@@ -1,0 +1,79 @@
+import React from "react";
+import {
+  createRootRoute,
+  Link,
+  Outlet,
+  useNavigate,
+} from "@tanstack/react-router";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
+
+const TanStackRouterDevtools = import.meta.env.PROD
+  ? () => null // Render nothing in production
+  : React.lazy(() =>
+      // Lazy load in development
+      import("@tanstack/router-devtools").then((res) => ({
+        default: res.TanStackRouterDevtools,
+      })),
+    );
+
+const Nav = () => {
+  const navigate = useNavigate({ from: "/" });
+  const { mutate: logout } = trpc.auth.logout.useMutation();
+  const queryClient = useQueryClient();
+
+  return (
+    <div className="p-2 flex gap-2">
+      <Link to="/" className="[&.active]:font-bold">
+        Home
+      </Link>{" "}
+      <Link to="/about" className="[&.active]:font-bold">
+        About
+      </Link>
+      <Button
+        variant="link"
+        onClick={async () => {
+          logout();
+
+          await queryClient.invalidateQueries();
+
+          navigate({ to: "/login", replace: true, resetScroll: true });
+        }}
+      >
+        Logout
+      </Button>
+    </div>
+  );
+};
+
+const Root = () => {
+  const { isPending, data: me } = trpc.user.me.useQuery();
+  const isAuthenticated = !!me;
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <>
+      {isAuthenticated ? (
+        <>
+          <Nav />
+
+          <hr />
+        </>
+      ) : undefined}
+
+      <Outlet />
+
+      <React.Suspense>
+        <TanStackRouterDevtools />
+      </React.Suspense>
+    </>
+  );
+};
+
+export const Route = createRootRoute({
+  component: Root,
+});
