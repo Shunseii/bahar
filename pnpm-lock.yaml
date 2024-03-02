@@ -29,6 +29,9 @@ importers:
       '@lingui/core':
         specifier: ^4.7.1
         version: 4.7.1
+      '@lingui/detect-locale':
+        specifier: ^4.7.1
+        version: 4.7.1
       '@lingui/macro':
         specifier: ^4.7.1
         version: 4.7.1(@lingui/react@4.7.1)(babel-plugin-macros@3.1.0)(typescript@5.3.3)
@@ -68,6 +71,9 @@ importers:
       clsx:
         specifier: ^2.1.0
         version: 2.1.0
+      jotai:
+        specifier: ^2.7.0
+        version: 2.7.0(@types/react@18.2.56)(react@18.2.0)
       lucide-react:
         specifier: ^0.331.0
         version: 0.331.0(react@18.2.0)
@@ -1624,6 +1630,11 @@ packages:
       '@babel/runtime': 7.23.9
       '@lingui/message-utils': 4.7.1
       unraw: 3.0.0
+
+  /@lingui/detect-locale@4.7.1:
+    resolution: {integrity: sha512-rx0NyPIHhzu9+wTURflBL3Vvpg5j+aCkjI1Cn1ErVHVc/TvRnLNDmHohMNyaeCYy5XJqcLgDHW/FRXW3H1OUmA==}
+    engines: {node: '>=16.0.0'}
+    dev: false
 
   /@lingui/format-po@4.7.1(typescript@5.3.3):
     resolution: {integrity: sha512-O5Tr/x0Pr+buk7YtbwrWR8MIaKV0ruwoIPuc05QlEHW/D15kcSRldHJ1lEKEB+bXRw050AeUxyRY7ibbZFyQ0g==}
@@ -6291,6 +6302,22 @@ packages:
   /jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
     dev: true
+
+  /jotai@2.7.0(@types/react@18.2.56)(react@18.2.0):
+    resolution: {integrity: sha512-4qsyFKu4MprI39rj2uoItyhu24NoCHzkOV7z70PQr65SpzV6CSyhQvVIfbNlNqOIOspNMdf5OK+kTXLvqe63Jw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.56
+      react: 18.2.0
+    dev: false
 
   /js-base64@3.7.6:
     resolution: {integrity: sha512-NPrWuHFxFUknr1KqJRDgUQPexQF0uIJWjeT+2KjEePhitQxQEx5EJBG1lVn5/hc8aLycTpXrDOgPQ6Zq+EDiTA==}

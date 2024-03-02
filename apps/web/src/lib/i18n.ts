@@ -19,6 +19,8 @@ export async function dynamicActivate(locale: TLocale) {
   i18n.load(locale, messages);
   i18n.activate(locale);
 
+  localStorage.setItem("lang", locale);
+
   document.documentElement.lang = locale;
   document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
 }

@@ -13,11 +13,30 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/routes/login.lazy.tsx:42
+#: src/components/LanguageMenu.tsx:17
+msgid "Arabic"
+msgstr "العربية"
+
+#: src/components/ThemeMenu.tsx:32
+msgid "Dark"
+msgstr "غامق"
+
+#: src/components/LanguageMenu.tsx:21
+msgid "English"
+msgstr "الانجلزية"
+
+#: src/components/ThemeMenu.tsx:35
+msgid "Light"
+msgstr "فاتح"
+
+#: src/routes/login.lazy.tsx:18
 msgid "Login"
 msgstr "تسجيل الدخول"
 
-#: src/routes/login.lazy.tsx:58
+#: src/routes/login.lazy.tsx:28
 msgid "Login with GitHub"
 msgstr "تسجيل الدخول مع GitHub"
 
+#: src/components/ThemeMenu.tsx:39
+msgid "System"
+msgstr "نظام"

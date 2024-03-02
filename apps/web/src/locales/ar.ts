@@ -1,1 +1,1 @@
-/*eslint-disable*/import type{Messages}from"@lingui/core";export const messages:Messages=JSON.parse("{\"z0t9bb\":\"تسجيل الدخول\"}");
+/*eslint-disable*/import type{Messages}from"@lingui/core";export const messages:Messages=JSON.parse("{\"8HV3WN\":\"العربية\",\"pvnfJD\":\"غامق\",\"lYGfRP\":\"الانجلزية\",\"1njn7W\":\"فاتح\",\"z0t9bb\":\"تسجيل الدخول\",\"2NSsmh\":\"تسجيل الدخول مع GitHub\",\"D+NlUC\":\"نظام\"}");

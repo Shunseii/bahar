@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   createRootRoute,
   Link,
@@ -50,6 +50,16 @@ const Nav = () => {
 const Root = () => {
   const { isPending, data: me } = trpc.user.me.useQuery();
   const isAuthenticated = !!me;
+
+  useEffect(() => {
+    // We updated the body styles in the index to display
+    // a background that matches the user's theme from local storage
+    // so that there isn't a flash of a white page every time.
+    //
+    // Here, we undo those styles since they are no longer needed.
+    document.body.style.height = "";
+    document.body.style.backgroundColor = "";
+  }, []);
 
   if (isPending) {
     return <div>Loading...</div>;

@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="dark" lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -8,6 +8,23 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      const theme = localStorage.getItem("theme");
+      const isSystemDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+
+      document.body.style.height = "100vh";
+
+      if (theme === "dark" || (theme === "system" && isSystemDark)) {
+        document.documentElement.classList.add("dark");
+        document.body.style.backgroundColor = "#020617";
+      } else {
+        document.documentElement.classList.remove("dark");
+        document.body.style.backgroundColor = "white";
+      }
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@lingui/core": "^4.7.1",
+    "@lingui/detect-locale": "^4.7.1",
     "@lingui/macro": "^4.7.1",
     "@lingui/react": "^4.7.1",
     "@radix-ui/react-select": "^2.0.0",
@@ -26,6 +27,7 @@
     "@trpc/server": "11.0.0-next-beta.289",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "jotai": "^2.7.0",
     "lucide-react": "^0.331.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

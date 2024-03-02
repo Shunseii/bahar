@@ -7,7 +7,8 @@ import { queryClient } from "./lib/query";
 import { I18nProvider } from "@lingui/react";
 import { i18n } from "@lingui/core";
 import { useEffect } from "react";
-import { DEFAULT_LOCALE, dynamicActivate } from "./lib/i18n";
+import { DEFAULT_LOCALE, LOCALES, TLocale, dynamicActivate } from "./lib/i18n";
+import { detect, fromStorage, fromNavigator } from "@lingui/detect-locale";
 
 const InnerApp = () => {
   return <RouterProvider router={router} />;
@@ -15,7 +16,20 @@ const InnerApp = () => {
 
 function App() {
   useEffect(() => {
-    dynamicActivate(DEFAULT_LOCALE);
+    const detectedLocale = detect(
+      fromStorage("lang"),
+      fromNavigator(),
+      DEFAULT_LOCALE,
+    )!;
+
+    // Convert en-US format to just en
+    const lang = detectedLocale.split("-")[0];
+    const isSupported = Object.keys(LOCALES).includes(lang);
+
+    // If language is not supported, then use default
+    const supportedLang = (!isSupported ? DEFAULT_LOCALE : lang) as TLocale;
+
+    dynamicActivate(supportedLang);
   }, []);
 
   return (
