@@ -1,42 +1,134 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2024-02-29 03:17-0500\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: @lingui/cli\n"
-"Language: ar\n"
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-02-29 03:17-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"X-Generator: Poedit 3.4.2\n"
 
-#: src/components/LanguageMenu.tsx:17
+#: src/zod.ts:35
+msgid "{val, plural, one {Cannot exceed # character} other {Cannot exceed # characters}}"
+msgstr "{val, plural, one {لا يمكن تجاوز حرف واحد} two {لا يمكن تجاوز حرفين} few {لا يمكن تاوز # حروف} many {لا يمكن تجاوز # حرفا} other {لا يمكن تجاوز # حرف}}"
+
+#: src/zod.ts:22
+msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
+msgstr "{val, plural, one {يجب أن يكون على الأقل واحد حرف} two {يجب أن يكون على الأقل حرفين} few {يجب أن يكون على الأقل # حروف} many {يجب أن يكون على الأقل # حرفا} other {يجب أن يكون على الأقل # حرف}}"
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:167
+msgid "Already have an account?"
+msgstr "لديك حساب بالفعل؟"
+
+#: src/components/LanguageMenu.tsx:22
 msgid "Arabic"
 msgstr "العربية"
+
+#: src/components/OTPForm.tsx:183
+msgid "Continue"
+msgstr "استمر"
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:82
+msgid "Create a new account"
+msgstr "إنشاء حساب جديد"
+
+#: src/routes/_layout/login/route.lazy.tsx:110
+msgid "Create one"
+msgstr "إنشاء حساب الآن"
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:145
+msgid "Create your account"
+msgstr "إنشاء حسابك"
 
 #: src/components/ThemeMenu.tsx:32
 msgid "Dark"
 msgstr "غامق"
 
-#: src/components/LanguageMenu.tsx:21
+#: src/routes/_layout/login/route.lazy.tsx:107
+msgid "Don't have an account?"
+msgstr "ليس لديك حساب؟"
+
+#: src/routes/_layout/login/route.lazy.tsx:67
+#: src/routes/_layout/sign-up/route.lazy.tsx:97
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#: src/components/LanguageMenu.tsx:26
 msgid "English"
 msgstr "الانجلزية"
+
+#: src/components/OTPForm.tsx:132
+msgid "Enter your 6-digit code from your email"
+msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
+
+#: src/routes/_layout/login/route.lazy.tsx:103
+#: src/routes/_layout/sign-up/route.lazy.tsx:163
+msgid "GitHub"
+msgstr "GitHub"
+
+#: src/components/OTPForm.tsx:127
+msgid "Go back"
+msgstr "ارجع"
 
 #: src/components/ThemeMenu.tsx:35
 msgid "Light"
 msgstr "فاتح"
 
-#: src/routes/login.lazy.tsx:18
-msgid "Login"
+#: src/routes/_layout/login/route.lazy.tsx:52
+#: src/routes/_layout/login/route.lazy.tsx:85
+#: src/routes/_layout/sign-up/route.lazy.tsx:170
+msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#: src/routes/login.lazy.tsx:28
-msgid "Login with GitHub"
-msgstr "تسجيل الدخول مع GitHub"
+#: src/routes/_layout/login/route.lazy.tsx:97
+#: src/routes/_layout/sign-up/route.lazy.tsx:157
+msgid "Or continue with"
+msgstr "أو استمر مع"
+
+#: src/components/OTPForm.tsx:109
+msgid "Please try again after 30 seconds."
+msgstr "حاول مرة أخرى بعد ٣٠ ثوان من فضلك."
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:67
+msgid "Please try again after five minutes."
+msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
 
 #: src/components/ThemeMenu.tsx:39
 msgid "System"
 msgstr "نظام"
+
+#: src/components/OTPForm.tsx:106
+msgid "That code has expired."
+msgstr "هذا الرمزقد انتهت صلاحيته."
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:30
+msgid "That email already exists."
+msgstr "هذا البريد الإلكتروني موجود بالفعل."
+
+#: src/zod.ts:13
+msgid "That email is invalid."
+msgstr "هذا البريد الإلكتروني غير صالح."
+
+#: src/zod.ts:7
+msgid "That is invalid."
+msgstr "هذا غير صالح."
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:105
+msgid "This is case insensitive."
+msgstr "هذا حالة غير حساسة."
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:127
+msgid "This is how we will address you."
+msgstr "هذه هي طريقة التى سنخاطبك بها."
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:119
+msgid "Username"
+msgstr "اسم مستخدم"
+
+#~ msgid "Submit code"
+#~ msgstr "إرسال"

@@ -1,6 +1,24 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export const REGEXP_ONLY_EN_AR_DIGITS = "^[0-9٠-٩]+$";
+
+export const convertArabicNumToEnglish = (arabicNumber: string) => {
+  const arabicNumerals = "٠١٢٣٤٥٦٧٨٩";
+  const englishNumerals = "0123456789";
+
+  const arabicToEnglishMap = new Map(
+    [...arabicNumerals].map((num, index) => [num, englishNumerals[index]]),
+  );
+
+  const englishNumber = arabicNumber.replace(
+    /[٠-٩]/g,
+    (match) => arabicToEnglishMap.get(match) as string,
+  );
+
+  return englishNumber;
+};
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }

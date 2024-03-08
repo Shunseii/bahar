@@ -20,6 +20,8 @@
     "@trpc/client": "11.0.0-next-beta.289",
     "@trpc/server": "11.0.0-next-beta.289",
     "@types/cookie-parser": "^1.4.6",
+    "@upstash/ratelimit": "^1.0.1",
+    "@upstash/redis": "^1.28.4",
     "arctic": "^1.2.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -32,6 +34,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@sendgrid/mail": "^8.1.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.6",

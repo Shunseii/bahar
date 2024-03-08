@@ -58,7 +58,7 @@ export const ThemeMenu = () => {
         <SelectGroup>
           {getAllThemes().map((theme) => (
             <SelectItem className="cursor-pointer" key={theme} value={theme}>
-              <div className="flex flex-row rtl:flex-row-reverse items-center gap-x-2">
+              <div className="flex flex-row items-center gap-x-2">
                 <ThemeIcon theme={theme} /> <ThemeLabel theme={theme} />
               </div>
             </SelectItem>

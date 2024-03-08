@@ -1,6 +1,8 @@
 import { TRPCError, initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { validateRequest } from "./auth";
+import { Ratelimit } from "@upstash/ratelimit";
+import { redisClient } from "./redis";
 
 // Created for each request
 export const createContext = async ({
@@ -12,7 +14,8 @@ export const createContext = async ({
   return {
     session,
     user,
-    setCookie: (name: string, value: string) => {
+    reqIp: req.ip,
+    setHeaders: (name: string, value: string) => {
       res.setHeader(name, value);
     },
   };
@@ -25,6 +28,61 @@ export type Context = Awaited<ReturnType<typeof createContext>>;
  * Should be done only once per backend!
  */
 const t = initTRPC.context<Context>().create();
+
+export const signUpLimitProcedure = t.procedure.use(async (opts) => {
+  const { ctx } = opts;
+  const rateLimit = new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.slidingWindow(5, "5 m"),
+    // Disabled temporarily to save on storage space and commands
+    analytics: false,
+    prefix: "@upstash/ratelimit",
+  });
+
+  const ip = ctx.reqIp ?? "";
+  const id = `sign-up:${ip}`;
+
+  if (!ip) {
+    console.warn("No IP address detected.");
+  }
+
+  const { success } = await rateLimit.limit(id);
+
+  if (!success) {
+    throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+  }
+
+  return opts.next({
+    ctx,
+  });
+});
+
+export const otpLimitProcedure = t.procedure.use(async (opts) => {
+  const { ctx } = opts;
+  const rateLimit = new Ratelimit({
+    redis: redisClient,
+    limiter: Ratelimit.fixedWindow(1, "30 s"),
+    analytics: true,
+    prefix: "@upstash/ratelimit",
+  });
+
+  const ip = ctx.reqIp ?? "";
+  const id = `otp:${ip}`;
+
+  if (!ip) {
+    console.warn("No IP address detected.");
+  }
+
+  const { success } = await rateLimit.limit(id);
+
+  if (!success) {
+    throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+  }
+
+  return opts.next({
+    ctx,
+  });
+});
 
 export const protectedProcedure = t.procedure.use(async (opts) => {
   const { ctx } = opts;

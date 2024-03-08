@@ -1,30 +1,17 @@
-# React + TypeScript + Vite
+# Bahar
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Bahar is an online web app that allows students to build up their own Arabic dictionary.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Install packages with `pnpm install`.
 
-## Expanding the ESLint configuration
+Run the local database `turso dev`.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Run the migrations `npm run drizzle:migrate` in the `packages/api` directory.
 
-- Configure the top-level `parserOptions` property like this:
+Run the dev servers `turbo dev`.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+As you're working through the app, run `npm run messages:extract` to extract any new labels from the code into the `.po` files.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Then, when you are building the appm run `npm run messages:compile` to prepare for a production build.

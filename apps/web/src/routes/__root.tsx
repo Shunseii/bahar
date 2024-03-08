@@ -66,7 +66,7 @@ const Root = () => {
   }
 
   return (
-    <>
+    <div className="font-primary">
       {isAuthenticated ? (
         <>
           <Nav />
@@ -80,7 +80,7 @@ const Root = () => {
       <React.Suspense>
         <TanStackRouterDevtools />
       </React.Suspense>
-    </>
+    </div>
   );
 };
 

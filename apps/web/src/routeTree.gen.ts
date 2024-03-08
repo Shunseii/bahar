@@ -13,8 +13,10 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LoginImport } from './routes/login'
+import { Route as LayoutImport } from './routes/_layout'
 import { Route as IndexImport } from './routes/index'
+import { Route as LayoutSignUpRouteImport } from './routes/_layout/sign-up/route'
+import { Route as LayoutLoginRouteImport } from './routes/_layout/login/route'
 
 // Create Virtual Routes
 
@@ -27,15 +29,29 @@ const AboutLazyRoute = AboutLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
-const LoginRoute = LoginImport.update({
-  path: '/login',
+const LayoutRoute = LayoutImport.update({
+  id: '/_layout',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
+} as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const LayoutSignUpRouteRoute = LayoutSignUpRouteImport.update({
+  path: '/sign-up',
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import('./routes/_layout/sign-up/route.lazy').then((d) => d.Route),
+)
+
+const LayoutLoginRouteRoute = LayoutLoginRouteImport.update({
+  path: '/login',
+  getParentRoute: () => LayoutRoute,
+} as any).lazy(() =>
+  import('./routes/_layout/login/route.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -45,13 +61,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/login': {
-      preLoaderRoute: typeof LoginImport
+    '/_layout': {
+      preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
     '/about': {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
+    }
+    '/_layout/login': {
+      preLoaderRoute: typeof LayoutLoginRouteImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/sign-up': {
+      preLoaderRoute: typeof LayoutSignUpRouteImport
+      parentRoute: typeof LayoutImport
     }
   }
 }
@@ -60,7 +84,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
-  LoginRoute,
+  LayoutRoute.addChildren([LayoutLoginRouteRoute, LayoutSignUpRouteRoute]),
   AboutLazyRoute,
 ])
 

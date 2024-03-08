@@ -2,8 +2,18 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Naskh+Arabic:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Bahar</title>
   </head>
   <body>
@@ -18,10 +28,10 @@
 
       if (theme === "dark" || (theme === "system" && isSystemDark)) {
         document.documentElement.classList.add("dark");
-        document.body.style.backgroundColor = "#020617";
+        document.body.style.backgroundColor = "hsl(222.2, 84%, 4.9%)";
       } else {
         document.documentElement.classList.remove("dark");
-        document.body.style.backgroundColor = "white";
+        document.body.style.backgroundColor = "hsl(0, 0%, 100%)";
       }
     </script>
 
