@@ -47,7 +47,6 @@ RUN pnpm install --prod --frozen-lockfile
 COPY --from=development /app/apps/api/dist /app/apps/api/dist
 COPY --from=development /app/apps/api/docker-entrypoint.sh ./
 
-COPY --from=prune /app/apps/api/.env /app/apps/api/.env
 COPY --from=prune /app/turbo.json /app/turbo.json
 
 # Needed for migrations
