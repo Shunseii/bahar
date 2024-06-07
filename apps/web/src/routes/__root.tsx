@@ -59,6 +59,8 @@ const Root = () => {
     document.body.style.backgroundColor = "";
   }, []);
 
+  console.log("API", import.meta.env.VITE_API_BASE_URL);
+
   if (isPending) {
     return <div>Loading...</div>;
   }
