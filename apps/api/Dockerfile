@@ -58,4 +58,6 @@ WORKDIR /app/apps/api
 
 EXPOSE 3000
 
+ENV PORT=3000
+
 ENTRYPOINT ["/app/docker-entrypoint.sh"]

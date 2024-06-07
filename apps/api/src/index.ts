@@ -9,7 +9,7 @@ import { userRouter } from "./routers/user.js";
 import { authRouter, trpcAuthRouter } from "./routers/auth.js";
 import { csrf } from "./middleware.js";
 
-const port = process.env.APP_PORT;
+const port = process.env.PORT;
 
 const appRouter = router({
   user: userRouter,
