@@ -6,7 +6,7 @@ import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 
 export const client = createClient({
   url: process.env.DATABASE_URL!,
-  // authToken: "DATABASE_AUTH_TOKEN",
+  authToken: process.env.TURSO_TOKEN!,
 });
 
 export const db = drizzle(client, { schema: { users, sessions } });
