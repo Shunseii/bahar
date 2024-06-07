@@ -8,6 +8,7 @@ import cors from "cors";
 import { userRouter } from "./routers/user.js";
 import { authRouter, trpcAuthRouter } from "./routers/auth.js";
 import { csrf } from "./middleware.js";
+import { getAllowedDomains } from "./utils.js";
 
 const port = process.env.PORT;
 
@@ -21,15 +22,17 @@ const app = express();
 app.use(cookieParser());
 app.use(csrf);
 
-const DOMAIN = process.env.WEB_CLIENT_DOMAIN!;
-
-const origin = DOMAIN.includes("localhost")
-  ? `http://${DOMAIN}`
-  : `https://${DOMAIN}`;
+const allowedDomains = getAllowedDomains(process.env.WEB_CLIENT_DOMAIN!);
 
 app.use(
   cors({
-    origin,
+    origin: (origin = "", callback) => {
+      if (allowedDomains.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS."));
+      }
+    },
     credentials: true,
   }),
 );

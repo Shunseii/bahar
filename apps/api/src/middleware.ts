@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyRequestOrigin } from "oslo/request";
+import { getAllowedDomains } from "./utils.js";
 
 export const csrf = (req: Request, res: Response, next: NextFunction) => {
   if (req.method === "GET") {
@@ -10,14 +11,9 @@ export const csrf = (req: Request, res: Response, next: NextFunction) => {
   const hostHeader =
     ((req.headers.host ?? req.headers["X-Forwarded-Host"]) as string) ?? null;
 
-  const DOMAIN = process.env.WEB_CLIENT_DOMAIN!;
-  const isLocal = DOMAIN.includes("localhost");
-  const protocol = isLocal ? "http" : "https";
-
-  const allowedDomains: string[] = [
+  const allowedDomains = [
     hostHeader,
-    `${protocol}://${DOMAIN}`,
-    `${protocol}://www.${DOMAIN}`,
+    ...getAllowedDomains(process.env.WEB_CLIENT_DOMAIN!),
   ];
 
   if (
