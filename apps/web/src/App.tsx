@@ -33,6 +33,8 @@ function App() {
     dynamicActivate(supportedLang);
   }, []);
 
+  console.log("API URL: ", import.meta.env.VITE_API_BASE_URL);
+
   return (
     <I18nProvider i18n={i18n}>
       <trpc.Provider client={trpcReactClient} queryClient={queryClient}>
