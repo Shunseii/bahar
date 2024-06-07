@@ -56,4 +56,6 @@ RUN chmod +x /app/docker-entrypoint.sh
 
 WORKDIR /app/apps/api
 
+EXPOSE 3000
+
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
