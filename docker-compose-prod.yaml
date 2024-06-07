@@ -1,0 +1,33 @@
+services:
+  api_prod:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - libsql
+  web_prod:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+      target: production
+    depends_on:
+      - api_prod
+    ports:
+      - "4000:80"
+    env_file:
+      - ./apps/web/.env
+  libsql:
+    image: ghcr.io/tursodatabase/libsql-server:latest
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+      - "5001:5001"
+    environment:
+      - SQLD_DB_PATH=/tmp/libsql
+    # volumes:
+    #   - ./tmp/data:/libsql

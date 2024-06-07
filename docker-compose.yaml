@@ -1,0 +1,40 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+      target: development
+    command: >
+      sh -c "pnpm run --filter api drizzle:migrate && exec pnpm turbo run dev --filter=api"
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/api/.env
+    volumes:
+      - .:/app
+    depends_on:
+      - libsql
+  web:
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+      target: development
+    command: pnpm turbo run dev --filter=web -- --port 80 --host
+    depends_on:
+      - api
+    ports:
+      - "4000:80"
+    env_file:
+      - ./apps/web/.env
+    volumes:
+      - .:/app
+  libsql:
+    image: ghcr.io/tursodatabase/libsql-server:latest
+    platform: linux/amd64
+    ports:
+      - "8080:8080"
+      - "5001:5001"
+    environment:
+      - SQLD_DB_PATH=/tmp/libsql
+    # volumes:
+    #   - ./tmp/data:/libsql

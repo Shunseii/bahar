@@ -1,0 +1,5 @@
+:{$PORT} {
+	root * apps/web/dist
+	file_server
+}
+
