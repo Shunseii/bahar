@@ -39,15 +39,6 @@ function App() {
     VITE_API_BASE_URL,
   } = import.meta.env;
 
-  console.log(
-    "meta env: ",
-    import.meta.env,
-    VITE_MEILISEARCH_API_URL,
-    VITE_MEILISEARCH_API_KEY,
-    VITE_API_BASE_URL,
-  );
-  console.log("process env: ", process.env);
-
   return (
     <I18nProvider i18n={i18n}>
       <trpc.Provider client={trpcReactClient} queryClient={queryClient}>

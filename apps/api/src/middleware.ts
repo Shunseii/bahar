@@ -13,6 +13,7 @@ export const csrf = (req: Request, res: Response, next: NextFunction) => {
   const allowedDomains: string[] = [
     hostHeader,
     process.env.WEB_CLIENT_BASE_URL!,
+    `www.${process.env.WEB_CLIENT_BASE_URL!}`,
   ];
 
   if (
