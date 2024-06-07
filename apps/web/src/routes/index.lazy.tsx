@@ -42,12 +42,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InstantSearch, Hits, Highlight } from "react-instantsearch";
+import { InstantSearch, Highlight, InfiniteHits } from "react-instantsearch";
 import { SearchInput } from "@/components/SearchInput";
 import { Separator } from "@/components/ui/separator";
 import { useQueryClient } from "@tanstack/react-query";
 
-const { searchClient } = instantMeiliSearch("<MY_HOST>", "<MY_API_KEY>");
+const { searchClient } = instantMeiliSearch(
+  import.meta.env.VITE_MEILISEARCH_API_URL,
+  import.meta.env.VITE_MEILISEARCH_API_KEY,
+);
 
 const Index = () => {
   const navigate = useNavigate({ from: "/" });
@@ -286,7 +289,7 @@ const Index = () => {
               </CardHeader>
 
               <CardContent>
-                <Hits<{ content: string; translation: string }>
+                <InfiniteHits<{ content: string; translation: string }>
                   classNames={{
                     list: "flex flex-col gap-y-4",
                   }}

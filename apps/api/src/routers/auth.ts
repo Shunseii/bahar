@@ -166,7 +166,10 @@ export const trpcAuthRouter = trpcRouter({
       z.object({ code: z.string().length(6, { message: "invalid_code" }) }),
     )
     .mutation(async ({ ctx, input: { code } }) => {
-      const totpController = new TOTPController();
+      const totpController = new TOTPController({
+        digits: 6,
+        period: new TimeSpan(30, "s"),
+      });
       const val = await redisClient.hgetall(code);
 
       const isEmpty = !val || Object.keys(val).length === 0;
@@ -218,7 +221,10 @@ export const trpcAuthRouter = trpcRouter({
       }),
     )
     .mutation(async ({ ctx: { setHeaders }, input: { code } }) => {
-      const totpController = new TOTPController();
+      const totpController = new TOTPController({
+        digits: 6,
+        period: new TimeSpan(30, "s"),
+      });
       const val = await redisClient.hgetall(code);
 
       const isEmpty = !val || Object.keys(val).length === 0;

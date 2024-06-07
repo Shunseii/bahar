@@ -38,3 +38,9 @@ dist/
 
 # local db (turso)
 local.db*
+
+# meilisearch data dir
+meili_data/
+
+# libsql (docker)
+libsql/
