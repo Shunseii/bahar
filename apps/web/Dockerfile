@@ -1,5 +1,10 @@
 FROM node:20-alpine AS base
 
+ARG PORT
+ARG VITE_API_BASE_URL
+ARG VITE_MEILISEARCH_API_KEY
+ARG VITE_MEILISEARCH_API_URL
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
@@ -54,8 +59,6 @@ RUN wget -qO- "https://github.com/caddyserver/caddy/releases/download/v2.4.5/cad
     | tar --no-same-owner -C /usr/bin/ -xz caddy
 
 COPY --from=prune /app/apps/web/Caddyfile /app/apps/web/Caddyfile
-
-RUN echo "PORT: $PORT VITE_API_BASE_URL=$VITE_API_BASE_URL"
 
 EXPOSE $PORT
 

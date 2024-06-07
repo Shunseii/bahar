@@ -1,5 +1,7 @@
 FROM node:20-slim AS base
 
+ARG PORT
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
@@ -55,8 +57,6 @@ COPY --from=prune /app/apps/api/drizzle /app/apps/api/drizzle
 RUN chmod +x /app/docker-entrypoint.sh
 
 WORKDIR /app/apps/api
-
-RUN echo "PORT: $PORT"
 
 EXPOSE $PORT
 
