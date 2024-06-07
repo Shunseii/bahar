@@ -21,9 +21,15 @@ const app = express();
 app.use(cookieParser());
 app.use(csrf);
 
+const DOMAIN = process.env.WEB_CLIENT_DOMAIN!;
+
+const origin = DOMAIN.includes("localhost")
+  ? `http://${DOMAIN}`
+  : `https://${DOMAIN}`;
+
 app.use(
   cors({
-    origin: process.env.WEB_CLIENT_BASE_URL,
+    origin,
     credentials: true,
   }),
 );

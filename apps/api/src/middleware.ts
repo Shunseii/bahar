@@ -10,10 +10,14 @@ export const csrf = (req: Request, res: Response, next: NextFunction) => {
   const hostHeader =
     ((req.headers.host ?? req.headers["X-Forwarded-Host"]) as string) ?? null;
 
+  const DOMAIN = process.env.WEB_CLIENT_DOMAIN!;
+  const isLocal = DOMAIN.includes("localhost");
+  const protocol = isLocal ? "http" : "https";
+
   const allowedDomains: string[] = [
     hostHeader,
-    process.env.WEB_CLIENT_BASE_URL!,
-    `www.${process.env.WEB_CLIENT_BASE_URL!}`,
+    `${protocol}://${DOMAIN}`,
+    `${protocol}://www.${DOMAIN}`,
   ];
 
   if (
