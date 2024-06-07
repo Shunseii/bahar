@@ -56,6 +56,8 @@ RUN chmod +x /app/docker-entrypoint.sh
 
 WORKDIR /app/apps/api
 
+RUN echo "PORT: $PORT"
+
 EXPOSE $PORT
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
