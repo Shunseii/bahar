@@ -33,7 +33,7 @@ function App() {
     dynamicActivate(supportedLang);
   }, []);
 
-  console.log("API URL: ", import.meta.env.VITE_API_BASE_URL);
+  console.log("API URL: ", import.meta.env, process.env);
 
   return (
     <I18nProvider i18n={i18n}>
