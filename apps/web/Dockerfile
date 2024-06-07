@@ -55,8 +55,6 @@ RUN wget -qO- "https://github.com/caddyserver/caddy/releases/download/v2.4.5/cad
 
 COPY --from=prune /app/apps/web/Caddyfile /app/apps/web/Caddyfile
 
-EXPOSE 80
-
-ENV PORT=80
+EXPOSE $PORT
 
 CMD ["caddy", "run", "--config", "/app/apps/web/Caddyfile"]

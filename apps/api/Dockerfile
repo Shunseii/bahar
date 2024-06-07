@@ -56,8 +56,6 @@ RUN chmod +x /app/docker-entrypoint.sh
 
 WORKDIR /app/apps/api
 
-EXPOSE 3000
-
-ENV PORT=3000
+EXPOSE $PORT
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
