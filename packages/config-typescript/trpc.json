@@ -1,8 +1,9 @@
 {
   "extends": "./base.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "target": "es2020",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["es2022"]
   }
 }

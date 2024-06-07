@@ -1,58 +1,35 @@
-# Turborepo Tailwind CSS starter
+# Bahar
 
-This is an official starter Turborepo.
+This is the monorepo for the Bahar application. It is set up using pnpm workspaces and turborepo.
 
-## Using this example
+## Getting Started
 
-Run the following command:
+Firstly, copy the `.example.env` to `.env` in `api` and `web`.
 
-```sh
-npx create-turbo@latest -e with-tailwind
-```
+Then, run `docker-compose up` to run all the services in development mode.
 
-## What's inside?
+Now, the front end application will be available on `http://localhost:4000`.
 
-This Turborepo includes the following packages/apps:
+To run a production setup locally, use `docker-compose -f docker-compose-prod.yaml up`.
 
-### Apps and Packages
+## Projects
 
-- `docs`: a [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `web`: another [Next.js](https://nextjs.org/) app with [Tailwind CSS](https://tailwindcss.com/)
-- `ui`: a stub React component library with [Tailwind CSS](https://tailwindcss.com/) shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Web
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+This is a front end SPA using Vite and React.
 
-### Building packages/ui
+It uses Shadcn and Tailwindcss for styling.
 
-This example is set up to produce compiled styles for `ui` components into the `dist` directory. The component `.tsx` files are consumed by the Next.js apps directly using `transpilePackages` in `next.config.js`. This was chosen for several reasons:
+Client side routing is done using tanstack router and async state managemnet with tanstack query. Atomic state management is done with Jotai.
 
-- Make sharing one `tailwind.config.js` to apps and packages as easy as possible.
-- Make package compilation simple by only depending on the Next.js Compiler and `tailwindcss`.
-- Ensure Tailwind classes do not overwrite each other. The `ui` package uses a `ui-` prefix for it's classes.
-- Maintain clear package export boundaries.
+It also makes use of Caddy as a production web server. The docker-compose-prod builds the app and serves it using Caddy.
 
-Another option is to consume `packages/ui` directly from source without building. If using this option, you will need to update the `tailwind.config.js` in your apps to be aware of your package locations, so it can find all usages of the `tailwindcss` class names for CSS compilation.
+### Api
 
-For example, in [tailwind.config.js](packages/tailwind-config/tailwind.config.js):
+This is a Node.js server using TRPC. It shares the trpc client with the front end.
 
-```js
-  content: [
-    // app content
-    `src/**/*.{js,ts,jsx,tsx}`,
-    // include packages if not transpiling
-    "../../packages/ui/*.{js,ts,jsx,tsx}",
-  ],
-```
+The primary database is libsql (turso) but also uses redis (upstash) for rate limiting.
 
-If you choose this strategy, you can remove the `tailwindcss` and `autoprefixer` dependencies from the `ui` package.
+Libsql persists data to the local disk. If you run it outside of docker, it will save the data to `apps/api/local.db`.
 
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [Tailwind CSS](https://tailwindcss.com/) for styles
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+It uses drizzle ORM to interact with the database and lucia-auth for handling authentication.

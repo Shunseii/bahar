@@ -6,12 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  dynamicActivate,
-  getLangDir,
-  getLocaleKeys,
-  TLocale,
-} from "@/lib/i18n";
+import { dynamicActivate, getLocaleKeys, TLocale } from "@/lib/i18n";
 import { i18n } from "@lingui/core";
 import { Trans } from "@lingui/macro";
 import { FC } from "react";

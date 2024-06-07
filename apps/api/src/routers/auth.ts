@@ -1,9 +1,9 @@
 import { OAuth2RequestError, generateState } from "arctic";
 import express, { type Router } from "express";
-import { github, lucia } from "../auth";
+import { github, lucia } from "../auth.js";
 import { serializeCookie } from "oslo/cookie";
-import { db } from "../db";
-import { users } from "../db/schema/users";
+import { db } from "../db/index.js";
+import { users } from "../db/schema/users.js";
 import { eq, or } from "drizzle-orm";
 import { TimeSpan, generateId } from "lucia";
 import {
@@ -12,13 +12,13 @@ import {
   publicProcedure,
   signUpLimitProcedure,
   router as trpcRouter,
-} from "../trpc";
+} from "../trpc.js";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { TOTPController } from "oslo/otp";
 import { HMAC } from "oslo/crypto";
-import { sendMail } from "../mail";
-import { redisClient } from "../redis";
+import { sendMail } from "../mail.js";
+import { redisClient } from "../redis.js";
 import { base64 } from "oslo/encoding";
 
 interface GitHubUser {
@@ -40,7 +40,7 @@ export const trpcAuthRouter = trpcRouter({
 
   login: signUpLimitProcedure
     .input(z.object({ email: z.string().email().min(5).max(256) }))
-    .mutation(async ({ input: { email }, ctx }) => {
+    .mutation(async ({ input: { email } }) => {
       const existingUser = (
         await db
           .select()
@@ -314,7 +314,7 @@ authRouter.get("/login/github/callback", async (req, res) => {
         Authorization: `Bearer ${tokens.accessToken}`,
       },
     });
-    const githubUser: GitHubUser = await githubUserResponse.json();
+    const githubUser = (await githubUserResponse.json()) as GitHubUser;
 
     const existingUser = (
       await db

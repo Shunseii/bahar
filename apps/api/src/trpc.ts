@@ -1,8 +1,8 @@
 import { TRPCError, initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { validateRequest } from "./auth";
+import { validateRequest } from "./auth.js";
 import { Ratelimit } from "@upstash/ratelimit";
-import { redisClient } from "./redis";
+import { redisClient } from "./redis.js";
 
 // Created for each request
 export const createContext = async ({

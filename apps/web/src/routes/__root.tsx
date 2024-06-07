@@ -27,10 +27,8 @@ const Nav = () => {
     <div className="p-2 flex gap-2">
       <Link to="/" className="[&.active]:font-bold">
         Home
-      </Link>{" "}
-      <Link to="/about" className="[&.active]:font-bold">
-        About
       </Link>
+
       <Button
         variant="link"
         onClick={async () => {
@@ -67,19 +65,17 @@ const Root = () => {
 
   return (
     <div className="font-primary">
-      {isAuthenticated ? (
-        <>
-          <Nav />
-
-          <hr />
-        </>
-      ) : undefined}
+      {/* {isAuthenticated ? ( */}
+      {/*   <> */}
+      {/*     <Nav /> */}
+      {/**/}
+      {/*     <hr /> */}
+      {/*   </> */}
+      {/* ) : undefined} */}
 
       <Outlet />
 
-      <React.Suspense>
-        <TanStackRouterDevtools />
-      </React.Suspense>
+      <React.Suspense>{/* <TanStackRouterDevtools /> */}</React.Suspense>
     </div>
   );
 };

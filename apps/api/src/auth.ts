@@ -1,8 +1,8 @@
 import { Lucia } from "lucia";
-import { adapter } from "./db";
+import { adapter } from "./db/index.js";
 import type { User as LuciaUser, Session as LuciaSession } from "lucia";
-import { User } from "./db/schema/users";
-import { Session } from "./db/schema/sessions";
+import { User } from "./db/schema/users.js";
+import { Session } from "./db/schema/sessions.js";
 import { GitHub } from "arctic";
 import type { IncomingMessage, ServerResponse } from "http";
 

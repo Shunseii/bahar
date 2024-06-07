@@ -1,8 +1,7 @@
 {
   "extends": "@repo/typescript-config/trpc.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "moduleResolution": "Bundler"
+    "outDir": "dist"
   },
-  "include": ["src"]
+  "include": ["src/**/*"]
 }

@@ -21,27 +21,27 @@ msgstr "{val, plural, one {لا يمكن تجاوز حرف واحد} two {لا �
 msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 msgstr "{val, plural, one {يجب أن يكون على الأقل واحد حرف} two {يجب أن يكون على الأقل حرفين} few {يجب أن يكون على الأقل # حروف} many {يجب أن يكون على الأقل # حرفا} other {يجب أن يكون على الأقل # حرف}}"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:167
+#: src/routes/_layout/sign-up/route.lazy.tsx:179
 msgid "Already have an account?"
 msgstr "لديك حساب بالفعل؟"
 
-#: src/components/LanguageMenu.tsx:22
+#: src/components/LanguageMenu.tsx:17
 msgid "Arabic"
 msgstr "العربية"
 
-#: src/components/OTPForm.tsx:183
+#: src/components/OTPForm.tsx:179
 msgid "Continue"
 msgstr "استمر"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:82
+#: src/routes/_layout/sign-up/route.lazy.tsx:94
 msgid "Create a new account"
 msgstr "إنشاء حساب جديد"
 
-#: src/routes/_layout/login/route.lazy.tsx:110
+#: src/routes/_layout/login/route.lazy.tsx:148
 msgid "Create one"
 msgstr "إنشاء حساب الآن"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:145
+#: src/routes/_layout/sign-up/route.lazy.tsx:157
 msgid "Create your account"
 msgstr "إنشاء حسابك"
 
@@ -49,29 +49,29 @@ msgstr "إنشاء حسابك"
 msgid "Dark"
 msgstr "غامق"
 
-#: src/routes/_layout/login/route.lazy.tsx:107
+#: src/routes/_layout/login/route.lazy.tsx:145
 msgid "Don't have an account?"
 msgstr "ليس لديك حساب؟"
 
-#: src/routes/_layout/login/route.lazy.tsx:67
-#: src/routes/_layout/sign-up/route.lazy.tsx:97
+#: src/routes/_layout/login/route.lazy.tsx:101
+#: src/routes/_layout/sign-up/route.lazy.tsx:109
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
-#: src/components/LanguageMenu.tsx:26
+#: src/components/LanguageMenu.tsx:21
 msgid "English"
 msgstr "الانجلزية"
 
-#: src/components/OTPForm.tsx:132
+#: src/components/OTPForm.tsx:128
 msgid "Enter your 6-digit code from your email"
 msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
 
-#: src/routes/_layout/login/route.lazy.tsx:103
-#: src/routes/_layout/sign-up/route.lazy.tsx:163
+#: src/routes/_layout/login/route.lazy.tsx:141
+#: src/routes/_layout/sign-up/route.lazy.tsx:175
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/components/OTPForm.tsx:127
+#: src/components/OTPForm.tsx:123
 msgid "Go back"
 msgstr "ارجع"
 
@@ -79,36 +79,45 @@ msgstr "ارجع"
 msgid "Light"
 msgstr "فاتح"
 
-#: src/routes/_layout/login/route.lazy.tsx:52
-#: src/routes/_layout/login/route.lazy.tsx:85
-#: src/routes/_layout/sign-up/route.lazy.tsx:170
+#: src/routes/_layout/login/route.lazy.tsx:86
+#: src/routes/_layout/login/route.lazy.tsx:123
+#: src/routes/_layout/sign-up/route.lazy.tsx:182
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#: src/routes/_layout/login/route.lazy.tsx:97
-#: src/routes/_layout/sign-up/route.lazy.tsx:157
+#: src/routes/_layout/login/route.lazy.tsx:135
+#: src/routes/_layout/sign-up/route.lazy.tsx:169
 msgid "Or continue with"
 msgstr "أو استمر مع"
 
-#: src/components/OTPForm.tsx:109
+#: src/components/OTPForm.tsx:105
 msgid "Please try again after 30 seconds."
 msgstr "حاول مرة أخرى بعد ٣٠ ثوان من فضلك."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:67
+#: src/routes/_layout/login/route.lazy.tsx:61
+#: src/routes/_layout/sign-up/route.lazy.tsx:69
 msgid "Please try again after five minutes."
 msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
+
+#: src/components/SearchInput.tsx:48
+msgid "Search..."
+msgstr "ابحث..."
 
 #: src/components/ThemeMenu.tsx:39
 msgid "System"
 msgstr "نظام"
 
-#: src/components/OTPForm.tsx:106
+#: src/components/OTPForm.tsx:102
 msgid "That code has expired."
 msgstr "هذا الرمزقد انتهت صلاحيته."
 
 #: src/routes/_layout/sign-up/route.lazy.tsx:30
 msgid "That email already exists."
 msgstr "هذا البريد الإلكتروني موجود بالفعل."
+
+#: src/routes/_layout/login/route.lazy.tsx:28
+msgid "That email is incorrect."
+msgstr "هذا البريد الإلكتروني غير صحيح."
 
 #: src/zod.ts:13
 msgid "That email is invalid."
@@ -118,15 +127,15 @@ msgstr "هذا البريد الإلكتروني غير صالح."
 msgid "That is invalid."
 msgstr "هذا غير صالح."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:105
+#: src/routes/_layout/sign-up/route.lazy.tsx:117
 msgid "This is case insensitive."
 msgstr "هذا حالة غير حساسة."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:127
+#: src/routes/_layout/sign-up/route.lazy.tsx:139
 msgid "This is how we will address you."
 msgstr "هذه هي طريقة التى سنخاطبك بها."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:119
+#: src/routes/_layout/sign-up/route.lazy.tsx:131
 msgid "Username"
 msgstr "اسم مستخدم"
 

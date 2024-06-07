@@ -5,6 +5,9 @@ import { defineConfig } from "vite";
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 
 export default defineConfig({
+  build: {
+    outDir: "dist",
+  },
   plugins: [
     react({
       plugins: [["@lingui/swc-plugin", {}]],

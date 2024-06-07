@@ -9,6 +9,7 @@ import { i18n } from "@lingui/core";
 import { useEffect } from "react";
 import { DEFAULT_LOCALE, LOCALES, TLocale, dynamicActivate } from "./lib/i18n";
 import { detect, fromStorage, fromNavigator } from "@lingui/detect-locale";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 const InnerApp = () => {
   return <RouterProvider router={router} />;
@@ -36,8 +37,10 @@ function App() {
     <I18nProvider i18n={i18n}>
       <trpc.Provider client={trpcReactClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <InnerApp />
-          <ReactQueryDevtools />
+          <TooltipProvider>
+            <InnerApp />
+          </TooltipProvider>
+          {/* <ReactQueryDevtools /> */}
         </QueryClientProvider>
       </trpc.Provider>
     </I18nProvider>
