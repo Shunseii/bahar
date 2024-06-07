@@ -24,8 +24,8 @@ services:
       - api
     ports:
       - "4000:80"
-    env_file:
-      - ./apps/web/.env
+    # env_file:
+    #   - ./apps/web/.env
     volumes:
       - .:/app
   meilisearch:

@@ -55,6 +55,8 @@ RUN wget -qO- "https://github.com/caddyserver/caddy/releases/download/v2.4.5/cad
 
 COPY --from=prune /app/apps/web/Caddyfile /app/apps/web/Caddyfile
 
+RUN echo "PORT: $PORT VITE_API_BASE_URL=$VITE_API_BASE_URL"
+
 EXPOSE $PORT
 
 CMD ["caddy", "run", "--config", "/app/apps/web/Caddyfile"]
