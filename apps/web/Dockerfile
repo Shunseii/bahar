@@ -55,7 +55,7 @@ COPY --from=prune /app/turbo.json /app/turbo.json
 RUN apk add --no-cache ca-certificates
 
 # Install Caddy
-RUN wget -qO- "https://github.com/caddyserver/caddy/releases/download/v2.4.5/caddy_2.4.5_linux_amd64.tar.gz" \
+RUN wget -qO- "https://github.com/caddyserver/caddy/releases/download/v2.8.4/caddy_2.8.4_linux_amd64.tar.gz" \
     | tar --no-same-owner -C /usr/bin/ -xz caddy
 
 COPY --from=prune /app/apps/web/Caddyfile /app/apps/web/Caddyfile

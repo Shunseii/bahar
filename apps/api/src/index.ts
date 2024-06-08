@@ -27,7 +27,7 @@ const allowedDomains = getAllowedDomains(process.env.WEB_CLIENT_DOMAIN!);
 app.use(
   cors({
     origin: (origin = "", callback) => {
-      if (allowedDomains.includes(origin)) {
+      if (allowedDomains.includes(origin) || !origin) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS."));
