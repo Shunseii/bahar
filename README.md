@@ -2,6 +2,12 @@
 
 This is the monorepo for the Bahar application. It is set up using pnpm workspaces and turborepo.
 
+Bahar is an online personal dictionary. Currently it only supports English - Arabic. 
+
+It allows you to build up your own dictionary that's powered by a search engine. 
+
+Currently, you can only view your dictionary and words only have translations. However, in the future, users will be able to add words themselves and words will have additional metadata like context, examples, root letters, morphology chart, etc...
+
 ## Getting Started
 
 Firstly, copy the `.example.env` to `.env` in `api` and `web`.
