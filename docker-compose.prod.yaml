@@ -18,7 +18,7 @@ services:
     depends_on:
       - api_prod
     ports:
-      - "4000:80"
+      - "4000:4000"
     env_file:
       - ./apps/web/.env
   meilisearch:

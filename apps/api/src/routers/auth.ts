@@ -1,11 +1,11 @@
 import { OAuth2RequestError, generateState } from "arctic";
 import express, { type Router } from "express";
-import { github, lucia } from "../auth.js";
+import { github, lucia, totpController } from "../auth.js";
 import { serializeCookie } from "oslo/cookie";
 import { db } from "../db/index.js";
 import { users } from "../db/schema/users.js";
 import { eq, or } from "drizzle-orm";
-import { TimeSpan, generateId } from "lucia";
+import { generateId } from "lucia";
 import {
   otpLimitProcedure,
   protectedProcedure,
@@ -15,7 +15,6 @@ import {
 } from "../trpc.js";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { TOTPController } from "oslo/otp";
 import { HMAC } from "oslo/crypto";
 import { sendMail } from "../mail.js";
 import { redisClient } from "../redis.js";
@@ -56,10 +55,6 @@ export const trpcAuthRouter = trpcRouter({
       }
 
       // Create TOTP
-      const totpController = new TOTPController({
-        digits: 6,
-        period: new TimeSpan(30, "s"),
-      });
       const secret = await new HMAC("SHA-1").generateKey();
       const otp = await totpController.generate(secret);
 
@@ -67,7 +62,7 @@ export const trpcAuthRouter = trpcRouter({
 
       // Store otp and secret so we can access it in another route
       await redisClient.hset(otp, { base64Secret, email });
-      await redisClient.expire(otp, 30);
+      await redisClient.expire(otp, 45);
 
       // TODO: Translate this
       sendMail({
@@ -101,10 +96,6 @@ export const trpcAuthRouter = trpcRouter({
       }
 
       // Create TOTP
-      const totpController = new TOTPController({
-        digits: 6,
-        period: new TimeSpan(30, "s"),
-      });
       const secret = await new HMAC("SHA-1").generateKey();
       const otp = await totpController.generate(secret);
 
@@ -112,7 +103,7 @@ export const trpcAuthRouter = trpcRouter({
 
       // Store otp and secret so we can access it in another route
       await redisClient.hset(otp, { base64Secret, email, username });
-      await redisClient.expire(otp, 30);
+      await redisClient.expire(otp, 45);
 
       // TODO: Translate this
       sendMail({
@@ -136,10 +127,6 @@ export const trpcAuthRouter = trpcRouter({
     )
     .mutation(async ({ input: { email, username } }) => {
       // Create TOTP
-      const totpController = new TOTPController({
-        digits: 6,
-        period: new TimeSpan(30, "s"),
-      });
       const secret = await new HMAC("SHA-1").generateKey();
       const otp = await totpController.generate(secret);
 
@@ -147,7 +134,7 @@ export const trpcAuthRouter = trpcRouter({
 
       // Store otp and secret so we can access it in another route
       await redisClient.hset(otp, { base64Secret, email, username });
-      await redisClient.expire(otp, 30);
+      await redisClient.expire(otp, 45);
 
       // TODO: Translate this
       sendMail({
@@ -166,10 +153,6 @@ export const trpcAuthRouter = trpcRouter({
       z.object({ code: z.string().length(6, { message: "invalid_code" }) }),
     )
     .mutation(async ({ ctx, input: { code } }) => {
-      const totpController = new TOTPController({
-        digits: 6,
-        period: new TimeSpan(30, "s"),
-      });
       const val = await redisClient.hgetall(code);
 
       const isEmpty = !val || Object.keys(val).length === 0;
@@ -221,10 +204,6 @@ export const trpcAuthRouter = trpcRouter({
       }),
     )
     .mutation(async ({ ctx: { setHeaders }, input: { code } }) => {
-      const totpController = new TOTPController({
-        digits: 6,
-        period: new TimeSpan(30, "s"),
-      });
       const val = await redisClient.hgetall(code);
 
       const isEmpty = !val || Object.keys(val).length === 0;

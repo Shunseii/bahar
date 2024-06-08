@@ -5,6 +5,8 @@ import { User } from "./db/schema/users.js";
 import { Session } from "./db/schema/sessions.js";
 import { GitHub } from "arctic";
 import type { IncomingMessage, ServerResponse } from "http";
+import { TimeSpan } from "oslo";
+import { TOTPController } from "oslo/otp";
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
@@ -56,6 +58,11 @@ export const validateRequest = async (
 
   return result;
 };
+
+export const totpController = new TOTPController({
+  digits: 6,
+  period: new TimeSpan(60, "s"),
+});
 
 export const github = new GitHub(
   process.env.GITHUB_CLIENT_ID!,
