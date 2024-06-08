@@ -1,11 +1,19 @@
 import { Search } from "lucide-react";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { msg } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { UseSearchBoxProps, useSearchBox } from "react-instantsearch";
 import { FC, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
-export const SearchInput: FC<UseSearchBoxProps> = (props) => {
+interface SearchInputProps extends UseSearchBoxProps {
+  className?: string;
+}
+
+export const SearchInput: FC<SearchInputProps> = ({
+  className = "",
+  ...props
+}) => {
   const { _ } = useLingui();
   const { query, refine } = useSearchBox(props);
   const [inputValue, setInputValue] = useState(query);
@@ -18,7 +26,7 @@ export const SearchInput: FC<UseSearchBoxProps> = (props) => {
 
   return (
     <form
-      className="relative ml-auto flex-1 md:grow-0"
+      className={cn("relative flex-1 md:grow-0", className)}
       role="search"
       noValidate
       action=""
@@ -41,12 +49,12 @@ export const SearchInput: FC<UseSearchBoxProps> = (props) => {
         }
       }}
     >
-      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <Search className="absolute ltr:left-2.5 rtl:right-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
 
       <Input
         type="search"
         placeholder={_(msg`Search...`)}
-        className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
+        className="w-full rounded-lg bg-background ltr:pl-8 rtl:pr-8 md:w-[450px] lg:w-[450px]"
         ref={inputRef}
         autoComplete="off"
         autoCorrect="off"

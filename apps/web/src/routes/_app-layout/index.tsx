@@ -3,7 +3,7 @@ import { trpc, trpcClient } from "@/lib/trpc";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_app-layout/")({
   beforeLoad: async ({ location }) => {
     const authData = await queryClient.fetchQuery({
       queryKey: [...getQueryKey(trpc.user.me), { type: "query" }],
