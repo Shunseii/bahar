@@ -11,66 +11,80 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as LayoutImport } from './routes/_layout'
-import { Route as IndexImport } from './routes/index'
-import { Route as LayoutIndexImport } from './routes/_layout/index'
+import { Route as LayoutRouteImport } from './routes/_layout/route'
+import { Route as AppLayoutRouteImport } from './routes/_app-layout/route'
+import { Route as AppLayoutIndexImport } from './routes/_app-layout/index'
 import { Route as LayoutSignUpRouteImport } from './routes/_layout/sign-up/route'
 import { Route as LayoutLoginRouteImport } from './routes/_layout/login/route'
+import { Route as AppLayoutSettingsRouteImport } from './routes/_app-layout/settings/route'
 
 // Create/Update Routes
 
-const LayoutRoute = LayoutImport.update({
+const LayoutRouteRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
-  path: '/',
+const AppLayoutRouteRoute = AppLayoutRouteImport.update({
+  id: '/_app-layout',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
-
-const LayoutIndexRoute = LayoutIndexImport.update({
-  path: '/',
-  getParentRoute: () => LayoutRoute,
 } as any)
+
+const AppLayoutIndexRoute = AppLayoutIndexImport.update({
+  path: '/',
+  getParentRoute: () => AppLayoutRouteRoute,
+} as any).lazy(() =>
+  import('./routes/_app-layout/index.lazy').then((d) => d.Route),
+)
 
 const LayoutSignUpRouteRoute = LayoutSignUpRouteImport.update({
   path: '/sign-up',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => LayoutRouteRoute,
 } as any).lazy(() =>
   import('./routes/_layout/sign-up/route.lazy').then((d) => d.Route),
 )
 
 const LayoutLoginRouteRoute = LayoutLoginRouteImport.update({
   path: '/login',
-  getParentRoute: () => LayoutRoute,
+  getParentRoute: () => LayoutRouteRoute,
 } as any).lazy(() =>
   import('./routes/_layout/login/route.lazy').then((d) => d.Route),
+)
+
+const AppLayoutSettingsRouteRoute = AppLayoutSettingsRouteImport.update({
+  path: '/settings',
+  getParentRoute: () => AppLayoutRouteRoute,
+} as any).lazy(() =>
+  import('./routes/_app-layout/settings/route.lazy').then((d) => d.Route),
 )
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      preLoaderRoute: typeof IndexImport
+    '/_app-layout': {
+      preLoaderRoute: typeof AppLayoutRouteImport
       parentRoute: typeof rootRoute
     }
     '/_layout': {
-      preLoaderRoute: typeof LayoutImport
+      preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRoute
+    }
+    '/_app-layout/settings': {
+      preLoaderRoute: typeof AppLayoutSettingsRouteImport
+      parentRoute: typeof AppLayoutRouteImport
     }
     '/_layout/login': {
       preLoaderRoute: typeof LayoutLoginRouteImport
-      parentRoute: typeof LayoutImport
+      parentRoute: typeof LayoutRouteImport
     }
     '/_layout/sign-up': {
       preLoaderRoute: typeof LayoutSignUpRouteImport
-      parentRoute: typeof LayoutImport
+      parentRoute: typeof LayoutRouteImport
     }
-    '/_layout/': {
-      preLoaderRoute: typeof LayoutIndexImport
-      parentRoute: typeof LayoutImport
+    '/_app-layout/': {
+      preLoaderRoute: typeof AppLayoutIndexImport
+      parentRoute: typeof AppLayoutRouteImport
     }
   }
 }
@@ -78,12 +92,11 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  IndexRoute,
-  LayoutRoute.addChildren([
-    LayoutLoginRouteRoute,
-    LayoutSignUpRouteRoute,
-    LayoutIndexRoute,
+  AppLayoutRouteRoute.addChildren([
+    AppLayoutSettingsRouteRoute,
+    AppLayoutIndexRoute,
   ]),
+  LayoutRouteRoute.addChildren([LayoutLoginRouteRoute, LayoutSignUpRouteRoute]),
 ])
 
 /* prettier-ignore-end */

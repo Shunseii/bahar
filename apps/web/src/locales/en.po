@@ -25,9 +25,22 @@ msgstr "{val, plural, one {Must be at least # character} other {Must be at least
 msgid "Already have an account?"
 msgstr "Already have an account?"
 
+#: src/routes/_app-layout/settings/route.lazy.tsx:23
+msgid "Appearance"
+msgstr "Appearance"
+
 #: src/components/LanguageMenu.tsx:17
 msgid "Arabic"
 msgstr "Arabic"
+
+#: src/routes/_app-layout/index.lazy.tsx:66
+msgid "Back to top"
+msgstr "Back to top"
+
+#: src/routes/_app-layout/route.tsx:62
+#: src/routes/_app-layout/route.tsx:170
+msgid "Bahar"
+msgstr "Bahar"
 
 #: src/components/OTPForm.tsx:179
 msgid "Continue"
@@ -45,9 +58,17 @@ msgstr "Create one"
 msgid "Create your account"
 msgstr "Create your account"
 
+#: src/routes/_app-layout/settings/route.lazy.tsx:27
+msgid "Customize how the application looks for you."
+msgstr "Customize how the application looks for you."
+
 #: src/components/ThemeMenu.tsx:32
 msgid "Dark"
 msgstr "Dark"
+
+#: src/routes/_app-layout/index.lazy.tsx:35
+msgid "Dictionary"
+msgstr "Dictionary"
 
 #: src/routes/_layout/login/route.lazy.tsx:145
 msgid "Don't have an account?"
@@ -75,6 +96,12 @@ msgstr "GitHub"
 msgid "Go back"
 msgstr "Go back"
 
+#: src/routes/_app-layout/route.tsx:72
+#: src/routes/_app-layout/route.tsx:78
+#: src/routes/_app-layout/route.tsx:180
+msgid "Home"
+msgstr "Home"
+
 #: src/components/ThemeMenu.tsx:35
 msgid "Light"
 msgstr "Light"
@@ -84,6 +111,15 @@ msgstr "Light"
 #: src/routes/_layout/sign-up/route.lazy.tsx:182
 msgid "Log in"
 msgstr "Log in"
+
+#: src/routes/_app-layout/route.tsx:132
+#: src/routes/_app-layout/route.tsx:208
+msgid "Logout"
+msgstr "Logout"
+
+#: src/routes/_app-layout/route.tsx:99
+msgid "My Account"
+msgstr "My Account"
 
 #: src/routes/_layout/login/route.lazy.tsx:135
 #: src/routes/_layout/sign-up/route.lazy.tsx:169
@@ -99,9 +135,16 @@ msgstr "Please try again after 30 seconds."
 msgid "Please try again after five minutes."
 msgstr "Please try again after five minutes."
 
-#: src/components/SearchInput.tsx:48
+#: src/components/meili/SearchInput.tsx:56
 msgid "Search..."
 msgstr "Search..."
+
+#: src/routes/_app-layout/route.tsx:110
+#: src/routes/_app-layout/route.tsx:140
+#: src/routes/_app-layout/route.tsx:188
+#: src/routes/_app-layout/settings/route.lazy.tsx:17
+msgid "Settings"
+msgstr "Settings"
 
 #~ msgid "Submit code"
 #~ msgstr "Submit code"
@@ -138,6 +181,14 @@ msgstr "This is case insensitive."
 msgid "This is how we will address you."
 msgstr "This is how we will address you."
 
+#: src/routes/_app-layout/route.tsx:154
+msgid "Toggle Menu"
+msgstr "Toggle Menu"
+
 #: src/routes/_layout/sign-up/route.lazy.tsx:131
 msgid "Username"
 msgstr "Username"
+
+#: src/routes/_app-layout/index.lazy.tsx:39
+msgid "View all the words in your personal dictionary."
+msgstr "View all the words in your personal dictionary."

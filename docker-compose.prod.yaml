@@ -15,6 +15,11 @@ services:
       context: .
       dockerfile: ./apps/web/Dockerfile
       target: production
+      args:
+        PORT: 4000
+        VITE_API_BASE_URL: http://localhost:3000
+        VITE_MEILISEARCH_API_KEY: http://localhost:7700
+        VITE_MEILISEARCH_API_URL: MASTER_KEY
     depends_on:
       - api_prod
     ports:
