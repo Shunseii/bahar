@@ -25,9 +25,22 @@ msgstr "{val, plural, one {يجب أن يكون على الأقل واحد حر�
 msgid "Already have an account?"
 msgstr "لديك حساب بالفعل؟"
 
+#: src/routes/_app-layout/settings/route.lazy.tsx:23
+msgid "Appearance"
+msgstr "المظهر"
+
 #: src/components/LanguageMenu.tsx:17
 msgid "Arabic"
 msgstr "العربية"
+
+#: src/routes/_app-layout/index.lazy.tsx:66
+msgid "Back to top"
+msgstr "العودة إلى الأعلى"
+
+#: src/routes/_app-layout/route.tsx:62
+#: src/routes/_app-layout/route.tsx:170
+msgid "Bahar"
+msgstr "بحر"
 
 #: src/components/OTPForm.tsx:179
 msgid "Continue"
@@ -45,9 +58,17 @@ msgstr "إنشاء حساب الآن"
 msgid "Create your account"
 msgstr "إنشاء حسابك"
 
+#: src/routes/_app-layout/settings/route.lazy.tsx:27
+msgid "Customize how the application looks for you."
+msgstr "قم بتخصيص كيف يظهر التطبيق بالنسبة لك."
+
 #: src/components/ThemeMenu.tsx:32
 msgid "Dark"
 msgstr "غامق"
+
+#: src/routes/_app-layout/index.lazy.tsx:35
+msgid "Dictionary"
+msgstr "معجم"
 
 #: src/routes/_layout/login/route.lazy.tsx:145
 msgid "Don't have an account?"
@@ -75,6 +96,12 @@ msgstr "GitHub"
 msgid "Go back"
 msgstr "ارجع"
 
+#: src/routes/_app-layout/route.tsx:72
+#: src/routes/_app-layout/route.tsx:78
+#: src/routes/_app-layout/route.tsx:180
+msgid "Home"
+msgstr "منزل"
+
 #: src/components/ThemeMenu.tsx:35
 msgid "Light"
 msgstr "فاتح"
@@ -84,6 +111,15 @@ msgstr "فاتح"
 #: src/routes/_layout/sign-up/route.lazy.tsx:182
 msgid "Log in"
 msgstr "تسجيل الدخول"
+
+#: src/routes/_app-layout/route.tsx:132
+#: src/routes/_app-layout/route.tsx:208
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+#: src/routes/_app-layout/route.tsx:99
+msgid "My Account"
+msgstr "حسابي"
 
 #: src/routes/_layout/login/route.lazy.tsx:135
 #: src/routes/_layout/sign-up/route.lazy.tsx:169
@@ -99,9 +135,19 @@ msgstr "حاول مرة أخرى بعد ٣٠ ثوان من فضلك."
 msgid "Please try again after five minutes."
 msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
 
-#: src/components/SearchInput.tsx:48
+#: src/components/meili/SearchInput.tsx:56
 msgid "Search..."
 msgstr "ابحث..."
+
+#: src/routes/_app-layout/route.tsx:110
+#: src/routes/_app-layout/route.tsx:140
+#: src/routes/_app-layout/route.tsx:188
+#: src/routes/_app-layout/settings/route.lazy.tsx:17
+msgid "Settings"
+msgstr "الإعدادات"
+
+#~ msgid "Submit code"
+#~ msgstr "إرسال"
 
 #: src/components/ThemeMenu.tsx:39
 msgid "System"
@@ -135,9 +181,14 @@ msgstr "هذا حالة غير حساسة."
 msgid "This is how we will address you."
 msgstr "هذه هي طريقة التى سنخاطبك بها."
 
+#: src/routes/_app-layout/route.tsx:154
+msgid "Toggle Menu"
+msgstr "تبديل القائمة"
+
 #: src/routes/_layout/sign-up/route.lazy.tsx:131
 msgid "Username"
 msgstr "اسم مستخدم"
 
-#~ msgid "Submit code"
-#~ msgstr "إرسال"
+#: src/routes/_app-layout/index.lazy.tsx:39
+msgid "View all the words in your personal dictionary."
+msgstr "انظر كل الألفاظ في معجمك الشخصي."
