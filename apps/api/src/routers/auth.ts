@@ -313,6 +313,11 @@ authRouter.get("/login/github/callback", async (req, res) => {
     return;
   }
 
+  const DOMAIN = process.env.WEB_CLIENT_DOMAIN!;
+  const isLocal = DOMAIN.includes("localhost");
+
+  const redirectUrl = `${isLocal ? "http" : "https"}://${DOMAIN}`;
+
   try {
     const tokens = await github.validateAuthorizationCode(code);
     const githubUserResponse = await fetch("https://api.github.com/user", {
@@ -351,7 +356,7 @@ authRouter.get("/login/github/callback", async (req, res) => {
           "Set-Cookie",
           lucia.createSessionCookie(session.id).serialize(),
         )
-        .redirect(process.env.WEB_CLIENT_BASE_URL!);
+        .redirect(redirectUrl);
     }
 
     const userId = generateId(15);
@@ -370,7 +375,7 @@ authRouter.get("/login/github/callback", async (req, res) => {
         "Set-Cookie",
         lucia.createSessionCookie(session.id).serialize(),
       )
-      .redirect(process.env.WEB_CLIENT_BASE_URL!);
+      .redirect(redirectUrl);
   } catch (err) {
     if (err instanceof OAuth2RequestError) {
       // Invalid code
