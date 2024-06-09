@@ -59,11 +59,6 @@ export const validateRequest = async (
   return result;
 };
 
-export const totpController = new TOTPController({
-  digits: 6,
-  period: new TimeSpan(60, "s"),
-});
-
 export const github = new GitHub(
   process.env.GITHUB_CLIENT_ID!,
   process.env.GITHUB_CLIENT_SECRET!,

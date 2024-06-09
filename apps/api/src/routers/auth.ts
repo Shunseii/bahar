@@ -1,6 +1,6 @@
 import { OAuth2RequestError, generateState } from "arctic";
 import express, { type Router } from "express";
-import { github, lucia, totpController } from "../auth.js";
+import { github, lucia } from "../auth.js";
 import { serializeCookie } from "oslo/cookie";
 import { db } from "../db/index.js";
 import { users } from "../db/schema/users.js";
@@ -15,10 +15,10 @@ import {
 } from "../trpc.js";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { HMAC } from "oslo/crypto";
 import { sendMail } from "../mail.js";
 import { redisClient } from "../redis.js";
 import { base64 } from "oslo/encoding";
+import { generateOTP, verifyOTP } from "../otp/totp.js";
 
 interface GitHubUser {
   id: number;
@@ -55,14 +55,9 @@ export const trpcAuthRouter = trpcRouter({
       }
 
       // Create TOTP
-      const secret = await new HMAC("SHA-1").generateKey();
-      const otp = await totpController.generate(secret);
+      const { secret, otp } = await generateOTP();
 
       const base64Secret = base64.encode(new Uint8Array(secret));
-
-      // Store otp and secret so we can access it in another route
-      await redisClient.hset(otp, { base64Secret, email });
-      await redisClient.expire(otp, 45);
 
       // TODO: Translate this
       sendMail({
@@ -72,6 +67,10 @@ export const trpcAuthRouter = trpcRouter({
         text: `Enter this code: ${otp}. This code only lasts for 30 seconds.`,
         html: `Enter this code: <strong>${otp}</strong>. This code only lasts for 30 seconds.`,
       });
+
+      // Store otp and secret so we can access it in another route
+      await redisClient.hset(otp, { base64Secret, email });
+      await redisClient.expire(otp, 45);
 
       return true;
     }),
@@ -96,14 +95,9 @@ export const trpcAuthRouter = trpcRouter({
       }
 
       // Create TOTP
-      const secret = await new HMAC("SHA-1").generateKey();
-      const otp = await totpController.generate(secret);
+      const { secret, otp } = await generateOTP();
 
       const base64Secret = base64.encode(new Uint8Array(secret));
-
-      // Store otp and secret so we can access it in another route
-      await redisClient.hset(otp, { base64Secret, email, username });
-      await redisClient.expire(otp, 45);
 
       // TODO: Translate this
       sendMail({
@@ -113,6 +107,10 @@ export const trpcAuthRouter = trpcRouter({
         text: `Enter this code: ${otp}. This code only lasts for 30 seconds.`,
         html: `Enter this code: <strong>${otp}</strong>. This code only lasts for 30 seconds.`,
       });
+
+      // Store otp and secret so we can access it in another route
+      await redisClient.hset(otp, { base64Secret, email, username });
+      await redisClient.expire(otp, 45);
 
       return true;
     }),
@@ -127,14 +125,9 @@ export const trpcAuthRouter = trpcRouter({
     )
     .mutation(async ({ input: { email, username } }) => {
       // Create TOTP
-      const secret = await new HMAC("SHA-1").generateKey();
-      const otp = await totpController.generate(secret);
+      const { secret, otp } = await generateOTP();
 
       const base64Secret = base64.encode(new Uint8Array(secret));
-
-      // Store otp and secret so we can access it in another route
-      await redisClient.hset(otp, { base64Secret, email, username });
-      await redisClient.expire(otp, 45);
 
       // TODO: Translate this
       sendMail({
@@ -144,6 +137,10 @@ export const trpcAuthRouter = trpcRouter({
         text: `Enter this code: ${otp}. This code only lasts for 30 seconds.`,
         html: `Enter this code: <strong>${otp}</strong>. This code only lasts for 30 seconds.`,
       });
+
+      // Store otp and secret so we can access it in another route
+      await redisClient.hset(otp, { base64Secret, email, username });
+      await redisClient.expire(otp, 45);
 
       return true;
     }),
@@ -171,7 +168,7 @@ export const trpcAuthRouter = trpcRouter({
 
       const secret = base64.decode(base64Secret);
 
-      const codeIsValid = await totpController.verify(code, secret);
+      const codeIsValid = await verifyOTP({ otp: code, secret });
 
       if (!codeIsValid) {
         throw new TRPCError({
@@ -234,7 +231,7 @@ export const trpcAuthRouter = trpcRouter({
 
       const secret = base64.decode(base64Secret);
 
-      const codeIsValid = await totpController.verify(code, secret);
+      const codeIsValid = await verifyOTP({ otp: code, secret });
 
       if (!codeIsValid) {
         throw new TRPCError({

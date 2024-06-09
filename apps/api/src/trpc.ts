@@ -62,7 +62,8 @@ export const otpLimitProcedure = t.procedure.use(async (opts) => {
   const rateLimit = new Ratelimit({
     redis: redisClient,
     limiter: Ratelimit.fixedWindow(1, "30 s"),
-    analytics: true,
+    // Disabled temporarily to save on storage space and commands
+    analytics: false,
     prefix: "@upstash/ratelimit",
   });
 
