@@ -18,6 +18,8 @@ import { OTPForm } from "@/components/OTPForm";
 import { trpc } from "@/lib/trpc";
 import { useAtom } from "jotai";
 import { showOTPFormAtom } from "@/atoms/otp";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 
 const schema = z.object({
   email: z.string().email().min(5).max(256),
@@ -33,10 +35,17 @@ const translateErrors = (errMsg: string) => {
 
 const Login = () => {
   const navigate = useNavigate({ from: "/" });
+  const queryClient = useQueryClient();
   const { redirect } = Route.useSearch();
   const [showOTPForm, setShowOTPForm] = useAtom(showOTPFormAtom);
   const login = trpc.auth.login.useMutation();
-  const validateOTP = trpc.auth.validateLoginOTP.useMutation();
+  const validateOTP = trpc.auth.validateLoginOTP.useMutation({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...getQueryKey(trpc.user.me), { type: "query" }],
+      });
+    },
+  });
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -44,6 +53,7 @@ const Login = () => {
       email: "",
     },
   });
+
   const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
     try {
       const lowerCaseEmail = data.email.toLowerCase();
@@ -72,9 +82,9 @@ const Login = () => {
         onSubmitForm={async (code) => {
           await validateOTP.mutateAsync({ code });
 
-          setShowOTPForm(false);
-
           navigate({ to: redirect ?? "/", replace: true, resetScroll: true });
+
+          setShowOTPForm(false);
         }}
       />
     );

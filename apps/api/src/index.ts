@@ -6,7 +6,8 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { userRouter } from "./routers/user.js";
-import { authRouter, trpcAuthRouter } from "./routers/auth.js";
+import { authRouter } from "./routers/auth/github.js";
+import { trpcAuthRouter } from "./routers/auth/index.js";
 import { csrf } from "./middleware.js";
 import { getAllowedDomains } from "./utils.js";
 

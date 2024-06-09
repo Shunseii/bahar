@@ -5,8 +5,6 @@ import { User } from "./db/schema/users.js";
 import { Session } from "./db/schema/sessions.js";
 import { GitHub } from "arctic";
 import type { IncomingMessage, ServerResponse } from "http";
-import { TimeSpan } from "oslo";
-import { TOTPController } from "oslo/otp";
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
