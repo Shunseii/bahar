@@ -18,7 +18,13 @@ import { TRPCError } from "@trpc/server";
 import { sendMail } from "../mail.js";
 import { redisClient } from "../redis.js";
 import { base64 } from "oslo/encoding";
-import { generateOTP, verifyOTP } from "../otp/totp.js";
+import { OTP_VALID_PERIOD, generateOTP, verifyOTP } from "../otp/totp.js";
+
+/**
+ * A buffer added to the redis ttl for otp
+ * secrets, in seconds.
+ */
+const REDIS_OTP_TTL_BUFFER = 15;
 
 interface GitHubUser {
   id: number;
@@ -70,7 +76,10 @@ export const trpcAuthRouter = trpcRouter({
 
       // Store otp and secret so we can access it in another route
       await redisClient.hset(otp, { base64Secret, email });
-      await redisClient.expire(otp, 45);
+      await redisClient.expire(
+        otp,
+        OTP_VALID_PERIOD.seconds() + REDIS_OTP_TTL_BUFFER,
+      );
 
       return true;
     }),
@@ -110,7 +119,10 @@ export const trpcAuthRouter = trpcRouter({
 
       // Store otp and secret so we can access it in another route
       await redisClient.hset(otp, { base64Secret, email, username });
-      await redisClient.expire(otp, 45);
+      await redisClient.expire(
+        otp,
+        OTP_VALID_PERIOD.seconds() + REDIS_OTP_TTL_BUFFER,
+      );
 
       return true;
     }),

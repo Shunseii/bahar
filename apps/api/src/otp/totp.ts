@@ -6,7 +6,14 @@ import { generateHOTP } from "oslo/otp";
 // checks for the exact time counter instead of checking a window to
 // account for delays.
 
+/**
+ * The duration of a TOTP.
+ */
 export const OTP_VALID_PERIOD = new TimeSpan(30, "s");
+
+/**
+ * The amount of digits a TOTP will consist of.
+ */
 export const OTP_DIGITS = 6;
 
 /**
