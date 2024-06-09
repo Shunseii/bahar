@@ -18,9 +18,15 @@ import { Separator } from "../ui/separator";
  */
 const PIXEL_HEIGHT_OFFSET = 800;
 
+interface Hit extends Record<string, unknown> {
+  id?: string;
+  content?: string;
+  translation?: string;
+}
+
 export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
   const { status } = useInstantSearch();
-  const { hits, showMore, isLastPage } = useInfiniteHits(props);
+  const { hits, showMore, isLastPage } = useInfiniteHits<Hit>(props);
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
 
@@ -40,7 +46,7 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
     <div>
       <ul className="flex flex-col gap-y-4" ref={ref}>
         {hits.map((hit) => (
-          <li key={hit.objectID}>
+          <li key={hit.id}>
             <article>
               <div className="flex flex-col gap-y-2">
                 <h2 dir="rtl" className="rtl:text-right">

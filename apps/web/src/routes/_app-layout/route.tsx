@@ -50,7 +50,13 @@ const AppLayout = () => {
   });
 
   return (
-    <InstantSearch indexName="dictionary" searchClient={searchClient}>
+    <InstantSearch
+      indexName="dictionary"
+      searchClient={searchClient}
+      future={{
+        preserveSharedStateOnUnmount: true,
+      }}
+    >
       <aside className="fixed inset-y-0 ltr:left-0 rtl:right-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 py-4">
           <Link
@@ -81,65 +87,53 @@ const AppLayout = () => {
         </nav>
 
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 py-4">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="!ring-0 !outline-none overflow-hidden rounded-full"
-                  >
-                    <Settings className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="!ring-0 !outline-none overflow-hidden rounded-full"
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
 
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>
-                    <Trans>My Account</Trans>
-                  </DropdownMenuLabel>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>
+                <Trans>My Account</Trans>
+              </DropdownMenuLabel>
 
-                  <DropdownMenuSeparator />
+              <DropdownMenuSeparator />
 
-                  <DropdownMenuItem asChild>
-                    <Link
-                      className="cursor-pointer w-full"
-                      to="/settings"
-                      from="/"
-                    >
-                      <Trans>Settings</Trans>
-                    </Link>
-                  </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link className="cursor-pointer w-full" to="/settings" from="/">
+                  <Trans>Settings</Trans>
+                </Link>
+              </DropdownMenuItem>
 
-                  <DropdownMenuSeparator />
+              <DropdownMenuSeparator />
 
-                  <DropdownMenuItem asChild>
-                    <Button
-                      variant="ghost"
-                      className="cursor-pointer justify-start w-full !ring-0 !outline-none"
-                      onClick={async () => {
-                        logout();
+              <DropdownMenuItem asChild>
+                <Button
+                  variant="ghost"
+                  className="cursor-pointer justify-start w-full !ring-0 !outline-none"
+                  onClick={async () => {
+                    logout();
 
-                        await queryClient.invalidateQueries();
+                    await queryClient.invalidateQueries();
 
-                        navigate({
-                          to: "/login",
-                          replace: true,
-                          resetScroll: true,
-                        });
-                      }}
-                    >
-                      <Trans>Logout</Trans>
-                    </Button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TooltipTrigger>
-
-            <TooltipContent side="right">
-              <Trans>Settings</Trans>
-            </TooltipContent>
-          </Tooltip>
+                    navigate({
+                      to: "/login",
+                      replace: true,
+                      resetScroll: true,
+                    });
+                  }}
+                >
+                  <Trans>Logout</Trans>
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
       </aside>
 

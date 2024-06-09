@@ -17,7 +17,7 @@ const Settings = () => {
         <Trans>Settings</Trans>
       </h1>
 
-      <Card x-chunk="dashboard-04-chunk-1">
+      <Card>
         <CardHeader>
           <CardTitle>
             <Trans>Appearance</Trans>

@@ -10,28 +10,39 @@ import { useEffect } from "react";
 import { DEFAULT_LOCALE, LOCALES, TLocale, dynamicActivate } from "./lib/i18n";
 import { detect, fromStorage, fromNavigator } from "@lingui/detect-locale";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { useToggle } from "@uidotdev/usehooks";
 
 const InnerApp = () => {
   return <RouterProvider router={router} />;
 };
 
 function App() {
+  const [isI18nActivated, toggleIsI18nActivated] = useToggle(false);
+
   useEffect(() => {
-    const detectedLocale = detect(
-      fromStorage("lang"),
-      fromNavigator(),
-      DEFAULT_LOCALE,
-    )!;
+    (async () => {
+      const detectedLocale = detect(
+        fromStorage("lang"),
+        fromNavigator(),
+        DEFAULT_LOCALE,
+      )!;
 
-    // Convert en-US format to just en
-    const lang = detectedLocale.split("-")[0];
-    const isSupported = Object.keys(LOCALES).includes(lang);
+      // Convert en-US format to just en
+      const lang = detectedLocale.split("-")[0];
+      const isSupported = Object.keys(LOCALES).includes(lang);
 
-    // If language is not supported, then use default
-    const supportedLang = (!isSupported ? DEFAULT_LOCALE : lang) as TLocale;
+      // If language is not supported, then use default
+      const supportedLang = (!isSupported ? DEFAULT_LOCALE : lang) as TLocale;
 
-    dynamicActivate(supportedLang);
+      await dynamicActivate(supportedLang);
+
+      toggleIsI18nActivated(true);
+    })();
   }, []);
+
+  if (!isI18nActivated) {
+    return;
+  }
 
   return (
     <I18nProvider i18n={i18n}>
@@ -40,6 +51,7 @@ function App() {
           <TooltipProvider>
             <InnerApp />
           </TooltipProvider>
+
           {/* <ReactQueryDevtools /> */}
         </QueryClientProvider>
       </trpc.Provider>
