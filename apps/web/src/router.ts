@@ -5,6 +5,9 @@ import { routeTree } from "./routeTree.gen";
 // Create a new router instance
 export const router = createRouter({
   routeTree,
+  context: {
+    authState: undefined!,
+  },
 });
 
 // Register the router instance for type safety

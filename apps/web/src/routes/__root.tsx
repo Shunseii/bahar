@@ -1,13 +1,6 @@
 import React, { useEffect } from "react";
-import {
-  createRootRoute,
-  Link,
-  Outlet,
-  useNavigate,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/button";
-import { useQueryClient } from "@tanstack/react-query";
 
 const TanStackRouterDevtools = import.meta.env.PROD
   ? () => null // Render nothing in production
@@ -18,36 +11,8 @@ const TanStackRouterDevtools = import.meta.env.PROD
       })),
     );
 
-const Nav = () => {
-  const navigate = useNavigate({ from: "/" });
-  const { mutate: logout } = trpc.auth.logout.useMutation();
-  const queryClient = useQueryClient();
-
-  return (
-    <div className="p-2 flex gap-2">
-      <Link to="/" className="[&.active]:font-bold">
-        Home
-      </Link>
-
-      <Button
-        variant="link"
-        onClick={async () => {
-          logout();
-
-          await queryClient.invalidateQueries();
-
-          navigate({ to: "/login", replace: true, resetScroll: true });
-        }}
-      >
-        Logout
-      </Button>
-    </div>
-  );
-};
-
 const Root = () => {
-  const { isPending, data: me } = trpc.user.me.useQuery();
-  const isAuthenticated = !!me;
+  const { isPending } = trpc.user.me.useQuery();
 
   useEffect(() => {
     // We updated the body styles in the index to display
@@ -65,21 +30,22 @@ const Root = () => {
 
   return (
     <div className="font-primary">
-      {/* {isAuthenticated ? ( */}
-      {/*   <> */}
-      {/*     <Nav /> */}
-      {/**/}
-      {/*     <hr /> */}
-      {/*   </> */}
-      {/* ) : undefined} */}
-
       <Outlet />
 
-      <React.Suspense>{/* <TanStackRouterDevtools /> */}</React.Suspense>
+      {/* <React.Suspense><TanStackRouterDevtools /></React.Suspense> */}
     </div>
   );
 };
 
-export const Route = createRootRoute({
+type User = {
+  id: string;
+  username: string;
+};
+
+interface RouterContext {
+  authState: User;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: Root,
 });

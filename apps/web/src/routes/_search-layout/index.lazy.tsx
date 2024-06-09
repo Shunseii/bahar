@@ -71,6 +71,6 @@ const Index = () => {
   );
 };
 
-export const Route = createLazyFileRoute("/_app-layout/")({
+export const Route = createLazyFileRoute("/_search-layout/")({
   component: Index,
 });
