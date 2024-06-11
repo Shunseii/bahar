@@ -1,6 +1,8 @@
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/meili/SearchInput";
+import { queryClient } from "@/lib/query";
+import { trpc, trpcClient } from "@/lib/trpc";
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
 import {
   Outlet,
@@ -8,6 +10,7 @@ import {
   useMatchRoute,
   redirect,
 } from "@tanstack/react-router";
+import { getQueryKey } from "@trpc/react-query";
 import { InstantSearch } from "react-instantsearch";
 
 const { searchClient } = instantMeiliSearch(
@@ -55,8 +58,11 @@ const AppLayout = () => {
 
 export const Route = createFileRoute("/_search-layout")({
   component: AppLayout,
-  beforeLoad: async ({ location, context }) => {
-    const authData = context.authState;
+  beforeLoad: async ({ location }) => {
+    const authData = await queryClient.fetchQuery({
+      queryKey: [...getQueryKey(trpc.user.me), { type: "query" }],
+      queryFn: () => trpcClient.user.me.query(),
+    });
 
     const isAuthenticated = !!authData;
 

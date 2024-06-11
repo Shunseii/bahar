@@ -20,6 +20,7 @@ import { useAtom } from "jotai";
 import { showOTPFormAtom } from "@/atoms/otp";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
+import { useEffect } from "react";
 
 const schema = z.object({
   email: z.string().email().min(5).max(256),
@@ -38,6 +39,7 @@ const Login = () => {
   const queryClient = useQueryClient();
   const { redirect } = Route.useSearch();
   const [showOTPForm, setShowOTPForm] = useAtom(showOTPFormAtom);
+
   const login = trpc.auth.login.useMutation();
   const validateOTP = trpc.auth.validateLoginOTP.useMutation({
     onSuccess: () => {
@@ -76,15 +78,21 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    setShowOTPForm(false);
+  }, []);
+
   if (showOTPForm) {
     return (
       <OTPForm
         onSubmitForm={async (code) => {
           await validateOTP.mutateAsync({ code });
 
-          navigate({ to: redirect ?? "/", replace: true, resetScroll: true });
-
-          setShowOTPForm(false);
+          navigate({
+            to: redirect ?? "/",
+            replace: true,
+            resetScroll: true,
+          });
         }}
       />
     );

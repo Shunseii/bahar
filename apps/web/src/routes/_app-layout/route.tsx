@@ -1,6 +1,9 @@
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
+import { queryClient } from "@/lib/query";
+import { trpc, trpcClient } from "@/lib/trpc";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { getQueryKey } from "@trpc/react-query";
 
 const AppLayout = () => {
   return (
@@ -24,8 +27,11 @@ const AppLayout = () => {
 
 export const Route = createFileRoute("/_app-layout")({
   component: AppLayout,
-  beforeLoad: async ({ location, context }) => {
-    const authData = context.authState;
+  beforeLoad: async ({ location }) => {
+    const authData = await queryClient.fetchQuery({
+      queryKey: [...getQueryKey(trpc.user.me), { type: "query" }],
+      queryFn: () => trpcClient.user.me.query(),
+    });
 
     const isAuthenticated = !!authData;
 
