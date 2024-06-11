@@ -33,12 +33,13 @@ msgstr "المظهر"
 msgid "Arabic"
 msgstr "العربية"
 
-#: src/routes/_app-layout/index.lazy.tsx:66
+#: src/routes/_search-layout/index.lazy.tsx:66
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
-#: src/routes/_app-layout/route.tsx:62
-#: src/routes/_app-layout/route.tsx:170
+#: src/components/DesktopNavigation.tsx:38
+#: src/components/MobileHeader.tsx:42
+#: src/routes/__root.tsx:21
 msgid "Bahar"
 msgstr "بحر"
 
@@ -50,7 +51,7 @@ msgstr "استمر"
 msgid "Create a new account"
 msgstr "إنشاء حساب جديد"
 
-#: src/routes/_layout/login/route.lazy.tsx:148
+#: src/routes/_layout/login/route.lazy.tsx:166
 msgid "Create one"
 msgstr "إنشاء حساب الآن"
 
@@ -66,15 +67,15 @@ msgstr "قم بتخصيص كيف يظهر التطبيق بالنسبة لك."
 msgid "Dark"
 msgstr "غامق"
 
-#: src/routes/_app-layout/index.lazy.tsx:35
+#: src/routes/_search-layout/index.lazy.tsx:35
 msgid "Dictionary"
 msgstr "معجم"
 
-#: src/routes/_layout/login/route.lazy.tsx:145
+#: src/routes/_layout/login/route.lazy.tsx:163
 msgid "Don't have an account?"
 msgstr "ليس لديك حساب؟"
 
-#: src/routes/_layout/login/route.lazy.tsx:101
+#: src/routes/_layout/login/route.lazy.tsx:119
 #: src/routes/_layout/sign-up/route.lazy.tsx:109
 msgid "Email"
 msgstr "البريد الإلكتروني"
@@ -87,7 +88,7 @@ msgstr "الانجلزية"
 msgid "Enter your 6-digit code from your email"
 msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
 
-#: src/routes/_layout/login/route.lazy.tsx:141
+#: src/routes/_layout/login/route.lazy.tsx:159
 #: src/routes/_layout/sign-up/route.lazy.tsx:175
 msgid "GitHub"
 msgstr "GitHub"
@@ -96,9 +97,9 @@ msgstr "GitHub"
 msgid "Go back"
 msgstr "ارجع"
 
-#: src/routes/_app-layout/route.tsx:72
-#: src/routes/_app-layout/route.tsx:78
-#: src/routes/_app-layout/route.tsx:180
+#: src/components/DesktopNavigation.tsx:48
+#: src/components/DesktopNavigation.tsx:54
+#: src/components/MobileHeader.tsx:49
 msgid "Home"
 msgstr "منزل"
 
@@ -106,22 +107,22 @@ msgstr "منزل"
 msgid "Light"
 msgstr "فاتح"
 
-#: src/routes/_layout/login/route.lazy.tsx:86
-#: src/routes/_layout/login/route.lazy.tsx:123
+#: src/routes/_layout/login/route.lazy.tsx:104
+#: src/routes/_layout/login/route.lazy.tsx:141
 #: src/routes/_layout/sign-up/route.lazy.tsx:182
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#: src/routes/_app-layout/route.tsx:132
-#: src/routes/_app-layout/route.tsx:208
+#: src/components/DesktopNavigation.tsx:103
+#: src/components/MobileHeader.tsx:77
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
-#: src/routes/_app-layout/route.tsx:99
+#: src/components/DesktopNavigation.tsx:74
 msgid "My Account"
 msgstr "حسابي"
 
-#: src/routes/_layout/login/route.lazy.tsx:135
+#: src/routes/_layout/login/route.lazy.tsx:153
 #: src/routes/_layout/sign-up/route.lazy.tsx:169
 msgid "Or continue with"
 msgstr "أو استمر مع"
@@ -130,7 +131,7 @@ msgstr "أو استمر مع"
 msgid "Please try again after 30 seconds."
 msgstr "حاول مرة أخرى بعد ٣٠ ثوان من فضلك."
 
-#: src/routes/_layout/login/route.lazy.tsx:61
+#: src/routes/_layout/login/route.lazy.tsx:73
 #: src/routes/_layout/sign-up/route.lazy.tsx:69
 msgid "Please try again after five minutes."
 msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
@@ -139,9 +140,8 @@ msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
 msgid "Search..."
 msgstr "ابحث..."
 
-#: src/routes/_app-layout/route.tsx:110
-#: src/routes/_app-layout/route.tsx:140
-#: src/routes/_app-layout/route.tsx:188
+#: src/components/DesktopNavigation.tsx:81
+#: src/components/MobileHeader.tsx:57
 #: src/routes/_app-layout/settings/route.lazy.tsx:17
 msgid "Settings"
 msgstr "الإعدادات"
@@ -161,7 +161,7 @@ msgstr "هذا الرمزقد انتهت صلاحيته."
 msgid "That email already exists."
 msgstr "هذا البريد الإلكتروني موجود بالفعل."
 
-#: src/routes/_layout/login/route.lazy.tsx:28
+#: src/routes/_layout/login/route.lazy.tsx:31
 msgid "That email is incorrect."
 msgstr "هذا البريد الإلكتروني غير صحيح."
 
@@ -181,7 +181,7 @@ msgstr "هذا حالة غير حساسة."
 msgid "This is how we will address you."
 msgstr "هذه هي طريقة التى سنخاطبك بها."
 
-#: src/routes/_app-layout/route.tsx:154
+#: src/components/MobileHeader.tsx:26
 msgid "Toggle Menu"
 msgstr "تبديل القائمة"
 
@@ -189,6 +189,6 @@ msgstr "تبديل القائمة"
 msgid "Username"
 msgstr "اسم مستخدم"
 
-#: src/routes/_app-layout/index.lazy.tsx:39
+#: src/routes/_search-layout/index.lazy.tsx:39
 msgid "View all the words in your personal dictionary."
 msgstr "انظر كل الألفاظ في معجمك الشخصي."

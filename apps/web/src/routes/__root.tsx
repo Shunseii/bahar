@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { trpc } from "@/lib/trpc";
+import { msg } from "@lingui/macro";
+import { useLingui } from "@lingui/react";
+import { useDocumentTitle } from "@uidotdev/usehooks";
 
 const TanStackRouterDevtools = import.meta.env.PROD
   ? () => null // Render nothing in production
@@ -12,7 +15,10 @@ const TanStackRouterDevtools = import.meta.env.PROD
     );
 
 const Root = () => {
+  const { _ } = useLingui();
   const { isPending } = trpc.user.me.useQuery();
+
+  useDocumentTitle(_(msg`Bahar`));
 
   useEffect(() => {
     // We updated the body styles in the index to display
