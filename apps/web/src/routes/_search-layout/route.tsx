@@ -2,8 +2,8 @@ import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/meili/SearchInput";
 import { queryClient } from "@/lib/query";
+import { searchClient } from "@/lib/search";
 import { trpc, trpcClient } from "@/lib/trpc";
-import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
 import {
   Outlet,
   createFileRoute,
@@ -12,11 +12,6 @@ import {
 } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 import { InstantSearch } from "react-instantsearch";
-
-const { searchClient } = instantMeiliSearch(
-  import.meta.env.VITE_MEILISEARCH_API_URL,
-  import.meta.env.VITE_MEILISEARCH_API_KEY,
-);
 
 const AppLayout = () => {
   const matchRoute = useMatchRoute();

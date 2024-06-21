@@ -30,6 +30,7 @@ module.exports = {
   rules: {
     "import/no-default-export": "off",
     "react-hooks/exhaustive-deps": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },
