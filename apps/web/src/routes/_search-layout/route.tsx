@@ -4,29 +4,17 @@ import { SearchInput } from "@/components/meili/SearchInput";
 import { queryClient } from "@/lib/query";
 import { searchClient } from "@/lib/search";
 import { trpc, trpcClient } from "@/lib/trpc";
-import {
-  Outlet,
-  createFileRoute,
-  useMatchRoute,
-  redirect,
-} from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 import { InstantSearch } from "react-instantsearch";
 
 const AppLayout = () => {
-  const matchRoute = useMatchRoute();
-
-  const shouldDisplaySearchInput = matchRoute({
-    to: "/",
-    from: "/",
-    fuzzy: false,
-  });
-
   return (
     <InstantSearch
       indexName="dictionary"
       searchClient={searchClient}
       future={{
+        // To stop the warning in the logs
         preserveSharedStateOnUnmount: true,
       }}
     >
@@ -37,9 +25,7 @@ const AppLayout = () => {
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           {/* Mobile nav and search bar */}
           <MobileHeader>
-            {shouldDisplaySearchInput ? (
-              <SearchInput className="m-auto" />
-            ) : undefined}
+            <SearchInput className="m-auto" />
           </MobileHeader>
 
           <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">

@@ -12,6 +12,7 @@ import { ArrowUp } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
+import { Page } from "@/components/Page";
 
 const Index = () => {
   const [{ y }, scrollTo] = useWindowScroll();
@@ -22,8 +23,8 @@ const Index = () => {
   const hasScrolledPastInitialView = hasLoadedHeight ? y > height : false;
 
   return (
-    <>
-      <Card x-chunk="search-chunk-0" className="m-auto w-full max-w-3xl">
+    <Page>
+      <Card className="m-auto w-full max-w-3xl">
         <CardHeader className="text-center">
           <CardTitle>
             <Trans>Dictionary</Trans>
@@ -61,7 +62,7 @@ const Index = () => {
           </span>
         </Button>
       </div>
-    </>
+    </Page>
   );
 };
 
