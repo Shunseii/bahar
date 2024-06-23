@@ -1,4 +1,3 @@
-import { trpc } from "@/lib/trpc";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import {
   Card,
@@ -13,23 +12,19 @@ import { ArrowUp } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
+import { Page } from "@/components/Page";
 
 const Index = () => {
   const [{ y }, scrollTo] = useWindowScroll();
   const { height } = useWindowSize();
 
-  const { isPending } = trpc.user.me.useQuery();
-
+  // Check that the window dimensions are available
   const hasLoadedHeight = height !== null && height > 0 && y !== null;
   const hasScrolledPastInitialView = hasLoadedHeight ? y > height : false;
 
-  if (isPending) {
-    return "Loading...";
-  }
-
   return (
-    <>
-      <Card x-chunk="search-chunk-0" className="m-auto w-full max-w-3xl">
+    <Page>
+      <Card className="m-auto w-full max-w-3xl">
         <CardHeader className="text-center">
           <CardTitle>
             <Trans>Dictionary</Trans>
@@ -67,7 +62,7 @@ const Index = () => {
           </span>
         </Button>
       </div>
-    </>
+    </Page>
   );
 };
 

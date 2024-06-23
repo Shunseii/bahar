@@ -1,4 +1,5 @@
 import { LanguageMenu } from "@/components/LanguageMenu";
+import { Page } from "@/components/Page";
 import { ThemeMenu } from "@/components/ThemeMenu";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
@@ -10,9 +11,7 @@ const Layout = () => {
         <LanguageMenu />
       </div>
 
-      <div className="flex flex-col justify-center items-center gap-y-6 mx-auto max-w-96">
-        <Outlet />
-      </div>
+      <Outlet />
     </div>
   );
 };

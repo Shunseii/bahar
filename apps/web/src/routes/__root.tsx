@@ -1,22 +1,20 @@
 import React, { useEffect } from "react";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import { trpc } from "@/lib/trpc";
 import { msg } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { useDocumentTitle } from "@uidotdev/usehooks";
 
-const TanStackRouterDevtools = import.meta.env.PROD
-  ? () => null // Render nothing in production
-  : React.lazy(() =>
-      // Lazy load in development
-      import("@tanstack/router-devtools").then((res) => ({
-        default: res.TanStackRouterDevtools,
-      })),
-    );
+// const TanStackRouterDevtools = import.meta.env.PROD
+//   ? () => null // Render nothing in production
+//   : React.lazy(() =>
+//       // Lazy load in development
+//       import("@tanstack/router-devtools").then((res) => ({
+//         default: res.TanStackRouterDevtools,
+//       })),
+//     );
 
 const Root = () => {
   const { _ } = useLingui();
-  const { isPending } = trpc.user.me.useQuery();
 
   useDocumentTitle(_(msg`Bahar`));
 
@@ -29,10 +27,6 @@ const Root = () => {
     document.body.style.height = "";
     document.body.style.backgroundColor = "";
   }, []);
-
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="font-primary">
