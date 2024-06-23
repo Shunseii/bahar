@@ -13,7 +13,11 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { useToggle } from "@uidotdev/usehooks";
 
 const InnerApp = () => {
-  return <RouterProvider router={router} />;
+  const { data, isPending } = trpc.user.me.useQuery();
+
+  if (isPending) return;
+
+  return <RouterProvider router={router} context={{ authState: data! }} />;
 };
 
 function App() {
