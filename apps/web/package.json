@@ -36,6 +36,7 @@
     "@uidotdev/usehooks": "^2.4.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "framer-motion": "^11.2.11",
     "input-otp": "0.3.31-beta",
     "jotai": "^2.7.0",
     "lucide-react": "^0.331.0",

@@ -21,6 +21,7 @@ import { showOTPFormAtom } from "@/atoms/otp";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
 import { useEffect } from "react";
+import { Page } from "@/components/Page";
 
 const schema = z.object({
   email: z.string().email().min(5).max(256),
@@ -99,7 +100,7 @@ const Login = () => {
   }
 
   return (
-    <>
+    <Page className="flex flex-col justify-center items-center gap-y-6 mx-auto max-w-96">
       <h1 className="tracking-tight font-bold text-2xl dark:text-white text-center text-gray-900">
         <Trans>Log in</Trans>
       </h1>
@@ -167,7 +168,7 @@ const Login = () => {
           </Link>
         </Button>
       </p>
-    </>
+    </Page>
   );
 };
 

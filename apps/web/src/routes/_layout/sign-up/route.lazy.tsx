@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { OTPForm } from "@/components/OTPForm";
 import { useAtom } from "jotai";
 import { showOTPFormAtom } from "@/atoms/otp";
+import { Page } from "@/components/Page";
 
 const schema = z.object({
   email: z.string().email().min(5).max(256),
@@ -89,7 +90,7 @@ const SignUp = () => {
   }
 
   return (
-    <>
+    <Page className="flex flex-col justify-center items-center gap-y-6 mx-auto max-w-96">
       <h1 className="tracking-tight font-bold text-2xl dark:text-white text-gray-900 text-center">
         <Trans>Create a new account</Trans>
       </h1>
@@ -183,7 +184,7 @@ const SignUp = () => {
           </Link>
         </Button>
       </p>
-    </>
+    </Page>
   );
 };
 

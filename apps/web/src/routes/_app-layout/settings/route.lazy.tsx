@@ -1,4 +1,5 @@
 import { LanguageMenu } from "@/components/LanguageMenu";
+import { Page } from "@/components/Page";
 import { ThemeMenu } from "@/components/ThemeMenu";
 import {
   Card,
@@ -12,7 +13,7 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 
 const Settings = () => {
   return (
-    <div className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
+    <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
       <h1 className="text-center text-3xl font-primary font-semibold">
         <Trans>Settings</Trans>
       </h1>
@@ -33,7 +34,7 @@ const Settings = () => {
           <LanguageMenu />
         </CardContent>
       </Card>
-    </div>
+    </Page>
   );
 };
 
