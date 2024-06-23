@@ -87,7 +87,7 @@ export const trpcAuthRouter = trpcRouter({
         await db.select().from(users).where(eq(users.email, email)).limit(1)
       )[0];
 
-      if (!!existingUser) {
+      if (existingUser) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "email_in_use",
@@ -225,7 +225,7 @@ export const trpcAuthRouter = trpcRouter({
         await db.select().from(users).where(eq(users.email, email)).limit(1)
       )[0];
 
-      if (!!existingUser) {
+      if (existingUser) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "email_in_use",
