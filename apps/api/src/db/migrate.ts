@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { migrate } from "drizzle-orm/libsql/migrator";
-import { db, client } from "./index.js";
+import { db, client } from "./";
 
 (async () => {
   console.log("Running migrations...");

@@ -1,9 +1,9 @@
 import { OAuth2RequestError, generateState } from "arctic";
 import express, { type Router } from "express";
-import { github, lucia } from "../../auth.js";
+import { github, lucia } from "../../auth";
 import { serializeCookie } from "oslo/cookie";
-import { db } from "../../db/index.js";
-import { users } from "../../db/schema/users.js";
+import { db } from "../../db";
+import { users } from "../../db/schema/users";
 import { eq, or } from "drizzle-orm";
 import { generateId } from "lucia";
 
@@ -97,6 +97,8 @@ authRouter.get("/login/github/callback", async (req, res) => {
       username: githubUser.login,
       email: githubUser.email,
     });
+
+    // TODO: Create meilisearch index for the user
 
     const session = await lucia.createSession(userId, {} as any);
 

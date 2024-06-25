@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { verifyRequestOrigin } from "oslo/request";
-import { getAllowedDomains } from "./utils.js";
+import { getAllowedDomains } from "./utils";
 
 export const csrf = (req: Request, res: Response, next: NextFunction) => {
   if (req.method === "GET") {

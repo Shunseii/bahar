@@ -1,6 +1,6 @@
-import { lucia } from "../../auth.js";
-import { db } from "../../db/index.js";
-import { users } from "../../db/schema/users.js";
+import { lucia } from "../../auth";
+import { db } from "../../db";
+import { users } from "../../db/schema/users";
 import { eq, or } from "drizzle-orm";
 import { generateId } from "lucia";
 import {
@@ -9,13 +9,13 @@ import {
   publicProcedure,
   signUpLimitProcedure,
   router as trpcRouter,
-} from "../../trpc.js";
+} from "../../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { sendMail } from "../../mail.js";
-import { redisClient } from "../../redis.js";
+import { sendMail } from "../../mail";
+import { redisClient } from "../../redis";
 import { base64 } from "oslo/encoding";
-import { OTP_VALID_PERIOD, generateOTP, verifyOTP } from "../../otp/totp.js";
+import { OTP_VALID_PERIOD, generateOTP, verifyOTP } from "../../otp/totp";
 
 /**
  * A buffer added to the redis ttl for otp
@@ -250,6 +250,8 @@ export const trpcAuthRouter = trpcRouter({
         username,
         email,
       });
+
+      // TODO: Create meilisearch index for the user
 
       const session = await lucia.createSession(userId, {} as any);
 

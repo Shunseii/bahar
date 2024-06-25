@@ -1,9 +1,10 @@
 {
   "extends": "./base.json",
   "compilerOptions": {
-    "target": "es2020",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "lib": ["es2022"]
   }
 }

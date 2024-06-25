@@ -1,15 +1,15 @@
 import "dotenv/config";
 
-import { router, createContext } from "./trpc.js";
+import { router, createContext } from "./trpc";
 import express from "express";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { userRouter } from "./routers/user.js";
-import { authRouter } from "./routers/auth/github.js";
-import { trpcAuthRouter } from "./routers/auth/index.js";
-import { csrf } from "./middleware.js";
-import { getAllowedDomains } from "./utils.js";
+import { userRouter } from "./routers/user";
+import { authRouter } from "./routers/auth/github";
+import { trpcAuthRouter } from "./routers/auth";
+import { csrf } from "./middleware";
+import { getAllowedDomains } from "./utils";
 
 const port = process.env.PORT;
 

@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
-import { users } from "./schema/users.js";
-import { sessions } from "./schema/sessions.js";
+import { users } from "./schema/users";
+import { sessions } from "./schema/sessions";
 import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
 
 export const client = createClient({

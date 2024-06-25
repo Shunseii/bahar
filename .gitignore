@@ -44,3 +44,6 @@ meili_data/
 
 # libsql (docker)
 libsql/
+
+# Turso tetris game
+.go-tetris.log

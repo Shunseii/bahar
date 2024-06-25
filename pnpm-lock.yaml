@@ -68,6 +68,9 @@ importers:
       lucia:
         specifier: ^3.0.1
         version: 3.0.1
+      meilisearch:
+        specifier: ^0.40.0
+        version: 0.40.0
       oslo:
         specifier: ^1.1.2
         version: 1.1.2
@@ -6978,6 +6981,14 @@ packages:
 
   /meilisearch@0.37.0:
     resolution: {integrity: sha512-LdbK6JmRghCawrmWKJSEQF0OiE82md+YqJGE/U2JcCD8ROwlhTx0KM6NX4rQt0u0VpV0QZVG9umYiu3CSSIJAQ==}
+    dependencies:
+      cross-fetch: 3.1.8
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /meilisearch@0.40.0:
+    resolution: {integrity: sha512-BoRhQMr2mBFLEeCfsvPluksGb01IaOiWvV3Deu3iEY+yYJ4jdGTu+IQi5FCjKlNQ7/TMWSN2XUToSgvH1tj0BQ==}
     dependencies:
       cross-fetch: 3.1.8
     transitivePeerDependencies:
