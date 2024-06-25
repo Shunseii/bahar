@@ -24,4 +24,3 @@
 	# if path doesn't exist, redirect it to 'index.html' for client side routing
 	try_files {path} /index.html
 }
-
