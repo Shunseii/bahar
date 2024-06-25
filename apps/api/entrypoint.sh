@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Run the migration
-node dist/db/migrate.js
+node dist/db/migrate.mjs
 
 # Run the development server
-exec node dist/index
+exec node dist/index.mjs

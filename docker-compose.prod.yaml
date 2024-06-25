@@ -16,10 +16,11 @@ services:
       dockerfile: ./apps/web/Dockerfile
       target: production
       args:
+        # Need to specify the env vars here
         PORT: 4000
         VITE_API_BASE_URL: http://localhost:3000
-        VITE_MEILISEARCH_API_KEY: http://localhost:7700
-        VITE_MEILISEARCH_API_URL: MASTER_KEY
+        VITE_MEILISEARCH_API_URL: http://localhost:7700
+        VITE_MEILISEARCH_API_KEY: MASTER_KEY
     depends_on:
       - api_prod
     ports:

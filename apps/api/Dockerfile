@@ -47,17 +47,17 @@ COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 RUN pnpm install --prod --frozen-lockfile
 
 COPY --from=development /app/apps/api/dist /app/apps/api/dist
-COPY --from=development /app/apps/api/docker-entrypoint.sh ./
+COPY --from=development /app/apps/api/entrypoint.sh ./
 
 COPY --from=prune /app/turbo.json /app/turbo.json
 
 # Needed for migrations
 COPY --from=prune /app/apps/api/drizzle /app/apps/api/drizzle
 
-RUN chmod +x /app/docker-entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 WORKDIR /app/apps/api
 
 EXPOSE $PORT
 
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]

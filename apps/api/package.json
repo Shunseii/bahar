@@ -4,8 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/index",
+    "clean": "rm -rf ./dist",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "npm run clean && npm run typecheck",
+    "build": "node build.mjs",
+    "start": "node dist/index.mjs",
     "dev": "tsx watch src",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "drizzle:gen": "drizzle-kit generate:sqlite",
@@ -44,6 +47,8 @@
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "drizzle-kit": "^0.22.1",
+    "esbuild": "^0.21.5",
+    "esbuild-plugin-file-path-extensions": "^2.1.2",
     "eslint": "^8.56.0",
     "typescript": "^5.2.2"
   },
