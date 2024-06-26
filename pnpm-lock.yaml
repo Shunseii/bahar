@@ -28,7 +28,7 @@ importers:
         version: 0.5.1
       '@lucia-auth/adapter-drizzle':
         specifier: ^1.0.2
-        version: 1.0.2(lucia@3.0.1)
+        version: 1.0.2(lucia@3.2.0)
       '@sendgrid/mail':
         specifier: ^8.1.1
         version: 8.1.1
@@ -66,8 +66,8 @@ importers:
         specifier: ^4.18.2
         version: 4.18.2
       lucia:
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^3.2.0
+        version: 3.2.0
       meilisearch:
         specifier: ^0.40.0
         version: 0.40.0
@@ -1852,12 +1852,12 @@ packages:
       - typescript
     dev: true
 
-  /@lucia-auth/adapter-drizzle@1.0.2(lucia@3.0.1):
+  /@lucia-auth/adapter-drizzle@1.0.2(lucia@3.2.0):
     resolution: {integrity: sha512-GT2Mp0NaUZ5O4OAvzoNcX9bGotoxBfADo6mTzIEKKJ+uar3HgtQVn/m5Ogj3I2iMv0YBHWgMmlnkUHXN5xFNow==}
     peerDependencies:
       lucia: 3.x
     dependencies:
-      lucia: 3.0.1
+      lucia: 3.2.0
     dev: false
 
   /@meilisearch/instant-meilisearch@0.16.0:
@@ -6981,10 +6981,10 @@ packages:
       yallist: 4.0.0
     dev: true
 
-  /lucia@3.0.1:
-    resolution: {integrity: sha512-srwUkTCGgr6N4mFpaKZVZy5kwiRZdsrbIDv9Wrjar+xyw1MjojYQQ7oRbegjRWOZ3yI8xOOclK3sz/rga2J7/w==}
+  /lucia@3.2.0:
+    resolution: {integrity: sha512-eXMxXwk6hqtjRTj4W/x3EnTUtAztLPm0p2N2TEBMDEbakDLXiYnDQ9z/qahjPdPdhPguQc+vwO0/88zIWxlpuw==}
     dependencies:
-      oslo: 1.0.1
+      oslo: 1.2.0
     dev: false
 
   /lucide-react@0.331.0(react@18.3.1):
@@ -7418,6 +7418,13 @@ packages:
       '@node-rs/argon2': 1.7.0
       '@node-rs/bcrypt': 1.9.0
       auri: 1.0.2
+    dev: false
+
+  /oslo@1.2.0:
+    resolution: {integrity: sha512-OoFX6rDsNcOQVAD2gQD/z03u4vEjWZLzJtwkmgfRF+KpQUXwdgEXErD7zNhyowmHwHefP+PM9Pw13pgpHMRlzw==}
+    dependencies:
+      '@node-rs/argon2': 1.7.0
+      '@node-rs/bcrypt': 1.9.0
     dev: false
 
   /p-limit@2.3.0:

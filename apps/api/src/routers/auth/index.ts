@@ -2,7 +2,7 @@ import { lucia } from "../../auth";
 import { db } from "../../db";
 import { users } from "../../db/schema/users";
 import { eq, or } from "drizzle-orm";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
 import {
   otpLimitProcedure,
   protectedProcedure,
@@ -16,6 +16,7 @@ import { sendMail } from "../../mail";
 import { redisClient } from "../../redis";
 import { base64 } from "oslo/encoding";
 import { OTP_VALID_PERIOD, generateOTP, verifyOTP } from "../../otp/totp";
+import { meilisearchClient } from "../../meilisearch";
 
 /**
  * A buffer added to the redis ttl for otp
@@ -243,23 +244,34 @@ export const trpcAuthRouter = trpcRouter({
         });
       }
 
-      const userId = generateId(15);
+      try {
+        const userId = generateIdFromEntropySize(10);
 
-      await db.insert(users).values({
-        id: userId,
-        username,
-        email,
-      });
+        await db.insert(users).values({
+          id: userId,
+          username,
+          email,
+        });
 
-      // TODO: Create meilisearch index for the user
+        const { taskUid } = await meilisearchClient.createIndex(userId);
 
-      const session = await lucia.createSession(userId, {} as any);
+        await meilisearchClient.waitForTask(taskUid);
 
-      setHeaders(
-        "Set-Cookie",
-        lucia.createSessionCookie(session.id).serialize(),
-      );
+        const session = await lucia.createSession(userId, {} as any);
 
-      return true;
+        setHeaders(
+          "Set-Cookie",
+          lucia.createSessionCookie(session.id).serialize(),
+        );
+
+        return true;
+      } catch (err) {
+        console.error(err);
+
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Something went wrong.",
+        });
+      }
     }),
 });
