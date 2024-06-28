@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import path from "path";
 import { router, createContext } from "./trpc";
 import express from "express";
 import * as trpcExpress from "@trpc/server/adapters/express";
@@ -7,9 +8,12 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth/github";
+import { dictionaryRouter } from "./routers/dictionary";
 import { trpcAuthRouter } from "./routers/auth";
 import { csrf } from "./middleware";
 import { getAllowedDomains } from "./utils";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
 const port = process.env.PORT;
 
@@ -39,6 +43,7 @@ app.use(
 );
 
 app.use(authRouter);
+app.use(dictionaryRouter);
 
 app.use(
   "/trpc",
