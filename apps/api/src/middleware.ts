@@ -1,6 +1,7 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { verifyRequestOrigin } from "oslo/request";
 import { getAllowedDomains } from "./utils";
+import { validateRequest } from "./auth";
 
 export const csrf = (req: Request, res: Response, next: NextFunction) => {
   if (req.method === "GET") {
@@ -23,6 +24,19 @@ export const csrf = (req: Request, res: Response, next: NextFunction) => {
   ) {
     return res.status(403).end();
   }
+
+  return next();
+};
+
+export const auth: RequestHandler = async (req, res, next) => {
+  const { session, user } = await validateRequest(req, res);
+
+  if (!session || !user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  req.user = user;
+  req.session = session;
 
   return next();
 };
