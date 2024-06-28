@@ -45,6 +45,13 @@ app.use(
 app.use(authRouter);
 app.use(dictionaryRouter);
 
+app.get("/schema.json", (_req, res) => {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const filePath = path.join(__dirname, "schema.json");
+
+  res.sendFile(filePath);
+});
+
 app.use(
   "/trpc",
   trpcExpress.createExpressMiddleware({

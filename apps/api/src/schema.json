@@ -1,0 +1,134 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "word": {
+        "type": "string",
+        "description": "A word in Arabic."
+      },
+      "translation": {
+        "type": "string",
+        "description": "The English translation of the word."
+      },
+      "type": {
+        "type": "string",
+        "description": "The type of the word.",
+        "enum": ["ism", "fi'l", "harf"]
+      },
+      "root": {
+        "type": "array",
+        "description": "An array of letters representing the root letters of the word.",
+        "items": {
+          "type": "string"
+        }
+      },
+      "tags": {
+        "type": "array",
+        "description": "Any tags associated with the word. These can denote things like the context.",
+        "items": {
+          "type": "string"
+        }
+      },
+      "examples": {
+        "type": "array",
+        "description": "Examples using the word. ",
+        "items": {
+          "type": "object",
+          "properties": {
+            "sentence": {
+              "description": "A sentence using the word.",
+              "type": "string"
+            },
+            "context": {
+              "description": "The context of the sentence. This can refer to casual or formal contexts, for example.",
+              "type": "string"
+            },
+            "translation": {
+              "description": "The English translation of the sentence.",
+              "type": "string"
+            }
+          },
+          "required": ["sentence"]
+        }
+      },
+      "morphology": {
+        "type": "object",
+        "description": "The morphological properties of the word.",
+        "properties": {
+          "ism": {
+            "type": "object",
+            "description": "The morphological properties of an ism such as the gender and the different plural and singular forms.",
+            "properties": {
+              "singular": {
+                "type": "string"
+              },
+              "dual": {
+                "type": "string"
+              },
+              "plural": {
+                "type": "string"
+              },
+              "gender": {
+                "type": "string",
+                "enum": ["male", "female"]
+              }
+            }
+          },
+          "fi'l": {
+            "type": "object",
+            "description": "The morphological properties of a fi'l such as the verb conjugations and noun forms.",
+            "properties": {
+              "past_tense": {
+                "type": "string"
+              },
+              "present_tense": {
+                "type": "string"
+              },
+              "active_participle": {
+                "type": "string"
+              },
+              "passive_participle": {
+                "type": "string"
+              },
+              "imperative": {
+                "type": "string"
+              },
+              "masadir": {
+                "type": "array",
+                "description": "A list of the possible verbal noun forms.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "word": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["word"]
+                }
+              },
+              "inflection": {
+                "type": "integer",
+                "description": "The inflection of the word. This refers to how many case endings the word can take. Three means it can take all three, two means it can only take raf' and nasb, and one means it is indeclinable.",
+                "enum": [1, 2, 3]
+              },
+              "form": {
+                "type": "string",
+                "description": "The form or pattern of the verb from I - X."
+              },
+              "form_arabic": {
+                "type": "string",
+                "description": "The form or pattern of the verb in Arabic using the root ف-ع-ل."
+              }
+            }
+          }
+        }
+      }
+    },
+    "required": ["word", "translation"]
+  }
+}
