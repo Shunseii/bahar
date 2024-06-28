@@ -22,7 +22,7 @@ const PIXEL_HEIGHT_OFFSET = 800;
 
 export interface Hit extends Record<string, unknown> {
   id?: string;
-  content?: string;
+  word?: string;
   translation?: string;
 }
 
@@ -88,7 +88,7 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
                   <h2 dir="rtl" className="rtl:text-right">
                     <Highlight
                       className="text-3xl"
-                      attribute="content"
+                      attribute="word"
                       hit={hit}
                     />
                   </h2>
