@@ -61,7 +61,7 @@ const Settings = () => {
 
         <CardContent className="flex flex-col gap-y-4">
           <form
-            className="flex flex-row items-end gap-x-4"
+            className="flex flex-col sm:flex-row items-start sm:items-end gap-x-4 gap-y-4"
             action="#"
             encType="multipart/form-data"
             onSubmit={async (e) => {

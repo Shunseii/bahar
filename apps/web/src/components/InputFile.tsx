@@ -31,12 +31,12 @@ export const InputFile: FC<InputFileProps> = ({
   }, []);
 
   return (
-    <div>
+    <div className="w-full sm:w-auto">
       <Label
         htmlFor="dictionary"
         tabIndex={0}
         className={cn(
-          "flex cursor-pointer max-w-sm h-10 py-2 px-4 items-center rounded-md border border-input gap-x-3",
+          "flex cursor-pointer w-max h-10 py-2 px-4 items-center rounded-md border border-input gap-x-3",
           className,
         )}
         onKeyDown={(e) => {
@@ -50,7 +50,11 @@ export const InputFile: FC<InputFileProps> = ({
         <Separator orientation="vertical" />
 
         <p className="font-medium text-muted-foreground flex gap-x-2 items-center">
-          {!fileName ? <Trans>No file chosen</Trans> : fileName}
+          {!fileName ? (
+            <Trans>No file chosen</Trans>
+          ) : (
+            <span className="truncate max-w-[180px]">{fileName}</span>
+          )}
 
           {fileName && (
             <button
