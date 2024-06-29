@@ -11,6 +11,7 @@ import { Monitor, Moon, Sun } from "lucide-react";
 import { FC } from "react";
 import { useAtom } from "jotai";
 import { Theme, getAllThemes, themeAtom } from "@/atoms/theme";
+import { useDir } from "@/hooks/useDir";
 
 export const ThemeIcon: FC<{ theme: Theme }> = ({ theme }) => {
   switch (theme) {
@@ -42,9 +43,11 @@ export const ThemeLabel: FC<{ theme: Theme }> = ({ theme }) => {
 
 export const ThemeMenu = () => {
   const [theme, setTheme] = useAtom(themeAtom);
+  const dir = useDir();
 
   return (
     <Select
+      dir={dir}
       defaultValue={theme}
       onValueChange={(theme: Theme) => {
         setTheme(theme);
@@ -59,7 +62,9 @@ export const ThemeMenu = () => {
           {getAllThemes().map((theme) => (
             <SelectItem className="cursor-pointer" key={theme} value={theme}>
               <div className="flex flex-row items-center gap-x-2">
-                <ThemeIcon theme={theme} /> <ThemeLabel theme={theme} />
+                <ThemeIcon theme={theme} />
+
+                <ThemeLabel theme={theme} />
               </div>
             </SelectItem>
           ))}

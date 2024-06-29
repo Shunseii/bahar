@@ -4,12 +4,13 @@ import express, {
   type Response,
   type NextFunction,
 } from "express";
-import Ajv, { type ErrorObject } from "ajv";
+import Ajv from "ajv";
 import multer from "multer";
 
 import schema from "../schema.json";
 import { meilisearchClient } from "../meilisearch";
 import { auth } from "../middleware";
+import { ErrorCode, MeilisearchError } from "../error";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -52,7 +53,7 @@ dictionaryRouter.post(
   auth,
   uploadWithErrorHandling,
   async (req, res) => {
-    const ajv = new Ajv();
+    const ajv = new Ajv({ allErrors: false });
     const fileData = req.file?.buffer.toString("utf-8");
 
     if (!fileData) {
@@ -65,39 +66,97 @@ dictionaryRouter.post(
     const isValid = validate(dictionary);
 
     if (!isValid) {
-      // TODO: Translate error messages
-      const parsedErrors = parseAjvErrors(validate.errors!);
-
-      return res.status(400).send(parsedErrors);
+      return res.status(400).send(validate.errors);
     }
-
-    // The flow for importing the dictionary is:
-    // 1. Create a temp index
-    // 2. Add documents to the temp index
-    // 3. Swap indexes
-    // 4. Delete the temp index
 
     // The user's index has the same id as their user id
     const userIndexId = req.user.id;
     const tempIndexId = `${userIndexId}_temp`;
 
-    const createTempIndexTask =
-      await meilisearchClient.createIndex(tempIndexId);
-    await meilisearchClient.waitForTask(createTempIndexTask.taskUid);
+    // TODO: Check if the temporary index already exists before creating it
+    // If it does, either delete it or empty it
+
+    // 1. Create a temp index
+    {
+      const { taskUid: createTaskUid } =
+        await meilisearchClient.createIndex(tempIndexId);
+
+      const createTempIndexTask =
+        await meilisearchClient.waitForTask(createTaskUid);
+
+      if (createTempIndexTask.error) {
+        const error = createTempIndexTask.error;
+
+        console.error(error);
+
+        return res.status(500).json({ code: error.code, type: error.type });
+      }
+    }
 
     const tempIndex = meilisearchClient.index(tempIndexId);
 
-    const addDocumentsTask = await tempIndex.addDocuments(dictionary);
-    await meilisearchClient.waitForTask(addDocumentsTask.taskUid);
+    // 2. Add documents to the temp index
+    try {
+      const { taskUid: addTaskUid } = await tempIndex.addDocuments(dictionary);
 
-    const swapIndexesTask = await meilisearchClient.swapIndexes([
-      { indexes: [userIndexId, tempIndexId] },
-    ]);
-    await meilisearchClient.waitForTask(swapIndexesTask.taskUid);
+      const addDocumentsTask = await meilisearchClient.waitForTask(addTaskUid);
 
-    const deleteTempIndexTask =
-      await meilisearchClient.deleteIndex(tempIndexId);
-    await meilisearchClient.waitForTask(deleteTempIndexTask.taskUid);
+      if (addDocumentsTask.error) {
+        const error = addDocumentsTask.error;
+
+        throw new MeilisearchError({
+          message: error.message,
+          code: error.code,
+          type: error.type,
+        });
+      }
+
+      // 3. Swap indexes
+      const { taskUid: swapTaskUid } = await meilisearchClient.swapIndexes([
+        { indexes: [userIndexId, tempIndexId] },
+      ]);
+
+      const swapIndexesTask = await meilisearchClient.waitForTask(swapTaskUid);
+
+      if (swapIndexesTask.error) {
+        const error = swapIndexesTask.error;
+
+        throw new MeilisearchError({
+          message: error.message,
+          code: error.code,
+          type: error.type,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+
+      // Rollback the temporary index
+      const deleteTempIndexTask =
+        await meilisearchClient.deleteIndex(tempIndexId);
+
+      await meilisearchClient.waitForTask(deleteTempIndexTask.taskUid);
+
+      if (error instanceof MeilisearchError) {
+        return res.status(500).json({ code: error.code, type: error.type });
+      } else {
+        return res.status(500).json({ code: ErrorCode.UNKNOWN_ERROR });
+      }
+    }
+
+    // 4. Delete the temp index
+    {
+      const { taskUid: deleteTaskUid } =
+        await meilisearchClient.deleteIndex(tempIndexId);
+
+      const deleteTempIndexTask =
+        await meilisearchClient.waitForTask(deleteTaskUid);
+
+      if (deleteTempIndexTask.error) {
+        const error = deleteTempIndexTask.error;
+
+        return res.status(500).json({ code: error.code, type: error.type });
+      }
+    }
 
     return res.status(200).end();
   },
@@ -115,35 +174,3 @@ dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
 
   return res.status(200).json(dictionary);
 });
-
-const parseAjvErrors = (errors: ErrorObject[]): string[] => {
-  const errorMessages: string[] = [];
-
-  if (errors && errors.length > 0) {
-    errors.forEach((error) => {
-      const instancePath = error.instancePath.replace(
-        /^\/(\d+)/,
-        (_, index) => `Index ${index} `,
-      );
-      const keyword = error.keyword;
-      const params = error.params;
-
-      let message = error.message ?? "";
-
-      switch (keyword) {
-        case "type":
-          message = `${instancePath} must be ${params.type}`;
-          break;
-        case "required":
-          message = `${instancePath}${params.missingProperty} is required`;
-          break;
-        default:
-          break;
-      }
-
-      errorMessages.push(message);
-    });
-  }
-
-  return errorMessages;
-};

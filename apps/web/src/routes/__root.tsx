@@ -3,6 +3,7 @@ import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { msg } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { useDocumentTitle } from "@uidotdev/usehooks";
+import { Toaster } from "@/components/ui/toaster";
 
 // const TanStackRouterDevtools = import.meta.env.PROD
 //   ? () => null // Render nothing in production
@@ -31,6 +32,7 @@ const Root = () => {
   return (
     <div className="font-primary">
       <Outlet />
+      <Toaster />
 
       {/* <React.Suspense><TanStackRouterDevtools /></React.Suspense> */}
     </div>

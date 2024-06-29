@@ -129,6 +129,6 @@
         }
       }
     },
-    "required": ["word", "translation"]
+    "required": ["id", "word", "translation"]
   }
 }

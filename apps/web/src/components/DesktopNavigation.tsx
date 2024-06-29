@@ -26,7 +26,7 @@ export const DesktopNavigation = () => {
   const { mutate: logout } = trpc.auth.logout.useMutation();
 
   return (
-    <aside className="fixed inset-y-0 ltr:left-0 rtl:right-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+    <aside className="fixed inset-y-0 ltr:left-0 rtl:right-0 z-10 hidden w-14 flex-col ltr:border-r rtl:border-l bg-background sm:flex">
       {/* Main nav buttons */}
       <nav className="flex flex-col items-center gap-4 px-2 py-4">
         <Link

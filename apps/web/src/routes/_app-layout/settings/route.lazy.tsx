@@ -10,14 +10,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Trans } from "@lingui/macro";
+import { useToast } from "@/hooks/useToast";
+import { ImportError, parseImportErrors } from "@/lib/error";
+import { msg, Trans } from "@lingui/macro";
+import { useLingui } from "@lingui/react";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useInstantSearch } from "react-instantsearch";
 
 const Settings = () => {
+  const { _ } = useLingui();
   const [file, setFile] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
   const { refresh } = useInstantSearch();
 
   return (
@@ -65,11 +70,24 @@ const Settings = () => {
               setIsLoading(true);
 
               const formData = new FormData();
-
               formData.append("dictionary", file!);
 
+              if (!file || file.type !== "application/json") {
+                toast({
+                  variant: "destructive",
+                  title: _(msg`Incorrect file type`),
+                  description: _(
+                    msg`Please select a JSON file with your dictionary.`,
+                  ),
+                });
+
+                setIsLoading(false);
+
+                return;
+              }
+
               try {
-                await fetch(
+                const res = await fetch(
                   `${import.meta.env.VITE_API_BASE_URL}/dictionary/import`,
                   {
                     method: "POST",
@@ -78,21 +96,71 @@ const Settings = () => {
                   },
                 );
 
+                console.log(res.status);
+
+                if (res.status >= 400 && res.status < 500) {
+                  const data = await res.json();
+
+                  throw new ImportError({
+                    message: "Error importing dictionary",
+                    errors: data,
+                  });
+                } else if (res.status >= 500) {
+                  const data = await res.text();
+
+                  throw new Error(data);
+                }
+
                 refresh();
+
+                toast({
+                  title: _(msg`Successfully imported!`),
+                  description: _(msg`Your dictionary has been updated!`),
+                });
               } catch (err) {
-                console.error(err);
+                if (err instanceof ImportError) {
+                  console.error(err.message);
+
+                  toast({
+                    variant: "destructive",
+                    description: parseImportErrors(err.errors),
+                  });
+
+                  toast({
+                    variant: "destructive",
+                    title: _(msg`Import failed!`),
+                    description: _(
+                      msg`Your dictionary is not valid. Please fix the errors and upload it again.`,
+                    ),
+                  });
+                } else {
+                  console.error(err);
+
+                  toast({
+                    variant: "destructive",
+                    title: _(msg`Import failed!`),
+                    description: _(
+                      msg`There was an error importing your dictionary. Please try again later.`,
+                    ),
+                  });
+                }
               } finally {
                 setIsLoading(false);
               }
             }}
           >
             <InputFile
-              onChange={(e) => {
-                setFile(e?.target?.files?.[0]);
+              onChange={(file) => {
+                setFile(file);
               }}
+              accept="application/json"
             />
 
-            <Button type="submit" disabled={!file || isLoading}>
+            <Button
+              id="import-dictionary-button"
+              type="submit"
+              disabled={!file || isLoading}
+            >
               <Trans>Import</Trans>
             </Button>
           </form>
