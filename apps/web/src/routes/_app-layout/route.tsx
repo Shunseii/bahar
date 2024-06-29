@@ -1,13 +1,25 @@
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { queryClient } from "@/lib/query";
+import { searchClient } from "@/lib/search";
 import { trpc, trpcClient } from "@/lib/trpc";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
+import { InstantSearch } from "react-instantsearch";
 
 const AppLayout = () => {
+  const { data } = trpc.user.me.useQuery();
+  const userIndexId = data?.id ?? "";
+
   return (
-    <>
+    <InstantSearch
+      indexName={userIndexId}
+      searchClient={searchClient}
+      future={{
+        // To stop the warning in the logs
+        preserveSharedStateOnUnmount: true,
+      }}
+    >
       {/* Desktop side navigation menu */}
       <DesktopNavigation />
 
@@ -21,7 +33,7 @@ const AppLayout = () => {
           </main>
         </div>
       </div>
-    </>
+    </InstantSearch>
   );
 };
 

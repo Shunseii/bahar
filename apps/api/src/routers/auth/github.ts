@@ -5,7 +5,8 @@ import { serializeCookie } from "oslo/cookie";
 import { db } from "../../db";
 import { users } from "../../db/schema/users";
 import { eq, or } from "drizzle-orm";
-import { generateId } from "lucia";
+import { generateIdFromEntropySize } from "lucia";
+import { meilisearchClient } from "../../meilisearch";
 
 interface GitHubUser {
   id: number;
@@ -89,7 +90,7 @@ authRouter.get("/login/github/callback", async (req, res) => {
         .redirect(redirectUrl);
     }
 
-    const userId = generateId(15);
+    const userId = generateIdFromEntropySize(10);
 
     await db.insert(users).values({
       id: userId,
@@ -98,7 +99,9 @@ authRouter.get("/login/github/callback", async (req, res) => {
       email: githubUser.email,
     });
 
-    // TODO: Create meilisearch index for the user
+    const { taskUid } = await meilisearchClient.createIndex(userId);
+
+    await meilisearchClient.waitForTask(taskUid);
 
     const session = await lucia.createSession(userId, {} as any);
 
@@ -109,6 +112,8 @@ authRouter.get("/login/github/callback", async (req, res) => {
       )
       .redirect(redirectUrl);
   } catch (err) {
+    console.error(err);
+
     if (err instanceof OAuth2RequestError) {
       // Invalid code
       return new Response(null, {

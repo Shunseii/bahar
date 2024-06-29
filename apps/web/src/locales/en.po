@@ -21,66 +21,70 @@ msgstr "{val, plural, one {Cannot exceed # character} other {Cannot exceed # cha
 msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 msgstr "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:179
+#: src/routes/_layout/sign-up/route.lazy.tsx:180
 msgid "Already have an account?"
 msgstr "Already have an account?"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:23
+#: src/routes/_app-layout/settings/route.lazy.tsx:37
 msgid "Appearance"
 msgstr "Appearance"
 
-#: src/components/LanguageMenu.tsx:17
+#: src/components/LanguageMenu.tsx:18
 msgid "Arabic"
 msgstr "Arabic"
 
-#: src/routes/_search-layout/index.lazy.tsx:66
+#: src/routes/_search-layout/index.lazy.tsx:61
 msgid "Back to top"
 msgstr "Back to top"
 
-#: src/components/DesktopNavigation.tsx:38
-#: src/components/MobileHeader.tsx:42
-#: src/routes/__root.tsx:21
+#: src/components/DesktopNavigation.tsx:38 src/components/MobileHeader.tsx:42
+#: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "Bahar"
+
+#: src/components/InputFile.tsx:48
+msgid "Choose file"
+msgstr "Choose file"
 
 #: src/components/OTPForm.tsx:179
 msgid "Continue"
 msgstr "Continue"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:94
+#: src/routes/_layout/sign-up/route.lazy.tsx:95
 msgid "Create a new account"
 msgstr "Create a new account"
 
-#: src/routes/_layout/login/route.lazy.tsx:166
+#: src/routes/_layout/login/route.lazy.tsx:167
 msgid "Create one"
 msgstr "Create one"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:157
+#: src/routes/_layout/sign-up/route.lazy.tsx:158
 msgid "Create your account"
 msgstr "Create your account"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:27
+#: src/routes/_app-layout/settings/route.lazy.tsx:41
 msgid "Customize how the application looks for you."
 msgstr "Customize how the application looks for you."
 
-#: src/components/ThemeMenu.tsx:32
+#: src/components/ThemeMenu.tsx:33
 msgid "Dark"
 msgstr "Dark"
 
-#: src/routes/_search-layout/index.lazy.tsx:35
+#: src/routes/_app-layout/settings/route.lazy.tsx:54
+#: src/routes/_search-layout/index.lazy.tsx:30
 msgid "Dictionary"
 msgstr "Dictionary"
 
-#: src/routes/_layout/login/route.lazy.tsx:163
+#: src/routes/_layout/login/route.lazy.tsx:164
 msgid "Don't have an account?"
 msgstr "Don't have an account?"
 
-#: src/routes/_layout/login/route.lazy.tsx:119
-#: src/routes/_layout/sign-up/route.lazy.tsx:109
+#: src/routes/_layout/login/route.lazy.tsx:120
+#: src/routes/_layout/sign-up/route.lazy.tsx:110
 msgid "Email"
 msgstr "Email"
 
-#: src/components/LanguageMenu.tsx:21
+#: src/components/LanguageMenu.tsx:22
 msgid "English"
 msgstr "English"
 
@@ -88,8 +92,12 @@ msgstr "English"
 msgid "Enter your 6-digit code from your email"
 msgstr "Enter your 6-digit code from your email"
 
-#: src/routes/_layout/login/route.lazy.tsx:159
-#: src/routes/_layout/sign-up/route.lazy.tsx:175
+#: src/routes/_app-layout/settings/route.lazy.tsx:209
+msgid "Export"
+msgstr "Export"
+
+#: src/routes/_layout/login/route.lazy.tsx:160
+#: src/routes/_layout/sign-up/route.lazy.tsx:176
 msgid "GitHub"
 msgstr "GitHub"
 
@@ -98,41 +106,76 @@ msgid "Go back"
 msgstr "Go back"
 
 #: src/components/DesktopNavigation.tsx:48
-#: src/components/DesktopNavigation.tsx:54
-#: src/components/MobileHeader.tsx:49
+#: src/components/DesktopNavigation.tsx:54 src/components/MobileHeader.tsx:49
 msgid "Home"
 msgstr "Home"
 
-#: src/components/ThemeMenu.tsx:35
+#: src/routes/_app-layout/settings/route.lazy.tsx:164
+msgid "Import"
+msgstr "Import"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:58
+msgid "Import and export your dictionary."
+msgstr "Import and export your dictionary."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:131
+#: src/routes/_app-layout/settings/route.lazy.tsx:141
+msgid "Import failed!"
+msgstr "Import failed!"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:169
+msgid "Importing a dictionary will overwrite your current one."
+msgstr "Importing a dictionary will overwrite your current one."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:78
+msgid "Incorrect file type"
+msgstr "Incorrect file type"
+
+#: src/lib/error.ts:49
+msgid "Invalid type. Expected {0}"
+msgstr "Invalid type. Expected {0}"
+
+#: src/components/ThemeMenu.tsx:36
 msgid "Light"
 msgstr "Light"
 
-#: src/routes/_layout/login/route.lazy.tsx:104
-#: src/routes/_layout/login/route.lazy.tsx:141
-#: src/routes/_layout/sign-up/route.lazy.tsx:182
+#: src/routes/_layout/login/route.lazy.tsx:105
+#: src/routes/_layout/login/route.lazy.tsx:142
+#: src/routes/_layout/sign-up/route.lazy.tsx:183
 msgid "Log in"
 msgstr "Log in"
 
-#: src/components/DesktopNavigation.tsx:103
-#: src/components/MobileHeader.tsx:77
+#: src/components/DesktopNavigation.tsx:103 src/components/MobileHeader.tsx:77
 msgid "Logout"
 msgstr "Logout"
+
+#: src/lib/error.ts:47
+msgid "Missing required property: {0}"
+msgstr "Missing required property: {0}"
 
 #: src/components/DesktopNavigation.tsx:74
 msgid "My Account"
 msgstr "My Account"
 
-#: src/routes/_layout/login/route.lazy.tsx:153
-#: src/routes/_layout/sign-up/route.lazy.tsx:169
+#: src/components/InputFile.tsx:53
+msgid "No file chosen"
+msgstr "No file chosen"
+
+#: src/routes/_layout/login/route.lazy.tsx:154
+#: src/routes/_layout/sign-up/route.lazy.tsx:170
 msgid "Or continue with"
 msgstr "Or continue with"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:80
+msgid "Please select a JSON file with your dictionary."
+msgstr "Please select a JSON file with your dictionary."
 
 #: src/components/OTPForm.tsx:105
 msgid "Please try again after 30 seconds."
 msgstr "Please try again after 30 seconds."
 
-#: src/routes/_layout/login/route.lazy.tsx:73
-#: src/routes/_layout/sign-up/route.lazy.tsx:69
+#: src/routes/_layout/login/route.lazy.tsx:74
+#: src/routes/_layout/sign-up/route.lazy.tsx:70
 msgid "Please try again after five minutes."
 msgstr "Please try again after five minutes."
 
@@ -140,16 +183,16 @@ msgstr "Please try again after five minutes."
 msgid "Search..."
 msgstr "Search..."
 
-#: src/components/DesktopNavigation.tsx:81
-#: src/components/MobileHeader.tsx:57
-#: src/routes/_app-layout/settings/route.lazy.tsx:17
+#: src/components/DesktopNavigation.tsx:81 src/components/MobileHeader.tsx:57
+#: src/routes/_app-layout/settings/route.lazy.tsx:31
 msgid "Settings"
 msgstr "Settings"
 
-#~ msgid "Submit code"
-#~ msgstr "Submit code"
+#: src/routes/_app-layout/settings/route.lazy.tsx:117
+msgid "Successfully imported!"
+msgstr "Successfully imported!"
 
-#: src/components/ThemeMenu.tsx:39
+#: src/components/ThemeMenu.tsx:40
 msgid "System"
 msgstr "System"
 
@@ -157,11 +200,11 @@ msgstr "System"
 msgid "That code has expired."
 msgstr "That code has expired."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:30
+#: src/routes/_layout/sign-up/route.lazy.tsx:31
 msgid "That email already exists."
 msgstr "That email already exists."
 
-#: src/routes/_layout/login/route.lazy.tsx:31
+#: src/routes/_layout/login/route.lazy.tsx:32
 msgid "That email is incorrect."
 msgstr "That email is incorrect."
 
@@ -173,11 +216,15 @@ msgstr "That email is invalid."
 msgid "That is invalid."
 msgstr "That is invalid."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:117
+#: src/routes/_app-layout/settings/route.lazy.tsx:143
+msgid "There was an error importing your dictionary. Please try again later."
+msgstr "There was an error importing your dictionary. Please try again later."
+
+#: src/routes/_layout/sign-up/route.lazy.tsx:118
 msgid "This is case insensitive."
 msgstr "This is case insensitive."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:139
+#: src/routes/_layout/sign-up/route.lazy.tsx:140
 msgid "This is how we will address you."
 msgstr "This is how we will address you."
 
@@ -185,10 +232,21 @@ msgstr "This is how we will address you."
 msgid "Toggle Menu"
 msgstr "Toggle Menu"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:131
+#: src/routes/_layout/sign-up/route.lazy.tsx:132
 msgid "Username"
 msgstr "Username"
 
-#: src/routes/_search-layout/index.lazy.tsx:39
+#: src/routes/_search-layout/index.lazy.tsx:34
 msgid "View all the words in your personal dictionary."
 msgstr "View all the words in your personal dictionary."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:118
+msgid "Your dictionary has been updated!"
+msgstr "Your dictionary has been updated!"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:133
+msgid "Your dictionary is not valid. Please fix the errors and upload it again."
+msgstr "Your dictionary is not valid. Please fix the errors and upload it again."
+
+#~ msgid "Submit code"
+#~ msgstr "Submit code"

@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useDir } from "@/hooks/useDir";
 import { dynamicActivate, getLocaleKeys, TLocale } from "@/lib/i18n";
 import { i18n } from "@lingui/core";
 import { Trans } from "@lingui/macro";
@@ -23,8 +24,11 @@ export const LocaleLabel: FC<{ locale: TLocale }> = ({ locale }) => {
 };
 
 export const LanguageMenu = () => {
+  const dir = useDir();
+
   return (
     <Select
+      dir={dir}
       defaultValue={i18n.locale}
       onValueChange={(lng: TLocale) => {
         dynamicActivate(lng);

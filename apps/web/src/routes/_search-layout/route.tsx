@@ -9,9 +9,12 @@ import { getQueryKey } from "@trpc/react-query";
 import { InstantSearch } from "react-instantsearch";
 
 const AppLayout = () => {
+  const { data } = trpc.user.me.useQuery();
+  const userIndexId = data?.id ?? "";
+
   return (
     <InstantSearch
-      indexName="dictionary"
+      indexName={userIndexId}
       searchClient={searchClient}
       future={{
         // To stop the warning in the logs
