@@ -1,8 +1,7 @@
 {
   "extends": "@repo/typescript-config/trpc.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "typeRoots": ["./src/types/express.d.ts"]
+    "outDir": "dist"
   },
   "include": ["src/**/*"]
 }

@@ -9,5 +9,5 @@ await esbuild.build({
   bundle: true,
   packages: "external",
   platform: "node",
-  plugins: [esbuildPluginFilePathExtensions()],
+  plugins: [esbuildPluginFilePathExtensions({ filter: /\.(ts|tsx)$/ })],
 });

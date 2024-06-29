@@ -14,6 +14,17 @@ import { csrf } from "./middleware";
 import { getAllowedDomains } from "./utils";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import { Session, User } from "lucia";
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user: User;
+      session: Session;
+    }
+  }
+}
 
 const port = process.env.PORT;
 
