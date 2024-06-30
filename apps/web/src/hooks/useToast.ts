@@ -10,7 +10,7 @@ const TOAST_LIMIT = 2;
 /**
  * The delay in milliseconds before a toast is removed from the queue.
  */
-const TOAST_REMOVE_DELAY = 2 * 60 * 1000; // 2 minutes
+export const TOAST_REMOVE_DELAY = 15 * 1000; // 15 seconds
 
 type ToasterToast = ToastProps & {
   id: string;

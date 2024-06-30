@@ -6,8 +6,8 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast";
-import { useToast } from "@/hooks/useToast";
 import { useDir } from "@/hooks/useDir";
+import { TOAST_REMOVE_DELAY, useToast } from "@/hooks/useToast";
 
 export function Toaster() {
   const { toasts } = useToast();
@@ -16,6 +16,7 @@ export function Toaster() {
   return (
     <ToastProvider
       swipeDirection={dir === "rtl" ? "left" : "right"}
+      duration={TOAST_REMOVE_DELAY}
     >
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
