@@ -7,12 +7,16 @@ import {
   ToastViewport,
 } from "@/components/ui/toast";
 import { useToast } from "@/hooks/useToast";
+import { useDir } from "@/hooks/useDir";
 
 export function Toaster() {
   const { toasts } = useToast();
+  const dir = useDir();
 
   return (
-    <ToastProvider>
+    <ToastProvider
+      swipeDirection={dir === "rtl" ? "left" : "right"}
+    >
       {toasts.map(function ({ id, title, description, action, ...props }) {
         return (
           <Toast key={id} {...props}>
