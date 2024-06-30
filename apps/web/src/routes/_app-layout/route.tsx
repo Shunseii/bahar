@@ -6,6 +6,7 @@ import { trpc, trpcClient } from "@/lib/trpc";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 import { InstantSearch } from "react-instantsearch";
+import { motion } from "framer-motion";
 
 const AppLayout = () => {
   const { data } = trpc.user.me.useQuery();
@@ -24,7 +25,7 @@ const AppLayout = () => {
       <DesktopNavigation />
 
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+        <div className="flex flex-col sm:gap-4 sm:py-4 ltr:sm:pl-14 rtl:sm:pr-14">
           {/* Mobile nav and search bar */}
           <MobileHeader />
 
