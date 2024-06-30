@@ -11,6 +11,10 @@
         "type": "string",
         "description": "A word in Arabic."
       },
+      "definition": {
+        "type": "string",
+        "description": "The definition of the word in Arabic."
+      },
       "translation": {
         "type": "string",
         "description": "The English translation of the word."
@@ -70,8 +74,12 @@
               "dual": {
                 "type": "string"
               },
-              "plural": {
-                "type": "string"
+              "plurals": {
+                "type": "array",
+                "description": "The (broken) plural forms of the word. Use harakat to indicate inflection.",
+                "items": {
+                  "type": "string"
+                }
               },
               "gender": {
                 "type": "string",
@@ -83,6 +91,23 @@
             "type": "object",
             "description": "The morphological properties of a fi'l such as the verb conjugations and noun forms.",
             "properties": {
+              "huroof": {
+                "type": "array",
+                "description": "A list of the prepositions that can be used with the fi'l.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "harf": {
+                      "type": "string"
+                    },
+                    "meaning": {
+                      "type": "string",
+                      "description": "The meaning of the fi'l when used with the preposition. If it is the same as the base meaning, then leave this blank."
+                    }
+                  },
+                  "required": ["harf"]
+                }
+              },
               "past_tense": {
                 "type": "string"
               },
