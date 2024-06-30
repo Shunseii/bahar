@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   Highlight,
   Snippet,
@@ -51,6 +51,18 @@ const SkeletonHits = () => {
 };
 
 export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
+  /**
+   * This is true if we have not queried search results at all.
+   * Used to determine if the loading state is shown for the first time.
+   * If it is, we want to show the skeleton loading state.
+   * If we've already loading results once before, then we don't
+   * want to show the skeleton loading state.
+   */
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  /**
+   * The countdown is used to add a delay to the initial loading state
+   * to avoid flickering.
+   */
   const { isCountdownComplete } = useCountdown(1000);
   const { status } = useInstantSearch();
   const { hits, showMore, isLastPage } = useInfiniteHits<Hit>(props);
@@ -65,9 +77,15 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
     ? height - y <= PIXEL_HEIGHT_OFFSET
     : false;
 
-  // Add an extra one second delay so that loading state doesn't flicker
+  // Add an extra one second delay so that initial loading state doesn't flicker
   const isInitialLoading =
-    (status === "loading" && !hits.length) || !isCountdownComplete;
+    (status === "loading" && isFirstLoad) || !isCountdownComplete;
+
+  useEffect(() => {
+    if (status === "idle" && isCountdownComplete) {
+      setIsFirstLoad(false);
+    }
+  }, [status, isCountdownComplete]);
 
   useEffect(() => {
     if (shouldLoadMore && !isLastPage && status === "idle") {
