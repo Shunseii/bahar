@@ -21,6 +21,9 @@ const config = {
       },
     },
     extend: {
+      scale: {
+        flip: "-1",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

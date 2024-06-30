@@ -16,7 +16,7 @@ import { useDir } from "@/hooks/useDir";
 export const ThemeIcon: FC<{ theme: Theme }> = ({ theme }) => {
   switch (theme) {
     case Theme.DARK:
-      return <Moon size={16} />;
+      return <Moon className="rtl:scale-x-flip" size={16} />;
 
     case Theme.LIGHT:
       return <Sun size={16} />;
