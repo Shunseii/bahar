@@ -130,7 +130,7 @@ const Login = () => {
             />
           </div>
 
-          <p className="text-sm font-medium text-destructive">
+          <p className="ltr:text-sm rtl:text-base font-medium text-destructive">
             {form.formState.errors.root?.message}
           </p>
 
@@ -149,7 +149,7 @@ const Login = () => {
           <div className="w-full border-t border-muted" />
         </div>
 
-        <div className="relative flex justify-center text-sm font-medium leading-6">
+        <div className="relative flex justify-center ltr:text-sm rtl:text-base font-medium leading-6">
           <span className="bg-background px-6 text-muted-foreground">
             <Trans>Or continue with</Trans>
           </span>
@@ -160,7 +160,7 @@ const Login = () => {
         <Trans>GitHub</Trans>
       </GithubLoginButton>
 
-      <p className="text-center text-sm gap-x-2 text-muted-foreground flex flex-row items-center">
+      <p className="text-center ltr:text-sm rtl:text-base gap-x-2 text-muted-foreground flex flex-row items-center">
         <Trans>Don't have an account?</Trans>
         <Button variant="link" className="p-0" asChild>
           <Link to="/sign-up">
