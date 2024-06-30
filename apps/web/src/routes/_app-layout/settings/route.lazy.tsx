@@ -96,8 +96,6 @@ const Settings = () => {
                   },
                 );
 
-                console.log(res.status);
-
                 if (res.status >= 400 && res.status < 500) {
                   const data = await res.json();
 
