@@ -10,12 +10,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DialogHeader,
+  DialogFooter,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/useToast";
 import { ImportError, parseImportErrors } from "@/lib/error";
 import { msg, Trans } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useInstantSearch } from "react-instantsearch";
 
 const Settings = () => {
@@ -24,6 +34,49 @@ const Settings = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { refresh } = useInstantSearch();
+
+  const deleteDictionary = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/dictionary`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      if (res.status >= 400) {
+        const data = await res.json();
+        console.error({
+          message: "Unexpected error while deleting dictionary.",
+          data,
+        });
+
+        throw new Error("Unexpected error");
+      }
+
+      refresh();
+
+      toast({
+        title: _(msg`Successfully deleted!`),
+        description: _(msg`Your dictionary has been deleted.`),
+      });
+    } catch (err) {
+      console.error(err);
+
+      toast({
+        variant: "destructive",
+        title: _(msg`Failed to delete!`),
+        description: _(
+          msg`There was an error deleting your dictionary. Please try again later.`,
+        ),
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   return (
     <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
@@ -55,7 +108,7 @@ const Settings = () => {
           </CardTitle>
 
           <CardDescription>
-            <Trans>Import and export your dictionary.</Trans>
+            <Trans>Manage your dictionary.</Trans>
           </CardDescription>
         </CardHeader>
 
@@ -164,9 +217,7 @@ const Settings = () => {
           </form>
 
           <CardDescription className="text-destructive">
-            <Trans>
-              Importing a dictionary will overwrite your current one.
-            </Trans>
+            <Trans>Any words that have the same ID will be overwritten.</Trans>
           </CardDescription>
         </CardContent>
 
@@ -206,6 +257,47 @@ const Settings = () => {
           >
             <Trans>Export</Trans>
           </Button>
+        </CardContent>
+
+        <CardContent>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="destructive" disabled={isLoading}>
+                <Trans>Delete</Trans>
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>
+                  <Trans>Delete your dictionary?</Trans>
+                </DialogTitle>
+
+                <DialogDescription>
+                  <Trans>
+                    Are you sure you want to delete your dictionary? All your
+                    words will be deleted permanently. This action cannot be
+                    undone. Please make sure to export your dictionary before
+                    deleting it.
+                  </Trans>
+                </DialogDescription>
+              </DialogHeader>
+
+              <DialogFooter className="gap-y-4">
+                <DialogClose asChild>
+                  <Button variant="destructive" onClick={deleteDictionary}>
+                    <Trans>Delete</Trans>
+                  </Button>
+                </DialogClose>
+
+                <DialogClose asChild>
+                  <Button variant="outline">
+                    <Trans>Cancel</Trans>
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </Page>

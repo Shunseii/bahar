@@ -21,11 +21,15 @@ msgstr "{val, plural, one {Cannot exceed # character} other {Cannot exceed # cha
 msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 msgstr "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:180
+#: src/routes/_layout/sign-up/route.lazy.tsx:182
 msgid "Already have an account?"
 msgstr "Already have an account?"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:37
+#: src/routes/_app-layout/settings/route.lazy.tsx:220
+msgid "Any words that have the same ID will be overwritten."
+msgstr "Any words that have the same ID will be overwritten."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:90
 msgid "Appearance"
 msgstr "Appearance"
 
@@ -33,14 +37,23 @@ msgstr "Appearance"
 msgid "Arabic"
 msgstr "Arabic"
 
+#: src/routes/_app-layout/settings/route.lazy.tsx:277
+msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
+msgstr "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
+
 #: src/routes/_search-layout/index.lazy.tsx:61
 msgid "Back to top"
 msgstr "Back to top"
 
-#: src/components/DesktopNavigation.tsx:38 src/components/MobileHeader.tsx:42
+#: src/components/DesktopNavigation.tsx:38
+#: src/components/MobileHeader.tsx:42
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "Bahar"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:295
+msgid "Cancel"
+msgstr "Cancel"
 
 #: src/components/InputFile.tsx:48
 msgid "Choose file"
@@ -62,7 +75,7 @@ msgstr "Create one"
 msgid "Create your account"
 msgstr "Create your account"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:41
+#: src/routes/_app-layout/settings/route.lazy.tsx:94
 msgid "Customize how the application looks for you."
 msgstr "Customize how the application looks for you."
 
@@ -70,7 +83,16 @@ msgstr "Customize how the application looks for you."
 msgid "Dark"
 msgstr "Dark"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:54
+#: src/routes/_app-layout/settings/route.lazy.tsx:266
+#: src/routes/_app-layout/settings/route.lazy.tsx:289
+msgid "Delete"
+msgstr "Delete"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:273
+msgid "Delete your dictionary?"
+msgstr "Delete your dictionary?"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:107
 #: src/routes/_search-layout/index.lazy.tsx:30
 msgid "Dictionary"
 msgstr "Dictionary"
@@ -92,12 +114,16 @@ msgstr "English"
 msgid "Enter your 6-digit code from your email"
 msgstr "Enter your 6-digit code from your email"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:209
+#: src/routes/_app-layout/settings/route.lazy.tsx:258
 msgid "Export"
 msgstr "Export"
 
+#: src/routes/_app-layout/settings/route.lazy.tsx:71
+msgid "Failed to delete!"
+msgstr "Failed to delete!"
+
 #: src/routes/_layout/login/route.lazy.tsx:160
-#: src/routes/_layout/sign-up/route.lazy.tsx:176
+#: src/routes/_layout/sign-up/route.lazy.tsx:177
 msgid "GitHub"
 msgstr "GitHub"
 
@@ -106,28 +132,21 @@ msgid "Go back"
 msgstr "Go back"
 
 #: src/components/DesktopNavigation.tsx:48
-#: src/components/DesktopNavigation.tsx:54 src/components/MobileHeader.tsx:49
+#: src/components/DesktopNavigation.tsx:54
+#: src/components/MobileHeader.tsx:49
 msgid "Home"
 msgstr "Home"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:164
+#: src/routes/_app-layout/settings/route.lazy.tsx:215
 msgid "Import"
 msgstr "Import"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:58
-msgid "Import and export your dictionary."
-msgstr "Import and export your dictionary."
-
-#: src/routes/_app-layout/settings/route.lazy.tsx:131
-#: src/routes/_app-layout/settings/route.lazy.tsx:141
+#: src/routes/_app-layout/settings/route.lazy.tsx:182
+#: src/routes/_app-layout/settings/route.lazy.tsx:192
 msgid "Import failed!"
 msgstr "Import failed!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:169
-msgid "Importing a dictionary will overwrite your current one."
-msgstr "Importing a dictionary will overwrite your current one."
-
-#: src/routes/_app-layout/settings/route.lazy.tsx:78
+#: src/routes/_app-layout/settings/route.lazy.tsx:131
 msgid "Incorrect file type"
 msgstr "Incorrect file type"
 
@@ -141,13 +160,18 @@ msgstr "Light"
 
 #: src/routes/_layout/login/route.lazy.tsx:105
 #: src/routes/_layout/login/route.lazy.tsx:142
-#: src/routes/_layout/sign-up/route.lazy.tsx:183
+#: src/routes/_layout/sign-up/route.lazy.tsx:185
 msgid "Log in"
 msgstr "Log in"
 
-#: src/components/DesktopNavigation.tsx:103 src/components/MobileHeader.tsx:77
+#: src/components/DesktopNavigation.tsx:103
+#: src/components/MobileHeader.tsx:77
 msgid "Logout"
 msgstr "Logout"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:111
+msgid "Manage your dictionary."
+msgstr "Manage your dictionary."
 
 #: src/lib/error.ts:47
 msgid "Missing required property: {0}"
@@ -157,7 +181,7 @@ msgstr "Missing required property: {0}"
 msgid "My Account"
 msgstr "My Account"
 
-#: src/components/InputFile.tsx:53
+#: src/components/InputFile.tsx:54
 msgid "No file chosen"
 msgstr "No file chosen"
 
@@ -166,7 +190,7 @@ msgstr "No file chosen"
 msgid "Or continue with"
 msgstr "Or continue with"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:80
+#: src/routes/_app-layout/settings/route.lazy.tsx:133
 msgid "Please select a JSON file with your dictionary."
 msgstr "Please select a JSON file with your dictionary."
 
@@ -183,12 +207,17 @@ msgstr "Please try again after five minutes."
 msgid "Search..."
 msgstr "Search..."
 
-#: src/components/DesktopNavigation.tsx:81 src/components/MobileHeader.tsx:57
-#: src/routes/_app-layout/settings/route.lazy.tsx:31
+#: src/components/DesktopNavigation.tsx:81
+#: src/components/MobileHeader.tsx:57
+#: src/routes/_app-layout/settings/route.lazy.tsx:84
 msgid "Settings"
 msgstr "Settings"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:117
+#: src/routes/_app-layout/settings/route.lazy.tsx:63
+msgid "Successfully deleted!"
+msgstr "Successfully deleted!"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:168
 msgid "Successfully imported!"
 msgstr "Successfully imported!"
 
@@ -216,7 +245,11 @@ msgstr "That email is invalid."
 msgid "That is invalid."
 msgstr "That is invalid."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:143
+#: src/routes/_app-layout/settings/route.lazy.tsx:73
+msgid "There was an error deleting your dictionary. Please try again later."
+msgstr "There was an error deleting your dictionary. Please try again later."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:194
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "There was an error importing your dictionary. Please try again later."
 
@@ -240,13 +273,14 @@ msgstr "Username"
 msgid "View all the words in your personal dictionary."
 msgstr "View all the words in your personal dictionary."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:118
+#: src/routes/_app-layout/settings/route.lazy.tsx:64
+msgid "Your dictionary has been deleted."
+msgstr "Your dictionary has been deleted."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:169
 msgid "Your dictionary has been updated!"
 msgstr "Your dictionary has been updated!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:133
+#: src/routes/_app-layout/settings/route.lazy.tsx:184
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "Your dictionary is not valid. Please fix the errors and upload it again."
-
-#~ msgid "Submit code"
-#~ msgstr "Submit code"

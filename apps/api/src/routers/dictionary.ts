@@ -71,33 +71,11 @@ dictionaryRouter.post(
 
     // The user's index has the same id as their user id
     const userIndexId = req.user.id;
-    const tempIndexId = `${userIndexId}_temp`;
+    const index = meilisearchClient.index(userIndexId);
 
-    // TODO: Check if the temporary index already exists before creating it
-    // If it does, either delete it or empty it
-
-    // 1. Create a temp index
-    {
-      const { taskUid: createTaskUid } =
-        await meilisearchClient.createIndex(tempIndexId);
-
-      const createTempIndexTask =
-        await meilisearchClient.waitForTask(createTaskUid);
-
-      if (createTempIndexTask.error) {
-        const error = createTempIndexTask.error;
-
-        console.error(error);
-
-        return res.status(500).json({ code: error.code, type: error.type });
-      }
-    }
-
-    const tempIndex = meilisearchClient.index(tempIndexId);
-
-    // 2. Add documents to the temp index
     try {
-      const { taskUid: addTaskUid } = await tempIndex.addDocuments(dictionary);
+      // Adds or replaces documents
+      const { taskUid: addTaskUid } = await index.addDocuments(dictionary);
 
       const addDocumentsTask = await meilisearchClient.waitForTask(addTaskUid);
 
@@ -110,51 +88,12 @@ dictionaryRouter.post(
           type: error.type,
         });
       }
-
-      // 3. Swap indexes
-      const { taskUid: swapTaskUid } = await meilisearchClient.swapIndexes([
-        { indexes: [userIndexId, tempIndexId] },
-      ]);
-
-      const swapIndexesTask = await meilisearchClient.waitForTask(swapTaskUid);
-
-      if (swapIndexesTask.error) {
-        const error = swapIndexesTask.error;
-
-        throw new MeilisearchError({
-          message: error.message,
-          code: error.code,
-          type: error.type,
-        });
-      }
     } catch (error) {
       console.error(error);
-
-      // Rollback the temporary index
-      const deleteTempIndexTask =
-        await meilisearchClient.deleteIndex(tempIndexId);
-
-      await meilisearchClient.waitForTask(deleteTempIndexTask.taskUid);
-
       if (error instanceof MeilisearchError) {
         return res.status(500).json({ code: error.code, type: error.type });
       } else {
         return res.status(500).json({ code: ErrorCode.UNKNOWN_ERROR });
-      }
-    }
-
-    // 4. Delete the temp index
-    {
-      const { taskUid: deleteTaskUid } =
-        await meilisearchClient.deleteIndex(tempIndexId);
-
-      const deleteTempIndexTask =
-        await meilisearchClient.waitForTask(deleteTaskUid);
-
-      if (deleteTempIndexTask.error) {
-        const error = deleteTempIndexTask.error;
-
-        return res.status(500).json({ code: error.code, type: error.type });
       }
     }
 
@@ -173,4 +112,21 @@ dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
   res.setHeader("Content-Disposition", "attachment; filename=data.json");
 
   return res.status(200).json(dictionary);
+});
+
+dictionaryRouter.delete("/dictionary", auth, async (req, res) => {
+  const userIndexId = req.user.id;
+  const index = meilisearchClient.index(userIndexId);
+
+  const { taskUid: deleteTaskUid } = await index.deleteAllDocuments();
+
+  const deleteTask = await meilisearchClient.waitForTask(deleteTaskUid);
+
+  if (deleteTask.error) {
+    const error = deleteTask.error;
+
+    return res.status(500).json({ code: error.code, type: error.type });
+  }
+
+  return res.status(200).end();
 });

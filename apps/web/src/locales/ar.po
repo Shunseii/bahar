@@ -21,11 +21,15 @@ msgstr "{val, plural, one {لا يمكن تجاوز حرف واحد} two {لا �
 msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 msgstr "{val, plural, one {يجب أن يكون على الأقل واحد حرف} two {يجب أن يكون على الأقل حرفين} few {يجب أن يكون على الأقل # حروف} many {يجب أن يكون على الأقل # حرفا} other {يجب أن يكون على الأقل # حرف}}"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:180
+#: src/routes/_layout/sign-up/route.lazy.tsx:182
 msgid "Already have an account?"
 msgstr "لديك حساب بالفعل؟"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:37
+#: src/routes/_app-layout/settings/route.lazy.tsx:220
+msgid "Any words that have the same ID will be overwritten."
+msgstr "سيستبدل كل كلمات التي لديها نفس المعرف."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:90
 msgid "Appearance"
 msgstr "المظهر"
 
@@ -33,14 +37,23 @@ msgstr "المظهر"
 msgid "Arabic"
 msgstr "العربية"
 
+#: src/routes/_app-layout/settings/route.lazy.tsx:277
+msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
+msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذف جميع كلماتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. صدر معجمك قبل حذفه من فضلك."
+
 #: src/routes/_search-layout/index.lazy.tsx:61
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
-#: src/components/DesktopNavigation.tsx:38 src/components/MobileHeader.tsx:42
+#: src/components/DesktopNavigation.tsx:38
+#: src/components/MobileHeader.tsx:42
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "بحر"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:295
+msgid "Cancel"
+msgstr "ألغ"
 
 #: src/components/InputFile.tsx:48
 msgid "Choose file"
@@ -62,7 +75,7 @@ msgstr "إنشاء حساب الآن"
 msgid "Create your account"
 msgstr "إنشاء حسابك"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:41
+#: src/routes/_app-layout/settings/route.lazy.tsx:94
 msgid "Customize how the application looks for you."
 msgstr "قم بتخصيص كيف يظهر التطبيق بالنسبة لك."
 
@@ -70,7 +83,16 @@ msgstr "قم بتخصيص كيف يظهر التطبيق بالنسبة لك."
 msgid "Dark"
 msgstr "غامق"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:54
+#: src/routes/_app-layout/settings/route.lazy.tsx:266
+#: src/routes/_app-layout/settings/route.lazy.tsx:289
+msgid "Delete"
+msgstr "احذف"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:273
+msgid "Delete your dictionary?"
+msgstr "هل تريد أن تحذف معجمك؟"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:107
 #: src/routes/_search-layout/index.lazy.tsx:30
 msgid "Dictionary"
 msgstr "معجم"
@@ -92,12 +114,16 @@ msgstr "الانجلزية"
 msgid "Enter your 6-digit code from your email"
 msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:209
+#: src/routes/_app-layout/settings/route.lazy.tsx:258
 msgid "Export"
 msgstr "صدر"
 
+#: src/routes/_app-layout/settings/route.lazy.tsx:71
+msgid "Failed to delete!"
+msgstr "فشل الحذف!"
+
 #: src/routes/_layout/login/route.lazy.tsx:160
-#: src/routes/_layout/sign-up/route.lazy.tsx:176
+#: src/routes/_layout/sign-up/route.lazy.tsx:177
 msgid "GitHub"
 msgstr "GitHub"
 
@@ -106,28 +132,21 @@ msgid "Go back"
 msgstr "ارجع"
 
 #: src/components/DesktopNavigation.tsx:48
-#: src/components/DesktopNavigation.tsx:54 src/components/MobileHeader.tsx:49
+#: src/components/DesktopNavigation.tsx:54
+#: src/components/MobileHeader.tsx:49
 msgid "Home"
 msgstr "منزل"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:164
+#: src/routes/_app-layout/settings/route.lazy.tsx:215
 msgid "Import"
 msgstr "استورد"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:58
-msgid "Import and export your dictionary."
-msgstr "استورد و صدر معجمك."
-
-#: src/routes/_app-layout/settings/route.lazy.tsx:131
-#: src/routes/_app-layout/settings/route.lazy.tsx:141
+#: src/routes/_app-layout/settings/route.lazy.tsx:182
+#: src/routes/_app-layout/settings/route.lazy.tsx:192
 msgid "Import failed!"
 msgstr "فشل الاستيراد!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:169
-msgid "Importing a dictionary will overwrite your current one."
-msgstr "استيراد المعجم سيستبدل معجمك الحالي."
-
-#: src/routes/_app-layout/settings/route.lazy.tsx:78
+#: src/routes/_app-layout/settings/route.lazy.tsx:131
 msgid "Incorrect file type"
 msgstr "نوع الملف غير صحيح"
 
@@ -141,13 +160,18 @@ msgstr "فاتح"
 
 #: src/routes/_layout/login/route.lazy.tsx:105
 #: src/routes/_layout/login/route.lazy.tsx:142
-#: src/routes/_layout/sign-up/route.lazy.tsx:183
+#: src/routes/_layout/sign-up/route.lazy.tsx:185
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#: src/components/DesktopNavigation.tsx:103 src/components/MobileHeader.tsx:77
+#: src/components/DesktopNavigation.tsx:103
+#: src/components/MobileHeader.tsx:77
 msgid "Logout"
 msgstr "تسجيل الخروج"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:111
+msgid "Manage your dictionary."
+msgstr "إدارة معجمك."
 
 #: src/lib/error.ts:47
 msgid "Missing required property: {0}"
@@ -157,7 +181,7 @@ msgstr "الخاصية المطلوبة مفقودة: {0}"
 msgid "My Account"
 msgstr "حسابي"
 
-#: src/components/InputFile.tsx:53
+#: src/components/InputFile.tsx:54
 msgid "No file chosen"
 msgstr "لم يتم اختيار ملف"
 
@@ -166,7 +190,7 @@ msgstr "لم يتم اختيار ملف"
 msgid "Or continue with"
 msgstr "أو استمر مع"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:80
+#: src/routes/_app-layout/settings/route.lazy.tsx:133
 msgid "Please select a JSON file with your dictionary."
 msgstr "اختر ملف JSON لمعجمك من فضلك."
 
@@ -183,12 +207,17 @@ msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
 msgid "Search..."
 msgstr "ابحث..."
 
-#: src/components/DesktopNavigation.tsx:81 src/components/MobileHeader.tsx:57
-#: src/routes/_app-layout/settings/route.lazy.tsx:31
+#: src/components/DesktopNavigation.tsx:81
+#: src/components/MobileHeader.tsx:57
+#: src/routes/_app-layout/settings/route.lazy.tsx:84
 msgid "Settings"
 msgstr "الإعدادات"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:117
+#: src/routes/_app-layout/settings/route.lazy.tsx:63
+msgid "Successfully deleted!"
+msgstr "نجح الحذف!"
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:168
 msgid "Successfully imported!"
 msgstr "تم الاستيراد بنجاح!"
 
@@ -216,7 +245,11 @@ msgstr "هذا البريد الإلكتروني غير صالح."
 msgid "That is invalid."
 msgstr "هذا غير صالح."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:143
+#: src/routes/_app-layout/settings/route.lazy.tsx:73
+msgid "There was an error deleting your dictionary. Please try again later."
+msgstr "حدث خطأ أثناء حذف معجمك. حاول مرة أخرى لاحقا من فضلك."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:194
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء استيراد لمعجمك. حاول مرة أخرى لاحقا."
 
@@ -240,13 +273,14 @@ msgstr "اسم مستخدم"
 msgid "View all the words in your personal dictionary."
 msgstr "انظر كل الألفاظ في معجمك الشخصي."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:118
+#: src/routes/_app-layout/settings/route.lazy.tsx:64
+msgid "Your dictionary has been deleted."
+msgstr "حذف معجمك."
+
+#: src/routes/_app-layout/settings/route.lazy.tsx:169
 msgid "Your dictionary has been updated!"
 msgstr "تم تحديث معجمك!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:133
+#: src/routes/_app-layout/settings/route.lazy.tsx:184
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة أخرى من فضلك."
-
-#~ msgid "Submit code"
-#~ msgstr "إرسال"
