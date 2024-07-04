@@ -8,7 +8,7 @@ import Ajv from "ajv";
 import multer from "multer";
 
 import schema from "../schema.json";
-import { meilisearchClient } from "../meilisearch";
+import { meilisearchClient } from "../clients/meilisearch";
 import { auth } from "../middleware";
 import { ErrorCode, MeilisearchError } from "../error";
 

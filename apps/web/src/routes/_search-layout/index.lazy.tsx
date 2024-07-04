@@ -1,5 +1,14 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import {
+  createEmptyCard,
+  formatDate,
+  fsrs,
+  generatorParameters,
+  Rating,
+  Grades,
+  State,
+} from "ts-fsrs";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -13,14 +22,41 @@ import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/Page";
+import { useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 
 const Index = () => {
   const [{ y }, scrollTo] = useWindowScroll();
   const { height } = useWindowSize();
+  const { mutate } = trpc.flashcard.update.useMutation();
+  const { data } = trpc.flashcard.today.useQuery();
 
   // Check that the window dimensions are available
   const hasLoadedHeight = height !== null && height > 0 && y !== null;
   const hasScrolledPastInitialView = hasLoadedHeight ? y > height : false;
+
+  useEffect(() => {
+    if (!data) return;
+
+    const f = fsrs();
+    const cards = data?.flashcards ?? [];
+    const now = new Date();
+    const scheduling_cards = f.repeat(cards[0], now);
+
+    const ratedCard = scheduling_cards[Rating.Easy].card;
+    const card = {
+      ...ratedCard,
+      id: cards[0].id,
+      due: ratedCard.due.toISOString(),
+      last_review: ratedCard?.last_review?.toISOString() ?? null,
+      due_timestamp: Math.floor(ratedCard.due.getTime() / 1000),
+      last_review_timestamp: ratedCard?.last_review
+        ? Math.floor(ratedCard.last_review.getTime() / 1000)
+        : null,
+    };
+
+    // mutate(card);
+  }, [data]);
 
   return (
     <Page>
