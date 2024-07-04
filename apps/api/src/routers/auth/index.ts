@@ -12,11 +12,11 @@ import {
 } from "../../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { sendMail } from "../../mail";
-import { redisClient } from "../../redis";
+import { sendMail } from "../../clients/mail";
+import { redisClient } from "../../clients/redis";
 import { base64 } from "oslo/encoding";
 import { OTP_VALID_PERIOD, generateOTP, verifyOTP } from "../../otp/totp";
-import { meilisearchClient } from "../../meilisearch";
+import { createUserIndex } from "../../clients/meilisearch";
 
 /**
  * A buffer added to the redis ttl for otp
@@ -253,9 +253,7 @@ export const trpcAuthRouter = trpcRouter({
           email,
         });
 
-        const { taskUid } = await meilisearchClient.createIndex(userId);
-
-        await meilisearchClient.waitForTask(taskUid);
+        await createUserIndex(userId);
 
         const session = await lucia.createSession(userId, {} as any);
 

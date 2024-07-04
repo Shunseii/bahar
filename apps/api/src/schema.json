@@ -152,6 +152,80 @@
             }
           }
         }
+      },
+      "flashcard": {
+        "type": "object",
+        "description": "Properties used for scheduling the flashcards associated with the word using FSRS. When adding new words, just set these to the default values. For updating existing words, leave them as-is to keep flashcard progress or set to default values to reset it.",
+        "properties": {
+          "difficulty": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0
+          },
+          "due": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date when the card needs to be reviewed. Set to the current time for new cards."
+          },
+          "due_timestamp": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "A UNIX timestamp in seconds that represents the same date as `due`."
+          },
+          "elapsed_days": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "lapses": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "last_review": {
+            "type": "string",
+            "format": "date-time",
+            "default": null
+          },
+          "last_review_timestamp": {
+            "type": "integer",
+            "minimum": 0,
+            "default": null,
+            "description": "A UNIX timestamp in seconds that represents the same date as `last_review`, if present."
+          },
+          "reps": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "scheduled_days": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "stability": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0
+          },
+          "state": {
+            "type": "integer",
+            "enum": [0, 1, 2, 3],
+            "description": "0 is New, 1 is Learning, 2 is Review, and 3 is Relearning.",
+            "default": 0
+          }
+        },
+        "required": [
+          "difficulty",
+          "due",
+          "due_timestamp",
+          "elapsed_days",
+          "lapses",
+          "reps",
+          "scheduled_days",
+          "stability",
+          "state"
+        ]
       }
     },
     "required": ["id", "word", "translation"]
