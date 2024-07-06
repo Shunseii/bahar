@@ -230,7 +230,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                     </p>
 
                     <Button
-                      className="bg-green-600 hover:bg-green-500/60 rtl text-lg"
+                      className="bg-green-600 hover:bg-green-600/90 dark:hover:bg-green-500/60 rtl text-lg"
                       onClick={() => gradeCard(Rating.Easy)}
                     >
                       <Trans>Easy</Trans>
