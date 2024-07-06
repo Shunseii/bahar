@@ -3,16 +3,20 @@ import { meilisearchClient } from "../clients/meilisearch";
 import { Card, createEmptyCard } from "ts-fsrs";
 import { z } from "zod";
 
-type Flashcard = Card & {
+export type Flashcard = Card & {
   id: string;
+  content: string;
+  translation: string;
   due: string;
-  last_review: string;
+  last_review: string | null;
   due_timestamp: number;
-  last_review_timestamp: number;
+  last_review_timestamp: number | null;
 };
 
 const FlashcardSchema = z.object({
   id: z.string(),
+  content: z.string(),
+  translation: z.string(),
   elapsed_days: z.number(),
   lapses: z.number(),
   reps: z.number(),
@@ -39,23 +43,27 @@ export const flashcardRouter = router({
       /**
        * Current timestamp in seconds
        */
-      // const now = Math.floor(new Date().getTime() / 1000);
+      const now = Math.floor(new Date().getTime() / 1000);
 
       const { results } = await meilisearchClient.index(user.id).getDocuments({
         filter: [
-          `flashcard.due_timestamp EXISTS`,
-          // `flashcard.due_timestamp NOT EXISTS OR flashcard.due_timestamp <= ${now}`,
+          `flashcard.due_timestamp NOT EXISTS OR flashcard.due_timestamp <= ${now}`,
         ],
+        limit: 1000,
       });
 
-      const flashcards: Flashcard[] = results.map(({ id, flashcard }) => {
-        const card = flashcard ?? getEmptyFlashcard(id);
+      const flashcards: Flashcard[] = results.map(
+        ({ id, word, translation, flashcard }) => {
+          const card = flashcard ?? getEmptyFlashcard(id);
 
-        return {
-          id,
-          ...card,
-        };
-      });
+          return {
+            id,
+            content: word,
+            translation,
+            ...card,
+          };
+        },
+      );
 
       return {
         flashcards,

@@ -11,15 +11,27 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: src/components/FlashcardDrawer.tsx:130
+msgid "{0, plural, one {# card left to review} other {# cards left to review}}"
+msgstr "{0, plural, one {تبقى بطاقة واحدة للدراسة} two {تبقى بطاقتان للدراسة} few {تبقى # بطاقات للدراسة} many {تبقى # بطاقة للدراسة} other {تبقى # بطاقة للدراسة}}"
+
+#: src/components/FlashcardDrawer.tsx:115
+msgid "{0, plural, one {You have # card to review.} other {You have # cards to review}}"
+msgstr "{0, plural, one {لديك بطاقة واحدة للدراسة.} two {لديك بطاقتان للدراسة.} few {لديك # بطاقات للدراسة.} many {لديك # بطاقة للدراسة.} other {لديك # بطاقة للدراسة.}}"
 
 #: src/zod.ts:35
 msgid "{val, plural, one {Cannot exceed # character} other {Cannot exceed # characters}}"
-msgstr "{val, plural, one {لا يمكن تجاوز حرف واحد} two {لا يمكن تجاوز حرفين} few {لا يمكن تاوز # حروف} many {لا يمكن تجاوز # حرفا} other {لا يمكن تجاوز # حرف}}"
+msgstr "{val, plural, one {لا يمكن تجاوز حرف واحد} two {لا يمكن تجاوز حرفين} few {لا يمكن تجاوز # حروف} many {لا يمكن تجاوز # حرفا} other {لا يمكن تجاوز # حرف}}"
 
 #: src/zod.ts:22
 msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 msgstr "{val, plural, one {يجب أن يكون على الأقل واحد حرف} two {يجب أن يكون على الأقل حرفين} few {يجب أن يكون على الأقل # حروف} many {يجب أن يكون على الأقل # حرفا} other {يجب أن يكون على الأقل # حرف}}"
+
+#: src/components/FlashcardDrawer.tsx:180
+msgid "Again"
+msgstr "مرة أخرى"
 
 #: src/routes/_layout/sign-up/route.lazy.tsx:182
 msgid "Already have an account?"
@@ -41,12 +53,11 @@ msgstr "العربية"
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذف جميع كلماتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. صدر معجمك قبل حذفه من فضلك."
 
-#: src/routes/_search-layout/index.lazy.tsx:61
+#: src/routes/_search-layout/index.lazy.tsx:88
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
-#: src/components/DesktopNavigation.tsx:38
-#: src/components/MobileHeader.tsx:42
+#: src/components/DesktopNavigation.tsx:38 src/components/MobileHeader.tsx:128
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "بحر"
@@ -93,13 +104,17 @@ msgid "Delete your dictionary?"
 msgstr "هل تريد أن تحذف معجمك؟"
 
 #: src/routes/_app-layout/settings/route.lazy.tsx:107
-#: src/routes/_search-layout/index.lazy.tsx:30
+#: src/routes/_search-layout/index.lazy.tsx:56
 msgid "Dictionary"
 msgstr "معجم"
 
 #: src/routes/_layout/login/route.lazy.tsx:164
 msgid "Don't have an account?"
 msgstr "ليس لديك حساب؟"
+
+#: src/components/FlashcardDrawer.tsx:225
+msgid "Easy"
+msgstr "سهل"
 
 #: src/routes/_layout/login/route.lazy.tsx:120
 #: src/routes/_layout/sign-up/route.lazy.tsx:110
@@ -131,9 +146,16 @@ msgstr "GitHub"
 msgid "Go back"
 msgstr "ارجع"
 
+#: src/components/FlashcardDrawer.tsx:210
+msgid "Good"
+msgstr "حسن"
+
+#: src/components/FlashcardDrawer.tsx:195
+msgid "Hard"
+msgstr "صعب"
+
 #: src/components/DesktopNavigation.tsx:48
-#: src/components/DesktopNavigation.tsx:54
-#: src/components/MobileHeader.tsx:49
+#: src/components/DesktopNavigation.tsx:54 src/components/MobileHeader.tsx:141
 msgid "Home"
 msgstr "منزل"
 
@@ -164,8 +186,7 @@ msgstr "فاتح"
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#: src/components/DesktopNavigation.tsx:103
-#: src/components/MobileHeader.tsx:77
+#: src/components/DesktopNavigation.tsx:103 src/components/MobileHeader.tsx:172
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
@@ -203,15 +224,22 @@ msgstr "حاول مرة أخرى بعد ٣٠ ثوان من فضلك."
 msgid "Please try again after five minutes."
 msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
 
+#: src/routes/_search-layout/index.lazy.tsx:48
+msgid "Review flashcards"
+msgstr "ادرس البطاقات"
+
 #: src/components/meili/SearchInput.tsx:56
 msgid "Search..."
 msgstr "ابحث..."
 
-#: src/components/DesktopNavigation.tsx:81
-#: src/components/MobileHeader.tsx:57
+#: src/components/DesktopNavigation.tsx:81 src/components/MobileHeader.tsx:152
 #: src/routes/_app-layout/settings/route.lazy.tsx:84
 msgid "Settings"
 msgstr "الإعدادات"
+
+#: src/components/FlashcardDrawer.tsx:236
+msgid "Show answer"
+msgstr "اعرض الجواب"
 
 #: src/routes/_app-layout/settings/route.lazy.tsx:63
 msgid "Successfully deleted!"
@@ -259,9 +287,9 @@ msgstr "هذا حالة غير حساسة."
 
 #: src/routes/_layout/sign-up/route.lazy.tsx:140
 msgid "This is how we will address you."
-msgstr "هذه هي طريقة التى سنخاطبك بها."
+msgstr "هذه هي الطريقة التي سنخاطبك بها."
 
-#: src/components/MobileHeader.tsx:26
+#: src/components/MobileHeader.tsx:107
 msgid "Toggle Menu"
 msgstr "تبديل القائمة"
 
@@ -269,9 +297,13 @@ msgstr "تبديل القائمة"
 msgid "Username"
 msgstr "اسم مستخدم"
 
-#: src/routes/_search-layout/index.lazy.tsx:34
+#: src/routes/_search-layout/index.lazy.tsx:60
 msgid "View all the words in your personal dictionary."
 msgstr "انظر كل الألفاظ في معجمك الشخصي."
+
+#: src/components/FlashcardDrawer.tsx:136
+msgid "You have no flashcards to review for now!"
+msgstr "ليس لديك بطاقات للدراسة الآن!"
 
 #: src/routes/_app-layout/settings/route.lazy.tsx:64
 msgid "Your dictionary has been deleted."
@@ -284,3 +316,6 @@ msgstr "تم تحديث معجمك!"
 #: src/routes/_app-layout/settings/route.lazy.tsx:184
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة أخرى من فضلك."
+
+#~ msgid "You have {0} cards to review."
+#~ msgstr "لديك {0} بطاقات للدراسة."

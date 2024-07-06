@@ -5,6 +5,7 @@ import express, {
   type NextFunction,
 } from "express";
 import Ajv from "ajv";
+import addFormats from "ajv-formats";
 import multer from "multer";
 
 import schema from "../schema.json";
@@ -54,6 +55,8 @@ dictionaryRouter.post(
   uploadWithErrorHandling,
   async (req, res) => {
     const ajv = new Ajv({ allErrors: false });
+    addFormats(ajv, ["date-time"]);
+
     const fileData = req.file?.buffer.toString("utf-8");
 
     if (!fileData) {
