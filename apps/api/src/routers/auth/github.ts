@@ -6,7 +6,7 @@ import { db } from "../../db";
 import { users } from "../../db/schema/users";
 import { eq, or } from "drizzle-orm";
 import { generateIdFromEntropySize } from "lucia";
-import { meilisearchClient } from "../../meilisearch";
+import { createUserIndex } from "../../clients/meilisearch";
 
 interface GitHubUser {
   id: number;
@@ -99,9 +99,7 @@ authRouter.get("/login/github/callback", async (req, res) => {
       email: githubUser.email,
     });
 
-    const { taskUid } = await meilisearchClient.createIndex(userId);
-
-    await meilisearchClient.waitForTask(taskUid);
+    await createUserIndex(userId);
 
     const session = await lucia.createSession(userId, {} as any);
 

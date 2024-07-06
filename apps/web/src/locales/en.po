@@ -11,7 +11,15 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
+
+#: src/components/FlashcardDrawer.tsx:130
+msgid "{0, plural, one {# card left to review} other {# cards left to review}}"
+msgstr "{0, plural, one {# card left to review} other {# cards left to review}}"
+
+#: src/components/FlashcardDrawer.tsx:115
+msgid "{0, plural, one {You have # card to review.} other {You have # cards to review}}"
+msgstr "{0, plural, one {You have # card to review.} other {You have # cards to review}}"
 
 #: src/zod.ts:35
 msgid "{val, plural, one {Cannot exceed # character} other {Cannot exceed # characters}}"
@@ -20,6 +28,10 @@ msgstr "{val, plural, one {Cannot exceed # character} other {Cannot exceed # cha
 #: src/zod.ts:22
 msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 msgstr "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
+
+#: src/components/FlashcardDrawer.tsx:180
+msgid "Again"
+msgstr "Again"
 
 #: src/routes/_layout/sign-up/route.lazy.tsx:182
 msgid "Already have an account?"
@@ -41,12 +53,12 @@ msgstr "Arabic"
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 
-#: src/routes/_search-layout/index.lazy.tsx:61
+#: src/routes/_search-layout/index.lazy.tsx:88
 msgid "Back to top"
 msgstr "Back to top"
 
 #: src/components/DesktopNavigation.tsx:38
-#: src/components/MobileHeader.tsx:42
+#: src/components/MobileHeader.tsx:128
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "Bahar"
@@ -93,13 +105,17 @@ msgid "Delete your dictionary?"
 msgstr "Delete your dictionary?"
 
 #: src/routes/_app-layout/settings/route.lazy.tsx:107
-#: src/routes/_search-layout/index.lazy.tsx:30
+#: src/routes/_search-layout/index.lazy.tsx:56
 msgid "Dictionary"
 msgstr "Dictionary"
 
 #: src/routes/_layout/login/route.lazy.tsx:164
 msgid "Don't have an account?"
 msgstr "Don't have an account?"
+
+#: src/components/FlashcardDrawer.tsx:225
+msgid "Easy"
+msgstr "Easy"
 
 #: src/routes/_layout/login/route.lazy.tsx:120
 #: src/routes/_layout/sign-up/route.lazy.tsx:110
@@ -131,9 +147,17 @@ msgstr "GitHub"
 msgid "Go back"
 msgstr "Go back"
 
+#: src/components/FlashcardDrawer.tsx:210
+msgid "Good"
+msgstr "Good"
+
+#: src/components/FlashcardDrawer.tsx:195
+msgid "Hard"
+msgstr "Hard"
+
 #: src/components/DesktopNavigation.tsx:48
 #: src/components/DesktopNavigation.tsx:54
-#: src/components/MobileHeader.tsx:49
+#: src/components/MobileHeader.tsx:141
 msgid "Home"
 msgstr "Home"
 
@@ -165,7 +189,7 @@ msgid "Log in"
 msgstr "Log in"
 
 #: src/components/DesktopNavigation.tsx:103
-#: src/components/MobileHeader.tsx:77
+#: src/components/MobileHeader.tsx:172
 msgid "Logout"
 msgstr "Logout"
 
@@ -203,15 +227,23 @@ msgstr "Please try again after 30 seconds."
 msgid "Please try again after five minutes."
 msgstr "Please try again after five minutes."
 
+#: src/routes/_search-layout/index.lazy.tsx:48
+msgid "Review flashcards"
+msgstr "Review flashcards"
+
 #: src/components/meili/SearchInput.tsx:56
 msgid "Search..."
 msgstr "Search..."
 
 #: src/components/DesktopNavigation.tsx:81
-#: src/components/MobileHeader.tsx:57
+#: src/components/MobileHeader.tsx:152
 #: src/routes/_app-layout/settings/route.lazy.tsx:84
 msgid "Settings"
 msgstr "Settings"
+
+#: src/components/FlashcardDrawer.tsx:236
+msgid "Show answer"
+msgstr "Show answer"
 
 #: src/routes/_app-layout/settings/route.lazy.tsx:63
 msgid "Successfully deleted!"
@@ -261,7 +293,7 @@ msgstr "This is case insensitive."
 msgid "This is how we will address you."
 msgstr "This is how we will address you."
 
-#: src/components/MobileHeader.tsx:26
+#: src/components/MobileHeader.tsx:107
 msgid "Toggle Menu"
 msgstr "Toggle Menu"
 
@@ -269,9 +301,13 @@ msgstr "Toggle Menu"
 msgid "Username"
 msgstr "Username"
 
-#: src/routes/_search-layout/index.lazy.tsx:34
+#: src/routes/_search-layout/index.lazy.tsx:60
 msgid "View all the words in your personal dictionary."
 msgstr "View all the words in your personal dictionary."
+
+#: src/components/FlashcardDrawer.tsx:136
+msgid "You have no flashcards to review for now!"
+msgstr "You have no flashcards to review for now!"
 
 #: src/routes/_app-layout/settings/route.lazy.tsx:64
 msgid "Your dictionary has been deleted."

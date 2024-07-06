@@ -13,10 +13,13 @@ import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/Page";
+import { trpc } from "@/lib/trpc";
+import { FlashcardDrawer } from "@/components/FlashcardDrawer";
 
 const Index = () => {
   const [{ y }, scrollTo] = useWindowScroll();
   const { height } = useWindowSize();
+  const { data, isFetching } = trpc.flashcard.today.useQuery();
 
   // Check that the window dimensions are available
   const hasLoadedHeight = height !== null && height > 0 && y !== null;
@@ -24,21 +27,45 @@ const Index = () => {
 
   return (
     <Page>
-      <Card className="m-auto w-full max-w-3xl">
-        <CardHeader className="text-center">
-          <CardTitle>
-            <Trans>Dictionary</Trans>
-          </CardTitle>
+      <div className="m-auto max-w-3xl flex flex-col gap-y-4">
+        <FlashcardDrawer>
+          <Button
+            className="w-max self-end relative"
+            variant="outline"
+            disabled={isFetching}
+          >
+            {/* Notification */}
+            {data?.flashcards?.length ? (
+              <div className="motion-safe:animate-pulse absolute border-background border-2 -top-1 ltr:-right-1 rtl:-left-1 p-1 text-xs h-2.5 w-2.5 bg-red-500 rounded-full" />
+            ) : undefined}
 
-          <CardDescription>
-            <Trans>View all the words in your personal dictionary.</Trans>
-          </CardDescription>
-        </CardHeader>
+            <p
+              className={cn(
+                isFetching &&
+                  "motion-safe:animate-pulse motion-reduce:opacity-50",
+              )}
+            >
+              <Trans>Review flashcards</Trans>
+            </p>
+          </Button>
+        </FlashcardDrawer>
 
-        <CardContent>
-          <InfiniteScroll />
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle>
+              <Trans>Dictionary</Trans>
+            </CardTitle>
+
+            <CardDescription>
+              <Trans>View all the words in your personal dictionary.</Trans>
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <InfiniteScroll />
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Scroll to top button */}
       <div

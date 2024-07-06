@@ -27,6 +27,7 @@
     "@upstash/ratelimit": "^1.2.0",
     "@upstash/redis": "^1.28.4",
     "ajv": "^8.16.0",
+    "ajv-formats": "^3.0.1",
     "arctic": "^1.2.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -37,6 +38,7 @@
     "meilisearch": "^0.40.0",
     "multer": "1.4.5-lts.1",
     "oslo": "^1.1.2",
+    "ts-fsrs": "^3.5.7",
     "tsx": "^4.7.1",
     "zod": "^3.22.4"
   },
