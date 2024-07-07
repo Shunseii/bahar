@@ -108,7 +108,7 @@ dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
   const userIndexId = req.user.id;
   const index = meilisearchClient.index(userIndexId);
 
-  const documents = await index.getDocuments();
+  const documents = await index.getDocuments({ limit: 1000 });
   const dictionary = documents.results;
 
   res.setHeader("Content-Type", "application/json");
