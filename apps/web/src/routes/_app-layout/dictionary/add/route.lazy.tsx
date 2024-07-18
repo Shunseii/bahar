@@ -177,22 +177,24 @@ const Add = () => {
     try {
       const filteredData = (() => {
         if (data.type === "ism") {
-          return addWord({
+          return {
             ...data,
             morphology: { ism: data?.morphology?.ism },
-          });
+          };
         } else if (data.type === "fi'l") {
-          return addWord({
+          return {
             ...data,
             morphology: { verb: data?.morphology?.verb },
-          });
+          };
         } else {
-          return addWord({
+          return {
             ...data,
             morphology: undefined,
-          });
+          };
         }
       })();
+
+      await addWord(filteredData);
 
       toast({
         title: _(msg`Successfully added word!`),
