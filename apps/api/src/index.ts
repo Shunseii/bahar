@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { userRouter } from "./routers/user";
 import { authRouter } from "./routers/auth/github";
-import { dictionaryRouter } from "./routers/dictionary";
+import { dictionaryRouter, trpcDictionaryRouter } from "./routers/dictionary";
 import { flashcardRouter } from "./routers/flashcard";
 import { trpcAuthRouter } from "./routers/auth";
 import { csrf } from "./middleware";
@@ -33,6 +33,7 @@ const appRouter = router({
   user: userRouter,
   auth: trpcAuthRouter,
   flashcard: flashcardRouter,
+  dictionary: trpcDictionaryRouter,
 });
 
 const app = express();

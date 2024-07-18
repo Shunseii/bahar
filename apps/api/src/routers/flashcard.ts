@@ -13,7 +13,7 @@ export type Flashcard = Card & {
   last_review_timestamp: number | null;
 };
 
-const FlashcardSchema = z.object({
+export const FlashcardSchema = z.object({
   id: z.string(),
   content: z.string(),
   translation: z.string(),

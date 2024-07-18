@@ -78,22 +78,37 @@
                 "type": "array",
                 "description": "The (broken) plural forms of the word. Use harakat to indicate inflection.",
                 "items": {
-                  "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "word": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "Any additional details about this form such as frequency of usage or context."
+                    }
+                  },
+                  "required": ["word"]
                 }
               },
               "gender": {
                 "type": "string",
-                "enum": ["male", "female"]
+                "enum": ["masculine", "feminine"]
+              },
+              "inflection": {
+                "type": "integer",
+                "description": "The inflection of the word. This refers to how many case endings the word can take. Three means it can take all three, two means it can only take raf' and nasb, and one means it is indeclinable.",
+                "enum": [1, 2, 3]
               }
             }
           },
-          "fi'l": {
+          "verb": {
             "type": "object",
             "description": "The morphological properties of a fi'l such as the verb conjugations and noun forms.",
             "properties": {
               "huroof": {
                 "type": "array",
-                "description": "A list of the prepositions that can be used with the fi'l.",
+                "description": "A list of the prepositions that can be used with the fi'l. Typically, if the meaning with the preposition is completely different, then it's better to create a separate dictionary entry.",
                 "items": {
                   "type": "object",
                   "properties": {
@@ -131,15 +146,14 @@
                   "properties": {
                     "word": {
                       "type": "string"
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "Any additional details about this form such as frequency of usage or context."
                     }
                   },
                   "required": ["word"]
                 }
-              },
-              "inflection": {
-                "type": "integer",
-                "description": "The inflection of the word. This refers to how many case endings the word can take. Three means it can take all three, two means it can only take raf' and nasb, and one means it is indeclinable.",
-                "enum": [1, 2, 3]
               },
               "form": {
                 "type": "string",

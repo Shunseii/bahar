@@ -25,6 +25,9 @@ const SearchLayoutIndexLazyImport = createFileRoute('/_search-layout/')()
 const AppLayoutSettingsRouteLazyImport = createFileRoute(
   '/_app-layout/settings',
 )()
+const AppLayoutDictionaryAddRouteLazyImport = createFileRoute(
+  '/_app-layout/dictionary/add',
+)()
 
 // Create/Update Routes
 
@@ -73,6 +76,16 @@ const LayoutLoginRouteRoute = LayoutLoginRouteImport.update({
   import('./routes/_layout/login/route.lazy').then((d) => d.Route),
 )
 
+const AppLayoutDictionaryAddRouteLazyRoute =
+  AppLayoutDictionaryAddRouteLazyImport.update({
+    path: '/dictionary/add',
+    getParentRoute: () => AppLayoutRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_app-layout/dictionary/add/route.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -105,13 +118,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SearchLayoutIndexLazyImport
       parentRoute: typeof SearchLayoutRouteImport
     }
+    '/_app-layout/dictionary/add': {
+      preLoaderRoute: typeof AppLayoutDictionaryAddRouteLazyImport
+      parentRoute: typeof AppLayoutRouteImport
+    }
   }
 }
 
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  AppLayoutRouteRoute.addChildren([AppLayoutSettingsRouteLazyRoute]),
+  AppLayoutRouteRoute.addChildren([
+    AppLayoutSettingsRouteLazyRoute,
+    AppLayoutDictionaryAddRouteLazyRoute,
+  ]),
   LayoutRouteRoute.addChildren([LayoutLoginRouteRoute, LayoutSignUpRouteRoute]),
   SearchLayoutRouteRoute.addChildren([SearchLayoutIndexLazyRoute]),
 ])
