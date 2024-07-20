@@ -115,11 +115,8 @@ export const CategoryFormSection = () => {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger
-                        id="status"
-                        aria-label={_(msg`Select status`)}
-                      >
-                        <SelectValue placeholder={_(msg`Select status`)} />
+                      <SelectTrigger id="type" aria-label={_(msg`Select type`)}>
+                        <SelectValue placeholder={_(msg`Select type`)} />
                       </SelectTrigger>
                     </FormControl>
 
