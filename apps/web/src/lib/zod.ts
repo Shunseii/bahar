@@ -4,7 +4,7 @@ import z from "zod";
 const errorMap: z.ZodErrorMap = (issue, ctx) => {
   if (issue.code === z.ZodIssueCode.invalid_type) {
     if (issue.expected === "string") {
-      return { message: t`That is invalid.` };
+      return { message: t`This field is required.` };
     }
   }
 
@@ -18,6 +18,10 @@ const errorMap: z.ZodErrorMap = (issue, ctx) => {
     const val = issue.minimum as number;
 
     if (issue.type === "string") {
+      if (val === 1) {
+        return { message: t`This field is required.` };
+      }
+
       return {
         message: plural(val, {
           one: "Must be at least # character",

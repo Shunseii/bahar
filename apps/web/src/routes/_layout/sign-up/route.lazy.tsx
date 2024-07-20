@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Trans, t } from "@lingui/macro";
 import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { trpc } from "@/lib/trpc";
-import { z } from "@/zod";
+import { z } from "@/lib/zod";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
 import {
   Form,

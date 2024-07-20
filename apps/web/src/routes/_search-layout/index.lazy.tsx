@@ -1,4 +1,4 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { Link, createLazyFileRoute } from "@tanstack/react-router";
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { InfiniteScroll } from "@/components/meili/InfiniteScroll";
 import { Button } from "@/components/ui/button";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, PlusIcon } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
@@ -28,27 +28,36 @@ const Index = () => {
   return (
     <Page>
       <div className="m-auto max-w-3xl flex flex-col gap-y-4">
-        <FlashcardDrawer>
-          <Button
-            className="w-max self-end relative"
-            variant="outline"
-            disabled={isFetching}
-          >
-            {/* Notification */}
-            {data?.flashcards?.length ? (
-              <div className="motion-safe:animate-pulse absolute border-background border-2 -top-1 ltr:-right-1 rtl:-left-1 p-1 text-xs h-2.5 w-2.5 bg-red-500 rounded-full" />
-            ) : undefined}
-
-            <p
-              className={cn(
-                isFetching &&
-                  "motion-safe:animate-pulse motion-reduce:opacity-50",
-              )}
-            >
-              <Trans>Review flashcards</Trans>
-            </p>
+        <div className="flex flex-row justify-between">
+          <Button variant="outline" asChild>
+            <Link to="/dictionary/add">
+              <PlusIcon className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
+              <Trans>Add word</Trans>
+            </Link>
           </Button>
-        </FlashcardDrawer>
+
+          <FlashcardDrawer>
+            <Button
+              className="w-max self-end relative"
+              variant="outline"
+              disabled={isFetching}
+            >
+              {/* Notification */}
+              {data?.flashcards?.length ? (
+                <div className="motion-safe:animate-pulse absolute border-background border-2 -top-1 ltr:-right-1 rtl:-left-1 p-1 text-xs h-2.5 w-2.5 bg-red-500 rounded-full" />
+              ) : undefined}
+
+              <p
+                className={cn(
+                  isFetching &&
+                    "motion-safe:animate-pulse motion-reduce:opacity-50",
+                )}
+              >
+                <Trans>Review flashcards</Trans>
+              </p>
+            </Button>
+          </FlashcardDrawer>
+        </div>
 
         <Card>
           <CardHeader className="text-center">
