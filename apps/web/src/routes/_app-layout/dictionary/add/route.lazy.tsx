@@ -38,7 +38,7 @@ export const FormSchema = z.object({
   word: z.string().min(1),
   translation: z.string().min(1),
   definition: z.string().optional(),
-  root: z.array(z.string()).optional(),
+  root: z.string().optional(),
   examples: z
     .array(
       z.object({
@@ -146,7 +146,7 @@ const Add = () => {
     defaultValues: {
       word: "",
       translation: "",
-      root: [],
+      root: "",
       type: "ism",
       examples: [],
       definition: "",
@@ -179,16 +179,19 @@ const Add = () => {
         if (data.type === "ism") {
           return {
             ...data,
+            root: data?.root?.split(""),
             morphology: { ism: data?.morphology?.ism },
           };
         } else if (data.type === "fi'l") {
           return {
             ...data,
+            root: data?.root?.split(""),
             morphology: { verb: data?.morphology?.verb },
           };
         } else {
           return {
             ...data,
+            root: data?.root?.split(""),
             morphology: undefined,
           };
         }
