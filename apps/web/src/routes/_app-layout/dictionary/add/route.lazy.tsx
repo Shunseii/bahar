@@ -38,7 +38,7 @@ export const FormSchema = z.object({
   word: z.string().min(1),
   translation: z.string().min(1),
   definition: z.string().optional(),
-  root: z.string().optional(),
+  root: z.array(z.string()).optional(),
   examples: z
     .array(
       z.object({
@@ -146,7 +146,7 @@ const Add = () => {
     defaultValues: {
       word: "",
       translation: "",
-      root: "",
+      root: [],
       type: "ism",
       examples: [],
       definition: "",
