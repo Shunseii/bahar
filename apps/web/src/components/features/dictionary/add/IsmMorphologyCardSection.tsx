@@ -130,7 +130,8 @@ export const IsmMorphologyCardSection = () => {
                             type="text"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1"
+                            className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
+                            dir="rtl"
                             {...renderField}
                           />
                         </FormControl>
@@ -240,74 +241,78 @@ export const IsmMorphologyCardSection = () => {
           <FormField
             control={form.control}
             name="morphology.ism.inflection"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex gap-x-2 items-center">
-                  <FormLabel>
-                    <Trans>Inflection</Trans>
-                  </FormLabel>
+            render={({ field }) => {
+              console.log(field.value);
 
-                  <Popover>
-                    <PopoverTrigger>
-                      <InfoIcon className="h-4 w-4" />
-                    </PopoverTrigger>
+              return (
+                <FormItem>
+                  <div className="flex gap-x-2 items-center">
+                    <FormLabel>
+                      <Trans>Inflection</Trans>
+                    </FormLabel>
 
-                    <PopoverContent className="text-sm" side="right">
-                      <p>
-                        <Trans>
-                          This refers to how many case endings the word can
-                          take.
-                        </Trans>
-                      </p>
-                      <br />
-                      <p>
-                        <Trans>For example, the word</Trans>
-                      </p>
+                    <Popover>
+                      <PopoverTrigger>
+                        <InfoIcon className="h-4 w-4" />
+                      </PopoverTrigger>
 
-                      <ul className="list-disc ltr:ml-4 rtl:mr-4">
-                        <li>
-                          <Trans>محمد is a triptote;</Trans>
-                        </li>
-                        <li>
-                          <Trans>يوسف is a diptote;</Trans>
-                        </li>
-                        <li>
-                          <Trans>موسى is indeclinable.</Trans>
-                        </li>
-                      </ul>
-                    </PopoverContent>
-                  </Popover>
-                </div>
+                      <PopoverContent className="text-sm" side="right">
+                        <p>
+                          <Trans>
+                            This refers to how many case endings the word can
+                            take.
+                          </Trans>
+                        </p>
+                        <br />
+                        <p>
+                          <Trans>For example, the word</Trans>
+                        </p>
 
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value as any} // Need to use integer value here
-                >
-                  <FormControl>
-                    <SelectTrigger
-                      id="gender"
-                      aria-label={_(msg`Select inflection`)}
-                    >
-                      <SelectValue placeholder={_(msg`Select inflection`)} />
-                    </SelectTrigger>
-                  </FormControl>
+                        <ul className="list-disc ltr:ml-4 rtl:mr-4">
+                          <li>
+                            <Trans>محمد is a triptote;</Trans>
+                          </li>
+                          <li>
+                            <Trans>يوسف is a diptote;</Trans>
+                          </li>
+                          <li>
+                            <Trans>موسى is indeclinable.</Trans>
+                          </li>
+                        </ul>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
 
-                  <SelectContent>
-                    <SelectItem value={String(Inflection.triptote)}>
-                      <Trans>Triptote</Trans>
-                    </SelectItem>
-                    <SelectItem value={String(Inflection.diptote)}>
-                      <Trans>Diptote</Trans>
-                    </SelectItem>
-                    <SelectItem value={String(Inflection.indeclinable)}>
-                      <Trans>Indeclinable</Trans>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value?.toString()} // Need to use integer value here
+                  >
+                    <FormControl>
+                      <SelectTrigger
+                        id="gender"
+                        aria-label={_(msg`Select inflection`)}
+                      >
+                        <SelectValue placeholder={_(msg`Select inflection`)} />
+                      </SelectTrigger>
+                    </FormControl>
 
-                <FormMessage />
-              </FormItem>
-            )}
+                    <SelectContent>
+                      <SelectItem value={String(Inflection.triptote)}>
+                        <Trans>Triptote</Trans>
+                      </SelectItem>
+                      <SelectItem value={String(Inflection.diptote)}>
+                        <Trans>Diptote</Trans>
+                      </SelectItem>
+                      <SelectItem value={String(Inflection.indeclinable)}>
+                        <Trans>Indeclinable</Trans>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         </div>
       </div>

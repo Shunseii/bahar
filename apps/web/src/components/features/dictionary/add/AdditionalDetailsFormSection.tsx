@@ -168,7 +168,8 @@ export const AdditionalDetailsFormSection = () => {
                               type="text"
                               // Need to do this otherwise the focus border will get cut off
                               // in the dropdown
-                              className="w-[98%] ltr:ml-1 rtl:mr-1"
+                              className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
+                              dir="rtl"
                               {...renderField}
                             />
                           </FormControl>

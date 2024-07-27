@@ -10,20 +10,25 @@ import { InfiniteScroll } from "@/components/meili/InfiniteScroll";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, PlusIcon } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
-import { Trans } from "@lingui/macro";
+import { Plural, Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/Page";
 import { trpc } from "@/lib/trpc";
 import { FlashcardDrawer } from "@/components/FlashcardDrawer";
+import { useInstantSearch } from "react-instantsearch";
 
 const Index = () => {
   const [{ y }, scrollTo] = useWindowScroll();
+  const { results } = useInstantSearch();
   const { height } = useWindowSize();
   const { data, isFetching } = trpc.flashcard.today.useQuery();
 
   // Check that the window dimensions are available
   const hasLoadedHeight = height !== null && height > 0 && y !== null;
   const hasScrolledPastInitialView = hasLoadedHeight ? y > height : false;
+
+  const processingTimeMs = results?.processingTimeMS;
+  const totalHits = results?.nbHits;
 
   return (
     <Page>
@@ -57,6 +62,19 @@ const Index = () => {
               </p>
             </Button>
           </FlashcardDrawer>
+        </div>
+
+        <div>
+          {processingTimeMs !== undefined && totalHits ? (
+            <p className="text-center text-sm text-muted-foreground">
+              <Plural
+                value={totalHits}
+                one="# result found in"
+                other="# results found in"
+              />{" "}
+              <Plural value={processingTimeMs} _0="<1 ms" other="# ms" />
+            </p>
+          ) : undefined}
         </div>
 
         <Card>
