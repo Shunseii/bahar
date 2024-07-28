@@ -10,6 +10,10 @@ import { useMeasure, useWindowScroll } from "@uidotdev/usehooks";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
 import { useCountdown } from "@/hooks/useCountdown";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Edit } from "lucide-react";
+import { Button } from "../ui/button";
+import { useNavigate } from "@tanstack/react-router";
 
 /**
  * The difference in the height of the infinite list and the
@@ -51,6 +55,7 @@ const SkeletonHits = () => {
 };
 
 export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
+  const navigate = useNavigate();
   /**
    * This is true if we have not queried search results at all.
    * Used to determine if the loading state is shown for the first time.
@@ -103,6 +108,20 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
             <li key={hit.id}>
               <article>
                 <div className="flex flex-col gap-y-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="self-end"
+                    onClick={() =>
+                      navigate({
+                        to: `/dictionary/edit/$wordId`,
+                        params: { wordId: hit.id! },
+                      })
+                    }
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+
                   <h2 dir="rtl" className="rtl:text-right">
                     <Highlight
                       className="text-3xl"

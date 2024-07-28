@@ -16,6 +16,7 @@ import { auth } from "../middleware";
 import { ErrorCode, MeilisearchError } from "../error";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+import { FlashcardSchema } from "./flashcard";
 
 // TODO: use shared schema between client and server
 
@@ -26,6 +27,7 @@ export enum Inflection {
 }
 
 export const DictionarySchema = z.object({
+  id: z.string().min(1),
   word: z.string().min(1),
   translation: z.string().min(1),
   definition: z.string().optional(),
@@ -40,6 +42,7 @@ export const DictionarySchema = z.object({
     )
     .optional(),
   type: z.enum(["ism", "fi'l", "harf"]).optional(),
+  flashcard: FlashcardSchema.optional(),
   morphology: z
     .object({
       ism: z
@@ -208,8 +211,96 @@ dictionaryRouter.delete("/dictionary", auth, async (req, res) => {
 });
 
 export const trpcDictionaryRouter = router({
+  find: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .output(DictionarySchema)
+    .query(async ({ ctx, input }) => {
+      const { user } = ctx;
+
+      const userIndex = meilisearchClient.index(user.id);
+
+      const word = (await userIndex.getDocument(input.id)) as z.infer<
+        typeof DictionarySchema
+      >;
+
+      return word;
+    }),
+  deleteWord: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx;
+
+      const userIndex = meilisearchClient.index(user.id);
+
+      try {
+        const { taskUid } = await userIndex.deleteDocument(input.id);
+
+        const { status, error } = await userIndex.waitForTask(taskUid);
+
+        if (status === "failed" && error) {
+          const { message, code, type } = error;
+
+          throw new MeilisearchError({
+            message,
+            code,
+            type,
+          });
+        }
+
+        // TODO: add better return type
+        return true;
+      } catch (err) {
+        if (err instanceof MeilisearchError) {
+          console.error(err.code, err.type, err.message);
+        } else if (err instanceof Error) {
+          console.error(err.message);
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "unexpected_error",
+        });
+      }
+    }),
+  editWord: protectedProcedure
+    .input(DictionarySchema.deepPartial())
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx;
+
+      const userIndex = meilisearchClient.index(user.id);
+
+      try {
+        const { taskUid } = await userIndex.updateDocuments([input]);
+
+        const { status, error } = await userIndex.waitForTask(taskUid);
+
+        if (status === "failed" && error) {
+          const { message, code, type } = error;
+
+          throw new MeilisearchError({
+            message,
+            code,
+            type,
+          });
+        }
+
+        // TODO: add better return type
+        return true;
+      } catch (err) {
+        if (err instanceof MeilisearchError) {
+          console.error(err.code, err.type, err.message);
+        } else if (err instanceof Error) {
+          console.error(err.message);
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "unexpected_error",
+        });
+      }
+    }),
   add: protectedProcedure
-    .input(DictionarySchema)
+    .input(DictionarySchema.omit({ id: true }))
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
 

@@ -1,5 +1,8 @@
 import { Page } from "@/components/Page";
-import { Link, createLazyFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { queryClient } from "@/lib/query";
+import { trpc, trpcClient } from "@/lib/trpc";
+import { getQueryKey } from "@trpc/react-query";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,11 +25,11 @@ import {
   MorphologyFormSection,
   CategoryFormSection,
 } from "@/components/features/dictionary/add";
-import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
 import { useLingui } from "@lingui/react";
 import { useInstantSearch } from "react-instantsearch";
-import { useEffect } from "react";
+import { FC } from "react";
+import { FormSchema } from "../add/route.lazy";
 
 export enum Inflection {
   indeclinable = 1,
@@ -34,68 +37,10 @@ export enum Inflection {
   triptote = 3,
 }
 
-export const FormSchema = z.object({
-  word: z.string().min(1),
-  translation: z.string().min(1),
-  definition: z.string().optional(),
-  root: z.string().optional(),
-  examples: z
-    .array(
-      z.object({
-        sentence: z.string(),
-        context: z.string().optional(),
-        translation: z.string().optional(),
-      }),
-    )
-    .optional(),
-  type: z.enum(["ism", "fi'l", "harf"]).optional(),
-  morphology: z
-    .object({
-      ism: z
-        .object({
-          singular: z.string().optional(),
-          dual: z.string().optional(),
-          plurals: z
-            .array(
-              z.object({ word: z.string(), details: z.string().optional() }),
-            )
-            .optional(),
-          gender: z.enum(["masculine", "feminine"]).optional(),
-          inflection: z.nativeEnum(Inflection).optional(),
-        })
-        .optional(),
-      verb: z
-        .object({
-          huroof: z
-            .array(
-              z.object({
-                harf: z.string(),
-                meaning: z.string().optional(),
-              }),
-            )
-            .optional(),
-          past_tense: z.string().optional(),
-          present_tense: z.string().optional(),
-          active_participle: z.string().optional(),
-          passive_participle: z.string().optional(),
-          imperative: z.string().optional(),
-          masadir: z
-            .array(
-              z.object({
-                word: z.string(),
-                details: z.string().optional(),
-              }),
-            )
-            .optional(),
-          form: z.string().optional(),
-          form_arabic: z.string().optional(),
-        })
-        .optional(),
-    })
-    .optional(),
-});
-
-const Breadcrumbs = ({ className }: { className?: string }) => {
+const Breadcrumbs: FC<{ className?: string; word: string }> = ({
+  className,
+  word,
+}) => {
   return (
     <Breadcrumb className={cn("mb-8", className)}>
       <BreadcrumbList>
@@ -110,7 +55,7 @@ const Breadcrumbs = ({ className }: { className?: string }) => {
         <BreadcrumbSeparator />
 
         <BreadcrumbItem>
-          <BreadcrumbPage>Add word</BreadcrumbPage>
+          <BreadcrumbPage>Edit {word}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -136,21 +81,38 @@ const BackButton = () => {
   );
 };
 
-const Add = () => {
-  const { mutateAsync: addWord } = trpc.dictionary.add.useMutation();
+const Edit = () => {
+  const { mutateAsync: editWord } = trpc.dictionary.editWord.useMutation({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: getQueryKey(
+          trpc.dictionary.find,
+          {
+            id: wordId,
+          },
+          "query",
+        ),
+      });
+    },
+  });
+
+  const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
+  const { wordId } = Route.useParams();
+  const navigate = useNavigate();
+  const { data, status } = trpc.dictionary.find.useQuery({ id: wordId });
   const { toast } = useToast();
   const { refresh } = useInstantSearch();
   const { _ } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      word: "",
-      translation: "",
-      root: "",
-      type: "ism",
-      examples: [],
-      definition: "",
-      morphology: {
+      word: data?.word ?? "",
+      translation: data?.translation ?? "",
+      root: data?.root ? data.root.join("") : "",
+      type: data?.type ?? "ism",
+      examples: data?.examples ?? [],
+      definition: data?.definition ?? "",
+      morphology: data?.morphology ?? {
         ism: {
           singular: "",
           dual: "",
@@ -172,6 +134,8 @@ const Add = () => {
       },
     },
   });
+
+  console.log({ status, data });
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     try {
@@ -197,11 +161,11 @@ const Add = () => {
         }
       })();
 
-      await addWord(filteredData);
+      await editWord({ id: wordId, ...filteredData });
 
       toast({
-        title: _(msg`Successfully added word!`),
-        description: _(msg`The word has been added to your dictionary.`),
+        title: _(msg`Successfully updated the word!`),
+        description: _(msg`The word has been updated.`),
       });
 
       refresh();
@@ -211,40 +175,45 @@ const Add = () => {
       }
 
       toast({
-        title: _(msg`Failed to add word!`),
+        title: _(msg`Failed to update the word!`),
         description: _(
-          msg`There was an error adding your word. Please try again.`,
+          msg`There was an error updating your word. Please try again.`,
         ),
         variant: "destructive",
       });
     }
   };
 
-  useEffect(() => {
-    if (form.formState.isSubmitSuccessful) {
-      form.reset();
-    }
-  }, [form.formState, form.reset]);
+  const content = data?.word!;
 
   return (
     <Page>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Breadcrumbs />
+          <Breadcrumbs word={content} />
 
           <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
               <BackButton />
 
               <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                <Trans>Add a new word to your dictionary</Trans>
+                {content}
               </h1>
 
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" type="button" size="sm" asChild>
-                  <Link to="/">
-                    <Trans>Discard</Trans>
-                  </Link>
+                <Button
+                  variant="destructive"
+                  type="button"
+                  size="sm"
+                  onClick={async () => {
+                    await deleteWord({ id: data?.id! });
+
+                    refresh();
+
+                    navigate({ to: "/" });
+                  }}
+                >
+                  <Trans>Delete</Trans>
                 </Button>
 
                 <Button size="sm" type="submit">
@@ -266,10 +235,19 @@ const Add = () => {
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" size="sm" type="button" asChild>
-                <Link to="/">
-                  <Trans>Discard</Trans>
-                </Link>
+              <Button
+                variant="destructive"
+                type="button"
+                size="sm"
+                onClick={async () => {
+                  await deleteWord({ id: data?.id! });
+
+                  refresh();
+
+                  navigate({ to: "/" });
+                }}
+              >
+                <Trans>Delete</Trans>
               </Button>
 
               <Button size="sm">
@@ -283,6 +261,24 @@ const Add = () => {
   );
 };
 
-export const Route = createLazyFileRoute("/_app-layout/dictionary/add")({
-  component: Add,
+export const Route = createFileRoute("/_app-layout/dictionary/edit/$wordId")({
+  component: Edit,
+  beforeLoad: async ({ params }) => {
+    const wordId = params.wordId;
+
+    // TODO: using ensureQueryData results in data being undefined
+    // when accessed for the first time
+    await queryClient.fetchQuery({
+      queryKey: [
+        ...getQueryKey(
+          trpc.dictionary.find,
+          {
+            id: wordId,
+          },
+          "query",
+        ),
+      ],
+      queryFn: () => trpcClient.dictionary.find.query({ id: wordId }),
+    });
+  },
 });

@@ -18,6 +18,7 @@ import { Route as LayoutRouteImport } from './routes/_layout/route'
 import { Route as AppLayoutRouteImport } from './routes/_app-layout/route'
 import { Route as LayoutSignUpRouteImport } from './routes/_layout/sign-up/route'
 import { Route as LayoutLoginRouteImport } from './routes/_layout/login/route'
+import { Route as AppLayoutDictionaryEditWordIdImport } from './routes/_app-layout/dictionary/edit/$wordId'
 
 // Create Virtual Routes
 
@@ -86,6 +87,12 @@ const AppLayoutDictionaryAddRouteLazyRoute =
     ),
   )
 
+const AppLayoutDictionaryEditWordIdRoute =
+  AppLayoutDictionaryEditWordIdImport.update({
+    path: '/dictionary/edit/$wordId',
+    getParentRoute: () => AppLayoutRouteRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -122,6 +129,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLayoutDictionaryAddRouteLazyImport
       parentRoute: typeof AppLayoutRouteImport
     }
+    '/_app-layout/dictionary/edit/$wordId': {
+      preLoaderRoute: typeof AppLayoutDictionaryEditWordIdImport
+      parentRoute: typeof AppLayoutRouteImport
+    }
   }
 }
 
@@ -131,6 +142,7 @@ export const routeTree = rootRoute.addChildren([
   AppLayoutRouteRoute.addChildren([
     AppLayoutSettingsRouteLazyRoute,
     AppLayoutDictionaryAddRouteLazyRoute,
+    AppLayoutDictionaryEditWordIdRoute,
   ]),
   LayoutRouteRoute.addChildren([LayoutLoginRouteRoute, LayoutSignUpRouteRoute]),
   SearchLayoutRouteRoute.addChildren([SearchLayoutIndexLazyRoute]),
