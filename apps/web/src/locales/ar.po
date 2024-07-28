@@ -139,7 +139,7 @@ msgstr "رجوع"
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
-#: src/components/DesktopNavigation.tsx:38 src/components/MobileHeader.tsx:128
+#: src/components/DesktopNavigation.tsx:38 src/components/MobileHeader.tsx:129
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "بحر"
@@ -192,8 +192,8 @@ msgstr "غامق"
 msgid "Definition"
 msgstr "التعريف"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:216
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:250
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:221
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:278
 #: src/routes/_app-layout/settings/route.lazy.tsx:266
 #: src/routes/_app-layout/settings/route.lazy.tsx:289
 msgid "Delete"
@@ -271,7 +271,7 @@ msgstr "فشل إضافة الكلمة!"
 msgid "Failed to delete!"
 msgstr "فشل الحذف!"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:178
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:183
 msgid "Failed to update the word!"
 msgstr "فشل في تحديث الكلمة!"
 
@@ -320,7 +320,7 @@ msgid "Harf {0}"
 msgstr "الحرف {0}"
 
 #: src/components/DesktopNavigation.tsx:48
-#: src/components/DesktopNavigation.tsx:54 src/components/MobileHeader.tsx:141
+#: src/components/DesktopNavigation.tsx:54 src/components/MobileHeader.tsx:143
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:105
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:50
 msgid "Home"
@@ -382,7 +382,7 @@ msgstr "فاتح"
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#: src/components/DesktopNavigation.tsx:103 src/components/MobileHeader.tsx:172
+#: src/components/DesktopNavigation.tsx:103 src/components/MobileHeader.tsx:175
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
@@ -475,6 +475,11 @@ msgstr "المضارع"
 msgid "Remove"
 msgstr "احذف"
 
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:249
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:263
+msgid "Reset flashcard"
+msgstr "أعد البطاقة"
+
 #: src/routes/_search-layout/index.lazy.tsx:61
 msgid "Review flashcards"
 msgstr "ادرس البطاقات"
@@ -485,8 +490,8 @@ msgstr "الجذر"
 
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:251
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:276
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:220
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:254
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:225
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:282
 msgid "Save"
 msgstr "احفظ"
 
@@ -513,7 +518,7 @@ msgstr "اختر الجنس"
 msgid "Sentence"
 msgstr "جملة"
 
-#: src/components/DesktopNavigation.tsx:81 src/components/MobileHeader.tsx:152
+#: src/components/DesktopNavigation.tsx:81 src/components/MobileHeader.tsx:155
 #: src/routes/_app-layout/settings/route.lazy.tsx:84
 msgid "Settings"
 msgstr "الإعدادات"
@@ -538,7 +543,7 @@ msgstr "نجح الحذف!"
 msgid "Successfully imported!"
 msgstr "تم الاستيراد بنجاح!"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:167
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:172
 msgid "Successfully updated the word!"
 msgstr "حدثت الكلمة بنجاح!"
 
@@ -590,7 +595,7 @@ msgstr "الحروف الجذرية للكلمة. يمكن فصل المدخلا
 msgid "The word has been added to your dictionary."
 msgstr "تمت إضافة الكلمة إلى معجمك."
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:168
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:173
 msgid "The word has been updated."
 msgstr "حدثت الكلمة."
 
@@ -606,7 +611,7 @@ msgstr "حدث خطأ أثناء حذف معجمك. حاول مرة أخرى ل�
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء استيراد لمعجمك. حاول مرة أخرى لاحقا."
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:180
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:185
 msgid "There was an error updating your word. Please try again."
 msgstr "حدث خطأ أثناء تحديث كلمتك. حاول مرة أخرى."
 

@@ -139,7 +139,7 @@ msgstr "Back"
 msgid "Back to top"
 msgstr "Back to top"
 
-#: src/components/DesktopNavigation.tsx:38 src/components/MobileHeader.tsx:128
+#: src/components/DesktopNavigation.tsx:38 src/components/MobileHeader.tsx:129
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "Bahar"
@@ -192,8 +192,8 @@ msgstr "Dark"
 msgid "Definition"
 msgstr "Definition"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:216
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:250
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:221
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:278
 #: src/routes/_app-layout/settings/route.lazy.tsx:266
 #: src/routes/_app-layout/settings/route.lazy.tsx:289
 msgid "Delete"
@@ -271,7 +271,7 @@ msgstr "Failed to add word!"
 msgid "Failed to delete!"
 msgstr "Failed to delete!"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:178
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:183
 msgid "Failed to update the word!"
 msgstr "Failed to update the word!"
 
@@ -320,7 +320,7 @@ msgid "Harf {0}"
 msgstr "Harf {0}"
 
 #: src/components/DesktopNavigation.tsx:48
-#: src/components/DesktopNavigation.tsx:54 src/components/MobileHeader.tsx:141
+#: src/components/DesktopNavigation.tsx:54 src/components/MobileHeader.tsx:143
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:105
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:50
 msgid "Home"
@@ -382,7 +382,7 @@ msgstr "Light"
 msgid "Log in"
 msgstr "Log in"
 
-#: src/components/DesktopNavigation.tsx:103 src/components/MobileHeader.tsx:172
+#: src/components/DesktopNavigation.tsx:103 src/components/MobileHeader.tsx:175
 msgid "Logout"
 msgstr "Logout"
 
@@ -475,6 +475,11 @@ msgstr "Present tense"
 msgid "Remove"
 msgstr "Remove"
 
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:249
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:263
+msgid "Reset flashcard"
+msgstr "Reset flashcard"
+
 #: src/routes/_search-layout/index.lazy.tsx:61
 msgid "Review flashcards"
 msgstr "Review flashcards"
@@ -485,8 +490,8 @@ msgstr "Root letters"
 
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:251
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:276
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:220
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:254
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:225
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:282
 msgid "Save"
 msgstr "Save"
 
@@ -513,7 +518,7 @@ msgstr "Select type"
 msgid "Sentence"
 msgstr "Sentence"
 
-#: src/components/DesktopNavigation.tsx:81 src/components/MobileHeader.tsx:152
+#: src/components/DesktopNavigation.tsx:81 src/components/MobileHeader.tsx:155
 #: src/routes/_app-layout/settings/route.lazy.tsx:84
 msgid "Settings"
 msgstr "Settings"
@@ -538,7 +543,7 @@ msgstr "Successfully deleted!"
 msgid "Successfully imported!"
 msgstr "Successfully imported!"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:167
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:172
 msgid "Successfully updated the word!"
 msgstr "Successfully updated the word!"
 
@@ -590,7 +595,7 @@ msgstr "The root letters of the word. The input can be separated by commas, spac
 msgid "The word has been added to your dictionary."
 msgstr "The word has been added to your dictionary."
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:168
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:173
 msgid "The word has been updated."
 msgstr "The word has been updated."
 
@@ -606,7 +611,7 @@ msgstr "There was an error deleting your dictionary. Please try again later."
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "There was an error importing your dictionary. Please try again later."
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:180
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:185
 msgid "There was an error updating your word. Please try again."
 msgstr "There was an error updating your word. Please try again."
 
