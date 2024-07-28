@@ -13,7 +13,6 @@ import { useCountdown } from "@/hooks/useCountdown";
 import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "@tanstack/react-router";
-import { trpc } from "@/lib/trpc";
 
 /**
  * The difference in the height of the infinite list and the
