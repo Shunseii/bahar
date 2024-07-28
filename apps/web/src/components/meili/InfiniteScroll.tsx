@@ -69,8 +69,7 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
    * to avoid flickering.
    */
   const { isCountdownComplete } = useCountdown(1000);
-  const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
-  const { status, refresh } = useInstantSearch();
+  const { status } = useInstantSearch();
   const { hits, showMore, isLastPage } = useInfiniteHits<Hit>(props);
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
