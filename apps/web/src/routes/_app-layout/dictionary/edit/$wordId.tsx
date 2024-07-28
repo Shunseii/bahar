@@ -82,6 +82,13 @@ const BackButton = () => {
 };
 
 const Edit = () => {
+  const { mutateAsync: resetFlashcard } = trpc.flashcard.reset.useMutation({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: getQueryKey(trpc.flashcard.today, undefined, "query"),
+      });
+    },
+  });
   const { mutateAsync: editWord } = trpc.dictionary.editWord.useMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -99,7 +106,7 @@ const Edit = () => {
   const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
   const { wordId } = Route.useParams();
   const navigate = useNavigate();
-  const { data, status } = trpc.dictionary.find.useQuery({ id: wordId });
+  const { data } = trpc.dictionary.find.useQuery({ id: wordId });
   const { toast } = useToast();
   const { refresh } = useInstantSearch();
   const { _ } = useLingui();
@@ -134,8 +141,6 @@ const Edit = () => {
       },
     },
   });
-
-  console.log({ status, data });
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     try {
@@ -231,10 +236,33 @@ const Edit = () => {
 
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                 <CategoryFormSection />
+
+                <Button
+                  variant="destructive"
+                  type="button"
+                  size="sm"
+                  className="hidden sm:block"
+                  onClick={async () => {
+                    await resetFlashcard({ id: data?.id! });
+                  }}
+                >
+                  <Trans>Reset flashcard</Trans>
+                </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
+              <Button
+                variant="destructive"
+                type="button"
+                size="sm"
+                onClick={async () => {
+                  await editWord({ id: data?.id!, flashcard: null });
+                }}
+              >
+                <Trans>Reset flashcard</Trans>
+              </Button>
+
               <Button
                 variant="destructive"
                 type="button"

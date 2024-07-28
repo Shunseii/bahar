@@ -42,7 +42,7 @@ export const DictionarySchema = z.object({
     )
     .optional(),
   type: z.enum(["ism", "fi'l", "harf"]).optional(),
-  flashcard: FlashcardSchema.optional(),
+  flashcard: FlashcardSchema.optional().nullable(),
   morphology: z
     .object({
       ism: z

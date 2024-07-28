@@ -70,6 +70,31 @@ export const flashcardRouter = router({
       };
     }),
 
+  reset: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx;
+
+      const { id } = input;
+
+      const userIndex = meilisearchClient.index(user.id);
+
+      const document = await userIndex.getDocument(id);
+
+      const { taskUid } = await userIndex.addDocuments([
+        {
+          ...document,
+          flashcard: undefined,
+        },
+      ]);
+
+      await meilisearchClient.index(user.id).waitForTask(taskUid);
+
+      return {
+        id,
+      };
+    }),
+
   update: protectedProcedure
     .input(FlashcardSchema)
     .mutation(async ({ ctx, input }) => {

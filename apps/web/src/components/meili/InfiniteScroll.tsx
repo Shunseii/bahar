@@ -10,10 +10,10 @@ import { useMeasure, useWindowScroll } from "@uidotdev/usehooks";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
 import { useCountdown } from "@/hooks/useCountdown";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import { trpc } from "@/lib/trpc";
 
 /**
  * The difference in the height of the infinite list and the
@@ -69,7 +69,8 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
    * to avoid flickering.
    */
   const { isCountdownComplete } = useCountdown(1000);
-  const { status } = useInstantSearch();
+  const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
+  const { status, refresh } = useInstantSearch();
   const { hits, showMore, isLastPage } = useInfiniteHits<Hit>(props);
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
