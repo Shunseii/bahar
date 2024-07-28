@@ -117,7 +117,8 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
         >
           <nav className="flex flex-col gap-y-6 text-lg font-medium">
             <Link
-              href="/"
+              to="/"
+              params={{}}
               onClick={() => {
                 setIsOpen(false);
               }}
@@ -132,6 +133,7 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
             <div className="flex flex-col gap-y-2">
               <NavLink
                 to="/"
+                params={{}}
                 className="h-auto w-auto justify-start gap-x-2"
                 onClick={() => {
                   setIsOpen(false);
@@ -143,6 +145,7 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
 
               <NavLink
                 to="/settings"
+                params={{}}
                 onClick={() => {
                   setIsOpen(false);
                 }}
