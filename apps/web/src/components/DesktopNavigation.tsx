@@ -41,7 +41,7 @@ export const DesktopNavigation = () => {
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <NavLink to="/">
+            <NavLink to="/" params={{}}>
               <Home className="h-5 w-5" />
 
               <span className="sr-only">
