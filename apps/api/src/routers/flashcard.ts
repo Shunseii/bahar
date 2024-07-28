@@ -14,7 +14,7 @@ export type Flashcard = Card & {
 };
 
 export const FlashcardSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   content: z.string(),
   translation: z.string(),
   elapsed_days: z.number(),
@@ -82,7 +82,10 @@ export const flashcardRouter = router({
         .updateDocuments([
           {
             id,
-            flashcard,
+            flashcard: {
+              ...flashcard,
+              id,
+            },
           },
         ]);
 
