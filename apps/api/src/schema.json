@@ -9,7 +9,7 @@
       },
       "word": {
         "type": "string",
-        "description": "A word in Arabic."
+        "description": "A word or expression in Arabic."
       },
       "definition": {
         "type": "string",
@@ -22,7 +22,7 @@
       "type": {
         "type": "string",
         "description": "The type of the word.",
-        "enum": ["ism", "fi'l", "harf"]
+        "enum": ["ism", "fi'l", "harf", "expression"]
       },
       "root": {
         "type": "array",
@@ -171,14 +171,6 @@
         "type": "object",
         "description": "Properties used for scheduling the flashcards associated with the word using FSRS. When adding new words, just set these to the default values. For updating existing words, leave them as-is to keep flashcard progress or set to default values to reset it.",
         "properties": {
-          "content": {
-            "type": "string",
-            "description": "The content of the flashcard."
-          },
-          "translation": {
-            "type": "string",
-            "description": "The translation of the flashcard."
-          },
           "difficulty": {
             "type": "number",
             "minimum": 0,

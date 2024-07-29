@@ -12,7 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Trans, msg } from "@lingui/macro";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { z } from "@/lib/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -30,6 +30,7 @@ import { useLingui } from "@lingui/react";
 import { useInstantSearch } from "react-instantsearch";
 import { FC } from "react";
 import { FormSchema } from "../add/route.lazy";
+import { useDir } from "@/hooks/useDir";
 
 export enum Inflection {
   indeclinable = 1,
@@ -63,6 +64,8 @@ const Breadcrumbs: FC<{ className?: string; word: string }> = ({
 };
 
 const BackButton = () => {
+  const dir = useDir();
+
   return (
     <Button
       variant="outline"
@@ -72,7 +75,11 @@ const BackButton = () => {
       asChild
     >
       <Link to="/">
-        <ChevronLeft className="h-4 w-4" />
+        {dir === "rtl" ? (
+          <ChevronRight className="h-4 w-4" />
+        ) : (
+          <ChevronLeft className="h-4 w-4" />
+        )}
         <span className="sr-only">
           <Trans>Back</Trans>
         </span>
@@ -115,7 +122,7 @@ const Edit = () => {
     defaultValues: {
       word: data?.word ?? "",
       translation: data?.translation ?? "",
-      root: data?.root ? data.root.join("") : "",
+      root: data?.root ? data.root.join(" ") : "",
       type: data?.type ?? "ism",
       examples: data?.examples ?? [],
       definition: data?.definition ?? "",
@@ -148,19 +155,28 @@ const Edit = () => {
         if (data.type === "ism") {
           return {
             ...data,
-            root: data?.root?.split(""),
+            root: data?.root
+              ?.trim()
+              ?.replace(/[\s,]+/g, "")
+              ?.split(""),
             morphology: { ism: data?.morphology?.ism },
           };
         } else if (data.type === "fi'l") {
           return {
             ...data,
-            root: data?.root?.split(""),
+            root: data?.root
+              ?.trim()
+              ?.replace(/[\s,]+/g, "")
+              ?.split(""),
             morphology: { verb: data?.morphology?.verb },
           };
         } else {
           return {
             ...data,
-            root: data?.root?.split(""),
+            root: data?.root
+              ?.trim()
+              ?.replace(/[\s,]+/g, "")
+              ?.split(""),
             morphology: undefined,
           };
         }

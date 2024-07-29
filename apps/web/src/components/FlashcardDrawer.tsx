@@ -1,4 +1,4 @@
-import { Plural, Trans } from "@lingui/macro";
+import { Plural, Trans, t } from "@lingui/macro";
 import { Tooltip, TooltipTrigger, TooltipContent } from "./ui/tooltip";
 import { Button } from "./ui/button";
 import { formatDistanceToNow } from "date-fns";
@@ -26,6 +26,20 @@ import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { motion } from "framer-motion";
 import { useDir } from "@/hooks/useDir";
+import { Badge } from "./ui/badge";
+
+const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
+  switch (str) {
+    case "ism":
+      return t`Noun`;
+    case "fi'l":
+      return t`Verb`;
+    case "harf":
+      return t`Preposition`;
+    case "expression":
+      return t`Expression`;
+  }
+};
 
 export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   const dir = useDir();
@@ -63,9 +77,11 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   const f = useMemo(() => fsrs(), []);
   const now = new Date();
 
-  const scheduling_cards = currentCard ? f.repeat(currentCard, now) : undefined;
+  const scheduling_cards = currentCard
+    ? f.repeat(currentCard.flashcard, now)
+    : undefined;
   const currentFlashcardIndex = flashcards.findIndex(
-    (flashcard) => flashcard.id === currentCard?.id,
+    (flashcard) => flashcard.card.id === currentCard?.card.id,
   );
 
   const gradeCard = useCallback(
@@ -80,9 +96,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
 
       const newCard = {
         ...selectedCard,
-        id: currentCard.id,
-        content: currentCard.content,
-        translation: currentCard.translation,
+        id: currentCard.card.id,
         due: selectedCard.due.toISOString(),
         last_review: selectedCard?.last_review?.toISOString() ?? null,
         due_timestamp: dueTimestamp,
@@ -102,6 +116,22 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   if (status === "pending") {
     return null;
   }
+
+  const isIsm = currentCard?.card.type === "ism";
+  const firstPlural = currentCard?.card.morphology?.ism?.plurals?.[0].word;
+  const singular = currentCard?.card.morphology?.ism?.singular;
+  const hasPlurals = isIsm && !!firstPlural;
+  const hasSingular = isIsm && !!singular;
+
+  const isVerb = currentCard?.card.type === "fi'l";
+  const pastTense = currentCard?.card.morphology?.verb?.past_tense;
+  const presentTense = currentCard?.card.morphology?.verb?.present_tense;
+  const firstMasdar = currentCard?.card.morphology?.verb?.masadir?.[0].word;
+  const hasPastTense = isVerb && !!pastTense;
+  const hasPresentTense = isVerb && !!presentTense;
+  const hasMasdar = isVerb && !!firstMasdar;
+
+  const root = currentCard?.card.root;
 
   return (
     <Drawer
@@ -144,9 +174,52 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
 
         {!currentCard ? undefined : (
           <div className="w-full max-w-2xl mx-auto flex flex-col gap-y-4 px-8">
+            {!!currentCard.card.type && (
+              <Badge variant="secondary" className="w-max self-end">
+                {getTranslatedType(currentCard.card.type)}
+              </Badge>
+            )}
+
             <p dir="rtl" className="rtl:text-right text-xl sm:text-2xl">
-              {currentCard.content}
+              {currentCard.card.word}
             </p>
+
+            <div className="flex gap-x-2 items-center self-end">
+              {hasPlurals && (
+                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+                  (ج) {firstPlural}
+                </p>
+              )}
+              {hasSingular && (
+                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+                  (م) {singular}
+                </p>
+              )}
+
+              {hasMasdar && (
+                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+                  {firstMasdar}
+                </p>
+              )}
+
+              {hasPresentTense && (
+                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+                  {presentTense}
+                </p>
+              )}
+
+              {hasPastTense && (
+                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+                  {pastTense}
+                </p>
+              )}
+            </div>
+
+            {isVerb && root && (
+              <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+                {root.join("-")}
+              </p>
+            )}
 
             {showAnswer && (
               <motion.p
@@ -155,7 +228,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                {currentCard.translation}
+                {currentCard.card.translation}
               </motion.p>
             )}
           </div>

@@ -2,39 +2,36 @@ import { router, protectedProcedure } from "../trpc";
 import { meilisearchClient } from "../clients/meilisearch";
 import { Card, createEmptyCard } from "ts-fsrs";
 import { z } from "zod";
+import { DictionarySchema } from "../schemas/dictionary.schema";
+import { FlashcardSchema } from "../schemas/flashcard.schema";
 
 export type Flashcard = Card & {
   id: string;
-  content: string;
-  translation: string;
   due: string;
   last_review: string | null;
   due_timestamp: number;
   last_review_timestamp: number | null;
 };
 
-export const FlashcardSchema = z.object({
-  id: z.string().optional(),
-  content: z.string(),
-  translation: z.string(),
-  elapsed_days: z.number(),
-  lapses: z.number(),
-  reps: z.number(),
-  scheduled_days: z.number(),
-  stability: z.number(),
-  state: z.number(),
-  difficulty: z.number(),
-  due: z.string(),
-  due_timestamp: z.number(),
-  last_review: z.string().nullable(),
-  last_review_timestamp: z.number().nullable(),
-});
-
 export const flashcardRouter = router({
   today: protectedProcedure
     .output(
       z.object({
-        flashcards: z.array(FlashcardSchema),
+        flashcards: z.array(
+          z.object({
+            flashcard: FlashcardSchema,
+            card: DictionarySchema.pick({
+              id: true,
+              word: true,
+              type: true,
+              translation: true,
+              morphology: true,
+              definition: true,
+              examples: true,
+              root: true,
+            }),
+          }),
+        ),
       }),
     )
     .query(async ({ ctx }) => {
@@ -52,21 +49,36 @@ export const flashcardRouter = router({
         limit: 1000,
       });
 
-      const flashcards: Flashcard[] = results.map(
-        ({ id, word, translation, flashcard }) => {
-          const card = flashcard ?? getEmptyFlashcard(id);
-
-          return {
-            id,
-            content: word,
-            translation,
-            ...card,
-          };
-        },
-      );
+      const dictionaryWords = results as z.infer<typeof DictionarySchema>[];
 
       return {
-        flashcards,
+        flashcards: dictionaryWords.map(
+          ({
+            id,
+            word,
+            type,
+            translation,
+            flashcard,
+            morphology,
+            definition,
+            examples,
+            root,
+          }) => {
+            return {
+              flashcard: flashcard ?? getEmptyFlashcard(id),
+              card: {
+                id,
+                word,
+                type,
+                translation,
+                morphology,
+                definition,
+                examples,
+                root,
+              },
+            };
+          },
+        ),
       };
     }),
 

@@ -16,78 +16,13 @@ import { auth } from "../middleware";
 import { ErrorCode, MeilisearchError } from "../error";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { FlashcardSchema } from "./flashcard";
-
-// TODO: use shared schema between client and server
+import { DictionarySchema } from "../schemas/dictionary.schema";
 
 export enum Inflection {
   indeclinable = 1,
   diptote = 2,
   triptote = 3,
 }
-
-export const DictionarySchema = z.object({
-  id: z.string().min(1),
-  word: z.string().min(1),
-  translation: z.string().min(1),
-  definition: z.string().optional(),
-  root: z.array(z.string()).optional(),
-  examples: z
-    .array(
-      z.object({
-        sentence: z.string(),
-        context: z.string().optional(),
-        translation: z.string().optional(),
-      }),
-    )
-    .optional(),
-  type: z.enum(["ism", "fi'l", "harf"]).optional(),
-  flashcard: FlashcardSchema.optional().nullable(),
-  morphology: z
-    .object({
-      ism: z
-        .object({
-          singular: z.string().optional(),
-          dual: z.string().optional(),
-          plurals: z
-            .array(
-              z.object({ word: z.string(), details: z.string().optional() }),
-            )
-            .optional(),
-          gender: z.enum(["masculine", "feminine"]).optional(),
-          inflection: z.nativeEnum(Inflection).optional(),
-        })
-        .optional(),
-      verb: z
-        .object({
-          huroof: z
-            .array(
-              z.object({
-                harf: z.string(),
-                meaning: z.string().optional(),
-              }),
-            )
-            .optional(),
-          past_tense: z.string().optional(),
-          present_tense: z.string().optional(),
-          active_participle: z.string().optional(),
-          passive_participle: z.string().optional(),
-          imperative: z.string().optional(),
-          masadir: z
-            .array(
-              z.object({
-                word: z.string(),
-                details: z.string().optional(),
-              }),
-            )
-            .optional(),
-          form: z.string().optional(),
-          form_arabic: z.string().optional(),
-        })
-        .optional(),
-    })
-    .optional(),
-});
 
 const upload = multer({
   storage: multer.memoryStorage(),

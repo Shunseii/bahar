@@ -193,7 +193,7 @@ export const VerbMorphologyCardSection = () => {
                             dir="rtl"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1"
+                            className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
                             {...renderField}
                           />
                         </FormControl>
@@ -349,7 +349,7 @@ export const VerbMorphologyCardSection = () => {
                             dir="rtl"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1"
+                            className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
                             {...renderField}
                           />
                         </FormControl>

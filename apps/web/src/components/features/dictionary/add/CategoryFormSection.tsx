@@ -130,6 +130,9 @@ export const CategoryFormSection = () => {
                       <SelectItem value="harf">
                         <Trans>Harf</Trans>
                       </SelectItem>
+                      <SelectItem value="expression">
+                        <Trans>Expression</Trans>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
 

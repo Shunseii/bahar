@@ -48,7 +48,7 @@ export const FormSchema = z.object({
       }),
     )
     .optional(),
-  type: z.enum(["ism", "fi'l", "harf"]).optional(),
+  type: z.enum(["ism", "fi'l", "harf", "expression"]).optional(),
   morphology: z
     .object({
       ism: z
@@ -179,19 +179,28 @@ const Add = () => {
         if (data.type === "ism") {
           return {
             ...data,
-            root: data?.root?.split(""),
+            root: data?.root
+              ?.trim()
+              ?.replace(/[\s,]+/g, "")
+              ?.split(""),
             morphology: { ism: data?.morphology?.ism },
           };
         } else if (data.type === "fi'l") {
           return {
             ...data,
-            root: data?.root?.split(""),
+            root: data?.root
+              ?.trim()
+              ?.replace(/[\s,]+/g, "")
+              ?.split(""),
             morphology: { verb: data?.morphology?.verb },
           };
         } else {
           return {
             ...data,
-            root: data?.root?.split(""),
+            root: data?.root
+              ?.trim()
+              ?.replace(/[\s,]+/g, "")
+              ?.split(""),
             morphology: undefined,
           };
         }
