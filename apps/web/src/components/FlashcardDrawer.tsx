@@ -184,7 +184,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
               {currentCard.card.word}
             </p>
 
-            <div className="flex gap-x-2 items-center">
+            <div className="flex gap-x-2 items-center ltr:self-end rtl:self-start rtl:flex-row-reverse">
               {hasPlurals && (
                 <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
                   (ج) {firstPlural}
