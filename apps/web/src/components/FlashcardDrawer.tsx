@@ -126,7 +126,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   const isVerb = currentCard?.card.type === "fi'l";
   const pastTense = currentCard?.card.morphology?.verb?.past_tense;
   const presentTense = currentCard?.card.morphology?.verb?.present_tense;
-  const firstMasdar = currentCard?.card.morphology?.verb?.masadir?.[0].word;
+  const firstMasdar = currentCard?.card.morphology?.verb?.masadir?.[0]?.word;
   const hasPastTense = isVerb && !!pastTense;
   const hasPresentTense = isVerb && !!presentTense;
   const hasMasdar = isVerb && !!firstMasdar;
