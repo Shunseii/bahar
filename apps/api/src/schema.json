@@ -96,9 +96,9 @@
                 "enum": ["masculine", "feminine"]
               },
               "inflection": {
-                "type": "integer",
+                "type": "string",
                 "description": "The inflection of the word. This refers to how many case endings the word can take. Three means it can take all three, two means it can only take raf' and nasb, and one means it is indeclinable.",
-                "enum": [1, 2, 3]
+                "enum": ["indeclinable", "diptote", "triptote"]
               }
             }
           },

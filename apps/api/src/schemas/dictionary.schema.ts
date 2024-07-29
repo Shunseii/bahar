@@ -32,7 +32,7 @@ export const DictionarySchema = z.object({
             )
             .optional(),
           gender: z.enum(["masculine", "feminine"]).optional(),
-          inflection: z.number().optional(),
+          inflection: z.string().optional(),
           // TODO: fix validation error
           // inflection: z.nativeEnum(Inflection).optional(),
         })

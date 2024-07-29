@@ -118,7 +118,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const isIsm = currentCard?.card.type === "ism";
-  const firstPlural = currentCard?.card.morphology?.ism?.plurals?.[0].word;
+  const firstPlural = currentCard?.card.morphology?.ism?.plurals?.[0]?.word;
   const singular = currentCard?.card.morphology?.ism?.singular;
   const hasPlurals = isIsm && !!firstPlural;
   const hasSingular = isIsm && !!singular;

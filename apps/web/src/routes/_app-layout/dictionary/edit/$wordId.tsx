@@ -29,14 +29,8 @@ import { useToast } from "@/hooks/useToast";
 import { useLingui } from "@lingui/react";
 import { useInstantSearch } from "react-instantsearch";
 import { FC } from "react";
-import { FormSchema } from "../add/route.lazy";
+import { FormSchema, Inflection } from "../add/route.lazy";
 import { useDir } from "@/hooks/useDir";
-
-export enum Inflection {
-  indeclinable = 1,
-  diptote = 2,
-  triptote = 3,
-}
 
 const Breadcrumbs: FC<{ className?: string; word: string }> = ({
   className,

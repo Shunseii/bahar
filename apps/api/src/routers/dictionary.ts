@@ -19,9 +19,9 @@ import { TRPCError } from "@trpc/server";
 import { DictionarySchema } from "../schemas/dictionary.schema";
 
 export enum Inflection {
-  indeclinable = 1,
-  diptote = 2,
-  triptote = 3,
+  indeclinable = "indeclinable ",
+  diptote = "diptote ",
+  triptote = "triptote ",
 }
 
 const upload = multer({

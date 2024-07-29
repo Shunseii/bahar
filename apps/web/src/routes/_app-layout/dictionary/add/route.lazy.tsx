@@ -29,9 +29,9 @@ import { useInstantSearch } from "react-instantsearch";
 import { useEffect } from "react";
 
 export enum Inflection {
-  indeclinable = 1,
-  diptote = 2,
-  triptote = 3,
+  indeclinable = "indeclinable",
+  diptote = "diptote",
+  triptote = "triptote",
 }
 
 export const FormSchema = z.object({
@@ -61,7 +61,9 @@ export const FormSchema = z.object({
             )
             .optional(),
           gender: z.enum(["masculine", "feminine"]).optional(),
-          inflection: z.nativeEnum(Inflection).optional(),
+          inflection: z.string().optional(),
+          // TODO: fix validation error
+          // inflection: z.nativeEnum(Inflection).optional(),
         })
         .optional(),
       verb: z

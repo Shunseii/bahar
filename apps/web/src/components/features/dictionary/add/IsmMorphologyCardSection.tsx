@@ -282,11 +282,11 @@ export const IsmMorphologyCardSection = () => {
 
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value as any} // Need to use integer value here
+                  defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger
-                      id="gender"
+                      id="inflection"
                       aria-label={_(msg`Select inflection`)}
                     >
                       <SelectValue placeholder={_(msg`Select inflection`)} />
@@ -294,13 +294,13 @@ export const IsmMorphologyCardSection = () => {
                   </FormControl>
 
                   <SelectContent>
-                    <SelectItem value={String(Inflection.triptote)}>
+                    <SelectItem value={Inflection.triptote}>
                       <Trans>Triptote</Trans>
                     </SelectItem>
-                    <SelectItem value={String(Inflection.diptote)}>
+                    <SelectItem value={Inflection.diptote}>
                       <Trans>Diptote</Trans>
                     </SelectItem>
-                    <SelectItem value={String(Inflection.indeclinable)}>
+                    <SelectItem value={Inflection.indeclinable}>
                       <Trans>Indeclinable</Trans>
                     </SelectItem>
                   </SelectContent>
