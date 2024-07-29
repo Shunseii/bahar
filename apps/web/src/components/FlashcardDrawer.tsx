@@ -175,7 +175,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
         {!currentCard ? undefined : (
           <div className="w-full max-w-2xl mx-auto flex flex-col gap-y-4 px-8">
             {!!currentCard.card.type && (
-              <Badge variant="secondary" className="w-max self-end">
+              <Badge variant="secondary" className="w-max">
                 {getTranslatedType(currentCard.card.type)}
               </Badge>
             )}
@@ -184,7 +184,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
               {currentCard.card.word}
             </p>
 
-            <div className="flex gap-x-2 items-center self-end">
+            <div className="flex gap-x-2 items-center">
               {hasPlurals && (
                 <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
                   (ج) {firstPlural}
