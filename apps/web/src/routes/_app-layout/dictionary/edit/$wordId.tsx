@@ -50,7 +50,9 @@ const Breadcrumbs: FC<{ className?: string; word: string }> = ({
         <BreadcrumbSeparator />
 
         <BreadcrumbItem>
-          <BreadcrumbPage>Edit {word}</BreadcrumbPage>
+          <BreadcrumbPage>
+            <Trans>Edit {word}</Trans>
+          </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
 import { FormSchema } from "@/routes/_app-layout/dictionary/add/route.lazy";
 import { msg, Trans } from "@lingui/macro";
@@ -33,6 +34,7 @@ import { useFormContext } from "react-hook-form";
 
 export const CategoryFormSection = () => {
   const { _ } = useLingui();
+  const dir = useDir();
   const form = useFormContext<z.infer<typeof FormSchema>>();
 
   return (
@@ -113,6 +115,7 @@ export const CategoryFormSection = () => {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    dir={dir}
                   >
                     <FormControl>
                       <SelectTrigger id="type" aria-label={_(msg`Select type`)}>

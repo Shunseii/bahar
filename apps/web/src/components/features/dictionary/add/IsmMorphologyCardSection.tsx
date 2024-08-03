@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
 import {
   FormSchema,
@@ -39,6 +40,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 
 export const IsmMorphologyCardSection = () => {
   const { _ } = useLingui();
+  const dir = useDir();
   const form = useFormContext<z.infer<typeof FormSchema>>();
 
   const {
@@ -213,6 +215,7 @@ export const IsmMorphologyCardSection = () => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  dir={dir}
                 >
                   <FormControl>
                     <SelectTrigger
@@ -283,6 +286,7 @@ export const IsmMorphologyCardSection = () => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  dir={dir}
                 >
                   <FormControl>
                     <SelectTrigger

@@ -9,7 +9,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Trans, msg } from "@lingui/macro";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { z } from "@/lib/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -27,6 +27,7 @@ import { useToast } from "@/hooks/useToast";
 import { useLingui } from "@lingui/react";
 import { useInstantSearch } from "react-instantsearch";
 import { useEffect } from "react";
+import { useDir } from "@/hooks/useDir";
 
 export enum Inflection {
   indeclinable = "indeclinable",
@@ -112,7 +113,9 @@ const Breadcrumbs = ({ className }: { className?: string }) => {
         <BreadcrumbSeparator />
 
         <BreadcrumbItem>
-          <BreadcrumbPage>Add word</BreadcrumbPage>
+          <BreadcrumbPage>
+            <Trans>Add word</Trans>
+          </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
@@ -120,6 +123,8 @@ const Breadcrumbs = ({ className }: { className?: string }) => {
 };
 
 const BackButton = () => {
+  const dir = useDir();
+
   return (
     <Button
       variant="outline"
@@ -129,7 +134,11 @@ const BackButton = () => {
       asChild
     >
       <Link to="/">
-        <ChevronLeft className="h-4 w-4" />
+        {dir === "rtl" ? (
+          <ChevronRight className="h-4 w-4" />
+        ) : (
+          <ChevronLeft className="h-4 w-4" />
+        )}
         <span className="sr-only">
           <Trans>Back</Trans>
         </span>

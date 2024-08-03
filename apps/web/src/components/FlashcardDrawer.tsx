@@ -223,12 +223,15 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
 
             {showAnswer && (
               <motion.p
-                dir="ltr"
-                className="ltr:text-left text-base sm:text-lg"
+                className="text-base sm:text-lg"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                {currentCard.card.translation}
+                {!!currentCard.card.definition && (
+                  <p dir="rtl">المعنى: {currentCard.card.definition}</p>
+                )}
+
+                <p dir="ltr">{currentCard.card.translation}</p>
               </motion.p>
             )}
           </div>
@@ -241,10 +244,10 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex gap-x-6 items-center w-max m-auto"
+                  className="flex gap-x-6 items-end w-max m-auto"
                 >
                   <div className="flex flex-col gap-y-2 items-center justify-center">
-                    <p className="ltr:text-sm rtl:text-base ltr:font-light rtl:font-normal">
+                    <p>
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Again].card.due,
                         { locale: dir === "ltr" ? enUS : ar },
@@ -254,14 +257,13 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                     <Button
                       variant="outline"
                       onClick={() => gradeCard(Rating.Again)}
-                      className="rtl:text-lg"
                     >
                       <Trans>Again</Trans>
                     </Button>
                   </div>
 
                   <div className="flex flex-col gap-y-2 items-center justify-center">
-                    <p className="ltr:text-sm rtl:text-base ltr:font-light rtl:font-normal">
+                    <p>
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Hard].card.due,
                         { locale: dir === "ltr" ? enUS : ar },
@@ -271,14 +273,13 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                     <Button
                       variant="destructive"
                       onClick={() => gradeCard(Rating.Hard)}
-                      className="rtl:text-lg"
                     >
                       <Trans>Hard</Trans>
                     </Button>
                   </div>
 
                   <div className="flex flex-col gap-y-2 items-center justify-center">
-                    <p className="ltr:text-sm rtl:text-base ltr:font-light rtl:font-normal">
+                    <p>
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Good].card.due,
                         { locale: dir === "ltr" ? enUS : ar },
@@ -288,14 +289,13 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                     <Button
                       variant="secondary"
                       onClick={() => gradeCard(Rating.Good)}
-                      className="rtl:text-lg"
                     >
                       <Trans>Good</Trans>
                     </Button>
                   </div>
 
                   <div className="flex flex-col gap-y-2 items-center justify-center">
-                    <p className="ltr:text-sm rtl:text-base ltr:font-light rtl:font-normal">
+                    <p className="max-w-14 text-center">
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Easy].card.due,
                         { locale: dir === "ltr" ? enUS : ar },
@@ -303,7 +303,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                     </p>
 
                     <Button
-                      className="bg-green-600 hover:bg-green-600/90 dark:hover:bg-green-500/60 rtl text-lg"
+                      className="bg-green-600 hover:bg-green-600/90 dark:hover:bg-green-500/60"
                       onClick={() => gradeCard(Rating.Easy)}
                     >
                       <Trans>Easy</Trans>
