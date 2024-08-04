@@ -12,7 +12,7 @@ import { Trans } from "@lingui/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useClickAway } from "@uidotdev/usehooks";
-import { Book, Home, PanelLeft, Settings } from "lucide-react";
+import { Home, PanelLeft, Settings } from "lucide-react";
 import React, { FC, PropsWithChildren } from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ import { X } from "lucide-react";
 import { sheetVariantsNoSlideAnimations } from "./ui/sheet/variants";
 import { atom, useAtom } from "jotai";
 import { motion } from "framer-motion";
+import Logo from "@/assets/logo.svg";
 
 const isOpenAtom = atom(false);
 
@@ -122,9 +123,12 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
               onClick={() => {
                 setIsOpen(false);
               }}
-              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-y-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
+              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-y-2 text-lg font-semibold md:text-base"
             >
-              <Book className="h-5 w-5 transition-all group-hover:scale-110" />
+              <img
+                src={Logo}
+                className="h-5 w-5 transition-all group-hover:scale-110"
+              />
               <span className="sr-only">
                 <Trans>Bahar</Trans>
               </span>

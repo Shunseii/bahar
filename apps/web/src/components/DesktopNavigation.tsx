@@ -17,7 +17,8 @@ import { trpc } from "@/lib/trpc";
 import { Trans } from "@lingui/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Book, Home, Settings } from "lucide-react";
+import { Home, Settings } from "lucide-react";
+import Logo from "@/assets/logo.svg";
 
 export const DesktopNavigation = () => {
   const navigate = useNavigate({ from: "/" });
@@ -31,9 +32,12 @@ export const DesktopNavigation = () => {
       <nav className="flex flex-col items-center gap-4 px-2 py-4">
         <Link
           to="/"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 text-lg font-semibold md:h-8 md:w-8 md:text-base"
         >
-          <Book className="h-4 w-4 transition-all group-hover:scale-110" />
+          <img
+            src={Logo}
+            className="h-5 w-5 transition-all group-hover:scale-110"
+          />
           <span className="sr-only">
             <Trans>Bahar</Trans>
           </span>
