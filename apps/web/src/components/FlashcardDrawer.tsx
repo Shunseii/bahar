@@ -247,7 +247,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                   className="flex gap-x-6 items-end w-max m-auto"
                 >
                   <div className="flex flex-col gap-y-2 items-center justify-center">
-                    <p>
+                    <p className="max-w-14 text-center">
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Again].card.due,
                         { locale: dir === "ltr" ? enUS : ar },
@@ -263,7 +263,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                   </div>
 
                   <div className="flex flex-col gap-y-2 items-center justify-center">
-                    <p>
+                    <p className="max-w-14 text-center">
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Hard].card.due,
                         { locale: dir === "ltr" ? enUS : ar },
@@ -279,7 +279,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                   </div>
 
                   <div className="flex flex-col gap-y-2 items-center justify-center">
-                    <p>
+                    <p className="max-w-14 text-center">
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Good].card.due,
                         { locale: dir === "ltr" ? enUS : ar },
