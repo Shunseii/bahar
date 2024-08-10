@@ -39,6 +39,7 @@ export const BasicDetailsFormSection = () => {
                   <Input
                     type="text"
                     dir="rtl"
+                    lang="ar"
                     className="w-full text-xl"
                     {...field}
                   />

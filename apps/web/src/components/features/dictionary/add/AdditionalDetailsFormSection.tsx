@@ -74,6 +74,7 @@ export const AdditionalDetailsFormSection = () => {
                 <FormControl>
                   <Input
                     type="text"
+                    lang="ar"
                     dir="rtl"
                     className="w-full text-xl"
                     {...field}
@@ -112,6 +113,7 @@ export const AdditionalDetailsFormSection = () => {
                       <FormControl>
                         <Input
                           type="text"
+                          lang="ar"
                           dir="rtl"
                           placeholder="ف ع ل"
                           className="w-full text-xl"
@@ -169,6 +171,7 @@ export const AdditionalDetailsFormSection = () => {
                               // Need to do this otherwise the focus border will get cut off
                               // in the dropdown
                               className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
+                              lang="ar"
                               dir="rtl"
                               {...renderField}
                             />

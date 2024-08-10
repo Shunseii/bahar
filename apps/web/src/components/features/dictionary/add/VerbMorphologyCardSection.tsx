@@ -59,6 +59,7 @@ export const VerbMorphologyCardSection = () => {
                 <Input
                   type="text"
                   dir="rtl"
+                  lang="ar"
                   className="w-full text-xl"
                   {...field}
                 />
@@ -82,6 +83,7 @@ export const VerbMorphologyCardSection = () => {
                 <Input
                   type="text"
                   dir="rtl"
+                  lang="ar"
                   className="w-full text-xl"
                   {...field}
                 />
@@ -105,6 +107,7 @@ export const VerbMorphologyCardSection = () => {
                 <Input
                   type="text"
                   dir="rtl"
+                  lang="ar"
                   className="w-full text-xl"
                   {...field}
                 />
@@ -128,6 +131,7 @@ export const VerbMorphologyCardSection = () => {
                 <Input
                   type="text"
                   dir="rtl"
+                  lang="ar"
                   className="w-full text-xl"
                   {...field}
                 />
@@ -151,6 +155,7 @@ export const VerbMorphologyCardSection = () => {
                 <Input
                   type="text"
                   dir="rtl"
+                  lang="ar"
                   className="w-full text-xl"
                   {...field}
                 />
@@ -191,6 +196,7 @@ export const VerbMorphologyCardSection = () => {
                           <Input
                             type="text"
                             dir="rtl"
+                            lang="ar"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
                             className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
@@ -297,6 +303,7 @@ export const VerbMorphologyCardSection = () => {
                 <Input
                   type="text"
                   dir="rtl"
+                  lang="ar"
                   className="w-full text-xl"
                   {...field}
                 />
@@ -347,6 +354,7 @@ export const VerbMorphologyCardSection = () => {
                           <Input
                             type="text"
                             dir="rtl"
+                            lang="ar"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
                             className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"

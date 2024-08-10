@@ -68,6 +68,7 @@ export const IsmMorphologyCardSection = () => {
                 <Input
                   type="text"
                   dir="rtl"
+                  lang="ar"
                   className="w-full text-xl"
                   {...field}
                 />
@@ -91,6 +92,7 @@ export const IsmMorphologyCardSection = () => {
                 <Input
                   type="text"
                   dir="rtl"
+                  lang="ar"
                   className="w-full text-xl"
                   {...field}
                 />
@@ -134,6 +136,7 @@ export const IsmMorphologyCardSection = () => {
                             // in the dropdown
                             className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
                             dir="rtl"
+                            lang="ar"
                             {...renderField}
                           />
                         </FormControl>
