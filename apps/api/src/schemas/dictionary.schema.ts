@@ -6,6 +6,7 @@ import { FlashcardSchema } from "./flashcard.schema";
 export const DictionarySchema = z.object({
   id: z.string().min(1),
   word: z.string().min(1),
+  tags: z.array(z.string()).optional(),
   translation: z.string().min(1),
   definition: z.string().optional(),
   root: z.array(z.string()).optional(),

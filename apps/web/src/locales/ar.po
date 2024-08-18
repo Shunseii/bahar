@@ -49,31 +49,39 @@ msgstr "حرف أو عطف."
 msgid "A verb."
 msgstr "فعل."
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:124
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:127
 msgid "Active participle"
 msgstr "اسم فاعل"
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:260
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:266
 msgid "Add a new word to your dictionary"
 msgstr "أضف كلمة جديدة إلى معجمك"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:267
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:270
 msgid "Add example"
 msgstr "أضف مثلا"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:418
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:426
 msgid "Add harf"
 msgstr "أضف حرف"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:263
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:269
 msgid "Add Masdar"
 msgstr "أضف مصدر"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:202
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:205
 msgid "Add plural"
 msgstr "أضف صيغة جمع"
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:117
+#: src/components/Autocomplete.tsx:148
+msgid "Add tag {inputValue}"
+msgstr "أضف علامة {inputValue}"
+
+#: src/components/features/dictionary/add/TagsFormSection.tsx:36
+msgid "Add tags to your word."
+msgstr "أضف علامات إلى كلمتك."
+
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:119
 #: src/routes/_search-layout/index.lazy.tsx:40
 msgid "Add word"
 msgstr "أضف كلمة"
@@ -82,7 +90,7 @@ msgstr "أضف كلمة"
 msgid "Additional Details"
 msgstr "تفاصيل إضافية"
 
-#: src/components/FlashcardDrawer.tsx:261
+#: src/components/FlashcardDrawer.tsx:268
 msgid "Again"
 msgstr "مرة أخرى"
 
@@ -90,24 +98,24 @@ msgstr "مرة أخرى"
 msgid "Already have an account?"
 msgstr "لديك حساب بالفعل؟"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:84
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:85
 msgid "An Arabic definition of the word."
 msgstr "تعريف عربية للكلمة."
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:202
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:205
 msgid "An English translation of the sentence."
 msgstr "ترجمة إنجلزية للجملة."
 
-#: src/components/features/dictionary/add/BasicDetailsFormSection.tsx:66
+#: src/components/features/dictionary/add/BasicDetailsFormSection.tsx:67
 msgid "An English translation of the word."
 msgstr "ترجمة إنجلزية للكلمة."
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:166
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:227
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:169
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:233
 msgid "Any additional details about this form such as frequency of usage or context."
 msgstr "أية تفاصيل إضافية عن هذه الصيغة مثلا تكرار الاستخدام أو السياق."
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:109
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:111
 msgid "Any plural forms of the word."
 msgstr "أية صيغ جمع للكلمة."
 
@@ -123,7 +131,7 @@ msgstr "المظهر"
 msgid "Arabic"
 msgstr "العربية"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:293
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:299
 msgid "Arabic verb form"
 msgstr "صيغة الفعل العربي"
 
@@ -131,8 +139,8 @@ msgstr "صيغة الفعل العربي"
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذف جميع كلماتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. صدر معجمك قبل حذفه من فضلك."
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:143
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:80
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:145
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:81
 msgid "Back"
 msgstr "رجوع"
 
@@ -140,8 +148,8 @@ msgstr "رجوع"
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
-#: src/components/DesktopNavigation.tsx:38
-#: src/components/MobileHeader.tsx:129
+#: src/components/DesktopNavigation.tsx:42
+#: src/components/MobileHeader.tsx:133
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "بحر"
@@ -162,7 +170,7 @@ msgstr "الباب"
 msgid "Choose file"
 msgstr "اختر ملف"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:217
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:220
 msgid "Context"
 msgstr "السياق"
 
@@ -194,8 +202,8 @@ msgstr "غامق"
 msgid "Definition"
 msgstr "التعريف"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:233
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:290
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:238
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:297
 #: src/routes/_app-layout/settings/route.lazy.tsx:266
 #: src/routes/_app-layout/settings/route.lazy.tsx:289
 msgid "Delete"
@@ -205,8 +213,8 @@ msgstr "احذف"
 msgid "Delete your dictionary?"
 msgstr "هل تريد أن تحذف معجمك؟"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:152
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:212
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:155
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:218
 msgid "Details"
 msgstr "تفاصيل"
 
@@ -215,12 +223,12 @@ msgstr "تفاصيل"
 msgid "Dictionary"
 msgstr "معجم"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:305
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:308
 msgid "Diptote"
 msgstr "ممنوع من الصرف"
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:266
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:291
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:272
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:299
 msgid "Discard"
 msgstr "ألغ"
 
@@ -228,15 +236,15 @@ msgstr "ألغ"
 msgid "Don't have an account?"
 msgstr "ليس لديك حساب؟"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:87
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:88
 msgid "Dual"
 msgstr "المثنى"
 
-#: src/components/FlashcardDrawer.tsx:309
+#: src/components/FlashcardDrawer.tsx:316
 msgid "Easy"
 msgstr "سهل"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:54
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:55
 msgid "Edit {word}"
 msgstr "حرّر {word}"
 
@@ -253,15 +261,15 @@ msgstr "الانجلزية"
 msgid "Enter your 6-digit code from your email"
 msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:153
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:155
 msgid "Example {0}"
 msgstr "المثال {0}"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:145
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:147
 msgid "Example usages of the word in different contexts."
 msgstr "استخدامات مثالية للكلمة في سياقات مختلفة."
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:141
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:143
 msgid "Examples"
 msgstr "أمثلة"
 
@@ -274,7 +282,7 @@ msgstr "صدر"
 msgid "Expression"
 msgstr "عبارة"
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:234
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:240
 msgid "Failed to add word!"
 msgstr "فشل إضافة الكلمة!"
 
@@ -282,11 +290,11 @@ msgstr "فشل إضافة الكلمة!"
 msgid "Failed to delete!"
 msgstr "فشل الحذف!"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:195
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:200
 msgid "Failed to update the word!"
 msgstr "فشل في تحديث الكلمة!"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:234
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:237
 msgid "Feminine"
 msgstr "مؤنّث"
 
@@ -295,11 +303,11 @@ msgstr "مؤنّث"
 msgid "Fi'l"
 msgstr "فعل"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:268
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:271
 msgid "For example, the word"
 msgstr "مثلا الكلمة"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:212
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:215
 msgid "Gender"
 msgstr "جنس"
 
@@ -312,29 +320,29 @@ msgstr "GitHub"
 msgid "Go back"
 msgstr "ارجع"
 
-#: src/components/FlashcardDrawer.tsx:293
+#: src/components/FlashcardDrawer.tsx:300
 msgid "Good"
 msgstr "حسن"
 
-#: src/components/FlashcardDrawer.tsx:277
+#: src/components/FlashcardDrawer.tsx:284
 msgid "Hard"
 msgstr "صعب"
 
 #: src/components/features/dictionary/add/CategoryFormSection.tsx:102
 #: src/components/features/dictionary/add/CategoryFormSection.tsx:134
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:343
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:350
 msgid "Harf"
 msgstr "حرف"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:333
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:340
 msgid "Harf {0}"
 msgstr "الحرف {0}"
 
-#: src/components/DesktopNavigation.tsx:48
-#: src/components/DesktopNavigation.tsx:54
-#: src/components/MobileHeader.tsx:143
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:108
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:45
+#: src/components/DesktopNavigation.tsx:52
+#: src/components/DesktopNavigation.tsx:58
+#: src/components/MobileHeader.tsx:147
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:110
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:46
 msgid "Home"
 msgstr "منزل"
 
@@ -342,11 +350,11 @@ msgstr "منزل"
 msgid "How the word is categorized based on its type or context."
 msgstr "طريقة تصنف الكلمة حسب نوعها أو سياقها."
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:318
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:325
 msgid "Huroof"
 msgstr "حروف"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:101
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:103
 msgid "Imperative"
 msgstr "الأمر"
 
@@ -363,11 +371,11 @@ msgstr "فشل الاستيراد!"
 msgid "Incorrect file type"
 msgstr "نوع الملف غير صحيح"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:308
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:311
 msgid "Indeclinable"
 msgstr "مبنى"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:251
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:254
 msgid "Inflection"
 msgstr "إعراب"
 
@@ -394,8 +402,8 @@ msgstr "فاتح"
 msgid "Log in"
 msgstr "تسجيل الدخول"
 
-#: src/components/DesktopNavigation.tsx:103
-#: src/components/MobileHeader.tsx:175
+#: src/components/DesktopNavigation.tsx:107
+#: src/components/MobileHeader.tsx:179
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
@@ -403,19 +411,19 @@ msgstr "تسجيل الخروج"
 msgid "Manage your dictionary."
 msgstr "إدارة معجمك."
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:165
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:170
 msgid "Masadir"
 msgstr "مصادر"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:231
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:234
 msgid "Masculine"
 msgstr "مذكر"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:177
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:182
 msgid "Masdar {0}"
 msgstr "المصدر {0}"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:368
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:376
 msgid "Meaning"
 msgstr "المعنى"
 
@@ -431,7 +439,7 @@ msgstr "الصرف"
 msgid "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
 msgstr "الصرف ينطبق فقط على الأسماء والأفعال. سيتم إخفاء هذا القسم إذا تم تعيين نوع الكلمة إلى أي شيء آخر."
 
-#: src/components/DesktopNavigation.tsx:74
+#: src/components/DesktopNavigation.tsx:78
 msgid "My Account"
 msgstr "حسابي"
 
@@ -448,7 +456,7 @@ msgstr "اسم"
 msgid "Or continue with"
 msgstr "أو استمر مع"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:147
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:151
 msgid "Passive participle"
 msgstr "اسم مفعول"
 
@@ -469,11 +477,11 @@ msgstr "حاول مرة أخرى بعد ٣٠ ثوان من فضلك."
 msgid "Please try again after five minutes."
 msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:117
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:119
 msgid "Plural {0}"
 msgstr "صيغة الجمع {0}"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:105
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:107
 msgid "Plurals"
 msgstr "صيغ جمع"
 
@@ -481,23 +489,23 @@ msgstr "صيغ جمع"
 msgid "Preposition"
 msgstr "حرف"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:322
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:329
 msgid "Prepositions (huroof) that can be used with the verb to change its meaning."
 msgstr "الحروف التي يمكن استخدامها مع الفعل لتغيير معناه."
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:78
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:79
 msgid "Present tense"
 msgstr "المضارع"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:249
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:184
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:245
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:400
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:252
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:187
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:251
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:408
 msgid "Remove"
 msgstr "احذف"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:261
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:275
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:268
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:282
 msgid "Reset flashcard"
 msgstr "أعد البطاقة"
 
@@ -505,28 +513,36 @@ msgstr "أعد البطاقة"
 msgid "Review flashcards"
 msgstr "ادرس البطاقات"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:109
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:110
 msgid "Root letters"
 msgstr "الجذر"
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:271
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:296
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:237
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:294
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:277
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:304
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:242
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:301
 msgid "Save"
 msgstr "احفظ"
+
+#: src/components/Autocomplete.tsx:78
+msgid "Search for a tag..."
+msgstr "ابحث عن علامة..."
 
 #: src/components/meili/SearchInput.tsx:56
 msgid "Search..."
 msgstr "ابحث..."
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:223
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:225
+#: src/components/Autocomplete.tsx:104
+msgid "Searching..."
+msgstr "يبحث..."
+
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:226
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:228
 msgid "Select gender"
 msgstr "اختر جنسا"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:294
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:296
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:297
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:299
 msgid "Select inflection"
 msgstr "اختر إعرابا"
 
@@ -535,17 +551,17 @@ msgstr "اختر إعرابا"
 msgid "Select type"
 msgstr "اختر الجنس"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:163
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:165
 msgid "Sentence"
 msgstr "جملة"
 
-#: src/components/DesktopNavigation.tsx:81
-#: src/components/MobileHeader.tsx:155
+#: src/components/DesktopNavigation.tsx:85
+#: src/components/MobileHeader.tsx:159
 #: src/routes/_app-layout/settings/route.lazy.tsx:84
 msgid "Settings"
 msgstr "الإعدادات"
 
-#: src/components/FlashcardDrawer.tsx:320
+#: src/components/FlashcardDrawer.tsx:327
 msgid "Show answer"
 msgstr "اعرض الجواب"
 
@@ -553,7 +569,7 @@ msgstr "اعرض الجواب"
 msgid "Singular"
 msgstr "مفرد"
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:223
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:229
 msgid "Successfully added word!"
 msgstr "تم إضافة الكلمة بنجاح!"
 
@@ -565,13 +581,17 @@ msgstr "نجح الحذف!"
 msgid "Successfully imported!"
 msgstr "تم الاستيراد بنجاح!"
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:184
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:189
 msgid "Successfully updated the word!"
 msgstr "حدثت الكلمة بنجاح!"
 
 #: src/components/ThemeMenu.tsx:40
 msgid "System"
 msgstr "نظام"
+
+#: src/components/features/dictionary/add/TagsFormSection.tsx:32
+msgid "Tags"
+msgstr "علامات"
 
 #: src/components/OTPForm.tsx:102
 msgid "That code has expired."
@@ -589,19 +609,19 @@ msgstr "هذا البريد الإلكتروني غير صحيح."
 msgid "That email is invalid."
 msgstr "هذا البريد الإلكتروني غير صالح."
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:231
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:234
 msgid "The context of the sentence, ex. formal or colloquial."
 msgstr "سياق الجملة مثلا رسمي أو عامي."
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:280
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:286
 msgid "The form of the verb ex. I, II, III, IV, etc..."
 msgstr "صيغة الفعل مثلا I, II, III, IV, هكذا و هكذا..."
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:306
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:313
 msgid "The form of the verb in Arabic ex. فعل, أفعل, استفعل, etc..."
 msgstr "صيغة الفعل بالعربية مثلا فعل, أفعل, استفعل, هكذا و هكذا..."
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:383
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:391
 msgid "The meaning of the verb when used with the harf."
 msgstr "معنى الفعل إذا استعمل مع الحرف."
 
@@ -609,19 +629,19 @@ msgstr "معنى الفعل إذا استعمل مع الحرف."
 msgid "The morphological breakdown of the word."
 msgstr "التصريف."
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:123
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:125
 msgid "The root letters of the word. The input can be separated by commas, spaces or have no delimeter ex. فعل or ف, ع, ل or ف ع ل."
 msgstr "الحروف الجذرية للكلمة. يمكن فصل المدخلات بفواصل أو مسافات أو لا تحتوي على محدد مثلا فعل أو ف، ع، ل أو ف ع ل."
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:224
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:230
 msgid "The word has been added to your dictionary."
 msgstr "تمت إضافة الكلمة إلى معجمك."
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:185
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:190
 msgid "The word has been updated."
 msgstr "حدثت الكلمة."
 
-#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:236
+#: src/routes/_app-layout/dictionary/add/route.lazy.tsx:242
 msgid "There was an error adding your word. Please try again."
 msgstr "حدث خطأ أثناء إضافة كلمتك. حاول مرة اخرى."
 
@@ -633,7 +653,7 @@ msgstr "حدث خطأ أثناء حذف معجمك. حاول مرة أخرى ل�
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء استيراد لمعجمك. حاول مرة أخرى لاحقا."
 
-#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:197
+#: src/routes/_app-layout/dictionary/edit/$wordId.tsx:202
 msgid "There was an error updating your word. Please try again."
 msgstr "حدث خطأ أثناء تحديث كلمتك. حاول مرة أخرى."
 
@@ -650,20 +670,20 @@ msgstr "هذا حالة غير حساسة."
 msgid "This is how we will address you."
 msgstr "هذه هي الطريقة التي سنخاطبك بها."
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:261
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:264
 msgid "This refers to how many case endings the word can take."
 msgstr "هذا هو إعراب الكلمة."
 
-#: src/components/MobileHeader.tsx:107
+#: src/components/MobileHeader.tsx:108
 msgid "Toggle Menu"
 msgstr "تبديل القائمة"
 
-#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:188
-#: src/components/features/dictionary/add/BasicDetailsFormSection.tsx:58
+#: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:191
+#: src/components/features/dictionary/add/BasicDetailsFormSection.tsx:59
 msgid "Translation"
 msgstr "الترجمة"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:302
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:305
 msgid "Triptote"
 msgstr "معرب"
 
@@ -679,11 +699,11 @@ msgstr "اسم مستخدم"
 msgid "Verb"
 msgstr "فعل"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:272
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:278
 msgid "Verb form"
 msgstr "صيغة الفعل"
 
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:169
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:174
 msgid "Verbal noun forms (masadir) of the verb."
 msgstr "مصادر للفعل."
 
@@ -692,8 +712,8 @@ msgid "View all the words in your personal dictionary."
 msgstr "انظر كل الألفاظ في معجمك الشخصي."
 
 #: src/components/features/dictionary/add/BasicDetailsFormSection.tsx:35
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:127
-#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:187
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:129
+#: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:192
 msgid "Word"
 msgstr "الكلمة"
 
@@ -713,14 +733,14 @@ msgstr "تم تحديث معجمك!"
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة أخرى من فضلك."
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:273
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:276
 msgid "محمد is a triptote;"
 msgstr "كلمة محمد هي معرب;"
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:279
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:282
 msgid "موسى is indeclinable."
 msgstr "كلمة موسى هي مبنى."
 
-#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:276
+#: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:279
 msgid "يوسف is a diptote;"
 msgstr "كلمة يوسف هي ممنوع من الصرف;"

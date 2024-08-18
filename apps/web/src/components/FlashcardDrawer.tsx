@@ -174,11 +174,18 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
 
         {!currentCard ? undefined : (
           <div className="w-full max-w-2xl mx-auto flex flex-col gap-y-4 px-8">
-            {!!currentCard.card.type && (
-              <Badge variant="secondary" className="w-max">
-                {getTranslatedType(currentCard.card.type)}
-              </Badge>
-            )}
+            <ul className="flex flex-wrap gap-2">
+              {!!currentCard.card.type && (
+                <Badge variant="secondary" className="w-max">
+                  {getTranslatedType(currentCard.card.type)}
+                </Badge>
+              )}
+              {currentCard.card.tags?.map((tag) => (
+                <Badge key={tag} variant="outline" className="w-max">
+                  {tag}
+                </Badge>
+              ))}
+            </ul>
 
             <p dir="rtl" className="rtl:text-right text-xl sm:text-2xl">
               {currentCard.card.word}

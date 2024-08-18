@@ -28,6 +28,7 @@ import { useLingui } from "@lingui/react";
 import { useInstantSearch } from "react-instantsearch";
 import { useEffect } from "react";
 import { useDir } from "@/hooks/useDir";
+import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 
 export enum Inflection {
   indeclinable = "indeclinable",
@@ -40,6 +41,7 @@ export const FormSchema = z.object({
   translation: z.string().min(1),
   definition: z.string().optional(),
   root: z.string().optional(),
+  tags: z.array(z.object({ name: z.string() })).optional(),
   examples: z
     .array(
       z.object({
@@ -157,6 +159,7 @@ const Add = () => {
     defaultValues: {
       word: "",
       translation: "",
+      tags: [],
       root: "",
       type: "ism",
       examples: [],
@@ -194,6 +197,7 @@ const Add = () => {
               ?.trim()
               ?.replace(/[\s,]+/g, "")
               ?.split(""),
+            tags: data?.tags?.map((tag) => tag.name) ?? [],
             morphology: { ism: data?.morphology?.ism },
           };
         } else if (data.type === "fi'l") {
@@ -203,6 +207,7 @@ const Add = () => {
               ?.trim()
               ?.replace(/[\s,]+/g, "")
               ?.split(""),
+            tags: data?.tags?.map((tag) => tag.name) ?? [],
             morphology: { verb: data?.morphology?.verb },
           };
         } else {
@@ -212,6 +217,7 @@ const Add = () => {
               ?.trim()
               ?.replace(/[\s,]+/g, "")
               ?.split(""),
+            tags: data?.tags?.map((tag) => tag.name) ?? [],
             morphology: undefined,
           };
         }
@@ -282,6 +288,8 @@ const Add = () => {
 
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                 <CategoryFormSection />
+
+                <TagsFormSection />
               </div>
             </div>
 

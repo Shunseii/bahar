@@ -25,6 +25,7 @@ export const flashcardRouter = router({
               word: true,
               type: true,
               translation: true,
+              tags: true,
               morphology: true,
               definition: true,
               examples: true,
@@ -63,6 +64,7 @@ export const flashcardRouter = router({
             definition,
             examples,
             root,
+            tags,
           }) => {
             return {
               flashcard: flashcard ?? getEmptyFlashcard(id),
@@ -75,6 +77,7 @@ export const flashcardRouter = router({
                 definition,
                 examples,
                 root,
+                tags,
               },
             };
           },

@@ -16,6 +16,7 @@ import { getAllowedDomains } from "./utils";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { Session, User } from "lucia";
+import { tagsRouter } from "./routers/tags";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -34,6 +35,7 @@ const appRouter = router({
   auth: trpcAuthRouter,
   flashcard: flashcardRouter,
   dictionary: trpcDictionaryRouter,
+  tags: tagsRouter,
 });
 
 const app = express();

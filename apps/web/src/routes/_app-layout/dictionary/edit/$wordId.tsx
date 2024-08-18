@@ -31,6 +31,7 @@ import { useInstantSearch } from "react-instantsearch";
 import { FC } from "react";
 import { FormSchema, Inflection } from "../add/route.lazy";
 import { useDir } from "@/hooks/useDir";
+import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 
 const Breadcrumbs: FC<{ className?: string; word: string }> = ({
   className,
@@ -118,6 +119,7 @@ const Edit = () => {
     defaultValues: {
       word: data?.word ?? "",
       translation: data?.translation ?? "",
+      tags: data?.tags?.map((tag) => ({ name: tag })) ?? [],
       root: data?.root ? data.root.join(" ") : "",
       type: data?.type ?? "ism",
       examples: data?.examples ?? [],
@@ -156,6 +158,7 @@ const Edit = () => {
               ?.replace(/[\s,]+/g, "")
               ?.split(""),
             morphology: { ism: data?.morphology?.ism },
+            tags: data?.tags?.map((tag) => tag.name) ?? [],
           };
         } else if (data.type === "fi'l") {
           return {
@@ -165,6 +168,7 @@ const Edit = () => {
               ?.replace(/[\s,]+/g, "")
               ?.split(""),
             morphology: { verb: data?.morphology?.verb },
+            tags: data?.tags?.map((tag) => tag.name) ?? [],
           };
         } else {
           return {
@@ -174,6 +178,7 @@ const Edit = () => {
               ?.replace(/[\s,]+/g, "")
               ?.split(""),
             morphology: undefined,
+            tags: data?.tags?.map((tag) => tag.name) ?? [],
           };
         }
       })();
@@ -248,6 +253,8 @@ const Edit = () => {
 
               <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
                 <CategoryFormSection />
+
+                <TagsFormSection />
 
                 <Button
                   variant="destructive"
