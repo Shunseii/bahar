@@ -8,6 +8,9 @@ import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 export default defineConfig({
   build: {
     outDir: "dist",
+    rollupOptions: {
+      external: ["workbox-window"],
+    },
   },
   plugins: [
     VitePWA({
