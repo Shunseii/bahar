@@ -8,6 +8,20 @@
       "when": 1709523618860,
       "tag": "0000_majestic_switch",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1725162433520,
+      "tag": "0001_brown_stick",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1725237076135,
+      "tag": "0002_grey_wendigo",
+      "breakpoints": true
     }
   ]
 }

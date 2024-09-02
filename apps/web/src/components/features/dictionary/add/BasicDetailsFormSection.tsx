@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@/routes/_app-layout/dictionary/add/route.lazy";
+import { FormSchema } from "@/schemas/dictionary";
 import { Trans } from "@lingui/macro";
 import { useFormContext } from "react-hook-form";
 

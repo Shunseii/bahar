@@ -29,10 +29,7 @@ import {
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
-import {
-  FormSchema,
-  Inflection,
-} from "@/routes/_app-layout/dictionary/add/route.lazy";
+import { FormSchema, Inflection } from "@/schemas/dictionary";
 import { Trans, msg } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { Plus, InfoIcon } from "lucide-react";

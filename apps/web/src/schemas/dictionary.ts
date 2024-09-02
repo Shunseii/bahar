@@ -1,15 +1,17 @@
-import { z } from "zod";
-import { Inflection } from "../routers/dictionary";
-import { FlashcardSchema } from "./flashcard.schema";
+import { z } from "@/lib/zod";
 
-// TODO: use shared schema between client and server
-export const DictionarySchema = z.object({
-  id: z.string().min(1),
+export enum Inflection {
+  indeclinable = "indeclinable",
+  diptote = "diptote",
+  triptote = "triptote",
+}
+
+export const FormSchema = z.object({
   word: z.string().min(1),
-  tags: z.array(z.string()).optional(),
   translation: z.string().min(1),
   definition: z.string().optional(),
-  root: z.array(z.string()).optional(),
+  root: z.string().optional(),
+  tags: z.array(z.object({ name: z.string() })).optional(),
   antonyms: z
     .array(
       z.object({
@@ -27,7 +29,6 @@ export const DictionarySchema = z.object({
     )
     .optional(),
   type: z.enum(["ism", "fi'l", "harf", "expression"]).optional(),
-  flashcard: FlashcardSchema.optional().nullable(),
   morphology: z
     .object({
       ism: z

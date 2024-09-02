@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@/routes/_app-layout/dictionary/add/route.lazy";
+import { FormSchema } from "@/schemas/dictionary";
 import { msg, Trans } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { InfoIcon } from "lucide-react";

@@ -38,9 +38,21 @@
           "type": "string"
         }
       },
+      "antonyms": {
+        "type": "array",
+        "description": "Any antonyms of the word.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "word": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "examples": {
         "type": "array",
-        "description": "Examples using the word. ",
+        "description": "Examples using the word.",
         "items": {
           "type": "object",
           "properties": {

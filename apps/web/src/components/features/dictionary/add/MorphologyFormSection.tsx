@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/popover";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFormContext } from "react-hook-form";
-import { FormSchema } from "@/routes/_app-layout/dictionary/add/route.lazy";
+import { FormSchema } from "@/schemas/dictionary";
 import { z } from "@/lib/zod";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { IsmMorphologyCardSection } from "./IsmMorphologyCardSection";

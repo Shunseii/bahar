@@ -30,6 +30,7 @@ export const flashcardRouter = router({
               definition: true,
               examples: true,
               root: true,
+              antonyms: true,
             }),
           }),
         ),
@@ -65,6 +66,7 @@ export const flashcardRouter = router({
             examples,
             root,
             tags,
+            antonyms,
           }) => {
             return {
               flashcard: flashcard ?? getEmptyFlashcard(id),
@@ -78,6 +80,7 @@ export const flashcardRouter = router({
                 examples,
                 root,
                 tags,
+                antonyms,
               },
             };
           },

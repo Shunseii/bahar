@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `settings_user_id_unique` ON `settings` (`user_id`);

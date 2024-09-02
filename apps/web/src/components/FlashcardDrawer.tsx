@@ -44,6 +44,7 @@ const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
 export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   const dir = useDir();
   const [showAnswer, setShowAnswer] = useState(false);
+  const { data: flashcardSettings } = trpc.settings.get.useQuery();
   const { data, status } = trpc.flashcard.today.useQuery();
   const { mutate: updateFlashcard } = trpc.flashcard.update.useMutation({
     onSuccess: async () => {
@@ -130,6 +131,8 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   const hasPastTense = isVerb && !!pastTense;
   const hasPresentTense = isVerb && !!presentTense;
   const hasMasdar = isVerb && !!firstMasdar;
+
+  const showAntonyms = flashcardSettings?.show_antonyms_in_flashcard;
 
   const root = currentCard?.card.root;
 
@@ -228,6 +231,15 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
               </p>
             )}
 
+            {showAntonyms === "hint" && (
+              <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+                أضداد:{" "}
+                {currentCard.card.antonyms
+                  ?.map((antonym) => antonym.word)
+                  .join(", ")}
+              </p>
+            )}
+
             {showAnswer && (
               <motion.p
                 className="text-base sm:text-lg"
@@ -236,6 +248,15 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
               >
                 {!!currentCard.card.definition && (
                   <p dir="rtl">المعنى: {currentCard.card.definition}</p>
+                )}
+
+                {showAntonyms === "answer" && (
+                  <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+                    أضداد:{" "}
+                    {currentCard.card.antonyms
+                      ?.map((antonym) => antonym.word)
+                      .join(", ")}
+                  </p>
                 )}
 
                 <p dir="ltr">{currentCard.card.translation}</p>
