@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS `decks_user_id_unique`;

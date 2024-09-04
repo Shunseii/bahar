@@ -27,6 +27,8 @@ import { getQueryKey } from "@trpc/react-query";
 import { motion } from "framer-motion";
 import { useDir } from "@/hooks/useDir";
 import { Badge } from "./ui/badge";
+import { FilterSchema } from "api/schemas";
+import { z } from "@/lib/zod";
 
 const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
   switch (str) {
@@ -41,19 +43,35 @@ const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
   }
 };
 
-export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
+interface FlashcardDrawerProps extends PropsWithChildren {
+  filters?: z.infer<typeof FilterSchema>;
+}
+
+export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
+  children,
+  filters = {},
+}) => {
   const dir = useDir();
   const [showAnswer, setShowAnswer] = useState(false);
   const { data: flashcardSettings } = trpc.settings.get.useQuery();
-  const { data, status } = trpc.flashcard.today.useQuery();
+  const { data, status } = trpc.flashcard.today.useQuery({ filters });
   const { mutate: updateFlashcard } = trpc.flashcard.update.useMutation({
     onSuccess: async () => {
-      const queryKey = [
-        ...getQueryKey(trpc.flashcard.today),
-        { type: "query" },
-      ];
+      const todayQueryKey = getQueryKey(
+        trpc.flashcard.today,
+        undefined,
+        "query",
+      );
+      const deckListQueryKey = getQueryKey(trpc.decks.list, undefined, "query");
 
-      await queryClient.invalidateQueries({ queryKey });
+      await queryClient.invalidateQueries({
+        queryKey: deckListQueryKey,
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: todayQueryKey,
+        exact: false,
+      });
     },
   });
 
@@ -64,7 +82,9 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   );
 
   useEffect(() => {
-    if (!flashcards?.length) return;
+    if (!flashcards?.length) {
+      setCurrentCard(null);
+    }
 
     setCurrentCard(flashcards[0]);
   }, [flashcards]);
@@ -132,6 +152,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
   const hasPresentTense = isVerb && !!presentTense;
   const hasMasdar = isVerb && !!firstMasdar;
 
+  const hasAntonyms = !!currentCard?.card?.antonyms?.length;
   const showAntonyms = flashcardSettings?.show_antonyms_in_flashcard;
 
   const root = currentCard?.card.root;
@@ -231,7 +252,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
               </p>
             )}
 
-            {showAntonyms === "hint" && (
+            {showAntonyms === "hint" && hasAntonyms && (
               <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
                 أضداد:{" "}
                 {currentCard.card.antonyms
@@ -241,7 +262,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
             )}
 
             {showAnswer && (
-              <motion.p
+              <motion.span
                 className="text-base sm:text-lg"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -250,7 +271,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                   <p dir="rtl">المعنى: {currentCard.card.definition}</p>
                 )}
 
-                {showAntonyms === "answer" && (
+                {showAntonyms === "answer" && hasAntonyms && (
                   <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
                     أضداد:{" "}
                     {currentCard.card.antonyms
@@ -260,7 +281,7 @@ export const FlashcardDrawer: FC<PropsWithChildren> = ({ children }) => {
                 )}
 
                 <p dir="ltr">{currentCard.card.translation}</p>
-              </motion.p>
+              </motion.span>
             )}
           </div>
         )}

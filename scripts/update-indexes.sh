@@ -7,7 +7,7 @@ if [ -z "$MEILISEARCH_HOST" ] || [ -z "$MEILISEARCH_MASTER_KEY" ]; then
   exit 1
 fi
 
-FILTERABLE_ATTRIBUTES='["flashcard.due_timestamp", "tags"]'
+FILTERABLE_ATTRIBUTES='["flashcard.due_timestamp", "tags", "type"]'
 
 echo "Updating indexes for all users..."
 

@@ -140,7 +140,7 @@ export const FlashcardSettingsCardSection = () => {
 
             <Button
               type="submit"
-              disabled={!form.formState.isDirty && !form.formState.isSubmitting}
+              disabled={!form.formState.isDirty || form.formState.isSubmitting}
             >
               <Trans>Save</Trans>
             </Button>

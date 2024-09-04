@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Inflection } from "../routers/dictionary";
+// import { Inflection } from "../routers/dictionary";
 import { FlashcardSchema } from "./flashcard.schema";
 
 // TODO: use shared schema between client and server

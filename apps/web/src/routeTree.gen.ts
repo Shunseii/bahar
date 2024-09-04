@@ -26,6 +26,7 @@ const SearchLayoutIndexLazyImport = createFileRoute('/_search-layout/')()
 const AppLayoutSettingsRouteLazyImport = createFileRoute(
   '/_app-layout/settings',
 )()
+const AppLayoutDecksRouteLazyImport = createFileRoute('/_app-layout/decks')()
 const AppLayoutDictionaryAddRouteLazyImport = createFileRoute(
   '/_app-layout/dictionary/add',
 )()
@@ -61,6 +62,13 @@ const AppLayoutSettingsRouteLazyRoute = AppLayoutSettingsRouteLazyImport.update(
   } as any,
 ).lazy(() =>
   import('./routes/_app-layout/settings/route.lazy').then((d) => d.Route),
+)
+
+const AppLayoutDecksRouteLazyRoute = AppLayoutDecksRouteLazyImport.update({
+  path: '/decks',
+  getParentRoute: () => AppLayoutRouteRoute,
+} as any).lazy(() =>
+  import('./routes/_app-layout/decks/route.lazy').then((d) => d.Route),
 )
 
 const LayoutSignUpRouteRoute = LayoutSignUpRouteImport.update({
@@ -117,6 +125,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSignUpRouteImport
       parentRoute: typeof LayoutRouteImport
     }
+    '/_app-layout/decks': {
+      preLoaderRoute: typeof AppLayoutDecksRouteLazyImport
+      parentRoute: typeof AppLayoutRouteImport
+    }
     '/_app-layout/settings': {
       preLoaderRoute: typeof AppLayoutSettingsRouteLazyImport
       parentRoute: typeof AppLayoutRouteImport
@@ -140,6 +152,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   AppLayoutRouteRoute.addChildren([
+    AppLayoutDecksRouteLazyRoute,
     AppLayoutSettingsRouteLazyRoute,
     AppLayoutDictionaryAddRouteLazyRoute,
     AppLayoutDictionaryEditWordIdRoute,

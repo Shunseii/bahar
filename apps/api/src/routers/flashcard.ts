@@ -4,6 +4,7 @@ import { Card, createEmptyCard } from "ts-fsrs";
 import { z } from "zod";
 import { DictionarySchema } from "../schemas/dictionary.schema";
 import { FlashcardSchema } from "../schemas/flashcard.schema";
+import { SelectDecksSchema } from "../db/schema/decks";
 
 export type Flashcard = Card & {
   id: string;
@@ -13,8 +14,11 @@ export type Flashcard = Card & {
   last_review_timestamp: number | null;
 };
 
+const TodaySchema = SelectDecksSchema.pick({ filters: true }).optional();
+
 export const flashcardRouter = router({
   today: protectedProcedure
+    .input(TodaySchema)
     .output(
       z.object({
         flashcards: z.array(
@@ -36,22 +40,13 @@ export const flashcardRouter = router({
         ),
       }),
     )
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       const { user } = ctx;
 
-      /**
-       * Current timestamp in seconds
-       */
-      const now = Math.floor(new Date().getTime() / 1000);
-
-      const { results } = await meilisearchClient.index(user.id).getDocuments({
-        filter: [
-          `flashcard.due_timestamp NOT EXISTS OR flashcard.due_timestamp <= ${now}`,
-        ],
-        limit: 1000,
+      const dictionaryWords = await queryFlashcards({
+        user_id: user.id,
+        input,
       });
-
-      const dictionaryWords = results as z.infer<typeof DictionarySchema>[];
 
       return {
         flashcards: dictionaryWords.map(
@@ -140,6 +135,52 @@ export const flashcardRouter = router({
       };
     }),
 });
+
+export const queryFlashcards = async ({
+  user_id,
+  input,
+  fields,
+  show_only_today = true,
+}: {
+  user_id: string;
+  input: z.infer<typeof TodaySchema>;
+  fields?: string[];
+  show_only_today?: boolean;
+}) => {
+  const { filters } = input ?? {};
+
+  const types = filters?.types?.length
+    ? filters?.types.map((type) => {
+        if (type === "fi'l") {
+          return '"fi\'l"';
+        }
+
+        return type;
+      })
+    : ["ism", '"fi\'l"', "harf", "expression"];
+
+  const { tags } = filters ?? {};
+
+  /**
+   * Current timestamp in seconds
+   */
+  const now = Math.floor(new Date().getTime() / 1000);
+
+  const { results } = await meilisearchClient.index(user_id).getDocuments({
+    // The type inference on fields is broken so need to cast to any
+    fields: fields as any,
+    filter: [
+      show_only_today
+        ? `flashcard.due_timestamp NOT EXISTS OR flashcard.due_timestamp <= ${now}`
+        : "",
+      `type IN [${types.join(", ")}]`,
+      tags?.length ? `tags IN [${tags.join(", ")}]` : "",
+    ],
+    limit: 1000,
+  });
+
+  return results as z.infer<typeof DictionarySchema>[];
+};
 
 const getEmptyFlashcard = (id: string): Flashcard => {
   return createEmptyCard(new Date(), (c) => {
