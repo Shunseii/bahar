@@ -29,9 +29,9 @@ import { useToast } from "@/hooks/useToast";
 import { useLingui } from "@lingui/react";
 import { useInstantSearch } from "react-instantsearch";
 import { FC } from "react";
-import { FormSchema, Inflection } from "../add/route.lazy";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
+import { FormSchema, Inflection } from "@/schemas/dictionary";
 
 const Breadcrumbs: FC<{ className?: string; word: string }> = ({
   className,
@@ -124,6 +124,7 @@ const Edit = () => {
       type: data?.type ?? "ism",
       examples: data?.examples ?? [],
       definition: data?.definition ?? "",
+      antonyms: data?.antonyms ?? [],
       morphology: data?.morphology ?? {
         ism: {
           singular: "",

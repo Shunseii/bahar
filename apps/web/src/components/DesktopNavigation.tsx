@@ -17,7 +17,7 @@ import { trpc } from "@/lib/trpc";
 import { Trans } from "@lingui/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Home, Settings } from "lucide-react";
+import { Home, Settings, Layers } from "lucide-react";
 import Logo from "@/assets/logo.svg";
 
 export const DesktopNavigation = () => {
@@ -56,6 +56,22 @@ export const DesktopNavigation = () => {
 
           <TooltipContent side="right">
             <Trans>Home</Trans>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <NavLink to="/decks" params={{}}>
+              <Layers className="h-5 w-5" />
+
+              <span className="sr-only">
+                <Trans>Decks</Trans>
+              </span>
+            </NavLink>
+          </TooltipTrigger>
+
+          <TooltipContent side="right">
+            <Trans>Decks</Trans>
           </TooltipContent>
         </Tooltip>
       </nav>

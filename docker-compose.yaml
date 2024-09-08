@@ -21,7 +21,7 @@ services:
       dockerfile: ./apps/api/Dockerfile
       target: development
     command: >
-      sh -c "pnpm run --filter api drizzle:studio -- --host=0.0.0.0 --port 4983"
+      sh -c "pnpm run --filter api drizzle:studio --host=0.0.0.0 --port 4983"
     environment:
       - DATABASE_URL=http://localhost:8080
     volumes:

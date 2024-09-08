@@ -2,6 +2,7 @@ import { InputFile } from "@/components/InputFile";
 import { LanguageMenu } from "@/components/LanguageMenu";
 import { Page } from "@/components/Page";
 import { ThemeMenu } from "@/components/ThemeMenu";
+import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -300,6 +301,8 @@ const Settings = () => {
           </Dialog>
         </CardContent>
       </Card>
+
+      <FlashcardSettingsCardSection />
     </Page>
   );
 };

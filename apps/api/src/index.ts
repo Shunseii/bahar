@@ -17,6 +17,8 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { Session, User } from "lucia";
 import { tagsRouter } from "./routers/tags";
+import { settingsRouter } from "./routers/settings";
+import { decksRouter } from "./routers/decks";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -36,6 +38,8 @@ const appRouter = router({
   flashcard: flashcardRouter,
   dictionary: trpcDictionaryRouter,
   tags: tagsRouter,
+  settings: settingsRouter,
+  decks: decksRouter,
 });
 
 const app = express();

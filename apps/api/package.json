@@ -11,15 +11,15 @@
     "start": "node dist/index.mjs",
     "dev": "tsx watch src",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "drizzle:gen": "drizzle-kit generate:sqlite",
+    "drizzle:gen": "drizzle-kit generate",
     "drizzle:migrate": "tsx src/db/migrate.ts",
     "drizzle:push": "drizzle-kit push",
     "drizzle:studio": "drizzle-kit studio",
     "drizzle:drop": "drizzle-kit drop"
   },
   "dependencies": {
-    "@libsql/client": "^0.5.1",
-    "@lucia-auth/adapter-drizzle": "^1.0.2",
+    "@libsql/client": "^0.10.0",
+    "@lucia-auth/adapter-drizzle": "^1.1.0",
     "@sendgrid/mail": "^8.1.1",
     "@trpc/client": "11.0.0-next-beta.289",
     "@trpc/server": "11.0.0-next-beta.289",
@@ -32,7 +32,8 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.31.0",
+    "drizzle-orm": "^0.33.0",
+    "drizzle-zod": "^0.5.1",
     "express": "^4.18.2",
     "lucia": "^3.2.0",
     "meilisearch": "^0.40.0",
@@ -52,13 +53,14 @@
     "@types/node": "^20.10.6",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
-    "drizzle-kit": "^0.22.1",
+    "drizzle-kit": "^0.24.2",
     "esbuild": "^0.21.5",
     "esbuild-plugin-file-path-extensions": "^2.1.2",
     "eslint": "^8.56.0",
     "typescript": "^5.2.2"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./schemas": "./src/schemas/index.ts"
   }
 }

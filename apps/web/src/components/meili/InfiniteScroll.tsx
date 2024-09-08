@@ -13,6 +13,7 @@ import { useCountdown } from "@/hooks/useCountdown";
 import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import { Trans } from "@lingui/macro";
 
 /**
  * The difference in the height of the infinite list and the
@@ -96,6 +97,20 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
       showMore();
     }
   }, [shouldLoadMore]);
+
+  if (!isInitialLoading && !hits.length) {
+    return (
+      <div className="flex flex-col gap-y-4">
+        <p>
+          <Trans>You have no words in your dictionary yet.</Trans>
+        </p>
+
+        <p>
+          <Trans>Add some to get started!</Trans>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>

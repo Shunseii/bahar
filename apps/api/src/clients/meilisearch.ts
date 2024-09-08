@@ -20,7 +20,7 @@ export const createUserIndex = async (userId: string) => {
   const userIndex = meilisearchClient.index(userId);
 
   const { taskUid: updateTaskUid } = await userIndex.updateSettings({
-    filterableAttributes: ["flashcard.due_timestamp"],
+    filterableAttributes: ["flashcard.due_timestamp", "tags", "type"],
   });
 
   await meilisearchClient.waitForTask(updateTaskUid);

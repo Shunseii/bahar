@@ -31,6 +31,7 @@ module.exports = {
     "import/no-default-export": "off",
     "react-hooks/exhaustive-deps": "off",
     "@typescript-eslint/no-unused-vars": "warn",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "warn",
     "react-refresh/only-export-components": [
       "warn",
       { allowConstantExport: true },

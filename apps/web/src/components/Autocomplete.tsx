@@ -9,6 +9,7 @@ import { Input } from "./ui/input";
 interface AutocompleteProps {
   className?: string;
   filter?: string[];
+  allowAdd?: boolean;
   onClick?: (value: string) => void;
 }
 
@@ -16,6 +17,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   className = "",
   filter = [],
   onClick,
+  allowAdd = true,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -92,68 +94,72 @@ export const Autocomplete: FC<AutocompleteProps> = ({
           }}
         />
 
-        {showDropdown && inputValue.length > 0 && !addedTagIsFiltered && (
-          <div
-            ref={dropdownRef}
-            className="absolute top-12 rounded-lg right-0 left-0 bg-background border-2 border-border"
-          >
-            {(() => {
-              if (isSearching) {
-                return (
-                  <div className="px-3 py-1">
-                    <Trans>Searching...</Trans>
-                  </div>
-                );
-              } else if (tags.length > 0) {
-                return (
-                  <ul>
-                    {tags.map((item) => (
-                      <li
-                        className="cursor-pointer px-3 py-1 hover:bg-muted"
-                        key={item}
-                        tabIndex={0}
-                        role="button"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
+        {showDropdown &&
+          inputValue.length > 0 &&
+          !addedTagIsFiltered &&
+          (tags.length > 0 || (tags.length === 0 && allowAdd)) && (
+            <div
+              ref={dropdownRef}
+              className="absolute top-12 rounded-lg right-0 left-0 bg-background border-2 border-border"
+            >
+              {(() => {
+                if (isSearching) {
+                  return (
+                    <div className="px-3 py-1">
+                      <Trans>Searching...</Trans>
+                    </div>
+                  );
+                } else if (tags.length > 0) {
+                  return (
+                    <ul>
+                      {tags.map((item) => (
+                        <li
+                          className="cursor-pointer px-3 py-1 hover:bg-muted"
+                          key={item}
+                          tabIndex={0}
+                          role="button"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              selectTag(item);
+                            }
+                          }}
+                          onClick={() => {
                             selectTag(item);
-                          }
-                        }}
-                        onClick={() => {
-                          selectTag(item);
-                        }}
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                );
-              } else if (
-                inputValue.length > 0 &&
-                tags.length === 0 &&
-                !filter.includes(inputValue)
-              ) {
-                return (
-                  <button
-                    className="px-3 py-1 hover:bg-muted w-full ltr:text-left rtl:text-right"
-                    type="button"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
+                          }}
+                        >
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                } else if (
+                  inputValue.length > 0 &&
+                  tags.length === 0 &&
+                  !filter.includes(inputValue) &&
+                  allowAdd
+                ) {
+                  return (
+                    <button
+                      className="px-3 py-1 hover:bg-muted w-full ltr:text-left rtl:text-right"
+                      type="button"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          selectTag(inputValue);
+                        }
+                      }}
+                      onClick={() => {
                         selectTag(inputValue);
-                      }
-                    }}
-                    onClick={() => {
-                      selectTag(inputValue);
-                    }}
-                  >
-                    <Trans>Add tag {inputValue}</Trans>
-                  </button>
-                );
-              } else {
-                return undefined;
-              }
-            })()}
-          </div>
-        )}
+                      }}
+                    >
+                      <Trans>Add tag {inputValue}</Trans>
+                    </button>
+                  );
+                } else {
+                  return undefined;
+                }
+              })()}
+            </div>
+          )}
       </div>
     </div>
   );

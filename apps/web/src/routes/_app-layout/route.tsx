@@ -6,7 +6,6 @@ import { trpc, trpcClient } from "@/lib/trpc";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 import { InstantSearch } from "react-instantsearch";
-import { motion } from "framer-motion";
 
 const AppLayout = () => {
   const { data } = trpc.user.me.useQuery();
