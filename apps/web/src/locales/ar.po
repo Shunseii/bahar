@@ -314,7 +314,7 @@ msgstr "سهل"
 
 #: src/routes/_app-layout/decks/route.lazy.tsx:147
 msgid "Edit"
-msgstr "تعديل"
+msgstr "عدَل"
 
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:55
 msgid "Edit {word}"
@@ -821,6 +821,10 @@ msgstr "هذا حالة غير حساسة."
 #: src/routes/_layout/sign-up/route.lazy.tsx:140
 msgid "This is how we will address you."
 msgstr "هذه هي الطريقة التي سنخاطبك بها."
+
+#: src/components/features/decks/DeckDialogContent.tsx:208
+msgid "This is the name of your deck."
+msgstr "هذا هو اسم مجموعتك."
 
 #: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:261
 msgid "This refers to how many case endings the word can take."

@@ -205,7 +205,7 @@ export const DeckDialogContent = ({
                   </div>
 
                   <FormDescription>
-                    This is the name of your deck.
+                    <Trans>This is the name of your deck.</Trans>
                   </FormDescription>
 
                   <FormMessage />
@@ -280,7 +280,7 @@ export const DeckDialogContent = ({
                       key={type}
                       render={({ field }) => {
                         return (
-                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                          <FormItem className="flex flex-row items-center gap-x-3 gap-y-0">
                             <FormControl>
                               <Checkbox
                                 checked={field.value?.includes(type)}
@@ -300,7 +300,7 @@ export const DeckDialogContent = ({
                               />
                             </FormControl>
 
-                            <FormLabel className="text-sm font-normal cursor-pointer">
+                            <FormLabel className="text-sm font-normal cursor-pointer !mt-0">
                               {getTypeLabel(type)}
                             </FormLabel>
                           </FormItem>

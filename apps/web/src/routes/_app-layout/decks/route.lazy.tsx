@@ -51,7 +51,7 @@ const Decks = () => {
       <Dialog>
         <DialogTrigger asChild className="w-max self-end">
           <Button size="sm" variant="outline">
-            <span className="flex gap-x-2">
+            <span className="flex gap-x-2 items-center">
               <Plus className="h-5 w-5" />
 
               <Trans>Create new deck</Trans>

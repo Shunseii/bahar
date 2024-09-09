@@ -822,6 +822,10 @@ msgstr "This is case insensitive."
 msgid "This is how we will address you."
 msgstr "This is how we will address you."
 
+#: src/components/features/decks/DeckDialogContent.tsx:208
+msgid "This is the name of your deck."
+msgstr "This is the name of your deck."
+
 #: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:261
 msgid "This refers to how many case endings the word can take."
 msgstr "This refers to how many case endings the word can take."
