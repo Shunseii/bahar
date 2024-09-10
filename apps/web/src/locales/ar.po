@@ -217,7 +217,7 @@ msgstr "أنشئ مجموعة جديدة باختيار الفلاتر. ستكو
 
 #: src/routes/_app-layout/decks/route.lazy.tsx:57
 msgid "Create new deck"
-msgstr "إنشاء مجموعة جديدة"
+msgstr "إنشاء مجموعة"
 
 #: src/routes/_layout/login/route.lazy.tsx:167
 msgid "Create one"
@@ -253,6 +253,7 @@ msgstr "تم تحديث المجموعة بنجاح!"
 
 #: src/components/DesktopNavigation.tsx:68
 #: src/components/DesktopNavigation.tsx:74
+#: src/components/MobileHeader.tsx:159
 #: src/routes/_app-layout/decks/route.lazy.tsx:68
 msgid "Decks"
 msgstr "المجموعات"
@@ -507,7 +508,7 @@ msgid "Log in"
 msgstr "تسجيل الدخول"
 
 #: src/components/DesktopNavigation.tsx:123
-#: src/components/MobileHeader.tsx:179
+#: src/components/MobileHeader.tsx:191
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
@@ -679,7 +680,7 @@ msgid "Sentence"
 msgstr "جملة"
 
 #: src/components/DesktopNavigation.tsx:101
-#: src/components/MobileHeader.tsx:159
+#: src/components/MobileHeader.tsx:171
 #: src/routes/_app-layout/settings/route.lazy.tsx:85
 msgid "Settings"
 msgstr "الإعدادات"
@@ -702,7 +703,7 @@ msgstr "مفرد"
 
 #: src/routes/_app-layout/decks/route.lazy.tsx:123
 msgid "Study this deck"
-msgstr "ادرس هذه المجموعة"
+msgstr "ادرس"
 
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:161
 msgid "Successfully added word!"

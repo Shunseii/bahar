@@ -253,6 +253,7 @@ msgstr "Deck successfully updated!"
 
 #: src/components/DesktopNavigation.tsx:68
 #: src/components/DesktopNavigation.tsx:74
+#: src/components/MobileHeader.tsx:159
 #: src/routes/_app-layout/decks/route.lazy.tsx:68
 msgid "Decks"
 msgstr "Decks"
@@ -507,7 +508,7 @@ msgid "Log in"
 msgstr "Log in"
 
 #: src/components/DesktopNavigation.tsx:123
-#: src/components/MobileHeader.tsx:179
+#: src/components/MobileHeader.tsx:191
 msgid "Logout"
 msgstr "Logout"
 
@@ -679,7 +680,7 @@ msgid "Sentence"
 msgstr "Sentence"
 
 #: src/components/DesktopNavigation.tsx:101
-#: src/components/MobileHeader.tsx:159
+#: src/components/MobileHeader.tsx:171
 #: src/routes/_app-layout/settings/route.lazy.tsx:85
 msgid "Settings"
 msgstr "Settings"
