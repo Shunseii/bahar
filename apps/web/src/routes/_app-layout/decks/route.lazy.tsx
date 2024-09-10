@@ -54,7 +54,7 @@ const Decks = () => {
             <span className="flex gap-x-2 items-center">
               <Plus className="h-5 w-5" />
 
-              <Trans>Create new deck</Trans>
+              <Trans>Create deck</Trans>
             </span>
           </Button>
         </DialogTrigger>
@@ -120,7 +120,7 @@ const Decks = () => {
                     <TableCell className="flex justify-between">
                       <FlashcardDrawer filters={deck.filters ?? undefined}>
                         <Button variant="outline" size="sm">
-                          <Trans>Study this deck</Trans>
+                          <Trans>Study</Trans>
                         </Button>
                       </FlashcardDrawer>
 

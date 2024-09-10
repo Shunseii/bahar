@@ -216,8 +216,11 @@ msgid "Create a new deck by choosing filters. The deck will be composed of the c
 msgstr "Create a new deck by choosing filters. The deck will be composed of the cards that match the filters."
 
 #: src/routes/_app-layout/decks/route.lazy.tsx:57
-msgid "Create new deck"
-msgstr "Create new deck"
+msgid "Create deck"
+msgstr "Create deck"
+
+#~ msgid "Create new deck"
+#~ msgstr "Create new deck"
 
 #: src/routes/_layout/login/route.lazy.tsx:167
 msgid "Create one"
@@ -702,8 +705,11 @@ msgid "Singular"
 msgstr "Singular"
 
 #: src/routes/_app-layout/decks/route.lazy.tsx:123
-msgid "Study this deck"
-msgstr "Study this deck"
+msgid "Study"
+msgstr "Study"
+
+#~ msgid "Study this deck"
+#~ msgstr "Study this deck"
 
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:161
 msgid "Successfully added word!"
