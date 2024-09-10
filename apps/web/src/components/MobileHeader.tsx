@@ -12,7 +12,7 @@ import { Trans } from "@lingui/macro";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useClickAway } from "@uidotdev/usehooks";
-import { Home, PanelLeft, Settings } from "lucide-react";
+import { Home, PanelLeft, Settings, Layers } from "lucide-react";
 import React, { FC, PropsWithChildren } from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
@@ -145,6 +145,18 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
               >
                 <Home className="w-5 h-5" />
                 <Trans>Home</Trans>
+              </NavLink>
+
+              <NavLink
+                to="/decks"
+                params={{}}
+                className="h-auto w-auto justify-start gap-x-2"
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
+                <Layers className="h-5 w-5" />
+                <Trans>Decks</Trans>
               </NavLink>
 
               <NavLink
