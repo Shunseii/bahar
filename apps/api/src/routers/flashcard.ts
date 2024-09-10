@@ -159,7 +159,7 @@ export const queryFlashcards = async ({
       })
     : ["ism", '"fi\'l"', "harf", "expression"];
 
-  const { tags } = filters ?? {};
+  const tags = filters?.tags?.map((tag) => `"${tag}"`) ?? [];
 
   /**
    * Current timestamp in seconds

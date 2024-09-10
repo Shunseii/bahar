@@ -214,7 +214,7 @@ export const DeckDialogContent = ({
             />
           </div>
 
-          <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-y-4 mb-2">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="ltr:text-sm rtl:text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 <Trans>Tags</Trans>
@@ -237,7 +237,7 @@ export const DeckDialogContent = ({
             </p>
           </div>
 
-          <ul className="flex flex-wrap gap-2 mb-2">
+          <ul className="flex flex-wrap gap-2 mb-3">
             {tagFields.map((field, index) => {
               return (
                 <Badge
