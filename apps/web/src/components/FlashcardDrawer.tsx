@@ -57,11 +57,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const { data, status } = trpc.flashcard.today.useQuery({ filters });
   const { mutate: updateFlashcard, status: updateFlashcardStatus } =
     trpc.flashcard.update.useMutation({
-      // TODO: this doesn't actually work nor affect the behaviour at all.
       onMutate: async (updatedCard) => {
         const todayQueryKey = getQueryKey(
           trpc.flashcard.today,
-          undefined,
+          { filters },
           "query",
         );
 
@@ -78,7 +77,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         }));
       },
 
-      onSuccess: async () => {
+      onSettled: async () => {
         const todayQueryKey = getQueryKey(
           trpc.flashcard.today,
           undefined,
