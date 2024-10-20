@@ -119,13 +119,57 @@ dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
   const userIndexId = req.user.id;
   const index = meilisearchClient.index(userIndexId);
 
-  const documents = await index.getDocuments({ limit: 1000 });
-  const dictionary = documents.results;
+  const shouldExportWithFlashcards = req.body?.includeFlashcards ?? false;
 
-  res.setHeader("Content-Type", "application/json");
-  res.setHeader("Content-Disposition", "attachment; filename=data.json");
+  // TODO: resolve this dynamically from the json schema
+  const JSON_SCHEMA_FIELDS = [
+    "id",
+    "word",
+    "definition",
+    "translation",
+    "type",
+    "root",
+    "tags",
+    "antonyms",
+    "examples",
+    "morphology",
+    shouldExportWithFlashcards && "flashcard",
+  ];
 
-  return res.status(200).json(dictionary);
+  const limit = 1000;
+  const allDocuments = [];
+
+  let offset = 0;
+
+  try {
+    let hasMoreDocuments = true;
+
+    do {
+      const { results, total } = await index.getDocuments({
+        offset,
+        limit,
+        fields: JSON_SCHEMA_FIELDS,
+      });
+
+      if (results.length > 0 && results.length <= total) {
+        allDocuments.push(...results);
+
+        offset += limit;
+      } else {
+        hasMoreDocuments = false; // No more documents to fetch
+      }
+    } while (hasMoreDocuments);
+
+    // Set headers for downloading the file
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Content-Disposition", "attachment; filename=data.json");
+
+    return res.status(200).json(allDocuments);
+  } catch (error) {
+    console.error("Error exporting dictionary:", error);
+
+    return res.status(500).json({ error: "Error exporting dictionary" });
+  }
 });
 
 dictionaryRouter.delete("/dictionary", auth, async (req, res) => {

@@ -36,6 +36,46 @@ const Settings = () => {
   const { toast } = useToast();
   const { refresh } = useInstantSearch();
 
+  const exportDictionary = useCallback(async (includeFlashcards = false) => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/dictionary/export`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            includeFlashcards,
+          }),
+        },
+      );
+
+      const data = JSON.stringify(await response.json(), null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      const filename = includeFlashcards
+        ? "dictionary-backup.json"
+        : "dictionary-without-flashcards.json";
+
+      link.href = url;
+      link.download = filename;
+      link.click();
+
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const deleteDictionary = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -223,41 +263,59 @@ const Settings = () => {
         </CardContent>
 
         <CardContent>
-          <Button
-            variant="secondary"
-            disabled={isLoading}
-            onClick={async () => {
-              try {
-                setIsLoading(true);
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="secondary" disabled={isLoading}>
+                <Trans>Export</Trans>
+              </Button>
+            </DialogTrigger>
 
-                const response = await fetch(
-                  `${import.meta.env.VITE_API_BASE_URL}/dictionary/export`,
-                  {
-                    method: "POST",
-                    credentials: "include",
-                  },
-                );
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  <Trans>Export your dictionary</Trans>
+                </DialogTitle>
 
-                const data = JSON.stringify(await response.json(), null, 2);
-                const blob = new Blob([data], { type: "application/json" });
+                <DialogDescription>
+                  <Trans>
+                    Exporting dictionary with flaschards will save your
+                    flashcard progress along with all the content in your
+                    dictionary. Use this option if you want to make a backup of
+                    your data.
+                    <br />
+                    <br />
+                    Exporting your dictionary without flashcards will not save
+                    any flashcard progress. Use this option if you want to share
+                    your dictionary.
+                    <br />
+                    <br />
+                    <strong>Warning</strong>: Importing your file without
+                    flashcards will reset all of your flashcards.
+                  </Trans>
+                </DialogDescription>
+              </DialogHeader>
 
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement("a");
+              <DialogFooter>
+                <div className="flex gap-4 justify-end">
+                  <Button
+                    variant="secondary"
+                    type="button"
+                    onClick={() => exportDictionary(false)}
+                  >
+                    <Trans>Export</Trans>
+                  </Button>
 
-                link.href = url;
-                link.download = "data.json";
-                link.click();
-
-                URL.revokeObjectURL(url);
-              } catch (err) {
-                console.error(err);
-              } finally {
-                setIsLoading(false);
-              }
-            }}
-          >
-            <Trans>Export</Trans>
-          </Button>
+                  <Button
+                    variant="secondary"
+                    type="button"
+                    onClick={() => exportDictionary(true)}
+                  >
+                    <Trans>Export with flashcards</Trans>
+                  </Button>
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </CardContent>
 
         <CardContent>
