@@ -57,6 +57,26 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const { data, status } = trpc.flashcard.today.useQuery({ filters });
   const { mutate: updateFlashcard, status: updateFlashcardStatus } =
     trpc.flashcard.update.useMutation({
+      onMutate: async (updatedCard) => {
+        const todayQueryKey = getQueryKey(
+          trpc.flashcard.today,
+          undefined,
+          "query",
+        );
+
+        await queryClient.cancelQueries({
+          queryKey: todayQueryKey,
+          exact: false,
+        });
+
+        queryClient.setQueryData(todayQueryKey, (old: typeof data) => ({
+          flashcards:
+            old?.flashcards?.filter(
+              (card) => card.card.id !== updatedCard.id,
+            ) ?? [],
+        }));
+      },
+
       onSuccess: async () => {
         const todayQueryKey = getQueryKey(
           trpc.flashcard.today,
