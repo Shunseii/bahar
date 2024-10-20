@@ -32,6 +32,124 @@ import { FC } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { FormSchema, Inflection } from "@/schemas/dictionary";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
+  const { mutateAsync: resetFlashcard } = trpc.flashcard.reset.useMutation({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: getQueryKey(trpc.flashcard.today, undefined, "query"),
+      });
+    },
+  });
+  const { toast } = useToast();
+  const { _ } = useLingui();
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="destructive" type="button" size="sm">
+          <Trans>Reset flashcard</Trans>
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            <Trans>Reset flashcard progress?</Trans>
+          </DialogTitle>
+
+          <DialogDescription>
+            <Trans>
+              Are you sure you want to reset this flashcard's progress? The word
+              entry in the dictionary will not be modified, but its
+              corresponding flashcards will be treated as new ones.
+              <br />
+              <br />
+              <strong>This action cannot be undone.</strong>
+            </Trans>
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter>
+          <Button
+            variant="destructive"
+            type="button"
+            className="w-max md:self-start self-center"
+            onClick={async () => {
+              await resetFlashcard({ id });
+
+              toast({
+                title: _(msg`Successfully reset the flashcard.`),
+              });
+            }}
+          >
+            <Trans>Reset flashcard</Trans>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
+  const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
+  const navigate = useNavigate();
+  const { refresh } = useInstantSearch();
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="destructive" type="button" size="sm">
+          <Trans>Delete</Trans>
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            <Trans>Delete this word?</Trans>
+          </DialogTitle>
+
+          <DialogDescription>
+            <Trans>
+              Are you sure you want to delete this word? It will be removed from
+              your dictionary and its flashcards will be deleted.
+              <br />
+              <br />
+              <strong>This action cannot be undone.</strong>
+            </Trans>
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter>
+          <Button
+            variant="destructive"
+            type="button"
+            className="w-max md:self-start self-center"
+            onClick={async () => {
+              await deleteWord({ id });
+
+              refresh();
+
+              navigate({ to: "/" });
+            }}
+          >
+            <Trans>Delete</Trans>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const Breadcrumbs: FC<{ className?: string; word: string }> = ({
   className,
@@ -86,13 +204,6 @@ const BackButton = () => {
 };
 
 const Edit = () => {
-  const { mutateAsync: resetFlashcard } = trpc.flashcard.reset.useMutation({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: getQueryKey(trpc.flashcard.today, undefined, "query"),
-      });
-    },
-  });
   const { mutateAsync: editWord } = trpc.dictionary.editWord.useMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -107,9 +218,7 @@ const Edit = () => {
     },
   });
 
-  const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
   const { wordId } = Route.useParams();
-  const navigate = useNavigate();
   const { data } = trpc.dictionary.find.useQuery({ id: wordId });
   const { toast } = useToast();
   const { refresh } = useInstantSearch();
@@ -224,20 +333,7 @@ const Edit = () => {
               </h1>
 
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button
-                  variant="destructive"
-                  type="button"
-                  size="sm"
-                  onClick={async () => {
-                    await deleteWord({ id: data?.id! });
-
-                    refresh();
-
-                    navigate({ to: "/" });
-                  }}
-                >
-                  <Trans>Delete</Trans>
-                </Button>
+                <DeleteWordButton id={data?.id!} />
 
                 <Button size="sm" type="submit">
                   <Trans>Save</Trans>
@@ -257,46 +353,16 @@ const Edit = () => {
 
                 <TagsFormSection />
 
-                <Button
-                  variant="destructive"
-                  type="button"
-                  size="sm"
-                  className="hidden sm:block"
-                  onClick={async () => {
-                    await resetFlashcard({ id: data?.id! });
-                  }}
-                >
-                  <Trans>Reset flashcard</Trans>
-                </Button>
+                <div className="hidden sm:block">
+                  <ResetFlashcardButton id={data?.id!} />
+                </div>
               </div>
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button
-                variant="destructive"
-                type="button"
-                size="sm"
-                onClick={async () => {
-                  await editWord({ id: data?.id!, flashcard: null });
-                }}
-              >
-                <Trans>Reset flashcard</Trans>
-              </Button>
+              <ResetFlashcardButton id={data?.id!} />
 
-              <Button
-                variant="destructive"
-                type="button"
-                size="sm"
-                onClick={async () => {
-                  await deleteWord({ id: data?.id! });
-
-                  refresh();
-
-                  navigate({ to: "/" });
-                }}
-              >
-                <Trans>Delete</Trans>
-              </Button>
+              <DeleteWordButton id={data?.id!} />
 
               <Button size="sm">
                 <Trans>Save</Trans>
