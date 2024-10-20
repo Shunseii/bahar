@@ -34,6 +34,7 @@ import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSe
 import { FormSchema, Inflection } from "@/schemas/dictionary";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -80,20 +81,22 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
         </DialogHeader>
 
         <DialogFooter>
-          <Button
-            variant="destructive"
-            type="button"
-            className="w-max md:self-start self-center"
-            onClick={async () => {
-              await resetFlashcard({ id });
+          <DialogClose asChild>
+            <Button
+              variant="destructive"
+              type="button"
+              className="w-max md:self-start self-center"
+              onClick={async () => {
+                await resetFlashcard({ id });
 
-              toast({
-                title: _(msg`Successfully reset the flashcard.`),
-              });
-            }}
-          >
-            <Trans>Reset flashcard</Trans>
-          </Button>
+                toast({
+                  title: _(msg`Successfully reset the flashcard.`),
+                });
+              }}
+            >
+              <Trans>Reset flashcard</Trans>
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

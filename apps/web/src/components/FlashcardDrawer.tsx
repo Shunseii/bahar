@@ -394,7 +394,6 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
               return (
                 <Button
                   className="w-full max-w-sm self-center rtl:text-lg"
-                  disabled={updateFlashcardStatus === "pending"}
                   onClick={() => setShowAnswer(true)}
                 >
                   <Trans>Show answer</Trans>
