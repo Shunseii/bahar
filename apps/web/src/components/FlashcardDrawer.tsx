@@ -55,25 +55,30 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const [showAnswer, setShowAnswer] = useState(false);
   const { data: flashcardSettings } = trpc.settings.get.useQuery();
   const { data, status } = trpc.flashcard.today.useQuery({ filters });
-  const { mutate: updateFlashcard } = trpc.flashcard.update.useMutation({
-    onSuccess: async () => {
-      const todayQueryKey = getQueryKey(
-        trpc.flashcard.today,
-        undefined,
-        "query",
-      );
-      const deckListQueryKey = getQueryKey(trpc.decks.list, undefined, "query");
+  const { mutate: updateFlashcard, status: updateFlashcardStatus } =
+    trpc.flashcard.update.useMutation({
+      onSuccess: async () => {
+        const todayQueryKey = getQueryKey(
+          trpc.flashcard.today,
+          undefined,
+          "query",
+        );
+        const deckListQueryKey = getQueryKey(
+          trpc.decks.list,
+          undefined,
+          "query",
+        );
 
-      await queryClient.invalidateQueries({
-        queryKey: deckListQueryKey,
-      });
+        await queryClient.invalidateQueries({
+          queryKey: deckListQueryKey,
+        });
 
-      await queryClient.invalidateQueries({
-        queryKey: todayQueryKey,
-        exact: false,
-      });
-    },
-  });
+        await queryClient.invalidateQueries({
+          queryKey: todayQueryKey,
+          exact: false,
+        });
+      },
+    });
 
   const flashcards = data?.flashcards ?? [];
 
@@ -89,6 +94,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     setCurrentCard(flashcards[0]);
   }, [flashcards]);
 
+  // Will get triggered after the current flashcard has been updated
+  // i.e. graded and removed from the queue. This will reset the answer
+  // AFTER the grading. This is not reliable and is used more as a catch-all
+  // for other cases when a card is updated without grading.
   useEffect(() => {
     if (currentCard) {
       setShowAnswer(false);
@@ -124,6 +133,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         last_review_timestamp: lastReviewTimestamp,
       };
 
+      setShowAnswer(false);
       updateFlashcard(newCard);
 
       if (currentFlashcardIndex === flashcards.length - 1) {
@@ -364,6 +374,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
               return (
                 <Button
                   className="w-full max-w-sm self-center rtl:text-lg"
+                  disabled={updateFlashcardStatus === "pending"}
                   onClick={() => setShowAnswer(true)}
                 >
                   <Trans>Show answer</Trans>
