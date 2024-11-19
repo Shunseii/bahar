@@ -7,7 +7,17 @@ if [ -z "$MEILISEARCH_HOST" ] || [ -z "$MEILISEARCH_MASTER_KEY" ]; then
   exit 1
 fi
 
-FILTERABLE_ATTRIBUTES='["flashcard.due_timestamp", "tags", "type"]'
+SORTABLE_ATTRIBUTES='[
+  "flashcard.due_timestamp", 
+  "flashcard_reverse.due_timestamp"
+]'
+
+FILTERABLE_ATTRIBUTES='[
+  "flashcard.due_timestamp", 
+  "flashcard_reverse.due_timestamp", 
+  "tags", 
+  "type"
+]'
 
 # The maximinum number of hits to return for a search query.
 MAX_TOTAL_HITS=2000
@@ -35,6 +45,21 @@ for index in $INDEXES; do
   if [[ $response =~ "code" && $response =~ "type" ]]; then
     echo $response | jq
     echo "Error updating filterable attributes for index: $index"
+    exit 1
+  fi
+
+  echo "Updating sortable attributes for index: $index"
+  # Update sortable attributes
+  response=$(curl \
+    -X PUT "$MEILISEARCH_HOST/indexes/$index/settings/sortable-attributes" \
+    -H "Authorization: Bearer $MEILISEARCH_MASTER_KEY" \
+    -H "Content-Type: application/json" \
+    -s \
+    --data-binary "$SORTABLE_ATTRIBUTES")
+
+  if [[ $response =~ "code" && $response =~ "type" ]]; then
+    echo $response | jq
+    echo "Error updating sortable attributes for index: $index"
     exit 1
   fi
 
