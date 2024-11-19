@@ -2,9 +2,13 @@ import { router, protectedProcedure } from "../trpc";
 import { meilisearchClient } from "../clients/meilisearch";
 import { Card, createEmptyCard } from "ts-fsrs";
 import { z } from "zod";
-import { DictionarySchema } from "../schemas/dictionary.schema";
+import {
+  DictionarySchema,
+  JSON_SCHEMA_FIELDS,
+} from "../schemas/dictionary.schema";
 import { FlashcardSchema } from "../schemas/flashcard.schema";
 import { SelectDecksSchema } from "../db/schema/decks";
+import { MultiSearchQueryWithFederation } from "meilisearch";
 
 export type Flashcard = Card & {
   id: string;
@@ -24,6 +28,7 @@ export const flashcardRouter = router({
         flashcards: z.array(
           z.object({
             flashcard: FlashcardSchema,
+            reverse: z.boolean(),
             card: DictionarySchema.pick({
               id: true,
               word: true,
@@ -36,9 +41,9 @@ export const flashcardRouter = router({
               root: true,
               antonyms: true,
             }),
-          }),
+          })
         ),
-      }),
+      })
     )
     .query(async ({ ctx, input }) => {
       const { user } = ctx;
@@ -46,6 +51,7 @@ export const flashcardRouter = router({
       const dictionaryWords = await queryFlashcards({
         user_id: user.id,
         input,
+        limit: 100,
       });
 
       return {
@@ -56,6 +62,7 @@ export const flashcardRouter = router({
             type,
             translation,
             flashcard,
+            reverse,
             morphology,
             definition,
             examples,
@@ -65,6 +72,7 @@ export const flashcardRouter = router({
           }) => {
             return {
               flashcard: flashcard ?? getEmptyFlashcard(id),
+              reverse,
               card: {
                 id,
                 word,
@@ -78,7 +86,7 @@ export const flashcardRouter = router({
                 antonyms,
               },
             };
-          },
+          }
         ),
       };
     }),
@@ -98,6 +106,7 @@ export const flashcardRouter = router({
         {
           ...document,
           flashcard: undefined,
+          flashcard_reverse: undefined,
         },
       ]);
 
@@ -109,18 +118,32 @@ export const flashcardRouter = router({
     }),
 
   update: protectedProcedure
-    .input(FlashcardSchema)
+    .input(
+      z.object({
+        flashcard: FlashcardSchema,
+        id: z.string(),
+        reverse: z.boolean().optional().default(false),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
 
-      const { id, ...flashcard } = input;
+      const {
+        id,
+        reverse,
+        flashcard: { ...flashcard },
+      } = input;
+
+      const flashcardFieldToUpdate = reverse
+        ? "flashcard_reverse"
+        : "flashcard";
 
       const { taskUid } = await meilisearchClient
         .index(user.id)
         .updateDocuments([
           {
             id,
-            flashcard: {
+            [flashcardFieldToUpdate]: {
               ...flashcard,
               id,
             },
@@ -136,16 +159,24 @@ export const flashcardRouter = router({
     }),
 });
 
+type OutputFlashcards = z.infer<typeof DictionarySchema> & {
+  reverse?: boolean;
+};
+
 export const queryFlashcards = async ({
   user_id,
   input,
   fields,
   show_only_today = true,
+  limit = 1000,
+  show_reverse = true,
 }: {
   user_id: string;
   input: z.infer<typeof TodaySchema>;
   fields?: string[];
   show_only_today?: boolean;
+  limit?: number;
+  show_reverse?: boolean;
 }) => {
   const { filters } = input ?? {};
 
@@ -166,20 +197,91 @@ export const queryFlashcards = async ({
    */
   const now = Math.floor(new Date().getTime() / 1000);
 
-  const { results } = await meilisearchClient.index(user_id).getDocuments({
-    // The type inference on fields is broken so need to cast to any
-    fields: fields as any,
-    filter: [
-      show_only_today
-        ? `flashcard.due_timestamp NOT EXISTS OR flashcard.due_timestamp <= ${now}`
-        : "",
-      `type IN [${types.join(", ")}]`,
-      tags?.length ? `tags IN [${tags.join(", ")}]` : "",
-    ],
-    limit: 1000,
+  const fieldsToRetrieve = fields ?? JSON_SCHEMA_FIELDS;
+
+  const queries: MultiSearchQueryWithFederation[] = [
+    {
+      indexUid: user_id,
+      limit,
+      sort: ["flashcard.due_timestamp:asc"],
+      attributesToRetrieve: fieldsToRetrieve.filter(
+        (field) => field !== "flashcard_reverse"
+      ),
+      filter: [
+        show_only_today
+          ? `flashcard.due_timestamp NOT EXISTS OR flashcard.due_timestamp <= ${now}`
+          : "",
+        `type IN [${types.join(", ")}]`,
+        tags?.length ? `tags IN [${tags.join(", ")}]` : "",
+      ],
+    },
+    ...(show_reverse
+      ? [
+          {
+            indexUid: user_id,
+            limit,
+            sort: ["flashcard_reverse.due_timestamp:asc"],
+            attributesToRetrieve: fieldsToRetrieve.filter(
+              (field) => field !== "flashcard"
+            ),
+            filter: [
+              show_only_today
+                ? `flashcard_reverse.due_timestamp NOT EXISTS OR flashcard_reverse.due_timestamp <= ${now}`
+                : "",
+              `type IN [${types.join(", ")}]`,
+              tags?.length ? `tags IN [${tags.join(", ")}]` : "",
+            ],
+          },
+        ]
+      : []),
+  ];
+
+  const [forwardFlashcardResults, reverseFlashcardResults] = (
+    await meilisearchClient.multiSearch<z.infer<typeof DictionarySchema>>({
+      queries,
+    })
+  ).results;
+
+  const allFlashcards = [
+    ...forwardFlashcardResults.hits,
+    ...reverseFlashcardResults.hits.map((f) => ({ ...f, reverse: true })),
+  ]
+    .sort((a, b) => {
+      const aTimestamp =
+        a.flashcard?.due_timestamp ?? a.flashcard_reverse?.due_timestamp;
+
+      const bTimestamp =
+        b.flashcard?.due_timestamp ?? b.flashcard_reverse?.due_timestamp;
+
+      // For sorting, we want to review overdue cards first rather than prioritizing
+      // new ones.
+      if (aTimestamp == null && bTimestamp == null) return 0; // maintain relative order of new cards
+      if (aTimestamp == null) return 1; // a goes later (is new)
+      if (bTimestamp == null) return -1; // b goes later (is new)
+
+      return aTimestamp - bTimestamp;
+    })
+    .slice(0, limit);
+
+  const flashcards = allFlashcards as OutputFlashcards[];
+
+  /**
+   * An array of flashcards where both flashcards and reversed flashcards use the
+   * `flashcard` field to store the flashcard data but with an additional `reverse` field
+   * to indicate the direction of each.
+   */
+  const normalizedFlashcards = flashcards.map((card) => {
+    const { flashcard, flashcard_reverse, ...fields } = card;
+    const isReverse = !!fields.reverse;
+
+    return {
+      ...fields,
+      flashcard: isReverse ? flashcard_reverse : flashcard,
+      reverse: isReverse,
+    };
   });
 
-  return results as z.infer<typeof DictionarySchema>[];
+  return normalizedFlashcards;
 };
 
 const getEmptyFlashcard = (id: string): Flashcard => {

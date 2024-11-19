@@ -38,7 +38,7 @@ export const decksRouter = router({
             user_id: user.id,
             fields: ["id"],
             show_only_today: true,
-            input: filters ? { filters } : undefined,
+            input: filters ? { filters: { ...filters } } : undefined,
           });
 
           return {

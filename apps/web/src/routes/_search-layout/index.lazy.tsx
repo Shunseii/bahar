@@ -14,7 +14,7 @@ import { Plural, Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/Page";
 import { trpc } from "@/lib/trpc";
-import { FlashcardDrawer } from "@/components/FlashcardDrawer";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
 import { useInstantSearch } from "react-instantsearch";
 
 const Index = () => {

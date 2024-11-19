@@ -28,7 +28,7 @@ import {
 import { Trans, msg } from "@lingui/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { MoreHorizontal, Plus } from "lucide-react";
-import { FlashcardDrawer } from "@/components/FlashcardDrawer";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { useToast } from "@/hooks/useToast";

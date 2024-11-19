@@ -16,7 +16,10 @@ import { auth } from "../middleware";
 import { ErrorCode, MeilisearchError } from "../error";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { DictionarySchema } from "../schemas/dictionary.schema";
+import {
+  DictionarySchema,
+  JSON_SCHEMA_FIELDS,
+} from "../schemas/dictionary.schema";
 
 export enum Inflection {
   indeclinable = "indeclinable ",
@@ -43,7 +46,7 @@ const upload = multer({
 const uploadWithErrorHandling = (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   upload(req, res, (err) => {
     if (err instanceof Error) {
@@ -112,7 +115,7 @@ dictionaryRouter.post(
     }
 
     return res.status(200).end();
-  },
+  }
 );
 
 dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
@@ -122,19 +125,12 @@ dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
   const shouldExportWithFlashcards = req.body?.includeFlashcards ?? false;
 
   // TODO: resolve this dynamically from the json schema
-  const JSON_SCHEMA_FIELDS = [
-    "id",
-    "word",
-    "definition",
-    "translation",
-    "type",
-    "root",
-    "tags",
-    "antonyms",
-    "examples",
-    "morphology",
-    shouldExportWithFlashcards && "flashcard",
-  ];
+
+  const fieldsToExport = JSON_SCHEMA_FIELDS.filter((field) =>
+    !shouldExportWithFlashcards
+      ? field !== "flashcard" && field !== "flashcard_reverse"
+      : true
+  );
 
   const limit = 1000;
   const allDocuments = [];
@@ -148,7 +144,7 @@ dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
       const { results, total } = await index.getDocuments({
         offset,
         limit,
-        fields: JSON_SCHEMA_FIELDS,
+        fields: fieldsToExport,
       });
 
       if (results.length > 0 && results.length <= total) {
