@@ -43,7 +43,7 @@ services:
     volumes:
       - .:/app
   meilisearch:
-    image: getmeili/meilisearch:v1.8
+    image: getmeili/meilisearch:v1.3.4
     ports:
       - "7700:7700"
     environment:
