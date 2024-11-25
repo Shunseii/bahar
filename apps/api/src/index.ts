@@ -19,6 +19,7 @@ import { Session, User } from "lucia";
 import { tagsRouter } from "./routers/tags";
 import { settingsRouter } from "./routers/settings";
 import { decksRouter } from "./routers/decks";
+import $RefParser from "@apidevtools/json-schema-ref-parser";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -66,11 +67,18 @@ app.use(
 app.use(authRouter);
 app.use(dictionaryRouter);
 
-app.get("/schema.json", (_req, res) => {
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const filePath = path.join(__dirname, "schema.json");
+app.get("/schema.json", async (_req, res) => {
+  try {
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const schemaPath = path.join(__dirname, "schema.json");
+    const schema = await $RefParser.bundle(schemaPath);
 
-  res.sendFile(filePath);
+    return res.json(schema);
+  } catch (err) {
+    console.error("Error bundling the schema: ", err);
+
+    return res.status(500).send("There was an error fetching the schema.");
+  }
 });
 
 app.use(
