@@ -1,5 +1,7 @@
 import { z } from "@/lib/zod";
 
+// TODO: reuse schema from API
+
 export enum Inflection {
   indeclinable = "indeclinable",
   diptote = "diptote",
