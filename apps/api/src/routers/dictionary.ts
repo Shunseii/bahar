@@ -9,14 +9,15 @@ import Ajv from "ajv";
 import { router, protectedProcedure } from "../trpc";
 import addFormats from "ajv-formats";
 import multer from "multer";
-
-import schema from "../schema.json";
 import { meilisearchClient } from "../clients/meilisearch";
 import { auth } from "../middleware";
 import { ErrorCode, MeilisearchError } from "../error";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { DictionarySchema } from "../schemas/dictionary.schema";
+import $RefParser from "@apidevtools/json-schema-ref-parser";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
 export enum Inflection {
   indeclinable = "indeclinable ",
@@ -75,6 +76,10 @@ dictionaryRouter.post(
     }
 
     const dictionary = JSON.parse(fileData) as Record<string, any>[];
+
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const schemaPath = path.join(__dirname, "../schema.json");
+    const schema = await $RefParser.bundle(schemaPath);
 
     const validate = ajv.compile(schema);
     const isValid = validate(dictionary);

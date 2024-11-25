@@ -1,6 +1,5 @@
 import "dotenv/config";
 
-import path from "path";
 import { router, createContext } from "./trpc";
 import express from "express";
 import * as trpcExpress from "@trpc/server/adapters/express";
@@ -13,7 +12,7 @@ import { flashcardRouter } from "./routers/flashcard";
 import { trpcAuthRouter } from "./routers/auth";
 import { csrf } from "./middleware";
 import { getAllowedDomains } from "./utils";
-import { dirname } from "path";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import { Session, User } from "lucia";
 import { tagsRouter } from "./routers/tags";

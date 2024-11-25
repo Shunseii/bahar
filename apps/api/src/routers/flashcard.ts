@@ -109,7 +109,7 @@ export const flashcardRouter = router({
     }),
 
   update: protectedProcedure
-    .input(FlashcardSchema)
+    .input(FlashcardSchema.extend({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
 
