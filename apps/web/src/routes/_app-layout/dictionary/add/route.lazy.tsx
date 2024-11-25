@@ -122,34 +122,32 @@ const Add = () => {
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     try {
       const filteredData = (() => {
+        const root = data?.root
+          ?.trim()
+          ?.replace(/[\s,]+/g, "")
+          ?.split("");
+
+        const tags = data?.tags?.map((tag) => tag.name) ?? [];
+
         if (data.type === "ism") {
           return {
             ...data,
-            root: data?.root
-              ?.trim()
-              ?.replace(/[\s,]+/g, "")
-              ?.split(""),
-            tags: data?.tags?.map((tag) => tag.name) ?? [],
+            root,
+            tags,
             morphology: { ism: data?.morphology?.ism },
           };
         } else if (data.type === "fi'l") {
           return {
             ...data,
-            root: data?.root
-              ?.trim()
-              ?.replace(/[\s,]+/g, "")
-              ?.split(""),
-            tags: data?.tags?.map((tag) => tag.name) ?? [],
+            root,
+            tags,
             morphology: { verb: data?.morphology?.verb },
           };
         } else {
           return {
             ...data,
-            root: data?.root
-              ?.trim()
-              ?.replace(/[\s,]+/g, "")
-              ?.split(""),
-            tags: data?.tags?.map((tag) => tag.name) ?? [],
+            root,
+            tags,
             morphology: undefined,
           };
         }
