@@ -43,9 +43,9 @@ export const FormSchema = z.object({
             )
             .optional(),
           gender: z.enum(["masculine", "feminine"]).optional(),
-          inflection: z.string().optional(),
-          // TODO: fix validation error
-          // inflection: z.nativeEnum(Inflection).optional(),
+          inflection: z
+            .enum(["indeclinable", "diptote", "triptote"])
+            .optional(),
         })
         .optional(),
       verb: z

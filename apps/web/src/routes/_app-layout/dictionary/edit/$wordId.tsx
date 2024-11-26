@@ -243,7 +243,7 @@ const Edit = () => {
           dual: "",
           gender: "masculine",
           plurals: [],
-          inflection: Inflection.triptote,
+          inflection: "triptote",
         },
         verb: {
           huroof: [],
@@ -262,41 +262,40 @@ const Edit = () => {
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     try {
-      const filteredData = (() => {
-        if (data.type === "ism") {
-          return {
-            ...data,
-            root: data?.root
-              ?.trim()
-              ?.replace(/[\s,]+/g, "")
-              ?.split(""),
-            morphology: { ism: data?.morphology?.ism },
-            tags: data?.tags?.map((tag) => tag.name) ?? [],
-          };
-        } else if (data.type === "fi'l") {
-          return {
-            ...data,
-            root: data?.root
-              ?.trim()
-              ?.replace(/[\s,]+/g, "")
-              ?.split(""),
-            morphology: { verb: data?.morphology?.verb },
-            tags: data?.tags?.map((tag) => tag.name) ?? [],
-          };
-        } else {
-          return {
-            ...data,
-            root: data?.root
-              ?.trim()
-              ?.replace(/[\s,]+/g, "")
-              ?.split(""),
-            morphology: undefined,
-            tags: data?.tags?.map((tag) => tag.name) ?? [],
-          };
-        }
-      })();
+      const root = data?.root
+        ?.trim()
+        ?.replace(/[\s,]+/g, "")
+        ?.split("");
 
-      await editWord({ id: wordId, ...filteredData });
+      const tags = data?.tags?.map((tag) => tag.name) ?? [];
+
+      const id = wordId;
+
+      if (data.type === "ism") {
+        await editWord({
+          ...data,
+          id,
+          root,
+          tags,
+          morphology: { ism: data?.morphology?.ism },
+        });
+      } else if (data.type === "fi'l") {
+        await editWord({
+          ...data,
+          id,
+          root,
+          tags,
+          morphology: { verb: data?.morphology?.verb },
+        });
+      } else {
+        await editWord({
+          ...data,
+          id,
+          root,
+          tags,
+          morphology: undefined,
+        });
+      }
 
       toast({
         title: _(msg`Successfully updated the word!`),
