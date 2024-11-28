@@ -123,11 +123,17 @@ export const flashcardRouter = router({
     }),
 
   update: protectedProcedure
-    .input(FlashcardSchema.extend({ id: z.string(), reverse: z.boolean() }))
+    .input(
+      z.object({
+        id: z.string(),
+        reverse: z.boolean(),
+        flashcard: FlashcardSchema,
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
 
-      const { id, reverse, ...flashcard } = input;
+      const { id, reverse, flashcard } = input;
 
       const flashcardFieldToUpdate = reverse
         ? "flashcard_reverse"
