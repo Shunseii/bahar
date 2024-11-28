@@ -8,7 +8,7 @@ import {
   decks,
 } from "../db/schema/decks";
 import { z } from "zod";
-import { queryFlashcards } from "./flashcard";
+import { FLASHCARD_LIMIT, queryFlashcards } from "./flashcard";
 
 export const decksRouter = router({
   list: protectedProcedure
@@ -17,6 +17,7 @@ export const decksRouter = router({
         .array(
           SelectDecksSchema.extend({
             to_review: z.number(),
+            total_hits: z.number(),
           }),
         )
         .optional(),
@@ -34,9 +35,10 @@ export const decksRouter = router({
         results.map(async (result) => {
           const filters = result.filters;
 
-          const flashcards = await queryFlashcards({
+          const { flashcards, totalHits } = await queryFlashcards({
             user_id: user.id,
             fields: ["id"],
+            limit: FLASHCARD_LIMIT,
             show_only_today: true,
             input: filters ? { filters: { ...filters } } : undefined,
           });
@@ -44,6 +46,7 @@ export const decksRouter = router({
           return {
             ...result,
             to_review: flashcards.length,
+            total_hits: totalHits,
           };
         }),
       );

@@ -72,6 +72,12 @@ const TagBadgesList: FC<{
   );
 };
 
+/**
+ * The maximum number of flashcards that will be returned
+ * by the API.
+ */
+export const FLASHCARD_LIMIT = 100;
+
 export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   children,
   filters = {},
@@ -84,7 +90,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       const todayQueryKey = getQueryKey(
         trpc.flashcard.today,
         { filters },
-        "query"
+        "query",
       );
 
       await queryClient.cancelQueries({
@@ -92,12 +98,17 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         exact: false,
       });
 
+      // TODO: when you have 101 cards, grading the next one will cause the
+      // number to be off by one until the server response comes back.
+      // This is due to the optimistic update.
+
       queryClient.setQueryData(todayQueryKey, (old: typeof data) => ({
+        total_hits: (old?.total_hits ?? 0) - 1,
         flashcards:
           old?.flashcards?.filter(
             (card) =>
               card.card.id !== updatedCard.id ||
-              card.reverse !== updatedCard.reverse
+              card.reverse !== updatedCard.reverse,
           ) ?? [],
       }));
     },
@@ -106,7 +117,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       const todayQueryKey = getQueryKey(
         trpc.flashcard.today,
         undefined,
-        "query"
+        "query",
       );
       const deckListQueryKey = getQueryKey(trpc.decks.list, undefined, "query");
 
@@ -122,9 +133,11 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   });
 
   const flashcards = data?.flashcards ?? [];
+  const totalHits = data?.total_hits ?? 0;
+  const hasMore = totalHits > FLASHCARD_LIMIT;
 
   const [currentCard, setCurrentCard] = useState<(typeof flashcards)[0] | null>(
-    flashcards[0]
+    flashcards[0],
   );
 
   useEffect(() => {
@@ -142,7 +155,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     ? f.repeat(currentCard.flashcard, now)
     : undefined;
   const currentFlashcardIndex = flashcards.findIndex(
-    (flashcard) => flashcard.card.id === currentCard?.card.id
+    (flashcard) => flashcard.card.id === currentCard?.card.id,
   );
 
   const gradeCard = useCallback(
@@ -175,7 +188,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         setCurrentCard(null);
       }
     },
-    [currentCard]
+    [currentCard],
   );
 
   // Initial load
@@ -196,11 +209,17 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
           </TooltipTrigger>
 
           <TooltipContent>
-            <Plural
-              value={flashcards.length}
-              one="You have # card to review."
-              other="You have # cards to review"
-            />
+            {hasMore ? (
+              <Trans>
+                You have more than {FLASHCARD_LIMIT} cards to review.
+              </Trans>
+            ) : (
+              <Plural
+                value={flashcards.length}
+                one="You have # card to review."
+                other="You have # cards to review"
+              />
+            )}
           </TooltipContent>
         </Tooltip>
       ) : (
@@ -210,15 +229,25 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>
-            {flashcards?.length ? (
-              <Plural
-                value={flashcards.length}
-                one="# card left to review"
-                other="# cards left to review"
-              />
-            ) : (
-              <Trans>You have no flashcards to review for now!</Trans>
-            )}
+            {(() => {
+              if (hasMore && flashcards?.length) {
+                return (
+                  <Trans>
+                    You have more than {FLASHCARD_LIMIT} cards to review.
+                  </Trans>
+                );
+              } else if (flashcards?.length) {
+                return (
+                  <Plural
+                    value={flashcards.length}
+                    one="# card left to review"
+                    other="# cards left to review"
+                  />
+                );
+              } else {
+                return <Trans>You have no flashcards to review for now!</Trans>;
+              }
+            })()}
           </DrawerTitle>
         </DrawerHeader>
 
@@ -256,7 +285,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <p className="max-w-14 text-center">
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Again].card.due,
-                        { locale: dir === "ltr" ? enUS : ar }
+                        { locale: dir === "ltr" ? enUS : ar },
                       )}
                     </p>
 
@@ -272,7 +301,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <p className="max-w-14 text-center">
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Hard].card.due,
-                        { locale: dir === "ltr" ? enUS : ar }
+                        { locale: dir === "ltr" ? enUS : ar },
                       )}
                     </p>
 
@@ -288,7 +317,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <p className="max-w-14 text-center">
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Good].card.due,
-                        { locale: dir === "ltr" ? enUS : ar }
+                        { locale: dir === "ltr" ? enUS : ar },
                       )}
                     </p>
 
@@ -304,7 +333,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <p className="max-w-14 text-center">
                       {formatDistanceToNow(
                         scheduling_cards[Rating.Easy].card.due,
-                        { locale: dir === "ltr" ? enUS : ar }
+                        { locale: dir === "ltr" ? enUS : ar },
                       )}
                     </p>
 

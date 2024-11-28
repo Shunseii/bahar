@@ -28,7 +28,10 @@ import {
 import { Trans, msg } from "@lingui/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { MoreHorizontal, Plus } from "lucide-react";
-import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
+import {
+  FlashcardDrawer,
+  FLASHCARD_LIMIT,
+} from "@/components/features/flashcards/FlashcardDrawer";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { useToast } from "@/hooks/useToast";
@@ -114,7 +117,9 @@ const Decks = () => {
                     <TableCell className="font-medium">{deck.name}</TableCell>
 
                     <TableCell className="font-medium">
-                      {deck.to_review}
+                      {deck.total_hits > FLASHCARD_LIMIT
+                        ? `~${deck.total_hits}`
+                        : deck.to_review}
                     </TableCell>
 
                     <TableCell className="flex justify-between">

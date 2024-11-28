@@ -8,6 +8,8 @@ import { SelectDecksSchema } from "../db/schema/decks";
 import { MultiSearchQueryWithFederation } from "meilisearch";
 import { JSON_SCHEMA_FIELDS } from "./dictionary";
 
+export const FLASHCARD_LIMIT = 100;
+
 export enum FlashcardState {
   NEW = 0,
   LEARNING = 1,
@@ -30,6 +32,7 @@ export const flashcardRouter = router({
     .input(TodaySchema)
     .output(
       z.object({
+        total_hits: z.number(),
         flashcards: z.array(
           z.object({
             flashcard: FlashcardSchema,
@@ -53,13 +56,14 @@ export const flashcardRouter = router({
     .query(async ({ ctx, input }) => {
       const { user } = ctx;
 
-      const dictionaryWords = await queryFlashcards({
+      const { flashcards: dictionaryWords, totalHits } = await queryFlashcards({
         user_id: user.id,
         input,
-        limit: 100,
+        limit: FLASHCARD_LIMIT,
       });
 
       return {
+        total_hits: totalHits,
         flashcards: dictionaryWords.map(
           ({
             id,
@@ -170,7 +174,8 @@ export const queryFlashcards = async ({
   fields,
   show_only_today = true,
   limit = 1000,
-  show_reverse = true,
+  // TODO: change this to false
+  show_reverse = false,
 }: {
   user_id: string;
   input: z.infer<typeof TodaySchema>;
@@ -243,9 +248,14 @@ export const queryFlashcards = async ({
     })
   ).results;
 
+  const totalHits =
+    (forwardFlashcardResults?.estimatedTotalHits ?? 0) +
+    (reverseFlashcardResults?.estimatedTotalHits ?? 0);
+
   const allFlashcards = [
     ...forwardFlashcardResults.hits,
-    ...reverseFlashcardResults.hits.map((f) => ({ ...f, reverse: true })),
+    ...(reverseFlashcardResults?.hits?.map((f) => ({ ...f, reverse: true })) ??
+      []),
   ]
     .sort((a, b) => {
       const aTimestamp =
@@ -282,7 +292,10 @@ export const queryFlashcards = async ({
     };
   });
 
-  return normalizedFlashcards;
+  return {
+    flashcards: normalizedFlashcards,
+    totalHits,
+  };
 };
 
 const getEmptyFlashcard = (id: string): Flashcard => {
