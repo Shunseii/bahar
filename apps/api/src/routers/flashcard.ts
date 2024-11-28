@@ -2,13 +2,18 @@ import { router, protectedProcedure } from "../trpc";
 import { meilisearchClient } from "../clients/meilisearch";
 import { Card, createEmptyCard } from "ts-fsrs";
 import { z } from "zod";
-import {
-  DictionarySchema,
-  JSON_SCHEMA_FIELDS,
-} from "../schemas/dictionary.schema";
+import { DictionarySchema } from "../schemas/dictionary.schema";
 import { FlashcardSchema } from "../schemas/flashcard.schema";
 import { SelectDecksSchema } from "../db/schema/decks";
 import { MultiSearchQueryWithFederation } from "meilisearch";
+import { JSON_SCHEMA_FIELDS } from "./dictionary";
+
+export enum FlashcardState {
+  NEW = 0,
+  LEARNING = 1,
+  REVIEW = 2,
+  RE_LEARNING = 3,
+}
 
 export type Flashcard = Card & {
   id: string;
@@ -41,9 +46,9 @@ export const flashcardRouter = router({
               root: true,
               antonyms: true,
             }),
-          })
+          }),
         ),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const { user } = ctx;
@@ -86,7 +91,7 @@ export const flashcardRouter = router({
                 antonyms,
               },
             };
-          }
+          },
         ),
       };
     }),
@@ -118,21 +123,11 @@ export const flashcardRouter = router({
     }),
 
   update: protectedProcedure
-    .input(
-      z.object({
-        flashcard: FlashcardSchema,
-        id: z.string(),
-        reverse: z.boolean().optional().default(false),
-      })
-    )
+    .input(FlashcardSchema.extend({ id: z.string(), reverse: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
 
-      const {
-        id,
-        reverse,
-        flashcard: { ...flashcard },
-      } = input;
+      const { id, reverse, ...flashcard } = input;
 
       const flashcardFieldToUpdate = reverse
         ? "flashcard_reverse"
@@ -205,7 +200,7 @@ export const queryFlashcards = async ({
       limit,
       sort: ["flashcard.due_timestamp:asc"],
       attributesToRetrieve: fieldsToRetrieve.filter(
-        (field) => field !== "flashcard_reverse"
+        (field) => field !== "flashcard_reverse",
       ),
       filter: [
         show_only_today
@@ -222,7 +217,7 @@ export const queryFlashcards = async ({
             limit,
             sort: ["flashcard_reverse.due_timestamp:asc"],
             attributesToRetrieve: fieldsToRetrieve.filter(
-              (field) => field !== "flashcard"
+              (field) => field !== "flashcard",
             ),
             filter: [
               show_only_today
