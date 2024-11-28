@@ -53,7 +53,8 @@ COPY --from=prune /app/turbo.json /app/turbo.json
 
 # Needed for migrations
 COPY --from=prune /app/apps/api/drizzle /app/apps/api/drizzle
-COPY --from=prune /app/apps/api/src/schema.json /app/apps/api/dist/schema.json
+
+COPY --from=prune /app/apps/api/src/*.json /app/apps/api/dist/
 
 RUN chmod +x /app/entrypoint.sh
 
