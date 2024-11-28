@@ -1,4 +1,4 @@
-import { text, sqliteTable } from "drizzle-orm/sqlite-core";
+import { text, sqliteTable, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { users } from "./users";
 
@@ -8,6 +8,9 @@ export const settings = sqliteTable("settings", {
     .notNull()
     .unique()
     .references(() => users.id),
+  show_reverse_flashcards: integer("show_reverse_flashcards", {
+    mode: "boolean",
+  }).default(false),
   show_antonyms_in_flashcard: text("show_antonyms_in_flashcard", {
     enum: ["hidden", "answer", "hint"],
   }).default("hidden"),

@@ -1,0 +1,1 @@
+ALTER TABLE `settings` ADD `show_reverse_flashcards` integer DEFAULT false;
