@@ -19,6 +19,26 @@ import $RefParser from "@apidevtools/json-schema-ref-parser";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
+// TODO: resolve this dynamically from the json schema
+export const JSON_SCHEMA_FIELDS = [
+  "id",
+  "word",
+  "definition",
+  "translation",
+  "type",
+  "root",
+  "tags",
+  "antonyms",
+  "examples",
+  "morphology",
+  "created_at",
+  "created_at_timestamp",
+  "updated_at",
+  "updated_at_timestamp",
+  "flashcard",
+  "flashcard_reverse",
+];
+
 export enum Inflection {
   indeclinable = "indeclinable ",
   diptote = "diptote ",
@@ -126,27 +146,18 @@ dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
 
   const shouldExportWithFlashcards = req.body?.includeFlashcards ?? false;
 
-  // TODO: resolve this dynamically from the json schema
-  const JSON_SCHEMA_FIELDS = [
-    "id",
-    "word",
-    "definition",
-    "translation",
-    "type",
-    "root",
-    "tags",
-    "antonyms",
-    "examples",
-    "morphology",
-    // When flashcards are included in an export, that implies the file is a backup.
-    // So we only want to include timestamps in backups, not shared dictionaries.
-    shouldExportWithFlashcards && "created_at",
-    shouldExportWithFlashcards && "created_at_timestamp",
-    shouldExportWithFlashcards && "updated_at",
-    shouldExportWithFlashcards && "updated_at_timestamp",
-    shouldExportWithFlashcards && "flashcard",
-    shouldExportWithFlashcards && "flashcard_reverse",
-  ];
+  const fieldsToExport = JSON_SCHEMA_FIELDS.filter((field) =>
+    !shouldExportWithFlashcards
+      ? field !== "flashcard" &&
+        field !== "flashcard_reverse" &&
+        // When flashcards are included in an export, that implies the file is a backup.
+        // So we only want to include timestamps in backups, not shared dictionaries.
+        field !== "created_at" &&
+        field !== "created_at_timestamp" &&
+        field !== "updated_at" &&
+        field !== "updated_at_timestamp"
+      : true,
+  );
 
   const limit = 1000;
   const allDocuments = [];
@@ -160,7 +171,7 @@ dictionaryRouter.post("/dictionary/export", auth, async (req, res) => {
       const { results, total } = await index.getDocuments({
         offset,
         limit,
-        fields: JSON_SCHEMA_FIELDS,
+        fields: fieldsToExport,
       });
 
       if (results.length > 0 && results.length <= total) {

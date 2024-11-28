@@ -195,6 +195,9 @@
     },
     "flashcard": {
       "$ref": "flashcard.json"
+    },
+    "flashcard_reverse": {
+      "$ref": "flashcard.json"
     }
   },
   "required": ["id", "word", "translation"]
