@@ -28,13 +28,17 @@ import {
 import { Trans, msg } from "@lingui/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { MoreHorizontal, Plus } from "lucide-react";
-import { FlashcardDrawer } from "@/components/FlashcardDrawer";
+import {
+  FlashcardDrawer,
+  FLASHCARD_LIMIT,
+} from "@/components/features/flashcards/FlashcardDrawer";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { useToast } from "@/hooks/useToast";
 import { Page } from "@/components/Page";
 
 const Decks = () => {
+  const { data: settingsData } = trpc.settings.get.useQuery();
   const { data } = trpc.decks.list.useQuery();
   const { mutateAsync: deleteDeck } = trpc.decks.delete.useMutation({
     onSuccess: () => {
@@ -114,11 +118,18 @@ const Decks = () => {
                     <TableCell className="font-medium">{deck.name}</TableCell>
 
                     <TableCell className="font-medium">
-                      {deck.to_review}
+                      {deck.total_hits > FLASHCARD_LIMIT
+                        ? `~${deck.total_hits}`
+                        : deck.to_review}
                     </TableCell>
 
                     <TableCell className="flex justify-between">
-                      <FlashcardDrawer filters={deck.filters ?? undefined}>
+                      <FlashcardDrawer
+                        filters={deck.filters ?? undefined}
+                        show_reverse={
+                          settingsData?.show_reverse_flashcards ?? undefined
+                        }
+                      >
                         <Button variant="outline" size="sm">
                           <Trans>Study</Trans>
                         </Button>

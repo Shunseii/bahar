@@ -1,6 +1,6 @@
 import { Plural, Trans, t } from "@lingui/macro";
-import { Tooltip, TooltipTrigger, TooltipContent } from "./ui/tooltip";
-import { Button } from "./ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "../../ui/tooltip";
+import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale/ar";
 import { enUS } from "date-fns/locale/en-US";
@@ -12,7 +12,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerFooter,
-} from "./ui/drawer";
+} from "../../ui/drawer";
 import {
   FC,
   PropsWithChildren,
@@ -21,14 +21,18 @@ import {
   useMemo,
   useState,
 } from "react";
-import { trpc } from "@/lib/trpc";
+import { RouterOutput, trpc } from "@/lib/trpc";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { motion } from "framer-motion";
 import { useDir } from "@/hooks/useDir";
-import { Badge } from "./ui/badge";
+import { Badge } from "../../ui/badge";
 import { FilterSchema } from "api/schemas";
 import { z } from "@/lib/zod";
+import { QuestionSide } from "./QuestionSide";
+import { AnswerSide } from "./AnswerSide";
+import { ReverseAnswerSide } from "./ReverseAnswerSide";
+import { ReverseQuestionSide } from "./ReverseQuestionSide";
 
 const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
   switch (str) {
@@ -45,62 +49,97 @@ const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
 
 interface FlashcardDrawerProps extends PropsWithChildren {
   filters?: z.infer<typeof FilterSchema>;
+  show_reverse?: boolean;
 }
+
+export type Flashcard = RouterOutput["flashcard"]["today"]["flashcards"][0];
+
+const TagBadgesList: FC<{
+  currentCard: Flashcard;
+}> = ({ currentCard }) => {
+  return (
+    <ul className="flex flex-wrap gap-2">
+      {!!currentCard.card.type && (
+        <Badge variant="secondary" className="w-max">
+          {getTranslatedType(currentCard.card.type)}
+        </Badge>
+      )}
+      {currentCard.card.tags?.map((tag) => (
+        <Badge key={tag} variant="outline" className="w-max">
+          {tag}
+        </Badge>
+      ))}
+    </ul>
+  );
+};
+
+/**
+ * The maximum number of flashcards that will be returned
+ * by the API.
+ */
+export const FLASHCARD_LIMIT = 100;
 
 export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   children,
   filters = {},
+  show_reverse = false,
 }) => {
   const dir = useDir();
   const [showAnswer, setShowAnswer] = useState(false);
-  const { data: flashcardSettings } = trpc.settings.get.useQuery();
-  const { data, status } = trpc.flashcard.today.useQuery({ filters });
-  const { mutate: updateFlashcard, status: updateFlashcardStatus } =
-    trpc.flashcard.update.useMutation({
-      onMutate: async (updatedCard) => {
-        const todayQueryKey = getQueryKey(
-          trpc.flashcard.today,
-          { filters },
-          "query",
-        );
+  const { data, status } = trpc.flashcard.today.useQuery({
+    filters,
+    show_reverse,
+  });
+  const { mutate: updateFlashcard } = trpc.flashcard.update.useMutation({
+    onMutate: async (updatedCard) => {
+      const todayQueryKey = getQueryKey(
+        trpc.flashcard.today,
+        { filters },
+        "query",
+      );
 
-        await queryClient.cancelQueries({
-          queryKey: todayQueryKey,
-          exact: false,
-        });
+      await queryClient.cancelQueries({
+        queryKey: todayQueryKey,
+        exact: false,
+      });
 
-        queryClient.setQueryData(todayQueryKey, (old: typeof data) => ({
-          flashcards:
-            old?.flashcards?.filter(
-              (card) => card.card.id !== updatedCard.id,
-            ) ?? [],
-        }));
-      },
+      // TODO: when you have 101 cards, grading the next one will cause the
+      // number to be off by one until the server response comes back.
+      // This is due to the optimistic update.
 
-      onSettled: async () => {
-        const todayQueryKey = getQueryKey(
-          trpc.flashcard.today,
-          undefined,
-          "query",
-        );
-        const deckListQueryKey = getQueryKey(
-          trpc.decks.list,
-          undefined,
-          "query",
-        );
+      queryClient.setQueryData(todayQueryKey, (old: typeof data) => ({
+        total_hits: (old?.total_hits ?? 0) - 1,
+        flashcards:
+          old?.flashcards?.filter(
+            (card) =>
+              card.card.id !== updatedCard.id ||
+              card.reverse !== updatedCard.reverse,
+          ) ?? [],
+      }));
+    },
 
-        await queryClient.invalidateQueries({
-          queryKey: deckListQueryKey,
-        });
+    onSettled: async () => {
+      const todayQueryKey = getQueryKey(
+        trpc.flashcard.today,
+        undefined,
+        "query",
+      );
+      const deckListQueryKey = getQueryKey(trpc.decks.list, undefined, "query");
 
-        await queryClient.invalidateQueries({
-          queryKey: todayQueryKey,
-          exact: false,
-        });
-      },
-    });
+      await queryClient.invalidateQueries({
+        queryKey: deckListQueryKey,
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: todayQueryKey,
+        exact: false,
+      });
+    },
+  });
 
   const flashcards = data?.flashcards ?? [];
+  const totalHits = data?.total_hits ?? 0;
+  const hasMore = totalHits > FLASHCARD_LIMIT;
 
   const [currentCard, setCurrentCard] = useState<(typeof flashcards)[0] | null>(
     flashcards[0],
@@ -113,16 +152,6 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
     setCurrentCard(flashcards[0]);
   }, [flashcards]);
-
-  // Will get triggered after the current flashcard has been updated
-  // i.e. graded and removed from the queue. This will reset the answer
-  // AFTER the grading. This is not reliable and is used more as a catch-all
-  // for other cases when a card is updated without grading.
-  useEffect(() => {
-    if (currentCard) {
-      setShowAnswer(false);
-    }
-  }, [currentCard]);
 
   const f = useMemo(() => fsrs(), []);
   const now = new Date();
@@ -154,7 +183,11 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       };
 
       setShowAnswer(false);
-      updateFlashcard(newCard);
+      updateFlashcard({
+        flashcard: newCard,
+        id: newCard.id,
+        reverse: currentCard.reverse,
+      });
 
       if (currentFlashcardIndex === flashcards.length - 1) {
         setCurrentCard(null);
@@ -167,25 +200,6 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   if (status === "pending") {
     return null;
   }
-
-  const isIsm = currentCard?.card.type === "ism";
-  const firstPlural = currentCard?.card.morphology?.ism?.plurals?.[0]?.word;
-  const singular = currentCard?.card.morphology?.ism?.singular;
-  const hasPlurals = isIsm && !!firstPlural;
-  const hasSingular = isIsm && !!singular;
-
-  const isVerb = currentCard?.card.type === "fi'l";
-  const pastTense = currentCard?.card.morphology?.verb?.past_tense;
-  const presentTense = currentCard?.card.morphology?.verb?.present_tense;
-  const firstMasdar = currentCard?.card.morphology?.verb?.masadir?.[0]?.word;
-  const hasPastTense = isVerb && !!pastTense;
-  const hasPresentTense = isVerb && !!presentTense;
-  const hasMasdar = isVerb && !!firstMasdar;
-
-  const hasAntonyms = !!currentCard?.card?.antonyms?.length;
-  const showAntonyms = flashcardSettings?.show_antonyms_in_flashcard;
-
-  const root = currentCard?.card.root;
 
   return (
     <Drawer
@@ -200,11 +214,17 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
           </TooltipTrigger>
 
           <TooltipContent>
-            <Plural
-              value={flashcards.length}
-              one="You have # card to review."
-              other="You have # cards to review"
-            />
+            {hasMore ? (
+              <Trans>
+                You have more than {FLASHCARD_LIMIT} cards to review.
+              </Trans>
+            ) : (
+              <Plural
+                value={flashcards.length}
+                one="You have # card to review."
+                other="You have # cards to review"
+              />
+            )}
           </TooltipContent>
         </Tooltip>
       ) : (
@@ -214,104 +234,45 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>
-            {flashcards?.length ? (
-              <Plural
-                value={flashcards.length}
-                one="# card left to review"
-                other="# cards left to review"
-              />
-            ) : (
-              <Trans>You have no flashcards to review for now!</Trans>
-            )}
+            {(() => {
+              if (hasMore && flashcards?.length) {
+                return (
+                  <Trans>
+                    You have more than {FLASHCARD_LIMIT} cards to review.
+                  </Trans>
+                );
+              } else if (flashcards?.length) {
+                return (
+                  <Plural
+                    value={flashcards.length}
+                    one="# card left to review"
+                    other="# cards left to review"
+                  />
+                );
+              } else {
+                return <Trans>You have no flashcards to review for now!</Trans>;
+              }
+            })()}
           </DrawerTitle>
         </DrawerHeader>
 
+        {/* Card body */}
         {!currentCard ? undefined : (
           <div className="w-full max-w-2xl mx-auto flex flex-col gap-y-4 px-8">
-            <ul className="flex flex-wrap gap-2">
-              {!!currentCard.card.type && (
-                <Badge variant="secondary" className="w-max">
-                  {getTranslatedType(currentCard.card.type)}
-                </Badge>
-              )}
-              {currentCard.card.tags?.map((tag) => (
-                <Badge key={tag} variant="outline" className="w-max">
-                  {tag}
-                </Badge>
-              ))}
-            </ul>
+            <TagBadgesList currentCard={currentCard} />
 
-            <p dir="rtl" className="rtl:text-right text-xl sm:text-2xl">
-              {currentCard.card.word}
-            </p>
+            {currentCard.reverse ? (
+              <>
+                <ReverseQuestionSide currentCard={currentCard} />
 
-            <div className="flex gap-x-2 items-center ltr:self-end rtl:self-start rtl:flex-row-reverse">
-              {hasPlurals && (
-                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-                  (ج) {firstPlural}
-                </p>
-              )}
-              {hasSingular && (
-                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-                  (م) {singular}
-                </p>
-              )}
+                {showAnswer && <ReverseAnswerSide currentCard={currentCard} />}
+              </>
+            ) : (
+              <>
+                <QuestionSide currentCard={currentCard} />
 
-              {hasMasdar && (
-                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-                  {firstMasdar}
-                </p>
-              )}
-
-              {hasPresentTense && (
-                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-                  {presentTense}
-                </p>
-              )}
-
-              {hasPastTense && (
-                <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-                  {pastTense}
-                </p>
-              )}
-            </div>
-
-            {isVerb && root && (
-              <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-                {root.join("-")}
-              </p>
-            )}
-
-            {showAntonyms === "hint" && hasAntonyms && (
-              <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-                أضداد:{" "}
-                {currentCard.card.antonyms
-                  ?.map((antonym) => antonym.word)
-                  .join(", ")}
-              </p>
-            )}
-
-            {showAnswer && (
-              <motion.span
-                className="text-base sm:text-lg"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                {!!currentCard.card.definition && (
-                  <p dir="rtl">المعنى: {currentCard.card.definition}</p>
-                )}
-
-                {showAntonyms === "answer" && hasAntonyms && (
-                  <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-                    أضداد:{" "}
-                    {currentCard.card.antonyms
-                      ?.map((antonym) => antonym.word)
-                      .join(", ")}
-                  </p>
-                )}
-
-                <p dir="ltr">{currentCard.card.translation}</p>
-              </motion.span>
+                {showAnswer && <AnswerSide currentCard={currentCard} />}
+              </>
             )}
           </div>
         )}

@@ -5,6 +5,10 @@ export const meilisearchClient = new MeiliSearch({
   apiKey: process.env.MEILISEARCH_API_KEY!,
 });
 
+//  TODO: Create single source of truth between this and script in the root
+
+const MAX_TOTAL_HITS = 2000;
+
 /**
  * Creates a new index for a user and configures it
  * with the necessary universal settings.
@@ -20,7 +24,19 @@ export const createUserIndex = async (userId: string) => {
   const userIndex = meilisearchClient.index(userId);
 
   const { taskUid: updateTaskUid } = await userIndex.updateSettings({
-    filterableAttributes: ["flashcard.due_timestamp", "tags", "type"],
+    sortableAttributes: [
+      "flashcard.due_timestamp",
+      "flashcard_reverse.due_timestamp",
+    ],
+    filterableAttributes: [
+      "flashcard.due_timestamp",
+      "flashcard_reverse.due_timestamp",
+      "tags",
+      "type",
+    ],
+    pagination: {
+      maxTotalHits: MAX_TOTAL_HITS,
+    },
   });
 
   await meilisearchClient.waitForTask(updateTaskUid);

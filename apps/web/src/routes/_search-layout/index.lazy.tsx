@@ -14,14 +14,20 @@ import { Plural, Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/Page";
 import { trpc } from "@/lib/trpc";
-import { FlashcardDrawer } from "@/components/FlashcardDrawer";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
 import { useInstantSearch } from "react-instantsearch";
 
 const Index = () => {
   const [{ y }, scrollTo] = useWindowScroll();
   const { results } = useInstantSearch();
   const { height } = useWindowSize();
-  const { data, isFetching } = trpc.flashcard.today.useQuery();
+  const { data: flashcardSettings } = trpc.settings.get.useQuery();
+
+  const show_reverse = flashcardSettings?.show_reverse_flashcards ?? false;
+
+  const { data, isFetching } = trpc.flashcard.today.useQuery({
+    show_reverse,
+  });
 
   // Check that the window dimensions are available
   const hasLoadedHeight = height !== null && height > 0 && y !== null;
@@ -41,7 +47,7 @@ const Index = () => {
             </Link>
           </Button>
 
-          <FlashcardDrawer>
+          <FlashcardDrawer show_reverse={show_reverse}>
             <Button
               className="w-max self-end relative"
               variant="outline"
