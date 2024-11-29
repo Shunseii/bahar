@@ -1,6 +1,6 @@
 # Bahar
 
-Bahar is an online web app that allows students to build up their own Arabic dictionary.
+This is the front end web application for Bahar.
 
 ## Getting Started
 
