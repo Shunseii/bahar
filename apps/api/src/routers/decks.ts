@@ -12,6 +12,11 @@ import { FLASHCARD_LIMIT, queryFlashcards } from "./flashcard";
 
 export const decksRouter = router({
   list: protectedProcedure
+    .input(
+      z
+        .object({ show_reverse: z.boolean().default(false).optional() })
+        .optional(),
+    )
     .output(
       z
         .array(
@@ -22,8 +27,9 @@ export const decksRouter = router({
         )
         .optional(),
     )
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       const { user } = ctx;
+      const { show_reverse } = input ?? {};
 
       const results = await db
         .select()
@@ -40,7 +46,8 @@ export const decksRouter = router({
             fields: ["id"],
             limit: FLASHCARD_LIMIT,
             show_only_today: true,
-            input: filters ? { filters: { ...filters } } : undefined,
+            filters,
+            show_reverse,
           });
 
           return {

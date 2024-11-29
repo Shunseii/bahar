@@ -38,6 +38,7 @@ import { useToast } from "@/hooks/useToast";
 import { Page } from "@/components/Page";
 
 const Decks = () => {
+  const { data: settingsData } = trpc.settings.get.useQuery();
   const { data } = trpc.decks.list.useQuery();
   const { mutateAsync: deleteDeck } = trpc.decks.delete.useMutation({
     onSuccess: () => {
@@ -123,7 +124,12 @@ const Decks = () => {
                     </TableCell>
 
                     <TableCell className="flex justify-between">
-                      <FlashcardDrawer filters={deck.filters ?? undefined}>
+                      <FlashcardDrawer
+                        filters={deck.filters ?? undefined}
+                        show_reverse={
+                          settingsData?.show_reverse_flashcards ?? undefined
+                        }
+                      >
                         <Button variant="outline" size="sm">
                           <Trans>Study</Trans>
                         </Button>

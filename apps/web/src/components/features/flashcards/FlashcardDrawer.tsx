@@ -49,6 +49,7 @@ const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
 
 interface FlashcardDrawerProps extends PropsWithChildren {
   filters?: z.infer<typeof FilterSchema>;
+  show_reverse?: boolean;
 }
 
 export type Flashcard = RouterOutput["flashcard"]["today"]["flashcards"][0];
@@ -81,10 +82,14 @@ export const FLASHCARD_LIMIT = 100;
 export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   children,
   filters = {},
+  show_reverse = false,
 }) => {
   const dir = useDir();
   const [showAnswer, setShowAnswer] = useState(false);
-  const { data, status } = trpc.flashcard.today.useQuery({ filters });
+  const { data, status } = trpc.flashcard.today.useQuery({
+    filters,
+    show_reverse,
+  });
   const { mutate: updateFlashcard } = trpc.flashcard.update.useMutation({
     onMutate: async (updatedCard) => {
       const todayQueryKey = getQueryKey(

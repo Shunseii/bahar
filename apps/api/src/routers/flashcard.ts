@@ -25,7 +25,12 @@ export type Flashcard = Card & {
   last_review_timestamp: number | null;
 };
 
-const TodaySchema = SelectDecksSchema.pick({ filters: true }).optional();
+const FilterSchema = SelectDecksSchema.pick({ filters: true });
+
+const TodaySchema = FilterSchema.extend({
+  filters: FilterSchema.shape.filters.optional(),
+  show_reverse: z.boolean().default(false).optional(),
+}).optional();
 
 export const flashcardRouter = router({
   today: protectedProcedure
@@ -55,11 +60,13 @@ export const flashcardRouter = router({
     )
     .query(async ({ ctx, input }) => {
       const { user } = ctx;
+      const { show_reverse, filters } = input ?? {};
 
       const { flashcards: dictionaryWords, totalHits } = await queryFlashcards({
         user_id: user.id,
-        input,
         limit: FLASHCARD_LIMIT,
+        filters,
+        show_reverse,
       });
 
       return {
@@ -170,22 +177,19 @@ type OutputFlashcards = z.infer<typeof DictionarySchema> & {
 
 export const queryFlashcards = async ({
   user_id,
-  input,
   fields,
   show_only_today = true,
   limit = 1000,
-  // TODO: change this to false
+  filters,
   show_reverse = false,
 }: {
   user_id: string;
-  input: z.infer<typeof TodaySchema>;
+  filters?: z.infer<typeof FilterSchema>["filters"];
   fields?: string[];
   show_only_today?: boolean;
   limit?: number;
   show_reverse?: boolean;
 }) => {
-  const { filters } = input ?? {};
-
   const types = filters?.types?.length
     ? filters?.types.map((type) => {
         if (type === "fi'l") {

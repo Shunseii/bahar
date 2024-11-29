@@ -43,8 +43,10 @@ const AppLayout = () => {
 export const Route = createFileRoute("/_search-layout")({
   component: AppLayout,
   beforeLoad: async ({ location }) => {
+    const authQueryKey = getQueryKey(trpc.user.me, undefined, "query");
+
     const authData = await queryClient.fetchQuery({
-      queryKey: [...getQueryKey(trpc.user.me), { type: "query" }],
+      queryKey: authQueryKey,
       queryFn: () => trpcClient.user.me.query(),
     });
 
@@ -56,6 +58,17 @@ export const Route = createFileRoute("/_search-layout")({
         search: {
           redirect: location.href,
         },
+      });
+    } else {
+      const settingsQueryKey = getQueryKey(
+        trpc.settings.get,
+        undefined,
+        "query",
+      );
+
+      await queryClient.ensureQueryData({
+        queryKey: settingsQueryKey,
+        queryFn: () => trpcClient.settings.get.query(),
       });
     }
   },
