@@ -1,3 +1,4 @@
+import { BetaBadge } from "@/components/BetaBadge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,12 +10,14 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/useToast";
 import { queryClient } from "@/lib/query";
 import { trpc } from "@/lib/trpc";
@@ -28,6 +31,7 @@ import { useForm } from "react-hook-form";
 
 const FormSchema = z.object({
   show_antonyms_in_flashcard: z.enum(["hidden", "answer", "hint"]).optional(),
+  show_reverse_flashcards: z.boolean().optional(),
 });
 
 export const FlashcardSettingsCardSection = () => {
@@ -46,9 +50,11 @@ export const FlashcardSettingsCardSection = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       show_antonyms_in_flashcard: "hidden",
+      show_reverse_flashcards: false,
     },
     values: {
       show_antonyms_in_flashcard: data?.show_antonyms_in_flashcard ?? "hidden",
+      show_reverse_flashcards: data?.show_reverse_flashcards ?? false,
     },
   });
 
@@ -84,7 +90,7 @@ export const FlashcardSettingsCardSection = () => {
       <CardContent className="flex flex-col gap-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-y-2 mb-4">
+            <div className="flex flex-col gap-y-4 mb-4">
               <FormField
                 control={form.control}
                 name="show_antonyms_in_flashcard"
@@ -133,6 +139,32 @@ export const FlashcardSettingsCardSection = () => {
                     </FormControl>
 
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="show_reverse_flashcards"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base flex items-center gap-x-2">
+                        <Trans>Reverse flashcards</Trans>
+                        <BetaBadge />
+                      </FormLabel>
+
+                      <FormDescription>
+                        <Trans>Show English to Arabic flashcards.</Trans>
+                      </FormDescription>
+                    </div>
+
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
