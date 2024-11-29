@@ -14,7 +14,10 @@ export const csrf = (req: Request, res: Response, next: NextFunction) => {
 
   const allowedDomains = [
     hostHeader,
-    ...getAllowedDomains(process.env.WEB_CLIENT_DOMAIN!),
+    ...getAllowedDomains([
+      process.env.WEB_CLIENT_DOMAIN!,
+      process.env.NEW_WEB_CLIENT_DOMAIN!,
+    ]),
   ];
 
   if (
