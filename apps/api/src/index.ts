@@ -48,7 +48,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(csrf);
 
-const allowedDomains = getAllowedDomains(process.env.WEB_CLIENT_DOMAIN!);
+const allowedDomains = getAllowedDomains([
+  process.env.WEB_CLIENT_DOMAIN!,
+  process.env.NEW_WEB_CLIENT_DOMAIN!,
+]);
 
 app.use(
   cors({
