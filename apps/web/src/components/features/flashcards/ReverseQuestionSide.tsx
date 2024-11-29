@@ -25,6 +25,8 @@ export const ReverseQuestionSide: FC<{ currentCard: Flashcard }> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
     >
+      <p dir="ltr">{currentCard.card.translation}</p>
+
       {!!currentCard.card.definition && (
         <p dir="rtl">المعنى: {currentCard.card.definition}</p>
       )}
@@ -35,8 +37,6 @@ export const ReverseQuestionSide: FC<{ currentCard: Flashcard }> = ({
           {currentCard.card.antonyms?.map((antonym) => antonym.word).join(", ")}
         </p>
       )}
-
-      <p dir="ltr">{currentCard.card.translation}</p>
     </motion.span>
   );
 };
