@@ -4,5 +4,14 @@ local-db:
 
 # Serve production web app
 serve:
-	# Must have caddy installed locally
-	PORT=4000 caddy run --config apps/web/Caddyfile
+	pnpm run --filter web wrangler:dev --port 4000
+
+# Run production application 
+prod:
+	docker compose -f docker-compose.prod.yaml up -d
+	make serve || (docker compose -f docker-compose.prod.yaml down && exit 1)
+	
+cleanup:
+	docker compose -f docker-compose.prod.yaml down
+
+.PHONY: prod cleanup
