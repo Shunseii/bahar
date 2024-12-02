@@ -94,7 +94,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     onMutate: async (updatedCard) => {
       const todayQueryKey = getQueryKey(
         trpc.flashcard.today,
-        { filters },
+        { filters, show_reverse },
         "query",
       );
 
