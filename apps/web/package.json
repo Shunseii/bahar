@@ -9,7 +9,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "messages:extract": "lingui extract",
-    "messages:compile": "lingui compile --typescript"
+    "messages:compile": "lingui compile --typescript",
+    "wrangler:dev": "wrangler pages dev"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
@@ -86,6 +87,7 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.2.2",
     "vite": "^5.1.0",
-    "vite-plugin-pwa": "^0.20.1"
+    "vite-plugin-pwa": "^0.20.1",
+    "wrangler": "^3.91.0"
   }
 }
