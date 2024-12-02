@@ -114,7 +114,7 @@ export const CategoryFormSection = () => {
 
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                     dir={dir}
                   >
                     <FormControl>
