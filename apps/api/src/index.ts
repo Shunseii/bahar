@@ -11,14 +11,11 @@ import { dictionaryRouter, trpcDictionaryRouter } from "./routers/dictionary";
 import { flashcardRouter } from "./routers/flashcard";
 import { trpcAuthRouter } from "./routers/auth";
 import { csrf } from "./middleware";
-import { getAllowedDomains } from "./utils";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
+import { getAllowedDomains, getFullSchema } from "./utils";
 import { Session, User } from "lucia";
 import { tagsRouter } from "./routers/tags";
 import { settingsRouter } from "./routers/settings";
 import { decksRouter } from "./routers/decks";
-import $RefParser from "@apidevtools/json-schema-ref-parser";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -71,9 +68,7 @@ app.use(dictionaryRouter);
 
 app.get("/schema.json", async (_req, res) => {
   try {
-    const __dirname = dirname(fileURLToPath(import.meta.url));
-    const schemaPath = path.join(__dirname, "schema.json");
-    const schema = await $RefParser.bundle(schemaPath);
+    const schema = await getFullSchema();
 
     return res.json(schema);
   } catch (err) {

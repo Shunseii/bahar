@@ -15,9 +15,7 @@ import { ErrorCode, MeilisearchError } from "../error";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { DictionarySchema } from "../schemas/dictionary.schema";
-import $RefParser from "@apidevtools/json-schema-ref-parser";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
+import { getFullSchema } from "../utils";
 
 // TODO: resolve this dynamically from the json schema
 export const JSON_SCHEMA_FIELDS = [
@@ -96,10 +94,7 @@ dictionaryRouter.post(
     }
 
     const dictionary = JSON.parse(fileData) as Record<string, any>[];
-
-    const __dirname = dirname(fileURLToPath(import.meta.url));
-    const schemaPath = path.join(__dirname, "../schema.json");
-    const schema = await $RefParser.bundle(schemaPath);
+    const schema = await getFullSchema();
 
     const validate = ajv.compile(schema);
     const isValid = validate(dictionary);
