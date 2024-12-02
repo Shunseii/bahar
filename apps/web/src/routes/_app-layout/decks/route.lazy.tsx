@@ -39,7 +39,9 @@ import { Page } from "@/components/Page";
 
 const Decks = () => {
   const { data: settingsData } = trpc.settings.get.useQuery();
-  const { data } = trpc.decks.list.useQuery();
+  const { data } = trpc.decks.list.useQuery({
+    show_reverse: settingsData?.show_reverse_flashcards ?? false,
+  });
   const { mutateAsync: deleteDeck } = trpc.decks.delete.useMutation({
     onSuccess: () => {
       queryClient.invalidateQueries({
