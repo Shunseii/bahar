@@ -103,13 +103,32 @@ dictionaryRouter.post(
       return res.status(400).send(validate.errors);
     }
 
+    // Add timestamps to any record that doesn't have it.
+    const preProcessedDictionary = dictionary.map((word) => {
+      const now = new Date();
+
+      if (!word.created_at_timestamp || !word.created_at) {
+        word.created_at = now.toISOString();
+        word.created_at_timestamp = Math.floor(now.getTime() / 1000);
+      }
+
+      if (!word.updated_at_timestamp || !word.updated_at) {
+        word.updated_at = now.toISOString();
+        word.updated_at_timestamp = Math.floor(now.getTime() / 1000);
+      }
+
+      return word;
+    });
+
     // The user's index has the same id as their user id
     const userIndexId = req.user.id;
     const index = meilisearchClient.index(userIndexId);
 
     try {
       // Adds or replaces documents
-      const { taskUid: addTaskUid } = await index.addDocuments(dictionary);
+      const { taskUid: addTaskUid } = await index.addDocuments(
+        preProcessedDictionary,
+      );
 
       const addDocumentsTask = await meilisearchClient.waitForTask(addTaskUid);
 
