@@ -5,17 +5,20 @@ import express, {
   type NextFunction,
 } from "express";
 import { nanoid } from "nanoid";
-import Ajv from "ajv";
 import { router, protectedProcedure } from "../trpc";
-import addFormats from "ajv-formats";
 import multer from "multer";
 import { meilisearchClient } from "../clients/meilisearch";
 import { auth } from "../middleware";
-import { ErrorCode, MeilisearchError } from "../error";
+import {
+  ErrorCode,
+  ImportErrorCode,
+  ImportResponseError,
+  MeilisearchError,
+} from "../error";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { DictionarySchema } from "../schemas/dictionary.schema";
-import { getFullSchema } from "../utils";
+import { WordsSchema } from "../schemas/words.schema";
 
 // TODO: resolve this dynamically from the json schema
 export const JSON_SCHEMA_FIELDS = [
@@ -84,41 +87,41 @@ dictionaryRouter.post(
   auth,
   uploadWithErrorHandling,
   async (req, res) => {
-    const ajv = new Ajv({ allErrors: false });
-    addFormats(ajv, ["date-time"]);
-
     const fileData = req.file?.buffer.toString("utf-8");
 
     if (!fileData) {
       return res.status(200).end();
     }
 
-    const dictionary = JSON.parse(fileData) as Record<string, any>[];
-    const schema = await getFullSchema();
+    let dictionary;
 
-    const validate = ajv.compile(schema);
-    const isValid = validate(dictionary);
-
-    if (!isValid) {
-      return res.status(400).send(validate.errors);
+    try {
+      dictionary = JSON.parse(fileData);
+    } catch (error) {
+      return res.status(400).json({
+        message: "Invalid JSON format.",
+        code: ImportErrorCode.INVALID_JSON,
+      });
     }
 
+    const validationResult = WordsSchema.safeParse(dictionary);
+
+    if (!validationResult.success) {
+      console.error(
+        "Error importing dictionary",
+        JSON.stringify(validationResult.error.errors, null, 2),
+      );
+
+      return res.status(400).json({
+        error: validationResult.error,
+        code: ImportErrorCode.VALIDATION_ERROR,
+      } as ImportResponseError);
+    }
+
+    const validatedDictionary = validationResult.data;
+
     // Add timestamps to any record that doesn't have it.
-    const preProcessedDictionary = dictionary.map((word) => {
-      const now = new Date();
-
-      if (!word.created_at_timestamp || !word.created_at) {
-        word.created_at = now.toISOString();
-        word.created_at_timestamp = Math.floor(now.getTime() / 1000);
-      }
-
-      if (!word.updated_at_timestamp || !word.updated_at) {
-        word.updated_at = now.toISOString();
-        word.updated_at_timestamp = Math.floor(now.getTime() / 1000);
-      }
-
-      return word;
-    });
+    const preProcessedDictionary = validatedDictionary.map(addTimestamps);
 
     // The user's index has the same id as their user id
     const userIndexId = req.user.id;
@@ -378,3 +381,27 @@ export const trpcDictionaryRouter = router({
       }
     }),
 });
+
+const addTimestamps = (word: z.infer<typeof DictionarySchema>) => {
+  const now = new Date();
+  const timestamp = Math.floor(now.getTime() / 1000); // seconds
+  const isoString = now.toISOString();
+
+  if (!word.created_at_timestamp || !word.created_at) {
+    word.created_at = now.toISOString();
+    word.created_at_timestamp = Math.floor(now.getTime() / 1000);
+  }
+
+  if (!word.updated_at_timestamp || !word.updated_at) {
+    word.updated_at = now.toISOString();
+    word.updated_at_timestamp = Math.floor(now.getTime() / 1000);
+  }
+
+  return {
+    ...word,
+    created_at: word.created_at ?? isoString,
+    created_at_timestamp: word.created_at_timestamp ?? timestamp,
+    updated_at: word.updated_at ?? isoString,
+    updated_at_timestamp: word.updated_at_timestamp ?? timestamp,
+  };
+};

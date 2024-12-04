@@ -43,7 +43,6 @@
     "@trpc/react-query": "11.0.0-next-beta.289",
     "@trpc/server": "11.0.0-next-beta.289",
     "@uidotdev/usehooks": "^2.4.1",
-    "ajv": "^8.16.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "1.0.0",

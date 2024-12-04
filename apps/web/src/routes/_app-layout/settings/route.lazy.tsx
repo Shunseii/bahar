@@ -26,6 +26,7 @@ import { ImportError, parseImportErrors } from "@/lib/error";
 import { msg, Trans } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { ImportResponseError } from "api/error";
 import { useCallback, useState } from "react";
 import { useInstantSearch } from "react-instantsearch";
 
@@ -191,11 +192,13 @@ const Settings = () => {
                 );
 
                 if (res.status >= 400 && res.status < 500) {
-                  const data = await res.json();
+                  const { code, error } =
+                    (await res.json()) as ImportResponseError;
 
                   throw new ImportError({
                     message: "Error importing dictionary",
-                    errors: data,
+                    error,
+                    code,
                   });
                 } else if (res.status >= 500) {
                   const data = await res.text();
@@ -211,11 +214,25 @@ const Settings = () => {
                 });
               } catch (err) {
                 if (err instanceof ImportError) {
-                  console.error(err.message);
+                  const { error, code, message } = err;
 
-                  toast({
-                    variant: "destructive",
-                    description: parseImportErrors(err.errors),
+                  console.error(
+                    "Error importing dictionary: ",
+                    message,
+                    code,
+                    error,
+                  );
+
+                  const importErrors = parseImportErrors({
+                    error,
+                    code,
+                  });
+
+                  importErrors.forEach((err) => {
+                    toast({
+                      variant: "destructive",
+                      description: err,
+                    });
                   });
 
                   toast({

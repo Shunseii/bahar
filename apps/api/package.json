@@ -13,7 +13,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "gen-schema:dictionary": "json-refs resolve src/dictionary.json | json-schema-to-zod --name 'DictionarySchema' | prettier --parser typescript > src/schemas/dictionary.schema.ts",
     "gen-schema:flashcard": "json-refs resolve src/flashcard.json | json-schema-to-zod --name 'FlashcardSchema' | prettier --parser typescript > src/schemas/flashcard.schema.ts",
-    "gen-schema": "npm run gen-schema:dictionary && npm run gen-schema:flashcard",
+    "gen-schema:full": "json-refs resolve src/schema.json | json-schema-to-zod --name 'WordsSchema' | prettier --parser typescript > src/schemas/words.schema.ts",
+    "gen-schema": "npm run gen-schema:dictionary && npm run gen-schema:flashcard && npm run gen-schema:full",
     "drizzle:gen": "drizzle-kit generate",
     "drizzle:migrate": "drizzle-kit migrate",
     "drizzle:push": "drizzle-kit push",
@@ -30,8 +31,6 @@
     "@types/cookie-parser": "^1.4.6",
     "@upstash/ratelimit": "^1.2.0",
     "@upstash/redis": "^1.28.4",
-    "ajv": "^8.16.0",
-    "ajv-formats": "^3.0.1",
     "arctic": "^1.2.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -68,6 +67,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./schemas": "./src/schemas/index.ts"
+    "./schemas": "./src/schemas/index.ts",
+    "./error": "./src/error.ts"
   }
 }
