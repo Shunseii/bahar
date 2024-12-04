@@ -118,6 +118,6 @@ const formattedErrorMessage = ({
     case "too_big":
       return `${prefix}${t`Value must be ${err.maximum} or less`}`;
     default:
-      return `${prefix}${t`${err.message}`}`;
+      return `${prefix}${err.message}`;
   }
 };
