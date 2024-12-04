@@ -49,8 +49,8 @@ msgstr "A preposition or conjunction."
 msgid "A verb."
 msgstr "A verb."
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:109
-#: src/routes/_app-layout/decks/route.lazy.tsx:153
+#: src/routes/_app-layout/decks/route.lazy.tsx:111
+#: src/routes/_app-layout/decks/route.lazy.tsx:155
 msgid "Actions"
 msgstr "Actions"
 
@@ -140,11 +140,11 @@ msgstr "Any additional details about this form such as frequency of usage or con
 msgid "Any plural forms of the word."
 msgstr "Any plural forms of the word."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:261
+#: src/routes/_app-layout/settings/route.lazy.tsx:278
 msgid "Any words that have the same ID will be overwritten."
 msgstr "Any words that have the same ID will be overwritten."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:131
+#: src/routes/_app-layout/settings/route.lazy.tsx:132
 msgid "Appearance"
 msgstr "Appearance"
 
@@ -160,7 +160,7 @@ msgstr "Arabic verb form"
 msgid "Are you sure you want to delete this word? It will be removed from your dictionary and its flashcards will be deleted.<0/><1/><2>This action cannot be undone.</2>"
 msgstr "Are you sure you want to delete this word? It will be removed from your dictionary and its flashcards will be deleted.<0/><1/><2>This action cannot be undone.</2>"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:336
+#: src/routes/_app-layout/settings/route.lazy.tsx:353
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 
@@ -191,11 +191,11 @@ msgstr "Basic Details"
 msgid "BETA"
 msgstr "BETA"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:354
+#: src/routes/_app-layout/settings/route.lazy.tsx:371
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:104
+#: src/routes/_app-layout/decks/route.lazy.tsx:106
 msgid "Cards to review today"
 msgstr "Cards to review today"
 
@@ -227,12 +227,9 @@ msgstr "Create a new deck"
 msgid "Create a new deck by choosing filters. The deck will be composed of the cards that match the filters."
 msgstr "Create a new deck by choosing filters. The deck will be composed of the cards that match the filters."
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:61
+#: src/routes/_app-layout/decks/route.lazy.tsx:63
 msgid "Create deck"
 msgstr "Create deck"
-
-#~ msgid "Create new deck"
-#~ msgstr "Create new deck"
 
 #: src/routes/_layout/login/route.lazy.tsx:167
 msgid "Create one"
@@ -246,7 +243,7 @@ msgstr "Create your account"
 msgid "Customize how flashcards appear."
 msgstr "Customize how flashcards appear."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:135
+#: src/routes/_app-layout/settings/route.lazy.tsx:136
 msgid "Customize how the application looks for you."
 msgstr "Customize how the application looks for you."
 
@@ -258,7 +255,7 @@ msgstr "Dark"
 msgid "Deck successfully created!"
 msgstr "Deck successfully created!"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:167
+#: src/routes/_app-layout/decks/route.lazy.tsx:169
 msgid "Deck successfully deleted!"
 msgstr "Deck successfully deleted!"
 
@@ -269,11 +266,11 @@ msgstr "Deck successfully updated!"
 #: src/components/DesktopNavigation.tsx:68
 #: src/components/DesktopNavigation.tsx:74
 #: src/components/MobileHeader.tsx:159
-#: src/routes/_app-layout/decks/route.lazy.tsx:72
+#: src/routes/_app-layout/decks/route.lazy.tsx:74
 msgid "Decks"
 msgstr "Decks"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:88
+#: src/routes/_app-layout/decks/route.lazy.tsx:90
 msgid "Decks allow you to create subsets of your existing flashcards by using filters on your dictionary which you can then study individually."
 msgstr "Decks allow you to create subsets of your existing flashcards by using filters on your dictionary which you can then study individually."
 
@@ -281,11 +278,11 @@ msgstr "Decks allow you to create subsets of your existing flashcards by using f
 msgid "Definition"
 msgstr "Definition"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:175
+#: src/routes/_app-layout/decks/route.lazy.tsx:177
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:115
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:149
-#: src/routes/_app-layout/settings/route.lazy.tsx:325
-#: src/routes/_app-layout/settings/route.lazy.tsx:348
+#: src/routes/_app-layout/settings/route.lazy.tsx:342
+#: src/routes/_app-layout/settings/route.lazy.tsx:365
 msgid "Delete"
 msgstr "Delete"
 
@@ -293,7 +290,7 @@ msgstr "Delete"
 msgid "Delete this word?"
 msgstr "Delete this word?"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:332
+#: src/routes/_app-layout/settings/route.lazy.tsx:349
 msgid "Delete your dictionary?"
 msgstr "Delete your dictionary?"
 
@@ -302,7 +299,7 @@ msgstr "Delete your dictionary?"
 msgid "Details"
 msgstr "Details"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:148
+#: src/routes/_app-layout/settings/route.lazy.tsx:149
 #: src/routes/_search-layout/index.lazy.tsx:89
 msgid "Dictionary"
 msgstr "Dictionary"
@@ -332,7 +329,7 @@ msgstr "Dual"
 msgid "Easy"
 msgstr "Easy"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:158
+#: src/routes/_app-layout/decks/route.lazy.tsx:160
 msgid "Edit"
 msgstr "Edit"
 
@@ -365,6 +362,10 @@ msgstr "Enter a deck name"
 msgid "Enter your 6-digit code from your email"
 msgstr "Enter your 6-digit code from your email"
 
+#: src/lib/error.ts:76
+msgid "Entry {arrayIndex}"
+msgstr "Entry {arrayIndex}"
+
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:166
 msgid "Example {0}"
 msgstr "Example {0}"
@@ -377,20 +378,20 @@ msgstr "Example usages of the word in different contexts."
 msgid "Examples"
 msgstr "Examples"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:269
-#: src/routes/_app-layout/settings/route.lazy.tsx:305
+#: src/routes/_app-layout/settings/route.lazy.tsx:286
+#: src/routes/_app-layout/settings/route.lazy.tsx:322
 msgid "Export"
 msgstr "Export"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:313
+#: src/routes/_app-layout/settings/route.lazy.tsx:330
 msgid "Export with flashcards"
 msgstr "Export with flashcards"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:276
+#: src/routes/_app-layout/settings/route.lazy.tsx:293
 msgid "Export your dictionary"
 msgstr "Export your dictionary"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:280
+#: src/routes/_app-layout/settings/route.lazy.tsx:297
 msgid "Exporting dictionary with flaschards will save your flashcard progress along with all the content in your dictionary. Use this option if you want to make a backup of your data.<0/><1/>Exporting your dictionary without flashcards will not save any flashcard progress. Use this option if you want to share your dictionary.<2/><3/><4>Warning</4>: Importing your file without flashcards will reset all of your flashcards."
 msgstr "Exporting dictionary with flaschards will save your flashcard progress along with all the content in your dictionary. Use this option if you want to make a backup of your data.<0/><1/>Exporting your dictionary without flashcards will not save any flashcard progress. Use this option if you want to share your dictionary.<2/><3/><4>Warning</4>: Importing your file without flashcards will reset all of your flashcards."
 
@@ -404,7 +405,7 @@ msgstr "Expression"
 msgid "Failed to add word!"
 msgstr "Failed to add word!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:112
+#: src/routes/_app-layout/settings/route.lazy.tsx:113
 msgid "Failed to delete!"
 msgstr "Failed to delete!"
 
@@ -494,16 +495,16 @@ msgstr "Huroof"
 msgid "Imperative"
 msgstr "Imperative"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:256
+#: src/routes/_app-layout/settings/route.lazy.tsx:273
 msgid "Import"
 msgstr "Import"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:223
-#: src/routes/_app-layout/settings/route.lazy.tsx:233
+#: src/routes/_app-layout/settings/route.lazy.tsx:240
+#: src/routes/_app-layout/settings/route.lazy.tsx:250
 msgid "Import failed!"
 msgstr "Import failed!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:172
+#: src/routes/_app-layout/settings/route.lazy.tsx:173
 msgid "Incorrect file type"
 msgstr "Incorrect file type"
 
@@ -519,9 +520,21 @@ msgstr "Inflection"
 msgid "Information such as the word's root, meaning, and examples."
 msgstr "Information such as the word's root, meaning, and examples."
 
-#: src/lib/error.ts:49
-msgid "Invalid type. Expected {0}"
-msgstr "Invalid type. Expected {0}"
+#: src/lib/error.ts:113
+msgid "Invalid datetime format"
+msgstr "Invalid datetime format"
+
+#: src/lib/error.ts:115
+msgid "Invalid string format"
+msgstr "Invalid string format"
+
+#: src/lib/error.ts:105
+msgid "Invalid type. Expected {0}, received {1}"
+msgstr "Invalid type. Expected {0}, received {1}"
+
+#: src/lib/error.ts:108
+msgid "Invalid value. Expected one of: {0}"
+msgstr "Invalid value. Expected one of: {0}"
 
 #: src/components/features/decks/DeckDialogContent.tsx:47
 #: src/components/features/dictionary/add/CategoryFormSection.tsx:77
@@ -544,11 +557,11 @@ msgstr "Log in"
 msgid "Logout"
 msgstr "Logout"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:76
+#: src/routes/_app-layout/decks/route.lazy.tsx:78
 msgid "Manage your decks and study them."
 msgstr "Manage your decks and study them."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:152
+#: src/routes/_app-layout/settings/route.lazy.tsx:153
 msgid "Manage your dictionary."
 msgstr "Manage your dictionary."
 
@@ -568,10 +581,6 @@ msgstr "Masdar {0}"
 msgid "Meaning"
 msgstr "Meaning"
 
-#: src/lib/error.ts:47
-msgid "Missing required property: {0}"
-msgstr "Missing required property: {0}"
-
 #: src/components/features/dictionary/add/MorphologyFormSection.tsx:52
 msgid "Morphology"
 msgstr "Morphology"
@@ -585,7 +594,7 @@ msgid "My Account"
 msgstr "My Account"
 
 #: src/components/features/decks/DeckDialogContent.tsx:195
-#: src/routes/_app-layout/decks/route.lazy.tsx:100
+#: src/routes/_app-layout/decks/route.lazy.tsx:102
 msgid "Name"
 msgstr "Name"
 
@@ -610,7 +619,7 @@ msgstr "Passive participle"
 msgid "Past tense"
 msgstr "Past tense"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:174
+#: src/routes/_app-layout/settings/route.lazy.tsx:175
 msgid "Please select a JSON file with your dictionary."
 msgstr "Please select a JSON file with your dictionary."
 
@@ -650,6 +659,10 @@ msgstr "Present tense"
 #: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:408
 msgid "Remove"
 msgstr "Remove"
+
+#: src/lib/error.ts:102
+msgid "Required field"
+msgstr "Required field"
 
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:61
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:97
@@ -721,7 +734,7 @@ msgstr "Sentence"
 
 #: src/components/DesktopNavigation.tsx:101
 #: src/components/MobileHeader.tsx:171
-#: src/routes/_app-layout/settings/route.lazy.tsx:125
+#: src/routes/_app-layout/settings/route.lazy.tsx:126
 msgid "Settings"
 msgstr "Settings"
 
@@ -745,22 +758,19 @@ msgstr "Show English to Arabic flashcards."
 msgid "Singular"
 msgstr "Singular"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:134
+#: src/routes/_app-layout/decks/route.lazy.tsx:136
 msgid "Study"
 msgstr "Study"
-
-#~ msgid "Study this deck"
-#~ msgstr "Study this deck"
 
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:155
 msgid "Successfully added word!"
 msgstr "Successfully added word!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:104
+#: src/routes/_app-layout/settings/route.lazy.tsx:105
 msgid "Successfully deleted!"
 msgstr "Successfully deleted!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:209
+#: src/routes/_app-layout/settings/route.lazy.tsx:212
 msgid "Successfully imported!"
 msgstr "Successfully imported!"
 
@@ -797,11 +807,15 @@ msgstr "That email is incorrect."
 msgid "That email is invalid."
 msgstr "That email is invalid."
 
+#: src/lib/error.ts:55
+msgid "That is not valid JSON."
+msgstr "That is not valid JSON."
+
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:245
 msgid "The context of the sentence, ex. formal or colloquial."
 msgstr "The context of the sentence, ex. formal or colloquial."
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:169
+#: src/routes/_app-layout/decks/route.lazy.tsx:171
 msgid "The deck \"{0}\" has been deleted."
 msgstr "The deck \"{0}\" has been deleted."
 
@@ -841,11 +855,11 @@ msgstr "There was an error adding your word. Please try again."
 msgid "There was an error creating the deck"
 msgstr "There was an error creating the deck"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:114
+#: src/routes/_app-layout/settings/route.lazy.tsx:115
 msgid "There was an error deleting your dictionary. Please try again later."
 msgstr "There was an error deleting your dictionary. Please try again later."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:235
+#: src/routes/_app-layout/settings/route.lazy.tsx:252
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "There was an error importing your dictionary. Please try again later."
 
@@ -907,6 +921,14 @@ msgstr "Types"
 msgid "Username"
 msgstr "Username"
 
+#: src/lib/error.ts:117
+msgid "Value must be {0} or greater"
+msgstr "Value must be {0} or greater"
+
+#: src/lib/error.ts:119
+msgid "Value must be {0} or less"
+msgstr "Value must be {0} or less"
+
 #: src/components/features/flashcards/FlashcardDrawer.tsx:42
 msgid "Verb"
 msgstr "Verb"
@@ -943,7 +965,7 @@ msgstr "Words that have the opposite meaning."
 msgid "You have more than {FLASHCARD_LIMIT} cards to review."
 msgstr "You have more than {FLASHCARD_LIMIT} cards to review."
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:84
+#: src/routes/_app-layout/decks/route.lazy.tsx:86
 msgid "You have no decks yet."
 msgstr "You have no decks yet."
 
@@ -963,15 +985,15 @@ msgstr "Your deck was not created. Please try again."
 msgid "Your deck was not updated. Please try again."
 msgstr "Your deck was not updated. Please try again."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:105
+#: src/routes/_app-layout/settings/route.lazy.tsx:106
 msgid "Your dictionary has been deleted."
 msgstr "Your dictionary has been deleted."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:210
+#: src/routes/_app-layout/settings/route.lazy.tsx:213
 msgid "Your dictionary has been updated!"
 msgstr "Your dictionary has been updated!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:225
+#: src/routes/_app-layout/settings/route.lazy.tsx:242
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "Your dictionary is not valid. Please fix the errors and upload it again."
 

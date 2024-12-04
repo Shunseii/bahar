@@ -49,8 +49,8 @@ msgstr "حرف أو عطف."
 msgid "A verb."
 msgstr "فعل."
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:109
-#: src/routes/_app-layout/decks/route.lazy.tsx:153
+#: src/routes/_app-layout/decks/route.lazy.tsx:111
+#: src/routes/_app-layout/decks/route.lazy.tsx:155
 msgid "Actions"
 msgstr "أعمال"
 
@@ -140,11 +140,11 @@ msgstr "أية تفاصيل إضافية عن هذه الصيغة مثلا تك�
 msgid "Any plural forms of the word."
 msgstr "أية صيغ جمع للكلمة."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:261
+#: src/routes/_app-layout/settings/route.lazy.tsx:278
 msgid "Any words that have the same ID will be overwritten."
 msgstr "سيستبدل كل كلمات التي لديها نفس المعرف."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:131
+#: src/routes/_app-layout/settings/route.lazy.tsx:132
 msgid "Appearance"
 msgstr "المظهر"
 
@@ -160,7 +160,7 @@ msgstr "صيغة الفعل العربي"
 msgid "Are you sure you want to delete this word? It will be removed from your dictionary and its flashcards will be deleted.<0/><1/><2>This action cannot be undone.</2>"
 msgstr "هل أنت متأكد أنك تريد حذف هذه الكلمة؟ سيتم إزالتها من معجمك وسيتم حذف البطاقات بها.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:336
+#: src/routes/_app-layout/settings/route.lazy.tsx:353
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذف جميع كلماتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. صدر معجمك قبل حذفه من فضلك."
 
@@ -191,11 +191,11 @@ msgstr "تفاصيل أساسية"
 msgid "BETA"
 msgstr "بيتا"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:354
+#: src/routes/_app-layout/settings/route.lazy.tsx:371
 msgid "Cancel"
 msgstr "ألغ"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:104
+#: src/routes/_app-layout/decks/route.lazy.tsx:106
 msgid "Cards to review today"
 msgstr "بطاقات للمراجعة اليوم"
 
@@ -227,12 +227,9 @@ msgstr "إنشاء مجموعة جديدة"
 msgid "Create a new deck by choosing filters. The deck will be composed of the cards that match the filters."
 msgstr "أنشئ مجموعة جديدة باختيار الفلاتر. ستكون المجموعة مكونة من البطاقات التي تطابق هذه الفلاتر."
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:61
+#: src/routes/_app-layout/decks/route.lazy.tsx:63
 msgid "Create deck"
 msgstr "أنشئ محموعة"
-
-#~ msgid "Create new deck"
-#~ msgstr "إنشاء مجموعة"
 
 #: src/routes/_layout/login/route.lazy.tsx:167
 msgid "Create one"
@@ -246,7 +243,7 @@ msgstr "إنشاء حسابك"
 msgid "Customize how flashcards appear."
 msgstr "خصص كيفيّة ظهور البطاقات."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:135
+#: src/routes/_app-layout/settings/route.lazy.tsx:136
 msgid "Customize how the application looks for you."
 msgstr "قم بتخصيص كيف يظهر التطبيق بالنسبة لك."
 
@@ -258,7 +255,7 @@ msgstr "غامق"
 msgid "Deck successfully created!"
 msgstr "تم إنشاء المجموعة بنجاح!"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:167
+#: src/routes/_app-layout/decks/route.lazy.tsx:169
 msgid "Deck successfully deleted!"
 msgstr "تم حذف المجموعة بنجاح!"
 
@@ -269,11 +266,11 @@ msgstr "تم تحديث المجموعة بنجاح!"
 #: src/components/DesktopNavigation.tsx:68
 #: src/components/DesktopNavigation.tsx:74
 #: src/components/MobileHeader.tsx:159
-#: src/routes/_app-layout/decks/route.lazy.tsx:72
+#: src/routes/_app-layout/decks/route.lazy.tsx:74
 msgid "Decks"
 msgstr "المجموعات"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:88
+#: src/routes/_app-layout/decks/route.lazy.tsx:90
 msgid "Decks allow you to create subsets of your existing flashcards by using filters on your dictionary which you can then study individually."
 msgstr "تتيح لك المجموعات إنشاء مجموعات فرعية من بطاقاتك التعليمية الموجودة باستخدام الفلاتر على قاموسك، والتي يمكنك دراستها بشكل فردي."
 
@@ -281,11 +278,11 @@ msgstr "تتيح لك المجموعات إنشاء مجموعات فرعية م
 msgid "Definition"
 msgstr "التعريف"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:175
+#: src/routes/_app-layout/decks/route.lazy.tsx:177
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:115
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:149
-#: src/routes/_app-layout/settings/route.lazy.tsx:325
-#: src/routes/_app-layout/settings/route.lazy.tsx:348
+#: src/routes/_app-layout/settings/route.lazy.tsx:342
+#: src/routes/_app-layout/settings/route.lazy.tsx:365
 msgid "Delete"
 msgstr "احذف"
 
@@ -293,7 +290,7 @@ msgstr "احذف"
 msgid "Delete this word?"
 msgstr "حذف هذه الكلمة؟"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:332
+#: src/routes/_app-layout/settings/route.lazy.tsx:349
 msgid "Delete your dictionary?"
 msgstr "هل تريد أن تحذف معجمك؟"
 
@@ -302,7 +299,7 @@ msgstr "هل تريد أن تحذف معجمك؟"
 msgid "Details"
 msgstr "تفاصيل"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:148
+#: src/routes/_app-layout/settings/route.lazy.tsx:149
 #: src/routes/_search-layout/index.lazy.tsx:89
 msgid "Dictionary"
 msgstr "معجم"
@@ -332,7 +329,7 @@ msgstr "المثنى"
 msgid "Easy"
 msgstr "سهل"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:158
+#: src/routes/_app-layout/decks/route.lazy.tsx:160
 msgid "Edit"
 msgstr "عدَل"
 
@@ -365,6 +362,10 @@ msgstr "أدخل اسم المجموعة"
 msgid "Enter your 6-digit code from your email"
 msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
 
+#: src/lib/error.ts:76
+msgid "Entry {arrayIndex}"
+msgstr "العنصر {arrayIndex}"
+
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:166
 msgid "Example {0}"
 msgstr "المثال {0}"
@@ -377,20 +378,20 @@ msgstr "استخدامات مثالية للكلمة في سياقات مختل�
 msgid "Examples"
 msgstr "أمثلة"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:269
-#: src/routes/_app-layout/settings/route.lazy.tsx:305
+#: src/routes/_app-layout/settings/route.lazy.tsx:286
+#: src/routes/_app-layout/settings/route.lazy.tsx:322
 msgid "Export"
 msgstr "صدر"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:313
+#: src/routes/_app-layout/settings/route.lazy.tsx:330
 msgid "Export with flashcards"
 msgstr "تصدير مع البطاقات"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:276
+#: src/routes/_app-layout/settings/route.lazy.tsx:293
 msgid "Export your dictionary"
 msgstr "تصدير معجمك"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:280
+#: src/routes/_app-layout/settings/route.lazy.tsx:297
 msgid "Exporting dictionary with flaschards will save your flashcard progress along with all the content in your dictionary. Use this option if you want to make a backup of your data.<0/><1/>Exporting your dictionary without flashcards will not save any flashcard progress. Use this option if you want to share your dictionary.<2/><3/><4>Warning</4>: Importing your file without flashcards will reset all of your flashcards."
 msgstr "تصدير المعجم مع البطاقات سيحفظ تقدم البطاقات بالإضافة إلى كل المحتوى في معجمك. استخدم هذا الخيار إذا كنت ترغب في إنشاء نسخة احتياطية من بياناتك.<0/><1/>تصدير المعجم بدون البطاقات لن يحفظ أي تقدم للبطاقات. استخدم هذا الخيار إذا كنت ترغب في مشاركة معجمك.<2/><3/><4>تحذير</4>: استيراد ملفك بدون البطاقات سيؤدي إلى إعادة تعيين جميع البطاقات."
 
@@ -404,7 +405,7 @@ msgstr "عبارة"
 msgid "Failed to add word!"
 msgstr "فشل إضافة الكلمة!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:112
+#: src/routes/_app-layout/settings/route.lazy.tsx:113
 msgid "Failed to delete!"
 msgstr "فشل الحذف!"
 
@@ -494,16 +495,16 @@ msgstr "حروف"
 msgid "Imperative"
 msgstr "الأمر"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:256
+#: src/routes/_app-layout/settings/route.lazy.tsx:273
 msgid "Import"
 msgstr "استورد"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:223
-#: src/routes/_app-layout/settings/route.lazy.tsx:233
+#: src/routes/_app-layout/settings/route.lazy.tsx:240
+#: src/routes/_app-layout/settings/route.lazy.tsx:250
 msgid "Import failed!"
 msgstr "فشل الاستيراد!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:172
+#: src/routes/_app-layout/settings/route.lazy.tsx:173
 msgid "Incorrect file type"
 msgstr "نوع الملف غير صحيح"
 
@@ -519,9 +520,21 @@ msgstr "إعراب"
 msgid "Information such as the word's root, meaning, and examples."
 msgstr "معلومات مثلا الجذر أو المعنى أو الأمثلة."
 
-#: src/lib/error.ts:49
-msgid "Invalid type. Expected {0}"
-msgstr "نوع غير صالح. المتوقع {0}"
+#: src/lib/error.ts:113
+msgid "Invalid datetime format"
+msgstr "الصيغة الزمنية غير صالحة"
+
+#: src/lib/error.ts:115
+msgid "Invalid string format"
+msgstr "صيغة النص غير صالحة"
+
+#: src/lib/error.ts:105
+msgid "Invalid type. Expected {0}, received {1}"
+msgstr "نوع غير صالح. المتوقع {0}، المستلم {1}"
+
+#: src/lib/error.ts:108
+msgid "Invalid value. Expected one of: {0}"
+msgstr "قيمة غير صالحة. يجب أن تكون إحدى القيم التالية: {0}"
 
 #: src/components/features/decks/DeckDialogContent.tsx:47
 #: src/components/features/dictionary/add/CategoryFormSection.tsx:77
@@ -544,11 +557,11 @@ msgstr "تسجيل الدخول"
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:76
+#: src/routes/_app-layout/decks/route.lazy.tsx:78
 msgid "Manage your decks and study them."
 msgstr "إدارة مجموعاتك ودراستها."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:152
+#: src/routes/_app-layout/settings/route.lazy.tsx:153
 msgid "Manage your dictionary."
 msgstr "إدارة معجمك."
 
@@ -568,10 +581,6 @@ msgstr "المصدر {0}"
 msgid "Meaning"
 msgstr "المعنى"
 
-#: src/lib/error.ts:47
-msgid "Missing required property: {0}"
-msgstr "الخاصية المطلوبة مفقودة: {0}"
-
 #: src/components/features/dictionary/add/MorphologyFormSection.tsx:52
 msgid "Morphology"
 msgstr "الصرف"
@@ -585,7 +594,7 @@ msgid "My Account"
 msgstr "حسابي"
 
 #: src/components/features/decks/DeckDialogContent.tsx:195
-#: src/routes/_app-layout/decks/route.lazy.tsx:100
+#: src/routes/_app-layout/decks/route.lazy.tsx:102
 msgid "Name"
 msgstr "اسم"
 
@@ -610,7 +619,7 @@ msgstr "اسم مفعول"
 msgid "Past tense"
 msgstr "الماضي"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:174
+#: src/routes/_app-layout/settings/route.lazy.tsx:175
 msgid "Please select a JSON file with your dictionary."
 msgstr "اختر ملف JSON لمعجمك من فضلك."
 
@@ -650,6 +659,10 @@ msgstr "المضارع"
 #: src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:408
 msgid "Remove"
 msgstr "احذف"
+
+#: src/lib/error.ts:102
+msgid "Required field"
+msgstr "حقل مطلوب"
 
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:61
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:97
@@ -721,7 +734,7 @@ msgstr "جملة"
 
 #: src/components/DesktopNavigation.tsx:101
 #: src/components/MobileHeader.tsx:171
-#: src/routes/_app-layout/settings/route.lazy.tsx:125
+#: src/routes/_app-layout/settings/route.lazy.tsx:126
 msgid "Settings"
 msgstr "الإعدادات"
 
@@ -745,22 +758,19 @@ msgstr "اعرض بطاقات من الإنجليزية إلى العربية."
 msgid "Singular"
 msgstr "مفرد"
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:134
+#: src/routes/_app-layout/decks/route.lazy.tsx:136
 msgid "Study"
 msgstr "أدرس"
-
-#~ msgid "Study this deck"
-#~ msgstr "ادرس"
 
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:155
 msgid "Successfully added word!"
 msgstr "تم إضافة الكلمة بنجاح!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:104
+#: src/routes/_app-layout/settings/route.lazy.tsx:105
 msgid "Successfully deleted!"
 msgstr "نجح الحذف!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:209
+#: src/routes/_app-layout/settings/route.lazy.tsx:212
 msgid "Successfully imported!"
 msgstr "تم الاستيراد بنجاح!"
 
@@ -797,11 +807,15 @@ msgstr "هذا البريد الإلكتروني غير صحيح."
 msgid "That email is invalid."
 msgstr "هذا البريد الإلكتروني غير صالح."
 
+#: src/lib/error.ts:55
+msgid "That is not valid JSON."
+msgstr "هذا ليس JSON صالح"
+
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:245
 msgid "The context of the sentence, ex. formal or colloquial."
 msgstr "سياق الجملة مثلا رسمي أو عامي."
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:169
+#: src/routes/_app-layout/decks/route.lazy.tsx:171
 msgid "The deck \"{0}\" has been deleted."
 msgstr "تم حذف المجموعة \"{0}\"."
 
@@ -841,11 +855,11 @@ msgstr "حدث خطأ أثناء إضافة كلمتك. حاول مرة اخرى
 msgid "There was an error creating the deck"
 msgstr "حدث خطأ أثناء إنشاء المجموعة"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:114
+#: src/routes/_app-layout/settings/route.lazy.tsx:115
 msgid "There was an error deleting your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء حذف معجمك. حاول مرة أخرى لاحقا من فضلك."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:235
+#: src/routes/_app-layout/settings/route.lazy.tsx:252
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء استيراد لمعجمك. حاول مرة أخرى لاحقا."
 
@@ -907,6 +921,14 @@ msgstr "أقسام"
 msgid "Username"
 msgstr "اسم مستخدم"
 
+#: src/lib/error.ts:117
+msgid "Value must be {0} or greater"
+msgstr "يجب أن تكون القيمة {0} أو أكبر"
+
+#: src/lib/error.ts:119
+msgid "Value must be {0} or less"
+msgstr "يجب أن تكون القيمة {0} أو أقل"
+
 #: src/components/features/flashcards/FlashcardDrawer.tsx:42
 msgid "Verb"
 msgstr "فعل"
@@ -943,7 +965,7 @@ msgstr "الكلمات التي لها معنى عكسي."
 msgid "You have more than {FLASHCARD_LIMIT} cards to review."
 msgstr "لديك أكثر من {FLASHCARD_LIMIT} بطاقة لمراجعتها."
 
-#: src/routes/_app-layout/decks/route.lazy.tsx:84
+#: src/routes/_app-layout/decks/route.lazy.tsx:86
 msgid "You have no decks yet."
 msgstr "ليس لديك أي مجموعات بعد."
 
@@ -963,15 +985,15 @@ msgstr "لم يتم إنشاء مجموعتك. يرجى المحاولة مرة 
 msgid "Your deck was not updated. Please try again."
 msgstr "لم يتم تحديث مجموعتك. يرجى المحاولة مرة أخرى."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:105
+#: src/routes/_app-layout/settings/route.lazy.tsx:106
 msgid "Your dictionary has been deleted."
 msgstr "حذف معجمك."
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:210
+#: src/routes/_app-layout/settings/route.lazy.tsx:213
 msgid "Your dictionary has been updated!"
 msgstr "تم تحديث معجمك!"
 
-#: src/routes/_app-layout/settings/route.lazy.tsx:225
+#: src/routes/_app-layout/settings/route.lazy.tsx:242
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة أخرى من فضلك."
 
