@@ -4,6 +4,7 @@ import { lingui } from "@lingui/vite-plugin";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vite";
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
+import { ValidateEnv } from "@julr/vite-plugin-validate-env";
 
 export default defineConfig({
   build: {
@@ -13,6 +14,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    ValidateEnv(),
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
