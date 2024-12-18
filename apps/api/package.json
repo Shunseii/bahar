@@ -15,6 +15,7 @@
     "gen-schema:flashcard": "json-refs resolve src/flashcard.json | json-schema-to-zod --name 'FlashcardSchema' | prettier --parser typescript > src/schemas/flashcard.schema.ts",
     "gen-schema:full": "json-refs resolve src/schema.json | json-schema-to-zod --name 'WordsSchema' | prettier --parser typescript > src/schemas/words.schema.ts",
     "gen-schema": "npm run gen-schema:dictionary && npm run gen-schema:flashcard && npm run gen-schema:full",
+    "auth:gen": "pnpm dlx @better-auth/cli generate -y --output src/db/schema/auth.ts && prettier --write src/db/schema/auth.ts",
     "drizzle:gen": "drizzle-kit generate",
     "drizzle:migrate": "drizzle-kit migrate",
     "drizzle:push": "drizzle-kit push",
@@ -24,25 +25,21 @@
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.7.2",
     "@libsql/client": "^0.10.0",
-    "@lucia-auth/adapter-drizzle": "^1.1.0",
     "@sendgrid/mail": "^8.1.1",
     "@trpc/client": "11.0.0-next-beta.289",
     "@trpc/server": "11.0.0-next-beta.289",
     "@types/cookie-parser": "^1.4.6",
-    "@upstash/ratelimit": "^1.2.0",
     "@upstash/redis": "^1.28.4",
-    "arctic": "^1.2.0",
+    "better-auth": "^1.0.22",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "drizzle-orm": "^0.36.4",
     "drizzle-zod": "^0.5.1",
     "express": "^4.18.2",
-    "lucia": "^3.2.0",
     "meilisearch": "^0.45.0",
     "multer": "1.4.5-lts.1",
     "nanoid": "^5.0.7",
-    "oslo": "^1.1.2",
     "ts-fsrs": "^3.5.7",
     "tsx": "^4.7.1",
     "zod": "^3.22.4"
@@ -68,6 +65,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./schemas": "./src/schemas/index.ts",
-    "./error": "./src/error.ts"
+    "./error": "./src/error.ts",
+    "./auth": "./src/auth.ts"
   }
 }

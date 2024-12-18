@@ -1,6 +1,8 @@
 import { Redis } from "@upstash/redis";
+import { config } from "../config";
 
 export const redisClient = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+  automaticDeserialization: true,
+  url: config.UPSTASH_REDIS_REST_URL,
+  token: config.UPSTASH_REDIS_REST_TOKEN,
 });

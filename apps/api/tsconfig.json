@@ -1,7 +1,9 @@
 {
   "extends": "@repo/typescript-config/trpc.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    "declaration": false,
+    "declarationMap": false
   },
   "include": ["src/**/*"]
 }

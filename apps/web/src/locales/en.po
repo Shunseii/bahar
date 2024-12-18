@@ -107,10 +107,6 @@ msgstr "Additional Details"
 msgid "Again"
 msgstr "Again"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:182
-msgid "Already have an account?"
-msgstr "Already have an account?"
-
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:95
 msgid "An Arabic definition of the word."
 msgstr "An Arabic definition of the word."
@@ -177,8 +173,8 @@ msgstr "Back"
 msgid "Back to top"
 msgstr "Back to top"
 
-#: src/components/DesktopNavigation.tsx:42
-#: src/components/MobileHeader.tsx:133
+#: src/components/DesktopNavigation.tsx:39
+#: src/components/MobileHeader.tsx:129
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "Bahar"
@@ -211,13 +207,13 @@ msgstr "Choose file"
 msgid "Context"
 msgstr "Context"
 
-#: src/components/OTPForm.tsx:179
+#: src/components/OTPForm.tsx:184
 msgid "Continue"
 msgstr "Continue"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:95
-msgid "Create a new account"
-msgstr "Create a new account"
+#: src/routes/_layout/login/route.lazy.tsx:136
+msgid "Continue with Email"
+msgstr "Continue with Email"
 
 #: src/components/features/decks/DeckDialogContent.tsx:61
 msgid "Create a new deck"
@@ -230,14 +226,6 @@ msgstr "Create a new deck by choosing filters. The deck will be composed of the 
 #: src/routes/_app-layout/decks/route.lazy.tsx:63
 msgid "Create deck"
 msgstr "Create deck"
-
-#: src/routes/_layout/login/route.lazy.tsx:167
-msgid "Create one"
-msgstr "Create one"
-
-#: src/routes/_layout/sign-up/route.lazy.tsx:158
-msgid "Create your account"
-msgstr "Create your account"
 
 #: src/components/features/settings/FlashcardSettingsCardSection.tsx:86
 msgid "Customize how flashcards appear."
@@ -263,9 +251,9 @@ msgstr "Deck successfully deleted!"
 msgid "Deck successfully updated!"
 msgstr "Deck successfully updated!"
 
-#: src/components/DesktopNavigation.tsx:68
-#: src/components/DesktopNavigation.tsx:74
-#: src/components/MobileHeader.tsx:159
+#: src/components/DesktopNavigation.tsx:65
+#: src/components/DesktopNavigation.tsx:71
+#: src/components/MobileHeader.tsx:155
 #: src/routes/_app-layout/decks/route.lazy.tsx:74
 msgid "Decks"
 msgstr "Decks"
@@ -313,10 +301,6 @@ msgstr "Diptote"
 msgid "Discard"
 msgstr "Discard"
 
-#: src/routes/_layout/login/route.lazy.tsx:164
-msgid "Don't have an account?"
-msgstr "Don't have an account?"
-
 #: src/components/features/settings/FlashcardSettingsCardSection.tsx:115
 msgid "Don't show"
 msgstr "Don't show"
@@ -345,8 +329,7 @@ msgstr "Edit your deck"
 msgid "Edit your deck by choosing filters. The deck will be composed of the cards that match the filters."
 msgstr "Edit your deck by choosing filters. The deck will be composed of the cards that match the filters."
 
-#: src/routes/_layout/login/route.lazy.tsx:120
-#: src/routes/_layout/sign-up/route.lazy.tsx:110
+#: src/routes/_layout/login/route.lazy.tsx:110
 msgid "Email"
 msgstr "Email"
 
@@ -358,7 +341,7 @@ msgstr "English"
 msgid "Enter a deck name"
 msgstr "Enter a deck name"
 
-#: src/components/OTPForm.tsx:128
+#: src/components/OTPForm.tsx:133
 msgid "Enter your 6-digit code from your email"
 msgstr "Enter your 6-digit code from your email"
 
@@ -443,12 +426,11 @@ msgstr "For example, the word"
 msgid "Gender"
 msgstr "Gender"
 
-#: src/routes/_layout/login/route.lazy.tsx:160
-#: src/routes/_layout/sign-up/route.lazy.tsx:177
+#: src/routes/_layout/login/route.lazy.tsx:154
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/components/OTPForm.tsx:123
+#: src/components/OTPForm.tsx:128
 msgid "Go back"
 msgstr "Go back"
 
@@ -471,9 +453,9 @@ msgstr "Harf"
 msgid "Harf {0}"
 msgstr "Harf {0}"
 
-#: src/components/DesktopNavigation.tsx:52
-#: src/components/DesktopNavigation.tsx:58
-#: src/components/MobileHeader.tsx:147
+#: src/components/DesktopNavigation.tsx:49
+#: src/components/DesktopNavigation.tsx:55
+#: src/components/MobileHeader.tsx:143
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:41
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:167
 msgid "Home"
@@ -546,14 +528,12 @@ msgstr "Ism"
 msgid "Light"
 msgstr "Light"
 
-#: src/routes/_layout/login/route.lazy.tsx:105
-#: src/routes/_layout/login/route.lazy.tsx:142
-#: src/routes/_layout/sign-up/route.lazy.tsx:185
-msgid "Log in"
-msgstr "Log in"
+#: src/routes/_layout/login/route.lazy.tsx:92
+msgid "Log in to your existing account or sign up for a new one"
+msgstr "Log in to your existing account or sign up for a new one"
 
-#: src/components/DesktopNavigation.tsx:123
-#: src/components/MobileHeader.tsx:191
+#: src/components/DesktopNavigation.tsx:110
+#: src/components/MobileHeader.tsx:173
 msgid "Logout"
 msgstr "Logout"
 
@@ -589,7 +569,7 @@ msgstr "Morphology"
 msgid "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
 msgstr "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
 
-#: src/components/DesktopNavigation.tsx:94
+#: src/components/DesktopNavigation.tsx:91
 msgid "My Account"
 msgstr "My Account"
 
@@ -606,8 +586,7 @@ msgstr "No file chosen"
 msgid "Noun"
 msgstr "Noun"
 
-#: src/routes/_layout/login/route.lazy.tsx:154
-#: src/routes/_layout/sign-up/route.lazy.tsx:170
+#: src/routes/_layout/login/route.lazy.tsx:148
 msgid "Or continue with"
 msgstr "Or continue with"
 
@@ -623,14 +602,10 @@ msgstr "Past tense"
 msgid "Please select a JSON file with your dictionary."
 msgstr "Please select a JSON file with your dictionary."
 
-#: src/components/OTPForm.tsx:105
-msgid "Please try again after 30 seconds."
-msgstr "Please try again after 30 seconds."
-
-#: src/routes/_layout/login/route.lazy.tsx:74
-#: src/routes/_layout/sign-up/route.lazy.tsx:70
-msgid "Please try again after five minutes."
-msgstr "Please try again after five minutes."
+#: src/components/OTPForm.tsx:113
+#: src/routes/_layout/login/route.lazy.tsx:55
+msgid "Please try again."
+msgstr "Please try again."
 
 #: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:116
 msgid "Plural {0}"
@@ -732,8 +707,8 @@ msgstr "Select type"
 msgid "Sentence"
 msgstr "Sentence"
 
-#: src/components/DesktopNavigation.tsx:101
-#: src/components/MobileHeader.tsx:171
+#: src/components/DesktopNavigation.tsx:98
+#: src/components/MobileHeader.tsx:167
 #: src/routes/_app-layout/settings/route.lazy.tsx:126
 msgid "Settings"
 msgstr "Settings"
@@ -791,17 +766,9 @@ msgstr "System"
 msgid "Tags"
 msgstr "Tags"
 
-#: src/components/OTPForm.tsx:102
-msgid "That code has expired."
-msgstr "That code has expired."
-
-#: src/routes/_layout/sign-up/route.lazy.tsx:31
-msgid "That email already exists."
-msgstr "That email already exists."
-
-#: src/routes/_layout/login/route.lazy.tsx:32
-msgid "That email is incorrect."
-msgstr "That email is incorrect."
+#: src/components/OTPForm.tsx:107
+msgid "That code is invalid."
+msgstr "That code is invalid."
 
 #: src/lib/zod.ts:13
 msgid "That email is invalid."
@@ -880,13 +847,9 @@ msgstr "There was an error updating your word. Please try again."
 msgid "This field is required."
 msgstr "This field is required."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:118
+#: src/routes/_layout/login/route.lazy.tsx:118
 msgid "This is case insensitive."
 msgstr "This is case insensitive."
-
-#: src/routes/_layout/sign-up/route.lazy.tsx:140
-msgid "This is how we will address you."
-msgstr "This is how we will address you."
 
 #: src/components/features/decks/DeckDialogContent.tsx:208
 msgid "This is the name of your deck."
@@ -896,7 +859,7 @@ msgstr "This is the name of your deck."
 msgid "This refers to how many case endings the word can take."
 msgstr "This refers to how many case endings the word can take."
 
-#: src/components/MobileHeader.tsx:108
+#: src/components/MobileHeader.tsx:104
 msgid "Toggle Menu"
 msgstr "Toggle Menu"
 
@@ -916,10 +879,6 @@ msgstr "Type"
 #: src/components/features/decks/DeckDialogContent.tsx:264
 msgid "Types"
 msgstr "Types"
-
-#: src/routes/_layout/sign-up/route.lazy.tsx:132
-msgid "Username"
-msgstr "Username"
 
 #: src/lib/error.ts:117
 msgid "Value must be {0} or greater"
@@ -944,6 +903,10 @@ msgstr "Verbal noun forms (masadir) of the verb."
 #: src/routes/_search-layout/index.lazy.tsx:93
 msgid "View all the words in your personal dictionary."
 msgstr "View all the words in your personal dictionary."
+
+#: src/routes/_layout/login/route.lazy.tsx:88
+msgid "Welcome to Bahar!"
+msgstr "Welcome to Bahar!"
 
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:310
 #: src/components/features/dictionary/add/BasicDetailsFormSection.tsx:35

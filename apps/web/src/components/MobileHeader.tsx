@@ -7,10 +7,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useDir } from "@/hooks/useDir";
-import { trpc } from "@/lib/trpc";
 import { Trans } from "@lingui/macro";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useClickAway } from "@uidotdev/usehooks";
 import { Home, PanelLeft, Settings, Layers } from "lucide-react";
 import React, { FC, PropsWithChildren } from "react";
@@ -21,6 +19,7 @@ import { sheetVariantsNoSlideAnimations } from "./ui/sheet/variants";
 import { atom, useAtom } from "jotai";
 import { motion } from "framer-motion";
 import Logo from "@/assets/logo.svg";
+import { useLogout } from "@/hooks/useLogout";
 
 const isOpenAtom = atom(false);
 
@@ -87,11 +86,8 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
   const ref = useClickAway(() => {
     setIsOpen(false);
   });
-  const navigate = useNavigate({ from: "/" });
-  const queryClient = useQueryClient();
+  const { logout } = useLogout();
   const dir = useDir();
-
-  const { mutate: logout } = trpc.auth.logout.useMutation();
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -172,21 +168,7 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
               </NavLink>
             </div>
 
-            <Button
-              variant="secondary"
-              onClick={async () => {
-                logout();
-
-                await queryClient.invalidateQueries();
-
-                navigate({
-                  to: "/login",
-                  replace: true,
-                  resetScroll: true,
-                });
-              }}
-              asChild
-            >
+            <Button variant="secondary" onClick={logout} asChild>
               <p>
                 <Trans>Logout</Trans>
               </p>

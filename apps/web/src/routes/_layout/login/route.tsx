@@ -23,6 +23,7 @@ export const Route = createFileRoute("/_layout/login")({
 
     const isAuthenticated = !!authData;
 
+    // TODO: redirect based on the uri
     if (isAuthenticated) {
       throw redirect({
         to: "/",

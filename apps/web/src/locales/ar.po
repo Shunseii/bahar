@@ -107,10 +107,6 @@ msgstr "تفاصيل إضافية"
 msgid "Again"
 msgstr "مرة أخرى"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:182
-msgid "Already have an account?"
-msgstr "لديك حساب بالفعل؟"
-
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:95
 msgid "An Arabic definition of the word."
 msgstr "تعريف عربية للكلمة."
@@ -177,8 +173,8 @@ msgstr "رجوع"
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
-#: src/components/DesktopNavigation.tsx:42
-#: src/components/MobileHeader.tsx:133
+#: src/components/DesktopNavigation.tsx:39
+#: src/components/MobileHeader.tsx:129
 #: src/routes/__root.tsx:20
 msgid "Bahar"
 msgstr "بحر"
@@ -211,13 +207,13 @@ msgstr "اختر ملف"
 msgid "Context"
 msgstr "السياق"
 
-#: src/components/OTPForm.tsx:179
+#: src/components/OTPForm.tsx:184
 msgid "Continue"
 msgstr "استمر"
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:95
-msgid "Create a new account"
-msgstr "إنشاء حساب جديد"
+#: src/routes/_layout/login/route.lazy.tsx:136
+msgid "Continue with Email"
+msgstr "استمرّ مع بريد الإلكتروني"
 
 #: src/components/features/decks/DeckDialogContent.tsx:61
 msgid "Create a new deck"
@@ -230,14 +226,6 @@ msgstr "أنشئ مجموعة جديدة باختيار الفلاتر. ستكو
 #: src/routes/_app-layout/decks/route.lazy.tsx:63
 msgid "Create deck"
 msgstr "أنشئ محموعة"
-
-#: src/routes/_layout/login/route.lazy.tsx:167
-msgid "Create one"
-msgstr "إنشاء حساب الآن"
-
-#: src/routes/_layout/sign-up/route.lazy.tsx:158
-msgid "Create your account"
-msgstr "إنشاء حسابك"
 
 #: src/components/features/settings/FlashcardSettingsCardSection.tsx:86
 msgid "Customize how flashcards appear."
@@ -263,9 +251,9 @@ msgstr "تم حذف المجموعة بنجاح!"
 msgid "Deck successfully updated!"
 msgstr "تم تحديث المجموعة بنجاح!"
 
-#: src/components/DesktopNavigation.tsx:68
-#: src/components/DesktopNavigation.tsx:74
-#: src/components/MobileHeader.tsx:159
+#: src/components/DesktopNavigation.tsx:65
+#: src/components/DesktopNavigation.tsx:71
+#: src/components/MobileHeader.tsx:155
 #: src/routes/_app-layout/decks/route.lazy.tsx:74
 msgid "Decks"
 msgstr "المجموعات"
@@ -313,10 +301,6 @@ msgstr "ممنوع من الصرف"
 msgid "Discard"
 msgstr "ألغ"
 
-#: src/routes/_layout/login/route.lazy.tsx:164
-msgid "Don't have an account?"
-msgstr "ليس لديك حساب؟"
-
 #: src/components/features/settings/FlashcardSettingsCardSection.tsx:115
 msgid "Don't show"
 msgstr "لا تعرض"
@@ -345,8 +329,7 @@ msgstr "عدّل مجموعتك"
 msgid "Edit your deck by choosing filters. The deck will be composed of the cards that match the filters."
 msgstr "عدّل مجموعتك من خلال اختيار الفلاتر. ستتكون المجموعة من البطاقات التي تطابق الفلاتر."
 
-#: src/routes/_layout/login/route.lazy.tsx:120
-#: src/routes/_layout/sign-up/route.lazy.tsx:110
+#: src/routes/_layout/login/route.lazy.tsx:110
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
@@ -358,7 +341,7 @@ msgstr "الانجلزية"
 msgid "Enter a deck name"
 msgstr "أدخل اسم المجموعة"
 
-#: src/components/OTPForm.tsx:128
+#: src/components/OTPForm.tsx:133
 msgid "Enter your 6-digit code from your email"
 msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
 
@@ -443,12 +426,11 @@ msgstr "مثلا الكلمة"
 msgid "Gender"
 msgstr "جنس"
 
-#: src/routes/_layout/login/route.lazy.tsx:160
-#: src/routes/_layout/sign-up/route.lazy.tsx:177
+#: src/routes/_layout/login/route.lazy.tsx:154
 msgid "GitHub"
 msgstr "GitHub"
 
-#: src/components/OTPForm.tsx:123
+#: src/components/OTPForm.tsx:128
 msgid "Go back"
 msgstr "ارجع"
 
@@ -471,9 +453,9 @@ msgstr "حرف"
 msgid "Harf {0}"
 msgstr "الحرف {0}"
 
-#: src/components/DesktopNavigation.tsx:52
-#: src/components/DesktopNavigation.tsx:58
-#: src/components/MobileHeader.tsx:147
+#: src/components/DesktopNavigation.tsx:49
+#: src/components/DesktopNavigation.tsx:55
+#: src/components/MobileHeader.tsx:143
 #: src/routes/_app-layout/dictionary/add/route.lazy.tsx:41
 #: src/routes/_app-layout/dictionary/edit/$wordId.tsx:167
 msgid "Home"
@@ -546,14 +528,12 @@ msgstr "اسم"
 msgid "Light"
 msgstr "فاتح"
 
-#: src/routes/_layout/login/route.lazy.tsx:105
-#: src/routes/_layout/login/route.lazy.tsx:142
-#: src/routes/_layout/sign-up/route.lazy.tsx:185
-msgid "Log in"
-msgstr "تسجيل الدخول"
+#: src/routes/_layout/login/route.lazy.tsx:92
+msgid "Log in to your existing account or sign up for a new one"
+msgstr "قم بتسجيل الدخول إلى حسابك الحالي أو قم بالتسجيل للحصول على حساب جديد"
 
-#: src/components/DesktopNavigation.tsx:123
-#: src/components/MobileHeader.tsx:191
+#: src/components/DesktopNavigation.tsx:110
+#: src/components/MobileHeader.tsx:173
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
@@ -589,7 +569,7 @@ msgstr "الصرف"
 msgid "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
 msgstr "الصرف ينطبق فقط على الأسماء والأفعال. سيتم إخفاء هذا القسم إذا تم تعيين نوع الكلمة إلى أي شيء آخر."
 
-#: src/components/DesktopNavigation.tsx:94
+#: src/components/DesktopNavigation.tsx:91
 msgid "My Account"
 msgstr "حسابي"
 
@@ -606,8 +586,7 @@ msgstr "لم يتم اختيار ملف"
 msgid "Noun"
 msgstr "اسم"
 
-#: src/routes/_layout/login/route.lazy.tsx:154
-#: src/routes/_layout/sign-up/route.lazy.tsx:170
+#: src/routes/_layout/login/route.lazy.tsx:148
 msgid "Or continue with"
 msgstr "أو استمر مع"
 
@@ -623,14 +602,10 @@ msgstr "الماضي"
 msgid "Please select a JSON file with your dictionary."
 msgstr "اختر ملف JSON لمعجمك من فضلك."
 
-#: src/components/OTPForm.tsx:105
-msgid "Please try again after 30 seconds."
-msgstr "حاول مرة أخرى بعد ٣٠ ثوان من فضلك."
-
-#: src/routes/_layout/login/route.lazy.tsx:74
-#: src/routes/_layout/sign-up/route.lazy.tsx:70
-msgid "Please try again after five minutes."
-msgstr "حاول مرة أخرى بعد ٥ دقائق من فضلك."
+#: src/components/OTPForm.tsx:113
+#: src/routes/_layout/login/route.lazy.tsx:55
+msgid "Please try again."
+msgstr "حاول مرّة أخرى"
 
 #: src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:116
 msgid "Plural {0}"
@@ -732,8 +707,8 @@ msgstr "اختر الجنس"
 msgid "Sentence"
 msgstr "جملة"
 
-#: src/components/DesktopNavigation.tsx:101
-#: src/components/MobileHeader.tsx:171
+#: src/components/DesktopNavigation.tsx:98
+#: src/components/MobileHeader.tsx:167
 #: src/routes/_app-layout/settings/route.lazy.tsx:126
 msgid "Settings"
 msgstr "الإعدادات"
@@ -791,17 +766,9 @@ msgstr "نظام"
 msgid "Tags"
 msgstr "علامات"
 
-#: src/components/OTPForm.tsx:102
-msgid "That code has expired."
-msgstr "هذا الرمزقد انتهت صلاحيته."
-
-#: src/routes/_layout/sign-up/route.lazy.tsx:31
-msgid "That email already exists."
-msgstr "هذا البريد الإلكتروني موجود بالفعل."
-
-#: src/routes/_layout/login/route.lazy.tsx:32
-msgid "That email is incorrect."
-msgstr "هذا البريد الإلكتروني غير صحيح."
+#: src/components/OTPForm.tsx:107
+msgid "That code is invalid."
+msgstr "هذا الشفرة غير صالح."
 
 #: src/lib/zod.ts:13
 msgid "That email is invalid."
@@ -809,7 +776,7 @@ msgstr "هذا البريد الإلكتروني غير صالح."
 
 #: src/lib/error.ts:55
 msgid "That is not valid JSON."
-msgstr "هذا ليس JSON صالح"
+msgstr "هذا ليس JSON صالح."
 
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:245
 msgid "The context of the sentence, ex. formal or colloquial."
@@ -880,13 +847,9 @@ msgstr "حدث خطأ أثناء تحديث كلمتك. حاول مرة أخرى
 msgid "This field is required."
 msgstr "هذه الخانة لازم."
 
-#: src/routes/_layout/sign-up/route.lazy.tsx:118
+#: src/routes/_layout/login/route.lazy.tsx:118
 msgid "This is case insensitive."
 msgstr "هذا حالة غير حساسة."
-
-#: src/routes/_layout/sign-up/route.lazy.tsx:140
-msgid "This is how we will address you."
-msgstr "هذه هي الطريقة التي سنخاطبك بها."
 
 #: src/components/features/decks/DeckDialogContent.tsx:208
 msgid "This is the name of your deck."
@@ -896,7 +859,7 @@ msgstr "هذا هو اسم مجموعتك."
 msgid "This refers to how many case endings the word can take."
 msgstr "هذا هو إعراب الكلمة."
 
-#: src/components/MobileHeader.tsx:108
+#: src/components/MobileHeader.tsx:104
 msgid "Toggle Menu"
 msgstr "تبديل القائمة"
 
@@ -916,10 +879,6 @@ msgstr "الجنس"
 #: src/components/features/decks/DeckDialogContent.tsx:264
 msgid "Types"
 msgstr "أقسام"
-
-#: src/routes/_layout/sign-up/route.lazy.tsx:132
-msgid "Username"
-msgstr "اسم مستخدم"
 
 #: src/lib/error.ts:117
 msgid "Value must be {0} or greater"
@@ -944,6 +903,10 @@ msgstr "مصادر للفعل."
 #: src/routes/_search-layout/index.lazy.tsx:93
 msgid "View all the words in your personal dictionary."
 msgstr "انظر كل الألفاظ في معجمك الشخصي."
+
+#: src/routes/_layout/login/route.lazy.tsx:88
+msgid "Welcome to Bahar!"
+msgstr "مرحباً بكم في بحر!"
 
 #: src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:310
 #: src/components/features/dictionary/add/BasicDetailsFormSection.tsx:35

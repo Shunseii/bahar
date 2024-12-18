@@ -1,5 +1,4 @@
 import { LanguageMenu } from "@/components/LanguageMenu";
-import { Page } from "@/components/Page";
 import { ThemeMenu } from "@/components/ThemeMenu";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 

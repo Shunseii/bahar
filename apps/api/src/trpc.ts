@@ -1,15 +1,31 @@
 import { TRPCError, initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { validateRequest } from "./auth";
-import { Ratelimit } from "@upstash/ratelimit";
-import { redisClient } from "./clients/redis";
+import { fromNodeHeaders } from "better-auth/node";
+import { Session, User, auth } from "./auth";
 
 // Created for each request
 export const createContext = async ({
   req,
   res,
 }: trpcExpress.CreateExpressContextOptions) => {
-  const { session, user } = await validateRequest(req, res);
+  const { api } = auth;
+
+  const data = (await api.getSession({
+    headers: fromNodeHeaders(req.headers),
+  })) as { session: Session; user: User };
+
+  if (!data) {
+    return {
+      session: null,
+      user: null,
+      reqIp: req.ip,
+      setHeaders: (name: string, value: string) => {
+        res.setHeader(name, value);
+      },
+    };
+  }
+
+  const { session, user } = data;
 
   return {
     session,
@@ -29,64 +45,8 @@ export type Context = Awaited<ReturnType<typeof createContext>>;
  */
 const t = initTRPC.context<Context>().create();
 
-export const signUpLimitProcedure = t.procedure.use(async (opts) => {
-  const { ctx } = opts;
-  const rateLimit = new Ratelimit({
-    redis: redisClient,
-    limiter: Ratelimit.slidingWindow(5, "5 m"),
-    // Disabled temporarily to save on storage space and commands
-    analytics: false,
-    prefix: "@upstash/ratelimit",
-  });
-
-  const ip = ctx.reqIp ?? "";
-  const id = `sign-up:${ip}`;
-
-  if (!ip) {
-    console.warn("No IP address detected.");
-  }
-
-  const { success } = await rateLimit.limit(id);
-
-  if (!success) {
-    throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-  }
-
-  return opts.next({
-    ctx,
-  });
-});
-
-export const otpLimitProcedure = t.procedure.use(async (opts) => {
-  const { ctx } = opts;
-  const rateLimit = new Ratelimit({
-    redis: redisClient,
-    limiter: Ratelimit.fixedWindow(1, "30 s"),
-    // Disabled temporarily to save on storage space and commands
-    analytics: false,
-    prefix: "@upstash/ratelimit",
-  });
-
-  const ip = ctx.reqIp ?? "";
-  const id = `otp:${ip}`;
-
-  if (!ip) {
-    console.warn("No IP address detected.");
-  }
-
-  const { success } = await rateLimit.limit(id);
-
-  if (!success) {
-    throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-  }
-
-  return opts.next({
-    ctx,
-  });
-});
-
 export const protectedProcedure = t.procedure.use(async (opts) => {
-  const { ctx } = opts;
+  const { ctx, next } = opts;
 
   if (!ctx.user || !ctx.session) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -94,7 +54,7 @@ export const protectedProcedure = t.procedure.use(async (opts) => {
 
   const { user, session } = ctx;
 
-  return opts.next({
+  return next({
     ctx: {
       // These are inferred as non-null now
       user,

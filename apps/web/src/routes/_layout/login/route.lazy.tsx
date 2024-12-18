@@ -1,4 +1,4 @@
-import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { Trans, t } from "@lingui/macro";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
 import z from "zod";
@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,68 +16,49 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { OTPForm } from "@/components/OTPForm";
-import { trpc } from "@/lib/trpc";
 import { useAtom } from "jotai";
 import { showOTPFormAtom } from "@/atoms/otp";
-import { useQueryClient } from "@tanstack/react-query";
-import { getQueryKey } from "@trpc/react-query";
 import { useEffect } from "react";
 import { Page } from "@/components/Page";
+import { authClient } from "@/lib/auth-client";
 
-const schema = z.object({
+export const LoginFormSchema = z.object({
   email: z.string().email().min(5).max(256),
 });
 
-const translateErrors = (errMsg: string) => {
-  if (errMsg === "incorrect_email") {
-    return t`That email is incorrect.`;
-  } else {
-    return "";
-  }
-};
-
 const Login = () => {
   const navigate = useNavigate({ from: "/" });
-  const queryClient = useQueryClient();
   const { redirect } = Route.useSearch();
   const [showOTPForm, setShowOTPForm] = useAtom(showOTPFormAtom);
 
-  const login = trpc.auth.login.useMutation();
-  const validateOTP = trpc.auth.validateLoginOTP.useMutation({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [...getQueryKey(trpc.user.me), { type: "query" }],
-      });
-    },
-  });
-
-  const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  const form = useForm<z.infer<typeof LoginFormSchema>>({
+    resolver: zodResolver(LoginFormSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
-    try {
-      const lowerCaseEmail = data.email.toLowerCase();
+  const onSubmit: SubmitHandler<z.infer<typeof LoginFormSchema>> = async ({
+    email,
+  }) => {
+    const lowerCaseEmail = email.toLowerCase();
 
-      await login.mutateAsync({ email: lowerCaseEmail });
+    const { error } = await authClient.emailOtp.sendVerificationOtp({
+      email: lowerCaseEmail,
+      type: "sign-in",
+    });
 
-      setShowOTPForm(true);
-    } catch (err) {
-      const error = err as typeof login.error;
+    if (error) {
+      console.error("There was an error sending the OTP: ", error);
 
-      if (error?.message === "incorrect_email") {
-        form.setError("email", { message: translateErrors(error.message) });
-      } else if (error?.data?.code === "TOO_MANY_REQUESTS") {
-        form.setError("root", {
-          message: t`Please try again after five minutes.`,
-        });
-      }
+      form.setError("root", {
+        message: t`Please try again.`,
+      });
 
-      // TODO: Otherwise, display an error toast
+      return;
     }
+
+    setShowOTPForm(true);
   };
 
   useEffect(() => {
@@ -85,25 +67,33 @@ const Login = () => {
 
   if (showOTPForm) {
     return (
-      <OTPForm
-        onSubmitForm={async (code) => {
-          await validateOTP.mutateAsync({ code });
-
-          navigate({
-            to: redirect ?? "/",
-            replace: true,
-            resetScroll: true,
-          });
-        }}
-      />
+      <Form {...form}>
+        <OTPForm
+          onVerifyOTP={() => {
+            navigate({
+              to: redirect ?? "/",
+              replace: true,
+              resetScroll: true,
+            });
+          }}
+        />
+      </Form>
     );
   }
 
   return (
     <Page className="flex flex-col justify-center items-center gap-y-6 mx-auto max-w-96">
-      <h1 className="tracking-tight font-bold text-2xl dark:text-white text-center text-gray-900">
-        <Trans>Log in</Trans>
-      </h1>
+      <div className="flex flex-col gap-y-2 mt-8 md:mt-0">
+        <h1 className="tracking-tight font-bold text-2xl dark:text-white text-center text-gray-900">
+          <Trans>Welcome to Bahar!</Trans>
+        </h1>
+
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+          <Trans>
+            Log in to your existing account or sign up for a new one
+          </Trans>
+        </p>
+      </div>
 
       <Form {...form}>
         <form
@@ -124,6 +114,10 @@ const Login = () => {
                     <Input {...field} />
                   </FormControl>
 
+                  <FormDescription>
+                    <Trans>This is case insensitive.</Trans>
+                  </FormDescription>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -139,7 +133,7 @@ const Login = () => {
             type="submit"
             className="w-full"
           >
-            <Trans>Log in</Trans>
+            <Trans>Continue with Email</Trans>
           </Button>
         </form>
       </Form>
@@ -159,15 +153,6 @@ const Login = () => {
       <GithubLoginButton>
         <Trans>GitHub</Trans>
       </GithubLoginButton>
-
-      <p className="text-center ltr:text-sm rtl:text-base gap-x-2 text-muted-foreground flex flex-row items-center">
-        <Trans>Don't have an account?</Trans>
-        <Button variant="link" className="p-0" asChild>
-          <Link to="/sign-up">
-            <Trans>Create one</Trans>
-          </Link>
-        </Button>
-      </p>
     </Page>
   );
 };

@@ -1,8 +1,9 @@
 import { MeiliSearch } from "meilisearch";
+import { config } from "../config";
 
 export const meilisearchClient = new MeiliSearch({
-  host: process.env.MEILISEARCH_HOST!,
-  apiKey: process.env.MEILISEARCH_API_KEY!,
+  host: config.MEILISEARCH_HOST!,
+  apiKey: config.MEILISEARCH_API_KEY!,
 });
 
 //  TODO: Create single source of truth between this and script in the root
@@ -13,15 +14,15 @@ const MAX_TOTAL_HITS = 2000;
  * Creates a new index for a user and configures it
  * with the necessary universal settings.
  *
- * @param userId The user's id.
+ * @param indexName The name of the index to create.
  */
-export const createUserIndex = async (userId: string) => {
+export const createUserIndex = async (indexName: string) => {
   const { taskUid: createTaskUid } =
-    await meilisearchClient.createIndex(userId);
+    await meilisearchClient.createIndex(indexName);
 
   await meilisearchClient.waitForTask(createTaskUid);
 
-  const userIndex = meilisearchClient.index(userId);
+  const userIndex = meilisearchClient.index(indexName);
 
   const { taskUid: updateTaskUid } = await userIndex.updateSettings({
     sortableAttributes: [

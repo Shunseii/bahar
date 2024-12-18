@@ -1,3 +1,7 @@
+local-db:
+	# Must have turso cli installed locally
+	turso dev --db-file apps/api/local.db
+
 # Serve production web app
 serve:
 	pnpm run --filter web wrangler:dev --port 4000
