@@ -83,7 +83,7 @@ const Login = () => {
 
   return (
     <Page className="flex flex-col justify-center items-center gap-y-6 mx-auto max-w-96">
-      <div className="flex flex-col gap-y-2">
+      <div className="flex flex-col gap-y-2 mt-8 md:mt-0">
         <h1 className="tracking-tight font-bold text-2xl dark:text-white text-center text-gray-900">
           <Trans>Welcome to Bahar!</Trans>
         </h1>
