@@ -1,6 +1,6 @@
 import { text, sqliteTable } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { users } from "./users";
+import { users } from "./auth";
 import { z } from "zod";
 
 export const decks = sqliteTable("decks", {

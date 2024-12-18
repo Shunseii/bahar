@@ -1,6 +1,6 @@
 import { text, sqliteTable, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { users } from "./users";
+import { users } from "./auth";
 
 export const settings = sqliteTable("settings", {
   id: text("id").notNull().primaryKey(),

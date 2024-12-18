@@ -13,18 +13,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { trpc } from "@/lib/trpc";
 import { Trans } from "@lingui/macro";
-import { useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Home, Settings, Layers } from "lucide-react";
+import { useLogout } from "@/hooks/useLogout";
+
 import Logo from "@/assets/logo.svg";
 
 export const DesktopNavigation = () => {
-  const navigate = useNavigate({ from: "/" });
-  const queryClient = useQueryClient();
-
-  const { mutate: logout } = trpc.auth.logout.useMutation();
+  const { logout } = useLogout();
 
   return (
     <aside className="fixed inset-y-0 ltr:left-0 rtl:right-0 z-10 hidden w-14 flex-col ltr:border-r rtl:border-l bg-background sm:flex">
@@ -108,17 +105,7 @@ export const DesktopNavigation = () => {
               <Button
                 variant="ghost"
                 className="cursor-pointer justify-start w-full !ring-0 !outline-none"
-                onClick={async () => {
-                  logout();
-
-                  await queryClient.invalidateQueries();
-
-                  navigate({
-                    to: "/login",
-                    replace: true,
-                    resetScroll: true,
-                  });
-                }}
+                onClick={logout}
               >
                 <Trans>Logout</Trans>
               </Button>

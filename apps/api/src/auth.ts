@@ -1,71 +1,109 @@
-import { Lucia } from "lucia";
-import { adapter } from "./db";
-import type { User as LuciaUser, Session as LuciaSession } from "lucia";
-import { User } from "./db/schema/users";
-import { Session } from "./db/schema/sessions";
-import { GitHub } from "arctic";
-import type { IncomingMessage, ServerResponse } from "http";
+import { betterAuth } from "better-auth";
+import { emailOTP, openAPI } from "better-auth/plugins";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "./db";
+import { users, verifications, sessions, accounts } from "./db/schema/auth";
+import { sendMail } from "./clients/mail";
+import { getAllowedDomains } from "./utils";
+import { config } from "./config";
+import { redisClient } from "./clients/redis";
+import { createUserIndex } from "./clients/meilisearch";
 
-export const lucia = new Lucia(adapter, {
-  sessionCookie: {
-    attributes: {
-      secure: process.env.NODE_ENV === "production",
+const APP_NAME = "Bahar";
+const OTP_LENGTH = 6;
+const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
+const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
+
+const allowedDomains = getAllowedDomains([
+  config.WEB_CLIENT_DOMAIN,
+  config.NEW_WEB_CLIENT_DOMAIN,
+]);
+
+export const auth = betterAuth({
+  trustedOrigins: allowedDomains,
+  emailAndPassword: {
+    enabled: false,
+  },
+  appName: APP_NAME,
+  secret: config.BETTER_AUTH_SECRET,
+  baseURL: config.APP_DOMAIN,
+  secondaryStorage: {
+    // Upstash client will automatically deserialize JSON strings
+    get: async (key) => {
+      return await redisClient.get(key);
+    },
+    set: async (key, value, ttl) => {
+      if (ttl) {
+        await redisClient.set(key, JSON.stringify(value), { ex: ttl });
+      } else {
+        await redisClient.set(key, JSON.stringify(value));
+      }
+    },
+    delete: async (key) => {
+      await redisClient.del(key);
     },
   },
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["github"],
+    },
+  },
+  socialProviders: {
+    github: {
+      enabled: true,
+      clientId: config.GITHUB_CLIENT_ID,
+      clientSecret: config.GITHUB_CLIENT_SECRET,
+    },
+  },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: SESSION_COOKIE_CACHE_EXPIRY_SECS,
+    },
+  },
+  plugins: [
+    openAPI(),
+    emailOTP({
+      otpLength: OTP_LENGTH,
+      expiresIn: OTP_EXPIRY_SECS,
+      disableSignUp: false,
+      sendVerificationOTP: async ({ email, otp }) => {
+        console.log("Sending OTP to:", email);
 
-  getUserAttributes: (attributes) => {
-    // Attributes are the fields directly from the database
-    return {
-      githubId: attributes.github_id,
-      username: attributes.username,
-      email: attributes.email,
-    };
+        // TODO: Translate this
+        await sendMail({
+          to: email,
+          from: "no-reply@bahar.dev",
+          subject: "Login | Bahar",
+          text: `Enter this code: ${otp}. This code only lasts for 5 minutes.`,
+          html: `Enter this code: <strong>${otp}</strong>. This code only lasts for 5 minutes.`,
+        });
+      },
+    }),
+  ],
+  database: drizzleAdapter(db, {
+    provider: "sqlite",
+    usePlural: true,
+    // TODO: figure out why I need to pass these explicitly here
+    schema: {
+      verifications,
+      users,
+      sessions,
+      accounts,
+    },
+  }),
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          // Set the index name to the user's id.
+          await createUserIndex(user.id);
+        },
+      },
+    },
   },
 });
 
-export const validateRequest = async (
-  req: IncomingMessage,
-  res: ServerResponse,
-): Promise<
-  { user: LuciaUser; session: LuciaSession } | { user: null; session: null }
-> => {
-  const sessionId = lucia.readSessionCookie(req.headers.cookie ?? "");
-
-  if (!sessionId) {
-    return {
-      user: null,
-      session: null,
-    };
-  }
-
-  const result = await lucia.validateSession(sessionId);
-
-  if (result.session && result.session.fresh) {
-    res.appendHeader(
-      "Set-Cookie",
-      lucia.createSessionCookie(result.session.id).serialize(),
-    );
-  }
-
-  if (!result.session) {
-    res.appendHeader(
-      "Set-Cookie",
-      lucia.createBlankSessionCookie().serialize(),
-    );
-  }
-
-  return result;
-};
-
-export const github = new GitHub(
-  process.env.GITHUB_CLIENT_ID!,
-  process.env.GITHUB_CLIENT_SECRET!,
-);
-
-declare module "lucia" {
-  interface Register {
-    Lucia: typeof lucia;
-    DatabaseUserAttributes: User;
-    DatabaseSessionAttributes: Session;
-  }
-}
+export type Session = (typeof auth.$Infer.Session)["session"];
+export type User = (typeof auth.$Infer.Session)["user"];

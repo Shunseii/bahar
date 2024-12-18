@@ -1,5 +1,5 @@
 import { db } from "../db/index";
-import { users } from "../db/schema/users";
+import { users } from "../db/schema/auth";
 import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 
@@ -22,7 +22,7 @@ export const userRouter = router({
 
       return {
         id: user.id,
-        username: user.username,
+        username: user.name,
       };
     }),
 

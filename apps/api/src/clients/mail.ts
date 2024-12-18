@@ -1,6 +1,7 @@
 import sgMail from "@sendgrid/mail";
+import { config } from "../config";
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+sgMail.setApiKey(config.SENDGRID_API_KEY!);
 
 export const sendMail = async (
   msg: sgMail.MailDataRequired | sgMail.MailDataRequired[],
