@@ -16,7 +16,6 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as SearchLayoutRouteImport } from './routes/_search-layout/route'
 import { Route as LayoutRouteImport } from './routes/_layout/route'
 import { Route as AppLayoutRouteImport } from './routes/_app-layout/route'
-import { Route as LayoutSignUpRouteImport } from './routes/_layout/sign-up/route'
 import { Route as LayoutLoginRouteImport } from './routes/_layout/login/route'
 import { Route as AppLayoutDictionaryEditWordIdImport } from './routes/_app-layout/dictionary/edit/$wordId'
 
@@ -71,13 +70,6 @@ const AppLayoutDecksRouteLazyRoute = AppLayoutDecksRouteLazyImport.update({
   import('./routes/_app-layout/decks/route.lazy').then((d) => d.Route),
 )
 
-const LayoutSignUpRouteRoute = LayoutSignUpRouteImport.update({
-  path: '/sign-up',
-  getParentRoute: () => LayoutRouteRoute,
-} as any).lazy(() =>
-  import('./routes/_layout/sign-up/route.lazy').then((d) => d.Route),
-)
-
 const LayoutLoginRouteRoute = LayoutLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => LayoutRouteRoute,
@@ -121,10 +113,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutLoginRouteImport
       parentRoute: typeof LayoutRouteImport
     }
-    '/_layout/sign-up': {
-      preLoaderRoute: typeof LayoutSignUpRouteImport
-      parentRoute: typeof LayoutRouteImport
-    }
     '/_app-layout/decks': {
       preLoaderRoute: typeof AppLayoutDecksRouteLazyImport
       parentRoute: typeof AppLayoutRouteImport
@@ -157,7 +145,7 @@ export const routeTree = rootRoute.addChildren([
     AppLayoutDictionaryAddRouteLazyRoute,
     AppLayoutDictionaryEditWordIdRoute,
   ]),
-  LayoutRouteRoute.addChildren([LayoutLoginRouteRoute, LayoutSignUpRouteRoute]),
+  LayoutRouteRoute.addChildren([LayoutLoginRouteRoute]),
   SearchLayoutRouteRoute.addChildren([SearchLayoutIndexLazyRoute]),
 ])
 
