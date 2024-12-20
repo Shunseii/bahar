@@ -1,8 +1,6 @@
-import { queryClient } from "@/lib/query";
-import { trpc, trpcClient } from "@/lib/trpc";
+import { authClient } from "@/lib/auth-client";
 import { redirect } from "@tanstack/react-router";
 import { createFileRoute } from "@tanstack/react-router";
-import { getQueryKey } from "@trpc/react-query";
 
 type LoginSearch = {
   redirect?: string;
@@ -16,13 +14,11 @@ export const Route = createFileRoute("/_layout/login")({
   },
 
   beforeLoad: async () => {
-    const authData = await queryClient.fetchQuery({
-      queryKey: [...getQueryKey(trpc.user.me), { type: "query" }],
-      queryFn: () => trpcClient.user.me.query(),
-    });
+    const { data } = await authClient.getSession();
 
-    const isAuthenticated = !!authData;
+    const isAuthenticated = !!data?.user;
 
+    // TODO: redirect based on the uri
     if (isAuthenticated) {
       throw redirect({
         to: "/",

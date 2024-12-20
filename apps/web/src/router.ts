@@ -5,6 +5,7 @@ import { routeTree } from "./routeTree.gen";
 // Create a new router instance
 export const router = createRouter({
   routeTree,
+  defaultPreload: "render",
   context: {
     authState: undefined!,
   },

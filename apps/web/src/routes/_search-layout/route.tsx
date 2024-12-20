@@ -1,6 +1,7 @@
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/meili/SearchInput";
+import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/lib/query";
 import { searchClient } from "@/lib/search";
 import { trpc, trpcClient } from "@/lib/trpc";
@@ -9,8 +10,10 @@ import { getQueryKey } from "@trpc/react-query";
 import { InstantSearch } from "react-instantsearch";
 
 const AppLayout = () => {
-  const { data } = trpc.user.me.useQuery();
-  const userIndexId = data?.id ?? "";
+  const { data } = authClient.useSession();
+  const userIndexId = data?.user?.id ?? "";
+
+  if (!userIndexId) return null;
 
   return (
     <InstantSearch
@@ -43,14 +46,9 @@ const AppLayout = () => {
 export const Route = createFileRoute("/_search-layout")({
   component: AppLayout,
   beforeLoad: async ({ location }) => {
-    const authQueryKey = getQueryKey(trpc.user.me, undefined, "query");
+    const { data } = await authClient.getSession();
 
-    const authData = await queryClient.fetchQuery({
-      queryKey: authQueryKey,
-      queryFn: () => trpcClient.user.me.query(),
-    });
-
-    const isAuthenticated = !!authData;
+    const isAuthenticated = !!data?.user;
 
     if (!isAuthenticated) {
       throw redirect({

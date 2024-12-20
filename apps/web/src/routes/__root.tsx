@@ -4,6 +4,7 @@ import { msg } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { useDocumentTitle } from "@uidotdev/usehooks";
 import { Toaster } from "@/components/ui/toaster";
+import { authClient } from "@/lib/auth-client";
 
 // const TanStackRouterDevtools = import.meta.env.PROD
 //   ? () => null // Render nothing in production
@@ -39,13 +40,10 @@ const Root = () => {
   );
 };
 
-type User = {
-  id: string;
-  username: string;
-};
+type User = (typeof authClient.$Infer.Session)["user"];
 
 interface RouterContext {
-  authState: User;
+  authState: User | null;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({

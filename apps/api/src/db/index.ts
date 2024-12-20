@@ -1,13 +1,11 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
-import { users } from "./schema/users";
-import { sessions } from "./schema/sessions";
-import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
+import { users, sessions } from "./schema/auth";
+import { config } from "../config";
 
 export const client = createClient({
-  url: process.env.DATABASE_URL!,
-  authToken: process.env.TURSO_TOKEN!,
+  url: config.DATABASE_URL,
+  authToken: config.TURSO_TOKEN,
 });
 
 export const db = drizzle(client, { schema: { users, sessions } });
-export const adapter = new DrizzleSQLiteAdapter(db, sessions, users);

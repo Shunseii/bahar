@@ -10,7 +10,7 @@ import { nanoid } from "nanoid";
 
 export const settingsRouter = router({
   get: protectedProcedure
-    .output(SelectSettingsSchema.optional())
+    .output(SelectSettingsSchema.nullable())
     .query(async ({ ctx }) => {
       const { user } = ctx;
 
@@ -21,7 +21,7 @@ export const settingsRouter = router({
         .where(eq(settings.user_id, user.id))
         .limit(1);
 
-      return results[0];
+      return results[0] ?? null;
     }),
 
   update: protectedProcedure

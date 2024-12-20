@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OTPInput, SlotProps } from "input-otp";
+import { authClient } from "@/lib/auth-client";
 import {
   Form,
   FormControl,
@@ -10,7 +10,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useFormContext } from "react-hook-form";
 import z from "zod";
 import {
   REGEXP_ONLY_EN_AR_DIGITS,
@@ -24,6 +24,7 @@ import { useSetAtom } from "jotai";
 import { showOTPFormAtom } from "@/atoms/otp";
 import { TLocale, getLangDir } from "@/lib/i18n";
 import { FC } from "react";
+import { LoginFormSchema } from "@/routes/_layout/login/route.lazy";
 
 const schema = z.object({
   code: z.string().length(6, {
@@ -69,12 +70,16 @@ function FakeDash() {
 }
 
 export const OTPForm: FC<{
-  onSubmitForm: (code: string) => Promise<void>;
-}> = ({ onSubmitForm }) => {
+  /**
+   * This function is called after the OTP has been
+   * successfully verified.
+   */
+  onVerifyOTP: () => void;
+}> = ({ onVerifyOTP }) => {
   const setShowOTPForm = useSetAtom(showOTPFormAtom);
   const { i18n } = useLingui();
 
-  const validateCode = trpc.auth.validateOTP.useMutation();
+  const loginForm = useFormContext<z.infer<typeof LoginFormSchema>>();
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -85,28 +90,28 @@ export const OTPForm: FC<{
   });
 
   const dir = getLangDir(i18n.locale as TLocale);
+  const email = loginForm.watch("email");
 
   const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (data) => {
     try {
       const normalizedCode = convertArabicNumToEnglish(data.code);
 
-      await onSubmitForm(normalizedCode);
-    } catch (err) {
-      // validateCode.error and validateLoginCode.error have the same properties
-      const error = err as typeof validateCode.error;
+      const { error } = await authClient.signIn.emailOtp({
+        email,
+        otp: normalizedCode,
+      });
 
-      if (
-        error?.message === "invalid_code" ||
-        error?.message === "expired_code"
-      ) {
-        form.setError("code", { message: t`That code has expired.` });
-      } else if (error?.message === "TOO_MANY_REQUESTS") {
-        form.setError("code", {
-          message: t`Please try again after 30 seconds.`,
-        });
+      if (error) {
+        console.error("Invalid OTP: ", error);
+
+        form.setError("code", { message: t`That code is invalid.` });
       }
 
-      // TODO: Show toast message with general error message
+      onVerifyOTP();
+    } catch (err) {
+      form.setError("root", {
+        message: t`Please try again.`,
+      });
     }
   };
 

@@ -1,38 +1,13 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import { verifyRequestOrigin } from "oslo/request";
-import { getAllowedDomains } from "./utils";
-import { validateRequest } from "./auth";
-
-export const csrf = (req: Request, res: Response, next: NextFunction) => {
-  if (req.method === "GET") {
-    return next();
-  }
-
-  const originHeader = req.headers.origin ?? null;
-  const hostHeader =
-    ((req.headers.host ?? req.headers["X-Forwarded-Host"]) as string) ?? null;
-
-  const allowedDomains = [
-    hostHeader,
-    ...getAllowedDomains([
-      process.env.WEB_CLIENT_DOMAIN!,
-      process.env.NEW_WEB_CLIENT_DOMAIN!,
-    ]),
-  ];
-
-  if (
-    !originHeader ||
-    !hostHeader ||
-    !verifyRequestOrigin(originHeader, allowedDomains)
-  ) {
-    return res.status(403).end();
-  }
-
-  return next();
-};
+import { RequestHandler } from "express";
+import { fromNodeHeaders } from "better-auth/node";
+import { Session, User, auth as authClient } from "./auth";
 
 export const auth: RequestHandler = async (req, res, next) => {
-  const { session, user } = await validateRequest(req, res);
+  const { api } = authClient;
+
+  const { user, session } = (await api.getSession({
+    headers: fromNodeHeaders(req.headers),
+  })) as { session: Session; user: User };
 
   if (!session || !user) {
     return res.status(401).json({ message: "Unauthorized" });
