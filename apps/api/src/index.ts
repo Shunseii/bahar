@@ -5,7 +5,6 @@ import express from "express";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { userRouter } from "./routers/user";
 import { dictionaryRouter, trpcDictionaryRouter } from "./routers/dictionary";
 import { flashcardRouter } from "./routers/flashcard";
 import { getAllowedDomains, getFullSchema } from "./utils";
@@ -29,7 +28,6 @@ declare global {
 const port = config.PORT;
 
 const appRouter = router({
-  user: userRouter,
   flashcard: flashcardRouter,
   dictionary: trpcDictionaryRouter,
   tags: tagsRouter,
