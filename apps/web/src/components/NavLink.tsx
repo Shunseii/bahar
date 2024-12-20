@@ -2,7 +2,10 @@ import { cn } from "@/lib/utils";
 import { Link, LinkProps } from "@tanstack/react-router";
 import { forwardRef } from "react";
 
-type NavLinkProps = Omit<LinkProps, "activeProps" | "inactiveProps">;
+type NavLinkProps = Omit<LinkProps, "activeProps" | "inactiveProps"> & {
+  className?: string;
+  onClick?: () => void;
+};
 
 export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(
   ({ className, to, children, ...props }, ref) => {
