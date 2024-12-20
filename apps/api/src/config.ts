@@ -7,7 +7,7 @@ const EnvironmentVariablesSchema = z.object({
   /**
    * The domain of the web client.
    */
-  WEB_CLIENT_DOMAIN: z.string().url(),
+  WEB_CLIENT_DOMAIN: z.string(),
 
   /**
    * The domain of the new web client hosted
@@ -16,7 +16,7 @@ const EnvironmentVariablesSchema = z.object({
    *
    * @deprecated
    */
-  NEW_WEB_CLIENT_DOMAIN: z.string().url(),
+  NEW_WEB_CLIENT_DOMAIN: z.string(),
 
   /**
    * The domain of the server.
