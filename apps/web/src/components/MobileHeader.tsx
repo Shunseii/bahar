@@ -168,7 +168,14 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
               </NavLink>
             </div>
 
-            <Button variant="secondary" onClick={logout} asChild>
+            <Button
+              variant="secondary"
+              onClick={async () => {
+                await logout();
+                setIsOpen(false);
+              }}
+              asChild
+            >
               <p>
                 <Trans>Logout</Trans>
               </p>
