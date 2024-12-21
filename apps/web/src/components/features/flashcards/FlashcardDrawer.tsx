@@ -4,7 +4,7 @@ import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale/ar";
 import { enUS } from "date-fns/locale/en-US";
-import { fsrs, Grade, Rating } from "ts-fsrs";
+import { fsrs, generatorParameters, Grade, Rating } from "ts-fsrs";
 import {
   Drawer,
   DrawerTrigger,
@@ -153,7 +153,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     setCurrentCard(flashcards[0]);
   }, [flashcards]);
 
-  const f = useMemo(() => fsrs(), []);
+  const f = useMemo(() => fsrs({ enable_fuzz: true }), []);
   const now = new Date();
 
   const scheduling_cards = currentCard

@@ -3,8 +3,8 @@ import react from "@vitejs/plugin-react-swc";
 import { lingui } from "@lingui/vite-plugin";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vite";
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import { ValidateEnv } from "@julr/vite-plugin-validate-env";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
   build: {

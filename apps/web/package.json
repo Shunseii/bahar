@@ -58,7 +58,7 @@
     "react-instantsearch": "^7.7.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
-    "ts-fsrs": "^3.5.7",
+    "ts-fsrs": "^4.5.1",
     "vaul": "^0.9.1",
     "zod": "^3.22.4"
   },
@@ -72,7 +72,7 @@
     "@repo/typescript-config": "workspace:*",
     "@swc/core": "1.3.105",
     "@tanstack/router-devtools": "^1.91.3",
-    "@tanstack/router-vite-plugin": "^1.91.1",
+    "@tanstack/router-plugin": "^1.91.1",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
