@@ -40,31 +40,3 @@ RUN pnpm install --frozen-lockfile
 COPY --from=prune /app/out/full/ .
 RUN pnpm turbo run build --filter=web
 
-FROM base AS production
-
-RUN npm install -g pnpm
-RUN pnpm add -g turbo
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-COPY .gitignore .gitignore
-COPY --from=prune /app/out/json/ .
-COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-
-RUN pnpm install --prod --frozen-lockfile
-
-COPY --from=development /app/apps/web/dist /app/apps/web/dist
-COPY --from=prune /app/turbo.json /app/turbo.json
-
-RUN apk add --no-cache ca-certificates
-
-# Install Caddy
-RUN wget -qO- "https://github.com/caddyserver/caddy/releases/download/v2.8.4/caddy_2.8.4_linux_amd64.tar.gz" \
-    | tar --no-same-owner -C /usr/bin/ -xz caddy
-
-COPY --from=prune /app/apps/web/Caddyfile /app/apps/web/Caddyfile
-
-EXPOSE $PORT
-
-CMD ["caddy", "run", "--config", "/app/apps/web/Caddyfile"]

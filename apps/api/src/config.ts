@@ -10,15 +10,6 @@ const EnvironmentVariablesSchema = z.object({
   WEB_CLIENT_DOMAIN: z.string(),
 
   /**
-   * The domain of the new web client hosted
-   * on Cloudflare Pages. Once migration is complete,
-   * this will be deprecated and removed.
-   *
-   * @deprecated
-   */
-  NEW_WEB_CLIENT_DOMAIN: z.string(),
-
-  /**
    * The domain of the server.
    */
   APP_DOMAIN: z.string().min(1),

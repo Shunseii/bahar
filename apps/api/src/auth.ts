@@ -14,10 +14,7 @@ const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
 
-const allowedDomains = getAllowedDomains([
-  config.WEB_CLIENT_DOMAIN,
-  config.NEW_WEB_CLIENT_DOMAIN,
-]);
+const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
 export const auth = betterAuth({
   trustedOrigins: allowedDomains,

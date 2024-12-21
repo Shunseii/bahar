@@ -37,10 +37,7 @@ const appRouter = router({
 
 const app = express();
 
-const allowedDomains = getAllowedDomains([
-  config.WEB_CLIENT_DOMAIN!,
-  config.NEW_WEB_CLIENT_DOMAIN!,
-]);
+const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
 app.use(
   cors({
