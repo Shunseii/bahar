@@ -66,7 +66,7 @@ export const auth = betterAuth({
       expiresIn: OTP_EXPIRY_SECS,
       disableSignUp: false,
       sendVerificationOTP: async ({ email, otp }) => {
-        console.log("Sending OTP to:", email);
+        // TODO add logs with pino here
 
         // TODO: Translate this
         await sendMail({

@@ -14,6 +14,12 @@ const EnvironmentVariablesSchema = z.object({
    */
   APP_DOMAIN: z.string().min(1),
 
+  LOG_LEVEL: z
+    .enum(["silent", "fatal", "error", "warn", "info", "debug", "trace"])
+    .default("info"),
+
+  APP_NAME: z.string().min(1),
+
   GITHUB_CLIENT_SECRET: z.string().min(1),
   GITHUB_CLIENT_ID: z.string().min(1),
 
