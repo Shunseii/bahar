@@ -1,5 +1,6 @@
 import { MeiliSearch } from "meilisearch";
 import { config } from "../config";
+import { LogCategory, logger } from "../logger";
 
 export const meilisearchClient = new MeiliSearch({
   host: config.MEILISEARCH_HOST!,
@@ -24,6 +25,11 @@ export const createUserIndex = async (indexName: string) => {
 
   const userIndex = meilisearchClient.index(indexName);
 
+  logger.debug(
+    { indexName, category: LogCategory.DATABASE, event: "index_created" },
+    "Creating user index...",
+  );
+
   const { taskUid: updateTaskUid } = await userIndex.updateSettings({
     sortableAttributes: [
       "flashcard.due_timestamp",
@@ -40,5 +46,10 @@ export const createUserIndex = async (indexName: string) => {
     },
   });
 
-  await meilisearchClient.waitForTask(updateTaskUid);
+  const task = await meilisearchClient.waitForTask(updateTaskUid);
+
+  logger.debug(
+    { task, indexName, category: LogCategory.DATABASE, event: "index_created" },
+    "Created user index.",
+  );
 };

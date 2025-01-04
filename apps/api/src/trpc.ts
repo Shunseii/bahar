@@ -19,10 +19,7 @@ export const createContext = async ({
     return {
       session: null,
       user: null,
-      reqIp: req.ip,
-      logger: logger.child({
-        req: { id: req.id },
-      }),
+      logger,
       setHeaders: (name: string, value: string) => {
         res.setHeader(name, value);
       },
@@ -34,10 +31,7 @@ export const createContext = async ({
   return {
     session,
     user,
-    reqIp: req.ip,
-    logger: logger.child({
-      req: { id: req.id },
-    }),
+    logger,
     setHeaders: (name: string, value: string) => {
       res.setHeader(name, value);
     },
@@ -57,7 +51,7 @@ export const loggingMiddleware = t.middleware(
     const start = Date.now();
     const input = await getRawInput();
 
-    const procedureChildLogger = ctx.logger.child({ path });
+    const procedureChildLogger = ctx.logger.child({ operation: path });
 
     try {
       const result = await next({
@@ -67,7 +61,7 @@ export const loggingMiddleware = t.middleware(
 
       procedureChildLogger.info(
         {
-          type,
+          operationType: type,
           input,
           durationMs,
           success: true,
@@ -81,7 +75,7 @@ export const loggingMiddleware = t.middleware(
 
       procedureChildLogger.error(
         {
-          type,
+          operationType: type,
           input,
           durationMs,
           error,

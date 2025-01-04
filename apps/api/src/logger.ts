@@ -1,14 +1,55 @@
 import pino from "pino";
 import { config } from "./config";
 import pinoHttp from "pino-http";
-import crypto from "crypto";
+import { AsyncLocalStorage } from "async_hooks";
+
+interface TraceContext {
+  traceId?: string;
+  seqNum: number;
+}
+
+export const traceContext = new AsyncLocalStorage<TraceContext>();
+
+export const getTraceContext = (): TraceContext => {
+  const context = traceContext.getStore();
+
+  if (!context) {
+    return {
+      traceId: undefined,
+      seqNum: 0,
+    };
+  }
+
+  return context;
+};
+
+export const enum LogCategory {
+  AUTH = "auth",
+  DATABASE = "database",
+  APPLICATION = "application",
+  FLASHCARD = "flashcard",
+  DICTIONARY = "dictionary",
+  DECK = "deck",
+  SETTINGS = "settings",
+  TAGS = "tags",
+}
 
 export const logger = pino({
   level: config.LOG_LEVEL,
   timestamp: pino.stdTimeFunctions.isoTime,
+  mixin: () => {
+    const context = getTraceContext();
+
+    context.seqNum++;
+
+    return {
+      traceId: context.traceId,
+      seqNum: context.seqNum,
+    };
+  },
   serializers: {
     err: pino.stdSerializers.err,
-    // req: pino.stdSerializers.req,
+    req: pino.stdSerializers.req,
     res: pino.stdSerializers.res,
   },
   transport:
@@ -20,7 +61,7 @@ export const logger = pino({
             translateTime: "yyyy-mm-dd HH:MM:ss.l o",
             messageFormat: "{msg}",
             ignore:
-              "pid,hostname,app,version,environment,req.headers,context,req.url",
+              "pid,hostname,app,version,environment,context,req.url,req.headers",
             levelFirst: true,
           },
         }
@@ -39,22 +80,12 @@ export const logger = pino({
 
 export const requestLogger = pinoHttp({
   logger,
-  genReqId: (req, res) => {
-    const existingId = req.id ?? req.headers["x-request-id"];
-
-    if (existingId) {
-      return existingId;
-    }
-
-    const id = crypto.randomUUID();
-
-    res.setHeader("X-Request-Id", id);
-
-    return id;
+  autoLogging: {
+    ignore: (req) => req.method === "OPTIONS",
   },
-  customProps: () => ({
-    context: "http",
-  }),
+  customReceivedMessage: () => {
+    return "request received";
+  },
   customLogLevel: (_req, res, err) => {
     if (err) return "error";
 
@@ -62,9 +93,28 @@ export const requestLogger = pinoHttp({
 
     return "info";
   },
+  customReceivedObject: () => {
+    return {
+      category: LogCategory.APPLICATION,
+      event: "request_received",
+    };
+  },
+  customSuccessObject: (_req, _res, val) => {
+    return {
+      ...val,
+      category: LogCategory.APPLICATION,
+      event: "request_processed",
+    };
+  },
+  customErrorObject: (_req, _res, _error, val) => {
+    return {
+      ...val,
+      category: LogCategory.APPLICATION,
+      event: "request_failed",
+    };
+  },
   serializers: {
     req: (req) => ({
-      id: req.id,
       method: req.method,
       url: req.url,
       path: req.url.split("?")[0],

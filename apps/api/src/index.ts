@@ -15,6 +15,7 @@ import { Session, User, auth } from "./auth";
 import { toNodeHandler } from "better-auth/node";
 import { config } from "./config";
 import { logger, requestLogger } from "./logger";
+import { traceContextMiddleware } from "./middleware";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -41,6 +42,8 @@ const app = express();
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
 app.set("trust proxy", true);
+
+app.use(traceContextMiddleware);
 
 app.use(requestLogger);
 
