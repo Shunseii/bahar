@@ -49,6 +49,8 @@ export const auth = betterAuth({
         path,
       });
 
+      const email = ctx?.body?.email?.toLowerCase();
+
       if (path === "/get-session") {
         authLogger.debug(
           {
@@ -64,8 +66,6 @@ export const auth = betterAuth({
           },
           "Sending verification otp email...",
         );
-
-        const email = ctx?.body?.email?.toLowerCase();
 
         return {
           context: {
@@ -84,8 +84,6 @@ export const auth = betterAuth({
           "Verifying email otp...",
         );
 
-        const email = ctx?.body?.email?.toLowerCase();
-
         return {
           context: {
             ...ctx,
@@ -102,8 +100,6 @@ export const auth = betterAuth({
           },
           "Signing in with email otp...",
         );
-
-        const email = ctx?.body?.email?.toLowerCase();
 
         return {
           context: {
