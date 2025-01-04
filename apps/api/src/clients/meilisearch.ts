@@ -25,7 +25,7 @@ export const createUserIndex = async (indexName: string) => {
 
   const userIndex = meilisearchClient.index(indexName);
 
-  logger.debug(
+  logger.info(
     { indexName, category: LogCategory.DATABASE, event: "index_created" },
     "Creating user index...",
   );
@@ -48,7 +48,7 @@ export const createUserIndex = async (indexName: string) => {
 
   const task = await meilisearchClient.waitForTask(updateTaskUid);
 
-  logger.debug(
+  logger.info(
     { task, indexName, category: LogCategory.DATABASE, event: "index_created" },
     "Created user index.",
   );
