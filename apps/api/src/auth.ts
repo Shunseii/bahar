@@ -60,9 +60,22 @@ export const auth = betterAuth({
         authLogger.info(
           {
             event: "send_verification_otp_email.start",
+            body: ctx.body,
           },
           "Sending verification otp email...",
         );
+
+        const email = ctx?.body?.email?.toLowerCase();
+
+        return {
+          context: {
+            ...ctx,
+            body: {
+              ...ctx.body,
+              email,
+            },
+          },
+        };
       } else if (path === "/email-otp/verify-email") {
         authLogger.info(
           {
@@ -70,6 +83,18 @@ export const auth = betterAuth({
           },
           "Verifying email otp...",
         );
+
+        const email = ctx?.body?.email?.toLowerCase();
+
+        return {
+          context: {
+            ...ctx,
+            body: {
+              ...ctx.body,
+              email,
+            },
+          },
+        };
       } else if (path === "/sign-in/email-otp") {
         authLogger.info(
           {
@@ -77,6 +102,18 @@ export const auth = betterAuth({
           },
           "Signing in with email otp...",
         );
+
+        const email = ctx?.body?.email?.toLowerCase();
+
+        return {
+          context: {
+            ...ctx,
+            body: {
+              ...ctx.body,
+              email,
+            },
+          },
+        };
       }
     }),
     after: createAuthMiddleware(async (ctx) => {
