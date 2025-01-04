@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/useToast";
 import { ImportError, parseImportErrors } from "@/lib/error";
+import { tracedFetch } from "@/lib/fetch";
 import { msg, Trans } from "@lingui/macro";
 import { useLingui } from "@lingui/react";
 import { createLazyFileRoute } from "@tanstack/react-router";
@@ -41,7 +42,7 @@ const Settings = () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch(
+      const response = await tracedFetch(
         `${import.meta.env.VITE_API_BASE_URL}/dictionary/export`,
         {
           method: "POST",
@@ -81,7 +82,7 @@ const Settings = () => {
     try {
       setIsLoading(true);
 
-      const res = await fetch(
+      const res = await tracedFetch(
         `${import.meta.env.VITE_API_BASE_URL}/dictionary`,
         {
           method: "DELETE",
@@ -182,7 +183,7 @@ const Settings = () => {
               }
 
               try {
-                const res = await fetch(
+                const res = await tracedFetch(
                   `${import.meta.env.VITE_API_BASE_URL}/dictionary/import`,
                   {
                     method: "POST",

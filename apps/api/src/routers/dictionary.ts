@@ -292,7 +292,7 @@ export const trpcDictionaryRouter = router({
       const updatedAt = now.toISOString();
       const updatedAtTimestamp = Math.floor(now.getTime() / 1000);
 
-      console.log({ input });
+      ctx.logger.debug(input, "Updating dictionary entry...");
 
       try {
         const { taskUid } = await userIndex.updateDocuments([

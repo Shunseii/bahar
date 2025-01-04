@@ -19,6 +19,12 @@ export const convertArabicNumToEnglish = (arabicNumber: string) => {
   return englishNumber;
 };
 
+export const TRACE_ID_HEADER = "x-request-id";
+
+export const generateTraceId = () => {
+  return crypto.randomUUID();
+};
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

@@ -14,6 +14,8 @@ import { decksRouter } from "./routers/decks";
 import { Session, User, auth } from "./auth";
 import { toNodeHandler } from "better-auth/node";
 import { config } from "./config";
+import { logger, requestLogger } from "./logger";
+import { traceContextMiddleware } from "./middleware";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -38,6 +40,12 @@ const appRouter = router({
 const app = express();
 
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
+
+app.set("trust proxy", true);
+
+app.use(traceContextMiddleware);
+
+app.use(requestLogger);
 
 app.use(
   cors({
@@ -67,7 +75,7 @@ app.get("/schema.json", async (_req, res) => {
 
     return res.json(schema);
   } catch (err) {
-    console.error("Error bundling the schema: ", err);
+    logger.error("Error bundling the schema: ", err);
 
     return res.status(500).send("There was an error fetching the schema.");
   }
@@ -82,7 +90,7 @@ app.use(
 );
 
 app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+  logger.info(`Listening on port ${port}`);
 });
 
 // Export type router type signature,

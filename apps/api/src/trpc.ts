@@ -2,6 +2,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { fromNodeHeaders } from "better-auth/node";
 import { Session, User, auth } from "./auth";
+import { logger } from "./logger";
 
 // Created for each request
 export const createContext = async ({
@@ -18,7 +19,7 @@ export const createContext = async ({
     return {
       session: null,
       user: null,
-      reqIp: req.ip,
+      logger,
       setHeaders: (name: string, value: string) => {
         res.setHeader(name, value);
       },
@@ -30,7 +31,7 @@ export const createContext = async ({
   return {
     session,
     user,
-    reqIp: req.ip,
+    logger,
     setHeaders: (name: string, value: string) => {
       res.setHeader(name, value);
     },
@@ -45,23 +46,68 @@ export type Context = Awaited<ReturnType<typeof createContext>>;
  */
 const t = initTRPC.context<Context>().create();
 
-export const protectedProcedure = t.procedure.use(async (opts) => {
-  const { ctx, next } = opts;
+export const loggingMiddleware = t.middleware(
+  async ({ path, type, getRawInput, next, ctx }) => {
+    const start = Date.now();
+    const input = await getRawInput();
 
-  if (!ctx.user || !ctx.session) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+    const procedureChildLogger = ctx.logger.child({ operation: path });
 
-  const { user, session } = ctx;
+    try {
+      const result = await next({
+        ctx: { ...ctx, logger: procedureChildLogger },
+      });
+      const durationMs = Date.now() - start;
 
-  return next({
-    ctx: {
-      // These are inferred as non-null now
-      user,
-      session,
-    },
+      procedureChildLogger.info(
+        {
+          operationType: type,
+          input,
+          durationMs,
+          success: true,
+        },
+        "tRPC request completed",
+      );
+
+      return result;
+    } catch (error) {
+      const durationMs = Date.now() - start;
+
+      procedureChildLogger.error(
+        {
+          operationType: type,
+          input,
+          durationMs,
+          error,
+          success: false,
+        },
+        "tRPC request failed",
+      );
+
+      throw error;
+    }
+  },
+);
+
+export const protectedProcedure = t.procedure
+  .use(loggingMiddleware)
+  .use(async (opts) => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || !ctx.session) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    const { user, session } = ctx;
+
+    return next({
+      ctx: {
+        // These are inferred as non-null now
+        user,
+        session,
+      },
+    });
   });
-});
 
 /**
  * Export reusable router and procedure helpers

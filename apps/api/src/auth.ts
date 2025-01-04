@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { emailOTP, openAPI } from "better-auth/plugins";
+import { createAuthMiddleware, emailOTP, openAPI } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
 import { users, verifications, sessions, accounts } from "./db/schema/auth";
@@ -8,6 +8,7 @@ import { getAllowedDomains } from "./utils";
 import { config } from "./config";
 import { redisClient } from "./clients/redis";
 import { createUserIndex } from "./clients/meilisearch";
+import { LogCategory, logger } from "./logger";
 
 const APP_NAME = "Bahar";
 const OTP_LENGTH = 6;
@@ -24,12 +25,138 @@ export const auth = betterAuth({
   appName: APP_NAME,
   secret: config.BETTER_AUTH_SECRET,
   baseURL: config.APP_DOMAIN,
+  onAPIError: {
+    throw: false,
+    onError: (error) => {
+      if (error instanceof Error) {
+        logger.error(
+          {
+            event: "unexpected_error",
+            category: LogCategory.AUTH,
+            error,
+          },
+          "There was an unexpected error.",
+        );
+      }
+    },
+  },
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      const { path } = ctx;
+
+      const authLogger = logger.child({
+        category: LogCategory.AUTH,
+        path,
+      });
+
+      if (path === "/get-session") {
+        authLogger.debug(
+          {
+            event: "get_session.start",
+          },
+          "Getting user session...",
+        );
+      } else if (path === "/email-otp/send-verification-otp") {
+        authLogger.info(
+          {
+            event: "send_verification_otp_email.start",
+          },
+          "Sending verification otp email...",
+        );
+      } else if (path === "/email-otp/verify-email") {
+        authLogger.info(
+          {
+            event: "verify_email.start",
+          },
+          "Verifying email otp...",
+        );
+      } else if (path === "/sign-in/email-otp") {
+        authLogger.info(
+          {
+            event: "login_email_otp.start",
+          },
+          "Signing in with email otp...",
+        );
+      }
+    }),
+    after: createAuthMiddleware(async (ctx) => {
+      const { path } = ctx;
+
+      const authLogger = logger.child({
+        category: LogCategory.AUTH,
+        path,
+      });
+
+      if (path === "/get-session") {
+        authLogger.debug(
+          {
+            event: "get_session.end",
+          },
+          "Retrieved user session.",
+        );
+      } else if (path === "/email-otp/send-verification-otp") {
+        authLogger.info(
+          {
+            event: "send_verification_otp_email.end",
+          },
+          "Sent verification otp email.",
+        );
+      } else if (path === "/email-otp/verify-email") {
+        authLogger.info(
+          {
+            event: "verify_email.end",
+          },
+          "Verified email otp.",
+        );
+      } else if (path === "/sign-in/email-otp") {
+        authLogger.info(
+          {
+            event: "login_email_otp.end",
+          },
+          "Signed in with email otp.",
+        );
+      }
+    }),
+  },
+  logger: {
+    disabled: true,
+    level: "debug",
+    log: (level, message, ...args) => {
+      // TODO: refactor this once the following PR has been addressed
+      // https://github.com/better-auth/better-auth/issues/1115
+      const ANSI_ESCAPE_REGEXP = new RegExp(String.raw`\u001b\[\d+m`);
+
+      /**
+       * Better auth passes us a formatted message but
+       * we just want the raw message since pino will
+       * handle formatting.
+       */
+      const unformattedMessage = message
+        ?.split?.("[Better Auth]:")?.[1]
+        ?.replace(ANSI_ESCAPE_REGEXP, "")
+        ?.trim();
+
+      const mergedArgs = args.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
+      logger[level](mergedArgs, unformattedMessage);
+    },
+  },
   secondaryStorage: {
+    // TODO: add trace ids to these logs
     // Upstash client will automatically deserialize JSON strings
     get: async (key) => {
+      logger.debug({ key, category: LogCategory.DATABASE, event: "redis_get" });
+
       return await redisClient.get(key);
     },
     set: async (key, value, ttl) => {
+      logger.debug({
+        key,
+        ttl,
+        category: LogCategory.DATABASE,
+        event: "redis_set",
+      });
+
       if (ttl) {
         await redisClient.set(key, JSON.stringify(value), { ex: ttl });
       } else {
@@ -37,6 +164,12 @@ export const auth = betterAuth({
       }
     },
     delete: async (key) => {
+      logger.debug({
+        key,
+        category: LogCategory.DATABASE,
+        event: "redis_delete",
+      });
+
       await redisClient.del(key);
     },
   },
@@ -66,8 +199,6 @@ export const auth = betterAuth({
       expiresIn: OTP_EXPIRY_SECS,
       disableSignUp: false,
       sendVerificationOTP: async ({ email, otp }) => {
-        console.log("Sending OTP to:", email);
-
         // TODO: Translate this
         await sendMail({
           to: email,
@@ -91,9 +222,76 @@ export const auth = betterAuth({
     },
   }),
   databaseHooks: {
+    account: {
+      create: {
+        before: async (account) => {
+          logger.info(
+            {
+              accountId: account.id,
+              category: LogCategory.DATABASE,
+              event: "account_create.start",
+            },
+            "Creating account...",
+          );
+        },
+        after: async (account) => {
+          logger.info(
+            {
+              accountId: account.id,
+              category: LogCategory.DATABASE,
+              event: "account_create.end",
+            },
+            "Created account.",
+          );
+        },
+      },
+    },
+    session: {
+      create: {
+        before: async (session) => {
+          logger.info(
+            {
+              sessionId: session.id,
+              category: LogCategory.DATABASE,
+              event: "session_create.start",
+            },
+            "Creating session...",
+          );
+        },
+        after: async (session) => {
+          logger.info(
+            {
+              sessionId: session.id,
+              category: LogCategory.DATABASE,
+              event: "session_create.end",
+            },
+            "Created session.",
+          );
+        },
+      },
+    },
     user: {
       create: {
+        before: async (user) => {
+          logger.info(
+            {
+              userId: user.id,
+              category: LogCategory.DATABASE,
+              event: "user_create.start",
+            },
+            "Creating user...",
+          );
+        },
         after: async (user) => {
+          logger.info(
+            {
+              userId: user.id,
+              category: LogCategory.DATABASE,
+              event: "user_create.end",
+            },
+            "Created user.",
+          );
+
           // Set the index name to the user's id.
           await createUserIndex(user.id);
         },

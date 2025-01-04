@@ -5,6 +5,7 @@ import {
 } from "@trpc/react-query";
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "api";
+import { TRACE_ID_HEADER, generateTraceId } from "./utils";
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -19,6 +20,10 @@ export const trpcReactClient = trpc.createClient({
         return fetch(url, {
           ...opts,
           credentials: "include",
+          headers: {
+            ...opts?.headers,
+            [TRACE_ID_HEADER]: generateTraceId(),
+          },
         });
       },
     }),
@@ -33,6 +38,10 @@ export const trpcClient = createTRPCClient<AppRouter>({
         return fetch(url, {
           ...opts,
           credentials: "include",
+          headers: {
+            ...opts?.headers,
+            [TRACE_ID_HEADER]: generateTraceId(),
+          },
         });
       },
     }),
