@@ -1,4 +1,4 @@
-# Bahar
+# Bahar Web
 
 This is the front end web application for Bahar.
 
