@@ -28,6 +28,7 @@ declare global {
 }
 
 const port = config.PORT;
+const host = config.HOST;
 
 const appRouter = router({
   flashcard: flashcardRouter,
@@ -89,8 +90,12 @@ app.use(
   }),
 );
 
-app.listen(port, () => {
-  logger.info(`Listening on port ${port}`);
+app.get("/health", (_req, res) => {
+  return res.send("OK");
+});
+
+app.listen(port, host, () => {
+  logger.info(`Listening on ${host}:${port}.`);
 });
 
 // Export type router type signature,

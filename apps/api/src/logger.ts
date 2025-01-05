@@ -81,7 +81,7 @@ export const logger = pino({
 export const requestLogger = pinoHttp({
   logger,
   autoLogging: {
-    ignore: (req) => req.method === "OPTIONS",
+    ignore: (req) => req.method === "OPTIONS" || req.url === "/health",
   },
   customReceivedMessage: () => {
     return "request received";
