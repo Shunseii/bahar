@@ -145,6 +145,8 @@ importers:
         specifier: ^5.2.2
         version: 5.3.3
 
+  apps/search: {}
+
   apps/web:
     dependencies:
       '@hookform/resolvers':

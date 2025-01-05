@@ -3,6 +3,7 @@ import { z } from "zod";
 const EnvironmentVariablesSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("development"),
   PORT: z.string().transform(Number).default("3000"),
+  HOST: z.string().default("localhost"),
 
   /**
    * The domain of the web client.

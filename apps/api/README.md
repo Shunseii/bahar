@@ -1,4 +1,4 @@
-# Bahar
+# Bahar API
 
 This is the back end API for Bahar.
 

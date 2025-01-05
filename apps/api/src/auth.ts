@@ -111,6 +111,8 @@ export const auth = betterAuth({
           },
         };
       }
+
+      return { context: ctx };
     }),
     after: createAuthMiddleware(async (ctx) => {
       const { path } = ctx;
