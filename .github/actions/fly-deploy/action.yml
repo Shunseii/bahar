@@ -1,0 +1,24 @@
+# See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
+#
+name: "Fly Deploy"
+description: "Deploy a project in the monorepo to Fly.io"
+inputs:
+  dockerfile:
+    description: "Path to the Dockerfile"
+    required: true
+  fly_config:
+    description: "Path to the fly.toml configuration file"
+    required: true
+  fly_api_token:
+    description: "Fly.io API token"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v4
+    - uses: superfly/flyctl-actions/setup-flyctl@master
+    - shell: bash
+      run: flyctl deploy --remote-only --dockerfile ${{ inputs.dockerfile }} --config ${{ inputs.fly_config }}
+      env:
+        FLY_API_TOKEN: ${{ inputs.fly_api_token }}
