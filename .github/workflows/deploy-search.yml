@@ -17,4 +17,4 @@ jobs:
         with:
           dockerfile: apps/search/Dockerfile
           fly_config: apps/search/fly.toml
-          fly_api_token: ${{ secrets.FLY_API_TOKEN }}
+          fly_api_token: ${{ secrets.FLY_BAHAR_SEARCH_TOKEN }}

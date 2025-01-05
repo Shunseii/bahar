@@ -1,5 +1,5 @@
 # See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
-#
+
 name: "Fly Deploy"
 description: "Deploy a project in the monorepo to Fly.io"
 inputs:

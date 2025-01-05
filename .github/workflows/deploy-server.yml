@@ -17,4 +17,4 @@ jobs:
         with:
           dockerfile: apps/api/Dockerfile
           fly_config: apps/api/fly.toml
-          fly_api_token: ${{ secrets.FLY_API_TOKEN }}
+          fly_api_token: ${{ secrets.FLY_BAHAR_API_TOKEN }}
