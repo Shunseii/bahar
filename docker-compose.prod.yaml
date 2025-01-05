@@ -12,8 +12,8 @@ services:
       - libsql
   meilisearch:
     build:
-      context: ./apps/search
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/search/Dockerfile
     ports:
       - "7700:7700"
     env_file:
