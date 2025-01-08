@@ -5,6 +5,8 @@ import { AsyncLocalStorage } from "async_hooks";
 
 interface TraceContext {
   traceId?: string;
+  userId?: string;
+  sessionId?: string;
   seqNum: number;
 }
 
@@ -15,7 +17,6 @@ export const getTraceContext = (): TraceContext => {
 
   if (!context) {
     return {
-      traceId: undefined,
       seqNum: 0,
     };
   }
@@ -45,6 +46,8 @@ export const logger = pino({
     return {
       traceId: context.traceId,
       seqNum: context.seqNum,
+      userId: context.userId,
+      sessionId: context.sessionId,
     };
   },
   serializers: {

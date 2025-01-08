@@ -2,7 +2,7 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { fromNodeHeaders } from "better-auth/node";
 import { Session, User, auth } from "./auth";
-import { logger } from "./logger";
+import { getTraceContext, logger } from "./logger";
 
 // Created for each request
 export const createContext = async ({
@@ -26,7 +26,11 @@ export const createContext = async ({
     };
   }
 
+  const context = getTraceContext();
   const { session, user } = data;
+
+  context.userId = user.id;
+  context.sessionId = session.id;
 
   return {
     session,

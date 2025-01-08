@@ -180,17 +180,23 @@ export const auth = betterAuth({
     // TODO: add trace ids to these logs
     // Upstash client will automatically deserialize JSON strings
     get: async (key) => {
-      logger.debug({ key, category: LogCategory.DATABASE, event: "redis_get" });
+      logger.debug(
+        { key, category: LogCategory.DATABASE, event: "redis_get" },
+        "Better auth get from redis.",
+      );
 
       return await redisClient.get(key);
     },
     set: async (key, value, ttl) => {
-      logger.debug({
-        key,
-        ttl,
-        category: LogCategory.DATABASE,
-        event: "redis_set",
-      });
+      logger.debug(
+        {
+          key,
+          ttl,
+          category: LogCategory.DATABASE,
+          event: "redis_set",
+        },
+        "Better auth set to redis.",
+      );
 
       if (ttl) {
         await redisClient.set(key, JSON.stringify(value), { ex: ttl });
@@ -199,11 +205,14 @@ export const auth = betterAuth({
       }
     },
     delete: async (key) => {
-      logger.debug({
-        key,
-        category: LogCategory.DATABASE,
-        event: "redis_delete",
-      });
+      logger.debug(
+        {
+          key,
+          category: LogCategory.DATABASE,
+          event: "redis_delete",
+        },
+        "Beter auth delete from redis.",
+      );
 
       await redisClient.del(key);
     },

@@ -1,4 +1,4 @@
-FROM getmeili/meilisearch:v1.3.4
+FROM getmeili/meilisearch:v1.12.0
 
 COPY ./apps/search/config.toml /etc/meilisearch/config.toml
 

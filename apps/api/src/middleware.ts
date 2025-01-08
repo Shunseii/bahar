@@ -2,7 +2,7 @@ import { NextFunction, RequestHandler, Request, Response } from "express";
 import { fromNodeHeaders } from "better-auth/node";
 import { Session, User, auth as authClient } from "./auth";
 import crypto from "crypto";
-import { traceContext } from "./logger";
+import { getTraceContext, traceContext } from "./logger";
 
 export const auth: RequestHandler = async (req, res, next) => {
   const { api } = authClient;
@@ -14,6 +14,11 @@ export const auth: RequestHandler = async (req, res, next) => {
   if (!session || !user) {
     return res.status(401).json({ message: "Unauthorized" });
   }
+
+  const context = getTraceContext();
+
+  context.userId = user.id;
+  context.sessionId = session.id;
 
   req.user = user;
   req.session = session;
