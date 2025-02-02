@@ -4,7 +4,7 @@ import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale/ar";
 import { enUS } from "date-fns/locale/en-US";
-import { fsrs, generatorParameters, Grade, Rating } from "ts-fsrs";
+import { fsrs, Grade, Rating } from "ts-fsrs";
 import {
   Drawer,
   DrawerTrigger,

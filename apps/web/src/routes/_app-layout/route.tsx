@@ -4,12 +4,15 @@ import { authClient } from "@/lib/auth-client";
 import { searchClient } from "@/lib/search";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { InstantSearch } from "react-instantsearch";
+import * as Sentry from "@sentry/react";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();
   const userIndexId = data?.user?.id ?? "";
 
   if (!userIndexId) return null;
+
+  Sentry.setUser({ id: data?.user.id, email: data?.user.email });
 
   return (
     <InstantSearch

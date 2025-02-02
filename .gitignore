@@ -29,6 +29,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.sentry-build-plugin
 
 # turbo
 .turbo
@@ -47,3 +48,6 @@ libsql/
 
 # Turso tetris game
 .go-tetris.log
+
+# Wranger temp files
+**/.wrangler/tmp

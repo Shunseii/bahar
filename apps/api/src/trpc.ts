@@ -1,4 +1,5 @@
 import { TRPCError, initTRPC } from "@trpc/server";
+import * as Sentry from "@sentry/node";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { fromNodeHeaders } from "better-auth/node";
 import { Session, User, auth } from "./auth";
@@ -31,6 +32,8 @@ export const createContext = async ({
 
   context.userId = user.id;
   context.sessionId = session.id;
+
+  Sentry.setUser({ id: user.id, email: user.email });
 
   return {
     session,
@@ -93,7 +96,14 @@ export const loggingMiddleware = t.middleware(
   },
 );
 
+const sentryMiddleware = t.middleware(
+  Sentry.trpcMiddleware({
+    attachRpcInput: true,
+  }),
+);
+
 export const protectedProcedure = t.procedure
+  .use(sentryMiddleware)
   .use(loggingMiddleware)
   .use(async (opts) => {
     const { ctx, next } = opts;
@@ -118,4 +128,4 @@ export const protectedProcedure = t.procedure
  * that can be used throughout the router
  */
 export const router = t.router;
-export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure.use(sentryMiddleware);

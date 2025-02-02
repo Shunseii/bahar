@@ -11,5 +11,8 @@ export default defineConfig({
 
     VITE_MEILISEARCH_API_URL: z.string().optional(),
     VITE_MEILISEARCH_API_KEY: z.string().optional(),
+
+    VITE_SENTRY_DSN: z.string().optional(),
+    VITE_SENTRY_ENV: z.enum(["local", "production"]).optional(),
   },
 });

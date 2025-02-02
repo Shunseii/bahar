@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import path from "path";
 import react from "@vitejs/plugin-react-swc";
 import { lingui } from "@lingui/vite-plugin";
@@ -9,9 +10,12 @@ import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 export default defineConfig({
   build: {
     outDir: "dist",
+
     rollupOptions: {
       external: ["workbox-window"],
     },
+
+    sourcemap: true,
   },
   plugins: [
     ValidateEnv(),
@@ -35,6 +39,14 @@ export default defineConfig({
             type: "image/png",
           },
         ],
+      },
+    }),
+    sentryVitePlugin({
+      org: "bahar-app",
+      project: "typescript-react",
+      telemetry: false,
+      reactComponentAnnotation: {
+        enabled: true,
       },
     }),
     react({
