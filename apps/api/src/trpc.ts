@@ -33,6 +33,8 @@ export const createContext = async ({
   context.userId = user.id;
   context.sessionId = session.id;
 
+  Sentry.setUser({ id: user.id, email: user.email });
+
   return {
     session,
     user,
