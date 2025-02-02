@@ -19,6 +19,7 @@ await esbuild.build({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
+      release: process.env.FLY_IMAGE_REF, // Only release during CI deployment
       debug: true,
       telemetry: false,
     }),
