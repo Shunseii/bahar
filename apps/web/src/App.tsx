@@ -12,10 +12,6 @@ import { detect, fromStorage, fromNavigator } from "@lingui/detect-locale";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { useToggle } from "@uidotdev/usehooks";
 
-const InnerApp = () => {
-  return <RouterProvider router={router} />;
-};
-
 function App() {
   const [isI18nActivated, toggleIsI18nActivated] = useToggle(false);
 
@@ -49,7 +45,7 @@ function App() {
       <trpc.Provider client={trpcReactClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
-            <InnerApp />
+            <RouterProvider router={router} />
           </TooltipProvider>
 
           {/* <ReactQueryDevtools /> */}

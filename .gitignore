@@ -48,3 +48,6 @@ libsql/
 
 # Turso tetris game
 .go-tetris.log
+
+# Wranger temp files
+**/.wrangler/tmp

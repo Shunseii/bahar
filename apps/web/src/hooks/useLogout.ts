@@ -3,6 +3,7 @@ import { authClient } from "@/lib/auth-client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
+import * as Sentry from "@sentry/react";
 
 /**
  * A hook that logs the user out of the application
@@ -31,6 +32,8 @@ export const useLogout = () => {
     });
 
     queryClient.clear();
+
+    Sentry.setUser(null);
   };
 
   return { logout };
