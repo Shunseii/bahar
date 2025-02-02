@@ -1,7 +1,8 @@
 import "dotenv/config";
 
-import { router, createContext } from "./trpc";
 import express from "express";
+import * as Sentry from "@sentry/node";
+import { router, createContext } from "./trpc";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -93,6 +94,8 @@ app.use(
 app.get("/health", (_req, res) => {
   return res.send("OK");
 });
+
+Sentry.setupExpressErrorHandler(app);
 
 app.listen(port, host, () => {
   logger.info(`Listening on ${host}:${port}.`);

@@ -3,4 +3,4 @@ npm-debug.log
 .git
 dist
 local.db*
-**/.env
+**/.env*

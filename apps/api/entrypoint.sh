@@ -4,4 +4,4 @@
 node dist/db/migrate.mjs
 
 # Run the development server
-exec node dist/index.mjs
+exec node --import ./instrument.mjs dist/index.mjs
