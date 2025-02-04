@@ -41,10 +41,10 @@ COPY --from=prune /app/out/full/ .
 
 # Environment variables needed for Sentry esbuild plugin
 # which will create a new release and upload sourcemaps
-ENV SENTRY_API_AUTH_TOKEN=${SENTRY_API_AUTH_TOKEN}
-ENV SENTRY_API_PROJECT=${SENTRY_API_PROJECT}
-ENV SENTRY_ORG=${SENTRY_ORG}
-ENV GITHUB_SHA=${GITHUB_SHA}
+ENV SENTRY_API_AUTH_TOKEN=$SENTRY_API_AUTH_TOKEN
+ENV SENTRY_API_PROJECT=$SENTRY_API_PROJECT
+ENV SENTRY_ORG=$SENTRY_ORG
+ENV GITHUB_SHA=$GITHUB_SHA
 
 RUN pnpm turbo run build --filter=api
 
