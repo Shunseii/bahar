@@ -2,13 +2,6 @@ import esbuild from "esbuild";
 import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin";
 import { esbuildPluginFilePathExtensions } from "esbuild-plugin-file-path-extensions";
 
-console.log("Sentry Config:", {
-  authToken: process.env.SENTRY_API_AUTH_TOKEN ? "present" : "missing",
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_API_PROJECT,
-  sha: process.env.GITHUB_SHA,
-});
-
 await esbuild.build({
   sourcemap: true,
   format: "esm",

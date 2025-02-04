@@ -26,6 +26,9 @@ RUN turbo prune api --docker
 
 FROM base AS development
 
+# Add certificates so we can call Sentry's API
+RUN apt-get update && apt-get install -y ca-certificates
+
 RUN npm install -g pnpm
 RUN pnpm add -g turbo
 
