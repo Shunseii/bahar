@@ -4,7 +4,13 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "env": [
+        "GITHUB_SHA",
+        "SENTRY_ORG",
+        "SENTRY_API_PROJECT",
+        "SENTRY_API_AUTH_TOKEN"
+      ]
     },
     "lint": {},
     "type-check": {},
