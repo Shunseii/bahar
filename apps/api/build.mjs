@@ -16,10 +16,10 @@ await esbuild.build({
 
     // Put the Sentry esbuild plugin after all other plugins
     sentryEsbuildPlugin({
-      authToken: process.env.SENTRY_AUTH_TOKEN,
+      authToken: process.env.SENTRY_API_AUTH_TOKEN,
       org: process.env.SENTRY_ORG,
-      project: process.env.SENTRY_PROJECT,
-      release: process.env.FLY_IMAGE_REF, // Only release during CI deployment
+      project: process.env.SENTRY_API_PROJECT,
+      release: process.env.GITHUB_SHA, // Only release during CI deployment
       debug: true,
       telemetry: false,
     }),

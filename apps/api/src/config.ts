@@ -37,9 +37,6 @@ const EnvironmentVariablesSchema = z.object({
 
   BETTER_AUTH_SECRET: z.string().min(1),
 
-  SENTRY_ORG: z.string().min(1),
-  SENTRY_PROJECT: z.string().min(1),
-  SENTRY_AUTH_TOKEN: z.string().min(1),
   SENTRY_DSN: z.string().min(1),
   SENTRY_ENV: z.enum(["production", "local"]),
 });
