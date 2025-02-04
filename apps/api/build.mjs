@@ -19,7 +19,9 @@ await esbuild.build({
       authToken: process.env.SENTRY_API_AUTH_TOKEN,
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_API_PROJECT,
-      release: process.env.GITHUB_SHA, // Only release during CI deployment
+      release: {
+        name: process.env.GITHUB_SHA, // Only release during CI deployment
+      },
       debug: true,
       telemetry: false,
     }),
