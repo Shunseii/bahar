@@ -28,33 +28,41 @@ class CustomNavigationDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationDrawer(
-      selectedIndex: selectedIndex,
-      onDestinationSelected: onDestinationSelected,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
-          child: Text(
-            'Bahar',
-            style: Theme.of(context).textTheme.titleSmall,
+    return Container(
+      decoration: BoxDecoration(
+          border: Border(
+              right: BorderSide(
+        color: Theme.of(context).colorScheme.outline,
+      ))),
+      child: NavigationDrawer(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: onDestinationSelected,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
+            child: Text(
+              'Bahar',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
           ),
-        ),
-        ...destinations.map((destination) {
-          return NavigationDrawerDestination(
-            label: Text(destination.label),
-            icon: destination.icon,
-            selectedIcon: destination.selectedIcon,
-          );
-        }),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-              onPressed: () {
-                print("Logged out!");
-              },
-              child: Text("Logout")),
-        )
-      ],
+          ...destinations.map((destination) {
+            return NavigationDrawerDestination(
+              label: Text(destination.label),
+              icon: destination.icon,
+              selectedIcon: destination.selectedIcon,
+            );
+          }),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+                onPressed: () {
+                  print("Logged out!");
+                },
+                child: Text("Logout")),
+          )
+        ],
+      ),
     );
   }
 }

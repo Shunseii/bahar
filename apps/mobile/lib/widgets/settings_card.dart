@@ -18,6 +18,8 @@ class SettingsCard extends StatelessWidget {
       children: [
         Expanded(
           child: Card(
+            borderOnForeground: true,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(

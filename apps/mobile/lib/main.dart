@@ -1,4 +1,5 @@
 import 'package:bahar/core/app_state.dart';
+import 'package:bahar/core/theme.dart';
 import 'package:bahar/screens/home.dart';
 import 'package:bahar/screens/settings.dart';
 import 'package:bahar/widgets/nav.dart';
@@ -9,24 +10,6 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(MyApp());
 }
-
-final seedColor = Colors.lightBlueAccent;
-
-final lightTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: seedColor,
-    brightness: Brightness.light,
-  ),
-);
-
-final darkTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: seedColor,
-    brightness: Brightness.dark,
-  ),
-);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -39,8 +22,8 @@ class MyApp extends StatelessWidget {
         builder: (context, appState, child) {
           return MaterialApp(
             title: 'Bahar',
-            theme: lightTheme,
-            darkTheme: darkTheme,
+            theme: AppTheme.lightTheme(),
+            darkTheme: AppTheme.darkTheme(),
             themeMode: appState.themeMode,
             home: MainPage(),
           );
@@ -83,6 +66,7 @@ class _MainPageState extends State<MainPage> {
 
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: theme.colorScheme.surfaceContainer,
             leading: Builder(
               builder: (context) {
                 return IconButton(
@@ -108,7 +92,7 @@ class _MainPageState extends State<MainPage> {
             children: [
               Expanded(
                 child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: theme.colorScheme.surface,
                   child: page,
                 ),
               ),

@@ -54,6 +54,7 @@ class ThemeToggle extends StatelessWidget {
 
     return DropdownMenu<ThemeOption>(
       dropdownMenuEntries: ThemeOption.entries,
+      inputDecorationTheme: Theme.of(context).inputDecorationTheme,
       initialSelection: ThemeOption.fromThemeMode(appState.themeMode),
       selectedTrailingIcon: Icon(LucideIcons.chevron_up),
       trailingIcon: Icon(LucideIcons.chevron_down),
