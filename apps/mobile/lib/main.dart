@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
             title: 'Bahar',
             theme: lightTheme,
             darkTheme: darkTheme,
-            themeMode: appState.activeThemeMode,
+            themeMode: appState.themeMode,
             home: MainPage(),
           );
         },
@@ -51,6 +51,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
   @override
   State<MainPage> createState() => _MainPageState();
 }
@@ -69,7 +71,7 @@ class _MainPageState extends State<MainPage> {
         page = Placeholder();
         break;
       case 2:
-        page = Settings();
+        page = SettingsPage();
         break;
       default:
         throw UnimplementedError("no widget for $selectedIndex");

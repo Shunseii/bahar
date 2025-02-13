@@ -1,7 +1,8 @@
-import 'package:bahar/widgets/theme_toggle.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     var text = "Hello, world!";
@@ -11,19 +12,6 @@ class HomePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(text),
-          SizedBox(height: 10),
-          ThemeSettingsWidget(),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  print("Next!");
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
         ],
       ),
     );

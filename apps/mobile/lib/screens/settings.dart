@@ -1,6 +1,12 @@
+import 'package:bahar/widgets/settings_card.dart';
+import 'package:bahar/widgets/theme_toggle.dart';
 import 'package:flutter/material.dart';
 
-class Settings extends StatelessWidget {
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({
+    super.key,
+  });
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -15,30 +21,13 @@ class Settings extends StatelessWidget {
                 ),
           ),
           SizedBox(height: 24),
-          Row(
+          SettingsCard(
+            title: "Appearance",
+            subtitle: "Customize how the application looks for you.",
             children: [
-              Expanded(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Appearance",
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        Text(
-                          "Customize how the application looks for you.",
-                          style: Theme.of(context).textTheme.labelSmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              ThemeToggle(),
             ],
-          )
+          ),
         ],
       ),
     );
