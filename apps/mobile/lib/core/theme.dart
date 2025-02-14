@@ -59,6 +59,23 @@ class AppTheme {
               ),
             ),
           ),
+      navigationDrawerTheme: NavigationDrawerThemeData(
+        indicatorColor: Colors.black12,
+        iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+          (Set<WidgetState> states) {
+            return IconThemeData(
+              color: Colors.black,
+            );
+          },
+        ),
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+          (Set<WidgetState> states) {
+            return TextStyle(
+              color: Colors.black,
+            );
+          },
+        ),
+      ),
       textTheme: baseTheme().textTheme.copyWith(
             bodyLarge: TextStyle(color: Colors.black),
             bodyMedium: TextStyle(color: Colors.black),
@@ -100,6 +117,23 @@ class AppTheme {
               ),
             ),
           ),
+      navigationDrawerTheme: NavigationDrawerThemeData(
+        indicatorColor: Colors.white12,
+        iconTheme: WidgetStateProperty.resolveWith<IconThemeData>(
+          (Set<WidgetState> states) {
+            return IconThemeData(
+              color: Colors.white,
+            );
+          },
+        ),
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>(
+          (Set<WidgetState> states) {
+            return TextStyle(
+              color: Colors.white,
+            );
+          },
+        ),
+      ),
       textTheme: baseTheme().textTheme.copyWith(
             bodyLarge: TextStyle(color: Colors.white),
             bodyMedium: TextStyle(color: Colors.white),

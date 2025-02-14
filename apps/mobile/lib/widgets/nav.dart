@@ -28,22 +28,24 @@ class CustomNavigationDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       decoration: BoxDecoration(
           border: Border(
               right: BorderSide(
-        color: Theme.of(context).colorScheme.outline,
+        color: theme.colorScheme.outline,
       ))),
       child: NavigationDrawer(
         selectedIndex: selectedIndex,
         onDestinationSelected: onDestinationSelected,
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+        backgroundColor: theme.colorScheme.surfaceContainer,
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
             child: Text(
               'Bahar',
-              style: Theme.of(context).textTheme.titleSmall,
+              style: theme.textTheme.titleSmall,
             ),
           ),
           ...destinations.map((destination) {

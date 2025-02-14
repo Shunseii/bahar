@@ -67,6 +67,14 @@ class _MainPageState extends State<MainPage> {
         return Scaffold(
           appBar: AppBar(
             backgroundColor: theme.colorScheme.surfaceContainer,
+            // Bottom border
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(1.0),
+              child: Container(
+                color: theme.colorScheme.outline,
+                height: 1.0,
+              ),
+            ),
             leading: Builder(
               builder: (context) {
                 return IconButton(
