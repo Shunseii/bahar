@@ -1,5 +1,6 @@
 {
   "@@locale": "ar",
+  "helloWorld": "مرحبا بالعالم!",
   "appName": "بحر",
   "settingsPageTitle": "الإعدادات",
   "settingsPageAppearanceCardTitle": "المظهر",
