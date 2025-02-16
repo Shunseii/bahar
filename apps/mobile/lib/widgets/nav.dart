@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 
 class Destination {
@@ -29,13 +30,24 @@ class CustomNavigationDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final TextDirection currentDir = Directionality.of(context);
+    final bool isRtl = currentDir == TextDirection.rtl;
 
     return Container(
       decoration: BoxDecoration(
-          border: Border(
-              right: BorderSide(
-        color: theme.colorScheme.outline,
-      ))),
+        border: Border(
+          left: isRtl
+              ? BorderSide(
+                  color: theme.colorScheme.outline,
+                )
+              : BorderSide.none,
+          right: isRtl
+              ? BorderSide.none
+              : BorderSide(
+                  color: theme.colorScheme.outline,
+                ),
+        ),
+      ),
       child: NavigationDrawer(
         selectedIndex: selectedIndex,
         onDestinationSelected: onDestinationSelected,
@@ -44,7 +56,7 @@ class CustomNavigationDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
             child: Text(
-              'Bahar',
+              AppLocalizations.of(context)!.appName,
               style: theme.textTheme.titleSmall,
             ),
           ),

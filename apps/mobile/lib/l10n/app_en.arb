@@ -1,0 +1,47 @@
+{
+  "@@locale": "en",
+  "appName": "Bahar",
+  "@appName": {
+    "description": "The name of the app"
+  },
+  "settingsPageTitle": "Settings",
+  "@settingsPageTitle": {
+    "description": "The title of the settings page"
+  },
+  "settingsPageAppearanceCardTitle": "Appearance",
+  "@settingsPageAppearanceCardTitle": {
+    "description": "The title of the appearance card in the settings page"
+  },
+  "settingsPageAppearanceCardSubtitle": "Customize how the app looks for you.",
+  "@settingsPageAppearanceCardSubtitle": {
+    "description": "The subtitle of the appearance card in the settings page"
+  },
+  "themeDark": "Dark",
+  "@themeDark": {
+    "description": "The label for the dark theme"
+  },
+  "themeLight": "Light",
+  "@themeLight": {
+    "description": "The label for the light theme"
+  },
+  "themeSystem": "System",
+  "@themeSystem": {
+    "description": "The label for the system theme"
+  },
+  "themeLabel": "Theme",
+  "@themeLabel": {
+    "description": "The label for the theme dropdown"
+  },
+  "englishLanguageLabel": "English",
+  "@englishLanguageLabel": {
+    "description": "The label for the english language"
+  },
+  "arabicLanguageLabel": "Arabic",
+  "@arabicLanguageLabel": {
+    "description": "The label for the arabic language"
+  },
+  "localeLabel": "Language",
+  "@localeLabel": {
+    "description": "The label for the language dropdown"
+  }
+}

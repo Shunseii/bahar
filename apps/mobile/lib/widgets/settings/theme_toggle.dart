@@ -2,29 +2,41 @@ import 'dart:collection';
 
 import 'package:bahar/core/app_state.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:provider/provider.dart';
 
 typedef ThemeOptionEntry = DropdownMenuEntry<ThemeOption>;
 
 enum ThemeOption {
-  light("Light", LucideIcons.sun),
-  dark("Dark", LucideIcons.moon),
-  system("System", LucideIcons.settings);
+  dark("theme_dark", LucideIcons.moon),
+  light("theme_light", LucideIcons.sun),
+  system("theme_system", LucideIcons.monitor);
 
-  const ThemeOption(this.label, this.icon);
-  final String label;
+  const ThemeOption(this.labelKey, this.icon);
+  final String labelKey;
   final IconData icon;
 
-  static final List<ThemeOptionEntry> entries = UnmodifiableListView(
-    values.map<ThemeOptionEntry>(
-      (ThemeOption option) => ThemeOptionEntry(
-        value: option,
-        label: option.label,
-        leadingIcon: Icon(option.icon),
+  static List<ThemeOptionEntry> getEntries(BuildContext context) {
+    return UnmodifiableListView(
+      values.map<ThemeOptionEntry>(
+        (ThemeOption option) => ThemeOptionEntry(
+          value: option,
+          label: getTranslatedLabel(context, option.labelKey),
+          leadingIcon: Icon(option.icon),
+        ),
       ),
-    ),
-  );
+    );
+  }
+
+  static String getTranslatedLabel(BuildContext context, String labelKey) {
+    return switch (labelKey) {
+      "theme_dark" => AppLocalizations.of(context)!.themeDark,
+      "theme_light" => AppLocalizations.of(context)!.themeLight,
+      "theme_system" => AppLocalizations.of(context)!.themeSystem,
+      _ => throw UnimplementedError("no label for $labelKey"),
+    };
+  }
 
   static ThemeOption fromThemeMode(ThemeMode themeMode) {
     return switch (themeMode) {
@@ -53,13 +65,14 @@ class ThemeToggle extends StatelessWidget {
     var appState = context.watch<AppState>();
 
     return DropdownMenu<ThemeOption>(
-      dropdownMenuEntries: ThemeOption.entries,
+      key: Key(appState.locale?.languageCode ?? Locale("en").languageCode),
+      dropdownMenuEntries: ThemeOption.getEntries(context),
       inputDecorationTheme: Theme.of(context).inputDecorationTheme,
       initialSelection: ThemeOption.fromThemeMode(appState.themeMode),
       selectedTrailingIcon: Icon(LucideIcons.chevron_up),
       trailingIcon: Icon(LucideIcons.chevron_down),
       leadingIcon: Icon(ThemeOption.fromThemeMode(appState.themeMode).icon),
-      label: Text("Theme"),
+      label: Text(AppLocalizations.of(context)!.themeLabel),
       onSelected: (ThemeOption? newValue) {
         if (newValue != null) {
           appState.setThemeMode(

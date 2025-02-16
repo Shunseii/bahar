@@ -4,6 +4,7 @@ import 'package:bahar/screens/home.dart';
 import 'package:bahar/screens/settings.dart';
 import 'package:bahar/widgets/nav.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,10 @@ class MyApp extends StatelessWidget {
       child: Consumer<AppState>(
         builder: (context, appState, child) {
           return MaterialApp(
-            title: 'Bahar',
+            onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+            locale: appState.locale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
             theme: AppTheme.lightTheme(),
             darkTheme: AppTheme.darkTheme(),
             themeMode: appState.themeMode,

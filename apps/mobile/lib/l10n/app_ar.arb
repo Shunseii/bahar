@@ -1,0 +1,14 @@
+{
+  "@@locale": "ar",
+  "appName": "بحر",
+  "settingsPageTitle": "الإعدادات",
+  "settingsPageAppearanceCardTitle": "المظهر",
+  "settingsPageAppearanceCardSubtitle": "قم بتخصيص كيف يظهر التطبيق بالنسبة لك.",
+  "themeDark": "غامق",
+  "themeLight": "فاتح",
+  "themeSystem": "نظام",
+  "themeLabel": "التصميم",
+  "englishLanguageLabel": "الإنجليزية",
+  "arabicLanguageLabel": "العربية",
+  "localeLabel": "اللغة"
+}
