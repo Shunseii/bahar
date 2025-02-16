@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:bahar/core/app_state.dart';
+import 'package:bahar/widgets/localized_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -23,7 +24,7 @@ enum ThemeOption {
         (ThemeOption option) => ThemeOptionEntry(
           value: option,
           label: getTranslatedLabel(context, option.labelKey),
-          leadingIcon: Icon(option.icon),
+          leadingIcon: LocalizedIcon(icon: Icon(option.icon)),
         ),
       ),
     );
@@ -71,7 +72,9 @@ class ThemeToggle extends StatelessWidget {
       initialSelection: ThemeOption.fromThemeMode(appState.themeMode),
       selectedTrailingIcon: Icon(LucideIcons.chevron_up),
       trailingIcon: Icon(LucideIcons.chevron_down),
-      leadingIcon: Icon(ThemeOption.fromThemeMode(appState.themeMode).icon),
+      leadingIcon: LocalizedIcon(
+        icon: Icon(ThemeOption.fromThemeMode(appState.themeMode).icon),
+      ),
       label: Text(AppLocalizations.of(context)!.themeLabel),
       onSelected: (ThemeOption? newValue) {
         if (newValue != null) {
