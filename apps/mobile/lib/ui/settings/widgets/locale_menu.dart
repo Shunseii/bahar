@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:bahar/core/app_state.dart';
+import 'package:bahar/core/view_model/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';

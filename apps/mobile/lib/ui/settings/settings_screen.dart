@@ -1,6 +1,6 @@
-import 'package:bahar/widgets/settings/locale_menu.dart';
-import 'package:bahar/widgets/settings/settings_card.dart';
-import 'package:bahar/widgets/settings/theme_toggle.dart';
+import 'package:bahar/ui/settings/widgets/locale_menu.dart';
+import 'package:bahar/ui/settings/widgets/settings_card.dart';
+import 'package:bahar/ui/settings/widgets/theme_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

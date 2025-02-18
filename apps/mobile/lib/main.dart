@@ -1,8 +1,8 @@
-import 'package:bahar/core/app_state.dart';
-import 'package:bahar/core/theme.dart';
-import 'package:bahar/screens/home.dart';
-import 'package:bahar/screens/settings.dart';
-import 'package:bahar/widgets/nav.dart';
+import 'package:bahar/core/view_model/app_state.dart';
+import 'package:bahar/core/view_model/theme.dart';
+import 'package:bahar/ui/home/home_screen.dart';
+import 'package:bahar/ui/settings/settings_screen.dart';
+import 'package:bahar/core/widgets/nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
