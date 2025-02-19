@@ -37,6 +37,12 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  sqflite: ^2.4.1
+  path: ^1.9.0
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +54,12 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  build_runner: ^2.4.15
+  freezed: ^2.5.8
+  json_serializable: ^6.9.4
+  riverpod_generator: ^2.6.4
+  custom_lint: ^0.7.3
+  riverpod_lint: ^2.6.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

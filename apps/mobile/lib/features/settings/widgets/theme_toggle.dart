@@ -1,11 +1,11 @@
 import 'dart:collection';
 
-import 'package:bahar/core/view_model/app_state.dart';
-import 'package:bahar/core/widgets/localized_icon.dart';
+import 'package:bahar/common/view_models/app_state.dart';
+import 'package:bahar/common/widgets/localized_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 typedef ThemeOptionEntry = DropdownMenuEntry<ThemeOption>;
 
@@ -56,17 +56,17 @@ enum ThemeOption {
   }
 }
 
-class ThemeToggle extends StatelessWidget {
+class ThemeToggle extends ConsumerWidget {
   const ThemeToggle({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<AppState>();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(appStateProvider);
 
     return DropdownMenu<ThemeOption>(
-      key: Key(appState.locale?.languageCode ?? Locale("en").languageCode),
+      key: Key(appState.locale.languageCode),
       dropdownMenuEntries: ThemeOption.getEntries(context),
       inputDecorationTheme: Theme.of(context).inputDecorationTheme,
       initialSelection: ThemeOption.fromThemeMode(appState.themeMode),
@@ -78,9 +78,9 @@ class ThemeToggle extends StatelessWidget {
       label: Text(AppLocalizations.of(context)!.themeLabel),
       onSelected: (ThemeOption? newValue) {
         if (newValue != null) {
-          appState.setThemeMode(
-            ThemeOption.toThemeMode(newValue),
-          );
+          ref.read(appStateProvider.notifier).setThemeMode(
+                ThemeOption.toThemeMode(newValue),
+              );
         }
       },
     );

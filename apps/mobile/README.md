@@ -1,16 +1,18 @@
-# mobile
+# Bahar
 
-A new Flutter project.
+This is the mobile app for Bahar built with Flutter.
 
-## Getting Started
+## Code Generation
 
-This project is a starting point for a Flutter application.
+Run the following to generate code for specific packages that rely on it
+such as `freezed` and `riverpod`:
 
-A few resources to get you started if this is your first Flutter project:
+```dart
+dart run build_runner build
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+In watch mode:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```dart
+dart run build_runner watch
+```

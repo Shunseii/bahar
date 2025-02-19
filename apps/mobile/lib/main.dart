@@ -1,38 +1,39 @@
-import 'package:bahar/core/view_model/app_state.dart';
-import 'package:bahar/core/view_model/theme.dart';
-import 'package:bahar/ui/home/home_screen.dart';
-import 'package:bahar/ui/settings/settings_screen.dart';
-import 'package:bahar/core/widgets/nav.dart';
+import 'package:bahar/common/view_models/app_state.dart';
+import 'package:bahar/common/theme.dart';
+import 'package:bahar/common/widgets/nav.dart';
+import 'package:bahar/features/home/home_screen.dart';
+import 'package:bahar/features/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/widgets.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // TODO: figure out how to initialize the database here
+
+  runApp(ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AppState(),
-      child: Consumer<AppState>(
-        builder: (context, appState, child) {
-          return MaterialApp(
-            onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
-            locale: appState.locale,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            theme: AppTheme.lightTheme(),
-            darkTheme: AppTheme.darkTheme(),
-            themeMode: appState.themeMode,
-            home: MainPage(),
-          );
-        },
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appState = ref.watch(appStateProvider);
+
+    return MaterialApp(
+      // TODO: do I need the routes here?
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+      locale: appState.locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      theme: AppTheme.lightTheme(),
+      darkTheme: AppTheme.darkTheme(),
+      themeMode: appState.themeMode,
+      home: MainPage(),
     );
   }
 }
