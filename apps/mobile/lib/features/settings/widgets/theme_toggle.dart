@@ -1,7 +1,7 @@
 import 'dart:collection';
 
-import 'package:bahar/common/view_models/app_state.dart';
 import 'package:bahar/common/widgets/localized_icon.dart';
+import 'package:bahar/common/providers/app_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -25,6 +25,13 @@ enum ThemeOption {
           value: option,
           label: getTranslatedLabel(context, option.labelKey),
           leadingIcon: LocalizedIcon(icon: Icon(option.icon)),
+          style: ButtonStyle(
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -63,22 +70,23 @@ class ThemeToggle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appState = ref.watch(appStateProvider);
+    final themeMode = ref.watch(themeModeProvider);
+    final locale = ref.watch(localeProvider);
 
     return DropdownMenu<ThemeOption>(
-      key: Key(appState.locale.languageCode),
+      key: Key(locale.languageCode),
       dropdownMenuEntries: ThemeOption.getEntries(context),
       inputDecorationTheme: Theme.of(context).inputDecorationTheme,
-      initialSelection: ThemeOption.fromThemeMode(appState.themeMode),
+      initialSelection: ThemeOption.fromThemeMode(themeMode),
       selectedTrailingIcon: Icon(LucideIcons.chevron_up),
       trailingIcon: Icon(LucideIcons.chevron_down),
       leadingIcon: LocalizedIcon(
-        icon: Icon(ThemeOption.fromThemeMode(appState.themeMode).icon),
+        icon: Icon(ThemeOption.fromThemeMode(themeMode).icon),
       ),
       label: Text(AppLocalizations.of(context)!.themeLabel),
       onSelected: (ThemeOption? newValue) {
         if (newValue != null) {
-          ref.read(appStateProvider.notifier).setThemeMode(
+          ref.read(appSettingsProvider.notifier).setThemeMode(
                 ThemeOption.toThemeMode(newValue),
               );
         }

@@ -9,8 +9,8 @@ part 'settings_model.g.dart';
 // How a field should be displayed in a flashcard.
 enum FlashcardFieldDisplay {
   hidden,
-  answer,
-  text;
+  hint,
+  answer;
 }
 
 @freezed

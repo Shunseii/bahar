@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:bahar/common/view_models/app_state.dart';
+import 'package:bahar/common/providers/app_state_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -21,6 +21,13 @@ enum LocaleOption {
         (LocaleOption option) => LocaleOptionEntry(
           value: option,
           label: getTranslatedLabel(context, option.labelKey),
+          style: ButtonStyle(
+            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -57,19 +64,19 @@ class LocaleMenu extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appState = ref.watch(appStateProvider);
+    final locale = ref.watch(localeProvider);
 
     return DropdownMenu<LocaleOption>(
       dropdownMenuEntries: LocaleOption.getEntries(context),
       inputDecorationTheme: Theme.of(context).inputDecorationTheme,
-      initialSelection: LocaleOption.fromLocale(appState.locale),
+      initialSelection: LocaleOption.fromLocale(locale),
       selectedTrailingIcon: Icon(LucideIcons.chevron_up),
       trailingIcon: Icon(LucideIcons.chevron_down),
       label: Text(AppLocalizations.of(context)!.localeLabel),
       onSelected: (LocaleOption? newValue) {
         if (newValue != null) {
           ref
-              .read(appStateProvider.notifier)
+              .read(appSettingsProvider.notifier)
               .setLocale(LocaleOption.toLocale(newValue));
         }
       },

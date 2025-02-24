@@ -47,5 +47,29 @@
   "localeLabel": "Language",
   "@localeLabel": {
     "description": "The label for the language dropdown"
+  },
+  "settingsPageFlashcardsCardTitle": "Flashcards",
+  "@settingsPageFlashcardsCardTitle": {
+    "description": "The title of the flashcards settings card in the settings page"
+  },
+  "settingsPageFlashcardsCardSubtitle": "Customize how flashcards appear.",
+  "@settingsPageFlashcardsCardSubtitle": {
+    "description": "The subtitle of the flashcards settings card in the settings page"
+  },
+  "antonymsSettingsTitle": "How should antonyms be shown in flashcards?",
+  "@antonymsSettingsTitle": {
+    "description": "The title of the antonyms section on the settings page"
+  },
+  "flashcardFieldDisplaySettingHidden": "Don't show",
+  "@flashcardFieldDisplaySettingHidden": {
+    "description": "The display label for the hidden value in the flashcard field display enum"
+  },
+  "flashcardFieldDisplaySettingHint": "Show as a hint",
+  "@flashcardFieldDisplaySettingHint": {
+    "description": "The display label for the hint value in the flashcard field display enum"
+  },
+  "flashcardFieldDisplaySettingAnswer": "Show after revealing the answer",
+  "@flashcardFieldDisplaySettingAnswer": {
+    "description": "The display label for the answer value in the flashcard field display enum"
   }
 }

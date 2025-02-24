@@ -1,10 +1,10 @@
 import 'package:bahar/features/settings/models/settings_model.dart';
 import 'package:bahar/common/services/database_service.dart';
 
-// TODO: figure out how to access this through view model
-
 class SettingsRepository {
-  final databaseService = DatabaseService.instance;
+  final DatabaseService databaseService;
+
+  SettingsRepository({required this.databaseService});
 
   Future<void> insert(SettingsModel settingsModel) async {
     final db = await databaseService.database;

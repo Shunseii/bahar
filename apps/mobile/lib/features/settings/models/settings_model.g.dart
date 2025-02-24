@@ -28,6 +28,6 @@ Map<String, dynamic> _$$SettingsModelImplToJson(_$SettingsModelImpl instance) =>
 
 const _$FlashcardFieldDisplayEnumMap = {
   FlashcardFieldDisplay.hidden: 'hidden',
+  FlashcardFieldDisplay.hint: 'hint',
   FlashcardFieldDisplay.answer: 'answer',
-  FlashcardFieldDisplay.text: 'text',
 };

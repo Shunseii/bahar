@@ -16,6 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AppState {
+  String get userId => throw _privateConstructorUsedError;
   ThemeMode get themeMode => throw _privateConstructorUsedError;
   Locale get locale => throw _privateConstructorUsedError;
 
@@ -31,7 +32,7 @@ abstract class $AppStateCopyWith<$Res> {
   factory $AppStateCopyWith(AppState value, $Res Function(AppState) then) =
       _$AppStateCopyWithImpl<$Res, AppState>;
   @useResult
-  $Res call({ThemeMode themeMode, Locale locale});
+  $Res call({String userId, ThemeMode themeMode, Locale locale});
 }
 
 /// @nodoc
@@ -49,10 +50,15 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? userId = null,
     Object? themeMode = null,
     Object? locale = null,
   }) {
     return _then(_value.copyWith(
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
       themeMode: null == themeMode
           ? _value.themeMode
           : themeMode // ignore: cast_nullable_to_non_nullable
@@ -73,7 +79,7 @@ abstract class _$$AppStateImplCopyWith<$Res>
       __$$AppStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({ThemeMode themeMode, Locale locale});
+  $Res call({String userId, ThemeMode themeMode, Locale locale});
 }
 
 /// @nodoc
@@ -89,10 +95,15 @@ class __$$AppStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? userId = null,
     Object? themeMode = null,
     Object? locale = null,
   }) {
     return _then(_$AppStateImpl(
+      userId: null == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as String,
       themeMode: null == themeMode
           ? _value.themeMode
           : themeMode // ignore: cast_nullable_to_non_nullable
@@ -109,8 +120,13 @@ class __$$AppStateImplCopyWithImpl<$Res>
 
 class _$AppStateImpl implements _AppState {
   const _$AppStateImpl(
-      {this.themeMode = ThemeMode.system, this.locale = const Locale('en')});
+      {this.userId = "",
+      this.themeMode = ThemeMode.system,
+      this.locale = const Locale('en')});
 
+  @override
+  @JsonKey()
+  final String userId;
   @override
   @JsonKey()
   final ThemeMode themeMode;
@@ -120,7 +136,7 @@ class _$AppStateImpl implements _AppState {
 
   @override
   String toString() {
-    return 'AppState(themeMode: $themeMode, locale: $locale)';
+    return 'AppState(userId: $userId, themeMode: $themeMode, locale: $locale)';
   }
 
   @override
@@ -128,13 +144,14 @@ class _$AppStateImpl implements _AppState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AppStateImpl &&
+            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.themeMode, themeMode) ||
                 other.themeMode == themeMode) &&
             (identical(other.locale, locale) || other.locale == locale));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, themeMode, locale);
+  int get hashCode => Object.hash(runtimeType, userId, themeMode, locale);
 
   /// Create a copy of AppState
   /// with the given fields replaced by the non-null parameter values.
@@ -146,9 +163,13 @@ class _$AppStateImpl implements _AppState {
 }
 
 abstract class _AppState implements AppState {
-  const factory _AppState({final ThemeMode themeMode, final Locale locale}) =
-      _$AppStateImpl;
+  const factory _AppState(
+      {final String userId,
+      final ThemeMode themeMode,
+      final Locale locale}) = _$AppStateImpl;
 
+  @override
+  String get userId;
   @override
   ThemeMode get themeMode;
   @override

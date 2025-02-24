@@ -26,8 +26,17 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
+      dropdownMenuTheme: DropdownMenuThemeData(
+        menuStyle: MenuStyle(
+          elevation: WidgetStateProperty.all<double>(0),
+          padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+            const EdgeInsets.all(8),
+          ),
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -51,8 +60,27 @@ class AppTheme {
               ),
             ),
           ),
+      dropdownMenuTheme: baseTheme().dropdownMenuTheme.copyWith(
+            menuStyle: baseTheme().dropdownMenuTheme.menuStyle!.copyWith(
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: lightColorScheme.outline,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+          ),
       inputDecorationTheme: baseTheme().inputDecorationTheme.copyWith(
             enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: lightColorScheme.outline,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
                 color: lightColorScheme.outline,
@@ -109,8 +137,27 @@ class AppTheme {
               ),
             ),
           ),
+      dropdownMenuTheme: baseTheme().dropdownMenuTheme.copyWith(
+            menuStyle: baseTheme().dropdownMenuTheme.menuStyle!.copyWith(
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      side: BorderSide(
+                        color: darkColorScheme.outline,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+          ),
       inputDecorationTheme: baseTheme().inputDecorationTheme.copyWith(
             enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: darkColorScheme.outline,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
                 color: darkColorScheme.outline,

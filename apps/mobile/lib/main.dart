@@ -1,4 +1,5 @@
-import 'package:bahar/common/view_models/app_state.dart';
+import 'package:bahar/common/providers/app_state_provider.dart';
+import 'package:bahar/common/services/database_service.dart';
 import 'package:bahar/common/theme.dart';
 import 'package:bahar/common/widgets/nav.dart';
 import 'package:bahar/features/home/home_screen.dart';
@@ -12,7 +13,8 @@ import 'package:flutter/widgets.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // TODO: figure out how to initialize the database here
+  final databaseService = DatabaseService.instance;
+  await databaseService.initialize();
 
   runApp(ProviderScope(child: MyApp()));
 }
@@ -22,18 +24,21 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appState = ref.watch(appStateProvider);
+    final themeMode = ref.watch(themeModeProvider);
+    final locale = ref.watch(localeProvider);
 
-    return MaterialApp(
-      // TODO: do I need the routes here?
-      onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
-      locale: appState.locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: AppTheme.lightTheme(),
-      darkTheme: AppTheme.darkTheme(),
-      themeMode: appState.themeMode,
-      home: MainPage(),
+    return _EagerInitialization(
+      child: MaterialApp(
+        // TODO: do I need the routes here?
+        onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+        locale: locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: AppTheme.lightTheme(),
+        darkTheme: AppTheme.darkTheme(),
+        themeMode: themeMode,
+        home: MainPage(),
+      ),
     );
   }
 }
@@ -114,5 +119,20 @@ class _MainPageState extends State<MainPage> {
         );
       },
     );
+  }
+}
+
+// Eagerly initialize theme, locale, and userId
+class _EagerInitialization extends ConsumerWidget {
+  const _EagerInitialization({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Eagerly initialize providers by watching them.
+    // By using "watch", the provider will stay alive and not be disposed.
+    ref.watch(appSettingsProvider);
+
+    return child;
   }
 }

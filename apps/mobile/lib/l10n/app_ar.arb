@@ -11,5 +11,11 @@
   "themeLabel": "التصميم",
   "englishLanguageLabel": "الإنجليزية",
   "arabicLanguageLabel": "العربية",
-  "localeLabel": "اللغة"
+  "localeLabel": "اللغة",
+  "settingsPageFlashcardsCardTitle": "بطاقات",
+  "settingsPageFlashcardsCardSubtitle": "خصص كيفيّة ظهور البطاقات.",
+  "antonymsSettingsTitle": "كيف ينبغي عرض الأضداد في بطاقات؟",
+  "flashcardFieldDisplaySettingHidden": "لا تعرض",
+  "flashcardFieldDisplaySettingHint": "عرض كتلميح",
+  "flashcardFieldDisplaySettingAnswer": "عرض بعد كشف الإجابة"
 }
