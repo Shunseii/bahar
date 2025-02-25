@@ -71,5 +71,9 @@
   "flashcardFieldDisplaySettingAnswer": "Show after revealing the answer",
   "@flashcardFieldDisplaySettingAnswer": {
     "description": "The display label for the answer value in the flashcard field display enum"
+  },
+  "settingsPageSaveButtonLabel": "Save",
+  "@settingsPageSaveButtonLabel": {
+    "description": "The label for the save button in the settings page"
   }
 }

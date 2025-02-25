@@ -17,5 +17,6 @@
   "antonymsSettingsTitle": "كيف ينبغي عرض الأضداد في بطاقات؟",
   "flashcardFieldDisplaySettingHidden": "لا تعرض",
   "flashcardFieldDisplaySettingHint": "عرض كتلميح",
-  "flashcardFieldDisplaySettingAnswer": "عرض بعد كشف الإجابة"
+  "flashcardFieldDisplaySettingAnswer": "عرض بعد كشف الإجابة",
+  "settingsPageSaveButtonLabel": "احفظ"
 }

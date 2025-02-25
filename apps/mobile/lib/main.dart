@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:toastification/toastification.dart';
 import 'package:flutter/widgets.dart';
 
 void main() async {
@@ -28,15 +29,17 @@ class MyApp extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     return _EagerInitialization(
-      child: MaterialApp(
-        onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
-        locale: locale,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: AppTheme.lightTheme(),
-        darkTheme: AppTheme.darkTheme(),
-        themeMode: themeMode,
-        home: MainPage(),
+      child: ToastificationWrapper(
+        child: MaterialApp(
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+          locale: locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: AppTheme.lightTheme(),
+          darkTheme: AppTheme.darkTheme(),
+          themeMode: themeMode,
+          home: MainPage(),
+        ),
       ),
     );
   }
@@ -74,7 +77,9 @@ class _MainPageState extends State<MainPage> {
         final theme = Theme.of(context);
 
         return Scaffold(
+          backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
+            scrolledUnderElevation: 0,
             backgroundColor: theme.colorScheme.surfaceContainer,
             // Bottom border
             bottom: PreferredSize(

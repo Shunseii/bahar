@@ -44,6 +44,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
   nanoid2: ^2.0.1
+  toastification: ^3.0.1
 
 dev_dependencies:
   flutter_test:

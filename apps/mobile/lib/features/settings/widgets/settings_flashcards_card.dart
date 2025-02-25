@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:bahar/features/settings/models/settings_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:toastification/toastification.dart';
+import 'package:bahar/common/utils/toast.dart';
+import 'package:bahar/common/widgets/primary_button.dart';
 
 class SettingsFlashcardCard extends ConsumerStatefulWidget {
   const SettingsFlashcardCard({
@@ -17,7 +20,8 @@ class SettingsFlashcardCard extends ConsumerStatefulWidget {
 }
 
 class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
-  FlashcardFieldDisplay? _showAntonyms = FlashcardFieldDisplay.hidden;
+  FlashcardFieldDisplay? showAntonyms = FlashcardFieldDisplay.hidden;
+  bool isDirty = false;
 
   @override
   void initState() {
@@ -25,7 +29,7 @@ class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
 
     ref.read(settingsProvider.future).then((settings) {
       setState(() {
-        _showAntonyms =
+        showAntonyms =
             settings?.showAntonymsInFlashcard ?? FlashcardFieldDisplay.hidden;
       });
     });
@@ -40,16 +44,44 @@ class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 24,
+          spacing: 16,
           children: [
             AntonymsSection(
-              showAntonyms: _showAntonyms,
+              showAntonyms: showAntonyms,
               onChanged: (FlashcardFieldDisplay? value) {
                 setState(() {
-                  _showAntonyms = value;
+                  isDirty = true;
+                  showAntonyms = value;
                 });
               },
             ),
+            PrimaryButton(
+              label: AppLocalizations.of(context)!.settingsPageSaveButtonLabel,
+              disabled: !isDirty,
+              onPressed: () async {
+                setState(() {
+                  isDirty = false;
+                });
+
+                final currentSettings = await ref.read(settingsProvider.future);
+
+                ref.read(settingsProvider.notifier).updateSettings(
+                      currentSettings!.copyWith(
+                        showAntonymsInFlashcard:
+                            showAntonyms ?? FlashcardFieldDisplay.hidden,
+                      ),
+                    );
+
+                if (!context.mounted) return;
+
+                showToast(
+                  context: context,
+                  type: ToastificationType.success,
+                  title: 'Settings updated!',
+                  description: 'Your settings have been updated.',
+                );
+              },
+            )
           ],
         ),
       ],
@@ -100,32 +132,6 @@ class AntonymsSection extends ConsumerWidget {
               onChanged: onChanged,
             ),
           ],
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            final currentSettings = await ref.read(settingsProvider.future);
-
-            ref.read(settingsProvider.notifier).updateSettings(
-                  currentSettings!.copyWith(
-                    showAntonymsInFlashcard:
-                        showAntonyms ?? FlashcardFieldDisplay.hidden,
-                  ),
-                );
-
-            if (!context.mounted) return;
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Settings updated!'),
-                duration: Duration(seconds: 2), // Adjust the duration as needed
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            foregroundColor: Theme.of(context).colorScheme.onPrimary,
-          ),
-          child: Text("Save"),
         ),
       ],
     );
