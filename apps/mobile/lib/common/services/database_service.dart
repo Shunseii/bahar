@@ -1,6 +1,7 @@
 import 'package:bahar/features/settings/models/settings_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'dart:developer' as developer;
 
 class DatabaseService {
   static final DatabaseService instance = DatabaseService._privateConstructor();
@@ -27,6 +28,11 @@ class DatabaseService {
     // constructed for each platform.
     String path = join(await getDatabasesPath(), 'bahar_database.db');
 
+    developer.log(
+      "Connecting to SQLite database at $path...",
+      name: 'app.service.database',
+    );
+
     Database database = await openDatabase(
       path,
       onCreate: _onCreate,
@@ -36,12 +42,24 @@ class DatabaseService {
       version: 1,
     );
 
+    developer.log(
+      "Successfully connected to SQLite database at $path",
+      name: 'app.service.database',
+    );
+
     return database;
   }
 
   Future<void> _onCreate(Database db, int version) async {
+    final initStatement = SettingsModel.initDatabaseModelStatement();
+
+    developer.log(
+      "Initializing SQLite database: $initStatement",
+      name: 'app.service.database',
+    );
+
     await db.execute(
-      SettingsModel.initDatabaseModelStatement(),
+      initStatement,
     );
   }
 }

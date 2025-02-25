@@ -1,5 +1,6 @@
 import 'package:bahar/features/settings/models/settings_model.dart';
 import 'package:bahar/common/services/database_service.dart';
+import 'dart:developer' as developer;
 
 class SettingsRepository {
   final DatabaseService databaseService;
@@ -10,12 +11,22 @@ class SettingsRepository {
     final db = await databaseService.database;
     final input = settingsModel.toMap();
 
+    developer.log(
+      "Inserting settings: $input",
+      name: 'app.repository.settings',
+    );
+
     await db.insert('settings', input);
   }
 
   Future<void> update(SettingsModel settingsModel) async {
     final db = await databaseService.database;
     final input = settingsModel.toMap();
+
+    developer.log(
+      "Updating settings: $input",
+      name: 'app.repository.settings',
+    );
 
     await db.update(
       'settings',
@@ -32,6 +43,11 @@ class SettingsRepository {
       'settings',
       where: 'user_id = ?',
       whereArgs: [userId],
+    );
+
+    developer.log(
+      "Getting settings: $results",
+      name: 'app.repository.settings',
     );
 
     if (results.isEmpty) return null;

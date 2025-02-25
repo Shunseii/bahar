@@ -49,7 +49,7 @@ class SettingsModel with _$SettingsModel {
     return {
       'id': id,
       'user_id': userId,
-      'show_reverse_flashcards': showReverseFlashcards,
+      'show_reverse_flashcards': showReverseFlashcards ? 1 : 0,
       'show_antonyms_in_flashcard': showAntonymsInFlashcard.toString(),
     };
   }

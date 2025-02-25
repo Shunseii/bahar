@@ -5,6 +5,7 @@ import 'package:bahar/features/settings/repositories/settings_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:nanoid2/nanoid2.dart';
+import 'dart:developer' as developer;
 
 part 'settings_provider.g.dart';
 
@@ -44,7 +45,18 @@ class Settings extends _$Settings {
 
   Future<void> updateSettings(SettingsModel settings) async {
     final repository = ref.watch(settingsRepositoryProvider);
+
+    developer.log(
+      "Updating settings: $settings",
+      name: 'app.provider.settings',
+    );
+
     await repository.update(settings);
+
+    developer.log(
+      "Successfully updated settings: $settings",
+      name: 'app.provider.settings',
+    );
 
     ref.invalidateSelf(); // Refresh the state
   }

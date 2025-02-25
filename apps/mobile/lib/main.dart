@@ -29,7 +29,6 @@ class MyApp extends ConsumerWidget {
 
     return _EagerInitialization(
       child: MaterialApp(
-        // TODO: do I need the routes here?
         onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
