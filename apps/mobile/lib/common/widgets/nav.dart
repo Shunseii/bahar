@@ -11,10 +11,21 @@ class Destination {
 }
 
 const List<Destination> destinations = <Destination>[
-  Destination('Home', Icon(LucideIcons.house), Icon(LucideIcons.house)),
-  Destination('Decks', Icon(LucideIcons.layers), Icon(LucideIcons.layers)),
   Destination(
-      'Settings', Icon(LucideIcons.settings), Icon(LucideIcons.settings)),
+    'Home',
+    Icon(LucideIcons.house),
+    Icon(LucideIcons.house),
+  ),
+  Destination(
+    'Decks',
+    Icon(LucideIcons.layers),
+    Icon(LucideIcons.layers),
+  ),
+  Destination(
+    'Settings',
+    Icon(LucideIcons.settings),
+    Icon(LucideIcons.settings),
+  ),
 ];
 
 class CustomNavigationDrawer extends StatelessWidget {

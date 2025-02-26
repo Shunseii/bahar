@@ -28,17 +28,23 @@ class MyApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
 
-    return _EagerInitialization(
-      child: ToastificationWrapper(
-        child: MaterialApp(
-          onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
-          locale: locale,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          theme: AppTheme.lightTheme(),
-          darkTheme: AppTheme.darkTheme(),
-          themeMode: themeMode,
-          home: MainPage(),
+    return ToastificationConfigProvider(
+      config: const ToastificationConfig(
+        alignment: Alignment.topCenter,
+        maxToastLimit: 3,
+      ),
+      child: _EagerInitialization(
+        child: ToastificationWrapper(
+          child: MaterialApp(
+            onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
+            locale: locale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: AppTheme.lightTheme(),
+            darkTheme: AppTheme.darkTheme(),
+            themeMode: themeMode,
+            home: MainPage(),
+          ),
         ),
       ),
     );
