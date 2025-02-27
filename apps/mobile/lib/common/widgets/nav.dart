@@ -3,7 +3,6 @@ import 'package:bahar/features/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'dart:developer' as developer;
 import 'package:go_router/go_router.dart';
 
 class Destination {
