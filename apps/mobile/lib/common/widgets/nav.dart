@@ -1,13 +1,20 @@
+import 'package:bahar/features/home/home_screen.dart';
+import 'package:bahar/features/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'dart:developer' as developer;
+import 'package:go_router/go_router.dart';
 
 class Destination {
-  const Destination(this.label, this.icon, this.selectedIcon);
+  const Destination(
+      this.label, this.icon, this.selectedIcon, this.page, this.path);
 
   final String label;
   final Widget icon;
   final Widget selectedIcon;
+  final Widget page;
+  final String path;
 }
 
 const List<Destination> destinations = <Destination>[
@@ -15,53 +22,63 @@ const List<Destination> destinations = <Destination>[
     'Home',
     Icon(LucideIcons.house),
     Icon(LucideIcons.house),
+    HomePage(),
+    '/home',
   ),
   Destination(
     'Decks',
     Icon(LucideIcons.layers),
     Icon(LucideIcons.layers),
+    Placeholder(),
+    '/decks',
   ),
   Destination(
     'Settings',
     Icon(LucideIcons.settings),
     Icon(LucideIcons.settings),
+    SettingsPage(),
+    '/settings',
   ),
 ];
 
-class CustomNavigationDrawer extends StatelessWidget {
+class CustomNavigationDrawer extends StatefulWidget {
   const CustomNavigationDrawer({
     super.key,
-    required this.selectedIndex,
-    required this.onDestinationSelected,
   });
 
-  final int selectedIndex;
-  final ValueChanged<int> onDestinationSelected;
+  @override
+  State<CustomNavigationDrawer> createState() => _CustomNavigationDrawerState();
+}
 
+class _CustomNavigationDrawerState extends State<CustomNavigationDrawer> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final TextDirection currentDir = Directionality.of(context);
-    final bool isRtl = currentDir == TextDirection.rtl;
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final location = GoRouterState.of(context).uri.path;
+
+    // Find the selected index based on the current path
+    int selectedIndex =
+        destinations.indexWhere((dest) => dest.path == location);
+
+    if (selectedIndex == -1) selectedIndex = 0;
 
     return Container(
       decoration: BoxDecoration(
         border: Border(
           left: isRtl
-              ? BorderSide(
-                  color: theme.colorScheme.outline,
-                )
+              ? BorderSide(color: theme.colorScheme.outline)
               : BorderSide.none,
           right: isRtl
               ? BorderSide.none
-              : BorderSide(
-                  color: theme.colorScheme.outline,
-                ),
+              : BorderSide(color: theme.colorScheme.outline),
         ),
       ),
       child: NavigationDrawer(
         selectedIndex: selectedIndex,
-        onDestinationSelected: onDestinationSelected,
+        onDestinationSelected: (index) {
+          context.push(destinations[index].path);
+        },
         backgroundColor: theme.colorScheme.surfaceContainer,
         children: <Widget>[
           Padding(

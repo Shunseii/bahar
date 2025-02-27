@@ -8,8 +8,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 import 'package:flutter/widgets.dart';
+
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
+
+final GoRouter _router = GoRouter(
+  navigatorKey: _rootNavigatorKey,
+  initialLocation: '/home',
+  routes: [
+    ShellRoute(
+      navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'shell'),
+      builder: (context, state, child) {
+        return AuthenticatedScreenLayout(page: child);
+      },
+      routes: [
+        GoRoute(
+          path: '/home',
+          builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          path: '/decks',
+          builder: (context, state) => const Placeholder(),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const SettingsPage(),
+        ),
+      ],
+    ),
+  ],
+  restorationScopeId: 'app',
+  debugLogDiagnostics: true,
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +68,7 @@ class MyApp extends ConsumerWidget {
       ),
       child: _EagerInitialization(
         child: ToastificationWrapper(
-          child: MaterialApp(
+          child: MaterialApp.router(
             onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
             locale: locale,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -43,7 +76,7 @@ class MyApp extends ConsumerWidget {
             theme: AppTheme.lightTheme(),
             darkTheme: AppTheme.darkTheme(),
             themeMode: themeMode,
-            home: MainPage(),
+            routerConfig: _router,
           ),
         ),
       ),
@@ -51,33 +84,16 @@ class MyApp extends ConsumerWidget {
   }
 }
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class AuthenticatedScreenLayout extends StatelessWidget {
+  const AuthenticatedScreenLayout({
+    super.key,
+    required this.page,
+  });
 
-  @override
-  State<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  var selectedIndex = 0;
+  final Widget page;
 
   @override
   Widget build(BuildContext context) {
-    Widget page;
-    switch (selectedIndex) {
-      case 0:
-        page = HomePage();
-        break;
-      case 1:
-        page = Placeholder();
-        break;
-      case 2:
-        page = SettingsPage();
-        break;
-      default:
-        throw UnimplementedError("no widget for $selectedIndex");
-    }
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final theme = Theme.of(context);
@@ -106,16 +122,7 @@ class _MainPageState extends State<MainPage> {
               },
             ),
           ),
-          drawer: CustomNavigationDrawer(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (index) {
-              setState(
-                () {
-                  selectedIndex = index;
-                },
-              );
-            },
-          ),
+          drawer: CustomNavigationDrawer(),
           body: Row(
             children: [
               Expanded(
