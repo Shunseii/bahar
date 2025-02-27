@@ -1,0 +1,2 @@
+/home/shunsei/Projects/bahar/apps/mobile/android/app/.cxx/Debug/26351b3e/x86/CMakeFiles/edit_cache.dir
+/home/shunsei/Projects/bahar/apps/mobile/android/app/.cxx/Debug/26351b3e/x86/CMakeFiles/rebuild_cache.dir
