@@ -21,6 +21,7 @@ class SettingsFlashcardCard extends ConsumerStatefulWidget {
 
 class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
   FlashcardFieldDisplay? showAntonyms = FlashcardFieldDisplay.hidden;
+  bool showReverseFlashcards = false;
   bool isDirty = false;
 
   @override
@@ -31,6 +32,7 @@ class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
       setState(() {
         showAntonyms =
             settings?.showAntonymsInFlashcard ?? FlashcardFieldDisplay.hidden;
+        showReverseFlashcards = settings?.showReverseFlashcards ?? false;
       });
     });
   }
@@ -55,6 +57,16 @@ class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
                 });
               },
             ),
+            const SizedBox(height: 16),
+            ReverseFlashcardsSection(
+              showReverseFlashcards: showReverseFlashcards,
+              onChanged: (bool value) {
+                setState(() {
+                  isDirty = true;
+                  showReverseFlashcards = value;
+                });
+              },
+            ),
             PrimaryButton(
               label: AppLocalizations.of(context)!.settingsPageSaveButtonLabel,
               disabled: !isDirty,
@@ -69,6 +81,7 @@ class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
                       currentSettings!.copyWith(
                         showAntonymsInFlashcard:
                             showAntonyms ?? FlashcardFieldDisplay.hidden,
+                        showReverseFlashcards: showReverseFlashcards,
                       ),
                     );
 
@@ -132,6 +145,54 @@ class AntonymsSection extends ConsumerWidget {
               onChanged: onChanged,
             ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+class ReverseFlashcardsSection extends ConsumerWidget {
+  final bool showReverseFlashcards;
+  final ValueChanged<bool> onChanged;
+
+  const ReverseFlashcardsSection({
+    super.key,
+    required this.showReverseFlashcards,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.reverseFlashcardsTitle,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            Text(
+              AppLocalizations.of(context)!.reverseFlashcardsDescription,
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+          ],
+        ),
+        Switch(
+          value: showReverseFlashcards,
+          onChanged: onChanged,
+          thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+            return colorScheme.surfaceContainer;
+          }),
+          trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+            final bool isSelected = states.contains(WidgetState.selected);
+
+            return isSelected ? colorScheme.primary : colorScheme.outline;
+          }),
+          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
         ),
       ],
     );

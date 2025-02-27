@@ -60,6 +60,14 @@
   "@antonymsSettingsTitle": {
     "description": "The title of the antonyms section on the settings page"
   },
+  "reverseFlashcardsTitle": "Reverse flashcards",
+  "@reverseFlashcardsTitle": {
+    "description": "The title of the reverse flashcards section on the settings page"
+  },
+  "reverseFlashcardsDescription": "Show English to Arabic flashcards.",
+  "@reverseFlashcardsDescription": {
+    "description": "The description of the reverse flashcards feature"
+  },
   "flashcardFieldDisplaySettingHidden": "Don't show",
   "@flashcardFieldDisplaySettingHidden": {
     "description": "The display label for the hidden value in the flashcard field display enum"
