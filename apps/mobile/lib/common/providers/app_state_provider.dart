@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nanoid2/nanoid2.dart';
+import 'dart:developer' as developer;
 
 part 'app_state_provider.g.dart';
 
@@ -36,22 +37,28 @@ class AppSettings extends _$AppSettings {
       userId: userId ?? "",
     );
   }
-  
+
   Future<void> createUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final userId = nanoid(); // 21 chars by default
-    
+
     await prefs.setString(_userIdKey, userId);
-    
+
     state = AsyncData(
       state.value!.copyWith(userId: userId),
     );
   }
-  
+
   Future<void> clearUserId() async {
     final prefs = await SharedPreferences.getInstance();
+
+    developer.log(
+      "Clearing user id from shared preferences: $userId",
+      name: 'app.provider.settings',
+    );
+
     await prefs.remove(_userIdKey);
-    
+
     state = AsyncData(
       state.value!.copyWith(userId: ""),
     );

@@ -91,12 +91,10 @@ class GettingStartedPage extends ConsumerWidget {
                   PrimaryButton(
                     label: l10n.getStarted,
                     onPressed: () async {
-                      // Create a user ID
                       await ref
                           .read(appSettingsProvider.notifier)
                           .createUserId();
 
-                      // Navigate to home
                       if (context.mounted) {
                         context.go('/home');
                       }

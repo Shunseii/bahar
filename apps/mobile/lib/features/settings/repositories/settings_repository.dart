@@ -54,4 +54,19 @@ class SettingsRepository {
 
     return SettingsModel.fromMap(results.first);
   }
+  
+  Future<void> delete(String userId) async {
+    final db = await databaseService.database;
+    
+    developer.log(
+      "Deleting settings for user: $userId",
+      name: 'app.repository.settings',
+    );
+    
+    await db.delete(
+      'settings',
+      where: 'user_id = ?',
+      whereArgs: [userId],
+    );
+  }
 }

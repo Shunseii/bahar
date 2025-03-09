@@ -60,4 +60,22 @@ class Settings extends _$Settings {
 
     ref.invalidateSelf(); // Refresh the state
   }
+
+  Future<void> clearAllSettings() async {
+    final repository = ref.watch(settingsRepositoryProvider);
+    final userId = ref.watch(userIdProvider);
+
+    developer.log(
+      "Clearing all settings for user: $userId",
+      name: 'app.provider.settings',
+    );
+
+    // Delete settings from database
+    await repository.delete(userId);
+
+    // Clear user ID from shared preferences
+    await ref.read(appSettingsProvider.notifier).clearUserId();
+
+    ref.invalidateSelf(); // Refresh the state
+  }
 }
