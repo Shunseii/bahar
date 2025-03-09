@@ -65,7 +65,7 @@ class GettingStartedPage extends ConsumerWidget {
                           color: theme.colorScheme.primaryContainer,
                           child: Center(
                             child: Text(
-                              'Bahar',
+                              l10n.appName,
                               style: theme.textTheme.displaySmall?.copyWith(
                                 color: theme.colorScheme.onPrimaryContainer,
                               ),
@@ -77,14 +77,14 @@ class GettingStartedPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    'Welcome to Bahar',
+                    l10n.welcomeToBahar,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Your personal Arabic language learning companion. Build your vocabulary and improve your fluency with flashcards and more.',
+                    l10n.appDescription,
                     style: theme.textTheme.bodyLarge,
                   ),
                   const Spacer(),

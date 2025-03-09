@@ -91,5 +91,13 @@
   "getStarted": "Get Started",
   "@getStarted": {
     "description": "The label for the get started button in the getting started page"
+  },
+  "welcomeToBahar": "Welcome to Bahar",
+  "@welcomeToBahar": {
+    "description": "The welcome message on the getting started page"
+  },
+  "appDescription": "Your personal Arabic language learning companion. Build your vocabulary and improve your fluency with flashcards and more.",
+  "@appDescription": {
+    "description": "The description of the app on the getting started page"
   }
 }
