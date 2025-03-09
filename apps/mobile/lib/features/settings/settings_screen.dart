@@ -1,5 +1,6 @@
 import 'package:bahar/features/settings/widgets/locale_menu.dart';
 import 'package:bahar/features/settings/widgets/settings_card.dart';
+import 'package:bahar/features/settings/widgets/settings_debug_card.dart';
 import 'package:bahar/features/settings/widgets/settings_flashcards_card.dart';
 import 'package:bahar/features/settings/widgets/theme_toggle.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,8 @@ class SettingsPage extends StatelessWidget {
           ),
           SizedBox(height: 24),
           SettingsFlashcardCard(),
+          SizedBox(height: 24),
+          SettingsDebugCard(),
         ],
       ),
     );

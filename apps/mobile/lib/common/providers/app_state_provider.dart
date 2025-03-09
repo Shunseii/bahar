@@ -30,15 +30,30 @@ class AppSettings extends _$AppSettings {
 
     String? userId = prefs.getString(_userIdKey);
 
-    if (userId == null) {
-      userId = nanoid(); // 21 chars by default
-      await prefs.setString(_userIdKey, userId);
-    }
-
     return AppState(
       themeMode: savedThemeMode,
       locale: savedLocale,
-      userId: userId,
+      userId: userId ?? "",
+    );
+  }
+  
+  Future<void> createUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = nanoid(); // 21 chars by default
+    
+    await prefs.setString(_userIdKey, userId);
+    
+    state = AsyncData(
+      state.value!.copyWith(userId: userId),
+    );
+  }
+  
+  Future<void> clearUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userIdKey);
+    
+    state = AsyncData(
+      state.value!.copyWith(userId: ""),
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:bahar/common/services/database_service.dart';
 import 'package:bahar/common/theme.dart';
 import 'package:bahar/common/widgets/nav.dart';
 import 'package:bahar/features/home/home_screen.dart';
+import 'package:bahar/features/onboarding/getting_started_screen.dart';
 import 'package:bahar/features/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -15,34 +16,56 @@ import 'package:flutter/widgets.dart';
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 
-final GoRouter _router = GoRouter(
-  navigatorKey: _rootNavigatorKey,
-  initialLocation: '/home',
-  routes: [
-    ShellRoute(
-      navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'shell'),
-      builder: (context, state, child) {
-        return AuthenticatedScreenLayout(page: child);
-      },
-      routes: [
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => const HomePage(),
-        ),
-        GoRoute(
-          path: '/decks',
-          builder: (context, state) => const Placeholder(),
-        ),
-        GoRoute(
-          path: '/settings',
-          builder: (context, state) => const SettingsPage(),
-        ),
-      ],
-    ),
-  ],
-  restorationScopeId: 'app',
-  debugLogDiagnostics: true,
-);
+// Router configuration with redirect logic
+final routerProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    navigatorKey: _rootNavigatorKey,
+    initialLocation: '/home',
+    redirect: (context, state) {
+      final userId = ref.read(userIdProvider);
+      
+      // If there's no userId and the user is not already on the onboarding route
+      if (userId.isEmpty && state.fullPath != '/onboarding') {
+        return '/onboarding';
+      }
+      
+      // If there is a userId and the user is on the onboarding route
+      if (userId.isNotEmpty && state.fullPath == '/onboarding') {
+        return '/home';
+      }
+      
+      return null;
+    },
+    routes: [
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const GettingStartedPage(),
+      ),
+      ShellRoute(
+        navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'shell'),
+        builder: (context, state, child) {
+          return AuthenticatedScreenLayout(page: child);
+        },
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: '/decks',
+            builder: (context, state) => const Placeholder(),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (context, state) => const SettingsPage(),
+          ),
+        ],
+      ),
+    ],
+    restorationScopeId: 'app',
+    debugLogDiagnostics: true,
+  );
+});
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +83,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
+    final router = ref.watch(routerProvider);
 
     return ToastificationConfigProvider(
       config: const ToastificationConfig(
@@ -76,7 +100,7 @@ class MyApp extends ConsumerWidget {
             theme: AppTheme.lightTheme(),
             darkTheme: AppTheme.darkTheme(),
             themeMode: themeMode,
-            routerConfig: _router,
+            routerConfig: router,
           ),
         ),
       ),

@@ -20,5 +20,7 @@
   "flashcardFieldDisplaySettingHidden": "لا تعرض",
   "flashcardFieldDisplaySettingHint": "عرض كتلميح",
   "flashcardFieldDisplaySettingAnswer": "عرض بعد كشف الإجابة",
-  "settingsPageSaveButtonLabel": "احفظ"
+  "settingsPageSaveButtonLabel": "احفظ",
+  "customizeYourExperience": "خصص تجربتك",
+  "getStarted": "ابدأ الآن"
 }

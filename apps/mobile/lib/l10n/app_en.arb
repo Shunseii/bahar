@@ -83,5 +83,13 @@
   "settingsPageSaveButtonLabel": "Save",
   "@settingsPageSaveButtonLabel": {
     "description": "The label for the save button in the settings page"
+  },
+  "customizeYourExperience": "Customize Your Experience",
+  "@customizeYourExperience": {
+    "description": "The title for the customization section in the getting started page"
+  },
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "The label for the get started button in the getting started page"
   }
 }
