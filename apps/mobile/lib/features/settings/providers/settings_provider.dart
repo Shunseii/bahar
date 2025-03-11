@@ -61,7 +61,7 @@ class Settings extends _$Settings {
     ref.invalidateSelf(); // Refresh the state
   }
 
-  Future<void> clearAllSettings() async {
+  Future<void> clearAllUserSettings() async {
     final repository = ref.watch(settingsRepositoryProvider);
     final userId = ref.watch(userIdProvider);
 
@@ -77,5 +77,36 @@ class Settings extends _$Settings {
     await ref.read(appSettingsProvider.notifier).clearUserId();
 
     ref.invalidateSelf(); // Refresh the state
+  }
+
+  Future<void> logAllSettings() async {
+    final repository = ref.watch(settingsRepositoryProvider);
+
+    developer.log(
+      "Getting all settings data",
+      name: 'app.provider.settings',
+    );
+
+    final allSettings = await repository.getAll();
+
+    developer.log(
+      "All settings data (${allSettings.length} records):\n${allSettings.map((s) => s.toString()).join('\n')}",
+      name: 'app.provider.settings',
+    );
+  }
+
+  Future<void> deleteAllSettings() async {
+    final repository = ref.watch(settingsRepositoryProvider);
+
+    developer.log(
+      "Deleting all settings data for all users",
+      name: 'app.provider.settings',
+    );
+
+    await repository.deleteAll();
+
+    await ref.read(appSettingsProvider.notifier).clearUserId();
+
+    ref.invalidateSelf();
   }
 }

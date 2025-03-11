@@ -69,4 +69,28 @@ class SettingsRepository {
       whereArgs: [userId],
     );
   }
+  
+  Future<List<SettingsModel>> getAll() async {
+    final db = await databaseService.database;
+    
+    final results = await db.query('settings');
+    
+    developer.log(
+      "Getting all settings: ${results.length} records found",
+      name: 'app.repository.settings',
+    );
+    
+    return results.map((map) => SettingsModel.fromMap(map)).toList();
+  }
+  
+  Future<void> deleteAll() async {
+    final db = await databaseService.database;
+    
+    developer.log(
+      "Deleting all settings records",
+      name: 'app.repository.settings',
+    );
+    
+    await db.delete('settings');
+  }
 }
