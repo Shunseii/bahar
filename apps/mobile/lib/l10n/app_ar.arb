@@ -2,6 +2,12 @@
   "@@locale": "ar",
   "helloWorld": "مرحبا بالعالم!",
   "appName": "بحر",
+  "dictionary": "القاموس",
+  "dictionaryDescription": "اعرض جميع الكلمات في قاموسك الشخصي.",
+  "searchHint": "بحث...",
+  "noWordsMessage": "لا توجد كلمات في قاموسك بعد.",
+  "addSomeToGetStarted": "أضف بعضًا للبدء!",
+  "addWord": "إضافة كلمة",
   "settingsPageTitle": "الإعدادات",
   "settingsPageAppearanceCardTitle": "المظهر",
   "settingsPageAppearanceCardSubtitle": "قم بتخصيص كيف يظهر التطبيق بالنسبة لك.",
@@ -24,5 +30,7 @@
   "customizeYourExperience": "خصص تجربتك",
   "getStarted": "ابدأ الآن",
   "welcomeToBahar": "مرحباً بك في بحر",
-  "appDescription": "رفيقك الشخصي لتعلم اللغة العربية. قم ببناء مفرداتك وتحسين طلاقتك باستخدام البطاقات التعليمية والمزيد."
+  "appDescription": "رفيقك الشخصي لتعلم اللغة العربية. قم ببناء مفرداتك وتحسين طلاقتك باستخدام البطاقات التعليمية والمزيد.",
+  "resultsFound": "نتائج وجدت",
+  "reviewFlashcards": "مراجعة البطاقات"
 }

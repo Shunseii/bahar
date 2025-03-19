@@ -16,12 +16,12 @@ class Destination {
   final String path;
 }
 
-const List<Destination> destinations = <Destination>[
+List<Destination> destinations = <Destination>[
   Destination(
     'Home',
     Icon(LucideIcons.house),
     Icon(LucideIcons.house),
-    HomePage(),
+    const HomePage(),
     '/home',
   ),
   Destination(

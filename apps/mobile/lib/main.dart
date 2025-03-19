@@ -16,24 +16,21 @@ import 'package:flutter/widgets.dart';
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 
-// Router configuration with redirect logic
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/home',
     redirect: (context, state) {
       final userId = ref.read(userIdProvider);
-      
-      // If there's no userId and the user is not already on the onboarding route
+
       if (userId.isEmpty && state.fullPath != '/onboarding') {
         return '/onboarding';
       }
-      
-      // If there is a userId and the user is on the onboarding route
+
       if (userId.isNotEmpty && state.fullPath == '/onboarding') {
         return '/home';
       }
-      
+
       return null;
     },
     routes: [
@@ -116,6 +113,58 @@ class AuthenticatedScreenLayout extends StatelessWidget {
 
   final Widget page;
 
+  Widget _buildAppBarTitle(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    final l10n = AppLocalizations.of(context)!;
+
+    // Only show search bar on home page
+    if (location == '/home') {
+      return Consumer(
+        builder: (context, ref, child) {
+          final theme = Theme.of(context);
+          final hintColor = theme.textTheme.labelSmall?.color;
+
+          return SearchBar(
+            hintText: l10n.searchHint,
+            hintStyle: WidgetStatePropertyAll(
+              theme.textTheme.labelLarge!.copyWith(
+                color: hintColor,
+              ),
+            ),
+            leading: Icon(
+              LucideIcons.search,
+              color: hintColor,
+              size: 18,
+            ),
+            padding: const WidgetStatePropertyAll(
+              EdgeInsets.symmetric(horizontal: 8.0),
+            ),
+            shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            constraints: const BoxConstraints(
+              maxHeight: 40.0,
+              minHeight: 40.0,
+            ),
+            backgroundColor: WidgetStatePropertyAll(
+              Theme.of(context).colorScheme.surfaceContainer,
+            ),
+            side: WidgetStatePropertyAll(
+              BorderSide(color: Theme.of(context).colorScheme.outline),
+            ),
+            onChanged: (value) {
+              ref.read(searchQueryProvider.notifier).state = value;
+            },
+          );
+        },
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -127,9 +176,11 @@ class AuthenticatedScreenLayout extends StatelessWidget {
           appBar: AppBar(
             scrolledUnderElevation: 0,
             backgroundColor: theme.colorScheme.surfaceContainer,
+            // Only show search in app bar for home screen
+            title: _buildAppBarTitle(context),
             // Bottom border
             bottom: PreferredSize(
-              preferredSize: Size.fromHeight(1.0),
+              preferredSize: const Size.fromHeight(1.0),
               child: Container(
                 color: theme.colorScheme.outline,
                 height: 1.0,
@@ -138,7 +189,9 @@ class AuthenticatedScreenLayout extends StatelessWidget {
             leading: Builder(
               builder: (context) {
                 return IconButton(
-                  icon: const Icon(LucideIcons.panel_left),
+                  icon: const Icon(
+                    LucideIcons.panel_left,
+                  ),
                   onPressed: () {
                     Scaffold.of(context).openDrawer();
                   },

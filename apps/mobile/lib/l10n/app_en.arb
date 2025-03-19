@@ -8,6 +8,30 @@
   "@appName": {
     "description": "The name of the app"
   },
+  "dictionary": "Dictionary",
+  "@dictionary": {
+    "description": "The title of the dictionary page"
+  },
+  "dictionaryDescription": "View all the words in your personal dictionary.",
+  "@dictionaryDescription": {
+    "description": "The description of the dictionary page"
+  },
+  "searchHint": "Search...",
+  "@searchHint": {
+    "description": "Hint text for the search bar"
+  },
+  "noWordsMessage": "You have no words in your dictionary yet.",
+  "@noWordsMessage": {
+    "description": "Message shown when there are no words in the dictionary"
+  },
+  "addSomeToGetStarted": "Add some to get started!",
+  "@addSomeToGetStarted": {
+    "description": "Additional message shown when there are no words in the dictionary"
+  },
+  "addWord": "Add word",
+  "@addWord": {
+    "description": "Label for the add word button"
+  },
   "settingsPageTitle": "Settings",
   "@settingsPageTitle": {
     "description": "The title of the settings page"
@@ -99,5 +123,13 @@
   "appDescription": "Your personal Arabic language learning companion. Build your vocabulary and improve your fluency with flashcards and more.",
   "@appDescription": {
     "description": "The description of the app on the getting started page"
+  },
+  "resultsFound": "results found",
+  "@resultsFound": {
+    "description": "Text shown after the number of search results"
+  },
+  "reviewFlashcards": "Review flashcards",
+  "@reviewFlashcards": {
+    "description": "Label for the review flashcards button"
   }
 }
