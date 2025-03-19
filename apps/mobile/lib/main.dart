@@ -136,6 +136,7 @@ class AuthenticatedScreenLayout extends StatelessWidget {
               color: hintColor,
               size: 18,
             ),
+            elevation: WidgetStatePropertyAll(0),
             padding: const WidgetStatePropertyAll(
               EdgeInsets.symmetric(horizontal: 8.0),
             ),

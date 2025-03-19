@@ -23,7 +23,11 @@ class DictionaryEntryCard extends StatelessWidget {
         Align(
           alignment: Alignment.centerRight,
           child: IconButton(
-            icon: const Icon(LucideIcons.square_pen, size: 18.0),
+            icon: Icon(
+              LucideIcons.square_pen,
+              size: 18.0,
+              color: theme.colorScheme.onSurface,
+            ),
             onPressed: onEdit,
             tooltip: 'Edit',
             style: IconButton.styleFrom(

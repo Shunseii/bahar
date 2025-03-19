@@ -44,6 +44,8 @@ class _ReviewFlashcardsButtonState extends State<ReviewFlashcardsButton>
     // TODO: Replace with real data
     const hasFlashcards = true;
 
+    final dir = Directionality.of(context);
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -60,7 +62,8 @@ class _ReviewFlashcardsButtonState extends State<ReviewFlashcardsButton>
         ),
         if (hasFlashcards)
           Positioned(
-            right: -1,
+            right: dir == TextDirection.ltr ? -1 : null,
+            left: dir == TextDirection.rtl ? -1 : null,
             child: _buildNotificationDot(context),
           ),
       ],
