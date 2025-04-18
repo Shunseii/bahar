@@ -12,17 +12,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:toastification/toastification.dart';
 import 'package:flutter/widgets.dart';
+import 'dart:developer' as developer;
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 
+class RouterRefreshNotifier extends ChangeNotifier {
+  RouterRefreshNotifier(Ref ref) {
+    ref.listen(appSettingsProvider, (_, __) {
+      notifyListeners();
+    });
+  }
+}
+
 final routerProvider = Provider<GoRouter>((ref) {
+  final refreshListenable = RouterRefreshNotifier(ref);
+
+  // appSettings is already loaded in MyApp, so we can safely access it
+  final appState = ref.read(appSettingsProvider).value!;
+  final hasUserId = appState.userId.isNotEmpty;
+
+  final initialLocation = hasUserId ? '/home' : '/onboarding';
+
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/home',
+    refreshListenable: refreshListenable,
+    initialLocation: initialLocation,
     redirect: (context, state) {
       final userId = ref.read(userIdProvider);
 
+      // Make sure we're always on the correct route based on auth state
       if (userId.isEmpty && state.fullPath != '/onboarding') {
         return '/onboarding';
       }
@@ -65,12 +85,27 @@ final routerProvider = Provider<GoRouter>((ref) {
 });
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // Keep splash screen visible while we initialize
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  final databaseService = DatabaseService.instance;
-  await databaseService.initialize();
+  try {
+    final databaseService = DatabaseService.instance;
+    await databaseService.initialize();
 
-  runApp(ProviderScope(child: MyApp()));
+    runApp(ProviderScope(child: MyApp()));
+  } catch (e) {
+    // If there's an error during initialization, remove splash and show error
+    FlutterNativeSplash.remove();
+
+    runApp(MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Text('Error initializing app: $e'),
+        ),
+      ),
+    ));
+  }
 }
 
 class MyApp extends ConsumerWidget {
@@ -80,27 +115,55 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
-    final router = ref.watch(routerProvider);
 
-    return ToastificationConfigProvider(
-      config: const ToastificationConfig(
-        alignment: Alignment.topCenter,
-        maxToastLimit: 3,
-      ),
-      child: _EagerInitialization(
-        child: ToastificationWrapper(
-          child: MaterialApp.router(
-            onGenerateTitle: (context) => AppLocalizations.of(context)!.appName,
-            locale: locale,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            theme: AppTheme.lightTheme(),
-            darkTheme: AppTheme.darkTheme(),
-            themeMode: themeMode,
-            routerConfig: router,
+    final appSettings = ref.watch(appSettingsProvider);
+
+    // Wait for app settings to be fully loaded before initializing the router
+    return appSettings.when(
+      data: (settings) {
+        final router = ref.watch(routerProvider);
+
+        FlutterNativeSplash.remove();
+
+        return ToastificationConfigProvider(
+          config: const ToastificationConfig(
+            alignment: Alignment.topCenter,
+            maxToastLimit: 3,
           ),
-        ),
-      ),
+          child: ToastificationWrapper(
+            child: MaterialApp.router(
+              onGenerateTitle: (context) =>
+                  AppLocalizations.of(context)!.appName,
+              locale: locale,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              theme: AppTheme.lightTheme(),
+              darkTheme: AppTheme.darkTheme(),
+              themeMode: themeMode,
+              routerConfig: router,
+            ),
+          ),
+        );
+      },
+      loading: () {
+        // Return empty container - the splash screen is still visible
+        // We want to keep showing the native splash until data is loaded
+        return const SizedBox.shrink();
+      },
+      error: (error, stack) {
+        FlutterNativeSplash.remove();
+
+        return MaterialApp(
+          theme: AppTheme.lightTheme(),
+          darkTheme: AppTheme.darkTheme(),
+          themeMode: ThemeMode.system,
+          home: Scaffold(
+            body: Center(
+              child: Text('Error loading app: $error'),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -134,15 +197,15 @@ class AuthenticatedScreenLayout extends StatelessWidget {
             leading: Icon(
               LucideIcons.search,
               color: hintColor,
-              size: 18,
+              size: 18.0,
             ),
-            elevation: WidgetStatePropertyAll(0),
+            elevation: WidgetStatePropertyAll(0.0),
             padding: const WidgetStatePropertyAll(
               EdgeInsets.symmetric(horizontal: 8.0),
             ),
             shape: WidgetStatePropertyAll(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.0),
               ),
             ),
             constraints: const BoxConstraints(
@@ -175,11 +238,9 @@ class AuthenticatedScreenLayout extends StatelessWidget {
         return Scaffold(
           backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
-            scrolledUnderElevation: 0,
+            scrolledUnderElevation: 0.0,
             backgroundColor: theme.colorScheme.surfaceContainer,
-            // Only show search in app bar for home screen
             title: _buildAppBarTitle(context),
-            // Bottom border
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(1.0),
               child: Container(
@@ -214,20 +275,5 @@ class AuthenticatedScreenLayout extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-// Eagerly initialize theme, locale, and userId
-class _EagerInitialization extends ConsumerWidget {
-  const _EagerInitialization({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Eagerly initialize providers by watching them.
-    // By using "watch", the provider will stay alive and not be disposed.
-    ref.watch(appSettingsProvider);
-
-    return child;
   }
 }

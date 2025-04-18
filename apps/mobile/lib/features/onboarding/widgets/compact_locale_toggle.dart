@@ -32,7 +32,7 @@ class CompactLocaleToggle extends ConsumerWidget {
               if (isSelected)
                 Icon(
                   Icons.check,
-                  size: 16,
+                  size: 16.0,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
             ],

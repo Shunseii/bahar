@@ -75,8 +75,8 @@ class _ReviewFlashcardsButtonState extends State<ReviewFlashcardsButton>
       animation: _animationController,
       builder: (context, child) {
         return Container(
-          width: 12,
-          height: 12,
+          width: 12.0,
+          height: 12.0,
           decoration: BoxDecoration(
             color: _colorAnimation.value,
             borderRadius: BorderRadius.circular(10.0),

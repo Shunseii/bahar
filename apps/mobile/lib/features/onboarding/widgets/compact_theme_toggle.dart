@@ -33,14 +33,14 @@ class CompactThemeToggle extends ConsumerWidget {
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 12.0),
               Expanded(
                 child: Text(ThemeOption.getTranslatedLabel(context, option.labelKey)),
               ),
               if (isSelected)
                 Icon(
                   Icons.check,
-                  size: 16,
+                  size: 16.0,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
             ],

@@ -81,7 +81,7 @@ class _CustomNavigationDrawerState extends State<CustomNavigationDrawer> {
         backgroundColor: theme.colorScheme.surfaceContainer,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.fromLTRB(28, 16, 16, 10),
+            padding: const EdgeInsets.fromLTRB(28.0, 16.0, 16.0, 10.0),
             child: Text(
               AppLocalizations.of(context)!.appName,
               style: theme.textTheme.titleSmall,

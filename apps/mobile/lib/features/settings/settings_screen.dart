@@ -15,7 +15,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         children: [
           Text(
             AppLocalizations.of(context)!.settingsPageTitle,
@@ -24,7 +24,7 @@ class SettingsPage extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
           ),
-          SizedBox(height: 24),
+          SizedBox(height: 24.0),
           SettingsCard(
             title:
                 AppLocalizations.of(context)!.settingsPageAppearanceCardTitle,
@@ -41,9 +41,9 @@ class SettingsPage extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 24),
+          SizedBox(height: 24.0),
           SettingsFlashcardCard(),
-          SizedBox(height: 24),
+          SizedBox(height: 24.0),
           SettingsDebugCard(),
         ],
       ),

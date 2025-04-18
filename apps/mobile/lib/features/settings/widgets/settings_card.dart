@@ -21,7 +21,7 @@ class SettingsCard extends StatelessWidget {
             borderOnForeground: true,
             color: Theme.of(context).colorScheme.surfaceContainer,
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -36,7 +36,7 @@ class SettingsCard extends StatelessWidget {
                       subtitle!,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
-                  SizedBox(height: 24),
+                  SizedBox(height: 24.0),
                   ...children,
                 ],
               ),

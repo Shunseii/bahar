@@ -46,7 +46,7 @@ class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 16,
+          spacing: 16.0,
           children: [
             AntonymsSection(
               showAntonyms: showAntonyms,
@@ -57,7 +57,7 @@ class _SettingsFlashcardCardState extends ConsumerState<SettingsFlashcardCard> {
                 });
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16.0),
             ReverseFlashcardsSection(
               showReverseFlashcards: showReverseFlashcards,
               onChanged: (bool value) {

@@ -25,7 +25,7 @@ class CompactRadioListTile<T> extends StatelessWidget {
         horizontal: VisualDensity.minimumDensity,
         vertical: VisualDensity.minimumDensity,
       ),
-      contentPadding: const EdgeInsets.all(0),
+      contentPadding: const EdgeInsets.all(0.0),
       value: value,
       groupValue: groupValue,
       onChanged: onChanged,

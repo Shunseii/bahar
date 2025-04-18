@@ -21,7 +21,7 @@ class SettingsDebugCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("User ID: $userId"),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16.0),
             PrimaryButton(
               label: "Clear user id from shared preferences",
               onPressed: () async {
@@ -32,7 +32,7 @@ class SettingsDebugCard extends ConsumerWidget {
                 }
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16.0),
             PrimaryButton(
               label: "Clear all user settings",
               onPressed: () async {
@@ -41,14 +41,14 @@ class SettingsDebugCard extends ConsumerWidget {
                     .clearAllUserSettings();
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16.0),
             PrimaryButton(
               label: "Log all settings data",
               onPressed: () async {
                 await ref.read(settingsProvider.notifier).logAllSettings();
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 16.0),
             PrimaryButton(
               label: "Delete all settings data",
               onPressed: () async {

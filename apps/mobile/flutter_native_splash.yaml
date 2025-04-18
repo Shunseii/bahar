@@ -1,0 +1,22 @@
+flutter_native_splash:
+  color: "#ffffff"
+  color_dark: "#121212"
+
+  image: assets/logo.png
+
+  # Android 12 specific settings (uses different image size)
+  android_12:
+    image: assets/logo.png
+    color: "#ffffff"
+    color_dark: "#121212"
+    icon_background_color: "#ffffff"
+    icon_background_color_dark: "#121212"
+
+  # Enable on platforms
+  android: true
+  ios: true
+  web: false
+
+  fullscreen: true
+  android_gravity: center
+  ios_content_mode: center

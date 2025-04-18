@@ -23,22 +23,22 @@ class AppTheme {
       fontFamily: 'Inter',
       inputDecorationTheme: InputDecorationTheme(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.0),
         ),
       ),
       dropdownMenuTheme: DropdownMenuThemeData(
         menuStyle: MenuStyle(
-          elevation: WidgetStateProperty.all<double>(0),
+          elevation: WidgetStateProperty.all<double>(0.0),
           padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-            const EdgeInsets.all(8),
+            const EdgeInsets.all(8.0),
           ),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          elevation: 0,
+          elevation: 0.0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12.0),
           ),
         ),
       ),

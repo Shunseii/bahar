@@ -23,8 +23,8 @@ class GettingStartedPage extends ConsumerWidget {
       // Add AppBar to control system overlay style
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        toolbarHeight: 0,
+        elevation: 0.0,
+        toolbarHeight: 0.0,
         systemOverlayStyle: theme.brightness == Brightness.dark
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark,
@@ -33,16 +33,16 @@ class GettingStartedPage extends ConsumerWidget {
         child: Stack(
           children: [
             Positioned(
-              top: 16,
-              right: isRtl ? 16 : null,
-              left: isRtl ? null : 16,
+              top: 16.0,
+              right: isRtl ? 16.0 : null,
+              left: isRtl ? null : 16.0,
               child: CompactThemeToggle(),
             ),
 
             Positioned(
-              top: 16,
-              right: isRtl ? null : 16,
-              left: isRtl ? 16 : null,
+              top: 16.0,
+              right: isRtl ? null : 16.0,
+              left: isRtl ? 16.0 : null,
               child: CompactLocaleToggle(),
             ),
 
@@ -56,12 +56,12 @@ class GettingStartedPage extends ConsumerWidget {
                   Center(
                     child: SvgPicture.asset(
                       'assets/logo.svg',
-                      width: 120,
-                      height: 120,
+                      width: 120.0,
+                      height: 120.0,
                       placeholderBuilder: (context) {
                         return Container(
-                          width: 120,
-                          height: 120,
+                          width: 120.0,
+                          height: 120.0,
                           color: theme.colorScheme.primaryContainer,
                           child: Center(
                             child: Text(
@@ -75,14 +75,14 @@ class GettingStartedPage extends ConsumerWidget {
                       },
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 32.0),
                   Text(
                     l10n.welcomeToBahar,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 16.0),
                   Text(
                     l10n.appDescription,
                     style: theme.textTheme.bodyLarge,
@@ -100,7 +100,7 @@ class GettingStartedPage extends ConsumerWidget {
                       }
                     },
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 24.0),
                 ],
               ),
             ),
