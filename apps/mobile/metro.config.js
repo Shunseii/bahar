@@ -7,7 +7,7 @@ const path = require("path");
 
 const config = withMonorepoPaths(
   withNativeWind(getDefaultConfig(__dirname), {
-    input: "./global.css",
+    input: "./src/global.css",
     configPath: "./tailwind.config.ts",
   }),
 );
