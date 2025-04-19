@@ -1,21 +1,21 @@
 // Learn more: https://docs.expo.dev/guides/monorepos/
 const { getDefaultConfig } = require("expo/metro-config");
 const { FileStore } = require("metro-cache");
-// const { withNativeWind } = require("nativewind/metro");
+const { withNativeWind } = require("nativewind/metro");
 
 const path = require("path");
 
-// const config = withMonorepoPaths(
-//   withNativeWind(getDefaultConfig(__dirname), {
-//     input: "./src/styles.css",
-//     configPath: "./tailwind.config.ts",
-//   }),
-// );
+const config = withMonorepoPaths(
+  withNativeWind(getDefaultConfig(__dirname), {
+    input: "./global.css",
+    configPath: "./tailwind.config.ts",
+  }),
+);
 
-const config = withMonorepoPaths(getDefaultConfig(__dirname), {
-  input: "./src/styles.css",
-  configPath: "./tailwind.config.ts",
-});
+// const config = withMonorepoPaths(getDefaultConfig(__dirname), {
+//   input: "./src/styles.css",
+//   configPath: "./tailwind.config.ts",
+// });
 
 // XXX: Resolve our exports in workspace packages
 // https://github.com/expo/expo/issues/26926
