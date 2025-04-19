@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { Image, StyleSheet, Platform, View, Text } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
@@ -15,10 +15,17 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
+      {/* Standard themed components */}
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+      
+      {/* Example of using Tailwind classes with CSS variables */}
+      <View className="bg-background p-4 rounded-lg m-4 border border-border">
+        <Text className="text-primary text-xl font-bold mb-2">Tailwind with CSS Variables</Text>
+        <Text className="text-foreground">This card is using the shared theme from web!</Text>
+      </View>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
