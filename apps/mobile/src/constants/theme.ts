@@ -44,4 +44,3 @@ export const cssVariables = {
     "--ring": "224.3 76.3% 48%",
   },
 };
-
