@@ -8,7 +8,7 @@ importers:
 
   .:
     devDependencies:
-      '@repo/typescript-config':
+      '@bahar/typescript-config':
         specifier: workspace:*
         version: link:packages/config-typescript
       eslint:
@@ -99,10 +99,10 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
-      '@repo/eslint-config':
+      '@bahar/eslint-config':
         specifier: workspace:*
         version: link:../../packages/config-eslint
-      '@repo/typescript-config':
+      '@bahar/typescript-config':
         specifier: workspace:*
         version: link:../../packages/config-typescript
       '@types/cors':
@@ -416,6 +416,12 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
+      '@bahar/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/config-eslint
+      '@bahar/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/config-typescript
       '@julr/vite-plugin-validate-env':
         specifier: ^1.2.0
         version: 1.2.0(vite@5.1.3)(zod@3.22.4)
@@ -431,12 +437,6 @@ importers:
       '@lingui/vite-plugin':
         specifier: ^5.3.1
         version: 5.3.1(typescript@5.3.3)(vite@5.1.3)
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/config-eslint
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/config-typescript
       '@swc/core':
         specifier: 1.11.21
         version: 1.11.21

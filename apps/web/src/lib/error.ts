@@ -114,9 +114,9 @@ const formattedErrorMessage = ({
       }
       return `${prefix}${t`Invalid string format`}`;
     case "too_small":
-      return `${prefix}${t`Value must be ${err.minimum} or greater`}`;
+      return `${prefix}${t`Value must be ${String(err.minimum)} or greater`}`;
     case "too_big":
-      return `${prefix}${t`Value must be ${err.maximum} or less`}`;
+      return `${prefix}${t`Value must be ${String(err.maximum)} or less`}`;
     default:
       return `${prefix}${err.message}`;
   }

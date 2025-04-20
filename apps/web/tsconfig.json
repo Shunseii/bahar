@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/typescript-config/vite.json",
+  "extends": "@bahar/typescript-config/vite.json",
   "include": ["src"],
   "compilerOptions": {
     "declaration": false,
