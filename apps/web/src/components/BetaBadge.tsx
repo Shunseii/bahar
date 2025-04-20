@@ -1,5 +1,5 @@
+import { Trans } from "@lingui/react/macro";
 import React from "react";
-import { Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
 
 interface BetaBadgeProps {

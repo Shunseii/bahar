@@ -1,8 +1,8 @@
-import { useLingui } from "@lingui/react";
+import { Trans } from "@lingui/react/macro";
+import { useLingui } from "@lingui/react/macro";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/lib/trpc";
-import { Trans, msg } from "@lingui/macro";
 import { useClickAway, useDebounce } from "@uidotdev/usehooks";
 import { Input } from "./ui/input";
 
@@ -23,7 +23,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const ref = useClickAway<HTMLInputElement>(() => setShowDropdown(false));
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const [inputValue, setInputValue] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const debouncedInputValue = useDebounce(inputValue, 500);
@@ -77,7 +77,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
       >
         <Input
           type="search"
-          placeholder={_(msg`Search for a tag...`)}
+          placeholder={t`Search for a tag...`}
           className="rounded-lg bg-background"
           onFocus={() => {
             setShowDropdown(true);

@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { FC, useEffect, useState } from "react";
 import {
   Highlight,
@@ -13,7 +14,6 @@ import { useCountdown } from "@/hooks/useCountdown";
 import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "@tanstack/react-router";
-import { Trans } from "@lingui/macro";
 
 /**
  * The difference in the height of the infinite list and the

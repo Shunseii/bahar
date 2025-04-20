@@ -1,4 +1,4 @@
-import { t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
 import { DictionarySchema } from "api/schemas";
 import { ImportErrorCode } from "api/error";
 import { type ZodError, type ZodIssue } from "zod";

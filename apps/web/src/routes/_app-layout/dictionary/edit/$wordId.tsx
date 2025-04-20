@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { Page } from "@/components/Page";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { queryClient } from "@/lib/query";
@@ -11,7 +12,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Trans, msg } from "@lingui/macro";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { z } from "@/lib/zod";
@@ -26,7 +26,7 @@ import {
   CategoryFormSection,
 } from "@/components/features/dictionary/add";
 import { useToast } from "@/hooks/useToast";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import { useInstantSearch } from "react-instantsearch";
 import { FC } from "react";
 import { useDir } from "@/hooks/useDir";
@@ -52,7 +52,7 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
     },
   });
   const { toast } = useToast();
-  const { _ } = useLingui();
+  const { t } = useLingui();
 
   return (
     <Dialog>
@@ -90,7 +90,7 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
                 await resetFlashcard({ id });
 
                 toast({
-                  title: _(msg`Successfully reset the flashcard.`),
+                  title: t`Successfully reset the flashcard.`,
                 });
               }}
             >
@@ -225,7 +225,7 @@ const Edit = () => {
   const { data } = trpc.dictionary.find.useQuery({ id: wordId });
   const { toast } = useToast();
   const { refresh } = useInstantSearch();
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -298,8 +298,8 @@ const Edit = () => {
       }
 
       toast({
-        title: _(msg`Successfully updated the word!`),
-        description: _(msg`The word has been updated.`),
+        title: t`Successfully updated the word!`,
+        description: t`The word has been updated.`,
       });
 
       refresh();
@@ -309,10 +309,8 @@ const Edit = () => {
       }
 
       toast({
-        title: _(msg`Failed to update the word!`),
-        description: _(
-          msg`There was an error updating your word. Please try again.`,
-        ),
+        title: t`Failed to update the word!`,
+        description: t`There was an error updating your word. Please try again.`,
         variant: "destructive",
       });
     }

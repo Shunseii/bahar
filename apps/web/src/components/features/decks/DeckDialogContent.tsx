@@ -1,4 +1,5 @@
-import { Trans, msg } from "@lingui/macro";
+import { t } from "@lingui/macro";
+import { Trans } from "@lingui/react/macro";
 import { Button } from "../../ui/button";
 import {
   DialogContent,
@@ -24,10 +25,9 @@ import { X } from "lucide-react";
 import { Autocomplete } from "../../Autocomplete";
 import { Label } from "../../ui/label";
 import { Checkbox } from "../../ui/checkbox";
-import { t } from "@lingui/macro";
 import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -110,7 +110,7 @@ export const DeckDialogContent = ({
     },
   });
   const { toast } = useToast();
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const form = useForm<z.infer<typeof DeckFormSchema>>({
     resolver: zodResolver(DeckFormSchema),
     defaultValues: {
@@ -143,7 +143,7 @@ export const DeckDialogContent = ({
         });
 
         toast({
-          title: _(msg`Deck successfully updated!`),
+          title: t`Deck successfully updated!`,
         });
       } else {
         await createDeck({
@@ -152,7 +152,7 @@ export const DeckDialogContent = ({
         });
 
         toast({
-          title: _(msg`Deck successfully created!`),
+          title: t`Deck successfully created!`,
         });
       }
 
@@ -162,14 +162,14 @@ export const DeckDialogContent = ({
     } catch (err) {
       if (isEditing) {
         toast({
-          title: _(msg`There was an error updating the deck`),
-          description: _(msg`Your deck was not updated. Please try again.`),
+          title: t`There was an error updating the deck`,
+          description: t`Your deck was not updated. Please try again.`,
           variant: "destructive",
         });
       } else {
         toast({
-          title: _(msg`There was an error creating the deck`),
-          description: _(msg`Your deck was not created. Please try again.`),
+          title: t`There was an error creating the deck`,
+          description: t`Your deck was not created. Please try again.`,
           variant: "destructive",
         });
       }
@@ -198,7 +198,7 @@ export const DeckDialogContent = ({
                     <FormControl>
                       <Input
                         className="col-span-3"
-                        placeholder={_(msg`Enter a deck name`)}
+                        placeholder={t`Enter a deck name`}
                         {...field}
                       />
                     </FormControl>

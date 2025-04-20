@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { BetaBadge } from "@/components/BetaBadge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,8 +24,7 @@ import { queryClient } from "@/lib/query";
 import { trpc } from "@/lib/trpc";
 import { z } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trans, msg } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import { getQueryKey } from "@trpc/react-query";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -35,7 +35,7 @@ const FormSchema = z.object({
 });
 
 export const FlashcardSettingsCardSection = () => {
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const { data } = trpc.settings.get.useQuery();
   const { mutate } = trpc.settings.update.useMutation({
     onSuccess: (serverData) => {
@@ -63,14 +63,12 @@ export const FlashcardSettingsCardSection = () => {
       mutate(data);
 
       toast({
-        title: _(msg`Flashcard settings updated!`),
+        title: t`Flashcard settings updated!`,
       });
     } catch (err) {
       toast({
-        title: _(msg`Failed to update flashcard settings.`),
-        description: _(
-          msg`There was an error updating your flashcard settings.`,
-        ),
+        title: t`Failed to update flashcard settings.`,
+        description: t`There was an error updating your flashcard settings.`,
       });
     }
   }, []);

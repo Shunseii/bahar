@@ -1,5 +1,6 @@
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { Trans, t } from "@lingui/macro";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
 import z from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";

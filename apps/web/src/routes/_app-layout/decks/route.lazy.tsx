@@ -1,7 +1,8 @@
+import { Trans } from "@lingui/react/macro";
 import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import {
   Card,
   CardHeader,
@@ -25,7 +26,6 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { Trans, msg } from "@lingui/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { MoreHorizontal, Plus } from "lucide-react";
 import {
@@ -50,7 +50,7 @@ const Decks = () => {
     },
   });
   const { toast } = useToast();
-  const { _ } = useLingui();
+  const { t } = useLingui();
 
   return (
     <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
@@ -166,10 +166,8 @@ const Decks = () => {
                                 await deleteDeck({ id: deck.id });
 
                                 toast({
-                                  title: _(msg`Deck successfully deleted!`),
-                                  description: _(
-                                    msg`The deck "${deck.name}" has been deleted.`,
-                                  ),
+                                  title: t`Deck successfully deleted!`,
+                                  description: t`The deck "${deck.name}" has been deleted.`,
                                 });
                               }}
                               className="cursor-pointer"

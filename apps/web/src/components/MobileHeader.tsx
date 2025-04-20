@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +8,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useDir } from "@/hooks/useDir";
-import { Trans } from "@lingui/macro";
 import { Link } from "@tanstack/react-router";
 import { useClickAway } from "@uidotdev/usehooks";
 import { Home, PanelLeft, Settings, Layers } from "lucide-react";

@@ -1,3 +1,4 @@
+import { Plural, Trans } from "@lingui/react/macro";
 import { Link, createLazyFileRoute } from "@tanstack/react-router";
 import {
   Card,
@@ -10,7 +11,6 @@ import { InfiniteScroll } from "@/components/meili/InfiniteScroll";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, PlusIcon } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
-import { Plural, Trans } from "@lingui/macro";
 import { cn } from "@/lib/utils";
 import { Page } from "@/components/Page";
 import { trpc } from "@/lib/trpc";

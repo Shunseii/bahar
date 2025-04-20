@@ -1,4 +1,5 @@
-import { Plural, Trans, t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { Tooltip, TooltipTrigger, TooltipContent } from "../../ui/tooltip";
 import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";

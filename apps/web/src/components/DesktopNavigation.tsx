@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +14,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Trans } from "@lingui/macro";
 import { Link } from "@tanstack/react-router";
 import { Home, Settings, Layers } from "lucide-react";
 import { useLogout } from "@/hooks/useLogout";
