@@ -1,4 +1,3 @@
-// Should be in sync with the css variables in the web app
 export const cssVariables = {
   light: {
     "--background": "0 0% 100%",

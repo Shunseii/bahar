@@ -13,7 +13,7 @@ import { vars } from "nativewind";
 import { View } from "react-native";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { cssVariables } from "@/constants/theme";
+import { cssVariables } from "@bahar/tailwind-config/theme";
 import "@/global.css";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.

@@ -1,9 +1,9 @@
 import { Config } from "tailwindcss";
-import webConfig from "../web/tailwind.config";
+import sharedConfig from "@bahar/tailwind-config/tailwind.config";
 
 export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
-  presets: [require("nativewind/preset"), webConfig],
+  presets: [require("nativewind/preset"), sharedConfig],
   theme: {
     extend: {},
   },

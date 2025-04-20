@@ -4,7 +4,7 @@
 
 // eslint-disable-next-line no-undef
 module.exports = {
-  extends: ["@repo/eslint-config/vite.js"],
+  extends: ["@bahar/eslint-config/vite.js"],
   // parserOptions: {
   //   project,
   // },

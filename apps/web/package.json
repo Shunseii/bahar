@@ -72,6 +72,7 @@
     "@lingui/vite-plugin": "^5.3.1",
     "@bahar/eslint-config": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
+    "@bahar/tailwind-config": "workspace:*",
     "@swc/core": "1.11.21",
     "@tanstack/router-devtools": "^1.91.3",
     "@tanstack/router-plugin": "^1.91.1",
