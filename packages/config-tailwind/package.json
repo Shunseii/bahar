@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7"

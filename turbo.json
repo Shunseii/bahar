@@ -14,6 +14,12 @@
     },
     "lint": {},
     "type-check": {},
+    "messages:extract": {
+      "cache": false
+    },
+    "message:compile": {
+      "cache": false
+    },
     "start": {
       "dependsOn": ["build"]
     },

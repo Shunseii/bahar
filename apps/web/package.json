@@ -73,6 +73,7 @@
     "@bahar/eslint-config": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
     "@bahar/tailwind-config": "workspace:*",
+    "@bahar/i18n-config": "workspace:*",
     "@swc/core": "1.11.21",
     "@tanstack/router-devtools": "^1.91.3",
     "@tanstack/router-plugin": "^1.91.1",

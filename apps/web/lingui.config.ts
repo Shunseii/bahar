@@ -1,13 +1,8 @@
 import type { LinguiConfig } from "@lingui/conf";
+import linguiConfig from "@bahar/i18n-config/lingui.config";
 
 const config: LinguiConfig = {
-  locales: ["en", "ar"],
-  catalogs: [
-    {
-      path: "<rootDir>/src/locales/{locale}",
-      include: ["src"],
-    },
-  ],
+  ...linguiConfig,
 };
 
 export default config;

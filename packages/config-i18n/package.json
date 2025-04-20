@@ -1,0 +1,15 @@
+{
+  "name": "@bahar/i18n-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "messages:extract": "lingui extract",
+    "messages:compile": "lingui compile --typescript"
+  },
+  "dependencies": {
+    "@lingui/core": "^5.3.1",
+    "@lingui/conf": "^5.3.1",
+    "@lingui/cli": "^5.3.1"
+  }
+}
