@@ -8,7 +8,9 @@
     "start": "turbo start",
     "type-check": "turbo type-check",
     "clean": "turbo clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "i18n:extract": "pnpm --filter @bahar/i18n messages:extract",
+    "i18n:compile": "pnpm --filter @bahar/i18n messages:compile"
   },
   "devDependencies": {
     "eslint": "^8.56.0",

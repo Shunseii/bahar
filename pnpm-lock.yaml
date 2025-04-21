@@ -159,6 +159,18 @@ importers:
       '@expo/vector-icons':
         specifier: ^14.0.2
         version: 14.0.4
+      '@formatjs/intl-locale':
+        specifier: ^4.2.11
+        version: 4.2.11
+      '@formatjs/intl-pluralrules':
+        specifier: ^5.4.4
+        version: 5.4.4
+      '@lingui/core':
+        specifier: ^5.3.1
+        version: 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)
+      '@lingui/react':
+        specifier: ^5.3.1
+        version: 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(react@18.3.1)
       '@react-navigation/bottom-tabs':
         specifier: ^7.2.0
         version: 7.2.0(@react-navigation/native@7.0.14)(react-native-safe-area-context@4.12.0)(react-native-screens@4.4.0)(react-native@0.76.9)(react@18.3.1)
@@ -241,9 +253,24 @@ importers:
       '@babel/core':
         specifier: ^7.25.2
         version: 7.26.0
+      '@bahar/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
       '@bahar/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/config-tailwind
+      '@lingui/babel-plugin-lingui-macro':
+        specifier: ^5.3.1
+        version: 5.3.1(typescript@5.3.3)
+      '@lingui/cli':
+        specifier: ^5.3.1
+        version: 5.3.1(typescript@5.3.3)
+      '@lingui/macro':
+        specifier: ^5.3.1
+        version: 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(react@18.3.1)
+      '@lingui/metro-transformer':
+        specifier: ^5.3.1
+        version: 5.3.1(expo@52.0.46)(metro@0.81.1)(react-native@0.76.9)(typescript@5.3.3)
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.14
@@ -422,9 +449,9 @@ importers:
       '@bahar/eslint-config':
         specifier: workspace:*
         version: link:../../packages/config-eslint
-      '@bahar/i18n-config':
+      '@bahar/i18n':
         specifier: workspace:*
-        version: link:../../packages/config-i18n
+        version: link:../../packages/i18n
       '@bahar/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/config-tailwind
@@ -531,18 +558,6 @@ importers:
         specifier: ^0.4.5
         version: 0.4.5(eslint@8.56.0)
 
-  packages/config-i18n:
-    dependencies:
-      '@lingui/cli':
-        specifier: ^5.3.1
-        version: 5.3.1(typescript@5.3.3)
-      '@lingui/conf':
-        specifier: ^5.3.1
-        version: 5.3.1(typescript@5.3.3)
-      '@lingui/core':
-        specifier: ^5.3.1
-        version: 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(babel-plugin-macros@3.1.0)
-
   packages/config-tailwind:
     dependencies:
       tailwindcss:
@@ -553,6 +568,18 @@ importers:
         version: 1.0.7(tailwindcss@3.4.17)
 
   packages/config-typescript: {}
+
+  packages/i18n:
+    dependencies:
+      '@lingui/cli':
+        specifier: ^5.3.1
+        version: 5.3.1(typescript@5.3.3)
+      '@lingui/conf':
+        specifier: ^5.3.1
+        version: 5.3.1(typescript@5.3.3)
+      '@lingui/core':
+        specifier: ^5.3.1
+        version: 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(babel-plugin-macros@3.1.0)
 
 packages:
 
@@ -3871,6 +3898,58 @@ packages:
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
     dev: false
 
+  /@formatjs/ecma402-abstract@2.3.4:
+    resolution: {integrity: sha512-qrycXDeaORzIqNhBOx0btnhpD1c+/qFIHAN9znofuMJX6QBwtbrmlpWfD4oiUUD2vJUOIYFA/gYtg2KAMGG7sA==}
+    dependencies:
+      '@formatjs/fast-memoize': 2.2.7
+      '@formatjs/intl-localematcher': 0.6.1
+      decimal.js: 10.5.0
+      tslib: 2.8.1
+    dev: false
+
+  /@formatjs/fast-memoize@2.2.7:
+    resolution: {integrity: sha512-Yabmi9nSvyOMrlSeGGWDiH7rf3a7sIwplbvo/dlz9WCIjzIQAfy1RMf4S0X3yG724n5Ghu2GmEl5NJIV6O9sZQ==}
+    dependencies:
+      tslib: 2.8.1
+    dev: false
+
+  /@formatjs/intl-enumerator@1.8.10:
+    resolution: {integrity: sha512-/iDm5v5809LN6GiEwT7gU/0lVuKbpyRh3l9USL205mi1kcunvY8eo4mooNr/3/cV4zWG9aUuPwrzukgSCaYlcg==}
+    dependencies:
+      '@formatjs/ecma402-abstract': 2.3.4
+      tslib: 2.8.1
+    dev: false
+
+  /@formatjs/intl-getcanonicallocales@2.5.5:
+    resolution: {integrity: sha512-sxosgiLSGhf3So3hf4nk223G+qxWEZytAWVmgwuK5k16698N6jMbndzLL0R51i54aTTIp+UyIC+VKjns2eil3w==}
+    dependencies:
+      tslib: 2.8.1
+    dev: false
+
+  /@formatjs/intl-locale@4.2.11:
+    resolution: {integrity: sha512-8OtGsxPawRF8D6I9SPVhoS/tNSAD0KO/9BywbaP3YNHeoI3qxsK7IR0bN7BCjW6qHZZD7U3VnXVHHteVk12zMA==}
+    dependencies:
+      '@formatjs/ecma402-abstract': 2.3.4
+      '@formatjs/intl-enumerator': 1.8.10
+      '@formatjs/intl-getcanonicallocales': 2.5.5
+      tslib: 2.8.1
+    dev: false
+
+  /@formatjs/intl-localematcher@0.6.1:
+    resolution: {integrity: sha512-ePEgLgVCqi2BBFnTMWPfIghu6FkbZnnBVhO2sSxvLfrdFw7wCHAHiDoM2h4NRgjbaY7+B7HgOLZGkK187pZTZg==}
+    dependencies:
+      tslib: 2.8.1
+    dev: false
+
+  /@formatjs/intl-pluralrules@5.4.4:
+    resolution: {integrity: sha512-PdxoTmqaIh9c/zMR6Hw6+avrEh0b0giYlF4S4KOUjmWHUfDFj/8BqKVFFyQx1QInsRWhjdRWumqKYrcsjogDwg==}
+    dependencies:
+      '@formatjs/ecma402-abstract': 2.3.4
+      '@formatjs/intl-localematcher': 0.6.1
+      decimal.js: 10.5.0
+      tslib: 2.8.1
+    dev: false
+
   /@hexagon/base64@1.1.28:
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
     dev: false
@@ -4394,6 +4473,25 @@ packages:
       - supports-color
       - typescript
 
+  /@lingui/babel-plugin-lingui-macro@5.3.1(typescript@5.3.3):
+    resolution: {integrity: sha512-W5jTcAx+eqeRLxbwVbgwoAXPodLfaaI0ieND+H3q4poxdtEQZONIcJLIACNJE2NS1W0YFBBJ3wrnJ9J+xUbzcw==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      babel-plugin-macros: 2 || 3
+    peerDependenciesMeta:
+      babel-plugin-macros:
+        optional: true
+    dependencies:
+      '@babel/core': 7.26.0
+      '@babel/runtime': 7.26.7
+      '@babel/types': 7.26.3
+      '@lingui/conf': 5.3.1(typescript@5.3.3)
+      '@lingui/core': 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)
+      '@lingui/message-utils': 5.3.1
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   /@lingui/cli@5.3.1(typescript@5.3.3):
     resolution: {integrity: sha512-BucbDUcxEpkrB6Vb6XwDIsooQVmyZKV9YzMkDDeAdx/PMPJVZyCoSjxSXP3itWLuNFrcUsfvUdeQPwTTEniS7Q==}
     engines: {node: '>=20.0.0'}
@@ -4444,6 +4542,23 @@ packages:
     transitivePeerDependencies:
       - typescript
 
+  /@lingui/core@5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1):
+    resolution: {integrity: sha512-Y6WdhTlzzz+HzE6rn34rVoyXuKvTHTF5JmKdevTRu5x7ZfURaEtcoT9y6k9jgA2QMaP8YblcnU50M0svn/UZTA==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      '@lingui/babel-plugin-lingui-macro': 5.3.1
+      babel-plugin-macros: 2 || 3
+    peerDependenciesMeta:
+      '@lingui/babel-plugin-lingui-macro':
+        optional: true
+      babel-plugin-macros:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.26.7
+      '@lingui/babel-plugin-lingui-macro': 5.3.1(typescript@5.3.3)
+      '@lingui/message-utils': 5.3.1
+      unraw: 3.0.0
+
   /@lingui/core@5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(babel-plugin-macros@3.1.0):
     resolution: {integrity: sha512-Y6WdhTlzzz+HzE6rn34rVoyXuKvTHTF5JmKdevTRu5x7ZfURaEtcoT9y6k9jgA2QMaP8YblcnU50M0svn/UZTA==}
     engines: {node: '>=20.0.0'}
@@ -4478,6 +4593,25 @@ packages:
     transitivePeerDependencies:
       - typescript
 
+  /@lingui/macro@5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-8n6dcziAVuNDtVdjuCqbrcmspqFrzK5aRlYP14R3XrCaKb4mcP5UdHD8+nk4yvLDABoMJgZUQrnWB5Ca2vpHvQ==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      '@lingui/babel-plugin-lingui-macro': 5.3.1
+      babel-plugin-macros: 2 || 3
+    peerDependenciesMeta:
+      '@lingui/babel-plugin-lingui-macro':
+        optional: true
+      babel-plugin-macros:
+        optional: true
+    dependencies:
+      '@lingui/babel-plugin-lingui-macro': 5.3.1(typescript@5.3.3)
+      '@lingui/core': 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)
+      '@lingui/react': 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(react@18.3.1)
+    transitivePeerDependencies:
+      - react
+    dev: true
+
   /@lingui/macro@5.3.1(react@18.3.1):
     resolution: {integrity: sha512-8n6dcziAVuNDtVdjuCqbrcmspqFrzK5aRlYP14R3XrCaKb4mcP5UdHD8+nk4yvLDABoMJgZUQrnWB5Ca2vpHvQ==}
     engines: {node: '>=20.0.0'}
@@ -4504,6 +4638,53 @@ packages:
       js-sha256: 0.10.1
     bundledDependencies:
       - '@messageformat/date-skeleton'
+
+  /@lingui/metro-transformer@5.3.1(expo@52.0.46)(metro@0.81.1)(react-native@0.76.9)(typescript@5.3.3):
+    resolution: {integrity: sha512-oGGJG4jYOqvve3o4NeDRcwLS5Yct+OMIFee5GJzkMTzzF/xsvkbxzyFC83CRPBoc/qFcWnyH6IMTGeJipzF1zA==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      '@expo/metro-config': '*'
+      '@react-native/metro-babel-transformer': '*'
+      expo: '>=50.0.0'
+      metro: '*'
+      react-native: '>=0.73.0'
+    peerDependenciesMeta:
+      '@expo/metro-config':
+        optional: true
+      '@react-native/metro-babel-transformer':
+        optional: true
+      expo:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.26.7
+      '@lingui/cli': 5.3.1(typescript@5.3.3)
+      '@lingui/conf': 5.3.1(typescript@5.3.3)
+      expo: 52.0.46(@babel/core@7.26.0)(@babel/preset-env@7.25.3)(react-native-webview@13.12.5)(react-native@0.76.9)(react@18.3.1)
+      memoize-one: 6.0.0
+      metro: 0.81.1
+      react-native: 0.76.9(@babel/core@7.26.0)(@babel/preset-env@7.25.3)(@types/react@18.3.18)(react@18.3.1)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
+
+  /@lingui/react@5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-hxyTm+/iRjsshPC/iuU/7Lc2Q6sfLWSaRUoaKVp4FDZgwcYwjVW+1IuTMG8sANdmzGX2ehOoutUOroIoYOEQWw==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      '@lingui/babel-plugin-lingui-macro': 5.3.1
+      babel-plugin-macros: 2 || 3
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@lingui/babel-plugin-lingui-macro':
+        optional: true
+      babel-plugin-macros:
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.26.7
+      '@lingui/babel-plugin-lingui-macro': 5.3.1(typescript@5.3.3)
+      '@lingui/core': 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)
+      react: 18.3.1
 
   /@lingui/react@5.3.1(react@18.3.1):
     resolution: {integrity: sha512-hxyTm+/iRjsshPC/iuU/7Lc2Q6sfLWSaRUoaKVp4FDZgwcYwjVW+1IuTMG8sANdmzGX2ehOoutUOroIoYOEQWw==}
@@ -5461,7 +5642,7 @@ packages:
     dependencies:
       '@peculiar/asn1-schema': 2.3.13
       asn1js: 3.0.5
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /@peculiar/asn1-ecc@2.3.14:
@@ -5470,7 +5651,7 @@ packages:
       '@peculiar/asn1-schema': 2.3.13
       '@peculiar/asn1-x509': 2.3.13
       asn1js: 3.0.5
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /@peculiar/asn1-rsa@2.3.13:
@@ -5479,7 +5660,7 @@ packages:
       '@peculiar/asn1-schema': 2.3.13
       '@peculiar/asn1-x509': 2.3.13
       asn1js: 3.0.5
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /@peculiar/asn1-schema@2.3.13:
@@ -5487,7 +5668,7 @@ packages:
     dependencies:
       asn1js: 3.0.5
       pvtsutils: 1.3.6
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /@peculiar/asn1-x509@2.3.13:
@@ -5497,7 +5678,7 @@ packages:
       asn1js: 3.0.5
       ipaddr.js: 2.2.0
       pvtsutils: 1.3.6
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /@pkgjs/parseargs@0.11.0:
@@ -5515,7 +5696,7 @@ packages:
       is-glob: 4.0.3
       open: 9.1.0
       picocolors: 1.1.1
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: true
 
   /@poppinss/cliui@6.4.1:
@@ -5566,7 +5747,7 @@ packages:
   /@radix-ui/primitive@1.0.1:
     resolution: {integrity: sha512-yQ8oGX2GVsEYMWGxcovu1uGWPCxV5BFfeeYxqPmuAzUyLT9qmaMXSAhXpb0WrspIeqYzdJpkh2vHModJPgRIaw==}
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
     dev: false
 
   /@radix-ui/primitive@1.1.0:
@@ -5761,7 +5942,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@types/react': 18.2.56
       react: 18.3.1
     dev: false
@@ -5788,7 +5969,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@types/react': 18.2.56
       react: 18.3.1
     dev: false
@@ -5893,7 +6074,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.56)(react@18.3.1)
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.19)(@types/react@18.2.56)(react-dom@18.3.1)(react@18.3.1)
@@ -5965,7 +6146,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@types/react': 18.2.56
       react: 18.3.1
     dev: false
@@ -5996,7 +6177,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.56)(react@18.3.1)
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.19)(@types/react@18.2.56)(react-dom@18.3.1)(react@18.3.1)
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.2.56)(react@18.3.1)
@@ -6037,7 +6218,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@radix-ui/react-use-layout-effect': 1.0.1(@types/react@18.2.56)(react@18.3.1)
       '@types/react': 18.2.56
       react: 18.3.1
@@ -6091,7 +6272,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@radix-ui/primitive': 1.0.1
       '@radix-ui/react-collection': 1.0.3(@types/react-dom@18.2.19)(@types/react@18.2.56)(react-dom@18.3.1)(react@18.3.1)
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.56)(react@18.3.1)
@@ -6222,7 +6403,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.19)(@types/react@18.2.56)(react-dom@18.3.1)(react@18.3.1)
       '@types/react': 18.2.56
       '@types/react-dom': 18.2.19
@@ -6264,7 +6445,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.56)(react@18.3.1)
       '@radix-ui/react-use-layout-effect': 1.0.1(@types/react@18.2.56)(react@18.3.1)
       '@types/react': 18.2.56
@@ -6307,7 +6488,7 @@ packages:
       '@types/react-dom':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@radix-ui/react-slot': 1.0.2(@types/react@18.2.56)(react@18.3.1)
       '@types/react': 18.2.56
       '@types/react-dom': 18.2.19
@@ -6723,7 +6904,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@babel/runtime': 7.23.9
+      '@babel/runtime': 7.26.7
       '@radix-ui/react-use-callback-ref': 1.0.1(@types/react@18.2.56)(react@18.3.1)
       '@types/react': 18.2.56
       react: 18.3.1
@@ -9372,7 +9553,7 @@ packages:
     dependencies:
       pvtsutils: 1.3.6
       pvutils: 1.1.3
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /ast-types-flow@0.0.8:
@@ -9933,7 +10114,7 @@ packages:
     resolution: {integrity: sha512-XKxXAC3HVPv7r674zP0VC3RTXz+/JKhfyw94ljvF80yynK6VkTnqE3jMuN8b3dUVmmc43TjyxjW4KTsmB3c86g==}
     dependencies:
       debug: 4.4.0
-      tslib: 2.6.2
+      tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -10599,7 +10780,6 @@ packages:
 
   /decimal.js@10.5.0:
     resolution: {integrity: sha512-8vDa8Qxvr/+d94hSh5P3IJwI5t8/c0KsMp+g8bNw9cY2icONa5aPfvKeieW1WlG0WQYwwhJ7mjui2xtiePQSXw==}
-    dev: true
 
   /decode-uri-component@0.2.2:
     resolution: {integrity: sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==}
@@ -14583,7 +14763,6 @@ packages:
 
   /memoize-one@6.0.0:
     resolution: {integrity: sha512-rkpe71W0N0c0Xz6QD0eJETuWAJGnJ9afsl1srmwPrI+yBCkge5EycXXbYRyvL29zZVUWQCY7InPRCv3GDXuZNw==}
-    dev: false
 
   /merge-descriptors@1.0.1:
     resolution: {integrity: sha512-cCi6g3/Zr1iqQi6ySbseM1Xvooa98N0w31jzUYrXPX2xqObmFGHJ0tQ5u74H3mVh7wLouTseZyYIq39g8cNp1w==}
@@ -16418,7 +16597,7 @@ packages:
       '@types/react': 18.2.56
       react: 18.3.1
       react-style-singleton: 2.2.1(@types/react@18.2.56)(react@18.3.1)
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /react-remove-scroll@2.5.5(@types/react@18.2.56)(react@18.3.1):
@@ -16498,7 +16677,7 @@ packages:
       get-nonce: 1.0.1
       invariant: 2.2.4
       react: 18.3.1
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /react-test-renderer@18.3.1(react@18.3.1):
@@ -17650,7 +17829,7 @@ packages:
     engines: {node: ^14.18.0 || >=16.0.0}
     dependencies:
       '@pkgr/utils': 2.4.2
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: true
 
   /tailwind-merge@2.2.1:
@@ -17918,6 +18097,7 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
+    dev: false
 
   /tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
@@ -18294,7 +18474,7 @@ packages:
     dependencies:
       '@types/react': 18.2.56
       react: 18.3.1
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /use-latest-callback@0.2.3(react@18.3.1):
@@ -18318,7 +18498,7 @@ packages:
       '@types/react': 18.2.56
       detect-node-es: 1.1.0
       react: 18.3.1
-      tslib: 2.6.2
+      tslib: 2.8.1
     dev: false
 
   /use-sync-external-store@1.2.0(react@18.3.1):

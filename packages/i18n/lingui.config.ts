@@ -10,7 +10,10 @@ const config: LinguiConfig = {
   catalogs: [
     {
       path: path.join(packageDir, "locales/{locale}"),
-      include: ["src"],
+      include: [
+        "<rootDir>/../../apps/web/src",
+        "<rootDir>/../../apps/mobile/src",
+      ],
     },
   ],
 };

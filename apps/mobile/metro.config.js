@@ -12,6 +12,17 @@ const config = withMonorepoPaths(
   }),
 );
 
+const { transformer, resolver } = config;
+
+config.transformer = {
+  ...transformer,
+  babelTransformerPath: require.resolve("@lingui/metro-transformer/expo"),
+};
+config.resolver = {
+  ...resolver,
+  sourceExts: [...resolver.sourceExts, "po", "pot"],
+};
+
 // const config = withMonorepoPaths(getDefaultConfig(__dirname), {
 //   input: "./src/styles.css",
 //   configPath: "./tailwind.config.ts",

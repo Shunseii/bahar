@@ -8,8 +8,6 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "messages:extract": "lingui extract",
-    "messages:compile": "lingui compile --typescript",
     "wrangler:dev": "wrangler pages dev"
   },
   "dependencies": {
@@ -73,7 +71,7 @@
     "@bahar/eslint-config": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
     "@bahar/tailwind-config": "workspace:*",
-    "@bahar/i18n-config": "workspace:*",
+    "@bahar/i18n": "workspace:*",
     "@swc/core": "1.11.21",
     "@tanstack/router-devtools": "^1.91.3",
     "@tanstack/router-plugin": "^1.91.1",

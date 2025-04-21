@@ -4,6 +4,7 @@ import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Trans } from "@lingui/react/macro";
 
 export default function HomeScreen() {
   return (
@@ -29,6 +30,9 @@ export default function HomeScreen() {
         </Text>
         <Text className="text-foreground">
           This card is using the shared theme from web!
+        </Text>
+        <Text className="text-foreground">
+          <Trans>Add word</Trans>
         </Text>
       </View>
       <ThemedView style={styles.stepContainer}>
