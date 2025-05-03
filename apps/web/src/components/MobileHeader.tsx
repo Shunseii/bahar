@@ -13,7 +13,7 @@ import { useClickAway } from "@uidotdev/usehooks";
 import { Home, PanelLeft, Settings, Layers } from "lucide-react";
 import React, { FC, PropsWithChildren } from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 import { X } from "lucide-react";
 import { sheetVariantsNoSlideAnimations } from "./ui/sheet/variants";
 import { atom, useAtom } from "jotai";

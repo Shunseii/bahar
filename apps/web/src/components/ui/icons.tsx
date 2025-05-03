@@ -3,7 +3,7 @@ import GithubLogoDark from "../../assets/github-dark.svg";
 import GithubLogoLight from "../../assets/github-light.svg";
 import { useAtomValue } from "jotai";
 import { FC } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 
 export const GithubLogo: FC<{ className?: string }> = ({ className }) => {
   const theme = useAtomValue(themeAtom);

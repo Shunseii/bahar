@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 import React from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 
 interface BetaBadgeProps {
   className?: string;

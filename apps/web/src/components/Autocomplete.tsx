@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/react/macro";
 import { useLingui } from "@lingui/react/macro";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 import { trpc } from "@/lib/trpc";
 import { useClickAway, useDebounce } from "@uidotdev/usehooks";
 import { Input } from "./ui/input";

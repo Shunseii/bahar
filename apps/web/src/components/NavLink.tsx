@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 import { Link, LinkProps } from "@tanstack/react-router";
 import { forwardRef } from "react";
 

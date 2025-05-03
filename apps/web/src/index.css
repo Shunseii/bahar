@@ -1,4 +1,4 @@
-@import "@bahar/tailwind-config/globals.css";
+@import "@bahar/design-system/globals.css";
 
 @layer base {
   * {

@@ -3,7 +3,7 @@ import { Input } from "../ui/input";
 import { useLingui } from "@lingui/react/macro";
 import { UseSearchBoxProps, useSearchBox } from "react-instantsearch";
 import { FC, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 
 interface SearchInputProps extends UseSearchBoxProps {
   className?: string;

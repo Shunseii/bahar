@@ -15,7 +15,7 @@ import { z } from "@/lib/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 import {
   AdditionalDetailsFormSection,
   BasicDetailsFormSection,

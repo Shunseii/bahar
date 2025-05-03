@@ -1,5 +1,5 @@
 import { Config } from "tailwindcss";
-import sharedConfig from "@bahar/tailwind-config/tailwind.config";
+import sharedConfig from "@bahar/design-system/tailwind.config";
 
 const config = {
   content: [
