@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@bahar/tailwind-config": "workspace:*",
+    "@bahar/design-system": "workspace:*",
     "@bahar/i18n": "workspace:*",
     "@lingui/babel-plugin-lingui-macro": "^5.3.1",
     "@lingui/cli": "^5.3.1",

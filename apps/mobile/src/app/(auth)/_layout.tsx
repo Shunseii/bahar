@@ -5,12 +5,18 @@ import { Drawer } from "expo-router/drawer";
 export default function Layout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer backBehavior="history">
+      <Drawer
+        backBehavior="history"
+        screenOptions={{
+          headerBackgroundContainerStyle: { backgroundColor: "#fff" },
+        }}
+      >
         <Drawer.Screen
           name="index"
           options={{
             swipeEdgeWidth: 300,
-            title: "Home",
+            // header: () => undefined,
+            title: "Login",
           }}
         />
         <Drawer.Screen

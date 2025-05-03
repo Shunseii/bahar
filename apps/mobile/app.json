@@ -32,10 +32,21 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b6d34ce9-eea1-4afe-8928-a40612cf502a"
+      }
+    },
+    "owner": "shunsei"
   }
 }
