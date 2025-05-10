@@ -4,6 +4,7 @@ import sharedConfig from "@bahar/design-system/tailwind.config";
 export default {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset"), sharedConfig],
+  darkMode: "class",
   theme: {
     extend: {
       // TODO: remove this once nativewind supports calc with mixed units

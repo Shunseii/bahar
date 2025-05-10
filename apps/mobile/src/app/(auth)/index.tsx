@@ -8,6 +8,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Page } from "@/components/Page";
 import { Input } from "@/components/ui/input";
+import { GithubLoginButton } from "@/components/GithubLoginButton";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -67,16 +68,7 @@ export default function LoginScreen() {
         <View className="flex-1 h-[1px] bg-gray-300 dark:bg-gray-700" />
       </View>
 
-      <Pressable
-        className="bg-gray-100 dark:bg-gray-800 rounded-md py-3 items-center"
-        onPress={() => {
-          /* To be implemented */
-        }}
-      >
-        <Text className="font-medium">
-          <Trans>GitHub</Trans>
-        </Text>
-      </Pressable>
+      <GithubLoginButton />
     </Page>
   );
 }

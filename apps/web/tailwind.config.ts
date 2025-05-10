@@ -9,6 +9,7 @@ const config = {
     "./src/**/*.{ts,tsx}",
   ],
   presets: [sharedConfig],
+  darkMode: "selector",
   theme: {
     extend: {},
   },

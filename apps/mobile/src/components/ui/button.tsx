@@ -1,22 +1,19 @@
 import { cn } from "@bahar/design-system";
 import { cva, VariantProps } from "class-variance-authority";
 import { FC, PropsWithChildren } from "react";
-import { Pressable } from "react-native";
+import { Pressable, Text } from "react-native";
 
 const buttonVariants = cva(
   "items-center justify-center rounded-md text-sm font-medium transition-colors disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary hover:underline",
+        default: "bg-primary text-primary-foreground",
+        destructive: "bg-destructive text-destructive-foreground",
+        outline: "border border-input bg-background",
+        secondary: "bg-secondary text-secondary-foreground",
+        ghost: "",
+        link: "text-primary",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -51,7 +48,9 @@ export const Button: FC<ButtonProps> = ({
       className={cn(buttonVariants({ variant, size, className }))}
       onPress={onPress}
     >
-      {children}
+      <Text className={cn(buttonVariants({ variant, size, className }))}>
+        {children}
+      </Text>
     </Pressable>
   );
 };
