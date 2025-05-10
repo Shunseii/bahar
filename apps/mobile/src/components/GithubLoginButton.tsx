@@ -16,7 +16,7 @@ export const GithubLoginButton = () => {
         console.log("GitHub login pressed");
       }}
     >
-      <View className="flex-row items-center gap-x-2">
+      <View className="flex-row items-center justify-center w-full gap-x-2">
         <FontAwesome5 name="github" size={20} color={iconColor} />
 
         <Text className="text-secondary font-medium">

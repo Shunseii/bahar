@@ -1,7 +1,8 @@
 import { cn } from "@bahar/design-system";
 import { cva, VariantProps } from "class-variance-authority";
 import { FC, PropsWithChildren } from "react";
-import { Pressable, Text } from "react-native";
+import { Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const buttonVariants = cva(
   "items-center justify-center rounded-md text-sm font-medium transition-colors disabled:opacity-50",
@@ -39,18 +40,26 @@ interface ButtonProps
 export const Button: FC<ButtonProps> = ({
   onPress,
   size,
-  variant,
+  variant = "default",
   className,
   children,
 }) => {
+  const variantsWithFeedback = ["default", "destructive", "secondary"];
+
   return (
-    <Pressable
+    <TouchableOpacity
       className={cn(buttonVariants({ variant, size, className }))}
       onPress={onPress}
+      activeOpacity={variantsWithFeedback.includes(variant!) ? 0.7 : 1}
     >
-      <Text className={cn(buttonVariants({ variant, size, className }))}>
+      <Text
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          "text-center",
+        )}
+      >
         {children}
       </Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
