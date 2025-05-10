@@ -156,6 +156,9 @@ importers:
 
   apps/mobile:
     dependencies:
+      '@digitalartlab/expo-plugin-localization':
+        specifier: ^3.0.0
+        version: 3.0.0(expo@52.0.46)
       '@expo/vector-icons':
         specifier: ^14.0.2
         version: 14.0.4
@@ -180,6 +183,9 @@ importers:
       '@react-navigation/native':
         specifier: ^7.0.14
         version: 7.0.14(react-native@0.76.9)(react@18.3.1)
+      class-variance-authority:
+        specifier: ^0.7.0
+        version: 0.7.0
       expo:
         specifier: ~52.0.46
         version: 52.0.46(@babel/core@7.26.0)(@babel/preset-env@7.25.3)(react-native-webview@13.12.5)(react-native@0.76.9)(react@18.3.1)
@@ -201,6 +207,9 @@ importers:
       expo-linking:
         specifier: ~7.0.5
         version: 7.0.5(expo@52.0.46)(react-native@0.76.9)(react@18.3.1)
+      expo-localization:
+        specifier: ~16.0.1
+        version: 16.0.1(expo@52.0.46)(react@18.3.1)
       expo-router:
         specifier: ~4.0.20
         version: 4.0.20(@react-navigation/drawer@7.1.1)(expo-constants@17.0.8)(expo-linking@7.0.5)(expo@52.0.46)(react-dom@18.3.1)(react-native-reanimated@3.16.2)(react-native-safe-area-context@4.12.0)(react-native-screens@4.4.0)(react-native@0.76.9)(react@18.3.1)
@@ -2238,6 +2247,17 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
+
+  /@digitalartlab/expo-plugin-localization@3.0.0(expo@52.0.46):
+    resolution: {integrity: sha512-Ni6PpqL8TkwM8EuFDtAW2mnnXukBUFD4VP0LvmPv3HwO5FrRnGF3Ja3TsQzOD1uMJG+zrJVIqcEcVFpKLjLwhg==}
+    peerDependencies:
+      expo: '>=51.0.0'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+    dependencies:
+      expo: 52.0.46(@babel/core@7.26.0)(@babel/preset-env@7.25.3)(react-native-webview@13.12.5)(react-native@0.76.9)(react@18.3.1)
+    dev: false
 
   /@drizzle-team/brocli@0.10.2:
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
@@ -12469,6 +12489,17 @@ packages:
       - supports-color
     dev: false
 
+  /expo-localization@16.0.1(expo@52.0.46)(react@18.3.1):
+    resolution: {integrity: sha512-kUrXiV/Pq9r7cG+TMt+Qa49IUQ9Y/czVwen4hmiboTclTopcWdIeCzYZv6JGtufoPpjEO9vVx1QJrXYl9V2u0Q==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
+    dependencies:
+      expo: 52.0.46(@babel/core@7.26.0)(@babel/preset-env@7.25.3)(react-native-webview@13.12.5)(react-native@0.76.9)(react@18.3.1)
+      react: 18.3.1
+      rtl-detect: 1.1.2
+    dev: false
+
   /expo-manifests@0.15.8(expo@52.0.46):
     resolution: {integrity: sha512-VuIyaMfRfLZeETNsRohqhy1l7iZ7I+HKMPfZXVL2Yn17TT0WkOhZoq1DzYwPbOHPgp1Uk6phNa86EyaHrD2DLw==}
     peerDependencies:
@@ -17460,6 +17491,10 @@ packages:
 
   /rou3@0.5.1:
     resolution: {integrity: sha512-OXMmJ3zRk2xeXFGfA3K+EOPHC5u7RDFG7lIOx0X1pdnhUkI8MdVrbV+sNsD80ElpUZ+MRHdyxPnFthq9VHs8uQ==}
+    dev: false
+
+  /rtl-detect@1.1.2:
+    resolution: {integrity: sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==}
     dev: false
 
   /run-applescript@5.0.0:

@@ -8,14 +8,13 @@ export default function Layout() {
       <Drawer
         backBehavior="history"
         screenOptions={{
-          headerBackgroundContainerStyle: { backgroundColor: "#fff" },
+          headerShown: false,
         }}
       >
         <Drawer.Screen
           name="index"
           options={{
             swipeEdgeWidth: 300,
-            // header: () => undefined,
             title: "Login",
           }}
         />

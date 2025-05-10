@@ -24,9 +24,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { cssVariables } from "@bahar/design-system/theme";
-import { messages } from "@bahar/i18n/locales/en";
+
+import { messages as enMessages } from "@bahar/i18n/locales/en";
+import { messages as arMessages } from "@bahar/i18n/locales/ar";
 
 import "@/global.css";
+import { getLocales } from "expo-localization";
 
 const setRootViewBackgroundColor = async () => {
   const colorScheme = Appearance.getColorScheme();
@@ -40,7 +43,13 @@ const setup = async () => {
   // Prevent the splash screen from auto-hiding before asset loading is complete.
   SplashScreen.preventAutoHideAsync();
 
-  i18n.loadAndActivate({ locale: "en", messages });
+  const systemLocale =
+    getLocales()[0].languageCode ??
+    (getLocales()[0].languageTag.substring(0, 2) as "en" | "ar");
+
+  const messages = systemLocale === "en" ? enMessages : arMessages;
+
+  i18n.loadAndActivate({ locale: systemLocale, messages });
 
   setRootViewBackgroundColor();
 };

@@ -1,7 +1,8 @@
-import { View, TextInput, Button, Pressable, Text } from "react-native";
+import { View, TextInput, Pressable, Text } from "react-native";
 import { useState } from "react";
 import { Stack } from "expo-router";
 import { Trans } from "@lingui/react/macro";
+import { Button } from "@/components/ui/button";
 
 import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,7 +29,7 @@ export default function LoginScreen() {
   // }
 
   return (
-    <Page className="flex flex-col gap-y-6">
+    <Page className="flex flex-col gap-y-6 mt-12">
       <Text className="tracking-tight font-bold text-2xl text-foreground text-center">
         <Trans>Welcome to Bahar!</Trans>
       </Text>
@@ -54,14 +55,9 @@ export default function LoginScreen() {
         </Text>
       </View>
 
-      <Pressable
-        className="bg-primary rounded-md py-3 mt-4 items-center"
-        onPress={handleSubmit}
-      >
-        <Text className="text-white font-medium">
-          <Trans>Continue with Email</Trans>
-        </Text>
-      </Pressable>
+      <Button onPress={handleSubmit}>
+        <Trans>Continue with Email</Trans>
+      </Button>
 
       <View className="flex-row items-center my-6">
         <View className="flex-1 h-[1px] bg-gray-300 dark:bg-gray-700" />
