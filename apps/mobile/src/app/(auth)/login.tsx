@@ -10,7 +10,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import z from "zod";
 import { authClient } from "@/utils/auth-client";
-import { useEffect } from "react";
 import { useRouter } from "expo-router";
 
 const LoginFormSchema = z.object({

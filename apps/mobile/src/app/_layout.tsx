@@ -10,7 +10,8 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { authClient } from "@/utils/auth-client";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
@@ -21,14 +22,14 @@ import { View, Text, Appearance, useColorScheme } from "react-native";
 import { I18nProvider, TransRenderProps } from "@lingui/react";
 import { i18n } from "@lingui/core";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-
+import { getLocales } from "expo-localization";
 import { cssVariables } from "@bahar/design-system/theme";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { messages as enMessages } from "@bahar/i18n/locales/en";
 import { messages as arMessages } from "@bahar/i18n/locales/ar";
 
 import "@/global.css";
-import { getLocales } from "expo-localization";
 
 const setRootViewBackgroundColor = async () => {
   const colorScheme = Appearance.getColorScheme();
@@ -56,18 +57,28 @@ const setup = async () => {
 setup();
 
 export default function RootLayout() {
+  const { isPending, data } = authClient.useSession();
+  const router = useRouter();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded && !isPending) {
+      const isAuthed = !!data;
+
+      if (isAuthed) {
+        router.replace("/");
+      } else {
+        router.replace("/login");
+      }
+
       SplashScreen.hideAsync();
     }
   }, [loaded]);
 
-  if (!loaded) {
+  if (!loaded || isPending) {
     return null;
   }
 
@@ -75,21 +86,32 @@ export default function RootLayout() {
     colorScheme === "dark" ? cssVariables.dark : cssVariables.light;
 
   return (
-    <SafeAreaProvider>
-      <View style={vars(themeVars)} className="flex-1">
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <I18nProvider i18n={i18n} defaultComponent={DefaultComponent}>
-            <Stack>
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" />
-          </I18nProvider>
-        </ThemeProvider>
-      </View>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <View style={vars(themeVars)} className="flex-1">
+          <ThemeProvider
+            value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+            <I18nProvider i18n={i18n} defaultComponent={DefaultComponent}>
+              <Stack>
+                <Stack.Screen
+                  name="(auth)"
+                  options={{ headerShown: false, animation: "fade" }}
+                />
+
+                <Stack.Screen
+                  name="(search)"
+                  options={{ headerShown: false, animation: "fade" }}
+                />
+
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="auto" />
+            </I18nProvider>
+          </ThemeProvider>
+        </View>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
