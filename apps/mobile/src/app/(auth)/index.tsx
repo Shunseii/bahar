@@ -1,36 +1,62 @@
-import { View, TextInput, Pressable, Text } from "react-native";
-import { useState } from "react";
-import { Stack } from "expo-router";
+import { View, Text } from "react-native";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Button } from "@/components/ui/button";
 
-import { ThemedText } from "@/components/ThemedText";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Page } from "@/components/Page";
 import { Input } from "@/components/ui/input";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import z from "zod";
+import { authClient } from "@/utils/auth-client";
+import { useEffect } from "react";
+import { useRouter } from "expo-router";
+
+const LoginFormSchema = z.object({
+  email: z.string().email().min(5).max(256),
+});
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("");
-  const [showOTPForm, setShowOTPForm] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = () => {
-    // To be implemented later
-    setShowOTPForm(true);
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(LoginFormSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit: SubmitHandler<z.infer<typeof LoginFormSchema>> = async ({
+    email,
+  }) => {
+    const lowerCaseEmail = email.toLowerCase();
+
+    const { error } = await authClient.emailOtp.sendVerificationOtp({
+      email: lowerCaseEmail,
+      type: "sign-in",
+    });
+
+    if (error) {
+      console.error("There was an error sending the OTP: ", error);
+
+      setError("root", {
+        message: t`Please try again.`,
+      });
+
+      return;
+    }
+
+    router.push(`/code/${lowerCaseEmail}`);
   };
 
-  // if (showOTPForm) {
-  //   return (
-  //     <SafeAreaView className="flex-1 p-6 justify-center">
-  //       <Stack.Screen options={{ title: "Enter Code" }} />
-  //       {/* OTP Form to be implemented */}
-  //       <ThemedText type="title">Enter the code sent to your email</ThemedText>
-  //     </SafeAreaView>
-  //   );
-  // }
-
   return (
-    <Page className="flex flex-col gap-y-6 mt-12">
+    <Page>
       <Text className="tracking-tight font-bold text-2xl text-foreground text-center">
         <Trans>Welcome to Bahar!</Trans>
       </Text>
@@ -44,19 +70,40 @@ export default function LoginScreen() {
           <Trans>Email</Trans>
         </Text>
 
-        <Input
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          autoCapitalize="none"
-          keyboardType="email-address"
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+          )}
+          name="email"
         />
+        {errors.email && (
+          <Text className="font-medium text-destructive">
+            <Trans>This field is required.</Trans>
+          </Text>
+        )}
 
         <Text className="text-sm text-muted-foreground">
           <Trans>This is case insensitive.</Trans>
         </Text>
       </View>
 
-      <Button onPress={handleSubmit}>
+      {!!errors.root?.message && (
+        <Text className="font-medium text-destructive">
+          {errors.root?.message}
+        </Text>
+      )}
+
+      <Button disabled={isSubmitting} onPress={handleSubmit(onSubmit)}>
         <Trans>Continue with Email</Trans>
       </Button>
 

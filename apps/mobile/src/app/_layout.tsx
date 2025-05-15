@@ -17,12 +17,11 @@ import { setBackgroundColorAsync } from "expo-system-ui";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { vars } from "nativewind";
-import { View, Text, Appearance } from "react-native";
+import { View, Text, Appearance, useColorScheme } from "react-native";
 import { I18nProvider, TransRenderProps } from "@lingui/react";
 import { i18n } from "@lingui/core";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
 import { cssVariables } from "@bahar/design-system/theme";
 
 import { messages as enMessages } from "@bahar/i18n/locales/en";

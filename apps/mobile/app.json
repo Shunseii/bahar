@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "bahar",
+    "name": "Bahar",
     "slug": "bahar",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -52,7 +52,8 @@
         {
           "locales": ["en", "ar"]
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

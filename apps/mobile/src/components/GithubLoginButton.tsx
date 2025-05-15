@@ -1,7 +1,6 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Button } from "./ui/button";
-import { View, Text } from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { View, Text, useColorScheme } from "react-native";
 import { Trans } from "@lingui/react/macro";
 
 export const GithubLoginButton = () => {

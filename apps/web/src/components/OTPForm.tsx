@@ -14,7 +14,10 @@ import {
 } from "@/components/ui/form";
 import { useForm, SubmitHandler, useFormContext } from "react-hook-form";
 import z from "zod";
-import { REGEXP_ONLY_EN_AR_DIGITS, convertArabicNumToEnglish } from "@/lib/utils";
+import {
+  REGEXP_ONLY_EN_AR_DIGITS,
+  convertArabicNumToEnglish,
+} from "@/lib/utils";
 import { cn } from "@bahar/design-system";
 import { useLingui } from "@lingui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";

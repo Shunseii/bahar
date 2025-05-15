@@ -30,6 +30,8 @@ config.resolver = {
 
 // XXX: Resolve our exports in workspace packages
 // https://github.com/expo/expo/issues/26926
+// Also needed for better auth:
+// https://www.better-auth.com/docs/integrations/expo#configure-metro-bundler
 config.resolver.unstable_enablePackageExports = true;
 
 module.exports = config;

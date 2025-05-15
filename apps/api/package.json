@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.7.2",
+    "@better-auth/expo": "^1.2.7",
     "@libsql/client": "^0.10.0",
     "@sendgrid/mail": "^8.1.1",
     "@sentry/esbuild-plugin": "^2.22.7",
@@ -33,7 +34,7 @@
     "@trpc/server": "11.0.0-next-beta.289",
     "@types/cookie-parser": "^1.4.6",
     "@upstash/redis": "^1.28.4",
-    "better-auth": "^1.1.8",
+    "better-auth": "^1.2.7",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

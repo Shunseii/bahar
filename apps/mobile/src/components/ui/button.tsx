@@ -2,7 +2,10 @@ import { cn } from "@bahar/design-system";
 import { cva, VariantProps } from "class-variance-authority";
 import { FC, PropsWithChildren } from "react";
 import { Text } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from "react-native-gesture-handler";
 
 const buttonVariants = cva(
   "items-center justify-center rounded-md text-sm font-medium transition-colors disabled:opacity-50",
@@ -32,7 +35,8 @@ const buttonVariants = cva(
 
 interface ButtonProps
   extends VariantProps<typeof buttonVariants>,
-    PropsWithChildren {
+    PropsWithChildren,
+    TouchableOpacityProps {
   onPress: () => void;
   className?: string;
 }
@@ -43,6 +47,7 @@ export const Button: FC<ButtonProps> = ({
   variant = "default",
   className,
   children,
+  ...rest
 }) => {
   const variantsWithFeedback = ["default", "destructive", "secondary"];
 
@@ -51,6 +56,7 @@ export const Button: FC<ButtonProps> = ({
       className={cn(buttonVariants({ variant, size, className }))}
       onPress={onPress}
       activeOpacity={variantsWithFeedback.includes(variant!) ? 0.7 : 1}
+      {...rest}
     >
       <Text
         className={cn(

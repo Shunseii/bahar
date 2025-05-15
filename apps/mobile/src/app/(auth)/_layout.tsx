@@ -19,9 +19,9 @@ export default function Layout() {
           }}
         />
         <Drawer.Screen
-          name="explore"
+          name="code/[email]"
           options={{
-            title: "Explore",
+            title: "Code",
           }}
         />
       </Drawer>
