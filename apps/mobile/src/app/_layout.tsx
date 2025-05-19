@@ -76,7 +76,7 @@ export default function RootLayout() {
 
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, isPending]);
 
   if (!loaded || isPending) {
     return null;
