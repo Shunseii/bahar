@@ -4,7 +4,7 @@ import { Page } from "@/components/Page";
 import { authClient } from "@/utils/auth-client";
 import { Redirect } from "expo-router";
 
-export default function HomeScreen() {
+export default function DecksScreen() {
   const { data } = authClient.useSession();
 
   if (!data) {
@@ -14,7 +14,7 @@ export default function HomeScreen() {
   return (
     <Page>
       <Text className="tracking-tight font-bold text-2xl text-foreground text-center">
-        This is your personalized Arabic dictionary!
+        Settings
       </Text>
 
       <Text className="text-muted-foreground mt-2 text-center text-sm">

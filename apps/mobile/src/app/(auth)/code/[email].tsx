@@ -41,7 +41,7 @@ export default function EnterCodeScreen() {
   };
 
   return (
-    <Page>
+    <Page className="!bg-background">
       <Text className="tracking-tight font-bold text-xl text-foreground text-center">
         <Trans>Enter your 6-digit code from your email</Trans>
       </Text>

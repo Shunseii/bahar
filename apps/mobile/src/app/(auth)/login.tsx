@@ -55,7 +55,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <Page>
+    <Page className="!bg-background">
       <Text className="tracking-tight font-bold text-2xl text-foreground text-center">
         <Trans>Welcome to Bahar!</Trans>
       </Text>
