@@ -22,12 +22,14 @@ import { authClient } from "@/utils/auth-client";
 import { Button } from "@/components/ui/button";
 import { ScrollView } from "react-native-gesture-handler";
 import { cn } from "@bahar/design-system";
+import { usePathname } from "expo-router";
 
 function SearchBarHeader({
   navigation,
 }: {
   navigation: DrawerNavigationProp<ParamListBase, string, undefined>;
 }) {
+  const pathname = usePathname();
   const { t } = useLingui();
   const colorScheme = useColorScheme();
   const [searchText, setSearchText] = useState("");
@@ -51,12 +53,14 @@ function SearchBarHeader({
         )}
       </TouchableOpacity>
 
-      <TextInput
-        className="flex-1 ml-3 border border-border rounded-md px-2 h-12 text-foreground placeholder:text-muted-foreground"
-        placeholder={t`Search...`}
-        value={searchText}
-        onChangeText={setSearchText}
-      />
+      {pathname === "/" && (
+        <TextInput
+          className="flex-1 ml-3 border border-border rounded-md px-2 h-12 text-foreground placeholder:text-muted-foreground"
+          placeholder={t`Search...`}
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      )}
     </View>
   );
 }
