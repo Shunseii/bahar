@@ -183,6 +183,9 @@ importers:
       '@lingui/react':
         specifier: ^5.3.1
         version: 5.3.1(@lingui/babel-plugin-lingui-macro@5.3.1)(react@18.3.1)
+      '@meilisearch/instant-meilisearch':
+        specifier: ^0.16.0
+        version: 0.16.0
       '@react-navigation/bottom-tabs':
         specifier: ^7.2.0
         version: 7.2.0(@react-navigation/native@7.0.14)(react-native-safe-area-context@4.12.0)(react-native-screens@4.4.0)(react-native@0.76.9)(react@18.3.1)
@@ -192,12 +195,30 @@ importers:
       '@react-navigation/native':
         specifier: ^7.0.14
         version: 7.0.14(react-native@0.76.9)(react@18.3.1)
+      '@tanstack/react-query':
+        specifier: ^5.22.2
+        version: 5.22.2(react@18.3.1)
+      '@trpc/client':
+        specifier: 11.0.0-next-beta.289
+        version: 11.0.0-next-beta.289(@trpc/server@11.0.0-next-beta.289)
+      '@trpc/next':
+        specifier: 11.0.0-next-beta.289
+        version: 11.0.0-next-beta.289(@tanstack/react-query@5.22.2)(@trpc/client@11.0.0-next-beta.289)(@trpc/react-query@11.0.0-next-beta.289)(@trpc/server@11.0.0-next-beta.289)(next@14.1.0)(react-dom@18.3.1)(react@18.3.1)
+      '@trpc/react-query':
+        specifier: 11.0.0-next-beta.289
+        version: 11.0.0-next-beta.289(@tanstack/react-query@5.22.2)(@trpc/client@11.0.0-next-beta.289)(@trpc/server@11.0.0-next-beta.289)(react-dom@18.3.1)(react@18.3.1)
+      '@trpc/server':
+        specifier: 11.0.0-next-beta.289
+        version: 11.0.0-next-beta.289
       better-auth:
         specifier: ^1.2.7
         version: 1.2.7
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       expo:
         specifier: ~52.0.46
         version: 52.0.46(@babel/core@7.26.0)(@babel/preset-env@7.25.3)(react-native-webview@13.12.5)(react-native@0.76.9)(react@18.3.1)
@@ -261,6 +282,9 @@ importers:
       react-hook-form:
         specifier: ^7.51.0
         version: 7.51.0(react@18.3.1)
+      react-instantsearch-core:
+        specifier: ^7.15.7
+        version: 7.15.7(algoliasearch@4.22.1)(react@18.3.1)
       react-native:
         specifier: 0.76.9
         version: 0.76.9(@babel/core@7.26.0)(@babel/preset-env@7.25.3)(@types/react@18.3.18)(react@18.3.1)
@@ -291,6 +315,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.17
         version: 3.4.17
+      ts-fsrs:
+        specifier: ^4.5.1
+        version: 4.5.1
       zod:
         specifier: ^3.22.4
         version: 3.24.1
@@ -8801,6 +8828,10 @@ packages:
     resolution: {integrity: sha512-Ip3IfRs3RZjeC88V8FGnWQTQXeS5gkJedPSosN6DMi9Xs8buGTpsPq6UhREoZsGH+62VoQ6jiRBUR8R77If69w==}
     dev: false
 
+  /@types/google.maps@3.58.1:
+    resolution: {integrity: sha512-X9QTSvGJ0nCfMzYOnaVs/k6/4L+7F5uCS+4iUmkLEls6J9S/Phv+m/i3mDeyc49ZBgwab3EFO1HEoBY7k98EGQ==}
+    dev: false
+
   /@types/graceful-fs@4.1.9:
     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}
     dependencies:
@@ -9816,6 +9847,15 @@ packages:
 
   /algoliasearch-helper@3.16.3(algoliasearch@4.22.1):
     resolution: {integrity: sha512-1OuJT6sONAa9PxcOmWo5WCAT3jQSpCR9/m5Azujja7nhUQwAUDvaaAYrcmUySsrvHh74usZHbE3jFfGnWtZj8w==}
+    peerDependencies:
+      algoliasearch: '>= 3.1 < 6'
+    dependencies:
+      '@algolia/events': 4.0.1
+      algoliasearch: 4.22.1
+    dev: false
+
+  /algoliasearch-helper@3.25.0(algoliasearch@4.22.1):
+    resolution: {integrity: sha512-vQoK43U6HXA9/euCqLjvyNdM4G2Fiu/VFp4ae0Gau9sZeIKBPvUPnXfLYAe65Bg7PFuw03coeu5K6lTPSXRObw==}
     peerDependencies:
       algoliasearch: '>= 3.1 < 6'
     dependencies:
@@ -13834,6 +13874,12 @@ packages:
       strip-ansi: 6.0.1
       through: 2.3.8
 
+  /instantsearch-ui-components@0.11.1:
+    resolution: {integrity: sha512-ZqUbJYYgObQ47J08ftXV1KNC1vdEoiD4/49qrkCdW46kRzLxLgYXJGuEuk48DQwK4aBtIoccgTyfbMGfcqNjxg==}
+    dependencies:
+      '@babel/runtime': 7.26.7
+    dev: false
+
   /instantsearch-ui-components@0.4.0:
     resolution: {integrity: sha512-Isa9Ankm89e9PUXsUto6TxYzcQpXKlWZMsKLXc//dO4i9q5JS8s0Es+c+U65jRLK2j1DiVlNx/Z6HshRIZwA8w==}
     dependencies:
@@ -13858,6 +13904,26 @@ packages:
       preact: 10.19.6
       qs: 6.9.7
       search-insights: 2.13.0
+    dev: false
+
+  /instantsearch.js@4.78.3(algoliasearch@4.22.1):
+    resolution: {integrity: sha512-0i7vyX9jHEIKSfhu+CZHL/ySnbMAe7e98YUJiZX5D7AiXo2WvAPbnV/3CXIPR0whNWOXKGvlv7Ji7Pt4Yrn+Aw==}
+    peerDependencies:
+      algoliasearch: '>= 3.1 < 6'
+    dependencies:
+      '@algolia/events': 4.0.1
+      '@types/dom-speech-recognition': 0.0.1
+      '@types/google.maps': 3.58.1
+      '@types/hogan.js': 3.0.5
+      '@types/qs': 6.9.11
+      algoliasearch: 4.22.1
+      algoliasearch-helper: 3.25.0(algoliasearch@4.22.1)
+      hogan.js: 3.0.2
+      htm: 3.1.1
+      instantsearch-ui-components: 0.11.1
+      preact: 10.19.6
+      qs: 6.9.7
+      search-insights: 2.17.3
     dev: false
 
   /internal-ip@4.3.0:
@@ -16993,6 +17059,20 @@ packages:
       react: 18.3.1
     dev: false
 
+  /react-instantsearch-core@7.15.7(algoliasearch@4.22.1)(react@18.3.1):
+    resolution: {integrity: sha512-9FOHY66VMD0FnxF1dT9g5eEPmGybeKwVAa/T2JX1AqLJCQMHysjEl6qH4+/F8M82KdCqzBof4mpFosPiAVuruA==}
+    peerDependencies:
+      algoliasearch: '>= 3.1 < 6'
+      react: '>= 16.8.0 < 20'
+    dependencies:
+      '@babel/runtime': 7.26.7
+      algoliasearch: 4.22.1
+      algoliasearch-helper: 3.25.0(algoliasearch@4.22.1)
+      instantsearch.js: 4.78.3(algoliasearch@4.22.1)
+      react: 18.3.1
+      use-sync-external-store: 1.4.0(react@18.3.1)
+    dev: false
+
   /react-instantsearch-core@7.7.0(algoliasearch@4.22.1)(react@18.3.1):
     resolution: {integrity: sha512-omUwh5JoYBOn/aa7iNtyD7t3FkJqcyscWdKaJ6VStsdAt1biDZQPpYkTG5xyZiSQ2mht99GqMm1OY1VM+zDumg==}
     peerDependencies:
@@ -17883,6 +17963,10 @@ packages:
 
   /search-insights@2.13.0:
     resolution: {integrity: sha512-Orrsjf9trHHxFRuo9/rzm0KIWmgzE8RMlZMzuhZOJ01Rnz3D0YBAe+V6473t6/H6c7irs6Lt48brULAiRWb3Vw==}
+    dev: false
+
+  /search-insights@2.17.3:
+    resolution: {integrity: sha512-RQPdCYTa8A68uM2jwxoY842xDhvx3E5LFL1LxvxCNMev4o5mLuokczhzjAgGwUZBAmOKZknArSxLKmXtIi2AxQ==}
     dev: false
 
   /secure-json-parse@2.7.0:
