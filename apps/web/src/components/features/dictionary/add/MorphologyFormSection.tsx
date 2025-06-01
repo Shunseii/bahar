@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { useFormContext } from "react-hook-form";
 import { FormSchema } from "@/schemas/dictionary";
 import { z } from "@/lib/zod";

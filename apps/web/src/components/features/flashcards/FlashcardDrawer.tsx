@@ -25,7 +25,7 @@ import {
 import { RouterOutput, trpc } from "@/lib/trpc";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useDir } from "@/hooks/useDir";
 import { Badge } from "../../ui/badge";
 import { FilterSchema } from "api/schemas";

@@ -17,7 +17,7 @@ import { cn } from "@bahar/design-system";
 import { X } from "lucide-react";
 import { sheetVariantsNoSlideAnimations } from "./ui/sheet/variants";
 import { atom, useAtom } from "jotai";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Logo from "@/assets/logo.svg";
 import { useLogout } from "@/hooks/useLogout";
 
