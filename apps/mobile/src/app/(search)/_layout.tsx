@@ -113,7 +113,7 @@ export default function Layout() {
           return (
             <View
               className={cn(
-                "flex-1 bg-background border-border px-4 pt-safe",
+                "flex-1 bg-background border-border px-4 py-safe",
                 dir === "rtl" && "border-l",
                 dir === "ltr" && "border-r",
               )}
@@ -140,9 +140,9 @@ export default function Layout() {
         screenOptions={{
           headerShown: true,
           header: ({ navigation }) => (
-            <SafeAreaView>
+            <View className="pt-safe">
               <SearchBarHeader navigation={navigation} />
-            </SafeAreaView>
+            </View>
           ),
         }}
       >
