@@ -5,6 +5,11 @@ import {
   TouchableOpacity,
   useColorScheme,
 } from "react-native";
+import {
+  InstantSearch,
+  useSearchBox,
+  UseSearchBoxProps,
+} from "react-instantsearch-core";
 import { Drawer } from "expo-router/drawer";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerItemList, DrawerNavigationProp } from "@react-navigation/drawer";
@@ -22,20 +27,34 @@ import { authClient } from "@/utils/auth-client";
 import { Button } from "@/components/ui/button";
 import { ScrollView } from "react-native-gesture-handler";
 import { cn } from "@bahar/design-system";
-import { usePathname } from "expo-router";
+import { Redirect, usePathname } from "expo-router";
+import { searchClient } from "@/utils/search";
+import { useRef } from "react";
 
 function SearchBarHeader({
   navigation,
+  ...props
 }: {
   navigation: DrawerNavigationProp<ParamListBase, string, undefined>;
-}) {
+} & UseSearchBoxProps) {
+  const { query, refine } = useSearchBox(props);
   const pathname = usePathname();
   const { t } = useLingui();
   const colorScheme = useColorScheme();
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState(query);
+  const inputRef = useRef<TextInput>(null);
   const locales = useLocales();
 
   const dir = locales[0].textDirection;
+
+  const setQuery = (newQuery: string) => {
+    setSearchText(newQuery);
+    refine(newQuery);
+  };
+
+  if (query !== searchText && !inputRef.current?.isFocused()) {
+    setSearchText(query);
+  }
 
   return (
     <View className="flex-row items-center px-4 h-16 bg-background border-b border-border">
@@ -57,8 +76,14 @@ function SearchBarHeader({
         <TextInput
           className="flex-1 ml-3 border border-border rounded-md px-2 h-12 text-foreground placeholder:text-muted-foreground"
           placeholder={t`Search...`}
+          ref={inputRef}
           value={searchText}
-          onChangeText={setSearchText}
+          onChangeText={setQuery}
+          clearButtonMode="while-editing"
+          autoCapitalize="none"
+          autoComplete="off"
+          autoCorrect={false}
+          spellCheck={false}
         />
       )}
     </View>
@@ -68,75 +93,86 @@ function SearchBarHeader({
 export default function Layout() {
   const locales = useLocales();
   const { t } = useLingui();
+  const { data } = authClient.useSession();
+
+  if (!data) {
+    return <Redirect href={"/login"} />;
+  }
 
   const dir = locales[0].textDirection;
 
   return (
-    <Drawer
-      backBehavior="history"
-      drawerContent={(props) => {
-        return (
-          <View
-            className={cn(
-              "flex-1 bg-background border-border px-4 pt-safe",
-              dir === "rtl" && "border-l",
-              dir === "ltr" && "border-r",
-            )}
-          >
-            <View className="flex-1 my-4">
-              <ScrollView alwaysBounceVertical={false}>
-                <DrawerItemList {...props} />
-              </ScrollView>
+    <InstantSearch
+      searchClient={searchClient}
+      indexName={data.user.id}
+      future={{ preserveSharedStateOnUnmount: true }}
+    >
+      <Drawer
+        backBehavior="history"
+        drawerContent={(props) => {
+          return (
+            <View
+              className={cn(
+                "flex-1 bg-background border-border px-4 pt-safe",
+                dir === "rtl" && "border-l",
+                dir === "ltr" && "border-r",
+              )}
+            >
+              <View className="flex-1 my-4">
+                <ScrollView alwaysBounceVertical={false}>
+                  <DrawerItemList {...props} />
+                </ScrollView>
 
-              <View>
-                <Button
-                  variant="secondary"
-                  onPress={async () => {
-                    await authClient.signOut();
-                  }}
-                >
-                  <Trans>Logout</Trans>
-                </Button>
+                <View>
+                  <Button
+                    variant="secondary"
+                    onPress={async () => {
+                      await authClient.signOut();
+                    }}
+                  >
+                    <Trans>Logout</Trans>
+                  </Button>
+                </View>
               </View>
             </View>
-          </View>
-        );
-      }}
-      screenOptions={{
-        headerShown: true,
-        header: ({ navigation }) => (
-          <SafeAreaView>
-            <SearchBarHeader navigation={navigation} />
-          </SafeAreaView>
-        ),
-      }}
-    >
-      <Drawer.Screen
-        name="index"
-        options={{
-          swipeEdgeWidth: 300,
-          drawerIcon: (props) => <Home {...props} />,
-          title: t`Home`,
+          );
         }}
-      />
+        screenOptions={{
+          headerShown: true,
+          header: ({ navigation }) => (
+            <SafeAreaView>
+              <SearchBarHeader navigation={navigation} />
+            </SafeAreaView>
+          ),
+        }}
+      >
+        <Drawer.Screen
+          name="index"
+          options={{
+            swipeEdgeWidth: 300,
+            drawerIcon: (props) => <Home {...props} />,
+            title: t`Home`,
+          }}
+        />
 
-      <Drawer.Screen
-        name="decks"
-        options={{
-          swipeEdgeWidth: 300,
-          drawerIcon: (props) => <Layers {...props} />,
-          title: t`Decks`,
-        }}
-      />
+        <Drawer.Screen
+          name="decks"
+          options={{
+            swipeEdgeWidth: 300,
+            drawerIcon: (props) => <Layers {...props} />,
+            title: t`Decks`,
+          }}
+        />
 
-      <Drawer.Screen
-        name="settings"
-        options={{
-          swipeEdgeWidth: 300,
-          drawerIcon: (props) => <Settings {...props} />,
-          title: t`Settings`,
-        }}
-      />
-    </Drawer>
+        <Drawer.Screen
+          name="settings"
+          options={{
+            swipeEdgeWidth: 300,
+            drawerIcon: (props) => <Settings {...props} />,
+            title: t`Settings`,
+          }}
+        />
+      </Drawer>
+    </InstantSearch>
   );
 }
