@@ -20,19 +20,23 @@ const InfiniteHits = ({
     escapeHTML: false,
   });
 
+  const handleEndReached = React.useCallback(() => {
+    if (!isLastPage) {
+      showMore();
+    }
+  }, [isLastPage, showMore]);
+
   return (
     <FlatList
       data={items}
       keyExtractor={(item) => item.id}
-      ItemSeparatorComponent={() => <View className="border-border border-b" />}
+      ItemSeparatorComponent={() => (
+        <View className="border-border border-b mx-8" />
+      )}
       ListHeaderComponent={ListHeader}
-      onEndReached={() => {
-        if (!isLastPage) {
-          showMore();
-        }
-      }}
+      onEndReached={handleEndReached}
       renderItem={({ item }) => (
-        <View className="p-4">
+        <View className="p-4 px-8">
           <Hit hit={item} />
         </View>
       )}
@@ -42,11 +46,11 @@ const InfiniteHits = ({
 
 export default function HomeScreen() {
   return (
-    <Page className="pt-0">
+    <Page className="pt-0 px-0">
       <InfiniteHits
         hitComponent={Hit}
         ListHeader={
-          <View className="pt-8">
+          <View className="pt-8 px-8">
             <Text className="tracking-tight font-bold text-2xl text-foreground text-center">
               This is your personalized Arabic dictionary!
             </Text>
