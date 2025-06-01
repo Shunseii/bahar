@@ -8,8 +8,8 @@
     "messages:compile": "lingui compile --typescript"
   },
   "dependencies": {
-    "@lingui/core": "^5.3.1",
-    "@lingui/conf": "^5.3.1",
-    "@lingui/cli": "^5.3.1"
+    "@lingui/core": "^5.3.2",
+    "@lingui/conf": "^5.3.2",
+    "@lingui/cli": "^5.3.2"
   }
 }
