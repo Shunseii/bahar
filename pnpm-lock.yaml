@@ -229,8 +229,8 @@ importers:
         specifier: ~17.1.5
         version: 17.1.6(expo@53.0.9)(react-native@0.79.2)
       expo-dev-client:
-        specifier: ~5.0.20
-        version: 5.0.20(expo@53.0.9)
+        specifier: ~5.1.8
+        version: 5.1.8(expo@53.0.9)
       expo-font:
         specifier: ~13.3.1
         version: 13.3.1(expo@53.0.9)(react@19.0.0)
@@ -362,8 +362,8 @@ importers:
         specifier: ~53.0.4
         version: 53.0.5(@babel/core@7.26.0)(expo@53.0.9)(jest@29.7.0)(react-dom@19.0.0)(react-native@0.79.2)(react@19.0.0)(webpack@5.97.1)
       react-test-renderer:
-        specifier: 18.3.1
-        version: 18.3.1(react@19.0.0)
+        specifier: 19.0.0
+        version: 19.0.0(react@19.0.0)
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -3702,53 +3702,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@expo/config-plugins@9.0.17:
-    resolution: {integrity: sha512-m24F1COquwOm7PBl5wRbkT9P9DviCXe0D7S7nQsolfbhdCWuvMkfXeoWmgjtdhy7sDlOyIgBrAdnB6MfsWKqIg==}
-    dependencies:
-      '@expo/config-types': 52.0.5
-      '@expo/json-file': 9.0.2
-      '@expo/plist': 0.2.2
-      '@expo/sdk-runtime-versions': 1.0.0
-      chalk: 4.1.2
-      debug: 4.4.0
-      getenv: 1.0.0
-      glob: 10.4.5
-      resolve-from: 5.0.0
-      semver: 7.7.1
-      slash: 3.0.0
-      slugify: 1.6.6
-      xcode: 3.0.1
-      xml2js: 0.6.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /@expo/config-types@52.0.5:
-    resolution: {integrity: sha512-AMDeuDLHXXqd8W+0zSjIt7f37vUd/BP8p43k68NHpyAvQO+z8mbQZm3cNQVAMySeayK2XoPigAFB1JF2NFajaA==}
-    dev: false
-
   /@expo/config-types@53.0.4:
     resolution: {integrity: sha512-0s+9vFx83WIToEr0Iwy4CcmiUXa5BgwBmEjylBB2eojX5XAMm9mJvw9KpjAb8m7zq2G0Q6bRbeufkzgbipuNQg==}
-
-  /@expo/config@10.0.11:
-    resolution: {integrity: sha512-nociJ4zr/NmbVfMNe9j/+zRlt7wz/siISu7PjdWE4WE+elEGxWWxsGzltdJG0llzrM+khx8qUiFK5aiVcdMBww==}
-    dependencies:
-      '@babel/code-frame': 7.10.4
-      '@expo/config-plugins': 9.0.17
-      '@expo/config-types': 52.0.5
-      '@expo/json-file': 9.0.2
-      deepmerge: 4.3.1
-      getenv: 1.0.0
-      glob: 10.4.5
-      require-from-string: 2.0.2
-      resolve-from: 5.0.0
-      resolve-workspace-root: 2.0.0
-      semver: 7.7.1
-      slugify: 1.6.6
-      sucrase: 3.35.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
 
   /@expo/config@11.0.10:
     resolution: {integrity: sha512-8S8Krr/c5lnl0eF03tA2UGY9rGBhZcbWKz2UWw5dpL/+zstwUmog8oyuuC8aRcn7GiTQLlbBkxcMeT8sOGlhbA==}
@@ -3828,14 +3783,6 @@ packages:
       temp-dir: 2.0.0
       unique-string: 2.0.0
 
-  /@expo/json-file@9.0.2:
-    resolution: {integrity: sha512-yAznIUrybOIWp3Uax7yRflB0xsEpvIwIEqIjao9SGi2Gaa+N0OamWfe0fnXBSWF+2zzF4VvqwT4W5zwelchfgw==}
-    dependencies:
-      '@babel/code-frame': 7.10.4
-      json5: 2.2.3
-      write-file-atomic: 2.4.3
-    dev: false
-
   /@expo/json-file@9.1.4:
     resolution: {integrity: sha512-7Bv86X27fPERGhw8aJEZvRcH9sk+9BenDnEmrI3ZpywKodYSBgc8lX9Y32faNVQ/p0YbDK9zdJ0BfAKNAOyi0A==}
     dependencies:
@@ -3891,14 +3838,6 @@ packages:
       npm-package-arg: 11.0.3
       ora: 3.4.0
       resolve-workspace-root: 2.0.0
-
-  /@expo/plist@0.2.2:
-    resolution: {integrity: sha512-ZZGvTO6vEWq02UAPs3LIdja+HRO18+LRI5QuDl6Hs3Ps7KX7xU6Y6kjahWKY37Rx2YjNpX07dGpBFzzC+vKa2g==}
-    dependencies:
-      '@xmldom/xmldom': 0.7.13
-      base64-js: 1.5.1
-      xmlbuilder: 14.0.0
-    dev: false
 
   /@expo/plist@0.3.4:
     resolution: {integrity: sha512-MhBLaUJNe9FQDDU2xhSNS4SAolr6K2wuyi4+A79vYuXLkAoICsbTwcGEQJN5jPY6D9izO/jsXh5k0h+mIWQMdw==}
@@ -9261,12 +9200,6 @@ packages:
       '@xtuc/long': 4.2.2
     dev: true
 
-  /@xmldom/xmldom@0.7.13:
-    resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
-    engines: {node: '>=10.0.0'}
-    deprecated: this version is no longer supported, please update to at least 0.8.*
-    dev: false
-
   /@xmldom/xmldom@0.8.10:
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
     engines: {node: '>=10.0.0'}
@@ -12107,50 +12040,50 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /expo-dev-client@5.0.20(expo@53.0.9):
-    resolution: {integrity: sha512-bLNkHdU7V3I4UefgJbJnIDUBUL0LxIal/xYEx9BbgDd3B7wgQKY//+BpPIxBOKCQ22lkyiHY8y9tLhO903sAgg==}
+  /expo-dev-client@5.1.8(expo@53.0.9):
+    resolution: {integrity: sha512-IopYPgBi3JflksO5ieTphbKsbYHy9iIVdT/d69It++y0iBMSm0oBIoDmUijrHKjE3fV6jnrwrm8luU13/mzIQQ==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 53.0.9(@babel/core@7.26.0)(react-native-webview@13.13.5)(react-native@0.79.2)(react@19.0.0)
-      expo-dev-launcher: 5.0.35(expo@53.0.9)
-      expo-dev-menu: 6.0.25(expo@53.0.9)
-      expo-dev-menu-interface: 1.9.3(expo@53.0.9)
-      expo-manifests: 0.15.8(expo@53.0.9)
-      expo-updates-interface: 1.0.0(expo@53.0.9)
+      expo-dev-launcher: 5.1.11(expo@53.0.9)
+      expo-dev-menu: 6.1.10(expo@53.0.9)
+      expo-dev-menu-interface: 1.10.0(expo@53.0.9)
+      expo-manifests: 0.16.5(expo@53.0.9)
+      expo-updates-interface: 1.1.0(expo@53.0.9)
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /expo-dev-launcher@5.0.35(expo@53.0.9):
-    resolution: {integrity: sha512-hEQr0ZREnUMxZ6wtQgfK1lzYnbb0zar3HqYZhmANzXmE6UEPbQ4GByLzhpfz/d+xxdBVQZsrHdtiV28KPG2sog==}
+  /expo-dev-launcher@5.1.11(expo@53.0.9):
+    resolution: {integrity: sha512-bN0+nv5H038s8Gzf8i16hwCyD3sWDmHp7vb+QbL1i6B3XNnICCKS/H/3VH6H3PRMvCmoLGPlg+ODDqGlf0nu3g==}
     peerDependencies:
       expo: '*'
     dependencies:
       ajv: 8.11.0
       expo: 53.0.9(@babel/core@7.26.0)(react-native-webview@13.13.5)(react-native@0.79.2)(react@19.0.0)
-      expo-dev-menu: 6.0.25(expo@53.0.9)
-      expo-manifests: 0.15.8(expo@53.0.9)
+      expo-dev-menu: 6.1.10(expo@53.0.9)
+      expo-manifests: 0.16.5(expo@53.0.9)
       resolve-from: 5.0.0
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /expo-dev-menu-interface@1.9.3(expo@53.0.9):
-    resolution: {integrity: sha512-KY/dWTBE1l47i9V366JN5rC6YIdOc9hz8yAmZzkl5DrPia5l3M2WIjtnpHC9zUkNjiSiG2urYoOAq4H/uLdmyg==}
+  /expo-dev-menu-interface@1.10.0(expo@53.0.9):
+    resolution: {integrity: sha512-NxtM/qot5Rh2cY333iOE87dDg1S8CibW+Wu4WdLua3UMjy81pXYzAGCZGNOeY7k9GpNFqDPNDXWyBSlk9r2pBg==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 53.0.9(@babel/core@7.26.0)(react-native-webview@13.13.5)(react-native@0.79.2)(react@19.0.0)
     dev: false
 
-  /expo-dev-menu@6.0.25(expo@53.0.9):
-    resolution: {integrity: sha512-K2m4z/I+CPWbMtHlDzU68lHaQs52De0v5gbsjAmA5ig8FrYh4MKZvPxSVANaiKENzgmtglu8qaFh7ua9Gt2TfA==}
+  /expo-dev-menu@6.1.10(expo@53.0.9):
+    resolution: {integrity: sha512-LaI0Bw5zzw5XefjYSX6YaMydzk0YBysjqQoxzj6ufDyKgwAfPmFwOLkZ03DOSerc9naezGLNAGgTEN6QTgMmgQ==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 53.0.9(@babel/core@7.26.0)(react-native-webview@13.13.5)(react-native@0.79.2)(react@19.0.0)
-      expo-dev-menu-interface: 1.9.3(expo@53.0.9)
+      expo-dev-menu-interface: 1.10.0(expo@53.0.9)
     dev: false
 
   /expo-file-system@18.1.10(expo@53.0.9)(react-native@0.79.2):
@@ -12180,8 +12113,8 @@ packages:
       expo: 53.0.9(@babel/core@7.26.0)(react-native-webview@13.13.5)(react-native@0.79.2)(react@19.0.0)
     dev: false
 
-  /expo-json-utils@0.14.0:
-    resolution: {integrity: sha512-xjGfK9dL0B1wLnOqNkX0jM9p48Y0I5xEPzHude28LY67UmamUyAACkqhZGaPClyPNfdzczk7Ej6WaRMT3HfXvw==}
+  /expo-json-utils@0.15.0:
+    resolution: {integrity: sha512-duRT6oGl80IDzH2LD2yEFWNwGIC2WkozsB6HF3cDYNoNNdUvFk6uN3YiwsTsqVM/D0z6LEAQ01/SlYvN+Fw0JQ==}
     dev: false
 
   /expo-keep-awake@14.1.4(expo@53.0.9)(react@19.0.0):
@@ -12219,14 +12152,14 @@ packages:
       rtl-detect: 1.1.2
     dev: false
 
-  /expo-manifests@0.15.8(expo@53.0.9):
-    resolution: {integrity: sha512-VuIyaMfRfLZeETNsRohqhy1l7iZ7I+HKMPfZXVL2Yn17TT0WkOhZoq1DzYwPbOHPgp1Uk6phNa86EyaHrD2DLw==}
+  /expo-manifests@0.16.5(expo@53.0.9):
+    resolution: {integrity: sha512-zLUeJogn2C7qOE75Zz7jcmJorMfIbSRR35ctspN0OK/Hq/+PAAptA8p9jNVC8xp/91uP9uI8f3xPhh+A11eR2A==}
     peerDependencies:
       expo: '*'
     dependencies:
-      '@expo/config': 10.0.11
+      '@expo/config': 11.0.10
       expo: 53.0.9(@babel/core@7.26.0)(react-native-webview@13.13.5)(react-native@0.79.2)(react@19.0.0)
-      expo-json-utils: 0.14.0
+      expo-json-utils: 0.15.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -12355,8 +12288,8 @@ packages:
       - supports-color
     dev: false
 
-  /expo-updates-interface@1.0.0(expo@53.0.9):
-    resolution: {integrity: sha512-93oWtvULJOj+Pp+N/lpTcFfuREX1wNeHtp7Lwn8EbzYYmdn37MvZU3TPW2tYYCZuhzmKEXnUblYcruYoDu7IrQ==}
+  /expo-updates-interface@1.1.0(expo@53.0.9):
+    resolution: {integrity: sha512-DeB+fRe0hUDPZhpJ4X4bFMAItatFBUPjw/TVSbJsaf3Exeami+2qbbJhWkcTMoYHOB73nOIcaYcWXYJnCJXO0w==}
     peerDependencies:
       expo: '*'
     dependencies:
@@ -16382,10 +16315,6 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
-  /react-is@18.3.1:
-    resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
-    dev: true
-
   /react-is@19.1.0:
     resolution: {integrity: sha512-Oe56aUPnkHyyDxxkvqtd7KkdQP5uIUfHxd5XTb3wE9d/kRnZLmKbDB0GWk919tdQ+mxxPtG6EAs6RMT6i1qtHg==}
 
@@ -16691,16 +16620,6 @@ packages:
       webpack-sources: 3.2.3
     dev: true
 
-  /react-shallow-renderer@16.15.0(react@19.0.0):
-    resolution: {integrity: sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==}
-    peerDependencies:
-      react: ^16.0.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      object-assign: 4.1.1
-      react: 19.0.0
-      react-is: 18.3.1
-    dev: true
-
   /react-style-singleton@2.2.3(@types/react@18.2.56)(react@19.0.0):
     resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
     engines: {node: '>=10'}
@@ -16716,17 +16635,6 @@ packages:
       react: 19.0.0
       tslib: 2.8.1
     dev: false
-
-  /react-test-renderer@18.3.1(react@19.0.0):
-    resolution: {integrity: sha512-KkAgygexHUkQqtvvx/otwxtuFu5cVjfzTCtjXLH9boS19/Nbtg84zS7wIQn39G8IlrhThBpQsMKkq5ZHZIYFXA==}
-    peerDependencies:
-      react: ^18.3.1
-    dependencies:
-      react: 19.0.0
-      react-is: 18.3.1
-      react-shallow-renderer: 16.15.0(react@19.0.0)
-      scheduler: 0.23.2
-    dev: true
 
   /react-test-renderer@19.0.0(react@19.0.0):
     resolution: {integrity: sha512-oX5u9rOQlHzqrE/64CNr0HB0uWxkCQmZNSfozlYvwE71TLVgeZxVf0IjouGEr1v7r1kcDifdAJBeOhdhxsG/DA==}
@@ -17126,12 +17034,6 @@ packages:
     engines: {node: '>=v12.22.7'}
     dependencies:
       xmlchars: 2.2.0
-    dev: true
-
-  /scheduler@0.23.2:
-    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
-    dependencies:
-      loose-envify: 1.4.0
     dev: true
 
   /scheduler@0.25.0:
@@ -19074,14 +18976,6 @@ packages:
   /wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  /write-file-atomic@2.4.3:
-    resolution: {integrity: sha512-GaETH5wwsX+GcnzhPgKcKjJ6M2Cq3/iZp1WyY/X1CSqrW+jVNM9Y7D8EC2sM4ZG/V8wZlSniJnCKWPmBYAucRQ==}
-    dependencies:
-      graceful-fs: 4.2.11
-      imurmurhash: 0.1.4
-      signal-exit: 3.0.7
-    dev: false
-
   /write-file-atomic@4.0.2:
     resolution: {integrity: sha512-7KxauUdBmSdWnmpaGFg+ppNjKF8uNLry8LyzjauQDOVONfFLNKrKvQOxZ/VuTIcS/gge/YNahf5RIIQWTSarlg==}
     engines: {node: ^12.13.0 || ^14.15.0 || >=16.0.0}
@@ -19161,11 +19055,6 @@ packages:
   /xmlbuilder@11.0.1:
     resolution: {integrity: sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==}
     engines: {node: '>=4.0'}
-
-  /xmlbuilder@14.0.0:
-    resolution: {integrity: sha512-ts+B2rSe4fIckR6iquDjsKbQFK2NlUk6iG5nf14mDEyldgoc2nEKZ3jZWMPTxGQwVgToSjt6VGIho1H8/fNFTg==}
-    engines: {node: '>=8.0'}
-    dev: false
 
   /xmlbuilder@15.1.1:
     resolution: {integrity: sha512-yMqGBqtXyeN1e3TGYvgNgDVZ3j84W4cwkOXQswghol6APgZWaff9lnbvN7MHYJOiXsvGPXtjTYJEiC9J2wv9Eg==}

@@ -11,7 +11,6 @@ import {
   UseSearchBoxProps,
 } from "react-instantsearch-core";
 import { Drawer } from "expo-router/drawer";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerItemList, DrawerNavigationProp } from "@react-navigation/drawer";
 import { ParamListBase } from "@react-navigation/native";
 import {
@@ -27,7 +26,7 @@ import { authClient } from "@/utils/auth-client";
 import { Button } from "@/components/ui/button";
 import { ScrollView } from "react-native-gesture-handler";
 import { cn } from "@bahar/design-system";
-import { Redirect, usePathname } from "expo-router";
+import { usePathname } from "expo-router";
 import { searchClient } from "@/utils/search";
 import { useRef } from "react";
 
@@ -95,16 +94,12 @@ export default function Layout() {
   const { t } = useLingui();
   const { data } = authClient.useSession();
 
-  if (!data) {
-    return <Redirect href={"/login"} />;
-  }
-
   const dir = locales[0].textDirection;
 
   return (
     <InstantSearch
       searchClient={searchClient}
-      indexName={data.user.id}
+      indexName={data!.user.id}
       future={{ preserveSharedStateOnUnmount: true }}
     >
       <Drawer

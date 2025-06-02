@@ -10,7 +10,7 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import { authClient } from "@/utils/auth-client";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -57,8 +57,7 @@ const setup = async () => {
 setup();
 
 export default function RootLayout() {
-  const { isPending, data } = authClient.useSession();
-  const router = useRouter();
+  const { isPending, data: authData } = authClient.useSession();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
@@ -66,21 +65,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded && !isPending) {
-      const isAuthed = !!data;
-
-      if (isAuthed) {
-        router.replace("/");
-      } else {
-        router.replace("/login");
-      }
-
       SplashScreen.hideAsync();
     }
   }, [loaded, isPending]);
-
-  if (!loaded || isPending) {
-    return null;
-  }
 
   const themeVars =
     colorScheme === "dark" ? cssVariables.dark : cssVariables.light;
@@ -94,15 +81,19 @@ export default function RootLayout() {
           >
             <I18nProvider i18n={i18n} defaultComponent={DefaultComponent}>
               <Stack>
-                <Stack.Screen
-                  name="(auth)"
-                  options={{ headerShown: false, animation: "fade" }}
-                />
+                <Stack.Protected guard={!authData}>
+                  <Stack.Screen
+                    name="(auth)"
+                    options={{ headerShown: false, animation: "fade" }}
+                  />
+                </Stack.Protected>
 
-                <Stack.Screen
-                  name="(search)"
-                  options={{ headerShown: false, animation: "fade" }}
-                />
+                <Stack.Protected guard={!!authData}>
+                  <Stack.Screen
+                    name="(search)"
+                    options={{ headerShown: false, animation: "fade" }}
+                  />
+                </Stack.Protected>
 
                 <Stack.Screen name="+not-found" />
               </Stack>
