@@ -1,4 +1,5 @@
-import React, { ReactNode, ComponentType, ReactElement } from "react";
+import React, { ComponentType, FC, ReactElement } from "react";
+import { Hit } from "instantsearch.js";
 import { Text, FlatList, View } from "react-native";
 import { Page } from "@/components/Page";
 import {
@@ -6,16 +7,32 @@ import {
   UseInfiniteHitsProps,
 } from "react-instantsearch-core";
 
+// TODO: centralize this
+type DictionarySchema = {
+  id: string;
+  word: string;
+  definition: string;
+};
+
+type HitType = Hit<DictionarySchema>;
+
+interface HitProps {
+  hit: HitType;
+}
+
+const Hit: FC<HitProps> = ({ hit }) => {
+  return <Text className="text-foreground">{hit.word}</Text>;
+};
+
 const InfiniteHits = ({
   hitComponent: Hit,
   ListHeader,
   ...props
-  // TODO: type the hit properly
 }: {
-  hitComponent: ComponentType<{ hit: unknown }>;
+  hitComponent: ComponentType<HitProps>;
   ListHeader: ReactElement;
-} & Omit<UseInfiniteHitsProps, "escapeHTML">) => {
-  const { items, isLastPage, showMore } = useInfiniteHits({
+} & Omit<UseInfiniteHitsProps<HitType>, "escapeHTML">) => {
+  const { items, isLastPage, showMore } = useInfiniteHits<HitType>({
     ...props,
     escapeHTML: false,
   });
@@ -64,7 +81,3 @@ export default function HomeScreen() {
     </Page>
   );
 }
-
-const Hit = ({ hit }: { hit: unknown }) => {
-  return <Text className="text-foreground">{(hit as any).word}</Text>;
-};
