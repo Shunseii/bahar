@@ -70,7 +70,7 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
    */
   const { isCountdownComplete } = useCountdown(1000);
   const { status } = useInstantSearch();
-  const { hits, showMore, isLastPage } = useInfiniteHits<Hit>(props);
+  const { items: hits, showMore, isLastPage } = useInfiniteHits<Hit>(props);
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
 

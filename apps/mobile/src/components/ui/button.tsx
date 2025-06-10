@@ -1,23 +1,20 @@
 import { cn } from "@bahar/design-system";
 import { cva, VariantProps } from "class-variance-authority";
-import { FC, PropsWithChildren } from "react";
-import { Text } from "react-native";
-import {
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "react-native-gesture-handler";
+import { FC, ElementType } from "react";
+import { Text, useColorScheme, View } from "react-native";
+import { Pressable, PressableProps } from "react-native-gesture-handler";
 
 const buttonVariants = cva(
-  "items-center justify-center rounded-md text-sm font-medium transition-colors disabled:opacity-50",
+  "flex flex-row items-center gap-x-2 justify-center rounded-md transition-colors disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground",
-        destructive: "bg-destructive text-destructive-foreground",
+        default: "bg-primary",
+        destructive: "bg-destructive",
         outline: "border border-input bg-background",
-        secondary: "bg-secondary text-secondary-foreground",
+        secondary: "bg-secondary",
         ghost: "",
-        link: "text-primary",
+        link: "",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -33,12 +30,32 @@ const buttonVariants = cva(
   },
 );
 
+const textVariants = cva("font-medium text-sm", {
+  variants: {
+    variant: {
+      default: "text-primary-foreground",
+      destructive: "text-destructive-foreground",
+      outline: "text-foreground",
+      secondary: "text-secondary-foreground",
+      ghost: "text-foreground",
+      link: "text-primary",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+});
+
+interface IconElementProps {
+  size?: number;
+  color?: string;
+}
+
 interface ButtonProps
   extends VariantProps<typeof buttonVariants>,
-    PropsWithChildren,
-    TouchableOpacityProps {
-  onPress: () => void;
+    PressableProps {
   className?: string;
+  Icon?: ElementType<IconElementProps>;
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -47,25 +64,38 @@ export const Button: FC<ButtonProps> = ({
   variant = "default",
   className,
   children,
+  Icon,
   ...rest
 }) => {
-  const variantsWithFeedback = ["default", "destructive", "secondary"];
+  const colorScheme = useColorScheme();
+  const variantsWithFeedback = [
+    "default",
+    "destructive",
+    "secondary",
+    "outline",
+  ];
 
   return (
-    <TouchableOpacity
-      className={cn(buttonVariants({ variant, size, className }))}
+    <Pressable
       onPress={onPress}
-      activeOpacity={variantsWithFeedback.includes(variant!) ? 0.7 : 1}
+      style={({ pressed }) => ({
+        opacity: pressed && variantsWithFeedback.includes(variant!) ? 0.7 : 1,
+      })}
       {...rest}
     >
-      <Text
-        className={cn(
-          buttonVariants({ variant, size, className }),
-          "text-center",
+      <View className={cn(buttonVariants({ variant, size, className }))}>
+        {Icon && (
+          <Icon size={16} color={colorScheme === "dark" ? "white" : "black"} />
         )}
-      >
-        {children}
-      </Text>
-    </TouchableOpacity>
+
+        <Text
+          className={cn(textVariants({ variant, className }), "text-center")}
+        >
+          {typeof children === "function"
+            ? children({ pressed: false, hovered: false })
+            : children}
+        </Text>
+      </View>
+    </Pressable>
   );
 };
