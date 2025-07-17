@@ -211,7 +211,7 @@ export const auth = betterAuth({
           category: LogCategory.DATABASE,
           event: "redis_delete",
         },
-        "Beter auth delete from redis.",
+        "Better auth delete from redis.",
       );
 
       await redisClient.del(key);
