@@ -1,10 +1,8 @@
-import sgMail from "@sendgrid/mail";
 import { config } from "../config";
+import { CreateEmailOptions, Resend } from "resend";
 
-sgMail.setApiKey(config.SENDGRID_API_KEY!);
+const resend = new Resend(config.RESEND_API_KEY);
 
-export const sendMail = async (
-  msg: sgMail.MailDataRequired | sgMail.MailDataRequired[],
-) => {
-  return sgMail.send(msg);
+export const sendMail = async (msg: CreateEmailOptions) => {
+  return resend.emails.send(msg);
 };
