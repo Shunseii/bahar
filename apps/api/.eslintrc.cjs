@@ -1,3 +1,3 @@
 module.exports = {
-  extends: ["@repo/eslint-config/trpc.js"],
+  extends: ["@bahar/eslint-config/trpc.js"],
 };
