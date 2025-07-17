@@ -26,7 +26,6 @@
     "@apidevtools/json-schema-ref-parser": "^11.7.2",
     "@better-auth/expo": "^1.2.7",
     "@libsql/client": "^0.10.0",
-    "@sendgrid/mail": "^8.1.1",
     "@sentry/esbuild-plugin": "^2.22.7",
     "@sentry/node": "^8.48.0",
     "@sentry/profiling-node": "^8.48.0",
@@ -46,6 +45,7 @@
     "nanoid": "^5.0.7",
     "pino": "^9.6.0",
     "pino-http": "^10.3.0",
+    "resend": "^4.6.0",
     "ts-fsrs": "^4.5.1",
     "tsx": "^4.7.1",
     "zod": "^3.22.4"
