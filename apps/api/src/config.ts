@@ -24,7 +24,13 @@ const EnvironmentVariablesSchema = z.object({
   GITHUB_CLIENT_SECRET: z.string().min(1),
   GITHUB_CLIENT_ID: z.string().min(1),
 
+  /**
+   * @deprecated Using resend now instead of sendgrid
+   * because Twilio is killing their free plan.
+   */
   SENDGRID_API_KEY: z.string().min(1),
+
+  RESEND_API_KEY: z.string().min(1),
 
   UPSTASH_REDIS_REST_URL: z.string().url(),
   UPSTASH_REDIS_REST_TOKEN: z.string().min(1),

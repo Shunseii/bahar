@@ -246,7 +246,7 @@ export const auth = betterAuth({
         // TODO: Translate this
         await sendMail({
           to: email,
-          from: "no-reply@bahar.dev",
+          from: "Bahar <no-reply@auth.bahar.dev>",
           subject: "Login | Bahar",
           text: `Enter this code: ${otp}. This code only lasts for 5 minutes.`,
           html: `Enter this code: <strong>${otp}</strong>. This code only lasts for 5 minutes.`,
