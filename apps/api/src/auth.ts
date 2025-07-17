@@ -243,14 +243,44 @@ export const auth = betterAuth({
       expiresIn: OTP_EXPIRY_SECS,
       disableSignUp: false,
       sendVerificationOTP: async ({ email, otp }) => {
+        logger.info(
+          {
+            event: "send_verification_email.start",
+            category: LogCategory.AUTH,
+            email,
+          },
+          "Sending verification email...",
+        );
+
         // TODO: Translate this
-        await sendMail({
+        const emailResp = await sendMail({
           to: email,
           from: "Bahar <no-reply@auth.bahar.dev>",
           subject: "Login | Bahar",
           text: `Enter this code: ${otp}. This code only lasts for 5 minutes.`,
           html: `Enter this code: <strong>${otp}</strong>. This code only lasts for 5 minutes.`,
         });
+
+        if (emailResp.error) {
+          logger.error(
+            {
+              event: "send_verification_email.error",
+              category: LogCategory.AUTH,
+              email,
+              error: emailResp.error,
+            },
+            "Error sending verification email.",
+          );
+        } else {
+          logger.info(
+            {
+              event: "send_verification_email.end",
+              category: LogCategory.AUTH,
+              email,
+            },
+            "Sent verification email.",
+          );
+        }
       },
     }),
   ],
