@@ -45,6 +45,7 @@ function SearchBarHeader({
   const locales = useLocales();
 
   const dir = locales[0].textDirection;
+  const isAddWordPage = pathname.includes("add-word");
 
   const setQuery = (newQuery: string) => {
     setSearchText(newQuery);
@@ -71,7 +72,7 @@ function SearchBarHeader({
         )}
       </TouchableOpacity>
 
-      {pathname === "/" && (
+      {pathname === "/" && !isAddWordPage && (
         <TextInput
           className="flex-1 ml-3 border border-border rounded-md px-2 h-12 text-foreground placeholder:text-muted-foreground"
           placeholder={t`Search...`}
@@ -142,7 +143,7 @@ export default function Layout() {
         }}
       >
         <Drawer.Screen
-          name="index"
+          name="(home)"
           options={{
             swipeEdgeWidth: 300,
             drawerIcon: (props) => <Home {...props} />,

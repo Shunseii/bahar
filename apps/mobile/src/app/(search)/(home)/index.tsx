@@ -6,14 +6,17 @@ import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react-native";
 import { Trans } from "@lingui/react/macro";
 import { ReviewFlashCardsButton } from "@/components/ReviewFlashcardsButton";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
     <Page className="pt-0 px-0">
       <View className="flex flex-row justify-between mx-4 mt-4 mb-2">
         <Button
           variant="outline"
-          onPress={() => {}}
+          onPress={() => router.push("/(search)/(home)/add-word")}
           className="h-max"
           Icon={PlusIcon}
         >
