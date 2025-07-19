@@ -11,6 +11,7 @@ export default function StackLayout() {
         name="index"
         options={{
           headerShown: false,
+          animation: "slide_from_left",
         }}
       />
 
@@ -18,9 +19,9 @@ export default function StackLayout() {
         name="add-word"
         options={{
           headerShown: false,
+          animation: "slide_from_right",
         }}
       />
     </Stack>
   );
 }
-
