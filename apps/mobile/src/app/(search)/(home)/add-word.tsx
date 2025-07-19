@@ -9,6 +9,8 @@ import { useLocales } from "expo-localization";
 import { useColorScheme } from "react-native";
 import { cn } from "@bahar/design-system";
 import { cssVariables } from "@bahar/design-system/theme";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 const Breadcrumbs = () => {
   const router = useRouter();
@@ -69,25 +71,68 @@ const BackButton = () => {
 };
 
 export default function AddWordScreen() {
+  const router = useRouter();
+
   return (
     <Page className="pt-0 px-4">
       <View className="flex-1 pt-4">
         <Breadcrumbs />
 
-        <View className="max-w-full flex-1">
-          <View className="flex-row items-center gap-4 mb-4">
+        <View className="max-w-full flex-1 gap-y-4">
+          <View className="flex-row items-center gap-4">
             <BackButton />
 
-            <Text className="text-xl font-semibold text-foreground tracking-tight">
+            <Text className="flex-1 text-xl font-semibold text-foreground tracking-tight">
               <Trans>Add a new word to your dictionary</Trans>
             </Text>
           </View>
 
-          {/* TODO: Form sections will be implemented here */}
-          <View className="flex-1 justify-center items-center">
-            <Text className="text-muted-foreground">
-              <Trans>Form sections coming soon...</Trans>
-            </Text>
+          <View className="grid gap-4 lg:gap-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <Trans>Basic Details</Trans>
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent>
+                <View className="gap-6">
+                  <View className="gap-2">
+                    <Text className="text-sm font-medium leading-none text-foreground">
+                      <Trans>Word</Trans> *
+                    </Text>
+                    <Input
+                      className="w-full text-xl"
+                      style={{ textAlign: "right" }}
+                    />
+                  </View>
+
+                  <View className="gap-2">
+                    <Text className="text-sm font-medium leading-none text-foreground">
+                      <Trans>Translation</Trans> *
+                    </Text>
+                    <Input className="w-full" />
+                    <Text className="text-sm text-muted-foreground">
+                      <Trans>An English translation of the word.</Trans>
+                    </Text>
+                  </View>
+                </View>
+              </CardContent>
+            </Card>
+          </View>
+
+          <View className="flex flex-row self-center items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onPress={() => router.push("/")}
+            >
+              <Trans>Discard</Trans>
+            </Button>
+
+            <Button variant="default" size="sm">
+              <Trans>Save</Trans>
+            </Button>
           </View>
         </View>
       </View>
