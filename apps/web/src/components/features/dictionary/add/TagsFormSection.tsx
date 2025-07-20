@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@/schemas/dictionary";
+import { FormSchema } from "@bahar/schemas";
 import { X } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 

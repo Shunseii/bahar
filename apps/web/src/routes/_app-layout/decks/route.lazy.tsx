@@ -1,6 +1,6 @@
 import { Trans } from "@lingui/react/macro";
 import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent";
-import { trpc } from "@/lib/trpc";
+import { trpc, trpcNew } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { useLingui } from "@lingui/react/macro";
 import {
@@ -36,12 +36,16 @@ import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { useToast } from "@/hooks/useToast";
 import { Page } from "@/components/Page";
+import { useQuery } from "@tanstack/react-query";
 
 const Decks = () => {
   const { data: settingsData } = trpc.settings.get.useQuery();
-  const { data } = trpc.decks.list.useQuery({
-    show_reverse: settingsData?.show_reverse_flashcards ?? false,
-  });
+  const { data } = useQuery(
+    trpcNew.decks.list.queryOptions({
+      show_reverse: settingsData?.show_reverse_flashcards ?? false,
+    }),
+  );
+
   const { mutateAsync: deleteDeck } = trpc.decks.delete.useMutation({
     onSuccess: () => {
       queryClient.invalidateQueries({

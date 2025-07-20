@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
-import { FormSchema, Inflection } from "@/schemas/dictionary";
+import { FormSchema, Inflection } from "@bahar/schemas";
 import { useLingui } from "@lingui/react/macro";
 import { Plus, InfoIcon } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -218,10 +218,7 @@ export const IsmMorphologyCardSection = () => {
                   dir={dir}
                 >
                   <FormControl>
-                    <SelectTrigger
-                      id="gender"
-                      aria-label={t`Select gender`}
-                    >
+                    <SelectTrigger id="gender" aria-label={t`Select gender`}>
                       <SelectValue placeholder={t`Select gender`} />
                     </SelectTrigger>
                   </FormControl>

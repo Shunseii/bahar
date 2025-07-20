@@ -11,6 +11,14 @@ import { cn } from "@bahar/design-system";
 import { cssVariables } from "@bahar/design-system/theme";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormSchema } from "@bahar/schemas";
+import type { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { trpc } from "@/utils/trpc";
+import { toast } from "sonner-native";
+import { t } from "@lingui/core/macro";
 
 const Breadcrumbs = () => {
   const router = useRouter();
@@ -70,8 +78,64 @@ const BackButton = () => {
   );
 };
 
+type FormData = z.infer<typeof FormSchema>;
+
 export default function AddWordScreen() {
+  const addWordMutation = useMutation(
+    trpc.dictionary.addWord.mutationOptions(),
+  );
   const router = useRouter();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<FormData>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      word: "",
+      translation: "",
+      tags: [],
+      root: "",
+      type: "ism",
+      examples: [],
+      definition: "",
+      antonyms: [],
+      morphology: {
+        ism: {
+          singular: "",
+          dual: "",
+          gender: "masculine",
+          plurals: [],
+          inflection: "triptote",
+        },
+        verb: {
+          huroof: [],
+          past_tense: "",
+          present_tense: "",
+          active_participle: "",
+          passive_participle: "",
+          imperative: "",
+          masadir: [],
+          form: "",
+          form_arabic: "",
+        },
+      },
+    },
+  });
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      const { word, translation } = data;
+
+      await addWordMutation.mutateAsync({ word, translation });
+
+      reset();
+    } catch (error) {
+      console.error("Error saving word:", error);
+    }
+  };
 
   return (
     <Page className="pt-0 px-4">
@@ -101,17 +165,47 @@ export default function AddWordScreen() {
                     <Text className="text-sm font-medium leading-none text-foreground">
                       <Trans>Word</Trans> *
                     </Text>
-                    <Input
-                      className="w-full text-xl"
-                      style={{ textAlign: "right" }}
+                    <Controller
+                      control={control}
+                      name="word"
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <Input
+                          className="w-full"
+                          style={{ textAlign: "right" }}
+                          onBlur={onBlur}
+                          onChangeText={onChange}
+                          value={value}
+                        />
+                      )}
                     />
+                    {errors.word && (
+                      <Text className="text-sm text-red-500">
+                        {errors.word.message}
+                      </Text>
+                    )}
                   </View>
 
                   <View className="gap-2">
                     <Text className="text-sm font-medium leading-none text-foreground">
                       <Trans>Translation</Trans> *
                     </Text>
-                    <Input className="w-full" />
+                    <Controller
+                      control={control}
+                      name="translation"
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <Input
+                          className="w-full"
+                          onBlur={onBlur}
+                          onChangeText={onChange}
+                          value={value}
+                        />
+                      )}
+                    />
+                    {errors.translation && (
+                      <Text className="text-sm text-red-500">
+                        {errors.translation.message}
+                      </Text>
+                    )}
                     <Text className="text-sm text-muted-foreground">
                       <Trans>An English translation of the word.</Trans>
                     </Text>
@@ -130,7 +224,12 @@ export default function AddWordScreen() {
               <Trans>Discard</Trans>
             </Button>
 
-            <Button variant="default" size="sm">
+            <Button
+              variant="default"
+              size="sm"
+              onPress={() => handleSubmit(onSubmit)()}
+              disabled={isSubmitting}
+            >
               <Trans>Save</Trans>
             </Button>
           </View>

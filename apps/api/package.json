@@ -29,8 +29,8 @@
     "@sentry/esbuild-plugin": "^2.22.7",
     "@sentry/node": "^8.48.0",
     "@sentry/profiling-node": "^8.48.0",
-    "@trpc/client": "11.0.0-next-beta.289",
-    "@trpc/server": "11.0.0-next-beta.289",
+    "@trpc/client": "^11.4.3",
+    "@trpc/server": "^11.4.3",
     "@types/cookie-parser": "^1.4.6",
     "@upstash/redis": "^1.28.4",
     "better-auth": "^1.2.7",
@@ -68,7 +68,7 @@
     "json-schema-to-zod": "^2.4.1",
     "pino-pretty": "^13.0.0",
     "prettier": "^3.1.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.8.3"
   },
   "exports": {
     ".": "./src/index.ts",

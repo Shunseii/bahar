@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@/schemas/dictionary";
+import { FormSchema } from "@bahar/schemas";
 import { useFormContext } from "react-hook-form";
 
 export const BasicDetailsFormSection = () => {
