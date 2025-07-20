@@ -29,7 +29,7 @@ import { useInstantSearch } from "react-instantsearch";
 import { useEffect } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { FormSchema } from "@/schemas/dictionary";
+import { FormSchema } from "@bahar/schemas";
 
 const Breadcrumbs = ({ className }: { className?: string }) => {
   return (

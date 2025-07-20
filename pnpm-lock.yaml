@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  zod: 3.24.1
+
 importers:
 
   .:
@@ -70,7 +73,7 @@ importers:
         version: 0.36.4(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(react@19.0.0)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.36.4)(zod@3.22.4)
+        version: 0.5.1(drizzle-orm@0.36.4)(zod@3.24.1)
       express:
         specifier: ^4.18.2
         version: 4.18.2
@@ -99,8 +102,8 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: 3.24.1
+        version: 3.24.1
     devDependencies:
       '@bahar/eslint-config':
         specifier: workspace:*
@@ -176,7 +179,7 @@ importers:
         version: 5.4.4
       '@hookform/resolvers':
         specifier: ^3.3.4
-        version: 3.3.4(react-hook-form@7.51.0)
+        version: 3.3.4(react-hook-form@7.56.4)
       '@lingui/core':
         specifier: ^5.3.2
         version: 5.3.2(@lingui/babel-plugin-lingui-macro@5.3.2)
@@ -280,8 +283,8 @@ importers:
         specifier: 19.0.0
         version: 19.0.0(react@19.0.0)
       react-hook-form:
-        specifier: ^7.51.0
-        version: 7.51.0(react@19.0.0)
+        specifier: ^7.56.1
+        version: 7.56.4(react@19.0.0)
       react-instantsearch-core:
         specifier: ^7.15.7
         version: 7.15.7(algoliasearch@4.22.1)(react@19.0.0)
@@ -319,7 +322,7 @@ importers:
         specifier: ^4.5.1
         version: 4.5.1
       zod:
-        specifier: ^3.22.4
+        specifier: 3.24.1
         version: 3.24.1
     devDependencies:
       '@babel/core':
@@ -518,8 +521,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.2.19)(@types/react@18.2.56)(react-dom@19.0.0)(react@19.0.0)
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: 3.24.1
+        version: 3.24.1
     devDependencies:
       '@bahar/design-system':
         specifier: workspace:*
@@ -530,12 +533,15 @@ importers:
       '@bahar/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@bahar/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
       '@bahar/typescript-config':
         specifier: workspace:*
         version: link:../../packages/config-typescript
       '@julr/vite-plugin-validate-env':
         specifier: ^1.2.0
-        version: 1.2.0(vite@5.1.3)(zod@3.22.4)
+        version: 1.2.0(vite@5.1.3)(zod@3.24.1)
       '@lingui/cli':
         specifier: ^5.3.2
         version: 5.3.2(typescript@5.3.3)
@@ -636,7 +642,10 @@ importers:
   packages/config-typescript: {}
 
   packages/design-system:
-    dependencies:
+    devDependencies:
+      '@bahar/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
       clsx:
         specifier: ^2.1.0
         version: 2.1.1
@@ -657,10 +666,20 @@ importers:
         version: 5.3.2
       '@lingui/conf':
         specifier: ^5.3.2
-        version: 5.3.2(typescript@5.8.3)
+        version: 5.3.2(typescript@5.3.3)
       '@lingui/core':
         specifier: ^5.3.2
         version: 5.3.2(@lingui/babel-plugin-lingui-macro@5.3.2)(babel-plugin-macros@3.1.0)
+
+  packages/schemas:
+    dependencies:
+      zod:
+        specifier: 3.24.1
+        version: 3.24.1
+    devDependencies:
+      '@bahar/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
 
 packages:
 
@@ -3994,12 +4013,12 @@ packages:
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
     dev: false
 
-  /@hookform/resolvers@3.3.4(react-hook-form@7.51.0):
+  /@hookform/resolvers@3.3.4(react-hook-form@7.56.4):
     resolution: {integrity: sha512-o5cgpGOuJYrd+iMKvkttOclgwRW86EsWJZZRC23prf0uU2i48Htq4PuT73AVb9ionFyZrwYEITuOFGF+BydEtQ==}
     peerDependencies:
       react-hook-form: ^7.0.0
     dependencies:
-      react-hook-form: 7.51.0(react@19.0.0)
+      react-hook-form: 7.56.4(react@19.0.0)
     dev: false
 
   /@hookform/resolvers@5.0.1(react-hook-form@7.56.4):
@@ -4323,12 +4342,12 @@ packages:
     resolution: {integrity: sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==}
     dev: false
 
-  /@julr/vite-plugin-validate-env@1.2.0(vite@5.1.3)(zod@3.22.4):
+  /@julr/vite-plugin-validate-env@1.2.0(vite@5.1.3)(zod@3.24.1):
     resolution: {integrity: sha512-taAYS+7zOREHjiLiMp6S1ZhYRxWs4QfC7Usvqvbi4ni78vOuHREbk446A5u0im06eTxUOfqishLbZ879N0hHMg==}
     engines: {node: '>=16'}
     peerDependencies:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0 || ^6.0.0
-      zod: ^3.0.0
+      zod: 3.24.1
     peerDependenciesMeta:
       zod:
         optional: true
@@ -4337,7 +4356,7 @@ packages:
       '@poppinss/validator-lite': 1.0.3
       unconfig: 0.6.0
       vite: 5.1.3(@types/node@20.10.6)
-      zod: 3.22.4
+      zod: 3.24.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -4548,6 +4567,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
+    dev: true
 
   /@lingui/babel-plugin-lingui-macro@5.3.2(babel-plugin-macros@3.1.0)(typescript@5.8.3):
     resolution: {integrity: sha512-NdXrq8aZlPjN4jeA/LkSLNyx5vPGmrW+r2ywMNQDPQPVP28Hq8c3hF9SQc1t7hwBorGQ3qzIQ7i2Vm6Y8PnjQw==}
@@ -4568,7 +4588,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    dev: true
 
   /@lingui/babel-plugin-lingui-macro@5.3.2(typescript@5.8.3):
     resolution: {integrity: sha512-NdXrq8aZlPjN4jeA/LkSLNyx5vPGmrW+r2ywMNQDPQPVP28Hq8c3hF9SQc1t7hwBorGQ3qzIQ7i2Vm6Y8PnjQw==}
@@ -4712,7 +4731,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.26.7
       chalk: 4.1.2
-      cosmiconfig: 8.3.6(typescript@5.8.3)
+      cosmiconfig: 8.3.6(typescript@5.3.3)
       jest-validate: 29.7.0
       jiti: 1.21.7
     transitivePeerDependencies:
@@ -4773,7 +4792,7 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.26.7
-      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.3.3)
+      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lingui/message-utils': 5.3.2
       babel-plugin-macros: 3.1.0
       unraw: 3.0.0
@@ -10290,6 +10309,7 @@ packages:
   /clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
+    dev: true
 
   /cmdk@1.1.1(@types/react-dom@18.2.19)(@types/react@18.2.56)(react-dom@19.0.0)(react@19.0.0):
     resolution: {integrity: sha512-Vsv7kFaXm+ptHDMZ7izaRsP70GgrW9NBNGswt9OZaVBLlE0SNpDq8eu/VGXyF9r7M0azK3Wy7OlYXsuyYLFzHg==}
@@ -11072,14 +11092,14 @@ packages:
       react: 19.0.0
     dev: false
 
-  /drizzle-zod@0.5.1(drizzle-orm@0.36.4)(zod@3.22.4):
+  /drizzle-zod@0.5.1(drizzle-orm@0.36.4)(zod@3.24.1):
     resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
     peerDependencies:
       drizzle-orm: '>=0.23.13'
-      zod: '*'
+      zod: 3.24.1
     dependencies:
       drizzle-orm: 0.36.4(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(react@19.0.0)
-      zod: 3.22.4
+      zod: 3.24.1
     dev: false
 
   /eastasianwidth@0.2.0:
@@ -16271,15 +16291,6 @@ packages:
       react: 19.0.0
     dev: false
 
-  /react-hook-form@7.51.0(react@19.0.0):
-    resolution: {integrity: sha512-BggOy5j58RdhdMzzRUHGOYhSz1oeylFAv6jUSG86OvCIvlAvS7KvnRY7yoAf2pfEiPN7BesnR0xx73nEk3qIiw==}
-    engines: {node: '>=12.22.0'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18
-    dependencies:
-      react: 19.0.0
-    dev: false
-
   /react-hook-form@7.56.4(react@19.0.0):
     resolution: {integrity: sha512-Rob7Ftz2vyZ/ZGsQZPaRdIefkgOSrQSPXfqBdvOPwJfoGnjwRJUs7EM7Kc1mcoDv3NOtqBzPGbcMB8CGn9CKgw==}
     engines: {node: '>=18.0.0'}
@@ -17812,7 +17823,6 @@ packages:
     resolution: {integrity: sha512-o+2GTLkthfa5YUt4JxPfzMIpQzZ3adD1vLVkvKE1Twl9UAhGsEbIZhHHZVRttyW177S8PDJI3bTQNaebyofK3Q==}
     dependencies:
       '@babel/runtime': 7.26.7
-    dev: false
 
   /tailwindcss-animate@1.0.7(tailwindcss@3.4.17):
     resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
@@ -17820,7 +17830,6 @@ packages:
       tailwindcss: '>=3.0.0 || insiders'
     dependencies:
       tailwindcss: 3.4.17
-    dev: false
 
   /tailwindcss@3.4.17:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
@@ -19168,9 +19177,6 @@ packages:
       mustache: 4.2.0
       stacktracey: 2.1.8
     dev: true
-
-  /zod@3.22.4:
-    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
 
   /zod@3.24.1:
     resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}

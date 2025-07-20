@@ -48,7 +48,7 @@
     "resend": "^4.6.0",
     "ts-fsrs": "^4.5.1",
     "tsx": "^4.7.1",
-    "zod": "^3.22.4"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@bahar/eslint-config": "workspace:*",
