@@ -102,7 +102,7 @@ export default function LoginScreen() {
         </Text>
       )}
 
-      <Button disabled={isSubmitting} onPress={handleSubmit(onSubmit)}>
+      <Button disabled={isSubmitting} onPress={() => handleSubmit(onSubmit)()}>
         <Trans>Continue with Email</Trans>
       </Button>
 
