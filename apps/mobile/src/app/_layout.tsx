@@ -75,6 +75,10 @@ export default function RootLayout() {
   const themeVars =
     colorScheme === "dark" ? cssVariables.dark : cssVariables.light;
 
+  if (!loaded || isPending) {
+    return null;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
