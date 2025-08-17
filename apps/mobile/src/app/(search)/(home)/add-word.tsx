@@ -31,7 +31,7 @@ const Breadcrumbs = () => {
     <View className={cn("mb-8")}>
       <View className="flex flex-row items-center gap-2.5">
         <View className="items-center gap-1.5">
-          <Pressable onPress={() => router.push("/")}>
+          <Pressable onPress={() => router.back()}>
             <Text className="text-sm text-muted-foreground">
               <Trans>Home</Trans>
             </Text>
@@ -62,7 +62,7 @@ const BackButton = () => {
   const dir = locales[0].textDirection;
 
   return (
-    <Button variant="outline" size="icon" onPress={() => router.push("/")}>
+    <Button variant="outline" size="icon" onPress={() => router.back()}>
       {dir === "rtl" ? (
         <ChevronRight
           size={16}
@@ -219,7 +219,7 @@ export default function AddWordScreen() {
             <Button
               variant="outline"
               size="sm"
-              onPress={() => router.push("/")}
+              onPress={() => router.back()}
             >
               <Trans>Discard</Trans>
             </Button>
