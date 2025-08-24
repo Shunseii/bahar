@@ -31,7 +31,7 @@ import { useInstantSearch } from "react-instantsearch";
 import { FC } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { FormSchema, Inflection } from "@/schemas/dictionary";
+import { FormSchema } from "@bahar/schemas";
 import {
   Dialog,
   DialogClose,

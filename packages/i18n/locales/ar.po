@@ -32,10 +32,12 @@ msgid "{totalHits, plural, one {# result found in} other {# results found in}}"
 msgstr "{totalHits, plural, one {وجدت نتيجة في} two {وجدا نتيجتان في} few {وجدت # نتائج في} many {وجدت # نتيجة في} other {وجدت # نتيجة في}}"
 
 #: ../../apps/web/src/lib/zod.ts:39
+#: ../../apps/mobile/src/utils/zod.ts:42
 msgid "{val, plural, one {Cannot exceed # character} other {Cannot exceed # characters}}"
 msgstr "{val, plural, one {لا يمكن تجاوز حرف واحد} two {لا يمكن تجاوز حرفين} few {لا يمكن تجاوز # حروف} many {لا يمكن تجاوز # حرفا} other {لا يمكن تجاوز # حرف}}"
 
 #: ../../apps/web/src/lib/zod.ts:26
+#: ../../apps/mobile/src/utils/zod.ts:29
 msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
 msgstr "{val, plural, one {يجب أن يكون على الأقل واحد حرف} two {يجب أن يكون على الأقل حرفين} few {يجب أن يكون على الأقل # حروف} many {يجب أن يكون على الأقل # حرفا} other {يجب أن يكون على الأقل # حرف}}"
 
@@ -51,8 +53,8 @@ msgstr "حرف أو عطف."
 msgid "A verb."
 msgstr "فعل."
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:111
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:155
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:115
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:159
 msgid "Actions"
 msgstr "أعمال"
 
@@ -61,6 +63,7 @@ msgid "Active participle"
 msgstr "اسم فاعل"
 
 #: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:190
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:150
 msgid "Add a new word to your dictionary"
 msgstr "أضف كلمة جديدة إلى معجمك"
 
@@ -98,7 +101,8 @@ msgstr "أضف علامات إلى كلمتك."
 
 #: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:46
 #: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:50
-#: ../../apps/mobile/src/app/(tabs)/index.tsx:34
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:23
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:50
 msgid "Add word"
 msgstr "أضف كلمة"
 
@@ -119,6 +123,7 @@ msgid "An English translation of the sentence."
 msgstr "ترجمة إنجلزية للجملة."
 
 #: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:67
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:210
 msgid "An English translation of the word."
 msgstr "ترجمة إنجلزية للكلمة."
 
@@ -184,6 +189,7 @@ msgid "Bahar"
 msgstr "بحر"
 
 #: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:23
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:158
 msgid "Basic Details"
 msgstr "تفاصيل أساسية"
 
@@ -195,7 +201,7 @@ msgstr "بيتا"
 msgid "Cancel"
 msgstr "ألغ"
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:106
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:110
 msgid "Cards to review today"
 msgstr "بطاقات للمراجعة اليوم"
 
@@ -212,10 +218,12 @@ msgid "Context"
 msgstr "السياق"
 
 #: ../../apps/web/src/components/OTPForm.tsx:185
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:77
 msgid "Continue"
 msgstr "استمر"
 
 #: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:137
+#: ../../apps/mobile/src/app/(auth)/login.tsx:106
 msgid "Continue with Email"
 msgstr "استمرّ مع بريد الإلكتروني"
 
@@ -227,7 +235,7 @@ msgstr "إنشاء مجموعة جديدة"
 msgid "Create a new deck by choosing filters. The deck will be composed of the cards that match the filters."
 msgstr "أنشئ مجموعة جديدة باختيار الفلاتر. ستكون المجموعة مكونة من البطاقات التي تطابق هذه الفلاتر."
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:63
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:67
 msgid "Create deck"
 msgstr "أنشئ محموعة"
 
@@ -247,7 +255,7 @@ msgstr "غامق"
 msgid "Deck successfully created!"
 msgstr "تم إنشاء المجموعة بنجاح!"
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:169
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:173
 msgid "Deck successfully deleted!"
 msgstr "تم حذف المجموعة بنجاح!"
 
@@ -255,14 +263,15 @@ msgstr "تم حذف المجموعة بنجاح!"
 msgid "Deck successfully updated!"
 msgstr "تم تحديث المجموعة بنجاح!"
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:74
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:78
 #: ../../apps/web/src/components/MobileHeader.tsx:155
 #: ../../apps/web/src/components/DesktopNavigation.tsx:65
 #: ../../apps/web/src/components/DesktopNavigation.tsx:71
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:159
 msgid "Decks"
 msgstr "المجموعات"
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:90
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:94
 msgid "Decks allow you to create subsets of your existing flashcards by using filters on your dictionary which you can then study individually."
 msgstr "تتيح لك المجموعات إنشاء مجموعات فرعية من بطاقاتك التعليمية الموجودة باستخدام الفلاتر على قاموسك، والتي يمكنك دراستها بشكل فردي."
 
@@ -274,7 +283,7 @@ msgstr "التعريف"
 #: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:358
 #: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:115
 #: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:149
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:175
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:179
 msgid "Delete"
 msgstr "احذف"
 
@@ -293,15 +302,17 @@ msgstr "تفاصيل"
 
 #: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:89
 #: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:148
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:33
 msgid "Dictionary"
 msgstr "معجم"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:305
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:302
 msgid "Diptote"
 msgstr "ممنوع من الصرف"
 
 #: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:196
 #: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:223
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:220
 msgid "Discard"
 msgstr "ألغ"
 
@@ -317,7 +328,7 @@ msgstr "المثنى"
 msgid "Easy"
 msgstr "سهل"
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:160
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:164
 msgid "Edit"
 msgstr "عدَل"
 
@@ -334,6 +345,7 @@ msgid "Edit your deck by choosing filters. The deck will be composed of the card
 msgstr "عدّل مجموعتك من خلال اختيار الفلاتر. ستتكون المجموعة من البطاقات التي تطابق الفلاتر."
 
 #: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:111
+#: ../../apps/mobile/src/app/(auth)/login.tsx:69
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
@@ -346,6 +358,7 @@ msgid "Enter a deck name"
 msgstr "أدخل اسم المجموعة"
 
 #: ../../apps/web/src/components/OTPForm.tsx:134
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:46
 msgid "Enter your 6-digit code from your email"
 msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
 
@@ -405,7 +418,7 @@ msgstr "فشل في تحديث إعدادات البطاقة."
 msgid "Failed to update the word!"
 msgstr "فشل في تحديث الكلمة!"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:234
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:231
 msgid "Feminine"
 msgstr "مؤنّث"
 
@@ -423,7 +436,7 @@ msgstr "تم تحديث إعدادات البطاقة!"
 msgid "Flashcards"
 msgstr "بطاقات"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:268
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:265
 msgid "For example, the word"
 msgstr "مثلا الكلمة"
 
@@ -432,6 +445,7 @@ msgid "Gender"
 msgstr "جنس"
 
 #: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:155
+#: ../../apps/mobile/src/components/GithubLoginButton.tsx:24
 msgid "GitHub"
 msgstr "GitHub"
 
@@ -464,6 +478,8 @@ msgstr "الحرف {0}"
 #: ../../apps/web/src/components/MobileHeader.tsx:143
 #: ../../apps/web/src/components/DesktopNavigation.tsx:49
 #: ../../apps/web/src/components/DesktopNavigation.tsx:55
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:150
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:36
 msgid "Home"
 msgstr "منزل"
 
@@ -496,11 +512,11 @@ msgstr "فشل الاستيراد!"
 msgid "Incorrect file type"
 msgstr "نوع الملف غير صحيح"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:308
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:305
 msgid "Indeclinable"
 msgstr "مبنى"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:251
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:248
 msgid "Inflection"
 msgstr "إعراب"
 
@@ -538,15 +554,17 @@ msgid "Light"
 msgstr "فاتح"
 
 #: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:93
+#: ../../apps/mobile/src/app/(auth)/login.tsx:64
 msgid "Log in to your existing account or sign up for a new one"
 msgstr "قم بتسجيل الدخول إلى حسابك الحالي أو قم بالتسجيل للحصول على حساب جديد"
 
 #: ../../apps/web/src/components/MobileHeader.tsx:180
 #: ../../apps/web/src/components/DesktopNavigation.tsx:110
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:129
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:78
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:82
 msgid "Manage your decks and study them."
 msgstr "إدارة مجموعاتك ودراستها."
 
@@ -558,7 +576,7 @@ msgstr "إدارة معجمك."
 msgid "Masadir"
 msgstr "مصادر"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:231
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:228
 msgid "Masculine"
 msgstr "مذكر"
 
@@ -583,7 +601,7 @@ msgstr "الصرف ينطبق فقط على الأسماء والأفعال. س�
 msgid "My Account"
 msgstr "حسابي"
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:102
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:106
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:195
 msgid "Name"
 msgstr "اسم"
@@ -597,6 +615,7 @@ msgid "Noun"
 msgstr "اسم"
 
 #: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:149
+#: ../../apps/mobile/src/app/(auth)/login.tsx:112
 msgid "Or continue with"
 msgstr "أو استمر مع"
 
@@ -614,6 +633,8 @@ msgstr "اختر ملف JSON لمعجمك من فضلك."
 
 #: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:56
 #: ../../apps/web/src/components/OTPForm.tsx:114
+#: ../../apps/mobile/src/app/(auth)/login.tsx:48
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:37
 msgid "Please try again."
 msgstr "حاول مرّة أخرى"
 
@@ -664,6 +685,7 @@ msgid "Reverse flashcards"
 msgstr "بطاقات العكسية"
 
 #: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:67
+#: ../../apps/mobile/src/components/ReviewFlashcardsButton.tsx:37
 msgid "Review flashcards"
 msgstr "ادرس البطاقات"
 
@@ -676,6 +698,7 @@ msgstr "الجذر"
 #: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:201
 #: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:228
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:175
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:229
 msgid "Save"
 msgstr "احفظ"
 
@@ -688,6 +711,7 @@ msgid "Search for a tag..."
 msgstr "ابحث عن علامة..."
 
 #: ../../apps/web/src/components/meili/SearchInput.tsx:55
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:78
 msgid "Search..."
 msgstr "ابحث..."
 
@@ -695,13 +719,13 @@ msgstr "ابحث..."
 msgid "Searching..."
 msgstr "يبحث..."
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:223
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:225
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:221
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:222
 msgid "Select gender"
 msgstr "اختر جنسا"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:294
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:296
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:291
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:293
 msgid "Select inflection"
 msgstr "اختر إعرابا"
 
@@ -721,6 +745,7 @@ msgstr "جملة"
 #: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:125
 #: ../../apps/web/src/components/MobileHeader.tsx:167
 #: ../../apps/web/src/components/DesktopNavigation.tsx:98
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:168
 msgid "Settings"
 msgstr "الإعدادات"
 
@@ -744,7 +769,7 @@ msgstr "اعرض بطاقات من الإنجليزية إلى العربية."
 msgid "Singular"
 msgstr "مفرد"
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:136
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:140
 msgid "Study"
 msgstr "أدرس"
 
@@ -778,10 +803,13 @@ msgid "Tags"
 msgstr "علامات"
 
 #: ../../apps/web/src/components/OTPForm.tsx:108
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:34
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:66
 msgid "That code is invalid."
 msgstr "هذا الشفرة غير صالح."
 
 #: ../../apps/web/src/lib/zod.ts:13
+#: ../../apps/mobile/src/utils/zod.ts:16
 msgid "That email is invalid."
 msgstr "هذا البريد الإلكتروني غير صالح."
 
@@ -794,7 +822,7 @@ msgid "The context of the sentence, ex. formal or colloquial."
 msgstr "سياق الجملة مثلا رسمي أو عامي."
 
 #. placeholder {0}: deck.name
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:170
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:174
 msgid "The deck \"{0}\" has been deleted."
 msgstr "تم حذف المجموعة \"{0}\"."
 
@@ -856,10 +884,14 @@ msgstr "حدث خطأ أثناء تحديث كلمتك. حاول مرة أخرى
 
 #: ../../apps/web/src/lib/zod.ts:7
 #: ../../apps/web/src/lib/zod.ts:22
+#: ../../apps/mobile/src/utils/zod.ts:10
+#: ../../apps/mobile/src/utils/zod.ts:25
+#: ../../apps/mobile/src/app/(auth)/login.tsx:90
 msgid "This field is required."
 msgstr "هذه الخانة لازم."
 
 #: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:119
+#: ../../apps/mobile/src/app/(auth)/login.tsx:95
 msgid "This is case insensitive."
 msgstr "هذا حالة غير حساسة."
 
@@ -867,7 +899,7 @@ msgstr "هذا حالة غير حساسة."
 msgid "This is the name of your deck."
 msgstr "هذا هو اسم مجموعتك."
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:261
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:258
 msgid "This refers to how many case endings the word can take."
 msgstr "هذا هو إعراب الكلمة."
 
@@ -877,10 +909,11 @@ msgstr "تبديل القائمة"
 
 #: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:59
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:202
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:190
 msgid "Translation"
 msgstr "الترجمة"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:302
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:299
 msgid "Triptote"
 msgstr "معرب"
 
@@ -915,10 +948,12 @@ msgid "Verbal noun forms (masadir) of the verb."
 msgstr "مصادر للفعل."
 
 #: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:93
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:37
 msgid "View all the words in your personal dictionary."
 msgstr "انظر كل الألفاظ في معجمك الشخصي."
 
 #: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:89
+#: ../../apps/mobile/src/app/(auth)/login.tsx:60
 msgid "Welcome to Bahar!"
 msgstr "مرحباً بكم في بحر!"
 
@@ -926,6 +961,7 @@ msgstr "مرحباً بكم في بحر!"
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:126
 #: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:35
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:310
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:166
 msgid "Word"
 msgstr "الكلمة"
 
@@ -942,7 +978,7 @@ msgstr "الكلمات التي لها معنى عكسي."
 msgid "You have more than {FLASHCARD_LIMIT} cards to review."
 msgstr "لديك أكثر من {FLASHCARD_LIMIT} بطاقة لمراجعتها."
 
-#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:86
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:90
 msgid "You have no decks yet."
 msgstr "ليس لديك أي مجموعات بعد."
 
@@ -974,14 +1010,14 @@ msgstr "تم تحديث معجمك!"
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة أخرى من فضلك."
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:273
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:270
 msgid "محمد is a triptote;"
 msgstr "كلمة محمد هي معرب;"
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:279
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:276
 msgid "موسى is indeclinable."
 msgstr "كلمة موسى هي مبنى."
 
-#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:276
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:273
 msgid "يوسف is a diptote;"
 msgstr "كلمة يوسف هي ممنوع من الصرف;"

@@ -14,11 +14,14 @@ import { Input } from "@/components/ui/input";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSchema } from "@bahar/schemas";
-import type { z } from "zod";
+import { errorMap } from "@/utils/zod";
+import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner-native";
 import { t } from "@lingui/core/macro";
+
+z.setErrorMap(errorMap);
 
 const Breadcrumbs = () => {
   const router = useRouter();
@@ -216,11 +219,7 @@ export default function AddWordScreen() {
           </View>
 
           <View className="flex flex-row self-center items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onPress={() => router.back()}
-            >
+            <Button variant="outline" size="sm" onPress={() => router.back()}>
               <Trans>Discard</Trans>
             </Button>
 

@@ -178,8 +178,8 @@ importers:
         specifier: ^5.4.4
         version: 5.4.4
       '@hookform/resolvers':
-        specifier: ^3.3.4
-        version: 3.3.4(react-hook-form@7.56.4)
+        specifier: ^5.0.1
+        version: 5.0.1(react-hook-form@7.56.4)
       '@lingui/core':
         specifier: ^5.3.2
         version: 5.3.2(@lingui/babel-plugin-lingui-macro@5.3.2)
@@ -4683,14 +4683,6 @@ packages:
 
   /@hexagon/base64@1.1.28:
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
-    dev: false
-
-  /@hookform/resolvers@3.3.4(react-hook-form@7.56.4):
-    resolution: {integrity: sha512-o5cgpGOuJYrd+iMKvkttOclgwRW86EsWJZZRC23prf0uU2i48Htq4PuT73AVb9ionFyZrwYEITuOFGF+BydEtQ==}
-    peerDependencies:
-      react-hook-form: ^7.0.0
-    dependencies:
-      react-hook-form: 7.56.4(react@19.0.0)
     dev: false
 
   /@hookform/resolvers@5.0.1(react-hook-form@7.56.4):
