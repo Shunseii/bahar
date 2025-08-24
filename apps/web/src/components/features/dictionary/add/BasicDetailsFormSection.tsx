@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   FormField,
@@ -9,8 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@/schemas/dictionary";
-import { Trans } from "@lingui/macro";
+import { FormSchema } from "@bahar/schemas";
 import { useFormContext } from "react-hook-form";
 
 export const BasicDetailsFormSection = () => {

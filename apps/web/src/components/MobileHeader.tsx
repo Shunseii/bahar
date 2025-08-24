@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,17 +8,16 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useDir } from "@/hooks/useDir";
-import { Trans } from "@lingui/macro";
 import { Link } from "@tanstack/react-router";
 import { useClickAway } from "@uidotdev/usehooks";
 import { Home, PanelLeft, Settings, Layers } from "lucide-react";
 import React, { FC, PropsWithChildren } from "react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 import { X } from "lucide-react";
 import { sheetVariantsNoSlideAnimations } from "./ui/sheet/variants";
 import { atom, useAtom } from "jotai";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Logo from "@/assets/logo.svg";
 import { useLogout } from "@/hooks/useLogout";
 

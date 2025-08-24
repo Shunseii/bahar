@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { Page } from "@/components/Page";
 import { Link, createLazyFileRoute } from "@tanstack/react-router";
 import {
@@ -8,14 +9,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Trans, msg } from "@lingui/macro";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { z } from "@/lib/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 import {
   AdditionalDetailsFormSection,
   BasicDetailsFormSection,
@@ -24,12 +24,12 @@ import {
 } from "@/components/features/dictionary/add";
 import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import { useInstantSearch } from "react-instantsearch";
 import { useEffect } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { FormSchema } from "@/schemas/dictionary";
+import { FormSchema } from "@bahar/schemas";
 
 const Breadcrumbs = ({ className }: { className?: string }) => {
   return (
@@ -84,7 +84,7 @@ const Add = () => {
   const { mutateAsync: addWord } = trpc.dictionary.addWord.useMutation();
   const { toast } = useToast();
   const { refresh } = useInstantSearch();
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -152,8 +152,8 @@ const Add = () => {
       }
 
       toast({
-        title: _(msg`Successfully added word!`),
-        description: _(msg`The word has been added to your dictionary.`),
+        title: t`Successfully added word!`,
+        description: t`The word has been added to your dictionary.`,
       });
 
       refresh();
@@ -163,10 +163,8 @@ const Add = () => {
       }
 
       toast({
-        title: _(msg`Failed to add word!`),
-        description: _(
-          msg`There was an error adding your word. Please try again.`,
-        ),
+        title: t`Failed to add word!`,
+        description: t`There was an error adding your word. Please try again.`,
         variant: "destructive",
       });
     }

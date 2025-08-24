@@ -1,6 +1,3 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
 export const REGEXP_ONLY_EN_AR_DIGITS = "^[0-9٠-٩]+$";
 
 export const convertArabicNumToEnglish = (arabicNumber: string) => {
@@ -24,7 +21,3 @@ export const TRACE_ID_HEADER = "x-request-id";
 export const generateTraceId = () => {
   return crypto.randomUUID();
 };
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}

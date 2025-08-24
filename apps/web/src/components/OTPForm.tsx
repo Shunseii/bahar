@@ -1,3 +1,5 @@
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { OTPInput, SlotProps } from "input-otp";
@@ -14,10 +16,9 @@ import { useForm, SubmitHandler, useFormContext } from "react-hook-form";
 import z from "zod";
 import {
   REGEXP_ONLY_EN_AR_DIGITS,
-  cn,
   convertArabicNumToEnglish,
 } from "@/lib/utils";
-import { Trans, t } from "@lingui/macro";
+import { cn } from "@bahar/design-system";
 import { useLingui } from "@lingui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSetAtom } from "jotai";

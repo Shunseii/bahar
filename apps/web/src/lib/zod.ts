@@ -1,4 +1,4 @@
-import { plural, t } from "@lingui/macro";
+import { plural, t } from "@lingui/core/macro";
 import z from "zod";
 
 const errorMap: z.ZodErrorMap = (issue, ctx) => {

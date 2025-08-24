@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import {
   Accordion,
   AccordionContent,
@@ -29,14 +30,13 @@ import {
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
-import { FormSchema, Inflection } from "@/schemas/dictionary";
-import { Trans, msg } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
+import { FormSchema, Inflection } from "@bahar/schemas";
+import { useLingui } from "@lingui/react/macro";
 import { Plus, InfoIcon } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
 export const IsmMorphologyCardSection = () => {
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const dir = useDir();
   const form = useFormContext<z.infer<typeof FormSchema>>();
 
@@ -218,11 +218,8 @@ export const IsmMorphologyCardSection = () => {
                   dir={dir}
                 >
                   <FormControl>
-                    <SelectTrigger
-                      id="gender"
-                      aria-label={_(msg`Select gender`)}
-                    >
-                      <SelectValue placeholder={_(msg`Select gender`)} />
+                    <SelectTrigger id="gender" aria-label={t`Select gender`}>
+                      <SelectValue placeholder={t`Select gender`} />
                     </SelectTrigger>
                   </FormControl>
 
@@ -291,9 +288,9 @@ export const IsmMorphologyCardSection = () => {
                   <FormControl>
                     <SelectTrigger
                       id="inflection"
-                      aria-label={_(msg`Select inflection`)}
+                      aria-label={t`Select inflection`}
                     >
-                      <SelectValue placeholder={_(msg`Select inflection`)} />
+                      <SelectValue placeholder={t`Select inflection`} />
                     </SelectTrigger>
                   </FormControl>
 

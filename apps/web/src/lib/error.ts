@@ -1,10 +1,24 @@
-import { t } from "@lingui/macro";
-import { DictionarySchema } from "api/schemas";
-import { ImportErrorCode } from "api/error";
-import { type ZodError, type ZodIssue } from "zod";
-import { z } from "zod";
+import { t } from "@lingui/core/macro";
+import { FormSchema as DictionarySchema } from "@bahar/schemas";
+import { type ZodError, type ZodIssue, z } from "zod";
 
 type ZodDictionaryError = ZodError<z.infer<typeof DictionarySchema>>;
+
+/**
+ * Error codes used when importing a dictionary.
+ *
+ * TODO: reuse the ones from the api
+ */
+export enum ImportErrorCode {
+  INVALID_JSON = "invalid_json",
+  VALIDATION_ERROR = "validation_error",
+}
+
+// TODO: resue the ones from the api
+export type ImportResponseError = {
+  code: ImportErrorCode;
+  error: ZodError<z.infer<typeof DictionarySchema>>;
+};
 
 /**
  * An error thrown when importing a dictionary.
@@ -114,9 +128,9 @@ const formattedErrorMessage = ({
       }
       return `${prefix}${t`Invalid string format`}`;
     case "too_small":
-      return `${prefix}${t`Value must be ${err.minimum} or greater`}`;
+      return `${prefix}${t`Value must be ${String(err.minimum)} or greater`}`;
     case "too_big":
-      return `${prefix}${t`Value must be ${err.maximum} or less`}`;
+      return `${prefix}${t`Value must be ${String(err.maximum)} or less`}`;
     default:
       return `${prefix}${err.message}`;
   }

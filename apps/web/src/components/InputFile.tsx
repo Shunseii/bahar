@@ -1,7 +1,7 @@
+import { Trans } from "@lingui/react/macro";
 import { Input, type InputProps } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { Trans } from "@lingui/macro";
+import { cn } from "@bahar/design-system";
 import { FC, useCallback, useRef, useState } from "react";
 import { Separator } from "./ui/separator";
 import { XIcon } from "lucide-react";

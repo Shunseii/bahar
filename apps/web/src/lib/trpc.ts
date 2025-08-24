@@ -4,8 +4,10 @@ import {
   httpBatchLink,
 } from "@trpc/react-query";
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "api";
+import type { AppRouter } from "../../../api/src/index";
 import { TRACE_ID_HEADER, generateTraceId } from "./utils";
+import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import { queryClient } from "./query";
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -46,4 +48,9 @@ export const trpcClient = createTRPCClient<AppRouter>({
       },
     }),
   ],
+});
+
+export const trpcNew = createTRPCOptionsProxy<AppRouter>({
+  client: trpcClient,
+  queryClient,
 });

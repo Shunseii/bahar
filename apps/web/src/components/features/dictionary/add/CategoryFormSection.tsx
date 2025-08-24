@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import {
   Card,
   CardContent,
@@ -26,14 +27,13 @@ import {
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@/schemas/dictionary";
-import { msg, Trans } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
+import { FormSchema } from "@bahar/schemas";
+import { useLingui } from "@lingui/react/macro";
 import { InfoIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
 export const CategoryFormSection = () => {
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const dir = useDir();
   const form = useFormContext<z.infer<typeof FormSchema>>();
 
@@ -118,8 +118,8 @@ export const CategoryFormSection = () => {
                     dir={dir}
                   >
                     <FormControl>
-                      <SelectTrigger id="type" aria-label={_(msg`Select type`)}>
-                        <SelectValue placeholder={_(msg`Select type`)} />
+                      <SelectTrigger id="type" aria-label={t`Select type`}>
+                        <SelectValue placeholder={t`Select type`} />
                       </SelectTrigger>
                     </FormControl>
 

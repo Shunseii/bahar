@@ -18,14 +18,16 @@ export const decksRouter = router({
         .optional(),
     )
     .output(
-      z
-        .array(
-          SelectDecksSchema.extend({
-            to_review: z.number(),
-            total_hits: z.number(),
-          }),
-        )
-        .optional(),
+      z.array(
+        SelectDecksSchema.extend({
+          to_review: z.number(),
+          total_hits: z.number(),
+        }),
+      ),
+      // TODO: This optional will break types on the client.
+      // First appeared after upgrading to typescript v5.8.3 and trpc v11.4.3
+      // related issue: https://github.com/trpc/trpc/issues/6521
+      // .optional(),
     )
     .query(async ({ ctx, input }) => {
       const { user } = ctx;
@@ -37,7 +39,7 @@ export const decksRouter = router({
         .where(eq(decks.user_id, user.id))
         .limit(20);
 
-      return await Promise.all(
+      const res = await Promise.all(
         results.map(async (result) => {
           const filters = result.filters;
 
@@ -57,6 +59,8 @@ export const decksRouter = router({
           };
         }),
       );
+
+      return res;
     }),
 
   create: protectedProcedure

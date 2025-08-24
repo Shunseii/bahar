@@ -1,0 +1,1023 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-02-29 03:17-0500\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 3.4.4\n"
+
+#. placeholder {0}: flashcards.length
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:247
+msgid "{0, plural, one {# card left to review} other {# cards left to review}}"
+msgstr "{0, plural, one {تبقى بطاقة واحدة للدراسة} two {تبقى بطاقتان للدراسة} few {تبقى # بطاقات للدراسة} many {تبقى # بطاقة للدراسة} other {تبقى # بطاقة للدراسة}}"
+
+#. placeholder {0}: flashcards.length
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:223
+msgid "{0, plural, one {You have # card to review.} other {You have # cards to review}}"
+msgstr "{totalHits, plural, one {نتيجة وجدت في} two {نتيجتان وجدتا في} few {# نتائج وجدت في} many {# نتيجة وجدت في} other {# نتيجة وجدت في}}"
+
+#: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:81
+msgid "{processingTimeMs, plural, =0 {<1 ms} other {# ms}}"
+msgstr "{processingTimeMs, plural, =0 {أقل من مللي ثانية} other {# مللي ثانية}}"
+
+#: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:76
+msgid "{totalHits, plural, one {# result found in} other {# results found in}}"
+msgstr "{totalHits, plural, one {وجدت نتيجة في} two {وجدا نتيجتان في} few {وجدت # نتائج في} many {وجدت # نتيجة في} other {وجدت # نتيجة في}}"
+
+#: ../../apps/web/src/lib/zod.ts:39
+#: ../../apps/mobile/src/utils/zod.ts:42
+msgid "{val, plural, one {Cannot exceed # character} other {Cannot exceed # characters}}"
+msgstr "{val, plural, one {لا يمكن تجاوز حرف واحد} two {لا يمكن تجاوز حرفين} few {لا يمكن تجاوز # حروف} many {لا يمكن تجاوز # حرفا} other {لا يمكن تجاوز # حرف}}"
+
+#: ../../apps/web/src/lib/zod.ts:26
+#: ../../apps/mobile/src/utils/zod.ts:29
+msgid "{val, plural, one {Must be at least # character} other {Must be at least # characters}}"
+msgstr "{val, plural, one {يجب أن يكون على الأقل واحد حرف} two {يجب أن يكون على الأقل حرفين} few {يجب أن يكون على الأقل # حروف} many {يجب أن يكون على الأقل # حرفا} other {يجب أن يكون على الأقل # حرف}}"
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:82
+msgid "A noun, adjective, adverb or pronoun, and anything that is not a verb or preposition."
+msgstr "غير فعل أو حرف."
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:107
+msgid "A preposition or conjunction."
+msgstr "حرف أو عطف."
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:96
+msgid "A verb."
+msgstr "فعل."
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:115
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:159
+msgid "Actions"
+msgstr "أعمال"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:127
+msgid "Active participle"
+msgstr "اسم فاعل"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:190
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:150
+msgid "Add a new word to your dictionary"
+msgstr "أضف كلمة جديدة إلى معجمك"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:355
+msgid "Add antonym"
+msgstr "أضف ضدا"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:281
+msgid "Add example"
+msgstr "أضف مثلا"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:426
+msgid "Add harf"
+msgstr "أضف حرف"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:269
+msgid "Add Masdar"
+msgstr "أضف مصدر"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:202
+msgid "Add plural"
+msgstr "أضف صيغة جمع"
+
+#: ../../apps/web/src/components/meili/InfiniteScroll.tsx:109
+msgid "Add some to get started!"
+msgstr "أضف شيا لتبدأ!"
+
+#: ../../apps/web/src/components/Autocomplete.tsx:154
+msgid "Add tag {inputValue}"
+msgstr "أضف علامة {inputValue}"
+
+#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:36
+msgid "Add tags to your word."
+msgstr "أضف علامات إلى كلمتك."
+
+#: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:46
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:50
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:23
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:50
+msgid "Add word"
+msgstr "أضف كلمة"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:63
+msgid "Additional Details"
+msgstr "تفاصيل إضافية"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:302
+msgid "Again"
+msgstr "مرة أخرى"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:95
+msgid "An Arabic definition of the word."
+msgstr "تعريف عربية للكلمة."
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:216
+msgid "An English translation of the sentence."
+msgstr "ترجمة إنجلزية للجملة."
+
+#: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:67
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:210
+msgid "An English translation of the word."
+msgstr "ترجمة إنجلزية للكلمة."
+
+#. placeholder {0}: index + 1
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:300
+msgid "Antonym {0}"
+msgstr "الضد {0}"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:288
+msgid "Antonyms"
+msgstr "أضداد"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:233
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:166
+msgid "Any additional details about this form such as frequency of usage or context."
+msgstr "أية تفاصيل إضافية عن هذه الصيغة مثلا تكرار الاستخدام أو السياق."
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:108
+msgid "Any plural forms of the word."
+msgstr "أية صيغ جمع للكلمة."
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:271
+msgid "Any words that have the same ID will be overwritten."
+msgstr "سيستبدل كل كلمات التي لديها نفس المعرف."
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:131
+msgid "Appearance"
+msgstr "المظهر"
+
+#: ../../apps/web/src/components/LanguageMenu.tsx:18
+msgid "Arabic"
+msgstr "العربية"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:299
+msgid "Arabic verb form"
+msgstr "صيغة الفعل العربي"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:126
+msgid "Are you sure you want to delete this word? It will be removed from your dictionary and its flashcards will be deleted.<0/><1/><2>This action cannot be undone.</2>"
+msgstr "هل أنت متأكد أنك تريد حذف هذه الكلمة؟ سيتم إزالتها من معجمك وسيتم حذف البطاقات بها.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:346
+msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
+msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذف جميع كلماتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. صدر معجمك قبل حذفه من فضلك."
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:72
+msgid "Are you sure you want to reset this flashcard's progress? The word entry in the dictionary will not be modified, but its corresponding flashcards will be treated as new ones.<0/><1/><2>This action cannot be undone.</2>"
+msgstr "هل أنت متأكد أنك تريد إعادة تعيين تقدم بطاقة هذه؟ لن يتم تعديل إدخال الكلمة في المعجك، ولكن سيتم التعامل مع بطاقات بها على أنها بطاقات جديدة.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:202
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:76
+msgid "Back"
+msgstr "رجوع"
+
+#: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:121
+msgid "Back to top"
+msgstr "العودة إلى الأعلى"
+
+#: ../../apps/web/src/routes/__root.tsx:20
+#: ../../apps/web/src/components/MobileHeader.tsx:129
+#: ../../apps/web/src/components/DesktopNavigation.tsx:39
+msgid "Bahar"
+msgstr "بحر"
+
+#: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:23
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:158
+msgid "Basic Details"
+msgstr "تفاصيل أساسية"
+
+#: ../../apps/web/src/components/BetaBadge.tsx:17
+msgid "BETA"
+msgstr "بيتا"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:364
+msgid "Cancel"
+msgstr "ألغ"
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:110
+msgid "Cards to review today"
+msgstr "بطاقات للمراجعة اليوم"
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:44
+msgid "Category"
+msgstr "الباب"
+
+#: ../../apps/web/src/components/InputFile.tsx:48
+msgid "Choose file"
+msgstr "اختر ملف"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:231
+msgid "Context"
+msgstr "السياق"
+
+#: ../../apps/web/src/components/OTPForm.tsx:185
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:77
+msgid "Continue"
+msgstr "استمر"
+
+#: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:137
+#: ../../apps/mobile/src/app/(auth)/login.tsx:106
+msgid "Continue with Email"
+msgstr "استمرّ مع بريد الإلكتروني"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:61
+msgid "Create a new deck"
+msgstr "إنشاء مجموعة جديدة"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:65
+msgid "Create a new deck by choosing filters. The deck will be composed of the cards that match the filters."
+msgstr "أنشئ مجموعة جديدة باختيار الفلاتر. ستكون المجموعة مكونة من البطاقات التي تطابق هذه الفلاتر."
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:67
+msgid "Create deck"
+msgstr "أنشئ محموعة"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:84
+msgid "Customize how flashcards appear."
+msgstr "خصص كيفيّة ظهور البطاقات."
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:135
+msgid "Customize how the application looks for you."
+msgstr "قم بتخصيص كيف يظهر التطبيق بالنسبة لك."
+
+#: ../../apps/web/src/components/ThemeMenu.tsx:33
+msgid "Dark"
+msgstr "غامق"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:155
+msgid "Deck successfully created!"
+msgstr "تم إنشاء المجموعة بنجاح!"
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:173
+msgid "Deck successfully deleted!"
+msgstr "تم حذف المجموعة بنجاح!"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:146
+msgid "Deck successfully updated!"
+msgstr "تم تحديث المجموعة بنجاح!"
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:78
+#: ../../apps/web/src/components/MobileHeader.tsx:155
+#: ../../apps/web/src/components/DesktopNavigation.tsx:65
+#: ../../apps/web/src/components/DesktopNavigation.tsx:71
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:159
+msgid "Decks"
+msgstr "المجموعات"
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:94
+msgid "Decks allow you to create subsets of your existing flashcards by using filters on your dictionary which you can then study individually."
+msgstr "تتيح لك المجموعات إنشاء مجموعات فرعية من بطاقاتك التعليمية الموجودة باستخدام الفلاتر على قاموسك، والتي يمكنك دراستها بشكل فردي."
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:81
+msgid "Definition"
+msgstr "التعريف"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:335
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:358
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:115
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:149
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:179
+msgid "Delete"
+msgstr "احذف"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:122
+msgid "Delete this word?"
+msgstr "حذف هذه الكلمة؟"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:342
+msgid "Delete your dictionary?"
+msgstr "هل تريد أن تحذف معجمك؟"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:218
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:152
+msgid "Details"
+msgstr "تفاصيل"
+
+#: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:89
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:148
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:33
+msgid "Dictionary"
+msgstr "معجم"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:302
+msgid "Diptote"
+msgstr "ممنوع من الصرف"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:196
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:223
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:220
+msgid "Discard"
+msgstr "ألغ"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:113
+msgid "Don't show"
+msgstr "لا تعرض"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:85
+msgid "Dual"
+msgstr "المثنى"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:350
+msgid "Easy"
+msgstr "سهل"
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:164
+msgid "Edit"
+msgstr "عدَل"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:176
+msgid "Edit {word}"
+msgstr "حرّر {word}"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:78
+msgid "Edit your deck"
+msgstr "عدّل مجموعتك"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:82
+msgid "Edit your deck by choosing filters. The deck will be composed of the cards that match the filters."
+msgstr "عدّل مجموعتك من خلال اختيار الفلاتر. ستتكون المجموعة من البطاقات التي تطابق الفلاتر."
+
+#: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:111
+#: ../../apps/mobile/src/app/(auth)/login.tsx:69
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#: ../../apps/web/src/components/LanguageMenu.tsx:22
+msgid "English"
+msgstr "الانجلزية"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:201
+msgid "Enter a deck name"
+msgstr "أدخل اسم المجموعة"
+
+#: ../../apps/web/src/components/OTPForm.tsx:134
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:46
+msgid "Enter your 6-digit code from your email"
+msgstr "ادخل رمزك المكون من ٦ أرقام من بريدك الإلكتروني"
+
+#: ../../apps/web/src/lib/error.ts:76
+msgid "Entry {arrayIndex}"
+msgstr "العنصر {arrayIndex}"
+
+#. placeholder {0}: index + 1
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:166
+msgid "Example {0}"
+msgstr "المثال {0}"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:158
+msgid "Example usages of the word in different contexts."
+msgstr "استخدامات مثالية للكلمة في سياقات مختلفة."
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:154
+msgid "Examples"
+msgstr "أمثلة"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:279
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:315
+msgid "Export"
+msgstr "صدر"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:323
+msgid "Export with flashcards"
+msgstr "تصدير مع البطاقات"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:286
+msgid "Export your dictionary"
+msgstr "تصدير معجمك"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:290
+msgid "Exporting dictionary with flaschards will save your flashcard progress along with all the content in your dictionary. Use this option if you want to make a backup of your data.<0/><1/>Exporting your dictionary without flashcards will not save any flashcard progress. Use this option if you want to share your dictionary.<2/><3/><4>Warning</4>: Importing your file without flashcards will reset all of your flashcards."
+msgstr "تصدير المعجم مع البطاقات سيحفظ تقدم البطاقات بالإضافة إلى كل المحتوى في معجمك. استخدم هذا الخيار إذا كنت ترغب في إنشاء نسخة احتياطية من بياناتك.<0/><1/>تصدير المعجم بدون البطاقات لن يحفظ أي تقدم للبطاقات. استخدم هذا الخيار إذا كنت ترغب في مشاركة معجمك.<2/><3/><4>تحذير</4>: استيراد ملفك بدون البطاقات سيؤدي إلى إعادة تعيين جميع البطاقات."
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:47
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:137
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:53
+msgid "Expression"
+msgstr "عبارة"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:166
+msgid "Failed to add word!"
+msgstr "فشل إضافة الكلمة!"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:114
+msgid "Failed to delete!"
+msgstr "فشل الحذف!"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:70
+msgid "Failed to update flashcard settings."
+msgstr "فشل في تحديث إعدادات البطاقة."
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:312
+msgid "Failed to update the word!"
+msgstr "فشل في تحديث الكلمة!"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:231
+msgid "Feminine"
+msgstr "مؤنّث"
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:91
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:131
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:49
+msgid "Fi'l"
+msgstr "فعل"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:66
+msgid "Flashcard settings updated!"
+msgstr "تم تحديث إعدادات البطاقة!"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:80
+msgid "Flashcards"
+msgstr "بطاقات"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:265
+msgid "For example, the word"
+msgstr "مثلا الكلمة"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:212
+msgid "Gender"
+msgstr "جنس"
+
+#: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:155
+#: ../../apps/mobile/src/components/GithubLoginButton.tsx:24
+msgid "GitHub"
+msgstr "GitHub"
+
+#: ../../apps/web/src/components/OTPForm.tsx:129
+msgid "Go back"
+msgstr "ارجع"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:334
+msgid "Good"
+msgstr "حسن"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:318
+msgid "Hard"
+msgstr "صعب"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:350
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:102
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:134
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:51
+msgid "Harf"
+msgstr "حرف"
+
+#. placeholder {0}: index + 1
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:340
+msgid "Harf {0}"
+msgstr "الحرف {0}"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:167
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:41
+#: ../../apps/web/src/components/MobileHeader.tsx:143
+#: ../../apps/web/src/components/DesktopNavigation.tsx:49
+#: ../../apps/web/src/components/DesktopNavigation.tsx:55
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:150
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:36
+msgid "Home"
+msgstr "منزل"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:98
+msgid "How should antonyms be shown in flashcards?"
+msgstr "كيف ينبغي عرض الأضداد في بطاقات؟"
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:48
+msgid "How the word is categorized based on its type or context."
+msgstr "طريقة تصنف الكلمة حسب نوعها أو سياقها."
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:325
+msgid "Huroof"
+msgstr "حروف"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:103
+msgid "Imperative"
+msgstr "الأمر"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:266
+msgid "Import"
+msgstr "استورد"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:237
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:245
+msgid "Import failed!"
+msgstr "فشل الاستيراد!"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:172
+msgid "Incorrect file type"
+msgstr "نوع الملف غير صحيح"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:305
+msgid "Indeclinable"
+msgstr "مبنى"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:248
+msgid "Inflection"
+msgstr "إعراب"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:67
+msgid "Information such as the word's root, meaning, and examples."
+msgstr "معلومات مثلا الجذر أو المعنى أو الأمثلة."
+
+#: ../../apps/web/src/lib/error.ts:113
+msgid "Invalid datetime format"
+msgstr "الصيغة الزمنية غير صالحة"
+
+#: ../../apps/web/src/lib/error.ts:115
+msgid "Invalid string format"
+msgstr "صيغة النص غير صالحة"
+
+#. placeholder {0}: err.expected
+#. placeholder {1}: err.received
+#: ../../apps/web/src/lib/error.ts:105
+msgid "Invalid type. Expected {0}, received {1}"
+msgstr "نوع غير صالح. المتوقع {0}، المستلم {1}"
+
+#. placeholder {0}: err.options.join( ", ", )
+#: ../../apps/web/src/lib/error.ts:108
+msgid "Invalid value. Expected one of: {0}"
+msgstr "قيمة غير صالحة. يجب أن تكون إحدى القيم التالية: {0}"
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:77
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:128
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:47
+msgid "Ism"
+msgstr "اسم"
+
+#: ../../apps/web/src/components/ThemeMenu.tsx:36
+msgid "Light"
+msgstr "فاتح"
+
+#: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:93
+#: ../../apps/mobile/src/app/(auth)/login.tsx:64
+msgid "Log in to your existing account or sign up for a new one"
+msgstr "قم بتسجيل الدخول إلى حسابك الحالي أو قم بالتسجيل للحصول على حساب جديد"
+
+#: ../../apps/web/src/components/MobileHeader.tsx:180
+#: ../../apps/web/src/components/DesktopNavigation.tsx:110
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:129
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:82
+msgid "Manage your decks and study them."
+msgstr "إدارة مجموعاتك ودراستها."
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:152
+msgid "Manage your dictionary."
+msgstr "إدارة معجمك."
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:170
+msgid "Masadir"
+msgstr "مصادر"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:228
+msgid "Masculine"
+msgstr "مذكر"
+
+#. placeholder {0}: index + 1
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:182
+msgid "Masdar {0}"
+msgstr "المصدر {0}"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:376
+msgid "Meaning"
+msgstr "المعنى"
+
+#: ../../apps/web/src/components/features/dictionary/add/MorphologyFormSection.tsx:52
+msgid "Morphology"
+msgstr "الصرف"
+
+#: ../../apps/web/src/components/features/dictionary/add/MorphologyFormSection.tsx:62
+msgid "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
+msgstr "الصرف ينطبق فقط على الأسماء والأفعال. سيتم إخفاء هذا القسم إذا تم تعيين نوع الكلمة إلى أي شيء آخر."
+
+#: ../../apps/web/src/components/DesktopNavigation.tsx:91
+msgid "My Account"
+msgstr "حسابي"
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:106
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:195
+msgid "Name"
+msgstr "اسم"
+
+#: ../../apps/web/src/components/InputFile.tsx:54
+msgid "No file chosen"
+msgstr "لم يتم اختيار ملف"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:41
+msgid "Noun"
+msgstr "اسم"
+
+#: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:149
+#: ../../apps/mobile/src/app/(auth)/login.tsx:112
+msgid "Or continue with"
+msgstr "أو استمر مع"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:151
+msgid "Passive participle"
+msgstr "اسم مفعول"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:55
+msgid "Past tense"
+msgstr "الماضي"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:173
+msgid "Please select a JSON file with your dictionary."
+msgstr "اختر ملف JSON لمعجمك من فضلك."
+
+#: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:56
+#: ../../apps/web/src/components/OTPForm.tsx:114
+#: ../../apps/mobile/src/app/(auth)/login.tsx:48
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:37
+msgid "Please try again."
+msgstr "حاول مرّة أخرى"
+
+#. placeholder {0}: index + 1
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:116
+msgid "Plural {0}"
+msgstr "صيغة الجمع {0}"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:104
+msgid "Plurals"
+msgstr "صيغ جمع"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:45
+msgid "Preposition"
+msgstr "حرف"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:329
+msgid "Prepositions (huroof) that can be used with the verb to change its meaning."
+msgstr "الحروف التي يمكن استخدامها مع الفعل لتغيير معناه."
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:79
+msgid "Present tense"
+msgstr "المضارع"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:251
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:408
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:184
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:263
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:337
+msgid "Remove"
+msgstr "احذف"
+
+#: ../../apps/web/src/lib/error.ts:102
+msgid "Required field"
+msgstr "حقل مطلوب"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:61
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:97
+msgid "Reset flashcard"
+msgstr "أعد البطاقة"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:68
+msgid "Reset flashcard progress?"
+msgstr "إعادة تعيين تقدم البطاقة؟"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:151
+msgid "Reverse flashcards"
+msgstr "بطاقات العكسية"
+
+#: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:67
+#: ../../apps/mobile/src/components/ReviewFlashcardsButton.tsx:37
+msgid "Review flashcards"
+msgstr "ادرس البطاقات"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:120
+msgid "Root letters"
+msgstr "الجذر"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:339
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:368
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:201
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:228
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:175
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:229
+msgid "Save"
+msgstr "احفظ"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:325
+msgid "Save changes"
+msgstr "حفظ التغييرات"
+
+#: ../../apps/web/src/components/Autocomplete.tsx:80
+msgid "Search for a tag..."
+msgstr "ابحث عن علامة..."
+
+#: ../../apps/web/src/components/meili/SearchInput.tsx:55
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:78
+msgid "Search..."
+msgstr "ابحث..."
+
+#: ../../apps/web/src/components/Autocomplete.tsx:109
+msgid "Searching..."
+msgstr "يبحث..."
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:221
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:222
+msgid "Select gender"
+msgstr "اختر جنسا"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:291
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:293
+msgid "Select inflection"
+msgstr "اختر إعرابا"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:268
+msgid "Select the types of words that you want to include in the deck."
+msgstr "حدد أنواع الكلمات التي تريد تضمينها في المجموعة."
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:121
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:122
+msgid "Select type"
+msgstr "اختر الجنس"
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:176
+msgid "Sentence"
+msgstr "جملة"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:125
+#: ../../apps/web/src/components/MobileHeader.tsx:167
+#: ../../apps/web/src/components/DesktopNavigation.tsx:98
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:168
+msgid "Settings"
+msgstr "الإعدادات"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:133
+msgid "Show after revealing the answer"
+msgstr "عرض بعد كشف الإجابة"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:361
+msgid "Show answer"
+msgstr "اعرض الجواب"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:123
+msgid "Show as a hint"
+msgstr "عرض كتلميح"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:156
+msgid "Show English to Arabic flashcards."
+msgstr "اعرض بطاقات من الإنجليزية إلى العربية."
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:61
+msgid "Singular"
+msgstr "مفرد"
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:140
+msgid "Study"
+msgstr "أدرس"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:155
+msgid "Successfully added word!"
+msgstr "تم إضافة الكلمة بنجاح!"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:106
+msgid "Successfully deleted!"
+msgstr "نجح الحذف!"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:209
+msgid "Successfully imported!"
+msgstr "تم الاستيراد بنجاح!"
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:93
+msgid "Successfully reset the flashcard."
+msgstr "تمت إعادة تعيين البطاقة بنجاح."
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:301
+msgid "Successfully updated the word!"
+msgstr "حدثت الكلمة بنجاح!"
+
+#: ../../apps/web/src/components/ThemeMenu.tsx:40
+msgid "System"
+msgstr "نظام"
+
+#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:32
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:220
+msgid "Tags"
+msgstr "علامات"
+
+#: ../../apps/web/src/components/OTPForm.tsx:108
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:34
+#: ../../apps/mobile/src/app/(auth)/code/[email].tsx:66
+msgid "That code is invalid."
+msgstr "هذا الشفرة غير صالح."
+
+#: ../../apps/web/src/lib/zod.ts:13
+#: ../../apps/mobile/src/utils/zod.ts:16
+msgid "That email is invalid."
+msgstr "هذا البريد الإلكتروني غير صالح."
+
+#: ../../apps/web/src/lib/error.ts:55
+msgid "That is not valid JSON."
+msgstr "هذا ليس JSON صالح."
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:245
+msgid "The context of the sentence, ex. formal or colloquial."
+msgstr "سياق الجملة مثلا رسمي أو عامي."
+
+#. placeholder {0}: deck.name
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:174
+msgid "The deck \"{0}\" has been deleted."
+msgstr "تم حذف المجموعة \"{0}\"."
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:286
+msgid "The form of the verb ex. I, II, III, IV, etc..."
+msgstr "صيغة الفعل مثلا I, II, III, IV, هكذا و هكذا..."
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:313
+msgid "The form of the verb in Arabic ex. فعل, أفعل, استفعل, etc..."
+msgstr "صيغة الفعل بالعربية مثلا فعل, أفعل, استفعل, هكذا و هكذا..."
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:391
+msgid "The meaning of the verb when used with the harf."
+msgstr "معنى الفعل إذا استعمل مع الحرف."
+
+#: ../../apps/web/src/components/features/dictionary/add/MorphologyFormSection.tsx:73
+msgid "The morphological breakdown of the word."
+msgstr "التصريف."
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:135
+msgid "The root letters of the word. The input can be separated by commas, spaces or have no delimeter ex. فعل or ف, ع, ل or ف ع ل."
+msgstr "الحروف الجذرية للكلمة. يمكن فصل المدخلات بفواصل أو مسافات أو لا تحتوي على محدد مثلا فعل أو ف، ع، ل أو ف ع ل."
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:156
+msgid "The word has been added to your dictionary."
+msgstr "تمت إضافة الكلمة إلى معجمك."
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:302
+msgid "The word has been updated."
+msgstr "حدثت الكلمة."
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/add/route.lazy.tsx:167
+msgid "There was an error adding your word. Please try again."
+msgstr "حدث خطأ أثناء إضافة كلمتك. حاول مرة اخرى."
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:171
+msgid "There was an error creating the deck"
+msgstr "حدث خطأ أثناء إنشاء المجموعة"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:115
+msgid "There was an error deleting your dictionary. Please try again later."
+msgstr "حدث خطأ أثناء حذف معجمك. حاول مرة أخرى لاحقا من فضلك."
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:246
+msgid "There was an error importing your dictionary. Please try again later."
+msgstr "حدث خطأ أثناء استيراد لمعجمك. حاول مرة أخرى لاحقا."
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:165
+msgid "There was an error updating the deck"
+msgstr "حدث خطأ أثناء تحديث المجموعة"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:71
+msgid "There was an error updating your flashcard settings."
+msgstr "حدث خطأ أثناء تحديث إعدادات بطاقاتك."
+
+#: ../../apps/web/src/routes/_app-layout/dictionary/edit/$wordId.tsx:313
+msgid "There was an error updating your word. Please try again."
+msgstr "حدث خطأ أثناء تحديث كلمتك. حاول مرة أخرى."
+
+#: ../../apps/web/src/lib/zod.ts:7
+#: ../../apps/web/src/lib/zod.ts:22
+#: ../../apps/mobile/src/utils/zod.ts:10
+#: ../../apps/mobile/src/utils/zod.ts:25
+#: ../../apps/mobile/src/app/(auth)/login.tsx:90
+msgid "This field is required."
+msgstr "هذه الخانة لازم."
+
+#: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:119
+#: ../../apps/mobile/src/app/(auth)/login.tsx:95
+msgid "This is case insensitive."
+msgstr "هذا حالة غير حساسة."
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:208
+msgid "This is the name of your deck."
+msgstr "هذا هو اسم مجموعتك."
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:258
+msgid "This refers to how many case endings the word can take."
+msgstr "هذا هو إعراب الكلمة."
+
+#: ../../apps/web/src/components/MobileHeader.tsx:104
+msgid "Toggle Menu"
+msgstr "تبديل القائمة"
+
+#: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:59
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:202
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:190
+msgid "Translation"
+msgstr "الترجمة"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:299
+msgid "Triptote"
+msgstr "معرب"
+
+#: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:64
+msgid "Type"
+msgstr "الجنس"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:264
+msgid "Types"
+msgstr "أقسام"
+
+#. placeholder {0}: String(err.minimum)
+#: ../../apps/web/src/lib/error.ts:117
+msgid "Value must be {0} or greater"
+msgstr "يجب أن تكون القيمة {0} أو أكبر"
+
+#. placeholder {0}: String(err.maximum)
+#: ../../apps/web/src/lib/error.ts:119
+msgid "Value must be {0} or less"
+msgstr "يجب أن تكون القيمة {0} أو أقل"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:43
+msgid "Verb"
+msgstr "فعل"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:278
+msgid "Verb form"
+msgstr "صيغة الفعل"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:174
+msgid "Verbal noun forms (masadir) of the verb."
+msgstr "مصادر للفعل."
+
+#: ../../apps/web/src/routes/_search-layout/index.lazy.tsx:93
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:37
+msgid "View all the words in your personal dictionary."
+msgstr "انظر كل الألفاظ في معجمك الشخصي."
+
+#: ../../apps/web/src/routes/_layout/login/route.lazy.tsx:89
+#: ../../apps/mobile/src/app/(auth)/login.tsx:60
+msgid "Welcome to Bahar!"
+msgstr "مرحباً بكم في بحر!"
+
+#: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:192
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:126
+#: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:35
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:310
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:166
+msgid "Word"
+msgstr "الكلمة"
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:234
+msgid "Words that have any of these tags will be included in the deck."
+msgstr "الكلمات التي تحتوي على أي من هذه العلامات ستُدرج في المجموعة."
+
+#: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:292
+msgid "Words that have the opposite meaning."
+msgstr "الكلمات التي لها معنى عكسي."
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:219
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:241
+msgid "You have more than {FLASHCARD_LIMIT} cards to review."
+msgstr "لديك أكثر من {FLASHCARD_LIMIT} بطاقة لمراجعتها."
+
+#: ../../apps/web/src/routes/_app-layout/decks/route.lazy.tsx:90
+msgid "You have no decks yet."
+msgstr "ليس لديك أي مجموعات بعد."
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:254
+msgid "You have no flashcards to review for now!"
+msgstr "ليس لديك بطاقات للدراسة الآن!"
+
+#: ../../apps/web/src/components/meili/InfiniteScroll.tsx:105
+msgid "You have no words in your dictionary yet."
+msgstr "ليس لديك أي كلمات في قاموسك بعد."
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:172
+msgid "Your deck was not created. Please try again."
+msgstr "لم يتم إنشاء مجموعتك. يرجى المحاولة مرة أخرى."
+
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:166
+msgid "Your deck was not updated. Please try again."
+msgstr "لم يتم تحديث مجموعتك. يرجى المحاولة مرة أخرى."
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:107
+msgid "Your dictionary has been deleted."
+msgstr "حذف معجمك."
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:210
+msgid "Your dictionary has been updated!"
+msgstr "تم تحديث معجمك!"
+
+#: ../../apps/web/src/routes/_app-layout/settings/route.lazy.tsx:238
+msgid "Your dictionary is not valid. Please fix the errors and upload it again."
+msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة أخرى من فضلك."
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:270
+msgid "محمد is a triptote;"
+msgstr "كلمة محمد هي معرب;"
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:276
+msgid "موسى is indeclinable."
+msgstr "كلمة موسى هي مبنى."
+
+#: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:273
+msgid "يوسف is a diptote;"
+msgstr "كلمة يوسف هي ممنوع من الصرف;"

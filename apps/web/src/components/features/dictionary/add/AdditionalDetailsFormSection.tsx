@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import {
   Accordion,
   AccordionContent,
@@ -23,9 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@/schemas/dictionary";
-import { Trans } from "@lingui/macro";
-import { AnimatePresence, motion } from "framer-motion";
+import { FormSchema } from "@bahar/schemas";
+import { AnimatePresence, motion } from "motion/react";
 import { Plus } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 

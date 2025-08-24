@@ -1,10 +1,9 @@
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
-import { msg } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import { UseSearchBoxProps, useSearchBox } from "react-instantsearch";
 import { FC, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@bahar/design-system";
 
 interface SearchInputProps extends UseSearchBoxProps {
   className?: string;
@@ -14,7 +13,7 @@ export const SearchInput: FC<SearchInputProps> = ({
   className = "",
   ...props
 }) => {
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const { query, refine } = useSearchBox(props);
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +52,7 @@ export const SearchInput: FC<SearchInputProps> = ({
 
       <Input
         type="search"
-        placeholder={_(msg`Search...`)}
+        placeholder={t`Search...`}
         className="w-full rounded-lg bg-background ltr:pl-8 rtl:pr-8 md:w-[450px] lg:w-[450px]"
         ref={inputRef}
         autoComplete="off"

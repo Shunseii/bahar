@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import { msg } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import { useDocumentTitle } from "@uidotdev/usehooks";
 import { Toaster } from "@/components/ui/toaster";
 import { authClient } from "@/lib/auth-client";
@@ -16,9 +15,9 @@ import { authClient } from "@/lib/auth-client";
 //     );
 
 const Root = () => {
-  const { _ } = useLingui();
+  const { t } = useLingui();
 
-  useDocumentTitle(_(msg`Bahar`));
+  useDocumentTitle(t`Bahar`);
 
   useEffect(() => {
     // We updated the body styles in the index to display

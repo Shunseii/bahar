@@ -1,4 +1,5 @@
-import { Plural, Trans, t } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { Tooltip, TooltipTrigger, TooltipContent } from "../../ui/tooltip";
 import { Button } from "../../ui/button";
 import { formatDistanceToNow } from "date-fns";
@@ -24,15 +25,23 @@ import {
 import { RouterOutput, trpc } from "@/lib/trpc";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useDir } from "@/hooks/useDir";
 import { Badge } from "../../ui/badge";
-import { FilterSchema } from "api/schemas";
 import { z } from "@/lib/zod";
 import { QuestionSide } from "./QuestionSide";
 import { AnswerSide } from "./AnswerSide";
 import { ReverseAnswerSide } from "./ReverseAnswerSide";
 import { ReverseQuestionSide } from "./ReverseQuestionSide";
+
+// TODO: reuse schema from the api
+const FilterSchema = z.object({
+  tags: z.array(z.string()).optional(),
+  state: z
+    .array(z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]))
+    .optional(),
+  types: z.array(z.enum(["ism", "fi'l", "harf", "expression"])).optional(),
+});
 
 const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
   switch (str) {

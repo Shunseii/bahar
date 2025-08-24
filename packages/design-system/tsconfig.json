@@ -1,0 +1,9 @@
+{
+  "extends": "@bahar/typescript-config/base.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "target": "ES2022"
+  },
+  "include": ["src/**/*", "index.ts"],
+  "exclude": ["node_modules"]
+}

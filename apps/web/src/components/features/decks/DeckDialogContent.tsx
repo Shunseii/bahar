@@ -1,4 +1,5 @@
-import { Trans, msg } from "@lingui/macro";
+import { t } from "@lingui/core/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { Button } from "../../ui/button";
 import {
   DialogContent,
@@ -24,14 +25,32 @@ import { X } from "lucide-react";
 import { Autocomplete } from "../../Autocomplete";
 import { Label } from "../../ui/label";
 import { Checkbox } from "../../ui/checkbox";
-import { t } from "@lingui/macro";
 import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
-import { useLingui } from "@lingui/react";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DeckSchema } from "api/schemas";
+
+// TODO: reuse schema from the api
+const DeckSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  name: z.string(),
+  filters: z
+    .object({
+      tags: z.array(z.string()).optional(),
+      state: z
+        .array(
+          z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
+        )
+        .optional(),
+      types: z.array(z.enum(["ism", "fi'l", "harf", "expression"])).optional(),
+    })
+    // API has this as object | null type even though we use optional
+    .nullable(),
+  total_hits: z.number(),
+  to_review: z.number(),
+});
 
 const DeckFormSchema = z.object({
   name: z.string().min(1),
@@ -110,7 +129,7 @@ export const DeckDialogContent = ({
     },
   });
   const { toast } = useToast();
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const form = useForm<z.infer<typeof DeckFormSchema>>({
     resolver: zodResolver(DeckFormSchema),
     defaultValues: {
@@ -143,7 +162,7 @@ export const DeckDialogContent = ({
         });
 
         toast({
-          title: _(msg`Deck successfully updated!`),
+          title: t`Deck successfully updated!`,
         });
       } else {
         await createDeck({
@@ -152,7 +171,7 @@ export const DeckDialogContent = ({
         });
 
         toast({
-          title: _(msg`Deck successfully created!`),
+          title: t`Deck successfully created!`,
         });
       }
 
@@ -162,14 +181,14 @@ export const DeckDialogContent = ({
     } catch (err) {
       if (isEditing) {
         toast({
-          title: _(msg`There was an error updating the deck`),
-          description: _(msg`Your deck was not updated. Please try again.`),
+          title: t`There was an error updating the deck`,
+          description: t`Your deck was not updated. Please try again.`,
           variant: "destructive",
         });
       } else {
         toast({
-          title: _(msg`There was an error creating the deck`),
-          description: _(msg`Your deck was not created. Please try again.`),
+          title: t`There was an error creating the deck`,
+          description: t`Your deck was not created. Please try again.`,
           variant: "destructive",
         });
       }
@@ -198,7 +217,7 @@ export const DeckDialogContent = ({
                     <FormControl>
                       <Input
                         className="col-span-3"
-                        placeholder={_(msg`Enter a deck name`)}
+                        placeholder={t`Enter a deck name`}
                         {...field}
                       />
                     </FormControl>

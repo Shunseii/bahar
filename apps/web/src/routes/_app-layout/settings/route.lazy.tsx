@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import { InputFile } from "@/components/InputFile";
 import { LanguageMenu } from "@/components/LanguageMenu";
 import { Page } from "@/components/Page";
@@ -24,15 +25,14 @@ import {
 import { useToast } from "@/hooks/useToast";
 import { ImportError, parseImportErrors } from "@/lib/error";
 import { tracedFetch } from "@/lib/fetch";
-import { msg, Trans } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
+import { useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { ImportResponseError } from "api/error";
+import { ImportResponseError } from "@/lib/error";
 import { useCallback, useState } from "react";
 import { useInstantSearch } from "react-instantsearch";
 
 const Settings = () => {
-  const { _ } = useLingui();
+  const { t } = useLingui();
   const [file, setFile] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -103,18 +103,16 @@ const Settings = () => {
       refresh();
 
       toast({
-        title: _(msg`Successfully deleted!`),
-        description: _(msg`Your dictionary has been deleted.`),
+        title: t`Successfully deleted!`,
+        description: t`Your dictionary has been deleted.`,
       });
     } catch (err) {
       console.error(err);
 
       toast({
         variant: "destructive",
-        title: _(msg`Failed to delete!`),
-        description: _(
-          msg`There was an error deleting your dictionary. Please try again later.`,
-        ),
+        title: t`Failed to delete!`,
+        description: t`There was an error deleting your dictionary. Please try again later.`,
       });
     } finally {
       setIsLoading(false);
@@ -171,10 +169,8 @@ const Settings = () => {
               if (!file || file.type !== "application/json") {
                 toast({
                   variant: "destructive",
-                  title: _(msg`Incorrect file type`),
-                  description: _(
-                    msg`Please select a JSON file with your dictionary.`,
-                  ),
+                  title: t`Incorrect file type`,
+                  description: t`Please select a JSON file with your dictionary.`,
                 });
 
                 setIsLoading(false);
@@ -210,8 +206,8 @@ const Settings = () => {
                 refresh();
 
                 toast({
-                  title: _(msg`Successfully imported!`),
-                  description: _(msg`Your dictionary has been updated!`),
+                  title: t`Successfully imported!`,
+                  description: t`Your dictionary has been updated!`,
                 });
               } catch (err) {
                 if (err instanceof ImportError) {
@@ -238,20 +234,16 @@ const Settings = () => {
 
                   toast({
                     variant: "destructive",
-                    title: _(msg`Import failed!`),
-                    description: _(
-                      msg`Your dictionary is not valid. Please fix the errors and upload it again.`,
-                    ),
+                    title: t`Import failed!`,
+                    description: t`Your dictionary is not valid. Please fix the errors and upload it again.`,
                   });
                 } else {
                   console.error(err);
 
                   toast({
                     variant: "destructive",
-                    title: _(msg`Import failed!`),
-                    description: _(
-                      msg`There was an error importing your dictionary. Please try again later.`,
-                    ),
+                    title: t`Import failed!`,
+                    description: t`There was an error importing your dictionary. Please try again later.`,
                   });
                 }
               } finally {

@@ -9,16 +9,18 @@ import { config } from "./config";
 import { redisClient } from "./clients/redis";
 import { createUserIndex } from "./clients/meilisearch";
 import { LogCategory, logger } from "./logger";
+import { expo } from "@better-auth/expo";
 
 const APP_NAME = "Bahar";
 const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
+const MOBILE_DEEP_LINK_SCHEME = "bahar://";
 
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
 export const auth = betterAuth({
-  trustedOrigins: allowedDomains,
+  trustedOrigins: [...allowedDomains, MOBILE_DEEP_LINK_SCHEME],
   emailAndPassword: {
     enabled: false,
   },
@@ -238,6 +240,7 @@ export const auth = betterAuth({
   },
   plugins: [
     openAPI(),
+    expo(),
     emailOTP({
       otpLength: OTP_LENGTH,
       expiresIn: OTP_EXPIRY_SECS,

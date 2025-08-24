@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import {
   Select,
   SelectContent,
@@ -9,7 +10,6 @@ import {
 import { useDir } from "@/hooks/useDir";
 import { dynamicActivate, getLocaleKeys, TLocale } from "@/lib/i18n";
 import { i18n } from "@lingui/core";
-import { Trans } from "@lingui/macro";
 import { FC } from "react";
 
 export const LocaleLabel: FC<{ locale: TLocale }> = ({ locale }) => {
