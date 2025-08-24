@@ -1,5 +1,5 @@
-import { t } from "@lingui/macro";
-import { Trans } from "@lingui/react/macro";
+import { t } from "@lingui/core/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { Button } from "../../ui/button";
 import {
   DialogContent,
@@ -27,11 +27,30 @@ import { Label } from "../../ui/label";
 import { Checkbox } from "../../ui/checkbox";
 import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
-import { useLingui } from "@lingui/react/macro";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DeckSchema } from "api/schemas";
+
+// TODO: reuse schema from the api
+const DeckSchema = z.object({
+  id: z.string(),
+  user_id: z.string(),
+  name: z.string(),
+  filters: z
+    .object({
+      tags: z.array(z.string()).optional(),
+      state: z
+        .array(
+          z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
+        )
+        .optional(),
+      types: z.array(z.enum(["ism", "fi'l", "harf", "expression"])).optional(),
+    })
+    // API has this as object | null type even though we use optional
+    .nullable(),
+  total_hits: z.number(),
+  to_review: z.number(),
+});
 
 const DeckFormSchema = z.object({
   name: z.string().min(1),

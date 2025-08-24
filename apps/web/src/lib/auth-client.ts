@@ -3,7 +3,7 @@ import {
   emailOTPClient,
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
-import type { auth } from "api/auth";
+import type { auth } from "../../../api/src/auth";
 import { TRACE_ID_HEADER, generateTraceId } from "./utils";
 
 export const authClient = createAuthClient({

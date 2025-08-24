@@ -28,12 +28,20 @@ import { getQueryKey } from "@trpc/react-query";
 import { motion } from "motion/react";
 import { useDir } from "@/hooks/useDir";
 import { Badge } from "../../ui/badge";
-import { FilterSchema } from "api/schemas";
 import { z } from "@/lib/zod";
 import { QuestionSide } from "./QuestionSide";
 import { AnswerSide } from "./AnswerSide";
 import { ReverseAnswerSide } from "./ReverseAnswerSide";
 import { ReverseQuestionSide } from "./ReverseQuestionSide";
+
+// TODO: reuse schema from the api
+const FilterSchema = z.object({
+  tags: z.array(z.string()).optional(),
+  state: z
+    .array(z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]))
+    .optional(),
+  types: z.array(z.enum(["ism", "fi'l", "harf", "expression"])).optional(),
+});
 
 const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
   switch (str) {

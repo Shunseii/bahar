@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/react";
 import { expoClient } from "@better-auth/expo/client";
-import type { auth } from "api/auth";
+import type { auth } from "../../../api/src/auth";
 import {
   inferAdditionalFields,
   emailOTPClient,

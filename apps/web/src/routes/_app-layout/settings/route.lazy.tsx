@@ -27,7 +27,7 @@ import { ImportError, parseImportErrors } from "@/lib/error";
 import { tracedFetch } from "@/lib/fetch";
 import { useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { ImportResponseError } from "api/error";
+import { ImportResponseError } from "@/lib/error";
 import { useCallback, useState } from "react";
 import { useInstantSearch } from "react-instantsearch";
 
