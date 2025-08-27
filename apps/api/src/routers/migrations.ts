@@ -2,7 +2,8 @@ import { router, protectedProcedure, adminProcedure } from "../trpc";
 import { db } from "../db";
 import { z } from "zod";
 import { migrations, SelectMigrationsSchema } from "../db/schema/migrations";
-import { desc, gt } from "drizzle-orm";
+import { asc, desc, gt } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
 
 export const migrationsRouter = router({
   /**
@@ -18,6 +19,13 @@ export const migrationsRouter = router({
         .insert(migrations)
         .values({ sql_script: sqlScript, description })
         .returning();
+
+      if (results.length === 0) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to register schema",
+        });
+      }
 
       const migration = results[0];
 
@@ -36,12 +44,18 @@ export const migrationsRouter = router({
         .orderBy(desc(migrations.version))
         .limit(1);
 
+      // When no migrations exist in the database.
+      // Ideally this should never happen.
+      if (results.length === 0) {
+        return 0;
+      }
+
       return results[0].version;
     }),
 
   /**
    * Verify the schema version against the current version.
-   * If an upate is required, returns the required migrations.
+   * If an update is required, returns the required migrations.
    *
    * Clients should apply each of these migrations locally.
    */
@@ -60,12 +74,15 @@ export const migrationsRouter = router({
         .select()
         .from(migrations)
         .where(gt(migrations.version, input.version))
-        .orderBy(desc(migrations.version));
+        .orderBy(asc(migrations.version));
 
       if (requiredMigrations.length > 0) {
+        const currentVersion =
+          requiredMigrations[requiredMigrations.length - 1].version;
+
         return {
           status: "update_required",
-          currentVersion: requiredMigrations[0].version,
+          currentVersion,
           clientVersion: input.version,
           requiredMigrations,
         };
