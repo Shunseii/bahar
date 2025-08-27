@@ -1,6 +1,7 @@
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import $RefParser from "@apidevtools/json-schema-ref-parser";
+import { decodeJwt } from "jose";
 
 /**
  * Constructs all the allowed subdomains for this api server
@@ -24,4 +25,15 @@ export const getFullSchema = async () => {
   const schema = await $RefParser.bundle(schemaPath);
 
   return schema;
+};
+
+export const isJwtExpired = (token: string): boolean => {
+  try {
+    const payload = decodeJwt(token);
+    const currentTime = Math.floor(Date.now() / 1000);
+
+    return payload.exp != null && payload.exp < currentTime;
+  } catch {
+    return true;
+  }
 };
