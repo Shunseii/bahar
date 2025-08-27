@@ -30,8 +30,8 @@ importers:
         specifier: ^11.7.2
         version: 11.7.2
       '@better-auth/expo':
-        specifier: ^1.2.7
-        version: 1.2.7(better-auth@1.2.10)
+        specifier: 1.2.10
+        version: 1.2.10(better-auth@1.2.10)
       '@libsql/client':
         specifier: ^0.10.0
         version: 0.10.0
@@ -50,6 +50,9 @@ importers:
       '@trpc/server':
         specifier: ^11.4.3
         version: 11.4.3(typescript@5.8.3)
+      '@tursodatabase/api':
+        specifier: ^1.9.0
+        version: 1.9.0
       '@types/cookie-parser':
         specifier: ^1.4.6
         version: 1.4.6
@@ -57,7 +60,7 @@ importers:
         specifier: ^1.28.4
         version: 1.28.4
       better-auth:
-        specifier: ^1.2.10
+        specifier: 1.2.10
         version: 1.2.10
       cookie-parser:
         specifier: ^1.4.6
@@ -77,6 +80,9 @@ importers:
       express:
         specifier: ^4.18.2
         version: 4.18.2
+      jose:
+        specifier: ^6.0.13
+        version: 6.0.13
       meilisearch:
         specifier: ^0.45.0
         version: 0.45.0
@@ -163,8 +169,8 @@ importers:
   apps/mobile:
     dependencies:
       '@better-auth/expo':
-        specifier: ^1.2.7
-        version: 1.2.7(better-auth@1.2.10)
+        specifier: 1.2.10
+        version: 1.2.10(better-auth@1.2.10)
       '@digitalartlab/expo-plugin-localization':
         specifier: ^3.0.0
         version: 3.0.0(expo@53.0.9)
@@ -214,7 +220,7 @@ importers:
         specifier: ^11.4.3
         version: 11.4.3(@tanstack/react-query@5.83.0)(@trpc/client@11.4.3)(@trpc/server@11.4.3)(react-dom@19.0.0)(react@19.0.0)(typescript@5.8.3)
       better-auth:
-        specifier: ^1.2.10
+        specifier: 1.2.10
         version: 1.2.10
       class-variance-authority:
         specifier: ^0.7.0
@@ -476,7 +482,7 @@ importers:
         specifier: ^2.4.1
         version: 2.4.1(react-dom@19.0.0)(react@19.0.0)
       better-auth:
-        specifier: ^1.0.10
+        specifier: 1.2.10
         version: 1.2.10
       class-variance-authority:
         specifier: ^0.7.0
@@ -2864,14 +2870,14 @@ packages:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
     dev: true
 
-  /@better-auth/expo@1.2.7(better-auth@1.2.10):
-    resolution: {integrity: sha512-g8qBx7lBFfOWvAzWwNUVZr6IWYwBcZ7D/HcTzBG1zoZmD7PbdseQugWlIeS711vZ/Qqez7ZV0mDwpk2h+uT4nQ==}
+  /@better-auth/expo@1.2.10(better-auth@1.2.10):
+    resolution: {integrity: sha512-wMnYtDGF5W37Kuq7OY3/mudlWbbvxLMX0zoOMgB/icx3mReD6dv3hfpuVPoNQxT/dl/R+Rj7dvJ3b5Rk4CI3NA==}
     peerDependencies:
-      better-auth: 1.2.7
+      better-auth: 1.2.10
     dependencies:
       '@better-fetch/fetch': 1.1.18
       better-auth: 1.2.10
-      better-call: 1.0.9
+      better-call: 1.0.16
       zod: 3.24.1
     dev: false
 
@@ -8354,6 +8360,12 @@ packages:
       typescript: 5.8.3
     dev: false
 
+  /@tursodatabase/api@1.9.0:
+    resolution: {integrity: sha512-wRxSVBjauf8AVDNoFu8114AmaCEIyHP6BtQo2QzYRYCJ06JVmcrPYPw+Uh6RPDNTi6F8cfyU9ShgxB+EsUeW4Q==}
+    dependencies:
+      whatwg-fetch: 3.6.20
+    dev: false
+
   /@types/babel__core@7.20.5:
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
     dependencies:
@@ -10060,15 +10072,6 @@ packages:
 
   /better-call@1.0.16:
     resolution: {integrity: sha512-42dgJ1rOtc0anOoxjXPOWuel/Z/4aeO7EJ2SiXNwvlkySSgjXhNjAjTMWa8DL1nt6EXS3jl3VKC3mPsU/lUgVA==}
-    dependencies:
-      '@better-fetch/fetch': 1.1.18
-      rou3: 0.5.1
-      set-cookie-parser: 2.7.1
-      uncrypto: 0.1.3
-    dev: false
-
-  /better-call@1.0.9:
-    resolution: {integrity: sha512-Qfm0gjk0XQz0oI7qvTK1hbqTsBY4xV2hsHAxF8LZfUYl3RaECCIifXuVqtPpZJWvlCCMlQSvkvhhyuApGUba6g==}
     dependencies:
       '@better-fetch/fetch': 1.1.18
       rou3: 0.5.1
@@ -14918,6 +14921,10 @@ packages:
 
   /jose@5.10.0:
     resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
+    dev: false
+
+  /jose@6.0.13:
+    resolution: {integrity: sha512-Yms4GpbmdANamS51kKK6w4hRlKx8KTxbWyAAKT/MhUMtqbIqh5mb2HjhTNUbk7TFL8/MBB5zWSDohL7ed4k/UA==}
     dev: false
 
   /jotai@2.12.4(@types/react@19.0.14)(react@19.0.0):

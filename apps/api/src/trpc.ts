@@ -123,6 +123,31 @@ export const protectedProcedure = t.procedure
     });
   });
 
+export const adminProcedure = t.procedure
+  .use(sentryMiddleware)
+  .use(loggingMiddleware)
+  .use(async (opts) => {
+    const { ctx, next } = opts;
+
+    if (!ctx.user || !ctx.session) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    const { user, session } = ctx;
+
+    if (user.role !== "admin") {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    return next({
+      ctx: {
+        // These are inferred as non-null now
+        user,
+        session,
+      },
+    });
+  });
+
 /**
  * Export reusable router and procedure helpers
  * that can be used throughout the router

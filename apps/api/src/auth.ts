@@ -1,8 +1,13 @@
 import { betterAuth } from "better-auth";
-import { createAuthMiddleware, emailOTP, openAPI } from "better-auth/plugins";
+import {
+  createAuthMiddleware,
+  emailOTP,
+  openAPI,
+  admin,
+} from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
-import { users, verifications, sessions, accounts } from "./db/schema/auth";
+// import { users, verifications, sessions, accounts } from "./db/schema/auth";
 import { sendMail } from "./clients/mail";
 import { getAllowedDomains } from "./utils";
 import { config } from "./config";
@@ -237,10 +242,12 @@ export const auth = betterAuth({
       enabled: true,
       maxAge: SESSION_COOKIE_CACHE_EXPIRY_SECS,
     },
+    storeSessionInDatabase: true,
   },
   plugins: [
     openAPI(),
     expo(),
+    admin(),
     emailOTP({
       otpLength: OTP_LENGTH,
       expiresIn: OTP_EXPIRY_SECS,
@@ -291,12 +298,12 @@ export const auth = betterAuth({
     provider: "sqlite",
     usePlural: true,
     // TODO: figure out why I need to pass these explicitly here
-    schema: {
-      verifications,
-      users,
-      sessions,
-      accounts,
-    },
+    // schema: {
+    // verifications,
+    // users,
+    // sessions,
+    // accounts,
+    // },
   }),
   databaseHooks: {
     account: {
