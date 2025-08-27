@@ -7,7 +7,7 @@ import {
 } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "./db";
-// import { users, verifications, sessions, accounts } from "./db/schema/auth";
+import { users, verifications, sessions, accounts } from "./db/schema/auth";
 import { sendMail } from "./clients/mail";
 import { getAllowedDomains } from "./utils";
 import { config } from "./config";
@@ -297,13 +297,13 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "sqlite",
     usePlural: true,
-    // TODO: figure out why I need to pass these explicitly here
-    // schema: {
-    // verifications,
-    // users,
-    // sessions,
-    // accounts,
-    // },
+    // If I don't pass these explicitly here, I get an error
+    schema: {
+      verifications,
+      users,
+      sessions,
+      accounts,
+    },
   }),
   databaseHooks: {
     account: {
