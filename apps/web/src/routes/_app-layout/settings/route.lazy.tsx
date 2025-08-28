@@ -30,6 +30,8 @@ import { createLazyFileRoute } from "@tanstack/react-router";
 import { ImportResponseError } from "@/lib/error";
 import { useCallback, useState } from "react";
 import { useInstantSearch } from "react-instantsearch";
+import { authClient } from "@/lib/auth-client";
+import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
 
 const Settings = () => {
   const { t } = useLingui();
@@ -37,6 +39,7 @@ const Settings = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { refresh } = useInstantSearch();
+  const { data: userData } = authClient.useSession();
 
   const exportDictionary = useCallback(async (includeFlashcards = false) => {
     try {
@@ -371,6 +374,8 @@ const Settings = () => {
       </Card>
 
       <FlashcardSettingsCardSection />
+
+      {userData?.user.role === "admin" && <AdminSettingsCardSection />}
     </Page>
   );
 };
