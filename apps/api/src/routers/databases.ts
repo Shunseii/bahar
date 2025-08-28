@@ -2,7 +2,7 @@ import { router, protectedProcedure } from "../trpc";
 import { db } from "../db";
 import { eq } from "drizzle-orm";
 import { databases, SelectDatabasesSchema } from "../db/schema/databases";
-import { tursoClient } from "../clients/turso";
+import { tursoPlatformClient } from "../clients/turso";
 import { isJwtExpired } from "../utils";
 import { TRPCError } from "@trpc/server";
 
@@ -59,7 +59,7 @@ export const databasesRouter = router({
       const userDb = results[0];
 
       if (userDb?.access_token && isJwtExpired(userDb.access_token)) {
-        const newToken = await tursoClient.databases.createToken(
+        const newToken = await tursoPlatformClient.databases.createToken(
           userDb.db_name,
         );
 

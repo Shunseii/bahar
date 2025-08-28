@@ -17,6 +17,8 @@ import { toNodeHandler } from "better-auth/node";
 import { config } from "./config";
 import { logger, requestLogger } from "./logger";
 import { traceContextMiddleware } from "./middleware";
+import { migrationsRouter } from "./routers/migrations";
+import { databasesRouter } from "./routers/databases";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -37,6 +39,8 @@ const appRouter = router({
   tags: tagsRouter,
   settings: settingsRouter,
   decks: decksRouter,
+  migrations: migrationsRouter,
+  databasesRouter: databasesRouter,
 });
 
 const app = express();
