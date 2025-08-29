@@ -10,7 +10,7 @@ export const GithubLoginButton: FC<{ children: ReactNode }> = ({
   const { redirect } = Route.useSearch();
   const redirectUrl = redirect
     ? `${window.location.origin}${redirect}`
-    : undefined;
+    : window.location.origin;
 
   return (
     <Button
