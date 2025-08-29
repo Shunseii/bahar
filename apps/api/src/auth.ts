@@ -381,9 +381,7 @@ export const auth = betterAuth({
 
           await createUserIndex(user.id);
 
-          // TODO: comment temporarily
-          // uncomment when I add the new schema in prod
-          // await setUpUserDb(user.id);
+          await setUpUserDb(user.id);
         },
       },
     },
