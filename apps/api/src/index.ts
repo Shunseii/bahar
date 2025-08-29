@@ -56,6 +56,8 @@ app.use(requestLogger);
 app.use(
   cors({
     origin: (origin = "", callback) => {
+      logger.debug({ origin, allowedDomains }, "Verifying CORS");
+
       if (allowedDomains.includes(origin) || !origin) {
         callback(null, true);
       } else {

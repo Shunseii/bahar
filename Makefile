@@ -18,4 +18,12 @@ prod: build
 cleanup:
 	docker compose -f docker-compose.prod.yaml down
 
+# Also make sure to clean up the "testing" db group 
+# in turso as that will have any user dbs that were 
+# created even locally.
+delete-local-data:
+	sudo rm -rf ./libsql
+	sudo rm -rf ./meili_data
+	sudo rm -rf ./apps/api/local.db*
+
 .PHONY: serve build prod cleanup
