@@ -15,6 +15,9 @@ import { redisClient } from "./clients/redis";
 import { createUserIndex } from "./clients/meilisearch";
 import { LogCategory, logger } from "./logger";
 import { expo } from "@better-auth/expo";
+import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
+import { databases } from "./db/schema/databases";
+import { nanoid } from "nanoid";
 
 const APP_NAME = "Bahar";
 const OTP_LENGTH = 6;
@@ -376,13 +379,44 @@ export const auth = betterAuth({
             "Created user.",
           );
 
-          // Set the index name to the user's id.
           await createUserIndex(user.id);
+
+          // TODO: comment temporarily
+          // uncomment when I add the new schema in prod
+          // await setUpUserDb(user.id);
         },
       },
     },
   },
 });
+
+/**
+ * Fully sets up a new user database
+ * so that it's ready for use immediately.
+ *
+ * This function will create the database in
+ * Turso, apply all migrations in the schema
+ * registry, then add it to the central databases
+ * table for that user.
+ */
+export const setUpUserDb = async (userId: string) => {
+  const { accessToken, newDb } = await createNewUserDb();
+
+  await applyAllNewMigrations({
+    dbUrl: `libsql://${newDb.hostname}`,
+    dbName: newDb.name,
+    token: accessToken.jwt,
+  });
+
+  await db.insert(databases).values({
+    id: nanoid(),
+    user_id: userId,
+    db_id: newDb.id,
+    hostname: newDb.hostname,
+    db_name: newDb.name,
+    access_token: accessToken.jwt,
+  });
+};
 
 export type Session = (typeof auth.$Infer.Session)["session"];
 export type User = (typeof auth.$Infer.Session)["user"];

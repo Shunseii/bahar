@@ -28,11 +28,6 @@ export const enum LogCategory {
   AUTH = "auth",
   DATABASE = "database",
   APPLICATION = "application",
-  FLASHCARD = "flashcard",
-  DICTIONARY = "dictionary",
-  DECK = "deck",
-  SETTINGS = "settings",
-  TAGS = "tags",
 }
 
 export const logger = pino({
