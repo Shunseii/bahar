@@ -22,8 +22,12 @@ export const createNewUserDb = async () => {
   /**
    * The alphabet containing only the characters that can be used
    * to name a database in Turso.
+   *
+   * It can only include lowercase letters, numbers, and dashes.
+   * Names cannot start or end with a dash so we don't include it
+   * to be safe.
    */
-  const customTursoDbNameAlphabet = "abcdefghijklmnopqrstuvwxyz-1234567890";
+  const customTursoDbNameAlphabet = "abcdefghijklmnopqrstuvwxyz1234567890";
 
   const randomId = customAlphabet(customTursoDbNameAlphabet, 21)();
   const dbName = `user-${randomId}`;
