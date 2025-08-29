@@ -93,7 +93,7 @@ export const AdminSettingsCardSection = () => {
                     <FormControl>
                       <Textarea
                         {...field}
-                        placeholder="Enter your SQL migration script here"
+                        placeholder={t`Enter your SQL migration script here`}
                         className="w-full"
                       />
                     </FormControl>
@@ -115,7 +115,7 @@ export const AdminSettingsCardSection = () => {
                     <FormControl>
                       <Textarea
                         {...field}
-                        placeholder="Enter a description for your migration"
+                        placeholder={t`Enter a description for your migration`}
                         className="w-full"
                       />
                     </FormControl>
