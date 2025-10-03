@@ -10,7 +10,7 @@ export const meilisearchClient = new MeiliSearch({
 //  TODO: Create single source of truth between this and script in the root
 //  Not high priority since I will be removing meilisearch
 
-const MAX_TOTAL_HITS = 2000;
+const MAX_TOTAL_HITS = 5000;
 
 /**
  * Creates a new index for a user and configures it

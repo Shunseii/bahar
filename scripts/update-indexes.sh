@@ -20,7 +20,7 @@ FILTERABLE_ATTRIBUTES='[
 ]'
 
 # The maximinum number of hits to return for a search query.
-MAX_TOTAL_HITS=2000
+MAX_TOTAL_HITS=5000
 
 echo "Updating indexes for all users..."
 echo
