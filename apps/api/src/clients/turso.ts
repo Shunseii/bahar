@@ -4,8 +4,9 @@ import { createClient as createDbClient } from "@libsql/client";
 import { customAlphabet } from "nanoid";
 import { db as centralDb } from "../db";
 import { migrations } from "../db/schema/migrations";
+import { databases } from "../db/schema/databases";
 import { LogCategory, logger } from "../logger";
-import { gt, asc } from "drizzle-orm";
+import { gt, asc, eq } from "drizzle-orm";
 
 export const tursoPlatformClient = createPlatformClient({
   org: config.TURSO_ORG_SLUG,
@@ -187,4 +188,84 @@ export const applyAllNewMigrations = async ({
     },
     "Applied migrations to user database.",
   );
+};
+
+/**
+ * Refreshes an expired access token for a user database.
+ */
+const refreshAccessToken = async (
+  dbName: string,
+  dbId: string,
+): Promise<string> => {
+  logger.info(
+    { dbName, dbId, category: LogCategory.DATABASE },
+    "Refreshing access token...",
+  );
+
+  const newToken = await tursoPlatformClient.databases.createToken(dbName, {
+    authorization: "full-access",
+    expiration: "2w",
+  });
+
+  await centralDb
+    .update(databases)
+    .set({ access_token: newToken.jwt })
+    .where(eq(databases.db_id, dbId));
+
+  logger.info(
+    { dbName, dbId, category: LogCategory.DATABASE },
+    "Created and saved new access token",
+  );
+
+  return newToken.jwt;
+};
+
+/**
+ * Gets a database client for a user's database, handling token refresh if needed.
+ * This is used for dual-write operations during migration from global DB to user DBs.
+ *
+ * @param userId - The user ID to get the database client for
+ * @returns The database client or null if the user doesn't have a database yet
+ */
+export const getUserDbClient = async (userId: string) => {
+  const userDb = await centralDb
+    .select()
+    .from(databases)
+    .where(eq(databases.user_id, userId))
+    .limit(1);
+
+  if (userDb.length === 0) {
+    return null;
+  }
+
+  const { hostname, access_token, db_name, db_id } = userDb[0];
+
+  const client = createDbClient({
+    url: `libsql://${hostname}`,
+    authToken: access_token,
+  });
+
+  // Test the connection
+  try {
+    await client.execute("SELECT 1");
+    return client;
+  } catch (err) {
+    // Check if it's an auth error (expired token)
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    if (errorMessage.includes("status 401")) {
+      logger.info(
+        { dbName: db_name, dbId: db_id, category: LogCategory.DATABASE },
+        "Token appears to be expired, refreshing...",
+      );
+
+      const newToken = await refreshAccessToken(db_name, db_id);
+      const newClient = createDbClient({
+        url: `libsql://${hostname}`,
+        authToken: newToken,
+      });
+      return newClient;
+    }
+
+    throw err;
+  }
 };
