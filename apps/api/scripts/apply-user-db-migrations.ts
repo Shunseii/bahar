@@ -2,8 +2,11 @@ import { db } from "../src/db";
 import { users } from "../src/db/schema/auth";
 import { databases } from "../src/db/schema/databases";
 import { eq } from "drizzle-orm";
-import { logger } from "../src/logger";
-import { applyAllNewMigrations, tursoPlatformClient } from "../src/clients/turso";
+import { logger } from "../src/utils/logger";
+import {
+  applyAllNewMigrations,
+  tursoPlatformClient,
+} from "../src/clients/turso";
 
 /**
  * Refreshes an expired access token for a user database
@@ -12,10 +15,7 @@ const refreshAccessToken = async (
   dbName: string,
   dbId: string,
 ): Promise<string> => {
-  logger.info(
-    { dbName, dbId },
-    "Access token expired, creating new token...",
-  );
+  logger.info({ dbName, dbId }, "Access token expired, creating new token...");
 
   const newToken = await tursoPlatformClient.databases.createToken(dbName, {
     authorization: "full-access",

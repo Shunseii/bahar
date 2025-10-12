@@ -1,5 +1,5 @@
 import { ZodError, z } from "zod";
-import { DictionarySchema } from "./schemas";
+import { DictionarySchema } from "../schemas";
 
 export enum ErrorCode {
   // Meilisearch Error Codes

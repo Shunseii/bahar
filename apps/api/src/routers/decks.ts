@@ -10,7 +10,7 @@ import {
 import { z } from "zod";
 import { FLASHCARD_LIMIT, queryFlashcards } from "./flashcard";
 import { getUserDbClient } from "../clients/turso";
-import { LogCategory, logger } from "../logger";
+import { LogCategory, logger } from "../utils/logger";
 
 export const decksRouter = router({
   list: protectedProcedure

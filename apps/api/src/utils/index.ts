@@ -21,7 +21,7 @@ export const getAllowedDomains = (domains: string[]) => {
  */
 export const getFullSchema = async () => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  const schemaPath = path.join(__dirname, "schema.json");
+  const schemaPath = path.join(__dirname, "../schema.json");
   const schema = await $RefParser.bundle(schemaPath);
 
   return schema;
@@ -37,3 +37,12 @@ export const isJwtExpired = (token: string): boolean => {
     return true;
   }
 };
+
+/**
+ * Generator that yields batches of items from an array.
+ */
+export function* batchIterator<T>(items: T[], batchSize: number) {
+  for (let i = 0; i < items.length; i += batchSize) {
+    yield items.slice(i, i + batchSize);
+  }
+}
