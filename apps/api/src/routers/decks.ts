@@ -35,11 +35,22 @@ export const decksRouter = router({
       const { user } = ctx;
       const { show_reverse } = input ?? {};
 
-      const results = await db
-        .select()
-        .from(decks)
-        .where(eq(decks.user_id, user.id))
-        .limit(20);
+      const userDbClient = await getUserDbClient(user.id);
+
+      if (!userDbClient) {
+        return [];
+      }
+
+      const result = await userDbClient.execute(
+        "SELECT id, name, filters FROM decks LIMIT 20",
+      );
+
+      const results = result.rows.map((row) => ({
+        id: row.id as string,
+        user_id: user.id,
+        name: row.name as string,
+        filters: row.filters ? JSON.parse(row.filters as string) : null,
+      }));
 
       const res = await Promise.all(
         results.map(async (result) => {

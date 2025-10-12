@@ -5,7 +5,6 @@ import {
   InsertSettingsSchema,
 } from "../db/schema/settings";
 import { db } from "../db";
-import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { getUserDbClient } from "../clients/turso";
 import { LogCategory, logger } from "../logger";
@@ -16,14 +15,30 @@ export const settingsRouter = router({
     .query(async ({ ctx }) => {
       const { user } = ctx;
 
-      // There is only one setting per user
-      const results = await db
-        .select()
-        .from(settings)
-        .where(eq(settings.user_id, user.id))
-        .limit(1);
+      const userDbClient = await getUserDbClient(user.id);
 
-      return results[0] ?? null;
+      if (!userDbClient) {
+        return null;
+      }
+
+      const result = await userDbClient.execute(
+        "SELECT id, show_reverse_flashcards, show_antonyms_in_flashcard FROM settings LIMIT 1",
+      );
+
+      if (result.rows.length === 0) {
+        return null;
+      }
+
+      const row = result.rows[0];
+      return {
+        id: row.id as string,
+        user_id: user.id,
+        show_reverse_flashcards: Boolean(row.show_reverse_flashcards),
+        show_antonyms_in_flashcard: row.show_antonyms_in_flashcard as
+          | "hidden"
+          | "answer"
+          | "hint",
+      };
     }),
 
   update: protectedProcedure
