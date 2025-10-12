@@ -2,7 +2,7 @@ import { db } from "../src/db";
 import { users } from "../src/db/schema/auth";
 import { databases } from "../src/db/schema/databases";
 import { eq, isNull } from "drizzle-orm";
-import { logger } from "../src/logger";
+import { logger } from "../src/utils/logger";
 import { setUpUserDb } from "../src/auth";
 
 /**

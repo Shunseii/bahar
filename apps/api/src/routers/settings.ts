@@ -7,7 +7,7 @@ import {
 import { db } from "../db";
 import { nanoid } from "nanoid";
 import { getUserDbClient } from "../clients/turso";
-import { LogCategory, logger } from "../logger";
+import { LogCategory, logger } from "../utils/logger";
 
 export const settingsRouter = router({
   get: protectedProcedure

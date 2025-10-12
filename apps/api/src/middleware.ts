@@ -2,7 +2,7 @@ import { NextFunction, RequestHandler, Request, Response } from "express";
 import { fromNodeHeaders } from "better-auth/node";
 import { Session, User, auth as authClient } from "./auth";
 import crypto from "crypto";
-import { getTraceContext, traceContext } from "./logger";
+import { getTraceContext, traceContext } from "./utils/logger";
 
 export const auth: RequestHandler = async (req, res, next) => {
   const { api } = authClient;

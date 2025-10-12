@@ -1,11 +1,11 @@
 import { createClient as createPlatformClient } from "@tursodatabase/api";
-import { config } from "../config";
+import { config } from "../utils/config";
 import { createClient as createDbClient } from "@libsql/client";
 import { customAlphabet } from "nanoid";
 import { db as centralDb } from "../db";
 import { migrations } from "../db/schema/migrations";
 import { databases } from "../db/schema/databases";
-import { LogCategory, logger } from "../logger";
+import { LogCategory, logger } from "../utils/logger";
 import { gt, asc, eq } from "drizzle-orm";
 
 export const tursoPlatformClient = createPlatformClient({

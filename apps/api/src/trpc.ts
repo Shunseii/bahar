@@ -3,7 +3,7 @@ import * as Sentry from "@sentry/node";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { fromNodeHeaders } from "better-auth/node";
 import { Session, User, auth } from "./auth";
-import { getTraceContext, logger } from "./logger";
+import { getTraceContext, logger } from "./utils/logger";
 
 // Created for each request
 export const createContext = async ({

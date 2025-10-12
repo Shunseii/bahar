@@ -1,6 +1,6 @@
 import { MeiliSearch } from "meilisearch";
-import { config } from "../config";
-import { LogCategory, logger } from "../logger";
+import { config } from "../utils/config";
+import { LogCategory, logger } from "../utils/logger";
 
 export const meilisearchClient = new MeiliSearch({
   host: config.MEILISEARCH_HOST!,

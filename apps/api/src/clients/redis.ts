@@ -1,5 +1,5 @@
 import { Redis } from "@upstash/redis";
-import { config } from "../config";
+import { config } from "../utils/config";
 
 export const redisClient = new Redis({
   automaticDeserialization: true,

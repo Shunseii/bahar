@@ -4,7 +4,7 @@ import { databases } from "../src/db/schema/databases";
 import { settings } from "../src/db/schema/settings";
 import { decks } from "../src/db/schema/decks";
 import { eq } from "drizzle-orm";
-import { logger } from "../src/logger";
+import { logger } from "../src/utils/logger";
 import { createClient } from "@libsql/client";
 import { tursoPlatformClient } from "../src/clients/turso";
 
@@ -159,7 +159,11 @@ const migrateSettingsAndDecksToUserDb = async () => {
           .where(eq(decks.user_id, user.id));
 
         logger.info(
-          { email: user.email, user_id: user.id, deckCount: globalDecks.length },
+          {
+            email: user.email,
+            user_id: user.id,
+            deckCount: globalDecks.length,
+          },
           `Found ${globalDecks.length} decks in global DB`,
         );
 
