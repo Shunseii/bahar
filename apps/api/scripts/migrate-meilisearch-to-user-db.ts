@@ -90,10 +90,10 @@ const migrateMeilisearchToUserDb = async () => {
 
               const createdAtMs = word.created_at_timestamp
                 ? word.created_at_timestamp * 1000
-                : Date.now();
+                : null;
               const updatedAtMs = word.updated_at_timestamp
                 ? word.updated_at_timestamp * 1000
-                : Date.now();
+                : null;
 
               statements.push({
                 sql: `INSERT INTO dictionary_entries (
@@ -123,9 +123,9 @@ const migrateMeilisearchToUserDb = async () => {
                   word.antonyms ? JSON.stringify(word.antonyms) : null,
                   word.examples ? JSON.stringify(word.examples) : null,
                   word.morphology ? JSON.stringify(word.morphology) : null,
-                  word.created_at ?? new Date(createdAtMs).toISOString(),
+                  word.created_at ?? (createdAtMs ? new Date(createdAtMs).toISOString() : null),
                   createdAtMs,
-                  word.updated_at ?? new Date(updatedAtMs).toISOString(),
+                  word.updated_at ?? (updatedAtMs ? new Date(updatedAtMs).toISOString() : null),
                   updatedAtMs,
                 ],
               });
