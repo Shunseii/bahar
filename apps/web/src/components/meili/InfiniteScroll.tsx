@@ -138,7 +138,7 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
 
                   <h2 dir="rtl" className="rtl:text-right">
                     <Highlight
-                      className="text-3xl"
+                      classNames={{ root: "text-3xl" }}
                       attribute="word"
                       hit={hit}
                     />

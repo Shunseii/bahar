@@ -8,10 +8,14 @@ import { databases } from "../db/schema/databases";
 import { LogCategory, logger } from "../utils/logger";
 import { gt, asc, eq } from "drizzle-orm";
 
-export const tursoPlatformClient = createPlatformClient({
-  org: config.TURSO_ORG_SLUG,
-  token: config.TURSO_PLATFORM_API_KEY,
-});
+// Explicitly typed with this return type to fix
+// a type error on build when enabling declaration: true
+// in tsconfig.json.
+export const tursoPlatformClient: ReturnType<typeof createPlatformClient> =
+  createPlatformClient({
+    org: config.TURSO_ORG_SLUG,
+    token: config.TURSO_PLATFORM_API_KEY,
+  }) as ReturnType<typeof createPlatformClient>;
 
 /**
  * Creates a new database for a user in Turso.

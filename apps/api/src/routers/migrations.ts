@@ -66,7 +66,20 @@ export const migrationsRouter = router({
         status: z.enum(["latest", "update_required"]),
         currentVersion: z.number(),
         clientVersion: z.number(),
-        requiredMigrations: z.array(SelectMigrationsSchema).optional(),
+        // TODO: Using the SelectMigrationsSchema results in ts not being
+        // able to infer the type on the client and just types as any.
+        // requiredMigrations: z.array(SelectMigrationsSchema).optional(),
+        requiredMigrations: z
+          .array(
+            z.object({
+              version: z.number(),
+              description: z.string(),
+              sql_script: z.string(),
+              // TODO: specifically, z.date() breaks the type inference.
+              // created_at: z.date(),
+            }),
+          )
+          .optional(),
       }),
     )
     .query(async ({ input }) => {

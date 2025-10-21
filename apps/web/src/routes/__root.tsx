@@ -4,6 +4,8 @@ import { useLingui } from "@lingui/react/macro";
 import { useDocumentTitle } from "@uidotdev/usehooks";
 import { Toaster } from "@/components/ui/toaster";
 import { authClient } from "@/lib/auth-client";
+import { initDb } from "@/lib/db";
+import { hydrateOramaDb } from "@/lib/search";
 
 // const TanStackRouterDevtools = import.meta.env.PROD
 //   ? () => null // Render nothing in production
@@ -16,7 +18,6 @@ import { authClient } from "@/lib/auth-client";
 
 const Root = () => {
   const { t } = useLingui();
-
   useDocumentTitle(t`Bahar`);
 
   useEffect(() => {
@@ -47,4 +48,8 @@ interface RouterContext {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: Root,
+  beforeLoad: async () => {
+    await initDb();
+    await hydrateOramaDb();
+  },
 });

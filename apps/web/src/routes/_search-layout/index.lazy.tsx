@@ -16,12 +16,17 @@ import { Page } from "@/components/Page";
 import { trpc } from "@/lib/trpc";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
 import { useInstantSearch } from "react-instantsearch";
+import { settingsTable } from "@/lib/db";
+import { useQuery } from "@tanstack/react-query";
 
 const Index = () => {
   const [{ y }, scrollTo] = useWindowScroll();
   const { results } = useInstantSearch();
   const { height } = useWindowSize();
-  const { data: flashcardSettings } = trpc.settings.get.useQuery();
+  const { data: flashcardSettings } = useQuery({
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
+  });
 
   const show_reverse = flashcardSettings?.show_reverse_flashcards ?? false;
 

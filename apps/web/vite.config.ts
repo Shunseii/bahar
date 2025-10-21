@@ -8,14 +8,26 @@ import { ValidateEnv } from "@julr/vite-plugin-validate-env";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
+  server: {
+    headers: {
+      "Cross-Origin-Opener-Policy": "same-origin",
+      "Cross-Origin-Embedder-Policy": "require-corp",
+    },
+  },
   build: {
     outDir: "dist",
+    target: "es2022",
 
     rollupOptions: {
       external: ["workbox-window"],
     },
 
     sourcemap: true,
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: "es2022",
+    },
   },
   plugins: [
     ValidateEnv(),

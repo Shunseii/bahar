@@ -4,11 +4,10 @@ import { SearchInput } from "@/components/meili/SearchInput";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/lib/query";
 import { searchClient } from "@/lib/search";
-import { trpc, trpcClient } from "@/lib/trpc";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import { getQueryKey } from "@trpc/react-query";
 import { InstantSearch } from "react-instantsearch";
 import * as Sentry from "@sentry/react";
+import { settingsTable } from "@/lib/db";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();
@@ -61,15 +60,9 @@ export const Route = createFileRoute("/_search-layout")({
         },
       });
     } else {
-      const settingsQueryKey = getQueryKey(
-        trpc.settings.get,
-        undefined,
-        "query",
-      );
-
       await queryClient.ensureQueryData({
-        queryKey: settingsQueryKey,
-        queryFn: () => trpcClient.settings.get.query(),
+        queryKey: settingsTable.getSettings.cacheOptions.queryKey,
+        queryFn: settingsTable.getSettings.query,
       });
     }
   },

@@ -40,7 +40,7 @@ const appRouter = router({
   settings: settingsRouter,
   decks: decksRouter,
   migrations: migrationsRouter,
-  databasesRouter: databasesRouter,
+  databases: databasesRouter,
 });
 
 const app = express();
