@@ -87,32 +87,37 @@ export const useInfiniteScroll = (
   // Triggers when show more is called,
   // appending to the existing hits
   useEffect(() => {
-    const { hits, ...metadata } = search({
+    // Don't search when offset is 0 since it
+    // was already handled in the other useEffect
+    if (offset === 0) return;
+
+    const { hits } = search({
       ...params,
       mode: "fulltext",
       limit: SEARCH_RESUTLS_PER_PAGE,
       offset,
     });
 
-    // If offset is 0, that means search params changed
-    // and so we reset the hits instead of appending to it
-    // and also set the search results metadata
-    if (offset === 0) {
-      setHits(hits);
-
-      setSearchResultsMetadata(metadata);
-    } else {
-      setHits((previousHits) =>
-        previousHits ? [...previousHits, ...hits] : hits,
-      );
-    }
-  }, [offset, setHits, setSearchResultsMetadata, search]);
+    setHits((previousHits) =>
+      previousHits ? [...previousHits, ...hits] : hits,
+    );
+  }, [offset, setHits, search]);
 
   // Triggers when search params change,
   // resetting the pagination
   useEffect(() => {
+    const { hits, ...metadata } = search({
+      ...params,
+      mode: "fulltext",
+      limit: SEARCH_RESUTLS_PER_PAGE,
+      offset: 0,
+    });
+
     setOffset(0);
-  }, [paramsKey, setOffset]);
+    setHits(hits);
+    setSearchResultsMetadata(metadata);
+    setHasMore(hits.length < metadata.count);
+  }, [paramsKey, setOffset, setHits, setSearchResultsMetadata, search]);
 
   useEffect(() => {
     if (!hits || !searchResultsMetadata) return;

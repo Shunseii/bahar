@@ -14,6 +14,9 @@ import { useCountdown } from "@/hooks/useCountdown";
 import { Edit } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNavigate } from "@tanstack/react-router";
+import { useInfiniteScroll } from "@/hooks/useSearch";
+import { useAtomValue } from "jotai";
+import { searchQueryAtom } from "./state";
 
 /**
  * The difference in the height of the infinite list and the
@@ -71,6 +74,8 @@ export const InfiniteScroll: FC<UseInfiniteHitsProps> = (props) => {
   const { isCountdownComplete } = useCountdown(1000);
   const { status } = useInstantSearch();
   const { items: hits, showMore, isLastPage } = useInfiniteHits<Hit>(props);
+  const searchQuery = useAtomValue(searchQueryAtom);
+  const { results } = useInfiniteScroll({ term: searchQuery });
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
 

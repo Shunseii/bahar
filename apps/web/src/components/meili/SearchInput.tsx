@@ -4,6 +4,8 @@ import { useLingui } from "@lingui/react/macro";
 import { UseSearchBoxProps, useSearchBox } from "react-instantsearch";
 import { FC, useRef, useState } from "react";
 import { cn } from "@bahar/design-system";
+import { useSetAtom } from "jotai";
+import { searchQueryAtom } from "./state";
 
 interface SearchInputProps extends UseSearchBoxProps {
   className?: string;
@@ -13,6 +15,7 @@ export const SearchInput: FC<SearchInputProps> = ({
   className = "",
   ...props
 }) => {
+  const setSearchQuery = useSetAtom(searchQueryAtom);
   const { t } = useLingui();
   const { query, refine } = useSearchBox(props);
   const [inputValue, setInputValue] = useState(query);
@@ -20,6 +23,7 @@ export const SearchInput: FC<SearchInputProps> = ({
 
   const setQuery = (newQuery: string) => {
     setInputValue(newQuery);
+    setSearchQuery(newQuery);
     refine(newQuery);
   };
 
