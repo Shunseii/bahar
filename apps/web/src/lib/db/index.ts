@@ -1,6 +1,6 @@
 import { connect, Database } from "@tursodatabase/sync-wasm/vite";
 import { SelectMigration, SelectSetting } from "@bahar/drizzle-user-db-schemas";
-import { trpcClient } from "./trpc";
+import { trpcClient } from "../trpc";
 import { RawSetting } from "@bahar/drizzle-user-db-schemas/src/settings";
 
 /**

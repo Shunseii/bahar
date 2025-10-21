@@ -1,10 +1,10 @@
-import { t } from '@lingui/core/macro'
-import { Trans } from '@lingui/react/macro'
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
-import { GithubLoginButton } from '@/components/GithubLoginButton'
-import z from 'zod'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
+import { GithubLoginButton } from "@/components/GithubLoginButton";
+import z from "zod";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -13,58 +13,58 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { OTPForm } from '@/components/OTPForm'
-import { useAtom } from 'jotai'
-import { showOTPFormAtom } from '@/atoms/otp'
-import { useEffect } from 'react'
-import { Page } from '@/components/Page'
-import { authClient } from '@/lib/auth-client'
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { OTPForm } from "@/components/OTPForm";
+import { useAtom } from "jotai";
+import { showOTPFormAtom } from "@/atoms/otp";
+import { useEffect } from "react";
+import { Page } from "@/components/Page";
+import { authClient } from "@/lib/auth-client";
 
 export const LoginFormSchema = z.object({
   email: z.string().email().min(5).max(256),
-})
+});
 
 const Login = () => {
-  const navigate = useNavigate({ from: '/' })
-  const { redirect } = Route.useSearch()
-  const [showOTPForm, setShowOTPForm] = useAtom(showOTPFormAtom)
+  const navigate = useNavigate({ from: "/" });
+  const { redirect } = Route.useSearch();
+  const [showOTPForm, setShowOTPForm] = useAtom(showOTPFormAtom);
 
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      email: '',
+      email: "",
     },
-  })
+  });
 
   const onSubmit: SubmitHandler<z.infer<typeof LoginFormSchema>> = async ({
     email,
   }) => {
-    const lowerCaseEmail = email.toLowerCase()
+    const lowerCaseEmail = email.toLowerCase();
 
     const { error } = await authClient.emailOtp.sendVerificationOtp({
       email: lowerCaseEmail,
-      type: 'sign-in',
-    })
+      type: "sign-in",
+    });
 
     if (error) {
-      console.error('There was an error sending the OTP: ', error)
+      console.error("There was an error sending the OTP: ", error);
 
-      form.setError('root', {
+      form.setError("root", {
         message: t`Please try again.`,
-      })
+      });
 
-      return
+      return;
     }
 
-    setShowOTPForm(true)
-  }
+    setShowOTPForm(true);
+  };
 
   useEffect(() => {
-    setShowOTPForm(false)
-  }, [])
+    setShowOTPForm(false);
+  }, []);
 
   if (showOTPForm) {
     return (
@@ -72,14 +72,14 @@ const Login = () => {
         <OTPForm
           onVerifyOTP={() => {
             navigate({
-              to: redirect ?? '/',
+              to: redirect ?? "/",
               replace: true,
               resetScroll: true,
-            })
+            });
           }}
         />
       </Form>
-    )
+    );
   }
 
   return (
@@ -155,9 +155,9 @@ const Login = () => {
         <Trans>GitHub</Trans>
       </GithubLoginButton>
     </Page>
-  )
-}
+  );
+};
 
-export const Route = createLazyFileRoute('/_unauthorized-layout/login')({
+export const Route = createLazyFileRoute("/_unauthorized-layout/login")({
   component: Login,
-})
+});

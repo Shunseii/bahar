@@ -1,6 +1,6 @@
-import { LanguageMenu } from '@/components/LanguageMenu'
-import { ThemeMenu } from '@/components/ThemeMenu'
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { LanguageMenu } from "@/components/LanguageMenu";
+import { ThemeMenu } from "@/components/ThemeMenu";
+import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 const Layout = () => {
   return (
@@ -12,9 +12,9 @@ const Layout = () => {
 
       <Outlet />
     </div>
-  )
-}
+  );
+};
 
-export const Route = createFileRoute('/_unauthorized-layout')({
+export const Route = createFileRoute("/_unauthorized-layout")({
   component: Layout,
-})
+});
