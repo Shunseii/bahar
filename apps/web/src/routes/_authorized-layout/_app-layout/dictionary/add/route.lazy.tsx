@@ -1,6 +1,6 @@
-import { Trans } from "@lingui/react/macro";
-import { Page } from "@/components/Page";
-import { Link, createLazyFileRoute } from "@tanstack/react-router";
+import { Trans } from '@lingui/react/macro'
+import { Page } from '@/components/Page'
+import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,32 +8,32 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { z } from "@/lib/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/components/ui/form";
-import { cn } from "@bahar/design-system";
+} from '@/components/ui/breadcrumb'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { z } from '@/lib/zod'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Form } from '@/components/ui/form'
+import { cn } from '@bahar/design-system'
 import {
   AdditionalDetailsFormSection,
   BasicDetailsFormSection,
   MorphologyFormSection,
   CategoryFormSection,
-} from "@/components/features/dictionary/add";
-import { trpc } from "@/lib/trpc";
-import { useToast } from "@/hooks/useToast";
-import { useLingui } from "@lingui/react/macro";
-import { useInstantSearch } from "react-instantsearch";
-import { useEffect } from "react";
-import { useDir } from "@/hooks/useDir";
-import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { FormSchema } from "@bahar/schemas";
+} from '@/components/features/dictionary/add'
+import { trpc } from '@/lib/trpc'
+import { useToast } from '@/hooks/useToast'
+import { useLingui } from '@lingui/react/macro'
+import { useInstantSearch } from 'react-instantsearch'
+import { useEffect } from 'react'
+import { useDir } from '@/hooks/useDir'
+import { TagsFormSection } from '@/components/features/dictionary/add/TagsFormSection'
+import { FormSchema } from '@bahar/schemas'
 
 const Breadcrumbs = ({ className }: { className?: string }) => {
   return (
-    <Breadcrumb className={cn("mb-8", className)}>
+    <Breadcrumb className={cn('mb-8', className)}>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
@@ -52,11 +52,11 @@ const Breadcrumbs = ({ className }: { className?: string }) => {
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-  );
-};
+  )
+}
 
 const BackButton = () => {
-  const dir = useDir();
+  const dir = useDir()
 
   return (
     <Button
@@ -67,7 +67,7 @@ const BackButton = () => {
       asChild
     >
       <Link to="/">
-        {dir === "rtl" ? (
+        {dir === 'rtl' ? (
           <ChevronRight className="h-4 w-4" />
         ) : (
           <ChevronLeft className="h-4 w-4" />
@@ -77,104 +77,104 @@ const BackButton = () => {
         </span>
       </Link>
     </Button>
-  );
-};
+  )
+}
 
 const Add = () => {
-  const { mutateAsync: addWord } = trpc.dictionary.addWord.useMutation();
-  const { toast } = useToast();
-  const { refresh } = useInstantSearch();
-  const { t } = useLingui();
+  const { mutateAsync: addWord } = trpc.dictionary.addWord.useMutation()
+  const { toast } = useToast()
+  const { refresh } = useInstantSearch()
+  const { t } = useLingui()
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      word: "",
-      translation: "",
+      word: '',
+      translation: '',
       tags: [],
-      root: "",
-      type: "ism",
+      root: '',
+      type: 'ism',
       examples: [],
-      definition: "",
+      definition: '',
       antonyms: [],
       morphology: {
         ism: {
-          singular: "",
-          dual: "",
-          gender: "masculine",
+          singular: '',
+          dual: '',
+          gender: 'masculine',
           plurals: [],
-          inflection: "triptote",
+          inflection: 'triptote',
         },
         verb: {
           huroof: [],
-          past_tense: "",
-          present_tense: "",
-          active_participle: "",
-          passive_participle: "",
-          imperative: "",
+          past_tense: '',
+          present_tense: '',
+          active_participle: '',
+          passive_participle: '',
+          imperative: '',
           masadir: [],
-          form: "",
-          form_arabic: "",
+          form: '',
+          form_arabic: '',
         },
       },
     },
-  });
+  })
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     try {
       const root = data?.root
         ?.trim()
-        ?.replace(/[\s,]+/g, "")
-        ?.split("");
+        ?.replace(/[\s,]+/g, '')
+        ?.split('')
 
-      const tags = data?.tags?.map((tag) => tag.name) ?? [];
+      const tags = data?.tags?.map((tag) => tag.name) ?? []
 
-      if (data.type === "ism") {
+      if (data.type === 'ism') {
         await addWord({
           ...data,
           root,
           tags,
           morphology: { ism: data?.morphology?.ism },
-        });
+        })
       } else if (data.type === "fi'l") {
         await addWord({
           ...data,
           root,
           tags,
           morphology: { verb: data?.morphology?.verb },
-        });
+        })
       } else {
         await addWord({
           ...data,
           root,
           tags,
           morphology: undefined,
-        });
+        })
       }
 
       toast({
         title: t`Successfully added word!`,
         description: t`The word has been added to your dictionary.`,
-      });
+      })
 
-      refresh();
+      refresh()
     } catch (err) {
       if (err instanceof Error) {
-        console.error(err.message);
+        console.error(err.message)
       }
 
       toast({
         title: t`Failed to add word!`,
         description: t`There was an error adding your word. Please try again.`,
-        variant: "destructive",
-      });
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   useEffect(() => {
     if (form.formState.isSubmitSuccessful) {
-      form.reset();
+      form.reset()
     }
-  }, [form.formState, form.reset]);
+  }, [form.formState, form.reset])
 
   return (
     <Page>
@@ -232,9 +232,11 @@ const Add = () => {
         </form>
       </Form>
     </Page>
-  );
-};
+  )
+}
 
-export const Route = createLazyFileRoute("/_app-layout/dictionary/add")({
+export const Route = createLazyFileRoute(
+  '/_authorized-layout/_app-layout/dictionary/add',
+)({
   component: Add,
-});
+})

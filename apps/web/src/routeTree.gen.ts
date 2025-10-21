@@ -13,236 +13,295 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as SearchLayoutRouteImport } from './routes/_search-layout/route'
-import { Route as LayoutRouteImport } from './routes/_layout/route'
-import { Route as AppLayoutRouteImport } from './routes/_app-layout/route'
-import { Route as LayoutLoginRouteImport } from './routes/_layout/login/route'
-import { Route as AppLayoutDictionaryEditWordIdImport } from './routes/_app-layout/dictionary/edit/$wordId'
+import { Route as UnauthorizedLayoutRouteImport } from './routes/_unauthorized-layout/route'
+import { Route as AuthorizedLayoutRouteImport } from './routes/_authorized-layout/route'
+import { Route as UnauthorizedLayoutLoginRouteImport } from './routes/_unauthorized-layout/login/route'
+import { Route as AuthorizedLayoutSearchLayoutRouteImport } from './routes/_authorized-layout/_search-layout/route'
+import { Route as AuthorizedLayoutAppLayoutRouteImport } from './routes/_authorized-layout/_app-layout/route'
+import { Route as AuthorizedLayoutAppLayoutDictionaryEditWordIdImport } from './routes/_authorized-layout/_app-layout/dictionary/edit/$wordId'
 
 // Create Virtual Routes
 
-const SearchLayoutIndexLazyImport = createFileRoute('/_search-layout/')()
-const AppLayoutSettingsRouteLazyImport = createFileRoute(
-  '/_app-layout/settings',
+const AuthorizedLayoutSearchLayoutIndexLazyImport = createFileRoute(
+  '/_authorized-layout/_search-layout/',
 )()
-const AppLayoutDecksRouteLazyImport = createFileRoute('/_app-layout/decks')()
-const AppLayoutDictionaryAddRouteLazyImport = createFileRoute(
-  '/_app-layout/dictionary/add',
+const AuthorizedLayoutAppLayoutSettingsRouteLazyImport = createFileRoute(
+  '/_authorized-layout/_app-layout/settings',
+)()
+const AuthorizedLayoutAppLayoutDecksRouteLazyImport = createFileRoute(
+  '/_authorized-layout/_app-layout/decks',
+)()
+const AuthorizedLayoutAppLayoutDictionaryAddRouteLazyImport = createFileRoute(
+  '/_authorized-layout/_app-layout/dictionary/add',
 )()
 
 // Create/Update Routes
 
-const SearchLayoutRouteRoute = SearchLayoutRouteImport.update({
-  id: '/_search-layout',
+const UnauthorizedLayoutRouteRoute = UnauthorizedLayoutRouteImport.update({
+  id: '/_unauthorized-layout',
   getParentRoute: () => rootRoute,
 } as any)
 
-const LayoutRouteRoute = LayoutRouteImport.update({
-  id: '/_layout',
+const AuthorizedLayoutRouteRoute = AuthorizedLayoutRouteImport.update({
+  id: '/_authorized-layout',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppLayoutRouteRoute = AppLayoutRouteImport.update({
-  id: '/_app-layout',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const SearchLayoutIndexLazyRoute = SearchLayoutIndexLazyImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SearchLayoutRouteRoute,
-} as any).lazy(() =>
-  import('./routes/_search-layout/index.lazy').then((d) => d.Route),
-)
-
-const AppLayoutSettingsRouteLazyRoute = AppLayoutSettingsRouteLazyImport.update(
-  {
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AppLayoutRouteRoute,
-  } as any,
-).lazy(() =>
-  import('./routes/_app-layout/settings/route.lazy').then((d) => d.Route),
-)
-
-const AppLayoutDecksRouteLazyRoute = AppLayoutDecksRouteLazyImport.update({
-  id: '/decks',
-  path: '/decks',
-  getParentRoute: () => AppLayoutRouteRoute,
-} as any).lazy(() =>
-  import('./routes/_app-layout/decks/route.lazy').then((d) => d.Route),
-)
-
-const LayoutLoginRouteRoute = LayoutLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => LayoutRouteRoute,
-} as any).lazy(() =>
-  import('./routes/_layout/login/route.lazy').then((d) => d.Route),
-)
-
-const AppLayoutDictionaryAddRouteLazyRoute =
-  AppLayoutDictionaryAddRouteLazyImport.update({
-    id: '/dictionary/add',
-    path: '/dictionary/add',
-    getParentRoute: () => AppLayoutRouteRoute,
+const UnauthorizedLayoutLoginRouteRoute =
+  UnauthorizedLayoutLoginRouteImport.update({
+    id: '/login',
+    path: '/login',
+    getParentRoute: () => UnauthorizedLayoutRouteRoute,
   } as any).lazy(() =>
-    import('./routes/_app-layout/dictionary/add/route.lazy').then(
+    import('./routes/_unauthorized-layout/login/route.lazy').then(
       (d) => d.Route,
     ),
   )
 
-const AppLayoutDictionaryEditWordIdRoute =
-  AppLayoutDictionaryEditWordIdImport.update({
+const AuthorizedLayoutSearchLayoutRouteRoute =
+  AuthorizedLayoutSearchLayoutRouteImport.update({
+    id: '/_search-layout',
+    getParentRoute: () => AuthorizedLayoutRouteRoute,
+  } as any)
+
+const AuthorizedLayoutAppLayoutRouteRoute =
+  AuthorizedLayoutAppLayoutRouteImport.update({
+    id: '/_app-layout',
+    getParentRoute: () => AuthorizedLayoutRouteRoute,
+  } as any)
+
+const AuthorizedLayoutSearchLayoutIndexLazyRoute =
+  AuthorizedLayoutSearchLayoutIndexLazyImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthorizedLayoutSearchLayoutRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authorized-layout/_search-layout/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthorizedLayoutAppLayoutSettingsRouteLazyRoute =
+  AuthorizedLayoutAppLayoutSettingsRouteLazyImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthorizedLayoutAppLayoutRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authorized-layout/_app-layout/settings/route.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthorizedLayoutAppLayoutDecksRouteLazyRoute =
+  AuthorizedLayoutAppLayoutDecksRouteLazyImport.update({
+    id: '/decks',
+    path: '/decks',
+    getParentRoute: () => AuthorizedLayoutAppLayoutRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authorized-layout/_app-layout/decks/route.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute =
+  AuthorizedLayoutAppLayoutDictionaryAddRouteLazyImport.update({
+    id: '/dictionary/add',
+    path: '/dictionary/add',
+    getParentRoute: () => AuthorizedLayoutAppLayoutRouteRoute,
+  } as any).lazy(() =>
+    import(
+      './routes/_authorized-layout/_app-layout/dictionary/add/route.lazy'
+    ).then((d) => d.Route),
+  )
+
+const AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute =
+  AuthorizedLayoutAppLayoutDictionaryEditWordIdImport.update({
     id: '/dictionary/edit/$wordId',
     path: '/dictionary/edit/$wordId',
-    getParentRoute: () => AppLayoutRouteRoute,
+    getParentRoute: () => AuthorizedLayoutAppLayoutRouteRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_app-layout': {
-      id: '/_app-layout'
+    '/_authorized-layout': {
+      id: '/_authorized-layout'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AppLayoutRouteImport
+      preLoaderRoute: typeof AuthorizedLayoutRouteImport
       parentRoute: typeof rootRoute
     }
-    '/_layout': {
-      id: '/_layout'
+    '/_unauthorized-layout': {
+      id: '/_unauthorized-layout'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof LayoutRouteImport
+      preLoaderRoute: typeof UnauthorizedLayoutRouteImport
       parentRoute: typeof rootRoute
     }
-    '/_search-layout': {
-      id: '/_search-layout'
+    '/_authorized-layout/_app-layout': {
+      id: '/_authorized-layout/_app-layout'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof SearchLayoutRouteImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutRouteImport
+      parentRoute: typeof AuthorizedLayoutRouteImport
     }
-    '/_layout/login': {
-      id: '/_layout/login'
+    '/_authorized-layout/_search-layout': {
+      id: '/_authorized-layout/_search-layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthorizedLayoutSearchLayoutRouteImport
+      parentRoute: typeof AuthorizedLayoutRouteImport
+    }
+    '/_unauthorized-layout/login': {
+      id: '/_unauthorized-layout/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof LayoutLoginRouteImport
-      parentRoute: typeof LayoutRouteImport
+      preLoaderRoute: typeof UnauthorizedLayoutLoginRouteImport
+      parentRoute: typeof UnauthorizedLayoutRouteImport
     }
-    '/_app-layout/decks': {
-      id: '/_app-layout/decks'
+    '/_authorized-layout/_app-layout/decks': {
+      id: '/_authorized-layout/_app-layout/decks'
       path: '/decks'
       fullPath: '/decks'
-      preLoaderRoute: typeof AppLayoutDecksRouteLazyImport
-      parentRoute: typeof AppLayoutRouteImport
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutDecksRouteLazyImport
+      parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
     }
-    '/_app-layout/settings': {
-      id: '/_app-layout/settings'
+    '/_authorized-layout/_app-layout/settings': {
+      id: '/_authorized-layout/_app-layout/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof AppLayoutSettingsRouteLazyImport
-      parentRoute: typeof AppLayoutRouteImport
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteLazyImport
+      parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
     }
-    '/_search-layout/': {
-      id: '/_search-layout/'
+    '/_authorized-layout/_search-layout/': {
+      id: '/_authorized-layout/_search-layout/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof SearchLayoutIndexLazyImport
-      parentRoute: typeof SearchLayoutRouteImport
+      preLoaderRoute: typeof AuthorizedLayoutSearchLayoutIndexLazyImport
+      parentRoute: typeof AuthorizedLayoutSearchLayoutRouteImport
     }
-    '/_app-layout/dictionary/add': {
-      id: '/_app-layout/dictionary/add'
+    '/_authorized-layout/_app-layout/dictionary/add': {
+      id: '/_authorized-layout/_app-layout/dictionary/add'
       path: '/dictionary/add'
       fullPath: '/dictionary/add'
-      preLoaderRoute: typeof AppLayoutDictionaryAddRouteLazyImport
-      parentRoute: typeof AppLayoutRouteImport
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyImport
+      parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
     }
-    '/_app-layout/dictionary/edit/$wordId': {
-      id: '/_app-layout/dictionary/edit/$wordId'
+    '/_authorized-layout/_app-layout/dictionary/edit/$wordId': {
+      id: '/_authorized-layout/_app-layout/dictionary/edit/$wordId'
       path: '/dictionary/edit/$wordId'
       fullPath: '/dictionary/edit/$wordId'
-      preLoaderRoute: typeof AppLayoutDictionaryEditWordIdImport
-      parentRoute: typeof AppLayoutRouteImport
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdImport
+      parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface AppLayoutRouteRouteChildren {
-  AppLayoutDecksRouteLazyRoute: typeof AppLayoutDecksRouteLazyRoute
-  AppLayoutSettingsRouteLazyRoute: typeof AppLayoutSettingsRouteLazyRoute
-  AppLayoutDictionaryAddRouteLazyRoute: typeof AppLayoutDictionaryAddRouteLazyRoute
-  AppLayoutDictionaryEditWordIdRoute: typeof AppLayoutDictionaryEditWordIdRoute
+interface AuthorizedLayoutAppLayoutRouteRouteChildren {
+  AuthorizedLayoutAppLayoutDecksRouteLazyRoute: typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
+  AuthorizedLayoutAppLayoutSettingsRouteLazyRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
+  AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute: typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
+  AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute: typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute
 }
 
-const AppLayoutRouteRouteChildren: AppLayoutRouteRouteChildren = {
-  AppLayoutDecksRouteLazyRoute: AppLayoutDecksRouteLazyRoute,
-  AppLayoutSettingsRouteLazyRoute: AppLayoutSettingsRouteLazyRoute,
-  AppLayoutDictionaryAddRouteLazyRoute: AppLayoutDictionaryAddRouteLazyRoute,
-  AppLayoutDictionaryEditWordIdRoute: AppLayoutDictionaryEditWordIdRoute,
+const AuthorizedLayoutAppLayoutRouteRouteChildren: AuthorizedLayoutAppLayoutRouteRouteChildren =
+  {
+    AuthorizedLayoutAppLayoutDecksRouteLazyRoute:
+      AuthorizedLayoutAppLayoutDecksRouteLazyRoute,
+    AuthorizedLayoutAppLayoutSettingsRouteLazyRoute:
+      AuthorizedLayoutAppLayoutSettingsRouteLazyRoute,
+    AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute:
+      AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute,
+    AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute:
+      AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute,
+  }
+
+const AuthorizedLayoutAppLayoutRouteRouteWithChildren =
+  AuthorizedLayoutAppLayoutRouteRoute._addFileChildren(
+    AuthorizedLayoutAppLayoutRouteRouteChildren,
+  )
+
+interface AuthorizedLayoutSearchLayoutRouteRouteChildren {
+  AuthorizedLayoutSearchLayoutIndexLazyRoute: typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
 }
 
-const AppLayoutRouteRouteWithChildren = AppLayoutRouteRoute._addFileChildren(
-  AppLayoutRouteRouteChildren,
-)
+const AuthorizedLayoutSearchLayoutRouteRouteChildren: AuthorizedLayoutSearchLayoutRouteRouteChildren =
+  {
+    AuthorizedLayoutSearchLayoutIndexLazyRoute:
+      AuthorizedLayoutSearchLayoutIndexLazyRoute,
+  }
 
-interface LayoutRouteRouteChildren {
-  LayoutLoginRouteRoute: typeof LayoutLoginRouteRoute
+const AuthorizedLayoutSearchLayoutRouteRouteWithChildren =
+  AuthorizedLayoutSearchLayoutRouteRoute._addFileChildren(
+    AuthorizedLayoutSearchLayoutRouteRouteChildren,
+  )
+
+interface AuthorizedLayoutRouteRouteChildren {
+  AuthorizedLayoutAppLayoutRouteRoute: typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
+  AuthorizedLayoutSearchLayoutRouteRoute: typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
 }
 
-const LayoutRouteRouteChildren: LayoutRouteRouteChildren = {
-  LayoutLoginRouteRoute: LayoutLoginRouteRoute,
+const AuthorizedLayoutRouteRouteChildren: AuthorizedLayoutRouteRouteChildren = {
+  AuthorizedLayoutAppLayoutRouteRoute:
+    AuthorizedLayoutAppLayoutRouteRouteWithChildren,
+  AuthorizedLayoutSearchLayoutRouteRoute:
+    AuthorizedLayoutSearchLayoutRouteRouteWithChildren,
 }
 
-const LayoutRouteRouteWithChildren = LayoutRouteRoute._addFileChildren(
-  LayoutRouteRouteChildren,
-)
+const AuthorizedLayoutRouteRouteWithChildren =
+  AuthorizedLayoutRouteRoute._addFileChildren(
+    AuthorizedLayoutRouteRouteChildren,
+  )
 
-interface SearchLayoutRouteRouteChildren {
-  SearchLayoutIndexLazyRoute: typeof SearchLayoutIndexLazyRoute
+interface UnauthorizedLayoutRouteRouteChildren {
+  UnauthorizedLayoutLoginRouteRoute: typeof UnauthorizedLayoutLoginRouteRoute
 }
 
-const SearchLayoutRouteRouteChildren: SearchLayoutRouteRouteChildren = {
-  SearchLayoutIndexLazyRoute: SearchLayoutIndexLazyRoute,
-}
+const UnauthorizedLayoutRouteRouteChildren: UnauthorizedLayoutRouteRouteChildren =
+  {
+    UnauthorizedLayoutLoginRouteRoute: UnauthorizedLayoutLoginRouteRoute,
+  }
 
-const SearchLayoutRouteRouteWithChildren =
-  SearchLayoutRouteRoute._addFileChildren(SearchLayoutRouteRouteChildren)
+const UnauthorizedLayoutRouteRouteWithChildren =
+  UnauthorizedLayoutRouteRoute._addFileChildren(
+    UnauthorizedLayoutRouteRouteChildren,
+  )
 
 export interface FileRoutesByFullPath {
-  '': typeof SearchLayoutRouteRouteWithChildren
-  '/login': typeof LayoutLoginRouteRoute
-  '/decks': typeof AppLayoutDecksRouteLazyRoute
-  '/settings': typeof AppLayoutSettingsRouteLazyRoute
-  '/': typeof SearchLayoutIndexLazyRoute
-  '/dictionary/add': typeof AppLayoutDictionaryAddRouteLazyRoute
-  '/dictionary/edit/$wordId': typeof AppLayoutDictionaryEditWordIdRoute
+  '': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
+  '/login': typeof UnauthorizedLayoutLoginRouteRoute
+  '/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
+  '/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
+  '/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
+  '/dictionary/add': typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
+  '/dictionary/edit/$wordId': typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute
 }
 
 export interface FileRoutesByTo {
-  '': typeof LayoutRouteRouteWithChildren
-  '/login': typeof LayoutLoginRouteRoute
-  '/decks': typeof AppLayoutDecksRouteLazyRoute
-  '/settings': typeof AppLayoutSettingsRouteLazyRoute
-  '/': typeof SearchLayoutIndexLazyRoute
-  '/dictionary/add': typeof AppLayoutDictionaryAddRouteLazyRoute
-  '/dictionary/edit/$wordId': typeof AppLayoutDictionaryEditWordIdRoute
+  '': typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
+  '/login': typeof UnauthorizedLayoutLoginRouteRoute
+  '/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
+  '/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
+  '/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
+  '/dictionary/add': typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
+  '/dictionary/edit/$wordId': typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/_app-layout': typeof AppLayoutRouteRouteWithChildren
-  '/_layout': typeof LayoutRouteRouteWithChildren
-  '/_search-layout': typeof SearchLayoutRouteRouteWithChildren
-  '/_layout/login': typeof LayoutLoginRouteRoute
-  '/_app-layout/decks': typeof AppLayoutDecksRouteLazyRoute
-  '/_app-layout/settings': typeof AppLayoutSettingsRouteLazyRoute
-  '/_search-layout/': typeof SearchLayoutIndexLazyRoute
-  '/_app-layout/dictionary/add': typeof AppLayoutDictionaryAddRouteLazyRoute
-  '/_app-layout/dictionary/edit/$wordId': typeof AppLayoutDictionaryEditWordIdRoute
+  '/_authorized-layout': typeof AuthorizedLayoutRouteRouteWithChildren
+  '/_unauthorized-layout': typeof UnauthorizedLayoutRouteRouteWithChildren
+  '/_authorized-layout/_app-layout': typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
+  '/_authorized-layout/_search-layout': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
+  '/_unauthorized-layout/login': typeof UnauthorizedLayoutLoginRouteRoute
+  '/_authorized-layout/_app-layout/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
+  '/_authorized-layout/_app-layout/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
+  '/_authorized-layout/_search-layout/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
+  '/_authorized-layout/_app-layout/dictionary/add': typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
+  '/_authorized-layout/_app-layout/dictionary/edit/$wordId': typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute
 }
 
 export interface FileRouteTypes {
@@ -266,28 +325,27 @@ export interface FileRouteTypes {
     | '/dictionary/edit/$wordId'
   id:
     | '__root__'
-    | '/_app-layout'
-    | '/_layout'
-    | '/_search-layout'
-    | '/_layout/login'
-    | '/_app-layout/decks'
-    | '/_app-layout/settings'
-    | '/_search-layout/'
-    | '/_app-layout/dictionary/add'
-    | '/_app-layout/dictionary/edit/$wordId'
+    | '/_authorized-layout'
+    | '/_unauthorized-layout'
+    | '/_authorized-layout/_app-layout'
+    | '/_authorized-layout/_search-layout'
+    | '/_unauthorized-layout/login'
+    | '/_authorized-layout/_app-layout/decks'
+    | '/_authorized-layout/_app-layout/settings'
+    | '/_authorized-layout/_search-layout/'
+    | '/_authorized-layout/_app-layout/dictionary/add'
+    | '/_authorized-layout/_app-layout/dictionary/edit/$wordId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  AppLayoutRouteRoute: typeof AppLayoutRouteRouteWithChildren
-  LayoutRouteRoute: typeof LayoutRouteRouteWithChildren
-  SearchLayoutRouteRoute: typeof SearchLayoutRouteRouteWithChildren
+  AuthorizedLayoutRouteRoute: typeof AuthorizedLayoutRouteRouteWithChildren
+  UnauthorizedLayoutRouteRoute: typeof UnauthorizedLayoutRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  AppLayoutRouteRoute: AppLayoutRouteRouteWithChildren,
-  LayoutRouteRoute: LayoutRouteRouteWithChildren,
-  SearchLayoutRouteRoute: SearchLayoutRouteRouteWithChildren,
+  AuthorizedLayoutRouteRoute: AuthorizedLayoutRouteRouteWithChildren,
+  UnauthorizedLayoutRouteRoute: UnauthorizedLayoutRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -300,55 +358,63 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/_app-layout",
-        "/_layout",
-        "/_search-layout"
+        "/_authorized-layout",
+        "/_unauthorized-layout"
       ]
     },
-    "/_app-layout": {
-      "filePath": "_app-layout/route.tsx",
+    "/_authorized-layout": {
+      "filePath": "_authorized-layout/route.tsx",
       "children": [
-        "/_app-layout/decks",
-        "/_app-layout/settings",
-        "/_app-layout/dictionary/add",
-        "/_app-layout/dictionary/edit/$wordId"
+        "/_authorized-layout/_app-layout",
+        "/_authorized-layout/_search-layout"
       ]
     },
-    "/_layout": {
-      "filePath": "_layout/route.tsx",
+    "/_unauthorized-layout": {
+      "filePath": "_unauthorized-layout/route.tsx",
       "children": [
-        "/_layout/login"
+        "/_unauthorized-layout/login"
       ]
     },
-    "/_search-layout": {
-      "filePath": "_search-layout/route.tsx",
+    "/_authorized-layout/_app-layout": {
+      "filePath": "_authorized-layout/_app-layout/route.tsx",
+      "parent": "/_authorized-layout",
       "children": [
-        "/_search-layout/"
+        "/_authorized-layout/_app-layout/decks",
+        "/_authorized-layout/_app-layout/settings",
+        "/_authorized-layout/_app-layout/dictionary/add",
+        "/_authorized-layout/_app-layout/dictionary/edit/$wordId"
       ]
     },
-    "/_layout/login": {
-      "filePath": "_layout/login/route.tsx",
-      "parent": "/_layout"
+    "/_authorized-layout/_search-layout": {
+      "filePath": "_authorized-layout/_search-layout/route.tsx",
+      "parent": "/_authorized-layout",
+      "children": [
+        "/_authorized-layout/_search-layout/"
+      ]
     },
-    "/_app-layout/decks": {
-      "filePath": "_app-layout/decks/route.lazy.tsx",
-      "parent": "/_app-layout"
+    "/_unauthorized-layout/login": {
+      "filePath": "_unauthorized-layout/login/route.tsx",
+      "parent": "/_unauthorized-layout"
     },
-    "/_app-layout/settings": {
-      "filePath": "_app-layout/settings/route.lazy.tsx",
-      "parent": "/_app-layout"
+    "/_authorized-layout/_app-layout/decks": {
+      "filePath": "_authorized-layout/_app-layout/decks/route.lazy.tsx",
+      "parent": "/_authorized-layout/_app-layout"
     },
-    "/_search-layout/": {
-      "filePath": "_search-layout/index.lazy.tsx",
-      "parent": "/_search-layout"
+    "/_authorized-layout/_app-layout/settings": {
+      "filePath": "_authorized-layout/_app-layout/settings/route.lazy.tsx",
+      "parent": "/_authorized-layout/_app-layout"
     },
-    "/_app-layout/dictionary/add": {
-      "filePath": "_app-layout/dictionary/add/route.lazy.tsx",
-      "parent": "/_app-layout"
+    "/_authorized-layout/_search-layout/": {
+      "filePath": "_authorized-layout/_search-layout/index.lazy.tsx",
+      "parent": "/_authorized-layout/_search-layout"
     },
-    "/_app-layout/dictionary/edit/$wordId": {
-      "filePath": "_app-layout/dictionary/edit/$wordId.tsx",
-      "parent": "/_app-layout"
+    "/_authorized-layout/_app-layout/dictionary/add": {
+      "filePath": "_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx",
+      "parent": "/_authorized-layout/_app-layout"
+    },
+    "/_authorized-layout/_app-layout/dictionary/edit/$wordId": {
+      "filePath": "_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx",
+      "parent": "/_authorized-layout/_app-layout"
     }
   }
 }

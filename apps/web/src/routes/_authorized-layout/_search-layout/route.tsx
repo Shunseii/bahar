@@ -1,21 +1,21 @@
-import { DesktopNavigation } from "@/components/DesktopNavigation";
-import { MobileHeader } from "@/components/MobileHeader";
-import { SearchInput } from "@/components/meili/SearchInput";
-import { authClient } from "@/lib/auth-client";
-import { queryClient } from "@/lib/query";
-import { searchClient } from "@/lib/search";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import { InstantSearch } from "react-instantsearch";
-import * as Sentry from "@sentry/react";
-import { settingsTable } from "@/lib/db";
+import { DesktopNavigation } from '@/components/DesktopNavigation'
+import { MobileHeader } from '@/components/MobileHeader'
+import { SearchInput } from '@/components/meili/SearchInput'
+import { authClient } from '@/lib/auth-client'
+import { queryClient } from '@/lib/query'
+import { searchClient } from '@/lib/search'
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { InstantSearch } from 'react-instantsearch'
+import * as Sentry from '@sentry/react'
+import { settingsTable } from '@/lib/db'
 
 const AppLayout = () => {
-  const { data } = authClient.useSession();
-  const userIndexId = data?.user?.id ?? "";
+  const { data } = authClient.useSession()
+  const userIndexId = data?.user?.id ?? ''
 
-  if (!userIndexId) return null;
+  if (!userIndexId) return null
 
-  Sentry.setUser({ id: data?.user.id, email: data?.user.email });
+  Sentry.setUser({ id: data?.user.id, email: data?.user.email })
 
   return (
     <InstantSearch
@@ -42,28 +42,28 @@ const AppLayout = () => {
         </div>
       </div>
     </InstantSearch>
-  );
-};
+  )
+}
 
-export const Route = createFileRoute("/_search-layout")({
+export const Route = createFileRoute('/_authorized-layout/_search-layout')({
   component: AppLayout,
   beforeLoad: async ({ location }) => {
-    const { data } = await authClient.getSession();
+    const { data } = await authClient.getSession()
 
-    const isAuthenticated = !!data?.user;
+    const isAuthenticated = !!data?.user
 
     if (!isAuthenticated) {
       throw redirect({
-        to: "/login",
+        to: '/login',
         search: {
           redirect: location.href,
         },
-      });
+      })
     } else {
       await queryClient.ensureQueryData({
         queryKey: settingsTable.getSettings.cacheOptions.queryKey,
         queryFn: settingsTable.getSettings.query,
-      });
+      })
     }
   },
-});
+})

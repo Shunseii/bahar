@@ -1,0 +1,20 @@
+import { LanguageMenu } from '@/components/LanguageMenu'
+import { ThemeMenu } from '@/components/ThemeMenu'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
+
+const Layout = () => {
+  return (
+    <div className="h-screen p-8">
+      <div className="flex justify-between">
+        <ThemeMenu />
+        <LanguageMenu />
+      </div>
+
+      <Outlet />
+    </div>
+  )
+}
+
+export const Route = createFileRoute('/_unauthorized-layout')({
+  component: Layout,
+})

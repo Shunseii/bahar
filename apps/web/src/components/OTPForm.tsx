@@ -25,7 +25,7 @@ import { useSetAtom } from "jotai";
 import { showOTPFormAtom } from "@/atoms/otp";
 import { TLocale, getLangDir } from "@/lib/i18n";
 import { FC } from "react";
-import { LoginFormSchema } from "@/routes/_layout/login/route.lazy";
+import { LoginFormSchema } from "@/routes/_unauthorized-layout/login/route.lazy";
 
 const schema = z.object({
   code: z.string().length(6, {

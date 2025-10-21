@@ -1,17 +1,17 @@
-import { Trans } from "@lingui/react/macro";
-import { InputFile } from "@/components/InputFile";
-import { LanguageMenu } from "@/components/LanguageMenu";
-import { Page } from "@/components/Page";
-import { ThemeMenu } from "@/components/ThemeMenu";
-import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
-import { Button } from "@/components/ui/button";
+import { Trans } from '@lingui/react/macro'
+import { InputFile } from '@/components/InputFile'
+import { LanguageMenu } from '@/components/LanguageMenu'
+import { Page } from '@/components/Page'
+import { ThemeMenu } from '@/components/ThemeMenu'
+import { FlashcardSettingsCardSection } from '@/components/features/settings/FlashcardSettingsCardSection'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card'
 import {
   DialogHeader,
   DialogFooter,
@@ -21,106 +21,106 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/useToast";
-import { ImportError, parseImportErrors } from "@/lib/error";
-import { tracedFetch } from "@/lib/fetch";
-import { useLingui } from "@lingui/react/macro";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { ImportResponseError } from "@/lib/error";
-import { useCallback, useState } from "react";
-import { useInstantSearch } from "react-instantsearch";
-import { authClient } from "@/lib/auth-client";
-import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
+} from '@/components/ui/dialog'
+import { useToast } from '@/hooks/useToast'
+import { ImportError, parseImportErrors } from '@/lib/error'
+import { tracedFetch } from '@/lib/fetch'
+import { useLingui } from '@lingui/react/macro'
+import { createLazyFileRoute } from '@tanstack/react-router'
+import { ImportResponseError } from '@/lib/error'
+import { useCallback, useState } from 'react'
+import { useInstantSearch } from 'react-instantsearch'
+import { authClient } from '@/lib/auth-client'
+import { AdminSettingsCardSection } from '@/components/features/settings/AdminSettingsCardSection'
 
 const Settings = () => {
-  const { t } = useLingui();
-  const [file, setFile] = useState<File>();
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-  const { refresh } = useInstantSearch();
-  const { data: userData } = authClient.useSession();
+  const { t } = useLingui()
+  const [file, setFile] = useState<File>()
+  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
+  const { refresh } = useInstantSearch()
+  const { data: userData } = authClient.useSession()
 
   const exportDictionary = useCallback(async (includeFlashcards = false) => {
     try {
-      setIsLoading(true);
+      setIsLoading(true)
 
       const response = await tracedFetch(
         `${import.meta.env.VITE_API_BASE_URL}/dictionary/export`,
         {
-          method: "POST",
-          credentials: "include",
+          method: 'POST',
+          credentials: 'include',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             includeFlashcards,
           }),
         },
-      );
+      )
 
-      const data = JSON.stringify(await response.json(), null, 2);
-      const blob = new Blob([data], { type: "application/json" });
+      const data = JSON.stringify(await response.json(), null, 2)
+      const blob = new Blob([data], { type: 'application/json' })
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
 
       const filename = includeFlashcards
-        ? "dictionary-backup.json"
-        : "dictionary-without-flashcards.json";
+        ? 'dictionary-backup.json'
+        : 'dictionary-without-flashcards.json'
 
-      link.href = url;
-      link.download = filename;
-      link.click();
+      link.href = url
+      link.download = filename
+      link.click()
 
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url)
     } catch (err) {
-      console.error(err);
+      console.error(err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, []);
+  }, [])
 
   const deleteDictionary = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setIsLoading(true)
 
       const res = await tracedFetch(
         `${import.meta.env.VITE_API_BASE_URL}/dictionary`,
         {
-          method: "DELETE",
-          credentials: "include",
+          method: 'DELETE',
+          credentials: 'include',
         },
-      );
+      )
 
       if (res.status >= 400) {
-        const data = await res.json();
+        const data = await res.json()
         console.error({
-          message: "Unexpected error while deleting dictionary.",
+          message: 'Unexpected error while deleting dictionary.',
           data,
-        });
+        })
 
-        throw new Error("Unexpected error");
+        throw new Error('Unexpected error')
       }
 
-      refresh();
+      refresh()
 
       toast({
         title: t`Successfully deleted!`,
         description: t`Your dictionary has been deleted.`,
-      });
+      })
     } catch (err) {
-      console.error(err);
+      console.error(err)
 
       toast({
-        variant: "destructive",
+        variant: 'destructive',
         title: t`Failed to delete!`,
         description: t`There was an error deleting your dictionary. Please try again later.`,
-      });
+      })
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, []);
+  }, [])
 
   return (
     <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
@@ -162,101 +162,101 @@ const Settings = () => {
             action="#"
             encType="multipart/form-data"
             onSubmit={async (e) => {
-              e.preventDefault();
+              e.preventDefault()
 
-              setIsLoading(true);
+              setIsLoading(true)
 
-              const formData = new FormData();
-              formData.append("dictionary", file!);
+              const formData = new FormData()
+              formData.append('dictionary', file!)
 
-              if (!file || file.type !== "application/json") {
+              if (!file || file.type !== 'application/json') {
                 toast({
-                  variant: "destructive",
+                  variant: 'destructive',
                   title: t`Incorrect file type`,
                   description: t`Please select a JSON file with your dictionary.`,
-                });
+                })
 
-                setIsLoading(false);
+                setIsLoading(false)
 
-                return;
+                return
               }
 
               try {
                 const res = await tracedFetch(
                   `${import.meta.env.VITE_API_BASE_URL}/dictionary/import`,
                   {
-                    method: "POST",
+                    method: 'POST',
                     body: formData,
-                    credentials: "include",
+                    credentials: 'include',
                   },
-                );
+                )
 
                 if (res.status >= 400 && res.status < 500) {
                   const { code, error } =
-                    (await res.json()) as ImportResponseError;
+                    (await res.json()) as ImportResponseError
 
                   throw new ImportError({
-                    message: "Error importing dictionary",
+                    message: 'Error importing dictionary',
                     error,
                     code,
-                  });
+                  })
                 } else if (res.status >= 500) {
-                  const data = await res.text();
+                  const data = await res.text()
 
-                  throw new Error(data);
+                  throw new Error(data)
                 }
 
-                refresh();
+                refresh()
 
                 toast({
                   title: t`Successfully imported!`,
                   description: t`Your dictionary has been updated!`,
-                });
+                })
               } catch (err) {
                 if (err instanceof ImportError) {
-                  const { error, code, message } = err;
+                  const { error, code, message } = err
 
                   console.error(
-                    "Error importing dictionary: ",
+                    'Error importing dictionary: ',
                     message,
                     code,
                     error,
-                  );
+                  )
 
                   const importErrors = parseImportErrors({
                     error,
                     code,
-                  });
+                  })
 
                   importErrors.forEach((err) => {
                     toast({
-                      variant: "destructive",
+                      variant: 'destructive',
                       description: err,
-                    });
-                  });
+                    })
+                  })
 
                   toast({
-                    variant: "destructive",
+                    variant: 'destructive',
                     title: t`Import failed!`,
                     description: t`Your dictionary is not valid. Please fix the errors and upload it again.`,
-                  });
+                  })
                 } else {
-                  console.error(err);
+                  console.error(err)
 
                   toast({
-                    variant: "destructive",
+                    variant: 'destructive',
                     title: t`Import failed!`,
                     description: t`There was an error importing your dictionary. Please try again later.`,
-                  });
+                  })
                 }
               } finally {
-                setIsLoading(false);
+                setIsLoading(false)
               }
             }}
           >
             <InputFile
               onChange={(file) => {
-                setFile(file);
+                setFile(file)
               }}
               accept="application/json"
             />
@@ -375,11 +375,13 @@ const Settings = () => {
 
       <FlashcardSettingsCardSection />
 
-      {userData?.user.role === "admin" && <AdminSettingsCardSection />}
+      {userData?.user.role === 'admin' && <AdminSettingsCardSection />}
     </Page>
-  );
-};
+  )
+}
 
-export const Route = createLazyFileRoute("/_app-layout/settings")({
+export const Route = createLazyFileRoute(
+  '/_authorized-layout/_app-layout/settings',
+)({
   component: Settings,
-});
+})

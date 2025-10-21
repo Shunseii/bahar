@@ -1,45 +1,45 @@
-import { Plural, Trans } from "@lingui/react/macro";
-import { Link, createLazyFileRoute } from "@tanstack/react-router";
+import { Plural, Trans } from '@lingui/react/macro'
+import { Link, createLazyFileRoute } from '@tanstack/react-router'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { InfiniteScroll } from "@/components/meili/InfiniteScroll";
-import { Button } from "@/components/ui/button";
-import { ArrowUp, PlusIcon } from "lucide-react";
-import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
-import { cn } from "@bahar/design-system";
-import { Page } from "@/components/Page";
-import { trpc } from "@/lib/trpc";
-import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
-import { useInstantSearch } from "react-instantsearch";
-import { settingsTable } from "@/lib/db";
-import { useQuery } from "@tanstack/react-query";
+} from '@/components/ui/card'
+import { InfiniteScroll } from '@/components/meili/InfiniteScroll'
+import { Button } from '@/components/ui/button'
+import { ArrowUp, PlusIcon } from 'lucide-react'
+import { useWindowScroll, useWindowSize } from '@uidotdev/usehooks'
+import { cn } from '@bahar/design-system'
+import { Page } from '@/components/Page'
+import { trpc } from '@/lib/trpc'
+import { FlashcardDrawer } from '@/components/features/flashcards/FlashcardDrawer'
+import { useInstantSearch } from 'react-instantsearch'
+import { settingsTable } from '@/lib/db'
+import { useQuery } from '@tanstack/react-query'
 
 const Index = () => {
-  const [{ y }, scrollTo] = useWindowScroll();
-  const { results } = useInstantSearch();
-  const { height } = useWindowSize();
+  const [{ y }, scrollTo] = useWindowScroll()
+  const { results } = useInstantSearch()
+  const { height } = useWindowSize()
   const { data: flashcardSettings } = useQuery({
     queryFn: settingsTable.getSettings.query,
     ...settingsTable.getSettings.cacheOptions,
-  });
+  })
 
-  const show_reverse = flashcardSettings?.show_reverse_flashcards ?? false;
+  const show_reverse = flashcardSettings?.show_reverse_flashcards ?? false
 
   const { data, isFetching } = trpc.flashcard.today.useQuery({
     show_reverse,
-  });
+  })
 
   // Check that the window dimensions are available
-  const hasLoadedHeight = height !== null && height > 0 && y !== null;
-  const hasScrolledPastInitialView = hasLoadedHeight ? y > height : false;
+  const hasLoadedHeight = height !== null && height > 0 && y !== null
+  const hasScrolledPastInitialView = hasLoadedHeight ? y > height : false
 
-  const processingTimeMs = results?.processingTimeMS;
-  const totalHits = results?.nbHits;
+  const processingTimeMs = results?.processingTimeMS
+  const totalHits = results?.nbHits
 
   return (
     <Page>
@@ -66,7 +66,7 @@ const Index = () => {
               <p
                 className={cn(
                   isFetching &&
-                    "motion-safe:animate-pulse motion-reduce:opacity-50",
+                    'motion-safe:animate-pulse motion-reduce:opacity-50',
                 )}
               >
                 <Trans>Review flashcards</Trans>
@@ -82,7 +82,7 @@ const Index = () => {
                 value={totalHits}
                 one="# result found in"
                 other="# results found in"
-              />{" "}
+              />{' '}
               <Plural value={processingTimeMs} _0="<1 ms" other="# ms" />
             </p>
           ) : undefined}
@@ -108,14 +108,14 @@ const Index = () => {
       {/* Scroll to top button */}
       <div
         className={cn(
-          "fixed bottom-8 ltr:right-8 rtl:left-8 transition-opacity opacity-0 pointer-events-none cursor-auto",
+          'fixed bottom-8 ltr:right-8 rtl:left-8 transition-opacity opacity-0 pointer-events-none cursor-auto',
           hasScrolledPastInitialView &&
-            "opacity-100 pointer-events-auto cursor-pointer",
+            'opacity-100 pointer-events-auto cursor-pointer',
         )}
       >
         <Button
           onClick={() => {
-            scrollTo({ top: 0, behavior: "smooth" });
+            scrollTo({ top: 0, behavior: 'smooth' })
           }}
           tabIndex={hasScrolledPastInitialView ? 0 : -1}
           variant="secondary"
@@ -128,9 +128,11 @@ const Index = () => {
         </Button>
       </div>
     </Page>
-  );
-};
+  )
+}
 
-export const Route = createLazyFileRoute("/_search-layout/")({
-  component: Index,
-});
+export const Route = createLazyFileRoute('/_authorized-layout/_search-layout/')(
+  {
+    component: Index,
+  },
+)
