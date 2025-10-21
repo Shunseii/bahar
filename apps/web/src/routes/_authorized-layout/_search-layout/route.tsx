@@ -7,7 +7,7 @@ import { searchClient } from "@/lib/search";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { InstantSearch } from "react-instantsearch";
 import * as Sentry from "@sentry/react";
-import { settingsTable } from "@/lib/db";
+import { settingsTable } from "@/lib/db/operations";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();

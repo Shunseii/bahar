@@ -1,5 +1,7 @@
 import { LanguageMenu } from "@/components/LanguageMenu";
 import { ThemeMenu } from "@/components/ThemeMenu";
+import { resetDb } from "@/lib/db";
+import { resetOramaDb } from "@/lib/search";
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 const Layout = () => {
@@ -17,4 +19,8 @@ const Layout = () => {
 
 export const Route = createFileRoute("/_unauthorized-layout")({
   component: Layout,
+  beforeLoad: async () => {
+    resetOramaDb();
+    await resetDb();
+  },
 });

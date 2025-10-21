@@ -4,6 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
 import * as Sentry from "@sentry/react";
+import { resetOramaDb } from "@/lib/search";
+import { resetDb } from "@/lib/db";
 
 /**
  * A hook that logs the user out of the application
@@ -34,6 +36,9 @@ export const useLogout = () => {
     queryClient.clear();
 
     Sentry.setUser(null);
+
+    resetOramaDb();
+    await resetDb();
   };
 
   return { logout };

@@ -25,7 +25,12 @@ export {
 export { decks, type SelectDeck, type InsertDeck } from "./decks";
 
 // Export settings schema and types
-export { settings, type SelectSetting, type InsertSetting } from "./settings";
+export {
+  settings,
+  type SelectSetting,
+  type InsertSetting,
+  type RawSetting,
+} from "./settings";
 
 // Export migrations schema and types
 export {

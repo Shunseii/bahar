@@ -16,7 +16,7 @@ import { Page } from "@/components/Page";
 import { trpc } from "@/lib/trpc";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
 import { useInstantSearch } from "react-instantsearch";
-import { settingsTable } from "@/lib/db";
+import { settingsTable } from "@/lib/db/operations";
 import { useQuery } from "@tanstack/react-query";
 
 const Index = () => {

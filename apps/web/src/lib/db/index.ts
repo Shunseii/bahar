@@ -1,8 +1,6 @@
 import { connect, Database } from "@tursodatabase/sync-wasm/vite";
-import { SelectMigration, SelectSetting } from "@bahar/drizzle-user-db-schemas";
+import { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import { trpcClient } from "../trpc";
-import { RawSetting } from "@bahar/drizzle-user-db-schemas/src/settings";
-
 /**
  * Singleton database instance connected to
  * a local copy of the user's database that syncs
@@ -11,9 +9,24 @@ import { RawSetting } from "@bahar/drizzle-user-db-schemas/src/settings";
  * Initially undefined, but we initialize it
  * in the pre load of the root router.
  */
-export let db: Database;
+let db: Database | null = null;
 
-const LOCAL_DB_PATH = "local.db";
+const LOCAL_DB_PATH_PREFIX = "bahar-local";
+
+export const getDb = () => {
+  if (!db) {
+    throw new Error("Database not initialized. Call initDb first.");
+  }
+
+  return db;
+};
+
+export const resetDb = async () => {
+  if (!db) return;
+
+  await db.close();
+  db = null;
+};
 
 /**
  * Initializes connection to the user's database
@@ -26,13 +39,14 @@ const LOCAL_DB_PATH = "local.db";
 export const initDb = async () => {
   if (db) return;
 
-  const { access_token, hostname } =
+  const { access_token, hostname, db_name } =
     await trpcClient.databases.userDatabase.query();
 
   try {
     const userDbClient = await _connectToLocalDb({
       hostname,
       authToken: access_token,
+      dbName: db_name,
     });
 
     db = userDbClient;
@@ -47,6 +61,7 @@ export const initDb = async () => {
     const reconnectedClient = await _connectToLocalDb({
       hostname,
       authToken: refreshed.access_token,
+      dbName: db_name,
     });
 
     db = reconnectedClient;
@@ -60,7 +75,11 @@ export const initDb = async () => {
  * Executes any required migrations on the user database.
  */
 const applyRequiredMigrations = async () => {
+  if (!db) return;
+
   const currentSchemaVersion = await getCurrentSchemaVersion();
+
+  if (!currentSchemaVersion) return;
 
   const { status, requiredMigrations } =
     await trpcClient.migrations.verifySchema.query({
@@ -106,6 +125,8 @@ const applyRequiredMigrations = async () => {
  * @returns The current version of the local user database schema.
  */
 const getCurrentSchemaVersion = async () => {
+  if (!db) return undefined;
+
   try {
     const result: Pick<SelectMigration, "version"> | undefined = await db
       .prepare(
@@ -121,45 +142,22 @@ const getCurrentSchemaVersion = async () => {
   }
 };
 
-type TableOperation = {
-  // Note: can't use a generic here to type the output
-  // it will still be any when used with satisfies
-  query?: () => Promise<unknown>;
-  mutation?: () => Promise<unknown>;
-  /**
-   * The cache options for the query in tanstack query.
-   */
-  cacheOptions: {
-    // Prefix with turso to ensure there's no conflict
-    // with trpc query keys.
-    queryKey: `turso.${string}`[];
-    staleTime?: number;
-  };
-};
+const _formatDbUrl = (hostname: string) => `libsql://${hostname}`;
 
-export const settingsTable = {
-  getSettings: {
-    query: async (): Promise<Omit<SelectSetting, "id">> => {
-      const res: RawSetting = await db.prepare("SELECT * FROM settings").get();
-
-      return {
-        show_antonyms_in_flashcard: res.show_antonyms_in_flashcard,
-        show_reverse_flashcards: Boolean(res.show_reverse_flashcards),
-      };
-    },
-    cacheOptions: {
-      queryKey: ["turso.settings.query"],
-      staleTime: Infinity,
-    },
-  },
-} satisfies Record<string, TableOperation>;
-
-const _formDbUrl = (hostname: string) => `libsql://${hostname}`;
+const _formatLocalDbName = (dbName: string) =>
+  `${LOCAL_DB_PATH_PREFIX}-${dbName}.db`;
 
 const _connectToLocalDb = async ({
   hostname,
   authToken,
+  dbName,
 }: {
   hostname: string;
   authToken: string;
-}) => connect({ path: LOCAL_DB_PATH, url: _formDbUrl(hostname), authToken });
+  dbName: string;
+}) =>
+  connect({
+    path: _formatLocalDbName(dbName),
+    url: _formatDbUrl(hostname),
+    authToken,
+  });

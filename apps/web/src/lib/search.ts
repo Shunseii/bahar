@@ -1,6 +1,6 @@
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
 import { create, insertMultiple } from "@orama/orama";
-import { db } from "./db";
+import { getDb } from "./db";
 import { RawDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 
 export const { searchClient } = instantMeiliSearch(
@@ -8,7 +8,7 @@ export const { searchClient } = instantMeiliSearch(
   import.meta.env.VITE_MEILISEARCH_API_KEY!,
 );
 
-export const oramaDb = create({
+export let oramaDb = create({
   schema: {
     created_at_timestamp_ms: "number",
     updated_at_timestamp_ms: "number",
@@ -33,6 +33,8 @@ export const hydrateOramaDb = async () => {
 
   let offset = 0;
   const BATCH_SIZE = 500;
+
+  const db = getDb();
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -69,4 +71,22 @@ export const hydrateOramaDb = async () => {
   }
 
   isOramaHydrated = true;
+};
+
+export const resetOramaDb = () => {
+  oramaDb = create({
+    schema: {
+      created_at_timestamp_ms: "number",
+      updated_at_timestamp_ms: "number",
+      word: "string",
+      translation: "string",
+      definition: "string",
+      type: "enum",
+      root: "string[]",
+      tags: "string[]",
+      // TODO: add more fields from morphology
+    },
+  });
+
+  isOramaHydrated = false;
 };
