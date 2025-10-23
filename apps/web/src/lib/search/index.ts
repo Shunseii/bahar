@@ -20,28 +20,29 @@ const formatElapsedTime = (number: bigint): string | number | object => {
   };
 };
 
-let oramaDb = create({
-  schema: {
-    created_at_timestamp_ms: "number",
-    updated_at_timestamp_ms: "number",
-    word: "string",
-    translation: "string",
-    definition: "string",
-    type: "enum",
-    root: "string[]",
-    tags: "string[]",
-    // TODO: add more fields from morphology
-  },
-  plugins: [pluginQPS()],
-  components: {
-    tokenizer: multiLanguageTokenizer,
-    formatElapsedTime,
-  },
-});
+const createOramaDb = () =>
+  create({
+    schema: {
+      created_at_timestamp_ms: "number",
+      updated_at_timestamp_ms: "number",
+      word: "string",
+      translation: "string",
+      definition: "string",
+      type: "enum",
+      root: "string[]",
+      tags: "string[]",
+      // TODO: add more fields from morphology
+    },
+    plugins: [pluginQPS()],
+    components: {
+      tokenizer: multiLanguageTokenizer,
+      formatElapsedTime,
+    },
+  });
+
+export let oramaDb = createOramaDb();
 
 let isOramaHydrated = false;
-
-export const getOramaDb = () => oramaDb;
 
 /**
  * Inserts all the words from the local turso user db
@@ -87,30 +88,13 @@ export const hydrateOramaDb = async () => {
     await insertMultiple(oramaDb, dictionaryEntries, BATCH_SIZE);
 
     offset += BATCH_SIZE;
-  }
 
-  isOramaHydrated = true;
+    isOramaHydrated = true;
+  }
 };
 
 export const resetOramaDb = () => {
-  oramaDb = create({
-    schema: {
-      created_at_timestamp_ms: "number",
-      updated_at_timestamp_ms: "number",
-      word: "string",
-      translation: "string",
-      definition: "string",
-      type: "enum",
-      root: "string[]",
-      tags: "string[]",
-      // TODO: add more fields from morphology
-    },
-    plugins: [pluginQPS()],
-    components: {
-      tokenizer: multiLanguageTokenizer,
-      formatElapsedTime,
-    },
-  });
+  oramaDb = createOramaDb();
 
   isOramaHydrated = false;
 };

@@ -15,7 +15,9 @@ import { nanoid } from "nanoid";
 type TableOperation = {
   // Note: can't use a generic here to type the output
   // it will still be any when used with satisfies
-  query?: () => Promise<unknown>;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query?: (...args: any[]) => Promise<unknown>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mutation?: (...args: any[]) => Promise<unknown>;
   /**
@@ -48,6 +50,29 @@ export const settingsTable = {
 } satisfies Record<string, TableOperation>;
 
 export const dictionaryEntriesTable = {
+  tags: {
+    query: async (
+      searchTerm: string,
+    ): Promise<{ tag: string; count: number }[]> => {
+      const db = getDb();
+
+      const res: { tag: string; count: number }[] = await db
+        .prepare(
+          `SELECT value as tag, COUNT(*) as count
+           FROM dictionary_entries, json_each(tags)
+           WHERE value IS NOT NULL AND value LIKE '%' || ? || '%'
+           GROUP BY value
+           ORDER BY count DESC;`,
+        )
+        .all([searchTerm]);
+
+      return res;
+    },
+    cacheOptions: {
+      queryKey: ["turso.dictionaryEntries.tags.query"],
+      staleTime: Infinity,
+    },
+  },
   addWord: {
     mutation: async (
       word: Omit<RawDictionaryEntry, "id">,

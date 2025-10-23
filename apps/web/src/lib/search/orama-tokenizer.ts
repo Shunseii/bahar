@@ -11,12 +11,14 @@ export const arabicTokenizer = defaultTokenizer.createTokenizer({
   stemming: true,
   stemmer: arabicStemmer,
   stopWords: arabicStopwords,
+  stemmerSkipProperties: ["tags"],
 });
 
 const englishTokenizer = defaultTokenizer.createTokenizer({
   language: "english",
   stemming: true,
   stopWords: englishStopwords,
+  stemmerSkipProperties: ["tags"],
 });
 
 /**

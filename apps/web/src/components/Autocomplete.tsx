@@ -2,9 +2,10 @@ import { Trans } from "@lingui/react/macro";
 import { useLingui } from "@lingui/react/macro";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@bahar/design-system";
-import { trpc } from "@/lib/trpc";
 import { useClickAway, useDebounce } from "@uidotdev/usehooks";
 import { Input } from "./ui/input";
+import { useQuery } from "@tanstack/react-query";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
 
 interface AutocompleteProps {
   className?: string;
@@ -27,8 +28,11 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   const [inputValue, setInputValue] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const debouncedInputValue = useDebounce(inputValue, 500);
-  const { data, isFetching } = trpc.tags.search.useQuery({
-    query: debouncedInputValue,
+
+  const { data, isFetching } = useQuery({
+    queryFn: () => dictionaryEntriesTable.tags.query(debouncedInputValue),
+    ...dictionaryEntriesTable.tags.cacheOptions,
+    queryKey: ["turso.dictionaryEntries.tags.query", debouncedInputValue],
   });
 
   useEffect(() => {
@@ -40,9 +44,9 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   }, [inputValue, debouncedInputValue, isFetching]);
 
   const tags =
-    data?.facetHits
-      ?.filter((item) => !filter?.includes(item.value))
-      ?.map((item) => item.value) ?? [];
+    data
+      ?.filter((item) => !filter?.includes(item.tag))
+      ?.map((item) => item.tag) ?? [];
 
   const selectTag = useCallback(
     (value: string) => {
@@ -95,7 +99,6 @@ export const Autocomplete: FC<AutocompleteProps> = ({
         />
 
         {showDropdown &&
-          inputValue.length > 0 &&
           !addedTagIsFiltered &&
           (tags.length > 0 || (tags.length === 0 && allowAdd)) && (
             <div
@@ -132,32 +135,30 @@ export const Autocomplete: FC<AutocompleteProps> = ({
                       ))}
                     </ul>
                   );
-                } else if (
-                  inputValue.length > 0 &&
-                  tags.length === 0 &&
-                  !filter.includes(inputValue) &&
-                  allowAdd
-                ) {
-                  return (
-                    <button
-                      className="px-3 py-1 hover:bg-muted w-full ltr:text-left rtl:text-right"
-                      type="button"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          selectTag(inputValue);
-                        }
-                      }}
-                      onClick={() => {
-                        selectTag(inputValue);
-                      }}
-                    >
-                      <Trans>Add tag {inputValue}</Trans>
-                    </button>
-                  );
                 } else {
                   return undefined;
                 }
               })()}
+
+              {!isSearching &&
+                inputValue.length > 0 &&
+                !tags.includes(inputValue) &&
+                !filter.includes(inputValue) && (
+                  <button
+                    className="px-3 py-1 hover:bg-muted w-full ltr:text-left rtl:text-right"
+                    type="button"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        selectTag(inputValue);
+                      }
+                    }}
+                    onClick={() => {
+                      selectTag(inputValue);
+                    }}
+                  >
+                    <Trans>Add tag {inputValue}</Trans>
+                  </button>
+                )}
             </div>
           )}
       </div>
