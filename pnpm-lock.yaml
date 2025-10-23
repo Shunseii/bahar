@@ -403,7 +403,19 @@ importers:
       '@meilisearch/instant-meilisearch':
         specifier: ^0.16.0
         version: 0.16.0
+      '@orama/highlight':
+        specifier: ^0.1.9
+        version: 0.1.9
       '@orama/orama':
+        specifier: ^3.1.16
+        version: 3.1.16
+      '@orama/plugin-qps':
+        specifier: ^3.1.16
+        version: 3.1.16
+      '@orama/stemmers':
+        specifier: ^3.1.16
+        version: 3.1.16
+      '@orama/stopwords':
         specifier: ^3.1.16
         version: 3.1.16
       '@radix-ui/react-accordion':
@@ -6089,8 +6101,28 @@ packages:
       '@opentelemetry/core': 1.30.0(@opentelemetry/api@1.9.0)
     dev: false
 
+  /@orama/highlight@0.1.9:
+    resolution: {integrity: sha512-eH4uZMea4R9x9vBFJyS/87oR4Y8oIKxF7e1SItJ9DhPlexZWMVZRlFYvHS1BM/563/dU240ct4ZaGHoYKiCkyQ==}
+    dev: false
+
   /@orama/orama@3.1.16:
     resolution: {integrity: sha512-scSmQBD8eANlMUOglxHrN1JdSW8tDghsPuS83otqealBiIeMukCQMOf/wc0JJjDXomqwNdEQFLXLGHrU6PGxuA==}
+    engines: {node: '>= 20.0.0'}
+    dev: false
+
+  /@orama/plugin-qps@3.1.16:
+    resolution: {integrity: sha512-/CIhC7GIx4kFEju3pjey9C4Q6feIn+xIkLKk4O+OASAKaocvygs4Q1A004utsQT+gFgD1va4309rDMV1SJ/1yA==}
+    dependencies:
+      '@orama/orama': 3.1.16
+    dev: false
+
+  /@orama/stemmers@3.1.16:
+    resolution: {integrity: sha512-DdkAkhDvWD12HZez+kniLxRK4hxf1f1y+7OHxv47HIdZPYUx1Y+7Z7dX/8nM7+jrq7sa7M0wLCYOpdhVXOYEBg==}
+    engines: {node: '>= 20.0.0'}
+    dev: false
+
+  /@orama/stopwords@3.1.16:
+    resolution: {integrity: sha512-vARYnaXUQ/OO11Lvdpz0Vn56ayJV/NZUvw/A/bRzdrmQ19jc5lftHBgHPFxmnzc5GKD3O4ENf3burV5iezqhiQ==}
     engines: {node: '>= 20.0.0'}
     dev: false
 

@@ -1,14 +1,26 @@
-import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
 import { create, insertMultiple } from "@orama/orama";
-import { getDb } from "./db";
+import { getDb } from "../db";
 import { RawDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import { multiLanguageTokenizer } from "./orama-tokenizer";
+import { pluginQPS } from "@orama/plugin-qps";
+import { Highlight } from "@orama/highlight";
 
-export const { searchClient } = instantMeiliSearch(
-  import.meta.env.VITE_MEILISEARCH_API_URL!,
-  import.meta.env.VITE_MEILISEARCH_API_KEY!,
-);
+const formatElapsedTime = (number: bigint): string | number | object => {
+  const ONE_MS_IN_NS = 1_000_000n;
 
-export let oramaDb = create({
+  const numInMs = number / ONE_MS_IN_NS;
+
+  if (numInMs < 1n) {
+    return { raw: number, formatted: "<1ms" };
+  }
+
+  return {
+    raw: number,
+    formatted: `${numInMs}ms`,
+  };
+};
+
+let oramaDb = create({
   schema: {
     created_at_timestamp_ms: "number",
     updated_at_timestamp_ms: "number",
@@ -20,9 +32,16 @@ export let oramaDb = create({
     tags: "string[]",
     // TODO: add more fields from morphology
   },
+  plugins: [pluginQPS()],
+  components: {
+    tokenizer: multiLanguageTokenizer,
+    formatElapsedTime,
+  },
 });
 
 let isOramaHydrated = false;
+
+export const getOramaDb = () => oramaDb;
 
 /**
  * Inserts all the words from the local turso user db
@@ -86,7 +105,21 @@ export const resetOramaDb = () => {
       tags: "string[]",
       // TODO: add more fields from morphology
     },
+    plugins: [pluginQPS()],
+    components: {
+      tokenizer: multiLanguageTokenizer,
+      formatElapsedTime,
+    },
   });
 
   isOramaHydrated = false;
 };
+
+export const oramaMatchHighlighter = new Highlight();
+
+if (import.meta.hot) {
+  import.meta.hot.accept(["./orama-tokenizer"], async () => {
+    resetOramaDb();
+    await hydrateOramaDb();
+  });
+}

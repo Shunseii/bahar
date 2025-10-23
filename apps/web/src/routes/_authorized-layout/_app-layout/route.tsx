@@ -1,28 +1,18 @@
-import { DesktopNavigation } from '@/components/DesktopNavigation'
-import { MobileHeader } from '@/components/MobileHeader'
-import { authClient } from '@/lib/auth-client'
-import { searchClient } from '@/lib/search'
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
-import { InstantSearch } from 'react-instantsearch'
-import * as Sentry from '@sentry/react'
+import { DesktopNavigation } from "@/components/DesktopNavigation";
+import { MobileHeader } from "@/components/MobileHeader";
+import { authClient } from "@/lib/auth-client";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import * as Sentry from "@sentry/react";
 
 const AppLayout = () => {
-  const { data } = authClient.useSession()
-  const userIndexId = data?.user?.id ?? ''
+  const { data } = authClient.useSession();
 
-  if (!userIndexId) return null
+  if (!data?.user) return null;
 
-  Sentry.setUser({ id: data?.user.id, email: data?.user.email })
+  Sentry.setUser({ id: data.user.id, email: data.user.email });
 
   return (
-    <InstantSearch
-      indexName={userIndexId}
-      searchClient={searchClient}
-      future={{
-        // To stop the warning in the logs
-        preserveSharedStateOnUnmount: true,
-      }}
-    >
+    <>
       {/* Desktop side navigation menu */}
       <DesktopNavigation />
 
@@ -36,24 +26,24 @@ const AppLayout = () => {
           </main>
         </div>
       </div>
-    </InstantSearch>
-  )
-}
+    </>
+  );
+};
 
-export const Route = createFileRoute('/_authorized-layout/_app-layout')({
+export const Route = createFileRoute("/_authorized-layout/_app-layout")({
   component: AppLayout,
   beforeLoad: async ({ location }) => {
-    const { data } = await authClient.getSession()
+    const { data } = await authClient.getSession();
 
-    const isAuthenticated = !!data?.user
+    const isAuthenticated = !!data?.user;
 
     if (!isAuthenticated) {
       throw redirect({
-        to: '/login',
+        to: "/login",
         search: {
           redirect: location.href,
         },
-      })
+      });
     }
   },
-})
+});

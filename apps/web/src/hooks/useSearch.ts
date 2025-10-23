@@ -1,5 +1,3 @@
-// const { items: hits, showMore, isLastPage } = useInfiniteHits<Hit>(props);
-
 import { atom, useAtom, useSetAtom } from "jotai";
 import {
   InternalTypedDocument,
@@ -9,8 +7,9 @@ import {
   type SearchParams,
 } from "@orama/orama";
 import { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
-import { oramaDb } from "@/lib/search";
-import { useCallback, useEffect, useState } from "react";
+import { getOramaDb } from "@/lib/search";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { detectLanguage } from "@/lib/utils";
 
 const SEARCH_RESUTLS_PER_PAGE = 20;
 
@@ -31,20 +30,58 @@ const offsetAtom = atom(0);
  */
 export const useSearch = () => {
   const setOffset = useSetAtom(offsetAtom);
-  const setHits = useSetAtom(hitsAtom);
-  const setSearchResultsMetadata = useSetAtom(searchResultsMetadataAtom);
+
+  const [hits, setHits] = useAtom(hitsAtom);
+  const [searchResultsMetadata, setSearchResultsMetadata] = useAtom(
+    searchResultsMetadataAtom,
+  );
 
   const search = useCallback(
-    (params: SearchParams<typeof oramaDb> = {}) =>
+    (
+      params: Omit<
+        SearchParams<ReturnType<typeof getOramaDb>>,
+        "limit" | "mode"
+      > = {},
+      language: "arabic" | "english" = "english",
+    ) =>
       // Orama's search function is sync by default,
       // but it's typed as sync or async since some plugins
       // can make it async. We cast type to sync return type
       // so it's easier to work with.
-      oramaSearch(oramaDb, params) as Results<
-        InternalTypedDocument<SelectDictionaryEntry>
-      >,
+      oramaSearch(
+        getOramaDb(),
+        {
+          ...params,
+          mode: "fulltext",
+          limit: SEARCH_RESUTLS_PER_PAGE,
+          properties: params.term
+            ? ["word", "translation", "definition", "tags"]
+            : undefined,
+          boost: {
+            word: 2,
+            translation: 2,
+          },
+          tolerance: 1,
+        },
+        language,
+      ) as Results<InternalTypedDocument<SelectDictionaryEntry>>,
     [],
   );
+
+  const preloadResults = useCallback(() => {
+    if (!hits && !searchResultsMetadata) {
+      const { hits: newHits, ...metadata } = search({}, "english");
+
+      setHits(newHits);
+      setSearchResultsMetadata(metadata);
+    }
+  }, [search, setHits, setSearchResultsMetadata]);
+
+  const reset = useCallback(() => {
+    setHits(undefined);
+    setSearchResultsMetadata(undefined);
+    setOffset(0);
+  }, [setHits, setSearchResultsMetadata, setOffset]);
 
   return {
     /**
@@ -54,13 +91,23 @@ export const useSearch = () => {
     search,
 
     /**
+     * Ensures there is data in the cache by checking if it's empty,
+     * if so, then it makes a search request that populates the cache.
+     */
+    preloadResults,
+
+    results:
+      hits && searchResultsMetadata
+        ? ({
+            hits,
+            ...searchResultsMetadata,
+          } as Results<InternalTypedDocument<SelectDictionaryEntry>>)
+        : undefined,
+
+    /**
      * Clears the cached search results.
      */
-    reset: () => {
-      setSearchResultsMetadata(undefined);
-      setHits(undefined);
-      setOffset(0);
-    },
+    reset,
   };
 };
 
@@ -69,7 +116,10 @@ export const useSearch = () => {
  * functionality and exposes helper methods for interacting with the results.
  */
 export const useInfiniteScroll = (
-  params: Omit<SearchParams<typeof oramaDb>, "limit" | "offset" | "mode"> = {},
+  params: Omit<
+    SearchParams<ReturnType<typeof getOramaDb>>,
+    "limit" | "offset" | "mode"
+  > = {},
 ) => {
   const { search } = useSearch();
 
@@ -84,6 +134,20 @@ export const useInfiniteScroll = (
   // For checking if the search params have changed
   const paramsKey = JSON.stringify(params);
 
+  const searchQueryLanguage = useMemo<Parameters<typeof search>[1]>(() => {
+    const detectedLanuage = detectLanguage(params.term ?? "");
+
+    switch (detectedLanuage) {
+      case "ar":
+        return "arabic";
+
+      case "unknown":
+      case "en":
+      default:
+        return "english";
+    }
+  }, [params.term]);
+
   // Triggers when show more is called,
   // appending to the existing hits
   useEffect(() => {
@@ -91,12 +155,13 @@ export const useInfiniteScroll = (
     // was already handled in the other useEffect
     if (offset === 0) return;
 
-    const { hits } = search({
-      ...params,
-      mode: "fulltext",
-      limit: SEARCH_RESUTLS_PER_PAGE,
-      offset,
-    });
+    const { hits } = search(
+      {
+        ...params,
+        offset,
+      },
+      searchQueryLanguage,
+    );
 
     setHits((previousHits) =>
       previousHits ? [...previousHits, ...hits] : hits,
@@ -106,12 +171,13 @@ export const useInfiniteScroll = (
   // Triggers when search params change,
   // resetting the pagination
   useEffect(() => {
-    const { hits, ...metadata } = search({
-      ...params,
-      mode: "fulltext",
-      limit: SEARCH_RESUTLS_PER_PAGE,
-      offset: 0,
-    });
+    const { hits, ...metadata } = search(
+      {
+        ...params,
+        offset: 0,
+      },
+      searchQueryLanguage,
+    );
 
     setOffset(0);
     setHits(hits);

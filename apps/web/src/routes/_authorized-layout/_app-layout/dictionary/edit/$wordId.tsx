@@ -1,9 +1,9 @@
-import { Trans } from '@lingui/react/macro'
-import { Page } from '@/components/Page'
-import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { queryClient } from '@/lib/query'
-import { trpc, trpcClient } from '@/lib/trpc'
-import { getQueryKey } from '@trpc/react-query'
+import { Trans } from "@lingui/react/macro";
+import { Page } from "@/components/Page";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { queryClient } from "@/lib/query";
+import { trpc, trpcClient } from "@/lib/trpc";
+import { getQueryKey } from "@trpc/react-query";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,27 +11,27 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { z } from '@/lib/zod'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Form } from '@/components/ui/form'
-import { cn } from '@bahar/design-system'
+} from "@/components/ui/breadcrumb";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { z } from "@/lib/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form } from "@/components/ui/form";
+import { cn } from "@bahar/design-system";
 import {
   AdditionalDetailsFormSection,
   BasicDetailsFormSection,
   MorphologyFormSection,
   CategoryFormSection,
-} from '@/components/features/dictionary/add'
-import { useToast } from '@/hooks/useToast'
-import { useLingui } from '@lingui/react/macro'
-import { useInstantSearch } from 'react-instantsearch'
-import { FC } from 'react'
-import { useDir } from '@/hooks/useDir'
-import { TagsFormSection } from '@/components/features/dictionary/add/TagsFormSection'
-import { FormSchema } from '@bahar/schemas'
+} from "@/components/features/dictionary/add";
+import { useToast } from "@/hooks/useToast";
+import { useLingui } from "@lingui/react/macro";
+import { useSearch } from "@/hooks/useSearch";
+import { FC } from "react";
+import { useDir } from "@/hooks/useDir";
+import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
+import { FormSchema } from "@bahar/schemas";
 import {
   Dialog,
   DialogClose,
@@ -41,18 +41,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 
 const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
   const { mutateAsync: resetFlashcard } = trpc.flashcard.reset.useMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: getQueryKey(trpc.flashcard.today, undefined, 'query'),
-      })
+        queryKey: getQueryKey(trpc.flashcard.today, undefined, "query"),
+      });
     },
-  })
-  const { toast } = useToast()
-  const { t } = useLingui()
+  });
+  const { toast } = useToast();
+  const { t } = useLingui();
 
   return (
     <Dialog>
@@ -87,11 +87,11 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
               type="button"
               className="w-max md:self-start self-center"
               onClick={async () => {
-                await resetFlashcard({ id })
+                await resetFlashcard({ id });
 
                 toast({
                   title: t`Successfully reset the flashcard.`,
-                })
+                });
               }}
             >
               <Trans>Reset flashcard</Trans>
@@ -100,13 +100,13 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
 const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
-  const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation()
-  const navigate = useNavigate()
-  const { refresh } = useInstantSearch()
+  const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
+  const navigate = useNavigate();
+  const { reset } = useSearch();
 
   return (
     <Dialog>
@@ -139,11 +139,11 @@ const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
             type="button"
             className="w-max md:self-start self-center"
             onClick={async () => {
-              await deleteWord({ id })
+              await deleteWord({ id });
 
-              refresh()
+              reset();
 
-              navigate({ to: '/' })
+              navigate({ to: "/" });
             }}
           >
             <Trans>Delete</Trans>
@@ -151,15 +151,15 @@ const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
 const Breadcrumbs: FC<{ className?: string; word: string }> = ({
   className,
   word,
 }) => {
   return (
-    <Breadcrumb className={cn('mb-8', className)}>
+    <Breadcrumb className={cn("mb-8", className)}>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>
@@ -178,11 +178,11 @@ const Breadcrumbs: FC<{ className?: string; word: string }> = ({
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
-  )
-}
+  );
+};
 
 const BackButton = () => {
-  const dir = useDir()
+  const dir = useDir();
 
   return (
     <Button
@@ -193,7 +193,7 @@ const BackButton = () => {
       asChild
     >
       <Link to="/">
-        {dir === 'rtl' ? (
+        {dir === "rtl" ? (
           <ChevronRight className="h-4 w-4" />
         ) : (
           <ChevronLeft className="h-4 w-4" />
@@ -203,8 +203,8 @@ const BackButton = () => {
         </span>
       </Link>
     </Button>
-  )
-}
+  );
+};
 
 const Edit = () => {
   const { mutateAsync: editWord } = trpc.dictionary.editWord.useMutation({
@@ -215,70 +215,70 @@ const Edit = () => {
           {
             id: wordId,
           },
-          'query',
+          "query",
         ),
-      })
+      });
     },
-  })
+  });
 
-  const { wordId } = Route.useParams()
-  const { data } = trpc.dictionary.find.useQuery({ id: wordId })
-  const { toast } = useToast()
-  const { refresh } = useInstantSearch()
-  const { t } = useLingui()
+  const { wordId } = Route.useParams();
+  const { data } = trpc.dictionary.find.useQuery({ id: wordId });
+  const { toast } = useToast();
+  const { reset } = useSearch();
+  const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      word: data?.word ?? '',
-      translation: data?.translation ?? '',
+      word: data?.word ?? "",
+      translation: data?.translation ?? "",
       tags: data?.tags?.map((tag) => ({ name: tag })) ?? [],
-      root: data?.root ? data.root.join(' ') : '',
-      type: data?.type ?? 'ism',
+      root: data?.root ? data.root.join(" ") : "",
+      type: data?.type ?? "ism",
       examples: data?.examples ?? [],
-      definition: data?.definition ?? '',
+      definition: data?.definition ?? "",
       antonyms: data?.antonyms ?? [],
       morphology: data?.morphology ?? {
         ism: {
-          singular: '',
-          dual: '',
-          gender: 'masculine',
+          singular: "",
+          dual: "",
+          gender: "masculine",
           plurals: [],
-          inflection: 'triptote',
+          inflection: "triptote",
         },
         verb: {
           huroof: [],
-          past_tense: '',
-          present_tense: '',
-          active_participle: '',
-          passive_participle: '',
-          imperative: '',
+          past_tense: "",
+          present_tense: "",
+          active_participle: "",
+          passive_participle: "",
+          imperative: "",
           masadir: [],
-          form: '',
-          form_arabic: '',
+          form: "",
+          form_arabic: "",
         },
       },
     },
-  })
+  });
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     try {
       const root = data?.root
         ?.trim()
-        ?.replace(/[\s,]+/g, '')
-        ?.split('')
+        ?.replace(/[\s,]+/g, "")
+        ?.split("");
 
-      const tags = data?.tags?.map((tag) => tag.name) ?? []
+      const tags = data?.tags?.map((tag) => tag.name) ?? [];
 
-      const id = wordId
+      const id = wordId;
 
-      if (data.type === 'ism') {
+      if (data.type === "ism") {
         await editWord({
           ...data,
           id,
           root,
           tags,
           morphology: { ism: data?.morphology?.ism },
-        })
+        });
       } else if (data.type === "fi'l") {
         await editWord({
           ...data,
@@ -286,7 +286,7 @@ const Edit = () => {
           root,
           tags,
           morphology: { verb: data?.morphology?.verb },
-        })
+        });
       } else {
         await editWord({
           ...data,
@@ -294,29 +294,29 @@ const Edit = () => {
           root,
           tags,
           morphology: undefined,
-        })
+        });
       }
 
       toast({
         title: t`Successfully updated the word!`,
         description: t`The word has been updated.`,
-      })
+      });
 
-      refresh()
+      reset();
     } catch (err) {
       if (err instanceof Error) {
-        console.error(err.message)
+        console.error(err.message);
       }
 
       toast({
         title: t`Failed to update the word!`,
         description: t`There was an error updating your word. Please try again.`,
-        variant: 'destructive',
-      })
+        variant: "destructive",
+      });
     }
-  }
+  };
 
-  const content = data?.word!
+  const content = data!.word;
 
   return (
     <Page>
@@ -333,7 +333,7 @@ const Edit = () => {
               </h1>
 
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <DeleteWordButton id={data?.id!} />
+                <DeleteWordButton id={data!.id} />
 
                 <Button size="sm" type="submit">
                   <Trans>Save</Trans>
@@ -354,15 +354,15 @@ const Edit = () => {
                 <TagsFormSection />
 
                 <div className="hidden sm:block">
-                  <ResetFlashcardButton id={data?.id!} />
+                  <ResetFlashcardButton id={data!.id} />
                 </div>
               </div>
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <ResetFlashcardButton id={data?.id!} />
+              <ResetFlashcardButton id={data!.id} />
 
-              <DeleteWordButton id={data?.id!} />
+              <DeleteWordButton id={data!.id} />
 
               <Button size="sm">
                 <Trans>Save</Trans>
@@ -372,15 +372,15 @@ const Edit = () => {
         </form>
       </Form>
     </Page>
-  )
-}
+  );
+};
 
 export const Route = createFileRoute(
-  '/_authorized-layout/_app-layout/dictionary/edit/$wordId',
+  "/_authorized-layout/_app-layout/dictionary/edit/$wordId",
 )({
   component: Edit,
   beforeLoad: async ({ params }) => {
-    const wordId = params.wordId
+    const wordId = params.wordId;
 
     // TODO: using ensureQueryData results in data being undefined
     // when accessed for the first time
@@ -391,10 +391,10 @@ export const Route = createFileRoute(
           {
             id: wordId,
           },
-          'query',
+          "query",
         ),
       ],
       queryFn: () => trpcClient.dictionary.find.query({ id: wordId }),
-    })
+    });
   },
-})
+});

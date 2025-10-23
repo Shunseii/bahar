@@ -25,7 +25,7 @@ import {
 import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
 import { useLingui } from "@lingui/react/macro";
-import { useInstantSearch } from "react-instantsearch";
+import { useSearch } from "@/hooks/useSearch";
 import { useEffect } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
@@ -83,7 +83,7 @@ const BackButton = () => {
 const Add = () => {
   const { mutateAsync: addWord } = trpc.dictionary.addWord.useMutation();
   const { toast } = useToast();
-  const { refresh } = useInstantSearch();
+  const { reset } = useSearch();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -156,7 +156,7 @@ const Add = () => {
         description: t`The word has been added to your dictionary.`,
       });
 
-      refresh();
+      reset();
     } catch (err) {
       if (err instanceof Error) {
         console.error(err.message);

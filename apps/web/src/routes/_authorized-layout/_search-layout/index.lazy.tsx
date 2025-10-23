@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { InfiniteScroll } from "@/components/meili/InfiniteScroll";
+import { InfiniteScroll } from "@/components/search/InfiniteScroll";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, PlusIcon } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
@@ -15,13 +15,13 @@ import { cn } from "@bahar/design-system";
 import { Page } from "@/components/Page";
 import { trpc } from "@/lib/trpc";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
-import { useInstantSearch } from "react-instantsearch";
 import { settingsTable } from "@/lib/db/operations";
 import { useQuery } from "@tanstack/react-query";
+import { useSearch } from "@/hooks/useSearch";
 
 const Index = () => {
   const [{ y }, scrollTo] = useWindowScroll();
-  const { results } = useInstantSearch();
+  const { results } = useSearch();
   const { height } = useWindowSize();
   const { data: flashcardSettings } = useQuery({
     queryFn: settingsTable.getSettings.query,
@@ -38,8 +38,8 @@ const Index = () => {
   const hasLoadedHeight = height !== null && height > 0 && y !== null;
   const hasScrolledPastInitialView = hasLoadedHeight ? y > height : false;
 
-  const processingTimeMs = results?.processingTimeMS;
-  const totalHits = results?.nbHits;
+  const processingTimeLabel = results?.elapsed?.formatted;
+  const totalHits = results?.count;
 
   return (
     <Page>
@@ -76,14 +76,14 @@ const Index = () => {
         </div>
 
         <div>
-          {processingTimeMs !== undefined && totalHits ? (
+          {processingTimeLabel !== undefined && totalHits ? (
             <p className="text-center text-sm text-muted-foreground">
               <Plural
                 value={totalHits}
                 one="# result found in"
                 other="# results found in"
               />{" "}
-              <Plural value={processingTimeMs} _0="<1 ms" other="# ms" />
+              {processingTimeLabel}
             </p>
           ) : undefined}
         </div>

@@ -1,30 +1,24 @@
 import { Search } from "lucide-react";
 import { Input } from "../ui/input";
 import { useLingui } from "@lingui/react/macro";
-import { UseSearchBoxProps, useSearchBox } from "react-instantsearch";
 import { FC, useRef, useState } from "react";
 import { cn } from "@bahar/design-system";
-import { useSetAtom } from "jotai";
+import { useAtom } from "jotai";
 import { searchQueryAtom } from "./state";
 
-interface SearchInputProps extends UseSearchBoxProps {
+interface SearchInputProps {
   className?: string;
 }
 
-export const SearchInput: FC<SearchInputProps> = ({
-  className = "",
-  ...props
-}) => {
-  const setSearchQuery = useSetAtom(searchQueryAtom);
+export const SearchInput: FC<SearchInputProps> = ({ className = "" }) => {
+  const [searchQuery, setSearchQuery] = useAtom(searchQueryAtom);
   const { t } = useLingui();
-  const { query, refine } = useSearchBox(props);
-  const [inputValue, setInputValue] = useState(query);
+  const [inputValue, setInputValue] = useState(searchQuery);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const setQuery = (newQuery: string) => {
     setInputValue(newQuery);
     setSearchQuery(newQuery);
-    refine(newQuery);
   };
 
   return (

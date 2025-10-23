@@ -1,31 +1,21 @@
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
-import { SearchInput } from "@/components/meili/SearchInput";
+import { SearchInput } from "@/components/search/SearchInput";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/lib/query";
-import { searchClient } from "@/lib/search";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import { InstantSearch } from "react-instantsearch";
 import * as Sentry from "@sentry/react";
 import { settingsTable } from "@/lib/db/operations";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();
-  const userIndexId = data?.user?.id ?? "";
 
-  if (!userIndexId) return null;
+  if (!data?.user) return null;
 
-  Sentry.setUser({ id: data?.user.id, email: data?.user.email });
+  Sentry.setUser({ id: data.user.id, email: data.user.email });
 
   return (
-    <InstantSearch
-      indexName={userIndexId}
-      searchClient={searchClient}
-      future={{
-        // To stop the warning in the logs
-        preserveSharedStateOnUnmount: true,
-      }}
-    >
+    <>
       {/* Desktop side navigation menu */}
       <DesktopNavigation />
 
@@ -41,7 +31,7 @@ const AppLayout = () => {
           </main>
         </div>
       </div>
-    </InstantSearch>
+    </>
   );
 };
 
