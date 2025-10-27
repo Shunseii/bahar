@@ -1,23 +1,23 @@
-import { Trans } from '@lingui/react/macro'
-import { DeckDialogContent } from '@/components/features/decks/DeckDialogContent'
-import { trpc, trpcNew } from '@/lib/trpc'
-import { Button } from '@/components/ui/button'
-import { useLingui } from '@lingui/react/macro'
+import { Trans } from "@lingui/react/macro";
+import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent";
+import { trpc } from "@/lib/trpc";
+import { Button } from "@/components/ui/button";
+import { useLingui } from "@lingui/react/macro";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
-} from '@/components/ui/card'
-import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+} from "@/components/ui/card";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableHeader,
@@ -25,36 +25,49 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from '@/components/ui/table'
-import { createLazyFileRoute } from '@tanstack/react-router'
-import { MoreHorizontal, Plus } from 'lucide-react'
-import {
-  FlashcardDrawer,
-  FLASHCARD_LIMIT,
-} from '@/components/features/flashcards/FlashcardDrawer'
-import { queryClient } from '@/lib/query'
-import { getQueryKey } from '@trpc/react-query'
-import { useToast } from '@/hooks/useToast'
-import { Page } from '@/components/Page'
-import { useQuery } from '@tanstack/react-query'
+} from "@/components/ui/table";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { MoreHorizontal, Plus } from "lucide-react";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
+import { queryClient } from "@/lib/query";
+import { getQueryKey } from "@trpc/react-query";
+import { useToast } from "@/hooks/useToast";
+import { Page } from "@/components/Page";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { settingsTable, decksTable } from "@/lib/db/operations";
 
 const Decks = () => {
-  const { data: settingsData } = trpc.settings.get.useQuery()
-  const { data } = useQuery(
-    trpcNew.decks.list.queryOptions({
-      show_reverse: settingsData?.show_reverse_flashcards ?? false,
-    }),
-  )
+  const { data: settingsData } = useQuery({
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
+  });
+
+  const { data } = useQuery({
+    queryFn: ({ queryKey: [, showReverse] }) =>
+      decksTable.list.query({
+        show_reverse: (showReverse as boolean | null) ?? undefined,
+      }),
+    ...decksTable.list.cacheOptions,
+    queryKey: [
+      ...decksTable.list.cacheOptions.queryKey,
+      settingsData?.show_reverse_flashcards,
+    ],
+  });
 
   const { mutateAsync: deleteDeck } = trpc.decks.delete.useMutation({
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [...getQueryKey(trpc.decks.list), { type: 'query' }],
-      })
+        queryKey: [...getQueryKey(trpc.decks.list), { type: "query" }],
+      });
     },
-  })
-  const { toast } = useToast()
-  const { t } = useLingui()
+  });
+
+  const { mutateAsync: deleteDeckLocal } = useMutation({
+    mutationFn: decksTable.delete.mutation,
+  });
+
+  const { toast } = useToast();
+  const { t } = useLingui();
 
   return (
     <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
@@ -124,9 +137,7 @@ const Decks = () => {
                     <TableCell className="font-medium">{deck.name}</TableCell>
 
                     <TableCell className="font-medium">
-                      {deck.total_hits > FLASHCARD_LIMIT
-                        ? `~${deck.total_hits}`
-                        : deck.to_review}
+                      {deck.to_review}
                     </TableCell>
 
                     <TableCell className="flex justify-between">
@@ -167,12 +178,15 @@ const Decks = () => {
 
                             <DropdownMenuItem
                               onClick={async () => {
-                                await deleteDeck({ id: deck.id })
+                                await Promise.all([
+                                  deleteDeck({ id: deck.id }),
+                                  deleteDeckLocal({ id: deck.id }),
+                                ]);
 
                                 toast({
                                   title: t`Deck successfully deleted!`,
                                   description: t`The deck "${deck.name}" has been deleted.`,
-                                })
+                                });
                               }}
                               className="cursor-pointer"
                             >
@@ -192,11 +206,11 @@ const Decks = () => {
         </CardContent>
       </Card>
     </Page>
-  )
-}
+  );
+};
 
 export const Route = createLazyFileRoute(
-  '/_authorized-layout/_app-layout/decks',
+  "/_authorized-layout/_app-layout/decks",
 )({
   component: Decks,
-})
+});

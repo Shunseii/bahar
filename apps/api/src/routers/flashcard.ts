@@ -7,7 +7,6 @@ import { FlashcardSchema } from "../schemas/flashcard.schema";
 import { SelectDecksSchema } from "../db/schema/decks";
 import { MultiSearchQueryWithFederation } from "meilisearch";
 import { JSON_SCHEMA_FIELDS } from "./dictionary";
-import { getUserDbClient } from "../clients/turso";
 
 export const FLASHCARD_LIMIT = 100;
 
@@ -129,66 +128,6 @@ export const flashcardRouter = router({
 
       await meilisearchClient.index(user.id).waitForTask(taskUid);
 
-      try {
-        const userDbClient = await getUserDbClient(user.id);
-
-        if (userDbClient) {
-          const now = new Date();
-          const emptyCard = createEmptyCard(now);
-          const dueDate = new Date(emptyCard.due);
-          const dueTimestampMs = dueDate.getTime();
-
-          await userDbClient.execute({
-            sql: `UPDATE flashcards SET
-              difficulty = ?,
-              due = ?,
-              due_timestamp_ms = ?,
-              elapsed_days = ?,
-              lapses = ?,
-              last_review = ?,
-              last_review_timestamp_ms = ?,
-              reps = ?,
-              scheduled_days = ?,
-              stability = ?,
-              state = ?
-            WHERE dictionary_entry_id = ?`,
-            args: [
-              emptyCard.difficulty,
-              emptyCard.due.toISOString(),
-              dueTimestampMs,
-              emptyCard.elapsed_days,
-              emptyCard.lapses,
-              null,
-              null,
-              emptyCard.reps,
-              emptyCard.scheduled_days,
-              emptyCard.stability,
-              emptyCard.state,
-              id,
-            ],
-          });
-
-          ctx.logger.info(
-            {
-              userId: user.id,
-              category: "database",
-              event: "flashcard.reset.dual_write.success",
-            },
-            "Successfully reset flashcards in user DB",
-          );
-        }
-      } catch (err) {
-        ctx.logger.error(
-          {
-            err,
-            userId: user.id,
-            category: "database",
-            event: "flashcard.reset.dual_write.error",
-          },
-          "Failed to reset flashcards in user DB",
-        );
-      }
-
       return {
         id,
       };
@@ -224,69 +163,6 @@ export const flashcardRouter = router({
         ]);
 
       await meilisearchClient.index(user.id).waitForTask(taskUid);
-
-      try {
-        const userDbClient = await getUserDbClient(user.id);
-
-        if (userDbClient) {
-          const direction = reverse ? "reverse" : "forward";
-          const dueDate = new Date(flashcard.due);
-          const dueTimestampMs = dueDate.getTime();
-          const lastReviewTimestampMs = flashcard.last_review
-            ? new Date(flashcard.last_review).getTime()
-            : null;
-
-          await userDbClient.execute({
-            sql: `UPDATE flashcards SET
-              difficulty = ?,
-              due = ?,
-              due_timestamp_ms = ?,
-              elapsed_days = ?,
-              lapses = ?,
-              last_review = ?,
-              last_review_timestamp_ms = ?,
-              reps = ?,
-              scheduled_days = ?,
-              stability = ?,
-              state = ?
-            WHERE dictionary_entry_id = ? AND direction = ?`,
-            args: [
-              flashcard.difficulty,
-              flashcard.due,
-              dueTimestampMs,
-              flashcard.elapsed_days,
-              flashcard.lapses,
-              flashcard.last_review ?? null,
-              lastReviewTimestampMs,
-              flashcard.reps,
-              flashcard.scheduled_days,
-              flashcard.stability,
-              flashcard.state,
-              id,
-              direction,
-            ],
-          });
-
-          ctx.logger.info(
-            {
-              userId: user.id,
-              category: "database",
-              event: "flashcard.update.dual_write.success",
-            },
-            "Successfully updated flashcard in user DB",
-          );
-        }
-      } catch (err) {
-        ctx.logger.error(
-          {
-            err,
-            userId: user.id,
-            category: "database",
-            event: "flashcard.update.dual_write.error",
-          },
-          "Failed to update flashcard in user DB",
-        );
-      }
 
       return {
         id,

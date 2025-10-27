@@ -16,13 +16,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/useToast";
-import { trpc } from "@/lib/trpc";
+import { trpcNew } from "@/lib/trpc";
 import { z } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLingui } from "@lingui/react/macro";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
+import { useMutation } from "@tanstack/react-query";
 
 const FormSchema = z.object({
   sqlScript: z.string(),
@@ -31,8 +32,9 @@ const FormSchema = z.object({
 
 export const AdminSettingsCardSection = () => {
   const { t } = useLingui();
-  const { mutate, error, isError } =
-    trpc.migrations.registerSchema.useMutation();
+  const { mutate, error, isError } = useMutation(
+    trpcNew.migrations.registerSchema.mutationOptions(),
+  );
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),

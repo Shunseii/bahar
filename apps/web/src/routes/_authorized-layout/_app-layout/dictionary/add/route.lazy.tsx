@@ -25,11 +25,11 @@ import {
 import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
 import { useLingui } from "@lingui/react/macro";
-import { useSearch } from "@/hooks/useSearch";
 import { useEffect } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { FormSchema } from "@bahar/schemas";
+import { useAddDictionaryEntry } from "@/hooks/db";
 
 const Breadcrumbs = ({ className }: { className?: string }) => {
   return (
@@ -82,8 +82,9 @@ const BackButton = () => {
 
 const Add = () => {
   const { mutateAsync: addWord } = trpc.dictionary.addWord.useMutation();
+  const { addDictionaryEntry } = useAddDictionaryEntry();
+
   const { toast } = useToast();
-  const { reset } = useSearch();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -128,35 +129,41 @@ const Add = () => {
 
       const tags = data?.tags?.map((tag) => tag.name) ?? [];
 
-      if (data.type === "ism") {
-        await addWord({
-          ...data,
-          root,
-          tags,
-          morphology: { ism: data?.morphology?.ism },
-        });
-      } else if (data.type === "fi'l") {
-        await addWord({
-          ...data,
-          root,
-          tags,
-          morphology: { verb: data?.morphology?.verb },
-        });
-      } else {
-        await addWord({
-          ...data,
-          root,
-          tags,
-          morphology: undefined,
-        });
-      }
+      const wordData = (() => {
+        if (data.type === "ism") {
+          return {
+            ...data,
+            root,
+            tags,
+            morphology: { ism: data?.morphology?.ism },
+          };
+        } else if (data.type === "fi'l") {
+          return {
+            ...data,
+            root,
+            tags,
+            morphology: { verb: data?.morphology?.verb },
+          };
+        } else {
+          return {
+            ...data,
+            root,
+            tags,
+            morphology: undefined,
+          };
+        }
+      })();
+
+      await Promise.all([
+        addWord(wordData),
+        // TODO: type shouldnt be optional
+        addDictionaryEntry({ word: { ...wordData, type: data.type ?? "ism" } }),
+      ]);
 
       toast({
         title: t`Successfully added word!`,
         description: t`The word has been added to your dictionary.`,
       });
-
-      reset();
     } catch (err) {
       if (err instanceof Error) {
         console.error(err.message);

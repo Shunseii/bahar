@@ -85,6 +85,10 @@ export const hydrateOramaDb = async () => {
       morphology: entry.morphology ? JSON.parse(entry.morphology) : undefined,
     }));
 
+    if (dictionaryEntries.some((e) => e.translation === "so and so")) {
+      console.log(dictionaryEntries);
+    }
+
     await insertMultiple(oramaDb, dictionaryEntries, BATCH_SIZE);
 
     offset += BATCH_SIZE;

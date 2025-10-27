@@ -2,7 +2,7 @@ import { Trans } from "@lingui/react/macro";
 import { Page } from "@/components/Page";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { queryClient } from "@/lib/query";
-import { trpc, trpcClient } from "@/lib/trpc";
+import { trpc } from "@/lib/trpc";
 import { getQueryKey } from "@trpc/react-query";
 import {
   Breadcrumb,
@@ -27,8 +27,7 @@ import {
 } from "@/components/features/dictionary/add";
 import { useToast } from "@/hooks/useToast";
 import { useLingui } from "@lingui/react/macro";
-import { useSearch } from "@/hooks/useSearch";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { FormSchema } from "@bahar/schemas";
@@ -42,6 +41,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
+import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
 
 const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
   const { mutateAsync: resetFlashcard } = trpc.flashcard.reset.useMutation({
@@ -51,6 +53,26 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
       });
     },
   });
+
+  const { mutateAsync: resetFlashcardLocal } = useMutation({
+    mutationFn: async ({
+      dictionary_entry_id,
+    }: {
+      dictionary_entry_id: string;
+    }) => {
+      await Promise.all([
+        flashcardsTable.reset.mutation({
+          dictionary_entry_id,
+          direction: "forward",
+        }),
+        flashcardsTable.reset.mutation({
+          dictionary_entry_id,
+          direction: "reverse",
+        }),
+      ]);
+    },
+  });
+
   const { toast } = useToast();
   const { t } = useLingui();
 
@@ -87,7 +109,10 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
               type="button"
               className="w-max md:self-start self-center"
               onClick={async () => {
-                await resetFlashcard({ id });
+                await Promise.all([
+                  resetFlashcard({ id }),
+                  resetFlashcardLocal({ dictionary_entry_id: id }),
+                ]);
 
                 toast({
                   title: t`Successfully reset the flashcard.`,
@@ -105,8 +130,9 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
 
 const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
   const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
+  const { deleteDictionaryEntry } = useDeleteDictionaryEntry();
+
   const navigate = useNavigate();
-  const { reset } = useSearch();
 
   return (
     <Dialog>
@@ -139,9 +165,10 @@ const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
             type="button"
             className="w-max md:self-start self-center"
             onClick={async () => {
-              await deleteWord({ id });
-
-              reset();
+              await Promise.all([
+                deleteWord({ id }),
+                deleteDictionaryEntry({ id }),
+              ]);
 
               navigate({ to: "/" });
             }}
@@ -206,7 +233,53 @@ const BackButton = () => {
   );
 };
 
+const getDefaultFormValues = (
+  data?: Awaited<ReturnType<typeof dictionaryEntriesTable.entry.query>>,
+): z.infer<typeof FormSchema> => {
+  const defaultMorphology = {
+    ism: {
+      singular: "",
+      dual: "",
+      gender: "masculine" as const,
+      plurals: [],
+      inflection: "triptote" as const,
+    },
+    verb: {
+      huroof: [],
+      past_tense: "",
+      present_tense: "",
+      active_participle: "",
+      passive_participle: "",
+      imperative: "",
+      masadir: [],
+      form: "",
+      form_arabic: "",
+    },
+  };
+
+  return {
+    word: data?.word ?? "",
+    translation: data?.translation ?? "",
+    tags: data?.tags?.map((tag) => ({ name: tag })) ?? [],
+    root: data?.root ? data.root.join(" ") : "",
+    type: data?.type ?? "ism",
+    examples: data?.examples ?? [],
+    definition: data?.definition ?? "",
+    antonyms:
+      data?.antonyms?.map((antonym) => ({ word: antonym.word ?? "" })) ?? [],
+    morphology: data?.morphology ?? defaultMorphology,
+  };
+};
+
 const Edit = () => {
+  const { editDictionaryEntry } = useEditDictionaryEntry();
+  const { wordId } = Route.useParams();
+
+  const { data } = useQuery({
+    queryFn: () => dictionaryEntriesTable.entry.query(wordId),
+    ...dictionaryEntriesTable.entry.cacheOptions,
+  });
+
   const { mutateAsync: editWord } = trpc.dictionary.editWord.useMutation({
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -220,45 +293,18 @@ const Edit = () => {
       });
     },
   });
-
-  const { wordId } = Route.useParams();
-  const { data } = trpc.dictionary.find.useQuery({ id: wordId });
   const { toast } = useToast();
-  const { reset } = useSearch();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      word: data?.word ?? "",
-      translation: data?.translation ?? "",
-      tags: data?.tags?.map((tag) => ({ name: tag })) ?? [],
-      root: data?.root ? data.root.join(" ") : "",
-      type: data?.type ?? "ism",
-      examples: data?.examples ?? [],
-      definition: data?.definition ?? "",
-      antonyms: data?.antonyms ?? [],
-      morphology: data?.morphology ?? {
-        ism: {
-          singular: "",
-          dual: "",
-          gender: "masculine",
-          plurals: [],
-          inflection: "triptote",
-        },
-        verb: {
-          huroof: [],
-          past_tense: "",
-          present_tense: "",
-          active_participle: "",
-          passive_participle: "",
-          imperative: "",
-          masadir: [],
-          form: "",
-          form_arabic: "",
-        },
-      },
-    },
+    defaultValues: getDefaultFormValues(data),
   });
+
+  // Scroll position is restored when navigating from
+  // the home page after scrolling down
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     try {
@@ -271,38 +317,43 @@ const Edit = () => {
 
       const id = wordId;
 
-      if (data.type === "ism") {
-        await editWord({
-          ...data,
-          id,
-          root,
-          tags,
-          morphology: { ism: data?.morphology?.ism },
-        });
-      } else if (data.type === "fi'l") {
-        await editWord({
-          ...data,
-          id,
-          root,
-          tags,
-          morphology: { verb: data?.morphology?.verb },
-        });
-      } else {
-        await editWord({
-          ...data,
-          id,
-          root,
-          tags,
-          morphology: undefined,
-        });
-      }
+      const input = (() => {
+        if (data.type === "ism") {
+          return {
+            ...data,
+            id,
+            root,
+            tags,
+            morphology: { ism: data?.morphology?.ism },
+          };
+        } else if (data.type === "fi'l") {
+          return {
+            ...data,
+            id,
+            root,
+            tags,
+            morphology: { verb: data?.morphology?.verb },
+          };
+        } else {
+          return {
+            ...data,
+            id,
+            root,
+            tags,
+            morphology: undefined,
+          };
+        }
+      })();
+
+      await Promise.all([
+        editWord(input),
+        editDictionaryEntry({ id: input.id, updates: input }),
+      ]);
 
       toast({
         title: t`Successfully updated the word!`,
         description: t`The word has been updated.`,
       });
-
-      reset();
     } catch (err) {
       if (err instanceof Error) {
         console.error(err.message);
@@ -382,19 +433,9 @@ export const Route = createFileRoute(
   beforeLoad: async ({ params }) => {
     const wordId = params.wordId;
 
-    // TODO: using ensureQueryData results in data being undefined
-    // when accessed for the first time
     await queryClient.fetchQuery({
-      queryKey: [
-        ...getQueryKey(
-          trpc.dictionary.find,
-          {
-            id: wordId,
-          },
-          "query",
-        ),
-      ],
-      queryFn: () => trpcClient.dictionary.find.query({ id: wordId }),
+      queryKey: dictionaryEntriesTable.entry.cacheOptions.queryKey,
+      queryFn: () => dictionaryEntriesTable.entry.query(wordId),
     });
   },
 });

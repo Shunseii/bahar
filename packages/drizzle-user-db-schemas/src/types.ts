@@ -56,14 +56,12 @@ export const FLASHCARD_DIRECTIONS = ["forward", "reverse"] as const;
 
 export type FlashcardDirection = (typeof FLASHCARD_DIRECTIONS)[number];
 
-/**
- * Flashcard states:
- * 0: New
- * 1: Learning
- * 2: Review
- * 3: Relearning
- */
-export type FlashcardState = 0 | 1 | 2 | 3;
+export enum FlashcardState {
+  NEW = 0,
+  LEARNING = 1,
+  REVIEW = 2,
+  RE_LEARNING = 3,
+}
 
 // Deck types
 export type DeckFilters = {

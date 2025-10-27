@@ -1,5 +1,61 @@
 import { TLocale } from "./i18n";
 
+/**
+ * Converts all `null` union types to `undefined` in an object type
+ * @example
+ * type User = { name: string | null; age: number | null }
+ * type UserUndefined = NullToUndefined<User>
+ * // Result: { name: string | undefined; age: number | undefined }
+ */
+export type NullToUndefined<T> = {
+  [K in keyof T]: null extends T[K] ? Exclude<T[K], null> | undefined : T[K];
+};
+
+/**
+ * Converts all null values in an object to undefined (recursively)
+ * @param obj - The object to transform
+ * @returns A new object with all null values converted to undefined
+ * @example
+ * const user = { name: "John", age: null }
+ * const result = nullToUndefined(user) // { name: "John", age: undefined }
+ */
+export const nullToUndefined = <T>(obj: T): NullToUndefined<T> => {
+  if (obj === null || obj === undefined) {
+    return obj as NullToUndefined<T>;
+  }
+
+  if (typeof obj !== "object") {
+    return obj as NullToUndefined<T>;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((item) =>
+      typeof item === "object" && item !== null
+        ? nullToUndefined(item)
+        : item === null
+          ? undefined
+          : item,
+    ) as NullToUndefined<T>;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: any = {};
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const value = (obj as any)[key];
+      if (value === null) {
+        result[key] = undefined;
+      } else if (typeof value === "object") {
+        result[key] = nullToUndefined(value);
+      } else {
+        result[key] = value;
+      }
+    }
+  }
+  return result as NullToUndefined<T>;
+};
+
 export const REGEXP_ONLY_EN_AR_DIGITS = "^[0-9٠-٩]+$";
 
 export const convertArabicNumToEnglish = (arabicNumber: string) => {

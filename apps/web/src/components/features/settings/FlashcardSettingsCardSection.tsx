@@ -28,6 +28,8 @@ import { useLingui } from "@lingui/react/macro";
 import { getQueryKey } from "@trpc/react-query";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { settingsTable } from "@/lib/db/operations";
 
 const FormSchema = z.object({
   show_antonyms_in_flashcard: z.enum(["hidden", "answer", "hint"]).optional(),
@@ -36,7 +38,10 @@ const FormSchema = z.object({
 
 export const FlashcardSettingsCardSection = () => {
   const { t } = useLingui();
-  const { data } = trpc.settings.get.useQuery();
+  const { data } = useQuery({
+    queryFn: () => settingsTable.getSettings.query(),
+    ...settingsTable.getSettings.cacheOptions,
+  });
   const { mutate } = trpc.settings.update.useMutation({
     onSuccess: (serverData) => {
       queryClient.setQueryData(
@@ -45,6 +50,16 @@ export const FlashcardSettingsCardSection = () => {
       );
     },
   });
+
+  const { mutateAsync: updateSettingsLocal } = useMutation({
+    mutationFn: settingsTable.update.mutation,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: settingsTable.getSettings.cacheOptions.queryKey,
+      });
+    },
+  });
+
   const { toast } = useToast();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -58,20 +73,28 @@ export const FlashcardSettingsCardSection = () => {
     },
   });
 
-  const onSubmit = useCallback(async (data: z.infer<typeof FormSchema>) => {
-    try {
-      mutate(data);
+  const onSubmit = useCallback(
+    async (formData: z.infer<typeof FormSchema>) => {
+      try {
+        await Promise.all([
+          new Promise<void>((resolve) => {
+            mutate(formData, { onSuccess: () => resolve() });
+          }),
+          updateSettingsLocal({ updates: formData }),
+        ]);
 
-      toast({
-        title: t`Flashcard settings updated!`,
-      });
-    } catch (err) {
-      toast({
-        title: t`Failed to update flashcard settings.`,
-        description: t`There was an error updating your flashcard settings.`,
-      });
-    }
-  }, []);
+        toast({
+          title: t`Flashcard settings updated!`,
+        });
+      } catch (err) {
+        toast({
+          title: t`Failed to update flashcard settings.`,
+          description: t`There was an error updating your flashcard settings.`,
+        });
+      }
+    },
+    [mutate, updateSettingsLocal, t, toast],
+  );
 
   return (
     <Card>

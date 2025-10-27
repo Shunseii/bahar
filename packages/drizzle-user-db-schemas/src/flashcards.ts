@@ -4,6 +4,7 @@ import {
   integer,
   real,
   uniqueIndex,
+  index,
 } from "drizzle-orm/sqlite-core";
 import { dictionaryEntries } from "./dictionary";
 import { FLASHCARD_DIRECTIONS } from "./types";
@@ -48,8 +49,17 @@ export const flashcards = sqliteTable(
       table.dictionary_entry_id,
       table.direction,
     ),
+
+    dueTimestampMsIdx: index("flashcards_due_timestamp_ms_index").on(
+      table.due_timestamp_ms,
+    ),
   }),
 );
 
 export type SelectFlashcard = typeof flashcards.$inferSelect;
 export type InsertFlashcard = typeof flashcards.$inferInsert;
+
+export type RawFlashcard = Omit<SelectFlashcard, "direction" | "is_hidden"> & {
+  direction: string | null;
+  is_hidden: number | null;
+};

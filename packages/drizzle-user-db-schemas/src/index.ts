@@ -19,10 +19,11 @@ export {
   flashcards,
   type SelectFlashcard,
   type InsertFlashcard,
+  type RawFlashcard,
 } from "./flashcards";
 
 // Export decks schema and types
-export { decks, type SelectDeck, type InsertDeck } from "./decks";
+export { decks, type SelectDeck, type InsertDeck, type RawDeck } from "./decks";
 
 // Export settings schema and types
 export {

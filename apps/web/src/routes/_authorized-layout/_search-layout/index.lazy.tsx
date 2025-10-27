@@ -13,9 +13,8 @@ import { ArrowUp, PlusIcon } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { cn } from "@bahar/design-system";
 import { Page } from "@/components/Page";
-import { trpc } from "@/lib/trpc";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
-import { settingsTable } from "@/lib/db/operations";
+import { flashcardsTable, settingsTable } from "@/lib/db/operations";
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@/hooks/useSearch";
 
@@ -30,8 +29,13 @@ const Index = () => {
 
   const show_reverse = flashcardSettings?.show_reverse_flashcards ?? false;
 
-  const { data, isFetching } = trpc.flashcard.today.useQuery({
-    show_reverse,
+  const { data, isFetching } = useQuery({
+    queryFn: async ({ queryKey: [, showReverse] }) =>
+      flashcardsTable.today.query({
+        showReverse: showReverse as boolean,
+      }),
+    ...flashcardsTable.today.cacheOptions,
+    queryKey: [...flashcardsTable.today.cacheOptions.queryKey, show_reverse],
   });
 
   // Check that the window dimensions are available
@@ -59,7 +63,7 @@ const Index = () => {
               disabled={isFetching}
             >
               {/* Notification */}
-              {data?.flashcards?.length ? (
+              {data?.length ? (
                 <div className="motion-safe:animate-pulse absolute border-background border-2 -top-1 ltr:-right-1 rtl:-left-1 p-1 text-xs h-2.5 w-2.5 bg-red-500 rounded-full" />
               ) : undefined}
 

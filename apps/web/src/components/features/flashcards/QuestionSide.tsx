@@ -1,48 +1,57 @@
-import { trpc } from "@/lib/trpc";
 import { motion } from "motion/react";
 import { FC } from "react";
-import { Flashcard } from "./FlashcardDrawer";
+import { useQuery } from "@tanstack/react-query";
+import {
+  FlashcardWithDictionaryEntry,
+  settingsTable,
+} from "@/lib/db/operations";
 
 /**
  * This displays the front side of the flashcard which contains
  * the Arabic word and any other fields the user has configured
  * to be displayed.
  */
-export const QuestionSide: FC<{ currentCard: Flashcard }> = ({
-  currentCard,
-}) => {
-  const { data: flashcardSettings } = trpc.settings.get.useQuery();
+export const QuestionSide: FC<{
+  currentCard: FlashcardWithDictionaryEntry;
+}> = ({ currentCard }) => {
+  const { data: flashcardSettings } = useQuery({
+    queryFn: () => settingsTable.getSettings.query(),
+    ...settingsTable.getSettings.cacheOptions,
+  });
 
-  const root = currentCard?.card.root;
+  const root = currentCard?.dictionary_entry.root;
 
   /**
    * Ism Conditions
    */
-  const isIsm = currentCard?.card.type === "ism";
-  const firstPlural = currentCard?.card.morphology?.ism?.plurals?.[0]?.word;
-  const singular = currentCard?.card.morphology?.ism?.singular;
+  const isIsm = currentCard?.dictionary_entry.type === "ism";
+  const firstPlural =
+    currentCard?.dictionary_entry.morphology?.ism?.plurals?.[0]?.word;
+  const singular = currentCard?.dictionary_entry.morphology?.ism?.singular;
   const hasPlurals = isIsm && !!firstPlural;
   const hasSingular = isIsm && !!singular;
 
   /**
    * Verb Conditions
    */
-  const isVerb = currentCard?.card.type === "fi'l";
-  const pastTense = currentCard?.card.morphology?.verb?.past_tense;
-  const presentTense = currentCard?.card.morphology?.verb?.present_tense;
+  const isVerb = currentCard?.dictionary_entry.type === "fi'l";
+  const pastTense = currentCard?.dictionary_entry.morphology?.verb?.past_tense;
+  const presentTense =
+    currentCard?.dictionary_entry.morphology?.verb?.present_tense;
   const hasPastTense = isVerb && !!pastTense;
   const hasPresentTense = isVerb && !!presentTense;
 
   /**
    * Masdar Conditions
    */
-  const firstMasdar = currentCard?.card.morphology?.verb?.masadir?.[0]?.word;
+  const firstMasdar =
+    currentCard?.dictionary_entry.morphology?.verb?.masadir?.[0]?.word;
   const hasMasdar = isVerb && !!firstMasdar;
 
   /**
    * Antonym Conditions
    */
-  const hasAntonyms = !!currentCard?.card?.antonyms?.length;
+  const hasAntonyms = !!currentCard.dictionary_entry.antonyms?.length;
   const showAntonyms = flashcardSettings?.show_antonyms_in_flashcard;
 
   return (
@@ -52,7 +61,7 @@ export const QuestionSide: FC<{ currentCard: Flashcard }> = ({
       animate={{ opacity: 1, y: 0 }}
     >
       <p dir="rtl" className="rtl:text-right text-xl sm:text-2xl">
-        {currentCard.card.word}
+        {currentCard.dictionary_entry.word}
       </p>
 
       <div className="flex gap-x-2 items-center ltr:self-end rtl:self-start rtl:flex-row-reverse">
@@ -95,7 +104,9 @@ export const QuestionSide: FC<{ currentCard: Flashcard }> = ({
       {showAntonyms === "hint" && hasAntonyms && (
         <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
           أضداد:{" "}
-          {currentCard.card.antonyms?.map((antonym) => antonym.word).join(", ")}
+          {currentCard.dictionary_entry.antonyms
+            ?.map((antonym) => antonym.word)
+            .join(", ")}
         </p>
       )}
     </motion.span>

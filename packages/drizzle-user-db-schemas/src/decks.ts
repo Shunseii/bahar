@@ -13,3 +13,7 @@ export const decks = sqliteTable("decks", {
 
 export type SelectDeck = typeof decks.$inferSelect;
 export type InsertDeck = typeof decks.$inferInsert;
+
+export type RawDeck = Omit<SelectDeck, "filters"> & {
+  filters: string | null;
+};

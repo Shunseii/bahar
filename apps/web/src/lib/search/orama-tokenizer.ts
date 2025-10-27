@@ -1,6 +1,4 @@
 import { tokenizer as defaultTokenizer } from "@orama/orama/components";
-import { stopwords as arabicStopwords } from "@orama/stopwords/arabic";
-import { stopwords as englishStopwords } from "@orama/stopwords/english";
 import { stemmer as arabicStemmer } from "@orama/stemmers/arabic";
 import { stripArabicDiacritics } from "../utils";
 
@@ -10,14 +8,17 @@ export const arabicTokenizer = defaultTokenizer.createTokenizer({
   language: "arabic",
   stemming: true,
   stemmer: arabicStemmer,
-  stopWords: arabicStopwords,
+
+  // Disabling stop words because words are all added by
+  // users manually, so each one is meaningful
+  stopWords: false,
   stemmerSkipProperties: ["tags"],
 });
 
 const englishTokenizer = defaultTokenizer.createTokenizer({
   language: "english",
   stemming: true,
-  stopWords: englishStopwords,
+  stopWords: false,
   stemmerSkipProperties: ["tags"],
 });
 

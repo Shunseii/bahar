@@ -30,11 +30,12 @@ import { useToast } from "@/hooks/useToast";
 import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { decksTable } from "@/lib/db/operations";
 
 // TODO: reuse schema from the api
 const DeckSchema = z.object({
   id: z.string(),
-  user_id: z.string(),
   name: z.string(),
   filters: z
     .object({
@@ -128,11 +129,30 @@ export const DeckDialogContent = ({
       });
     },
   });
+
+  const { mutateAsync: createDeckLocal } = useMutation({
+    mutationFn: decksTable.create.mutation,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: decksTable.list.cacheOptions.queryKey,
+      });
+    },
+  });
+
+  const { mutateAsync: updateDeckLocal } = useMutation({
+    mutationFn: decksTable.update.mutation,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: decksTable.list.cacheOptions.queryKey,
+      });
+    },
+  });
+
   const { toast } = useToast();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof DeckFormSchema>>({
     resolver: zodResolver(DeckFormSchema),
-    defaultValues: {
+    values: {
       name: deck?.name ?? "",
       tags: deck?.filters?.tags?.map((tag) => ({ word: tag })) ?? [],
       types: deck?.filters?.types ?? allTypes,
@@ -152,23 +172,33 @@ export const DeckDialogContent = ({
 
   const onSubmit = async (values: z.infer<typeof DeckFormSchema>) => {
     const { name, tags, types } = values;
+    const filters = { tags: tags?.map((tag) => tag.word), types };
 
     try {
       if (isEditing) {
-        await updateDeck({
-          id: deck.id,
-          name,
-          filters: { tags: tags?.map((tag) => tag.word), types },
-        });
+        await Promise.all([
+          updateDeck({
+            id: deck.id,
+            name,
+            filters,
+          }),
+          updateDeckLocal({
+            id: deck.id,
+            updates: { name, filters },
+          }),
+        ]);
 
         toast({
           title: t`Deck successfully updated!`,
         });
       } else {
-        await createDeck({
-          name,
-          filters: { tags: tags?.map((tag) => tag.word), types },
-        });
+        await Promise.all([
+          createDeck({
+            name,
+            filters,
+          }),
+          createDeckLocal({ deck: { name, filters } }),
+        ]);
 
         toast({
           title: t`Deck successfully created!`,
@@ -217,6 +247,7 @@ export const DeckDialogContent = ({
                     <FormControl>
                       <Input
                         className="col-span-3"
+                        data-1p-ignore
                         placeholder={t`Enter a deck name`}
                         {...field}
                       />
