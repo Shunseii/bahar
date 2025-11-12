@@ -23,15 +23,27 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/useToast";
-import { ImportError, parseImportErrors } from "@/lib/error";
+import { ImportError, parseImportErrors, ImportErrorCode } from "@/lib/error";
 import { tracedFetch } from "@/lib/fetch";
 import { useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { ImportResponseError } from "@/lib/error";
 import { useCallback, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
 import { useSearch } from "@/hooks/useSearch";
+import { getDb } from "@/lib/db";
+import {
+  readFileAsText,
+  batchArray,
+  createImportStatements,
+  transformForExport,
+} from "@/lib/db/import-export/v1";
+import { ExportSchemaWithFlashcardsV1 } from "@/lib/db/import-export/v1/schema";
+import {
+  RawDictionaryEntry,
+  SelectFlashcard,
+} from "@bahar/drizzle-user-db-schemas";
+import { hydrateOramaDb, resetOramaDb } from "@/lib/search";
 
 const Settings = () => {
   const { t } = useLingui();
@@ -41,75 +53,94 @@ const Settings = () => {
   const { toast } = useToast();
   const { data: userData } = authClient.useSession();
 
-  const exportDictionary = useCallback(async (includeFlashcards = false) => {
-    try {
-      setIsLoading(true);
+  const exportDictionary = useCallback(
+    async (includeFlashcards = false) => {
+      try {
+        setIsLoading(true);
 
-      const response = await tracedFetch(
-        `${import.meta.env.VITE_API_BASE_URL}/dictionary/export`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        const db = getDb();
+
+        const entries: RawDictionaryEntry[] = await db
+          .prepare("SELECT * FROM dictionary_entries")
+          .all();
+
+        const exportData: unknown[] = [];
+
+        for (const entry of entries) {
+          const flashcards: SelectFlashcard[] = await db
+            .prepare(
+              "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction",
+            )
+            .all([entry.id]);
+
+          const transformed = transformForExport({
+            entry,
+            flashcards,
             includeFlashcards,
-          }),
-        },
-      );
+          });
+          exportData.push(transformed);
+        }
 
-      const data = JSON.stringify(await response.json(), null, 2);
-      const blob = new Blob([data], { type: "application/json" });
+        const data = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([data], { type: "application/json" });
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
 
-      const filename = includeFlashcards
-        ? "dictionary-backup.json"
-        : "dictionary-without-flashcards.json";
+        const filename = includeFlashcards
+          ? "dictionary-backup.json"
+          : "dictionary-without-flashcards.json";
 
-      link.href = url;
-      link.download = filename;
-      link.click();
+        link.href = url;
+        link.download = filename;
+        link.click();
 
-      URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+        URL.revokeObjectURL(url);
+
+        toast({
+          title: t`Successfully exported!`,
+          description: t`Your dictionary has been downloaded.`,
+        });
+      } catch (err: unknown) {
+        console.error(err);
+        toast({
+          variant: "destructive",
+          title: t`Export failed!`,
+          description: t`There was an error exporting your dictionary. Please try again later.`,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [toast, t],
+  );
 
   const deleteDictionary = useCallback(async () => {
     try {
       setIsLoading(true);
 
-      const res = await tracedFetch(
-        `${import.meta.env.VITE_API_BASE_URL}/dictionary`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
+      const db = getDb();
 
-      if (res.status >= 400) {
-        const data = await res.json();
-        console.error({
-          message: "Unexpected error while deleting dictionary.",
-          data,
-        });
+      // Delete from local DB (cascades to flashcards)
+      await db.prepare("DELETE FROM dictionary_entries").run();
+      await db.push();
 
-        throw new Error("Unexpected error");
-      }
+      tracedFetch(`${import.meta.env.VITE_API_BASE_URL}/dictionary`, {
+        method: "DELETE",
+        credentials: "include",
+      }).catch((err: unknown) => {
+        console.error("Failed to delete from Meilisearch:", err);
+      });
 
       reset();
+      resetOramaDb();
+      await hydrateOramaDb();
 
       toast({
         title: t`Successfully deleted!`,
         description: t`Your dictionary has been deleted.`,
       });
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
 
       toast({
@@ -120,7 +151,7 @@ const Settings = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [reset, toast, t]);
 
   return (
     <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
@@ -166,9 +197,6 @@ const Settings = () => {
 
               setIsLoading(true);
 
-              const formData = new FormData();
-              formData.append("dictionary", file!);
-
               if (!file || file.type !== "application/json") {
                 toast({
                   variant: "destructive",
@@ -182,37 +210,75 @@ const Settings = () => {
               }
 
               try {
-                const res = await tracedFetch(
+                const fileContent = await readFileAsText(file);
+                let parsedData: unknown;
+
+                try {
+                  parsedData = JSON.parse(fileContent);
+                } catch {
+                  throw new ImportError({
+                    message: "Error importing dictionary",
+                    error: new Error("Invalid JSON format") as never,
+                    code: ImportErrorCode.INVALID_JSON,
+                  });
+                }
+
+                const validationResult =
+                  ExportSchemaWithFlashcardsV1.safeParse(parsedData);
+
+                if (!validationResult.success) {
+                  throw new ImportError({
+                    message: "Error importing dictionary",
+                    error: validationResult.error as never,
+                    code: ImportErrorCode.VALIDATION_ERROR,
+                  });
+                }
+
+                const validatedDictionary = validationResult.data;
+
+                const db = getDb();
+                const BATCH_SIZE = 100;
+
+                for (const batch of batchArray(
+                  validatedDictionary,
+                  BATCH_SIZE,
+                )) {
+                  for (const word of batch) {
+                    const { dictEntry, flashcards } =
+                      createImportStatements(word);
+
+                    await db.prepare(dictEntry.sql).run(dictEntry.args);
+
+                    await db.prepare(flashcards[0].sql).run(flashcards[0].args);
+                    await db.prepare(flashcards[1].sql).run(flashcards[1].args);
+                  }
+                }
+
+                await db.push();
+
+                const meilisearchFormData = new FormData();
+                meilisearchFormData.append("dictionary", file!);
+
+                tracedFetch(
                   `${import.meta.env.VITE_API_BASE_URL}/dictionary/import`,
                   {
                     method: "POST",
-                    body: formData,
+                    body: meilisearchFormData,
                     credentials: "include",
                   },
-                );
-
-                if (res.status >= 400 && res.status < 500) {
-                  const { code, error } =
-                    (await res.json()) as ImportResponseError;
-
-                  throw new ImportError({
-                    message: "Error importing dictionary",
-                    error,
-                    code,
-                  });
-                } else if (res.status >= 500) {
-                  const data = await res.text();
-
-                  throw new Error(data);
-                }
+                ).catch((err: unknown) => {
+                  console.error("Failed to sync to Meilisearch:", err);
+                });
 
                 reset();
+                resetOramaDb();
+                await hydrateOramaDb();
 
                 toast({
                   title: t`Successfully imported!`,
                   description: t`Your dictionary has been updated!`,
                 });
-              } catch (err) {
+              } catch (err: unknown) {
                 if (err instanceof ImportError) {
                   const { error, code, message } = err;
 
@@ -228,10 +294,10 @@ const Settings = () => {
                     code,
                   });
 
-                  importErrors.forEach((err) => {
+                  importErrors.forEach((importError) => {
                     toast({
                       variant: "destructive",
-                      description: err,
+                      description: importError,
                     });
                   });
 

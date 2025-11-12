@@ -13,14 +13,14 @@ import { detectLanguage } from "@/lib/utils";
 
 const SEARCH_RESUTLS_PER_PAGE = 20;
 
-const searchResultsMetadataAtom = atom<
-  | Omit<Results<InternalTypedDocument<SelectDictionaryEntry>>, "hits">
-  | undefined
->(undefined);
+const searchResultsMetadataAtom = atom<Omit<
+  Results<InternalTypedDocument<SelectDictionaryEntry>>,
+  "hits"
+> | null>(null);
 
 const hitsAtom = atom<
-  Result<InternalTypedDocument<SelectDictionaryEntry>>[] | undefined
->(undefined);
+  Result<InternalTypedDocument<SelectDictionaryEntry>>[] | null
+>(null);
 
 const offsetAtom = atom(0);
 
@@ -75,8 +75,8 @@ export const useSearch = () => {
   }, [search, setHits, setSearchResultsMetadata]);
 
   const reset = useCallback(() => {
-    setHits(undefined);
-    setSearchResultsMetadata(undefined);
+    setHits(null);
+    setSearchResultsMetadata(null);
     setOffset(0);
   }, [setHits, setSearchResultsMetadata, setOffset]);
 

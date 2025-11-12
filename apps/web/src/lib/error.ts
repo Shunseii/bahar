@@ -2,6 +2,9 @@ import { t } from "@lingui/core/macro";
 import { FormSchema as DictionarySchema } from "@bahar/schemas";
 import { type ZodError, type ZodIssue, z } from "zod";
 
+// TODO: after migrating fully to turso user dbs, use the
+// client-side type from the lib/db/import-export/v1 dir
+// and also add version-specific error-handling
 type ZodDictionaryError = ZodError<z.infer<typeof DictionarySchema>>;
 
 /**

@@ -19,7 +19,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { DictionarySchema } from "../schemas/dictionary.schema";
 import { WordsSchema } from "../schemas/words.schema";
-import { getUserDbClient } from "../clients/turso";
+
 import { createEmptyCard } from "ts-fsrs";
 import { batchIterator } from "../utils";
 
@@ -202,91 +202,6 @@ dictionaryRouter.post(
           type: error.type,
         });
       }
-
-      try {
-        const userDbClient = await getUserDbClient(req.user.id);
-
-        if (userDbClient) {
-          const now = new Date();
-
-          const BATCH_SIZE = 100;
-
-          for (const batch of batchIterator(
-            preProcessedDictionary,
-            BATCH_SIZE,
-          )) {
-            const statements = [];
-
-            for (const word of batch) {
-              const createdAtTimestampMs = word.created_at_timestamp
-                ? word.created_at_timestamp * 1000
-                : now.getTime();
-              const updatedAtTimestampMs = word.updated_at_timestamp
-                ? word.updated_at_timestamp * 1000
-                : now.getTime();
-
-              statements.push({
-                sql: `INSERT INTO dictionary_entries (
-                  id, word, translation, definition, type, root, tags, antonyms, examples, morphology,
-                  created_at, created_at_timestamp_ms, updated_at, updated_at_timestamp_ms
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(id) DO UPDATE SET
-                  word = excluded.word,
-                  translation = excluded.translation,
-                  definition = excluded.definition,
-                  type = excluded.type,
-                  root = excluded.root,
-                  tags = excluded.tags,
-                  antonyms = excluded.antonyms,
-                  examples = excluded.examples,
-                  morphology = excluded.morphology,
-                  updated_at = excluded.updated_at,
-                  updated_at_timestamp_ms = excluded.updated_at_timestamp_ms`,
-                args: [
-                  word.id,
-                  word.word,
-                  word.translation,
-                  word.definition ?? null,
-                  word.type ?? null,
-                  word.root ? JSON.stringify(word.root) : null,
-                  word.tags ? JSON.stringify(word.tags) : null,
-                  word.antonyms ? JSON.stringify(word.antonyms) : null,
-                  word.examples ? JSON.stringify(word.examples) : null,
-                  word.morphology ? JSON.stringify(word.morphology) : null,
-                  word.created_at,
-                  createdAtTimestampMs,
-                  word.updated_at,
-                  updatedAtTimestampMs,
-                ],
-              });
-
-              statements.push(
-                createFlashcardStatement({
-                  dictionaryEntryId: word.id,
-                  direction: "forward",
-                  flashcardData: word.flashcard,
-                }),
-              );
-
-              statements.push(
-                createFlashcardStatement({
-                  dictionaryEntryId: word.id,
-                  direction: "reverse",
-                  flashcardData: word.flashcard_reverse,
-                }),
-              );
-            }
-
-            await userDbClient.batch(statements);
-          }
-
-          console.log(
-            `Successfully imported ${preProcessedDictionary.length} entries to user DB`,
-          );
-        }
-      } catch (err) {
-        console.error("Failed to write dictionary import to user DB", err);
-      }
     } catch (error) {
       console.error(error);
       if (error instanceof MeilisearchError) {
@@ -367,19 +282,6 @@ dictionaryRouter.delete("/dictionary", auth, async (req, res) => {
     const error = deleteTask.error;
 
     return res.status(500).json({ code: error.code, type: error.type });
-  }
-
-  try {
-    const userDbClient = await getUserDbClient(req.user.id);
-
-    if (userDbClient) {
-      // Will cascade delete all associated flashcards
-      await userDbClient.execute("DELETE FROM dictionary_entries");
-
-      console.log("Successfully deleted all entries from user DB");
-    }
-  } catch (err) {
-    console.error("Failed to delete all entries from user DB", err);
   }
 
   return res.status(200).end();

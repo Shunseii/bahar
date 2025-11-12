@@ -34,7 +34,7 @@ import { ReverseAnswerSide } from "./ReverseAnswerSide";
 import { ReverseQuestionSide } from "./ReverseQuestionSide";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
-    FLASHCARD_LIMIT,
+  FLASHCARD_LIMIT,
   flashcardsTable,
   FlashcardWithDictionaryEntry,
 } from "@/lib/db/operations";
@@ -120,6 +120,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     ],
   });
   const { mutateAsync: updateFlashcard } = trpc.flashcard.update.useMutation({
+    // TODO: Remove this with dual write logic
     // onMutate: async (updatedCard) => {
     //   const todayQueryKey = getQueryKey(
     //     trpc.flashcard.today,

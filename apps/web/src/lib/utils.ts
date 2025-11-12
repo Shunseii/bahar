@@ -120,3 +120,7 @@ export const stripArabicDiacritics = (text: string): string => {
   // Remove Arabic diacritical marks (Tashkeel) and Tatweel
   return text.replace(/[\u064B-\u0652\u0640]/g, "");
 };
+
+export const toMs = (timestamp: number) => {
+  return timestamp * 1000;
+};
