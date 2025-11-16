@@ -1,6 +1,8 @@
 import { connect, Database } from "@tursodatabase/sync-wasm/vite";
 import { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import { trpcClient } from "../trpc";
+import { DatabaseNotInitializedError, DatabaseConnectionError } from "./errors";
+
 /**
  * Singleton database instance connected to
  * a local copy of the user's database that syncs
@@ -15,7 +17,7 @@ const LOCAL_DB_PATH_PREFIX = "bahar-local";
 
 export const getDb = () => {
   if (!db) {
-    throw new Error("Database not initialized. Call initDb first.");
+    throw new DatabaseNotInitializedError();
   }
 
   return db;
@@ -56,6 +58,10 @@ export const initDb = async () => {
     await db.pull();
     await db.push();
   } catch (err) {
+    console.error(
+      "Initial error connecting to database. Refreshing turso token and trying again...",
+    );
+
     const refreshed = await trpcClient.databases.refreshUserToken.mutate();
 
     const reconnectedClient = await _connectToLocalDb({
@@ -155,9 +161,16 @@ const _connectToLocalDb = async ({
   hostname: string;
   authToken: string;
   dbName: string;
-}) =>
-  connect({
-    path: _formatLocalDbName(dbName),
-    url: _formatDbUrl(hostname),
-    authToken,
-  });
+}) => {
+  try {
+    return connect({
+      path: _formatLocalDbName(dbName),
+      url: _formatDbUrl(hostname),
+      authToken,
+    });
+  } catch (err) {
+    console.error("Error connecting to local database: ", err);
+
+    throw new DatabaseConnectionError();
+  }
+};
