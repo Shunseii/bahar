@@ -6,15 +6,15 @@ This is the back end API for Bahar.
 
 Install packages with `pnpm install`.
 
-Run the local database with `turso dev`.
+Run the local database with `turso dev` or `make local-db`.
 
-Run the migrations with `pnpm run --filter api drizzle:migrate` in the `packages/api` directory.
+Run the migrations with `pnpm run --filter api drizzle:migrate`.
 
-Run the dev servers with `turbo dev`.
+Run the dev servers with `pnpm dev` or `turbo dev`.
 
-Whenever you update the table in sqlite, run `pnpm run --filter api drizzle:gen` to generate the migration files.
+Whenever you update tables in SQLite, run `pnpm run --filter api drizzle:gen` to generate the migration files.
 
-Whenever you add any plugins that modify the auth tables (or if a better auth update adds new tables/columns), run `pnpm run --filter api auth:gen` to generate the migration files.
+Whenever you add any plugins that modify the auth tables (or if a Better Auth update adds new tables/columns), run `pnpm run --filter api auth:gen` to generate the migration files.
 
 ## Schema Registry
 
