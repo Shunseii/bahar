@@ -32,7 +32,7 @@ import { NullToUndefined } from "../utils";
  */
 export const FLASHCARD_LIMIT = 100;
 
-type TableOperation = {
+export type TableOperation = {
   // Note: can't use a generic here to type the output
   // it will still be any when used with satisfies
 
