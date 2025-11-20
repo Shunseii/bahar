@@ -1,172 +1,72 @@
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
 import { useSearch } from "@/hooks/useSearch";
-import { initDb } from "@/lib/db";
+import { getDb, initDb } from "@/lib/db";
+import { migrationTable } from "@/lib/db/operations/migration";
 import { hydrateOramaDb } from "@/lib/search";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
   createFileRoute,
   ErrorRouteComponent,
   Outlet,
 } from "@tanstack/react-router";
-import { FC, useEffect, useState } from "react";
-import { isDisplayError } from "@/lib/db/errors";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { DisplayError } from "@/lib/db/errors";
+import * as Sentry from "@sentry/react";
+import { ErrorMessage } from "@/components/errors/ErrorMessage";
+import React from "react";
+import { useMeasure } from "@uidotdev/usehooks";
+import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
+
+/**
+ * How often to sync the user database in the background.
+ */
+const BACKGROUND_SYNC_INTERVAL = 60 * 1000;
 
 const AuthorizedLayout = () => {
   const { preloadResults } = useSearch();
+  const { data: latestMigration } = useQuery({
+    queryKey: migrationTable.latestMigration.cacheOptions.queryKey,
+    queryFn: migrationTable.latestMigration.query,
+  });
+  const [bannerRef, { height: bannerHeight }] = useMeasure();
+
+  const schemaIsOutdated = latestMigration?.status !== "failed";
 
   useEffect(() => {
     preloadResults();
   }, [preloadResults]);
 
-  return <Outlet />;
-};
+  // Background sync
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const db = getDb();
 
-const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
-  const [showDetails, setShowDetails] = useState(false);
-  const { data: session } = authClient.useSession();
-  const timestamp = new Date().toLocaleString();
+        Sentry.logger.info("Background syncing...");
 
-  if (isDisplayError(error)) {
-    return (
-      <>
-        <div className="mt-2 text-muted-foreground text-sm flex flex-col gap-2">
-          <p>
-            {error.message}{" "}
-            <Trans>You can try reloading the page to fix it.</Trans>
-          </p>
+        await db.pull();
+        await db.push();
 
-          <button
-            onClick={() => setShowDetails(!showDetails)}
-            className="text-left text-primary hover:underline cursor-pointer w-fit"
-          >
-            {showDetails ? (
-              <Trans>Hide details</Trans>
-            ) : (
-              <Trans>Still not working?</Trans>
-            )}
-          </button>
+        Sentry.logger.info("Background sync complete");
+      } catch (error) {
+        Sentry.logger.warn("Background sync failed", {
+          reason: String(error),
+        });
+      }
+    }, BACKGROUND_SYNC_INTERVAL);
 
-          {showDetails && (
-            <div>
-              <p className="text-sm text-muted-foreground">
-                <Trans>
-                  Please contact{" "}
-                  <a
-                    className="text-primary hover:underline"
-                    href="mailto:support@bahar.dev"
-                  >
-                    support
-                  </a>{" "}
-                  with the following details:
-                </Trans>
-              </p>
+    return () => clearInterval(interval);
+  }, []);
 
-              <div className="mt-3 bg-background rounded border border-border space-y-2 p-2">
-                <p className="text-xs">
-                  <span className="font-semibold">
-                    <Trans>User ID:</Trans>
-                  </span>{" "}
-                  <code>{session?.user?.id ?? "Unknown"}</code>
-                </p>
-
-                <p className="text-xs">
-                  <span className="font-semibold">
-                    <Trans>Time:</Trans>
-                  </span>{" "}
-                  <code>{timestamp}</code>
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-4 flex gap-2">
-          <Button variant="default" onClick={() => window.location.reload()}>
-            <Trans>Reload</Trans>
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={() => (window.location.href = "/")}
-          >
-            <Trans>Go Home</Trans>
-          </Button>
-        </div>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <div className="mt-2 text-muted-foreground text-sm flex flex-col gap-2">
-          <p>
-            <Trans>An unexpected error occurred.</Trans>{" "}
-            <Trans>You can try reloading the page to fix it.</Trans>
-          </p>
-
-          <button
-            onClick={() => setShowDetails(!showDetails)}
-            className="text-left text-primary hover:underline cursor-pointer w-fit"
-          >
-            {showDetails ? (
-              <Trans>Hide details</Trans>
-            ) : (
-              <Trans>Still not working?</Trans>
-            )}
-          </button>
-          <p></p>
-
-          {showDetails && (
-            <div>
-              <p className="text-sm text-muted-foreground">
-                <Trans>
-                  Please contact{" "}
-                  <a
-                    className="text-primary hover:underline"
-                    href="mailto:support@bahar.dev"
-                  >
-                    support
-                  </a>{" "}
-                  with the following details:
-                </Trans>
-              </p>
-
-              <div className="mt-3 bg-background rounded border border-border space-y-2 p-2">
-                <p className="text-xs">
-                  <span className="font-semibold">
-                    <Trans>User ID:</Trans>
-                  </span>{" "}
-                  <code>{session?.user?.id ?? "Unknown"}</code>
-                </p>
-
-                <p className="text-xs">
-                  <span className="font-semibold">
-                    <Trans>Time:</Trans>
-                  </span>{" "}
-                  <code>{timestamp}</code>
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-4 flex gap-2">
-          <Button variant="default" onClick={() => window.location.reload()}>
-            <Trans>Reload</Trans>
-          </Button>
-
-          <Button
-            variant="secondary"
-            onClick={() => (window.location.href = "/")}
-          >
-            <Trans>Go Home</Trans>
-          </Button>
-        </div>
-      </>
-    );
-  }
+  return (
+    <div style={schemaIsOutdated ? { marginTop: `${bannerHeight}px` } : {}}>
+      {schemaIsOutdated && <SchemaOutdatedBanner ref={bannerRef} />}
+      <Outlet />
+    </div>
+  );
 };
 
 const AuthorizedLayoutError: ErrorRouteComponent = ({ error }) => {
@@ -197,7 +97,73 @@ const AuthorizedLayoutError: ErrorRouteComponent = ({ error }) => {
 
 export const Route = createFileRoute("/_authorized-layout")({
   beforeLoad: async () => {
-    await initDb();
+    const initDbResult = await initDb();
+
+    if (!initDbResult.ok) {
+      const error = initDbResult.error;
+
+      Sentry.captureException(new Error(initDbResult.error.type), {
+        contexts: {
+          db_init: {
+            type: initDbResult.error.type,
+            reason: initDbResult.error.reason,
+          },
+        },
+      });
+
+      switch (error.type) {
+        case "get_db_info_failed":
+          throw new DisplayError({
+            message: t`There's a temporary issue loading your account. Please try reloading the page.`,
+            details: t`Failed to retrieve database information.`,
+            cause: error.type,
+            hasManualFix: true,
+          });
+
+        case "token_refresh_failed":
+        case "turso_remote_sync_failed":
+        case "db_connection_failed_after_refresh":
+          throw new DisplayError({
+            message: t`We can't reach our servers right now. Check your connection and try again.`,
+            details: t`Unable to connect to remote database.`,
+            cause: error.type,
+            hasManualFix: true,
+          });
+
+        case "api_schema_verification_failed":
+          throw new DisplayError({
+            message: t`We're having trouble with your account setup. Please try again.`,
+            details: t`Failed validating local database schema with server.`,
+            cause: error.type,
+            hasManualFix: true,
+          });
+
+        case "migration_failed":
+          throw new DisplayError({
+            message: t`Your account needs maintenance. We've been notified. Please try again later.`,
+            details: t`Failed to apply migration to local database.`,
+            cause: error.type,
+          });
+
+        case "latest_migration_status_query_failed":
+          throw new DisplayError({
+            message: t`We're having trouble accessing your account. Please try again.`,
+            details: t`Unable to query status of client database.`,
+            cause: error.type,
+          });
+
+        case "latest_migration_is_failing":
+          // We ignore this error because we don't want to block user
+          // from using the app if migration fails to apply. This is
+          // because the code should aim to be backwards compatible
+          // and thus still handle older schema versions.
+          //
+          // Fixing this will require manual work by a developer,
+          // so capturing it as an issue in Sentry above is sufficient.
+          break;
+      }
+    }
+
     await hydrateOramaDb();
   },
   errorComponent: (props) => <AuthorizedLayoutError {...props} />,
