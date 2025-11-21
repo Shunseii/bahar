@@ -33,7 +33,7 @@ const AuthorizedLayout = () => {
   });
   const [bannerRef, { height: bannerHeight }] = useMeasure();
 
-  const schemaIsOutdated = latestMigration?.status !== "failed";
+  const schemaIsOutdated = latestMigration?.status === "failed";
 
   useEffect(() => {
     preloadResults();

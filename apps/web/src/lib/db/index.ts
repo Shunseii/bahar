@@ -182,7 +182,6 @@ const applyRequiredMigrations = async () => {
       (error) => ({
         type: "migration_failed" as const,
         reason: String(error),
-        migrationVersion: migration.version,
       }),
     );
 

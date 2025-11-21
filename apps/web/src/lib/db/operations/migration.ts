@@ -8,9 +8,7 @@ export const migrationTable = {
       try {
         const db = getDb();
         const res: SelectMigration = await db
-          .prepare(
-            "SELECT version FROM migrations ORDER BY version DESC LIMIT 1;",
-          )
+          .prepare("SELECT * FROM migrations ORDER BY version DESC LIMIT 1;")
           .get();
 
         return res;
