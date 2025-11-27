@@ -1,7 +1,7 @@
 import { connect, Database } from "@tursodatabase/sync-wasm/vite";
 import { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import { trpcClient } from "../trpc";
-import { tryCatch } from "../result";
+import { err, ok, tryCatch } from "../result";
 import * as Sentry from "@sentry/react";
 
 /**
@@ -40,12 +40,12 @@ export const resetDb = async () => {
  * Also runs an initial sync with remote and any new migrations.
  */
 export const initDb = async () => {
-  if (db) return { ok: true, value: undefined } as const;
+  if (db) return ok(null);
 
   const infoResult = await tryCatch(
     () => trpcClient.databases.userDatabase.query(),
     (error) => ({
-      type: "get_db_info_failed" as const,
+      type: "get_db_info_failed",
       reason: String(error),
     }),
   );
@@ -61,7 +61,7 @@ export const initDb = async () => {
         dbName: db_name,
       }),
     (error) => ({
-      type: "db_connection_failed" as const,
+      type: "db_connection_failed",
       reason: String(error),
     }),
   );
@@ -70,7 +70,7 @@ export const initDb = async () => {
     const refreshResult = await tryCatch(
       () => trpcClient.databases.refreshUserToken.mutate(),
       (error) => ({
-        type: "token_refresh_failed" as const,
+        type: "token_refresh_failed",
         reason: String(error),
       }),
     );
@@ -84,7 +84,7 @@ export const initDb = async () => {
           dbName: db_name,
         }),
       (error) => ({
-        type: "db_connection_failed_after_refresh" as const,
+        type: "db_connection_failed_after_refresh",
         reason: String(error),
       }),
     );
@@ -105,7 +105,7 @@ export const initDb = async () => {
       await db!.push();
     },
     (error) => ({
-      type: "turso_remote_sync_failed" as const,
+      type: "turso_remote_sync_failed",
       reason: String(error),
     }),
   );
@@ -128,34 +128,42 @@ export const initDb = async () => {
  * this logic will cause issues.
  */
 const applyRequiredMigrations = async () => {
-  if (!db) return { ok: true, value: undefined } as const;
+  if (!db) return ok(null);
 
   const latestMigrationStatus = await tryCatch(
-    async () => {
+    () => {
       return db!
         .prepare("SELECT * FROM migrations ORDER BY version DESC LIMIT 1;")
         .get() as Promise<SelectMigration>;
     },
     (error) => ({
-      type: "latest_migration_status_query_failed" as const,
+      type: "latest_migration_status_query_failed",
       reason: String(error),
     }),
   );
   if (!latestMigrationStatus.ok) return latestMigrationStatus;
 
   if (latestMigrationStatus.value.status === "failed") {
-    return {
-      ok: false,
-      error: {
-        type: "latest_migration_is_failing",
-        reason:
-          "The most recent migration for the client database had failed before. Must be fixed manually before proceeding with the remaining migrations.",
-      },
-    } as const;
+    return err({
+      type: "latest_migration_is_failing",
+      reason:
+        "The most recent migration for the client database had failed before. Must be fixed manually before proceeding with the remaining migrations.",
+    });
   }
 
-  const currentSchemaVersion = await getCurrentSchemaVersion();
-  if (!currentSchemaVersion) return { ok: true, value: undefined } as const;
+  const currentSchemaVersionResult = await getCurrentSchemaVersion();
+  if (
+    !currentSchemaVersionResult.ok &&
+    currentSchemaVersionResult.error.type !== "migration_table_does_not_exist"
+  ) {
+    return err(currentSchemaVersionResult.error);
+  }
+
+  // Assume that if migration table doesn't exist, this is a fresh database
+  // and we need to apply all migrations onto it.
+  const currentSchemaVersion = currentSchemaVersionResult.ok
+    ? currentSchemaVersionResult.value
+    : 0;
 
   const verifySchemaResult = await tryCatch(
     () =>
@@ -163,7 +171,7 @@ const applyRequiredMigrations = async () => {
         version: currentSchemaVersion,
       }),
     (error) => ({
-      type: "api_schema_verification_failed" as const,
+      type: "api_schema_verification_failed",
       reason: String(error),
     }),
   );
@@ -171,8 +179,7 @@ const applyRequiredMigrations = async () => {
 
   const { status, requiredMigrations } = verifySchemaResult.value;
 
-  if (status === "latest" || !requiredMigrations?.length)
-    return { ok: true, value: undefined } as const;
+  if (status === "latest" || !requiredMigrations?.length) return ok(null);
 
   for (const migration of requiredMigrations) {
     const nowTimestampMs = Date.now();
@@ -180,7 +187,7 @@ const applyRequiredMigrations = async () => {
     const execResult = await tryCatch(
       () => db!.exec(migration.sql_script),
       (error) => ({
-        type: "migration_failed" as const,
+        type: "migration_failed",
         reason: String(error),
       }),
     );
@@ -199,7 +206,7 @@ const applyRequiredMigrations = async () => {
               "failed",
             ]),
         (error) => {
-          Sentry.logger.error("Failed to log migration failure", {
+          Sentry.logger.error("Failed to log failed migration", {
             migrationVersion: migration.version,
             reason: String(error),
           });
@@ -232,28 +239,42 @@ const applyRequiredMigrations = async () => {
     );
   }
 
-  return { ok: true, value: undefined } as const;
+  return ok(null);
 };
 
-/**
- * @returns The current version of the local user database schema.
- */
 const getCurrentSchemaVersion = async () => {
-  if (!db) return undefined;
+  if (!db) return err({ type: "db_not_initialized" });
 
-  try {
-    const result: Pick<SelectMigration, "version"> | undefined = await db
-      .prepare(
-        "SELECT version FROM migrations WHERE status = 'applied' ORDER BY version DESC LIMIT 1;",
-      )
-      .get();
+  const tableExists = await tryCatch(
+    async () => {
+      const result = await db!
+        .prepare(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';",
+        )
+        .get();
 
-    return result?.version ?? 0;
-  } catch (err) {
-    // Assuming that this is a fresh database
+      return !!result;
+    },
+    () => ({ type: "check_migration_table_exists_query_failed" }),
+  );
 
-    return 0;
-  }
+  if (!tableExists.ok) return tableExists;
+
+  if (!tableExists.value)
+    return err({ type: "migration_table_does_not_exist" });
+
+  return tryCatch(
+    async () => {
+      const row: Pick<SelectMigration, "version"> | undefined = await db!
+        .prepare(
+          "SELECT version FROM migrations WHERE status = 'applied' ORDER BY version DESC LIMIT 1;",
+        )
+        .get();
+
+      return row?.version ?? 0;
+    },
+    () => ({ type: "schema_version_query_failed" }),
+  );
 };
 
 const _formatDbUrl = (hostname: string) => `libsql://${hostname}`;

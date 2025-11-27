@@ -28,7 +28,7 @@ export const buildSelectWithNestedJson = ({
   tableAlias: string;
   jsonObjectAlias: string;
 }): string => {
-  const jsonColumns = ['root', 'tags', 'antonyms', 'examples', 'morphology'];
+  const jsonColumns = ["root", "tags", "antonyms", "examples", "morphology"];
 
   const jsonPairs = columns
     .map((col) => {

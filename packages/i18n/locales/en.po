@@ -23,6 +23,10 @@ msgstr "{0, plural, one {# card left to review} other {# cards left to review}}"
 msgid "{0, plural, one {You have # card to review.} other {You have # cards to review}}"
 msgstr "{0, plural, one {You have # card to review.} other {You have # cards to review}}"
 
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:55
+msgid "{hydrationSkippedCount, plural, one {# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.} other {# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.}}"
+msgstr "{hydrationSkippedCount, plural, one {# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.} other {# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.}}"
+
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:85
 msgid "{totalHits, plural, one {# result found in} other {# results found in}}"
 msgstr "{totalHits, plural, one {# result found in} other {# results found in}}"
@@ -450,7 +454,7 @@ msgstr "Expression"
 msgid "Failed to add word!"
 msgstr "Failed to add word!"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:152
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:182
 msgid "Failed to apply migration to local database."
 msgstr "Failed to apply migration to local database."
 
@@ -458,8 +462,11 @@ msgstr "Failed to apply migration to local database."
 msgid "Failed to delete!"
 msgstr "Failed to delete!"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:102
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:126
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:174
+msgid "Failed to retrieve data from local database."
+msgstr "Failed to retrieve data from local database."
+
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:153
 msgid "Failed to retrieve database information."
 msgstr "Failed to retrieve database information."
 
@@ -477,8 +484,8 @@ msgid "Failed to upload migration"
 msgstr "Failed to upload migration"
 
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:144
-msgid "Failed validating local database schema with server."
-msgstr "Failed validating local database schema with server."
+#~ msgid "Failed validating local database schema with server."
+#~ msgstr "Failed validating local database schema with server."
 
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:231
 msgid "Feminine"
@@ -876,6 +883,10 @@ msgstr "Show English to Arabic flashcards."
 msgid "Singular"
 msgstr "Singular"
 
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:54
+msgid "Some dictionary entries couldn't be loaded"
+msgstr "Some dictionary entries couldn't be loaded"
+
 #: ../../apps/web/src/components/features/settings/AdminSettingsCardSection.tsx:92
 msgid "SQL Script"
 msgstr "SQL Script"
@@ -1009,8 +1020,16 @@ msgstr "There was an error updating your word. Please try again."
 msgid "There was an error uploading your SQL migration"
 msgstr "There was an error uploading your SQL migration"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:101
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:125
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:210
+msgid "There was an error when indexing your data in the search engine."
+msgstr "There was an error when indexing your data in the search engine."
+
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:195
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:217
+msgid "There was an unexpected error. Please try again."
+msgstr "There was an unexpected error. Please try again."
+
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:152
 msgid "There's a temporary issue loading your account. Please try reloading the page."
 msgstr "There's a temporary issue loading your account. Please try reloading the page."
 
@@ -1061,17 +1080,22 @@ msgstr "Type"
 msgid "Types"
 msgstr "Types"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:85
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:109
 msgid "Uh oh! Something went wrong :/"
 msgstr "Uh oh! Something went wrong :/"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:136
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:164
 msgid "Unable to connect to remote database."
 msgstr "Unable to connect to remote database."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:159
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:189
 msgid "Unable to query status of client database."
 msgstr "Unable to query status of client database."
+
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:196
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:218
+msgid "Unknown error."
+msgstr "Unknown error."
 
 #. placeholder {0}: String(err.minimum)
 #: ../../apps/web/src/lib/error.ts:134
@@ -1100,15 +1124,16 @@ msgstr "Verbal noun forms (masadir) of the verb."
 msgid "View all the words in your personal dictionary."
 msgstr "View all the words in your personal dictionary."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:135
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:163
 msgid "We can't reach our servers right now. Check your connection and try again."
 msgstr "We can't reach our servers right now. Check your connection and try again."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:158
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:188
 msgid "We're having trouble accessing your account. Please try again."
 msgstr "We're having trouble accessing your account. Please try again."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:143
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:173
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:209
 msgid "We're having trouble with your account setup. Please try again."
 msgstr "We're having trouble with your account setup. Please try again."
 
@@ -1154,7 +1179,7 @@ msgstr "You have no flashcards to review for now!"
 msgid "You have no words in your dictionary yet."
 msgstr "You have no words in your dictionary yet."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:151
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:181
 msgid "Your account needs maintenance. We've been notified. Please try again later."
 msgstr "Your account needs maintenance. We've been notified. Please try again later."
 

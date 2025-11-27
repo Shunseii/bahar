@@ -6,7 +6,7 @@ export class DisplayError extends Error {
   /**
    * Original error code.
    */
-  cause: string;
+  cause?: string;
 
   /**
    * UI-friendly and translated details
@@ -27,7 +27,7 @@ export class DisplayError extends Error {
     hasManualFix = false,
   }: {
     message: string;
-    cause: string;
+    cause?: string;
     details: string;
     hasManualFix?: boolean;
   }) {

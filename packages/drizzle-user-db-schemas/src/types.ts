@@ -1,55 +1,84 @@
 /**
- * @file TypeScript types for JSON fields in user database tables.
+ * @file Zod schemas and TypeScript types for JSON fields in user database tables.
+ * Types are inferred from schemas to ensure runtime and compile-time consistency.
  */
+import { z } from "zod";
 
-// Dictionary types
+// Dictionary schemas and types
 export const WORD_TYPES = ["ism", "fi'l", "harf", "expression"] as const;
 
-export type WordType = (typeof WORD_TYPES)[number];
+export const WordTypeSchema = z.enum(WORD_TYPES);
+export type WordType = z.infer<typeof WordTypeSchema>;
 
-export type RootLetters = string[];
+export const RootLettersSchema = z.array(z.string());
+export type RootLetters = z.infer<typeof RootLettersSchema>;
 
-export type Tags = string[];
+export const TagsSchema = z.array(z.string());
+export type Tags = z.infer<typeof TagsSchema>;
 
-export type Antonym = {
-  word?: string;
-};
+export const AntonymSchema = z.object({
+  word: z.string().optional(),
+});
+export type Antonym = z.infer<typeof AntonymSchema>;
 
-export type Example = {
-  sentence: string;
-  context?: string;
-  translation?: string;
-};
+export const ExampleSchema = z.object({
+  sentence: z.string(),
+  context: z.string().optional(),
+  translation: z.string().optional(),
+});
+export type Example = z.infer<typeof ExampleSchema>;
 
-export type Morphology = {
-  ism?: {
-    singular?: string;
-    dual?: string;
-    plurals?: Array<{
-      word: string;
-      details?: string;
-    }>;
-    gender?: "masculine" | "feminine";
-    inflection?: "indeclinable" | "diptote" | "triptote";
-  };
-  verb?: {
-    huroof?: Array<{
-      harf: string;
-      meaning?: string;
-    }>;
-    past_tense?: string;
-    present_tense?: string;
-    active_participle?: string;
-    passive_participle?: string;
-    imperative?: string;
-    masadir?: Array<{
-      word: string;
-      details?: string;
-    }>;
-    form?: string;
-    form_arabic?: string;
-  };
-};
+export const MorphologySchema: z.ZodSchema<any> = z
+  .object({
+    ism: z
+      .object({
+        singular: z.string().optional(),
+        dual: z.string().optional(),
+        plurals: z
+          .array(
+            z.object({
+              word: z.string(),
+              details: z.string().optional(),
+            }),
+          )
+          .optional(),
+        gender: z.enum(["masculine", "feminine"]).optional(),
+        inflection: z
+          .enum(["indeclinable", "diptote", "triptote"])
+          .optional(),
+      })
+      .optional(),
+    verb: z
+      .object({
+        huroof: z
+          .array(
+            z.object({
+              harf: z.string(),
+              meaning: z.string().optional(),
+            }),
+          )
+          .optional(),
+        past_tense: z.string().optional(),
+        present_tense: z.string().optional(),
+        active_participle: z.string().optional(),
+        passive_participle: z.string().optional(),
+        imperative: z.string().optional(),
+        masadir: z
+          .array(
+            z.object({
+              word: z.string(),
+              details: z.string().optional(),
+            }),
+          )
+          .optional(),
+        form: z.string().optional(),
+        form_arabic: z.string().optional(),
+      })
+      .optional(),
+  })
+  .optional();
+
+export type Morphology = z.infer<typeof MorphologySchema>;
 
 // Flashcard types
 export const FLASHCARD_DIRECTIONS = ["forward", "reverse"] as const;

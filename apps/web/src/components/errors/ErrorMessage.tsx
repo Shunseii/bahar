@@ -120,13 +120,17 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
                     fieldName={<Trans>Cause:</Trans>}
                     detail={error.cause}
                   />
-
-                  <ErrorDetailField
-                    fieldName={<Trans>Details:</Trans>}
-                    detail={error.details}
-                  />
                 </>
               )}
+
+              <ErrorDetailField
+                fieldName={<Trans>Details:</Trans>}
+                detail={
+                  isDisplayError
+                    ? error.details
+                    : `${error.name}: ${error.message}`
+                }
+              />
             </div>
           </div>
         )}

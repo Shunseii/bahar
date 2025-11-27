@@ -11,6 +11,8 @@ import { DEFAULT_LOCALE, LOCALES, TLocale, dynamicActivate } from "./lib/i18n";
 import { detect, fromStorage, fromNavigator } from "@lingui/detect-locale";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { useToggle } from "@uidotdev/usehooks";
+import { Provider as JotaiProvider } from "jotai";
+import { store } from "./lib/store";
 
 function App() {
   const [isI18nActivated, toggleIsI18nActivated] = useToggle(false);
@@ -41,17 +43,19 @@ function App() {
   }
 
   return (
-    <I18nProvider i18n={i18n}>
-      <trpc.Provider client={trpcReactClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <RouterProvider router={router} />
-          </TooltipProvider>
+    <JotaiProvider store={store}>
+      <I18nProvider i18n={i18n}>
+        <trpc.Provider client={trpcReactClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <RouterProvider router={router} />
+            </TooltipProvider>
 
-          {/* <ReactQueryDevtools /> */}
-        </QueryClientProvider>
-      </trpc.Provider>
-    </I18nProvider>
+            {/* <ReactQueryDevtools /> */}
+          </QueryClientProvider>
+        </trpc.Provider>
+      </I18nProvider>
+    </JotaiProvider>
   );
 }
 

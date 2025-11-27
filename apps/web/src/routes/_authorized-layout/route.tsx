@@ -4,7 +4,11 @@ import { useSearch } from "@/hooks/useSearch";
 import { getDb, initDb } from "@/lib/db";
 import { migrationTable } from "@/lib/db/operations/migration";
 import { hydrateOramaDb } from "@/lib/search";
-import { t } from "@lingui/core/macro";
+import { useToast } from "@/hooks/useToast";
+import { store } from "@/lib/store";
+import { hydrationSkippedCountAtom } from "@/atoms/hydration";
+import { useAtom } from "jotai";
+import { t, plural } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
   createFileRoute,
@@ -27,6 +31,10 @@ const BACKGROUND_SYNC_INTERVAL = 60 * 1000;
 
 const AuthorizedLayout = () => {
   const { preloadResults } = useSearch();
+  const { toast } = useToast();
+  const [hydrationSkippedCount, setHydrationSkippedCount] = useAtom(
+    hydrationSkippedCountAtom,
+  );
   const { data: latestMigration } = useQuery({
     queryKey: migrationTable.latestMigration.cacheOptions.queryKey,
     queryFn: migrationTable.latestMigration.query,
@@ -38,6 +46,26 @@ const AuthorizedLayout = () => {
   useEffect(() => {
     preloadResults();
   }, [preloadResults]);
+
+  // Show toast if some dictionary entries were skipped during hydration
+  useEffect(() => {
+    if (!hydrationSkippedCount) return;
+
+    const id = requestAnimationFrame(() => {
+      toast({
+        title: t`Some dictionary entries couldn't be loaded`,
+        description: plural(hydrationSkippedCount, {
+          one: "# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.",
+          other:
+            "# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.",
+        }),
+      });
+
+      setHydrationSkippedCount(0);
+    });
+
+    return () => cancelAnimationFrame(id);
+  }, [hydrationSkippedCount, toast]);
 
   // Background sync
   useEffect(() => {
@@ -101,17 +129,28 @@ export const Route = createFileRoute("/_authorized-layout")({
 
     if (!initDbResult.ok) {
       const error = initDbResult.error;
+      const errReason = "reason" in error ? error.reason : null;
 
-      Sentry.captureException(new Error(initDbResult.error.type), {
+      Sentry.captureException(new Error(error.type), {
         contexts: {
           db_init: {
-            type: initDbResult.error.type,
-            reason: initDbResult.error.reason,
+            type: error.type,
+            reason: errReason,
           },
         },
       });
 
       switch (error.type) {
+        case "latest_migration_is_failing":
+          // We ignore this error because we don't want to block user
+          // from using the app if migration fails to apply. This is
+          // because the code should aim to be backwards compatible
+          // and thus still handle older schema versions.
+          //
+          // Fixing this will require manual work by a developer,
+          // so capturing it as an issue in Sentry above is sufficient.
+          break;
+
         case "get_db_info_failed":
           throw new DisplayError({
             message: t`There's a temporary issue loading your account. Please try reloading the page.`,
@@ -122,6 +161,7 @@ export const Route = createFileRoute("/_authorized-layout")({
 
         case "token_refresh_failed":
         case "turso_remote_sync_failed":
+        case "api_schema_verification_failed":
         case "db_connection_failed_after_refresh":
           throw new DisplayError({
             message: t`We can't reach our servers right now. Check your connection and try again.`,
@@ -130,10 +170,12 @@ export const Route = createFileRoute("/_authorized-layout")({
             hasManualFix: true,
           });
 
-        case "api_schema_verification_failed":
+        case "db_not_initialized":
+        case "check_migration_table_exists_query_failed":
+        case "schema_version_query_failed":
           throw new DisplayError({
             message: t`We're having trouble with your account setup. Please try again.`,
-            details: t`Failed validating local database schema with server.`,
+            details: t`Failed to retrieve data from local database.`,
             cause: error.type,
             hasManualFix: true,
           });
@@ -152,19 +194,45 @@ export const Route = createFileRoute("/_authorized-layout")({
             cause: error.type,
           });
 
-        case "latest_migration_is_failing":
-          // We ignore this error because we don't want to block user
-          // from using the app if migration fails to apply. This is
-          // because the code should aim to be backwards compatible
-          // and thus still handle older schema versions.
-          //
-          // Fixing this will require manual work by a developer,
-          // so capturing it as an issue in Sentry above is sufficient.
-          break;
+        default:
+          throw new DisplayError({
+            message: t`There was an unexpected error. Please try again.`,
+            details: t`Unknown error.`,
+          });
       }
     }
 
-    await hydrateOramaDb();
+    const hydrateOramaDbResult = await hydrateOramaDb();
+
+    if (!hydrateOramaDbResult.ok) {
+      const error = hydrateOramaDbResult.error;
+
+      switch (error.type) {
+        case "hydration_failed":
+          throw new DisplayError({
+            message: t`We're having trouble with your account setup. Please try again.`,
+            details: t`There was an error when indexing your data in the search engine.`,
+            cause: error.type,
+            hasManualFix: true,
+          });
+
+        default:
+          throw new DisplayError({
+            message: t`There was an unexpected error. Please try again.`,
+            details: t`Unknown error.`,
+          });
+      }
+    }
+
+    if (hydrateOramaDbResult.value.skippedCount > 0) {
+      // If there was a partial hydration, it will set
+      // the skippedCount in a jotai atom. We will then
+      // display this to the user.
+      store.set(
+        hydrationSkippedCountAtom,
+        hydrateOramaDbResult.value.skippedCount,
+      );
+    }
   },
   errorComponent: (props) => <AuthorizedLayoutError {...props} />,
   component: AuthorizedLayout,
