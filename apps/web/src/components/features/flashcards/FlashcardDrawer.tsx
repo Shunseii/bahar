@@ -37,7 +37,7 @@ import {
   FLASHCARD_LIMIT,
   flashcardsTable,
   FlashcardWithDictionaryEntry,
-} from "@/lib/db/operations";
+} from "@/lib/db/operations/flashcards";
 import {
   FlashcardState,
   SelectDeck,

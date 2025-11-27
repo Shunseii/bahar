@@ -14,6 +14,7 @@ import {
   DICTIONARY_ENTRY_COLUMNS,
 } from "../utils";
 import { TableOperation } from "./types";
+import * as Sentry from "@sentry/react";
 
 /**
  * The threshold after which the UI won't display the
@@ -99,20 +100,35 @@ export const flashcardsTable = {
           dictionary_entry: string;
         })[] = await db.prepare(sql).all(params);
 
-        return rawResults?.map((raw) => {
-          const parsedDictionaryEntry =
-            convertRawDictionaryEntryToSelectDictionaryEntry(
+        return rawResults
+          ?.map((raw) => {
+            const result = convertRawDictionaryEntryToSelectDictionaryEntry(
               JSON.parse(raw.dictionary_entry),
             );
 
-          return {
-            ...raw,
-            direction: (raw.direction ??
-              "forward") as SelectFlashcard["direction"],
-            is_hidden: Boolean(raw.is_hidden),
-            dictionary_entry: parsedDictionaryEntry,
-          };
-        });
+            if (!result.ok) {
+              Sentry.captureMessage(
+                `Flashcard query: failed to parse dictionary entry for flashcard ${raw.id}`,
+                {
+                  level: "warning",
+                  extra: {
+                    flashcardId: raw.id,
+                    error: result.error,
+                  },
+                },
+              );
+              return null;
+            }
+
+            return {
+              ...raw,
+              direction: (raw.direction ??
+                "forward") as SelectFlashcard["direction"],
+              is_hidden: Boolean(raw.is_hidden),
+              dictionary_entry: result.value,
+            };
+          })
+          .filter((entry) => entry !== null);
       } catch (err) {
         console.error("Error in flashcardsTable.today", err);
         throw err;

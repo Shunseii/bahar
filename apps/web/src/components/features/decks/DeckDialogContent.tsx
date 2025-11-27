@@ -31,7 +31,7 @@ import { queryClient } from "@/lib/query";
 import { getQueryKey } from "@trpc/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { decksTable } from "@/lib/db/operations";
+import { decksTable } from "@/lib/db/operations/decks";
 
 // TODO: reuse schema from the api
 const DeckSchema = z.object({

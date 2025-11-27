@@ -3,8 +3,8 @@ import { FC } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   FlashcardWithDictionaryEntry,
-  settingsTable,
-} from "@/lib/db/operations";
+} from "@/lib/db/operations/flashcards";
+import { settingsTable } from "@/lib/db/operations/settings";
 
 /**
  * This displays the back side of the flashcard which contains

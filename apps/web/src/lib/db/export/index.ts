@@ -2,8 +2,12 @@ import {
   SelectFlashcard,
   RawDictionaryEntry,
 } from "@bahar/drizzle-user-db-schemas";
-import { convertRawDictionaryEntryToSelectDictionaryEntry } from "../utils";
+import {
+  convertRawDictionaryEntryToSelectDictionaryEntry,
+  type ConvertDictionaryEntryError,
+} from "../utils";
 import { ImportWordV1 } from "../import/v1/schema";
+import { ok, err, type Result } from "../../result";
 
 /**
  * Transforms a dictionary entry with its flashcards into export format.
@@ -17,8 +21,12 @@ export function transformForExport({
   entry: RawDictionaryEntry;
   flashcards: SelectFlashcard[];
   includeFlashcards: boolean;
-}): ImportWordV1 {
-  const converted = convertRawDictionaryEntryToSelectDictionaryEntry(entry);
+}): Result<ImportWordV1, ConvertDictionaryEntryError> {
+  const convertResult = convertRawDictionaryEntryToSelectDictionaryEntry(entry);
+  if (!convertResult.ok) {
+    return err(convertResult.error);
+  }
+  const converted = convertResult.value;
 
   const result: ImportWordV1 = {
     id: converted.id,
@@ -68,5 +76,5 @@ export function transformForExport({
     }
   }
 
-  return result;
+  return ok(result);
 }

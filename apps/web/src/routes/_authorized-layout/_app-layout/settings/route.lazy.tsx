@@ -66,6 +66,7 @@ const Settings = () => {
 
         const exportData: unknown[] = [];
 
+        let skippedCount = 0;
         for (const entry of entries) {
           const flashcards: SelectFlashcard[] = await db
             .prepare(
@@ -73,12 +74,27 @@ const Settings = () => {
             )
             .all([entry.id]);
 
-          const transformed = transformForExport({
+          const result = transformForExport({
             entry,
             flashcards,
             includeFlashcards,
           });
-          exportData.push(transformed);
+
+          if (!result.ok) {
+            console.warn(
+              `Skipping corrupted entry "${result.error.word}" (${result.error.entryId}): ${result.error.field} - ${result.error.reason}`,
+            );
+            skippedCount++;
+            continue;
+          }
+
+          exportData.push(result.value);
+        }
+
+        if (skippedCount > 0) {
+          console.warn(
+            `Export completed with ${skippedCount} entries skipped due to data corruption`,
+          );
         }
 
         const data = JSON.stringify(exportData, null, 2);
@@ -97,10 +113,18 @@ const Settings = () => {
 
         URL.revokeObjectURL(url);
 
-        toast({
-          title: t`Successfully exported!`,
-          description: t`Your dictionary has been downloaded.`,
-        });
+        if (skippedCount > 0) {
+          toast({
+            variant: "destructive",
+            title: t`Export completed with issues`,
+            description: t`${skippedCount} entries were skipped due to data corruption.`,
+          });
+        } else {
+          toast({
+            title: t`Successfully exported!`,
+            description: t`Your dictionary has been downloaded.`,
+          });
+        }
       } catch (err: unknown) {
         console.error(err);
         toast({
@@ -244,8 +268,10 @@ const Settings = () => {
                   BATCH_SIZE,
                 )) {
                   for (const word of batch) {
-                    const { dictEntry, flashcards } =
-                      createImportStatements(word, version);
+                    const { dictEntry, flashcards } = createImportStatements(
+                      word,
+                      version,
+                    );
 
                     await db.prepare(dictEntry.sql).run(dictEntry.args);
 

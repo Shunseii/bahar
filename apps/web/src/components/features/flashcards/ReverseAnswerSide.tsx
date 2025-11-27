@@ -2,8 +2,8 @@ import { motion } from "motion/react";
 import { FC } from "react";
 import {
   FlashcardWithDictionaryEntry,
-  settingsTable,
-} from "@/lib/db/operations";
+} from "@/lib/db/operations/flashcards";
+import { settingsTable } from "@/lib/db/operations/settings";
 import { useQuery } from "@tanstack/react-query";
 
 /**

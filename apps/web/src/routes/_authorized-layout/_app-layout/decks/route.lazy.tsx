@@ -34,7 +34,8 @@ import { getQueryKey } from "@trpc/react-query";
 import { useToast } from "@/hooks/useToast";
 import { Page } from "@/components/Page";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { settingsTable, decksTable } from "@/lib/db/operations";
+import { settingsTable } from "@/lib/db/operations/settings";
+import { decksTable } from "@/lib/db/operations/decks";
 
 const Decks = () => {
   const { data: settingsData } = useQuery({

@@ -29,7 +29,7 @@ import { getQueryKey } from "@trpc/react-query";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { settingsTable } from "@/lib/db/operations";
+import { settingsTable } from "@/lib/db/operations/settings";
 
 const FormSchema = z.object({
   show_antonyms_in_flashcard: z.enum(["hidden", "answer", "hint"]).optional(),

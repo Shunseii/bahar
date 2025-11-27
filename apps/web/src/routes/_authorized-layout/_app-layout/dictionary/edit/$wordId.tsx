@@ -42,7 +42,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
+import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
 
 const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {

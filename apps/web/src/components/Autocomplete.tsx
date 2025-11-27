@@ -5,7 +5,7 @@ import { cn } from "@bahar/design-system";
 import { useClickAway, useDebounce } from "@uidotdev/usehooks";
 import { Input } from "./ui/input";
 import { useQuery } from "@tanstack/react-query";
-import { dictionaryEntriesTable } from "@/lib/db/operations";
+import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 
 interface AutocompleteProps {
   className?: string;

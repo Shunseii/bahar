@@ -14,7 +14,8 @@ import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { cn } from "@bahar/design-system";
 import { Page } from "@/components/Page";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
-import { flashcardsTable, settingsTable } from "@/lib/db/operations";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { settingsTable } from "@/lib/db/operations/settings";
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@/hooks/useSearch";
 

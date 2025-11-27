@@ -1,7 +1,21 @@
 import {
   RawDictionaryEntry,
   SelectDictionaryEntry,
+  RootLettersSchema,
+  TagsSchema,
+  AntonymSchema,
+  ExampleSchema,
+  MorphologySchema,
 } from "@bahar/drizzle-user-db-schemas";
+import { safeJsonParse, ok, err, type Result } from "../result";
+import { z } from "zod";
+
+export type ConvertDictionaryEntryError = {
+  entryId: string;
+  word: string;
+  field: string;
+  reason: string;
+};
 
 /**
  * Generates a SQL json_object clause from type-safe column names.
@@ -63,8 +77,58 @@ export const DICTIONARY_ENTRY_COLUMNS = [
 
 export const convertRawDictionaryEntryToSelectDictionaryEntry = (
   raw: RawDictionaryEntry,
-): SelectDictionaryEntry => {
-  return {
+): Result<SelectDictionaryEntry, ConvertDictionaryEntryError> => {
+  const rootResult = safeJsonParse(raw.root, RootLettersSchema);
+  if (!rootResult.ok) {
+    return err({
+      entryId: raw.id,
+      word: raw.word,
+      field: "root",
+      reason: JSON.stringify(rootResult.error),
+    });
+  }
+
+  const tagsResult = safeJsonParse(raw.tags, TagsSchema);
+  if (!tagsResult.ok) {
+    return err({
+      entryId: raw.id,
+      word: raw.word,
+      field: "tags",
+      reason: JSON.stringify(tagsResult.error),
+    });
+  }
+
+  const antonymsResult = safeJsonParse(raw.antonyms, z.array(AntonymSchema));
+  if (!antonymsResult.ok) {
+    return err({
+      entryId: raw.id,
+      word: raw.word,
+      field: "antonyms",
+      reason: JSON.stringify(antonymsResult.error),
+    });
+  }
+
+  const examplesResult = safeJsonParse(raw.examples, z.array(ExampleSchema));
+  if (!examplesResult.ok) {
+    return err({
+      entryId: raw.id,
+      word: raw.word,
+      field: "examples",
+      reason: JSON.stringify(examplesResult.error),
+    });
+  }
+
+  const morphologyResult = safeJsonParse(raw.morphology, MorphologySchema);
+  if (!morphologyResult.ok) {
+    return err({
+      entryId: raw.id,
+      word: raw.word,
+      field: "morphology",
+      reason: JSON.stringify(morphologyResult.error),
+    });
+  }
+
+  return ok({
     id: raw.id,
     created_at: raw.created_at,
     created_at_timestamp_ms: raw.created_at_timestamp_ms,
@@ -74,10 +138,10 @@ export const convertRawDictionaryEntryToSelectDictionaryEntry = (
     translation: raw.translation,
     definition: raw.definition,
     type: raw.type,
-    root: raw.root ? JSON.parse(raw.root) : null,
-    tags: raw.tags ? JSON.parse(raw.tags) : null,
-    antonyms: raw.antonyms ? JSON.parse(raw.antonyms) : null,
-    examples: raw.examples ? JSON.parse(raw.examples) : null,
-    morphology: raw.morphology ? JSON.parse(raw.morphology) : null,
-  };
+    root: rootResult.value,
+    tags: tagsResult.value,
+    antonyms: antonymsResult.value,
+    examples: examplesResult.value,
+    morphology: morphologyResult.value,
+  });
 };

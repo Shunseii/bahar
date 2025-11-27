@@ -5,9 +5,21 @@ import {
 } from "@bahar/drizzle-user-db-schemas";
 import { getDb } from "..";
 import { nanoid } from "nanoid";
-import { convertRawDictionaryEntryToSelectDictionaryEntry } from "../utils";
+import {
+  convertRawDictionaryEntryToSelectDictionaryEntry,
+  type ConvertDictionaryEntryError,
+} from "../utils";
 import { NullToUndefined } from "../../utils";
 import { TableOperation } from "./types";
+
+class DictionaryEntryParseError extends Error {
+  constructor(public details: ConvertDictionaryEntryError) {
+    super(
+      `Failed to parse dictionary entry "${details.word}" (${details.entryId}): field "${details.field}" - ${details.reason}`,
+    );
+    this.name = "DictionaryEntryParseError";
+  }
+}
 
 export const dictionaryEntriesTable = {
   entry: {
@@ -18,7 +30,11 @@ export const dictionaryEntriesTable = {
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?`)
           .get([id]);
 
-        return convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        if (!result.ok) {
+          throw new DictionaryEntryParseError(result.error);
+        }
+        return result.value;
       } catch (err) {
         console.error("Error in dictionaryEntriesTable.entry", err);
         throw err;
@@ -105,7 +121,11 @@ export const dictionaryEntriesTable = {
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?;`)
           .get([id]);
 
-        return convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        if (!result.ok) {
+          throw new DictionaryEntryParseError(result.error);
+        }
+        return result.value;
       } catch (err) {
         console.error("Error in dictionaryEntriesTable.addWord", err);
         throw err;
@@ -213,7 +233,11 @@ export const dictionaryEntriesTable = {
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?;`)
           .get([id]);
 
-        return convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        if (!result.ok) {
+          throw new DictionaryEntryParseError(result.error);
+        }
+        return result.value;
       } catch (err) {
         console.error("Error in dictionaryEntriesTable.editWord", err);
         throw err;
@@ -242,7 +266,11 @@ export const dictionaryEntriesTable = {
 
         await db.push();
 
-        return convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        if (!result.ok) {
+          throw new DictionaryEntryParseError(result.error);
+        }
+        return result.value;
       } catch (err) {
         console.error("Error in dictionaryEntriesTable.delete", err);
         throw err;

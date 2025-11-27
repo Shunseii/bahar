@@ -1,4 +1,5 @@
-import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
+import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { getOramaDb } from "@/lib/search";
 import { nullToUndefined } from "@/lib/utils";
 import { insert, update, remove } from "@orama/orama";
