@@ -278,7 +278,7 @@ const Edit = () => {
 
   const { data } = useQuery({
     queryFn: () => dictionaryEntriesTable.entry.query(wordId),
-    ...dictionaryEntriesTable.entry.cacheOptions,
+    queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, wordId],
   });
 
   const { mutateAsync: editWord } = trpc.dictionary.editWord.useMutation({
@@ -435,7 +435,7 @@ export const Route = createFileRoute(
     const wordId = params.wordId;
 
     await queryClient.fetchQuery({
-      queryKey: dictionaryEntriesTable.entry.cacheOptions.queryKey,
+      queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, wordId],
       queryFn: () => dictionaryEntriesTable.entry.query(wordId),
     });
   },
