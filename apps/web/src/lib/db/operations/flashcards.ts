@@ -94,8 +94,6 @@ export const flashcardsTable = {
         WHERE ${whereClause}
         `;
 
-        console.debug("Executing SQL", sql, params);
-
         const rawResults: (RawFlashcard & {
           dictionary_entry: string;
         })[] = await db.prepare(sql).all(params);

@@ -74,33 +74,16 @@ export const decksTable = {
 
               const toReviewSql = `SELECT COUNT(*) as count FROM flashcards f LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id WHERE f.due_timestamp_ms <= ? AND ${whereClause}`;
               const toReviewAllParams = [now, ...toReviewParams];
-              console.debug("Executing toReview query:", {
-                sql: toReviewSql,
-                params: toReviewAllParams,
-                deckId: deck.id,
-                deckName: deck.name,
-              });
 
               const toReviewCount: { count: number } = await db
                 .prepare(toReviewSql)
                 .get(toReviewAllParams);
 
-              console.debug("toReview result:", toReviewCount);
-
               const totalHitsSql = `SELECT COUNT(*) as count FROM flashcards f LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id WHERE ${whereClause}`;
-
-              console.debug("Executing totalHits query:", {
-                sql: totalHitsSql,
-                params: totalHitsParams,
-                deckId: deck.id,
-                deckName: deck.name,
-              });
 
               const totalHitsCount: { count: number } = await db
                 .prepare(totalHitsSql)
                 .get([...totalHitsParams]);
-
-              console.debug("totalHits result:", totalHitsCount);
 
               return {
                 ...deck,
