@@ -1,5 +1,5 @@
 import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
-import { oramaDb } from "@/lib/search";
+import { getOramaDb } from "@/lib/search";
 import { nullToUndefined } from "@/lib/utils";
 import { insert, update, remove } from "@orama/orama";
 import { useMutation } from "@tanstack/react-query";
@@ -56,7 +56,7 @@ export const useAddDictionaryEntry = () => {
         }),
       ]);
 
-      insert(oramaDb, nullToUndefined(newWord));
+      insert(getOramaDb(), nullToUndefined(newWord));
       reset();
     },
   };
@@ -81,7 +81,7 @@ export const useDeleteDictionaryEntry = () => {
     ) => {
       const deletedWord = await mutateAsync(params, opts);
 
-      remove(oramaDb, deletedWord.id);
+      remove(getOramaDb(), deletedWord.id);
       reset();
     },
   };
@@ -111,7 +111,7 @@ export const useEditDictionaryEntry = () => {
     ) => {
       const updatedWord = await mutateAsync(params, opts);
 
-      update(oramaDb, updatedWord.id, nullToUndefined(updatedWord));
+      update(getOramaDb(), updatedWord.id, nullToUndefined(updatedWord));
       reset();
     },
   };

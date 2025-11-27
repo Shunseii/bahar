@@ -36,9 +36,9 @@ import {
   readFileAsText,
   batchArray,
   createImportStatements,
-  transformForExport,
-} from "@/lib/db/import-export/v1";
-import { ExportSchemaWithFlashcardsV1 } from "@/lib/db/import-export/v1/schema";
+  parseImportData,
+} from "@/lib/db/import";
+import { transformForExport } from "@/lib/db/export";
 import {
   RawDictionaryEntry,
   SelectFlashcard,
@@ -223,18 +223,18 @@ const Settings = () => {
                   });
                 }
 
-                const validationResult =
-                  ExportSchemaWithFlashcardsV1.safeParse(parsedData);
-
-                if (!validationResult.success) {
+                let parsedImport;
+                try {
+                  parsedImport = parseImportData(parsedData);
+                } catch (err) {
                   throw new ImportError({
                     message: "Error importing dictionary",
-                    error: validationResult.error as never,
+                    error: err as never,
                     code: ImportErrorCode.VALIDATION_ERROR,
                   });
                 }
 
-                const validatedDictionary = validationResult.data;
+                const { version, entries: validatedDictionary } = parsedImport;
 
                 const db = getDb();
                 const BATCH_SIZE = 100;
@@ -245,7 +245,7 @@ const Settings = () => {
                 )) {
                   for (const word of batch) {
                     const { dictEntry, flashcards } =
-                      createImportStatements(word);
+                      createImportStatements(word, version);
 
                     await db.prepare(dictEntry.sql).run(dictEntry.args);
 

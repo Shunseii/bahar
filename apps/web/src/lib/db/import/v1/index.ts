@@ -1,20 +1,7 @@
-/**
- * Utilities for importing and exporting dictionary data.
- * Handles transformations between JSON format and local database format.
- */
-
 import { nanoid } from "nanoid";
 import { createEmptyCard } from "ts-fsrs";
-import {
-  SelectFlashcard,
-  RawDictionaryEntry,
-} from "@bahar/drizzle-user-db-schemas";
-import { convertRawDictionaryEntryToSelectDictionaryEntry } from "../../utils";
-import { ExportSchemaWithFlashcardsV1 } from "./schema";
-import { z } from "zod";
 import { toMs } from "@/lib/utils";
-
-type ImportWord = z.infer<typeof ExportSchemaWithFlashcardsV1>[number];
+import { ImportWordV1 } from "./schema";
 
 interface SqlStatement {
   sql: string;
@@ -24,7 +11,7 @@ interface SqlStatement {
 /**
  * Creates SQL statements for inserting a dictionary entry and its flashcards
  */
-export function createImportStatements(word: ImportWord): {
+export function createImportStatements(word: ImportWordV1): {
   dictEntry: SqlStatement;
   flashcards: [SqlStatement, SqlStatement];
 } {
@@ -99,7 +86,7 @@ function createFlashcardStatement({
 }: {
   dictionaryEntryId: string;
   direction: "forward" | "reverse";
-  flashcardData?: ImportWord["flashcard"];
+  flashcardData?: ImportWordV1["flashcard"];
 }): SqlStatement {
   const emptyCard = createEmptyCard(new Date());
 
@@ -146,96 +133,4 @@ function createFlashcardStatement({
       0, // is_hidden
     ],
   };
-}
-
-/**
- * Transforms a dictionary entry with its flashcards into export format
- */
-export function transformForExport({
-  entry,
-  flashcards,
-  includeFlashcards,
-}: {
-  entry: RawDictionaryEntry;
-  flashcards: SelectFlashcard[];
-  includeFlashcards: boolean;
-}): ImportWord {
-  const converted = convertRawDictionaryEntryToSelectDictionaryEntry(entry);
-
-  const result: ImportWord = {
-    id: converted.id,
-    word: converted.word,
-    translation: converted.translation,
-    definition: converted.definition ?? undefined,
-    type: converted.type ?? undefined,
-    root: converted.root ?? undefined,
-    tags: converted.tags ?? undefined,
-    antonyms: converted.antonyms ?? undefined,
-    examples: converted.examples ?? undefined,
-    morphology: converted.morphology ?? undefined,
-  };
-
-  if (includeFlashcards) {
-    result.created_at = converted.created_at ?? undefined;
-    result.created_at_timestamp = converted.created_at_timestamp_ms
-      ? Math.floor(converted.created_at_timestamp_ms / 1000)
-      : undefined;
-    result.updated_at = converted.updated_at ?? undefined;
-    result.updated_at_timestamp = converted.updated_at_timestamp_ms
-      ? Math.floor(converted.updated_at_timestamp_ms / 1000)
-      : undefined;
-
-    for (const fc of flashcards) {
-      const flashcardObj = {
-        difficulty: fc.difficulty ?? 0,
-        due: fc.due,
-        due_timestamp: Math.floor(fc.due_timestamp_ms / 1000),
-        elapsed_days: fc.elapsed_days ?? 0,
-        lapses: fc.lapses ?? 0,
-        last_review: fc.last_review ?? null,
-        last_review_timestamp: fc.last_review_timestamp_ms
-          ? Math.floor(fc.last_review_timestamp_ms / 1000)
-          : null,
-        reps: fc.reps ?? 0,
-        scheduled_days: fc.scheduled_days ?? 0,
-        stability: fc.stability ?? 0,
-        state: (fc.state ?? 0) as 0 | 1 | 2 | 3,
-      };
-
-      if (fc.direction === "forward") {
-        result.flashcard = flashcardObj;
-      } else {
-        result.flashcard_reverse = flashcardObj;
-      }
-    }
-  }
-
-  return result;
-}
-
-/**
- * Reads a file as text
- */
-export async function readFileAsText(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        resolve(reader.result);
-      } else {
-        reject(new Error("Failed to read file"));
-      }
-    };
-    reader.onerror = () => reject(new Error("Failed to read file"));
-    reader.readAsText(file);
-  });
-}
-
-/**
- * Batches an array into chunks of specified size
- */
-export function* batchArray<T>(array: T[], batchSize: number) {
-  for (let i = 0; i < array.length; i += batchSize) {
-    yield array.slice(i, i + batchSize);
-  }
 }

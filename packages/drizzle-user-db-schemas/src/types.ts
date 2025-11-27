@@ -28,7 +28,7 @@ export const ExampleSchema = z.object({
 });
 export type Example = z.infer<typeof ExampleSchema>;
 
-export const MorphologySchema: z.ZodSchema<any> = z
+export const MorphologySchema = z
   .object({
     ism: z
       .object({
@@ -43,9 +43,7 @@ export const MorphologySchema: z.ZodSchema<any> = z
           )
           .optional(),
         gender: z.enum(["masculine", "feminine"]).optional(),
-        inflection: z
-          .enum(["indeclinable", "diptote", "triptote"])
-          .optional(),
+        inflection: z.enum(["indeclinable", "diptote", "triptote"]).optional(),
       })
       .optional(),
     verb: z

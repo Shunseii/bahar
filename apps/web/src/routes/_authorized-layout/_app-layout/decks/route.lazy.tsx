@@ -64,6 +64,11 @@ const Decks = () => {
 
   const { mutateAsync: deleteDeckLocal } = useMutation({
     mutationFn: decksTable.delete.mutation,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: decksTable.list.cacheOptions.queryKey,
+      });
+    },
   });
 
   const { toast } = useToast();

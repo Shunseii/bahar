@@ -7,7 +7,7 @@ import {
   type SearchParams,
 } from "@orama/orama";
 import { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
-import { oramaDb } from "@/lib/search";
+import { getOramaDb } from "@/lib/search";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { detectLanguage } from "@/lib/utils";
 
@@ -38,7 +38,7 @@ export const useSearch = () => {
 
   const search = useCallback(
     (
-      params: Omit<SearchParams<typeof oramaDb>, "limit" | "mode"> = {},
+      params: Omit<SearchParams<ReturnType<typeof getOramaDb>>, "limit" | "mode"> = {},
       language: "arabic" | "english" = "english",
     ) =>
       // Orama's search function is sync by default,
@@ -46,7 +46,7 @@ export const useSearch = () => {
       // can make it async. We cast type to sync return type
       // so it's easier to work with.
       oramaSearch(
-        oramaDb,
+        getOramaDb(),
         {
           ...params,
           mode: "fulltext",
@@ -113,7 +113,7 @@ export const useSearch = () => {
  * functionality and exposes helper methods for interacting with the results.
  */
 export const useInfiniteScroll = (
-  params: Omit<SearchParams<typeof oramaDb>, "limit" | "offset" | "mode"> = {},
+  params: Omit<SearchParams<ReturnType<typeof getOramaDb>>, "limit" | "offset" | "mode"> = {},
 ) => {
   const { search } = useSearch();
 

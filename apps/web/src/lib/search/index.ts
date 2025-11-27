@@ -49,7 +49,9 @@ const createOramaDb = () =>
     },
   });
 
-export let oramaDb = createOramaDb();
+let oramaDb = createOramaDb();
+
+export const getOramaDb = () => oramaDb;
 
 let isOramaHydrated = false;
 

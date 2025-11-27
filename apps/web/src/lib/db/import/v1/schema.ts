@@ -162,11 +162,6 @@ const FullExportSchema = z.object({
   flashcard_reverse: FlashcardSchema.optional(),
 });
 
-export const ExportSchemaV1 = z.array(
-  FullExportSchema.omit({
-    flashcard: true,
-    flashcard_reverse: true,
-  }),
-);
+export const ImportSchemaV1 = z.array(FullExportSchema);
 
-export const ExportSchemaWithFlashcardsV1 = z.array(FullExportSchema);
+export type ImportWordV1 = z.infer<typeof ImportSchemaV1>[number];

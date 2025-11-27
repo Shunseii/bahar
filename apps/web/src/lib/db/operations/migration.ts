@@ -1,6 +1,6 @@
 import { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import { getDb } from "..";
-import { TableOperation } from "../operations";
+import { TableOperation } from "./types";
 
 export const migrationTable = {
   latestMigration: {
