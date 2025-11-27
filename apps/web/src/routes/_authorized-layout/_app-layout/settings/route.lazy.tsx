@@ -263,21 +263,30 @@ const Settings = () => {
                 const db = getDb();
                 const BATCH_SIZE = 100;
 
+                const insertBatch = db.transaction(
+                  async (batch: typeof validatedDictionary) => {
+                    for (const word of batch) {
+                      const { dictEntry, flashcards } = createImportStatements(
+                        word,
+                        version,
+                      );
+
+                      await db.prepare(dictEntry.sql).run(dictEntry.args);
+                      await db
+                        .prepare(flashcards[0].sql)
+                        .run(flashcards[0].args);
+                      await db
+                        .prepare(flashcards[1].sql)
+                        .run(flashcards[1].args);
+                    }
+                  },
+                );
+
                 for (const batch of batchArray(
                   validatedDictionary,
                   BATCH_SIZE,
                 )) {
-                  for (const word of batch) {
-                    const { dictEntry, flashcards } = createImportStatements(
-                      word,
-                      version,
-                    );
-
-                    await db.prepare(dictEntry.sql).run(dictEntry.args);
-
-                    await db.prepare(flashcards[0].sql).run(flashcards[0].args);
-                    await db.prepare(flashcards[1].sql).run(flashcards[1].args);
-                  }
+                  await insertBatch(batch);
                 }
 
                 await db.push();
