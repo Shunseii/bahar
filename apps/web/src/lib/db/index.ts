@@ -134,7 +134,7 @@ const applyRequiredMigrations = async () => {
     () => {
       return db!
         .prepare("SELECT * FROM migrations ORDER BY version DESC LIMIT 1;")
-        .get() as Promise<SelectMigration>;
+        .get() as Promise<SelectMigration | undefined>;
     },
     (error) => ({
       type: "latest_migration_status_query_failed",
@@ -143,7 +143,7 @@ const applyRequiredMigrations = async () => {
   );
   if (!latestMigrationStatus.ok) return latestMigrationStatus;
 
-  if (latestMigrationStatus.value.status === "failed") {
+  if (latestMigrationStatus.value?.status === "failed") {
     return err({
       type: "latest_migration_is_failing",
       reason:
