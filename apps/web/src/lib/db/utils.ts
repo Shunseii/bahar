@@ -42,17 +42,8 @@ export const buildSelectWithNestedJson = ({
   tableAlias: string;
   jsonObjectAlias: string;
 }): string => {
-  const jsonColumns = ["root", "tags", "antonyms", "examples", "morphology"];
-
   const jsonPairs = columns
-    .map((col) => {
-      if (jsonColumns.includes(col)) {
-        return `'${col}', ${tableAlias}.${col}`;
-      } else {
-        // Escape backslashes and quotes in string columns
-        return `'${col}', REPLACE(REPLACE(${tableAlias}.${col}, '\\', '\\\\'), '"', '\\"')`;
-      }
-    })
+    .map((col) => `'${col}', ${tableAlias}.${col}`)
     .join(", ");
 
   return `json_object(${jsonPairs}) as ${jsonObjectAlias}`;
