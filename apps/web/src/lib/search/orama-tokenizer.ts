@@ -1,6 +1,10 @@
 import { tokenizer as defaultTokenizer } from "@orama/orama/components";
 import { stemmer as arabicStemmer } from "@orama/stemmers/arabic";
-import { stripArabicDiacritics } from "../utils";
+import {
+  stripArabicDiacritics,
+  normalizeArabicHamza,
+  normalizeArabicWeakLetters,
+} from "../utils";
 
 export type OramaLanguage = "arabic" | "english";
 
@@ -33,16 +37,18 @@ export const multiLanguageTokenizer = {
   tokenize(raw: string, language: string, prop?: string): string[] {
     const ENGLISH_PROPS = ["translation"];
 
-    const cleanedRaw = stripArabicDiacritics(raw);
+    const normalizedRaw = normalizeArabicWeakLetters(
+      normalizeArabicHamza(stripArabicDiacritics(raw)),
+    );
 
     let result: string[];
 
     if (prop && ENGLISH_PROPS.includes(prop)) {
       result = englishTokenizer.tokenize(raw, "english", prop);
     } else if (prop && !language && !ENGLISH_PROPS.includes(prop)) {
-      result = arabicTokenizer.tokenize(cleanedRaw, "arabic", prop);
+      result = arabicTokenizer.tokenize(normalizedRaw, "arabic", prop);
     } else if (language === "arabic") {
-      result = arabicTokenizer.tokenize(cleanedRaw, language, prop);
+      result = arabicTokenizer.tokenize(normalizedRaw, language, prop);
     } else {
       result = englishTokenizer.tokenize(raw, language, prop);
     }

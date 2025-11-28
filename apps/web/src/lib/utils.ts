@@ -121,6 +121,22 @@ export const stripArabicDiacritics = (text: string): string => {
   return text.replace(/[\u064B-\u0652\u0640]/g, "");
 };
 
+/**
+ * Normalizes hamza variants (أ إ آ ء ؤ ئ) to bare alif (ا)
+ * Example: "هيئة" → "هيائ" , "مسؤول" → "مساوول"
+ */
+export const normalizeArabicHamza = (text: string): string => {
+  return text.replace(/[أإآءؤئ]/g, "ا");
+};
+
+/**
+ * Normalizes weak letters (حروف العلة: ا و ي) to alif (ا)
+ * Example: "عمارة" → "عاااة", "كتوب" → "كتاب"
+ */
+export const normalizeArabicWeakLetters = (text: string): string => {
+  return text.replace(/[اوي]/g, "ا");
+};
+
 export const toMs = (timestamp: number) => {
   return timestamp * 1000;
 };

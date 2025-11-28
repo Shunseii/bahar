@@ -38,14 +38,25 @@ export const useSearch = () => {
 
   const search = useCallback(
     (
-      params: Omit<SearchParams<ReturnType<typeof getOramaDb>>, "limit" | "mode"> = {},
+      params: Omit<
+        SearchParams<ReturnType<typeof getOramaDb>>,
+        "limit" | "mode"
+      > = {},
       language: "arabic" | "english" = "english",
-    ) =>
+    ) => {
+      const tolerance = (() => {
+        if (!params.term) return 0;
+
+        if (params.term.length < 3) return 0;
+        if (params.term.length < 5) return 1;
+        return 2;
+      })();
+
       // Orama's search function is sync by default,
       // but it's typed as sync or async since some plugins
       // can make it async. We cast type to sync return type
       // so it's easier to work with.
-      oramaSearch(
+      return oramaSearch(
         getOramaDb(),
         {
           ...params,
@@ -58,10 +69,11 @@ export const useSearch = () => {
             word: 2,
             translation: 2,
           },
-          tolerance: 1,
+          tolerance,
         },
         language,
-      ) as Results<InternalTypedDocument<SelectDictionaryEntry>>,
+      ) as Results<InternalTypedDocument<SelectDictionaryEntry>>;
+    },
     [],
   );
 
@@ -113,7 +125,10 @@ export const useSearch = () => {
  * functionality and exposes helper methods for interacting with the results.
  */
 export const useInfiniteScroll = (
-  params: Omit<SearchParams<ReturnType<typeof getOramaDb>>, "limit" | "offset" | "mode"> = {},
+  params: Omit<
+    SearchParams<ReturnType<typeof getOramaDb>>,
+    "limit" | "offset" | "mode"
+  > = {},
 ) => {
   const { search } = useSearch();
 
