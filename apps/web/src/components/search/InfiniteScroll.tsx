@@ -29,7 +29,7 @@ export const InfiniteScroll: FC = () => {
   const navigate = useNavigate();
   const searchQuery = useAtomValue(searchQueryAtom);
   const {
-    results: { hits },
+    results: { hits } = {},
     showMore,
     hasMore,
   } = useInfiniteScroll({ term: searchQuery });

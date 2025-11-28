@@ -9,7 +9,7 @@ import {
 import { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { getOramaDb } from "@/lib/search";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { detectLanguage } from "@/lib/utils";
+import { detectLanguage, stripArabicDiacritics } from "@/lib/utils";
 
 const SEARCH_RESULTS_PER_PAGE = 20;
 
@@ -47,8 +47,11 @@ export const useSearch = () => {
       const tolerance = (() => {
         if (!params.term) return 0;
 
-        if (params.term.length < 3) return 0;
-        if (params.term.length < 5) return 1;
+        const len = stripArabicDiacritics(params.term).length;
+
+        if (len <= 2) return 0;
+        if (len <= 3) return 1;
+
         return 2;
       })();
 
@@ -66,8 +69,8 @@ export const useSearch = () => {
             ? ["word", "translation", "definition", "tags"]
             : undefined,
           boost: {
-            word: 2,
-            translation: 2,
+            word: 10,
+            translation: 10,
           },
           tolerance,
         },
@@ -207,9 +210,12 @@ export const useInfiniteScroll = (
       setOffset((prevOffset) => prevOffset + SEARCH_RESULTS_PER_PAGE);
     },
     hasMore,
-    results: {
-      ...searchResultsMetadata,
-      hits,
-    } as Results<InternalTypedDocument<SelectDictionaryEntry>>,
+    results:
+      hits && searchResultsMetadata
+        ? ({
+            ...searchResultsMetadata,
+            hits,
+          } as Results<InternalTypedDocument<SelectDictionaryEntry>>)
+        : undefined,
   };
 };
