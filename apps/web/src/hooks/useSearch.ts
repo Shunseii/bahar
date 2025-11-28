@@ -11,7 +11,7 @@ import { getOramaDb } from "@/lib/search";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { detectLanguage } from "@/lib/utils";
 
-const SEARCH_RESUTLS_PER_PAGE = 20;
+const SEARCH_RESULTS_PER_PAGE = 20;
 
 const searchResultsMetadataAtom = atom<Omit<
   Results<InternalTypedDocument<SelectDictionaryEntry>>,
@@ -61,7 +61,7 @@ export const useSearch = () => {
         {
           ...params,
           mode: "fulltext",
-          limit: SEARCH_RESUTLS_PER_PAGE,
+          limit: SEARCH_RESULTS_PER_PAGE,
           properties: params.term
             ? ["word", "translation", "definition", "tags"]
             : undefined,
@@ -204,7 +204,7 @@ export const useInfiniteScroll = (
 
   return {
     showMore: () => {
-      setOffset((prevOffset) => prevOffset + SEARCH_RESUTLS_PER_PAGE);
+      setOffset((prevOffset) => prevOffset + SEARCH_RESULTS_PER_PAGE);
     },
     hasMore,
     results: {
