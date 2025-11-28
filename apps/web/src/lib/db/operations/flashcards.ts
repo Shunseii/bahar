@@ -5,6 +5,7 @@ import {
   FlashcardState,
   SelectDictionaryEntry,
   InsertFlashcard,
+  WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
 import { getDb } from "..";
 import { nanoid } from "nanoid";
@@ -44,14 +45,19 @@ export const flashcardsTable = {
 
         const {
           tags = [],
-          types = ["ism", "harf", "fi'l", "expression"],
-          state = [
-            FlashcardState.NEW,
-            FlashcardState.LEARNING,
-            FlashcardState.REVIEW,
-            FlashcardState.RE_LEARNING,
-          ],
+          types: rawTypes,
+          state: rawState,
         } = filters ?? {};
+
+        const types = rawTypes?.length ? rawTypes : [...WORD_TYPES];
+        const state = rawState?.length
+          ? rawState
+          : [
+              FlashcardState.NEW,
+              FlashcardState.LEARNING,
+              FlashcardState.REVIEW,
+              FlashcardState.RE_LEARNING,
+            ];
 
         const directions = showReverse ? ["forward", "reverse"] : ["forward"];
 
@@ -180,9 +186,13 @@ export const flashcardsTable = {
 
         await db.push();
 
-        const res: RawFlashcard = await db
+        const res: RawFlashcard | undefined = await db
           .prepare(`SELECT * FROM flashcards WHERE id = ?;`)
           .get([id]);
+
+        if (!res) {
+          throw new Error(`Failed to retrieve newly created flashcard: ${id}`);
+        }
 
         return {
           ...res,
@@ -286,9 +296,13 @@ export const flashcardsTable = {
 
         await db.push();
 
-        const res: RawFlashcard = await db
+        const res: RawFlashcard | undefined = await db
           .prepare(`SELECT * FROM flashcards WHERE id = ?;`)
           .get([id]);
+
+        if (!res) {
+          throw new Error(`Flashcard not found: ${id}`);
+        }
 
         return {
           ...res,
@@ -343,11 +357,15 @@ export const flashcardsTable = {
 
         await db.push();
 
-        const res: RawFlashcard = await db
+        const res: RawFlashcard | undefined = await db
           .prepare(
             `SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;`,
           )
           .get([dictionary_entry_id, direction]);
+
+        if (!res) {
+          throw new Error(`Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`);
+        }
 
         return {
           ...res,

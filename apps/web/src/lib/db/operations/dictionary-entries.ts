@@ -26,9 +26,13 @@ export const dictionaryEntriesTable = {
     query: async (id: string): Promise<SelectDictionaryEntry> => {
       try {
         const db = getDb();
-        const res: RawDictionaryEntry = await db
+        const res: RawDictionaryEntry | undefined = await db
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?`)
           .get([id]);
+
+        if (!res) {
+          throw new Error(`Dictionary entry not found: ${id}`);
+        }
 
         const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
         if (!result.ok) {
@@ -117,9 +121,13 @@ export const dictionaryEntriesTable = {
 
         await db.push();
 
-        const res: RawDictionaryEntry = await db
+        const res: RawDictionaryEntry | undefined = await db
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?;`)
           .get([id]);
+
+        if (!res) {
+          throw new Error(`Failed to retrieve newly created dictionary entry: ${id}`);
+        }
 
         const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
         if (!result.ok) {
@@ -229,9 +237,13 @@ export const dictionaryEntriesTable = {
 
         await db.push();
 
-        const res: RawDictionaryEntry = await db
+        const res: RawDictionaryEntry | undefined = await db
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?;`)
           .get([id]);
+
+        if (!res) {
+          throw new Error(`Dictionary entry not found: ${id}`);
+        }
 
         const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
         if (!result.ok) {
@@ -256,9 +268,13 @@ export const dictionaryEntriesTable = {
       try {
         const db = getDb();
 
-        const res: RawDictionaryEntry = await db
+        const res: RawDictionaryEntry | undefined = await db
           .prepare("SELECT * FROM dictionary_entries WHERE id = ?;")
           .get([id]);
+
+        if (!res) {
+          throw new Error(`Dictionary entry not found: ${id}`);
+        }
 
         await db
           .prepare(`DELETE FROM dictionary_entries WHERE id = ?;`)

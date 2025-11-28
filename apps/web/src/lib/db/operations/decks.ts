@@ -1,4 +1,9 @@
-import { SelectDeck, RawDeck } from "@bahar/drizzle-user-db-schemas";
+import {
+  SelectDeck,
+  RawDeck,
+  FlashcardState,
+  WORD_TYPES,
+} from "@bahar/drizzle-user-db-schemas";
 import { getDb } from "..";
 import { nanoid } from "nanoid";
 import { TableOperation } from "./types";
@@ -28,9 +33,19 @@ export const decksTable = {
             try {
               const {
                 tags = [],
-                types = ["ism", "harf", "fi'l", "expression"],
-                state = [0, 1, 2, 3],
+                types: rawTypes,
+                state: rawState,
               } = deck.filters ?? {};
+
+              const types = rawTypes?.length ? rawTypes : [...WORD_TYPES];
+              const state = rawState?.length
+                ? rawState
+                : [
+                    FlashcardState.NEW,
+                    FlashcardState.LEARNING,
+                    FlashcardState.REVIEW,
+                    FlashcardState.RE_LEARNING,
+                  ];
 
               const directions = show_reverse
                 ? ["forward", "reverse"]
@@ -128,9 +143,13 @@ export const decksTable = {
 
         await db.push();
 
-        const res: RawDeck = await db
+        const res: RawDeck | undefined = await db
           .prepare(`SELECT * FROM decks WHERE id = ?;`)
           .get([id]);
+
+        if (!res) {
+          throw new Error(`Failed to retrieve newly created deck: ${id}`);
+        }
 
         return {
           ...res,
@@ -180,9 +199,13 @@ export const decksTable = {
 
         await db.push();
 
-        const res: RawDeck = await db
+        const res: RawDeck | undefined = await db
           .prepare(`SELECT * FROM decks WHERE id = ?;`)
           .get([id]);
+
+        if (!res) {
+          throw new Error(`Deck not found: ${id}`);
+        }
 
         return {
           ...res,

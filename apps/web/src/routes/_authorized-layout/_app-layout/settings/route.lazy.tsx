@@ -158,7 +158,11 @@ const Settings = () => {
 
       reset();
       resetOramaDb();
-      await hydrateOramaDb();
+      const hydrateResult = await hydrateOramaDb();
+      if (!hydrateResult.ok) {
+        window.location.reload();
+        return;
+      }
 
       toast({
         title: t`Successfully deleted!`,
@@ -307,7 +311,11 @@ const Settings = () => {
 
                 reset();
                 resetOramaDb();
-                await hydrateOramaDb();
+                const hydrateResult = await hydrateOramaDb();
+                if (!hydrateResult.ok) {
+                  window.location.reload();
+                  return;
+                }
 
                 toast({
                   title: t`Successfully imported!`,

@@ -13,6 +13,7 @@ import * as Sentry from "@sentry/react";
  * in the pre load of the root router.
  */
 let db: Database | null = null;
+let dbInitPromise: ReturnType<typeof _initDbInternal> | null = null;
 
 const LOCAL_DB_PATH_PREFIX = "bahar-local";
 
@@ -29,6 +30,7 @@ export const resetDb = async () => {
 
   await db.close();
   db = null;
+  dbInitPromise = null;
 };
 
 /**
@@ -38,10 +40,21 @@ export const resetDb = async () => {
  * of the database.
  *
  * Also runs an initial sync with remote and any new migrations.
+ *
+ * Uses a promise-based singleton pattern to prevent race conditions
+ * if called concurrently before initialization completes.
  */
 export const initDb = async () => {
   if (db) return ok(null);
+  if (dbInitPromise) return dbInitPromise;
 
+  dbInitPromise = _initDbInternal();
+  const result = await dbInitPromise;
+  if (!result.ok) dbInitPromise = null; // Allow retry on failure
+  return result;
+};
+
+const _initDbInternal = async () => {
   const infoResult = await tryCatch(
     () => trpcClient.databases.userDatabase.query(),
     (error) => ({
