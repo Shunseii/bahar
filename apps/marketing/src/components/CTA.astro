@@ -8,43 +8,82 @@ interface Props {
 const { locale } = Astro.props;
 ---
 
-<section class="py-20 sm:py-32">
+<section class="py-24 sm:py-32">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="relative overflow-hidden rounded-3xl bg-primary px-6 py-20 sm:px-12 sm:py-28">
-      <!-- Decorative elements -->
-      <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div class="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-white/10 blur-3xl"></div>
-        <div class="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-white/10 blur-3xl"></div>
-      </div>
+    <div class="relative isolate overflow-hidden rounded-3xl">
+      <!-- Gradient background -->
+      <div class="absolute inset-0 bg-gradient-to-br from-primary via-blue-600 to-violet-600"></div>
 
-      <div class="relative mx-auto max-w-2xl text-center">
-        <h2 class="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl">
-          {t(locale, 'cta.title')}
-        </h2>
-        <p class="mt-4 text-lg text-primary-foreground/80">
-          {t(locale, 'cta.subtitle')}
-        </p>
-        <div class="mt-10">
-          <a
-            href="https://bahar.dev"
-            class="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary shadow-sm transition-colors hover:bg-white/90"
-          >
-            {t(locale, 'cta.button')}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="ms-2 h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
+      <!-- Animated gradient overlay -->
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,255,255,0.15)_0%,_transparent_50%)]"></div>
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(255,255,255,0.1)_0%,_transparent_50%)]"></div>
+
+      <!-- Grid pattern -->
+      <div class="absolute inset-0 opacity-10" style="background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;);"></div>
+
+      <!-- Floating shapes -->
+      <div class="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-white/10 blur-3xl"></div>
+      <div class="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-white/10 blur-3xl"></div>
+
+      <div class="relative px-6 py-24 sm:px-12 sm:py-32 lg:px-16">
+        <div class="mx-auto max-w-2xl text-center">
+          <!-- Icon -->
+          <div class="mx-auto mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
-          </a>
+          </div>
+
+          <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            {t(locale, 'cta.title')}
+          </h2>
+          <p class="mt-6 text-lg leading-relaxed text-white/80">
+            {t(locale, 'cta.subtitle')}
+          </p>
+
+          <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              href="https://bahar.dev"
+              class="group relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl bg-white px-8 py-4 text-base font-semibold text-primary shadow-xl transition-all duration-300 hover:shadow-2xl sm:w-auto"
+            >
+              <span class="relative z-10 flex items-center gap-2">
+                {t(locale, 'cta.button')}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+              <!-- Shine effect -->
+              <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-primary/10 to-transparent transition-transform duration-700 group-hover:translate-x-full"></div>
+            </a>
+          </div>
+
+          <!-- Trust indicators -->
+          <div class="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-white/60">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              {t(locale, 'cta.free')}
+            </div>
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              {t(locale, 'cta.noCard')}
+            </div>
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              {t(locale, 'cta.startFast')}
+            </div>
+          </div>
         </div>
       </div>
     </div>

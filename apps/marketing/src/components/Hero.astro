@@ -8,67 +8,145 @@ interface Props {
 const { locale } = Astro.props;
 ---
 
-<section class="relative overflow-hidden py-20 sm:py-32">
+<section class="relative overflow-hidden pt-24 pb-20 sm:pt-32 sm:pb-32 lg:pt-40">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="mx-auto max-w-3xl text-center">
-      <h1 class="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-        {t(locale, 'hero.title')}
+    <div class="mx-auto max-w-4xl text-center">
+      <!-- Animated Badge -->
+      <div class="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
+        <span class="relative flex h-2 w-2">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+        </span>
+        {t(locale, 'hero.badge')}
+      </div>
+
+      <!-- Headline with gradient -->
+      <h1 class="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+        <span class="block">{t(locale, 'hero.title.line1')}</span>
+        <span class="mt-2 block bg-gradient-to-r from-primary via-blue-400 to-primary bg-clip-text text-transparent">
+          {t(locale, 'hero.title.line2')}
+        </span>
       </h1>
-      <p class="mt-6 text-lg leading-8 text-muted-foreground sm:text-xl">
+
+      <p class="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
         {t(locale, 'hero.subtitle')}
       </p>
-      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+
+      <!-- CTA Buttons -->
+      <div class="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
         <a
           href="https://bahar.dev"
-          class="inline-flex w-full items-center justify-center rounded-lg bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 sm:w-auto"
+          class="group relative inline-flex w-full items-center justify-center overflow-hidden rounded-xl bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:shadow-xl hover:shadow-primary/30 sm:w-auto"
         >
-          {t(locale, 'hero.cta.primary')}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="ms-2 h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 7l5 5m0 0l-5 5m5-5H6"
-            />
-          </svg>
+          <span class="relative z-10 flex items-center gap-2">
+            {t(locale, 'hero.cta.primary')}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </span>
+          <!-- Shine effect -->
+          <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"></div>
         </a>
         <a
           href={getLocalizedPath('blog', locale)}
-          class="inline-flex w-full items-center justify-center rounded-lg border border-border bg-background px-6 py-3 text-base font-semibold text-foreground transition-colors hover:bg-secondary sm:w-auto"
+          class="group inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-background/50 px-8 py-4 text-base font-semibold text-foreground backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:bg-primary/5 sm:w-auto"
         >
           {t(locale, 'hero.cta.secondary')}
         </a>
       </div>
     </div>
 
-    <!-- App Preview Placeholder -->
-    <div class="mx-auto mt-16 max-w-5xl sm:mt-24">
-      <div class="relative overflow-hidden rounded-xl border border-border bg-secondary/50 shadow-2xl">
-        <div class="aspect-[16/10] flex items-center justify-center bg-gradient-to-br from-secondary to-muted p-8">
-          <div class="text-center">
-            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-8 w-8 text-primary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
+    <!-- App Preview -->
+    <div class="mx-auto mt-20 max-w-5xl sm:mt-28">
+      <div class="relative">
+        <!-- Glow effect behind -->
+        <div class="absolute -inset-4 rounded-2xl bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 opacity-50 blur-3xl"></div>
+
+        <!-- Browser mockup -->
+        <div class="relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 shadow-2xl backdrop-blur-sm">
+          <!-- Browser header -->
+          <div class="flex items-center gap-2 border-b border-border/50 bg-muted/50 px-4 py-3">
+            <div class="flex gap-1.5">
+              <div class="h-3 w-3 rounded-full bg-red-400/80"></div>
+              <div class="h-3 w-3 rounded-full bg-yellow-400/80"></div>
+              <div class="h-3 w-3 rounded-full bg-green-400/80"></div>
             </div>
-            <p class="text-sm text-muted-foreground">App Screenshot Placeholder</p>
+            <div class="mx-auto flex items-center gap-2 rounded-md bg-background/50 px-3 py-1 text-xs text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              bahar.dev
+            </div>
+          </div>
+
+          <!-- App content placeholder -->
+          <div class="aspect-[16/9] bg-gradient-to-br from-background via-background to-muted/50 p-6 sm:p-8">
+            <div class="flex h-full flex-col">
+              <!-- Mock app header -->
+              <div class="flex items-center justify-between border-b border-border/30 pb-4">
+                <div class="flex items-center gap-3">
+                  <div class="h-8 w-8 rounded-lg bg-primary/20"></div>
+                  <div class="h-4 w-20 rounded bg-muted"></div>
+                </div>
+                <div class="flex gap-2">
+                  <div class="h-8 w-8 rounded-lg bg-muted"></div>
+                  <div class="h-8 w-8 rounded-lg bg-muted"></div>
+                </div>
+              </div>
+
+              <!-- Mock content -->
+              <div class="mt-6 grid flex-1 gap-4 sm:grid-cols-3">
+                <div class="col-span-2 space-y-4">
+                  <!-- Search bar -->
+                  <div class="flex items-center gap-3 rounded-xl border border-border/30 bg-muted/30 px-4 py-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <span class="text-sm text-muted-foreground">{t(locale, 'hero.mockup.search')}</span>
+                  </div>
+
+                  <!-- Word cards -->
+                  <div class="space-y-3">
+                    {[
+                      { ar: 'كِتَاب', en: 'Book', root: 'ك-ت-ب' },
+                      { ar: 'مَدْرَسَة', en: 'School', root: 'د-ر-س' },
+                    ].map((word) => (
+                      <div class="flex items-center justify-between rounded-xl border border-border/30 bg-card/50 p-4 transition-colors hover:border-primary/30">
+                        <div class="flex items-center gap-4">
+                          <div class="text-2xl font-arabic">{word.ar}</div>
+                          <div class="text-sm text-muted-foreground">{word.en}</div>
+                        </div>
+                        <div class="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">{word.root}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <!-- Sidebar stats -->
+                <div class="hidden space-y-4 sm:block">
+                  <div class="rounded-xl border border-border/30 bg-card/50 p-4">
+                    <div class="text-xs text-muted-foreground">{t(locale, 'hero.mockup.wordsLearned')}</div>
+                    <div class="mt-1 text-2xl font-bold">247</div>
+                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-muted">
+                      <div class="h-full w-3/4 rounded-full bg-gradient-to-r from-primary to-blue-400"></div>
+                    </div>
+                  </div>
+                  <div class="rounded-xl border border-border/30 bg-card/50 p-4">
+                    <div class="text-xs text-muted-foreground">{t(locale, 'hero.mockup.streak')}</div>
+                    <div class="mt-1 flex items-baseline gap-1">
+                      <span class="text-2xl font-bold">12</span>
+                      <span class="text-lg">🔥</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
