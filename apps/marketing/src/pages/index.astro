@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AnimatedBackground from '../components/AnimatedBackground';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import CTA from '../components/CTA.astro';
+
+const locale = 'en';
+---
+
+<BaseLayout locale={locale}>
+  <AnimatedBackground client:load transition:persist />
+  <Hero locale={locale} />
+  <Features locale={locale} />
+  <CTA locale={locale} />
+</BaseLayout>

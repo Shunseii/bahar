@@ -1,0 +1,52 @@
+---
+import { t, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<section class="py-20 sm:py-32">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="relative overflow-hidden rounded-3xl bg-primary px-6 py-20 sm:px-12 sm:py-28">
+      <!-- Decorative elements -->
+      <div class="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div class="absolute -top-20 -right-20 h-80 w-80 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-white/10 blur-3xl"></div>
+      </div>
+
+      <div class="relative mx-auto max-w-2xl text-center">
+        <h2 class="text-3xl font-bold tracking-tight text-primary-foreground sm:text-4xl">
+          {t(locale, 'cta.title')}
+        </h2>
+        <p class="mt-4 text-lg text-primary-foreground/80">
+          {t(locale, 'cta.subtitle')}
+        </p>
+        <div class="mt-10">
+          <a
+            href="https://bahar.dev"
+            class="inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-base font-semibold text-primary shadow-sm transition-colors hover:bg-white/90"
+          >
+            {t(locale, 'cta.button')}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="ms-2 h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

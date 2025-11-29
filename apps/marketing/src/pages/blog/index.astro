@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/blog/PostCard.astro';
+import { t } from '../../i18n';
+
+const locale = 'en';
+
+const posts = await getCollection('blog-en', ({ data }) => !data.draft);
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title={`${t(locale, 'blog.title')} | Bahar`}
+  description={t(locale, 'blog.subtitle')}
+  locale={locale}
+>
+  <section class="py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">
+          {t(locale, 'blog.title')}
+        </h1>
+        <p class="mt-4 text-lg text-muted-foreground">
+          {t(locale, 'blog.subtitle')}
+        </p>
+      </div>
+
+      <div class="mx-auto mt-16 grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {sortedPosts.map((post) => (
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            slug={post.id}
+            locale={locale}
+          />
+        ))}
+      </div>
+
+      {sortedPosts.length === 0 && (
+        <p class="mt-16 text-center text-muted-foreground">
+          No posts yet. Check back soon!
+        </p>
+      )}
+    </div>
+  </section>
+</BaseLayout>

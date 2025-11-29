@@ -1,0 +1,108 @@
+---
+import { t, getLocalizedPath, getAlternateLocale, type Locale } from '../i18n';
+import ThemeToggle from './ThemeToggle';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const alternateLocale = getAlternateLocale(locale);
+
+const navItems = [
+  { label: t(locale, 'nav.home'), href: getLocalizedPath('', locale) },
+  { label: t(locale, 'nav.blog'), href: getLocalizedPath('blog', locale) },
+];
+
+// Get current path for language switcher
+const currentPath = Astro.url.pathname;
+const alternatePath = locale === 'en'
+  ? `/ar${currentPath}`
+  : currentPath.replace(/^\/ar/, '') || '/';
+
+---
+
+<header transition:name="main-header" class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <!-- Logo -->
+    <a href={getLocalizedPath('', locale)} class="flex items-center gap-2">
+      <img src="/favicon.svg" alt={t(locale, 'logo')} class="h-8 w-8" />
+      <span class="text-xl font-bold">{t(locale, 'logo')}</span>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="hidden items-center gap-6 md:flex">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-2 sm:gap-4">
+      <!-- Theme Toggle -->
+      <ThemeToggle client:load />
+
+      <!-- Language Switcher -->
+      <a
+        href={alternatePath}
+        class="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+      >
+        {alternateLocale === 'ar' ? 'العربية' : 'English'}
+      </a>
+
+      <!-- CTA Button -->
+      <a
+        href="https://bahar.dev"
+        class="hidden rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:inline-flex"
+      >
+        {t(locale, 'nav.getStarted')}
+      </a>
+
+      <!-- Mobile Menu Button -->
+      <button
+        type="button"
+        class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground md:hidden"
+        aria-label="Open menu"
+        id="mobile-menu-button"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden border-t border-border md:hidden">
+    <div class="space-y-1 px-4 py-3">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+        >
+          {item.label}
+        </a>
+      ))}
+      <a
+        href="https://bahar.dev"
+        class="block rounded-md bg-primary px-3 py-2 text-center text-base font-medium text-primary-foreground"
+      >
+        {t(locale, 'nav.getStarted')}
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const button = document.getElementById('mobile-menu-button');
+  const menu = document.getElementById('mobile-menu');
+
+  button?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>

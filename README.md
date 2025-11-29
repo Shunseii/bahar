@@ -46,6 +46,14 @@ This project contains the Dockerfile for Meilisearch and the configuration to de
 
 This is a React Native project which largely uses the same tools as the web app.
 
+### Marketing
+
+This is the marketing website and blog for Bahar built with Astro 5 and Tailwind CSS v4.
+
+It supports both English and Arabic with full RTL support. Blog posts are written in MDX.
+
+It uses Cloudflare Pages for hosting.
+
 ## I18n
 
 Internationalization (i18n) is done using LinguiJS and managed mainly in the `i18n` package.
