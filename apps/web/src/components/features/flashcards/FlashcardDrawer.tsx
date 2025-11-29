@@ -38,6 +38,7 @@ import {
   flashcardsTable,
   FlashcardWithDictionaryEntry,
 } from "@/lib/db/operations/flashcards";
+import { decksTable } from "@/lib/db/operations/decks";
 import {
   FlashcardState,
   SelectDeck,
@@ -168,28 +169,27 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
   const { mutateAsync: updateFlashcardLocal } = useMutation({
     mutationFn: flashcardsTable.update.mutation,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
         queryKey: flashcardsTable.today.cacheOptions.queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: decksTable.list.cacheOptions.queryKey,
       });
     },
   });
 
-  const flashcards = data ?? [];
-  const totalHits = data?.length ?? 0;
-  const hasMore = totalHits > FLASHCARD_LIMIT;
-
-  const [currentCard, setCurrentCard] = useState<(typeof flashcards)[0] | null>(
-    flashcards[0],
-  );
+  const [cards, setCards] = useState<FlashcardWithDictionaryEntry[]>([]);
 
   useEffect(() => {
-    if (!flashcards?.length) {
-      setCurrentCard(null);
+    if (data) {
+      setCards(data);
     }
+  }, [data]);
 
-    setCurrentCard(flashcards[0]);
-  }, [flashcards]);
+  const totalHits = cards.length;
+  const hasMore = totalHits > FLASHCARD_LIMIT;
+  const currentCard = cards[0] ?? null;
 
   const f = useMemo(() => fsrs({ enable_fuzz: true }), []);
   const now = new Date();
@@ -197,9 +197,6 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const scheduling_cards = currentCard
     ? f.repeat(convertFlashcardToFsrsCard(currentCard), now)
     : undefined;
-  const currentFlashcardIndex = flashcards.findIndex(
-    (flashcard) => flashcard.id === currentCard?.id,
-  );
 
   const gradeCard = useCallback(
     async (grade: Grade) => {
@@ -239,31 +236,20 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       };
 
       setShowAnswer(false);
+      setCards((prev) => prev.filter((c) => c.id !== currentCard.id));
 
-      await Promise.all([
-        updateFlashcard({
-          flashcard: newCard,
-          id: newCard.id,
-          reverse: currentCard.direction === "reverse",
-        }),
-        updateFlashcardLocal({
-          id: currentCard.id,
-          updates: localUpdates,
-        }),
-      ]);
+      updateFlashcard({
+        flashcard: newCard,
+        id: newCard.id,
+        reverse: currentCard.direction === "reverse",
+      });
 
-      if (currentFlashcardIndex === flashcards.length - 1) {
-        setCurrentCard(null);
-      }
+      await updateFlashcardLocal({
+        id: currentCard.id,
+        updates: localUpdates,
+      });
     },
-    [
-      currentCard,
-      scheduling_cards,
-      currentFlashcardIndex,
-      flashcards.length,
-      updateFlashcard,
-      updateFlashcardLocal,
-    ],
+    [currentCard, scheduling_cards, updateFlashcard, updateFlashcardLocal],
   );
 
   // Initial load
@@ -277,7 +263,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         setShowAnswer(false);
       }}
     >
-      {flashcards?.length ? (
+      {cards?.length ? (
         <Tooltip>
           <TooltipTrigger asChild>
             <DrawerTrigger asChild>{children}</DrawerTrigger>
@@ -290,7 +276,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
               </Trans>
             ) : (
               <Plural
-                value={flashcards.length}
+                value={cards.length}
                 one="You have # card to review."
                 other="You have # cards to review"
               />
@@ -305,16 +291,16 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         <DrawerHeader>
           <DrawerTitle>
             {(() => {
-              if (hasMore && flashcards?.length) {
+              if (hasMore && cards?.length) {
                 return (
                   <Trans>
                     You have more than {FLASHCARD_LIMIT} cards to review.
                   </Trans>
                 );
-              } else if (flashcards?.length) {
+              } else if (cards?.length) {
                 return (
                   <Plural
-                    value={flashcards.length}
+                    value={cards.length}
                     one="# card left to review"
                     other="# cards left to review"
                   />

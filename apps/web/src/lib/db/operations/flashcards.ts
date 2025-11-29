@@ -16,6 +16,16 @@ import {
 } from "../utils";
 import { TableOperation } from "./types";
 import * as Sentry from "@sentry/react";
+import { debounce } from "@tanstack/pacer";
+
+const DEBOUNCED_DELAY_MS = 2 * 1000;
+
+const debouncedPush = debounce(
+  () => {
+    getDb().push();
+  },
+  { wait: DEBOUNCED_DELAY_MS },
+);
 
 /**
  * The threshold after which the UI won't display the
@@ -43,11 +53,7 @@ export const flashcardsTable = {
         const db = getDb();
         const now = Date.now();
 
-        const {
-          tags = [],
-          types: rawTypes,
-          state: rawState,
-        } = filters ?? {};
+        const { tags = [], types: rawTypes, state: rawState } = filters ?? {};
 
         const types = rawTypes?.length ? rawTypes : [...WORD_TYPES];
         const state = rawState?.length
@@ -294,7 +300,7 @@ export const flashcardsTable = {
           )
           .run(params);
 
-        await db.push();
+        debouncedPush();
 
         const res: RawFlashcard | undefined = await db
           .prepare(`SELECT * FROM flashcards WHERE id = ?;`)
@@ -364,7 +370,9 @@ export const flashcardsTable = {
           .get([dictionary_entry_id, direction]);
 
         if (!res) {
-          throw new Error(`Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`);
+          throw new Error(
+            `Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`,
+          );
         }
 
         return {
