@@ -15,6 +15,7 @@ import {
   DICTIONARY_ENTRY_COLUMNS,
 } from "../utils";
 import { TableOperation } from "./types";
+import * as Sentry from "@sentry/react";
 
 /**
  * The threshold after which the UI won't display the
