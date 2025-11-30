@@ -92,7 +92,7 @@ msgstr "أضف صيغة جمع"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:373
 msgid "Add some to get started!"
-msgstr "أضف شيا لتبدأ!"
+msgstr "أضف شيئًا لتبدأ!"
 
 #: ../../apps/web/src/components/Autocomplete.tsx:159
 msgid "Add tag {inputValue}"
@@ -127,12 +127,12 @@ msgstr "تعريف عربية للكلمة."
 
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:216
 msgid "An English translation of the sentence."
-msgstr "ترجمة إنجلزية للجملة."
+msgstr "ترجمة إنجليزية للجملة."
 
 #: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:67
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:213
 msgid "An English translation of the word."
-msgstr "ترجمة إنجلزية للكلمة."
+msgstr "ترجمة إنجليزية للكلمة."
 
 #: ../../apps/web/src/components/errors/ErrorMessage.tsx:72
 msgid "An unexpected error occurred. You can try reloading the page to fix it."
@@ -187,7 +187,7 @@ msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذ
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:95
 msgid "Are you sure you want to reset this flashcard's progress? The word entry in the dictionary will not be modified, but its corresponding flashcards will be treated as new ones.<0/><1/><2>This action cannot be undone.</2>"
-msgstr "هل أنت متأكد أنك تريد إعادة تعيين تقدم بطاقة هذه؟ لن يتم تعديل إدخال الكلمة في المعجك، ولكن سيتم التعامل مع بطاقات بها على أنها بطاقات جديدة.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
+msgstr "هل أنت متأكد أنك تريد إعادة تعيين تقدم بطاقة هذه؟ لن يتم تعديل إدخال الكلمة في المعجم، ولكن سيتم التعامل مع بطاقات بها على أنها بطاقات جديدة.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:230
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:76
@@ -269,7 +269,7 @@ msgstr "أنشئ مجموعة جديدة باختيار الفلاتر. ستكو
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:88
 msgid "Create deck"
-msgstr "أنشئ محموعة"
+msgstr "أنشئ مجموعة"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:107
 msgid "Customize how flashcards appear."
@@ -396,7 +396,7 @@ msgstr "البريد الإلكتروني"
 
 #: ../../apps/web/src/components/LanguageMenu.tsx:22
 msgid "English"
-msgstr "الانجلزية"
+msgstr "الإنجليزية"
 
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:251
 msgid "Enter a deck name"
@@ -1274,12 +1274,12 @@ msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة
 
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:270
 msgid "محمد is a triptote;"
-msgstr "كلمة محمد هي معرب;"
+msgstr "كلمة «محمد» هي معرب."
 
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:276
 msgid "موسى is indeclinable."
-msgstr "كلمة موسى هي مبنى."
+msgstr "كلمة «موسى» هي مبنى."
 
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:273
 msgid "يوسف is a diptote;"
-msgstr "كلمة يوسف هي ممنوع من الصرف;"
+msgstr "كلمة «يوسف» هي ممنوع من الصرف."
