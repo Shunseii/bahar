@@ -62,8 +62,26 @@ const { locale } = Astro.props;
       </div>
     </div>
 
-    <!-- App Preview -->
-    <div class="mx-auto mt-20 max-w-5xl sm:mt-28">
+    <!-- App Preview (hidden on mobile) -->
+    <div class="hidden sm:block mx-auto mt-20 max-w-5xl sm:mt-28">
+      <!-- Preview Tabs -->
+      <div class="flex justify-center gap-2 mb-6">
+        <button
+          class="hero-preview-tab cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-primary text-primary-foreground"
+          data-tab="dictionary"
+          type="button"
+        >
+          {t(locale, 'hero.mockup.tab.dictionary')}
+        </button>
+        <button
+          class="hero-preview-tab cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-muted text-muted-foreground hover:bg-muted/80"
+          data-tab="flashcards"
+          type="button"
+        >
+          {t(locale, 'hero.mockup.tab.flashcards')}
+        </button>
+      </div>
+
       <div class="relative">
         <!-- Glow effect behind -->
         <div class="absolute -inset-4 rounded-2xl bg-gradient-to-r from-primary/20 via-blue-500/20 to-primary/20 opacity-50 blur-3xl"></div>
@@ -85,63 +103,176 @@ const { locale } = Astro.props;
             </div>
           </div>
 
-          <!-- App content placeholder -->
-          <div class="aspect-[16/9] bg-gradient-to-br from-background via-background to-muted/50 p-6 sm:p-8">
-            <div class="flex h-full flex-col">
-              <!-- Mock app header -->
-              <div class="flex items-center justify-between border-b border-border/30 pb-4">
-                <div class="flex items-center gap-3">
-                  <div class="h-8 w-8 rounded-lg bg-primary/20"></div>
-                  <div class="h-4 w-20 rounded bg-muted"></div>
+          <!-- App content -->
+          <div class="aspect-[16/9] bg-background flex relative">
+            <!-- Sidebar - always shows home as active -->
+            <div class="hidden sm:flex w-14 flex-col items-center ltr:border-r rtl:border-l border-border py-4">
+              <!-- Nav icons -->
+              <div class="flex flex-col gap-4">
+                <div class="p-2 rounded-lg bg-muted">
+                  <svg class="h-5 w-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
                 </div>
-                <div class="flex gap-2">
-                  <div class="h-8 w-8 rounded-lg bg-muted"></div>
-                  <div class="h-8 w-8 rounded-lg bg-muted"></div>
+                <div class="p-2 rounded-lg">
+                  <svg class="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+              </div>
+              <!-- Settings at bottom -->
+              <div class="mt-auto p-2 rounded-lg">
+                <svg class="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Main content - Dictionary -->
+            <div class="flex-1 p-4 sm:p-6 overflow-hidden">
+              <!-- Search bar -->
+              <div class="flex items-center justify-center mb-4">
+                <div class="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-4 py-2 w-full max-w-md">
+                  <svg class="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <span class="text-sm text-muted-foreground">{t(locale, 'hero.mockup.search')}</span>
                 </div>
               </div>
 
-              <!-- Mock content -->
-              <div class="mt-6 grid flex-1 gap-4 sm:grid-cols-3">
-                <div class="col-span-2 space-y-4">
-                  <!-- Search bar -->
-                  <div class="flex items-center gap-3 rounded-xl border border-border/30 bg-muted/30 px-4 py-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <span class="text-sm text-muted-foreground">{t(locale, 'hero.mockup.search')}</span>
-                  </div>
+              <!-- Action buttons -->
+              <div class="flex items-center justify-between mb-3">
+                <button class="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-sm text-foreground/80">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                  {t(locale, 'hero.mockup.addWord')}
+                </button>
+                <button class="relative flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-1.5 text-sm text-foreground/80">
+                  {t(locale, 'hero.mockup.reviewFlashcards')}
+                  <span class="absolute -top-1 ltr:-right-1 rtl:-left-1 h-2.5 w-2.5 rounded-full bg-red-500"></span>
+                </button>
+              </div>
 
-                  <!-- Word cards -->
-                  <div class="space-y-3">
-                    {[
-                      { ar: 'كِتَاب', en: 'Book', root: 'ك-ت-ب' },
-                      { ar: 'مَدْرَسَة', en: 'School', root: 'د-ر-س' },
-                    ].map((word) => (
-                      <div class="flex items-center justify-between rounded-xl border border-border/30 bg-card/50 p-4 transition-colors hover:border-primary/30">
-                        <div class="flex items-center gap-4">
-                          <div class="text-2xl font-arabic">{word.ar}</div>
-                          <div class="text-sm text-muted-foreground">{word.en}</div>
-                        </div>
-                        <div class="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">{word.root}</div>
-                      </div>
-                    ))}
-                  </div>
+              <!-- Results count -->
+              <div class="text-center text-xs text-muted-foreground mb-4">{t(locale, 'hero.mockup.resultsFound')}</div>
+
+              <!-- Dictionary card -->
+              <div class="rounded-xl border border-border bg-card overflow-hidden">
+                <!-- Card header -->
+                <div class="text-center py-4 border-b border-border">
+                  <h3 class="text-lg font-semibold text-foreground">{t(locale, 'hero.mockup.dictionary')}</h3>
+                  <p class="text-xs text-muted-foreground mt-1">{t(locale, 'hero.mockup.dictionarySubtitle')}</p>
                 </div>
 
-                <!-- Sidebar stats -->
-                <div class="hidden space-y-4 sm:block">
-                  <div class="rounded-xl border border-border/30 bg-card/50 p-4">
-                    <div class="text-xs text-muted-foreground">{t(locale, 'hero.mockup.wordsLearned')}</div>
-                    <div class="mt-1 text-2xl font-bold">247</div>
-                    <div class="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-                      <div class="h-full w-3/4 rounded-full bg-gradient-to-r from-primary to-blue-400"></div>
+                <!-- Word list -->
+                <div class="divide-y divide-border">
+                  {[
+                    { ar: 'كِتَاب', en: 'book' },
+                    { ar: 'قَلَم', en: 'pen' },
+                    { ar: 'مِفتَاح', en: 'key' },
+                  ].map((word) => (
+                    <div class="flex items-center justify-between px-4 py-3">
+                      <span class="text-sm text-muted-foreground">{word.en}</span>
+                      <div class="flex items-center gap-2">
+                        <span class="text-lg font-arabic text-foreground">{word.ar}</span>
+                        <svg class="h-4 w-4 text-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <!-- Flashcard Drawer Overlay -->
+            <div class="hero-flashcard-drawer absolute inset-0 hidden">
+              <!-- Backdrop -->
+              <div class="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+
+              <!-- Drawer -->
+              <div class="absolute inset-x-0 bottom-0 top-8 sm:top-12 bg-background rounded-t-2xl border-t border-x border-border flex flex-col">
+                <!-- Drawer handle -->
+                <div class="flex justify-center py-2">
+                  <div class="w-12 h-1 rounded-full bg-muted-foreground/30"></div>
+                </div>
+
+                <!-- Cards to review banner -->
+                <div class="text-sm text-muted-foreground px-4 sm:px-6 ltr:text-left rtl:text-right">
+                  {t(locale, 'hero.mockup.flashcard.cardsToReview')}
+                </div>
+
+                <!-- Flashcard content -->
+                <div class="flex-1 flex flex-col items-center justify-center px-4 sm:px-6">
+                  <!-- Progress bar -->
+                  <div class="w-full max-w-md mb-4 sm:mb-6">
+                    <div class="h-1 bg-muted rounded-full overflow-hidden">
+                      <div class="h-full w-1/3 bg-primary rounded-full"></div>
                     </div>
                   </div>
-                  <div class="rounded-xl border border-border/30 bg-card/50 p-4">
-                    <div class="text-xs text-muted-foreground">{t(locale, 'hero.mockup.streak')}</div>
-                    <div class="mt-1 flex items-baseline gap-1">
-                      <span class="text-2xl font-bold">12</span>
-                      <span class="text-lg">🔥</span>
+
+                  <!-- Card content -->
+                  <div class="text-center space-y-2 sm:space-y-3">
+                    <!-- Type badge -->
+                    <span class="inline-block px-3 py-1 rounded-md bg-muted text-xs font-medium text-muted-foreground">
+                      {t(locale, 'hero.mockup.flashcard.noun')}
+                    </span>
+
+                    <!-- Arabic word -->
+                    <div class="text-3xl sm:text-4xl lg:text-5xl font-arabic text-foreground">
+                      كِتَاب
+                    </div>
+
+                    <!-- Root -->
+                    <div class="text-base sm:text-lg text-muted-foreground font-arabic">
+                      ك-ت-ب
+                    </div>
+
+                    <!-- Translation -->
+                    <div class="text-base sm:text-lg text-muted-foreground">
+                      book
+                    </div>
+
+                    <!-- Singular/Plural -->
+                    <div class="flex items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
+                      <div class="flex items-center gap-2">
+                        <span class="text-xs uppercase tracking-wide">{t(locale, 'hero.mockup.flashcard.singular')}</span>
+                        <span class="font-arabic text-foreground">كِتَاب</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <span class="text-xs uppercase tracking-wide">{t(locale, 'hero.mockup.flashcard.plural')}</span>
+                        <span class="font-arabic text-foreground">كُتُب</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Review buttons -->
+                  <div class="mt-4 sm:mt-6 flex items-end justify-center gap-1.5 sm:gap-3">
+                    <div class="flex flex-col items-center gap-1">
+                      <span class="text-[10px] sm:text-xs text-muted-foreground">{t(locale, 'hero.mockup.flashcard.1min')}</span>
+                      <button class="px-2 sm:px-4 lg:px-6 py-1.5 sm:py-2 rounded-lg border border-border bg-background text-xs sm:text-sm font-medium text-foreground">
+                        {t(locale, 'hero.mockup.flashcard.again')}
+                      </button>
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                      <span class="text-[10px] sm:text-xs text-muted-foreground">{t(locale, 'hero.mockup.flashcard.5min')}</span>
+                      <button class="px-2 sm:px-4 lg:px-6 py-1.5 sm:py-2 rounded-lg bg-destructive text-xs sm:text-sm font-medium text-destructive-foreground">
+                        {t(locale, 'hero.mockup.flashcard.hard')}
+                      </button>
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                      <span class="text-[10px] sm:text-xs text-muted-foreground">{t(locale, 'hero.mockup.flashcard.10min')}</span>
+                      <button class="px-2 sm:px-4 lg:px-6 py-1.5 sm:py-2 rounded-lg bg-muted text-xs sm:text-sm font-medium text-foreground">
+                        {t(locale, 'hero.mockup.flashcard.good')}
+                      </button>
+                    </div>
+                    <div class="flex flex-col items-center gap-1">
+                      <span class="text-[10px] sm:text-xs text-muted-foreground">{t(locale, 'hero.mockup.flashcard.16days')}</span>
+                      <button class="px-2 sm:px-4 lg:px-6 py-1.5 sm:py-2 rounded-lg bg-success text-xs sm:text-sm font-medium text-success-foreground">
+                        {t(locale, 'hero.mockup.flashcard.easy')}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -153,3 +284,42 @@ const { locale } = Astro.props;
     </div>
   </div>
 </section>
+
+<script>
+  function initHeroTabs() {
+    const tabs = document.querySelectorAll('.hero-preview-tab');
+    const drawer = document.querySelector('.hero-flashcard-drawer');
+
+    if (!tabs.length || !drawer) return;
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.getAttribute('data-tab');
+
+        // Update tab styles
+        tabs.forEach(t => {
+          if (t.getAttribute('data-tab') === targetTab) {
+            t.classList.remove('bg-muted', 'text-muted-foreground', 'hover:bg-muted/80');
+            t.classList.add('bg-primary', 'text-primary-foreground');
+          } else {
+            t.classList.remove('bg-primary', 'text-primary-foreground');
+            t.classList.add('bg-muted', 'text-muted-foreground', 'hover:bg-muted/80');
+          }
+        });
+
+        // Toggle drawer visibility
+        if (targetTab === 'flashcards') {
+          drawer.classList.remove('hidden');
+        } else {
+          drawer.classList.add('hidden');
+        }
+      });
+    });
+  }
+
+  // Initialize on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', initHeroTabs);
+
+  // Re-initialize on Astro page transitions (View Transitions API)
+  document.addEventListener('astro:page-load', initHeroTabs);
+</script>

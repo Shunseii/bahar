@@ -70,16 +70,20 @@ const alternatePath = locale === 'en'
         aria-label="Open menu"
         id="mobile-menu-button"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <div class="relative h-6 w-6">
+          <!-- Hamburger lines that animate to X -->
+          <span class="hamburger-line absolute left-0 top-1 h-0.5 w-6 bg-current transition-all duration-300"></span>
+          <span class="hamburger-line absolute left-0 top-[11px] h-0.5 w-6 bg-current transition-all duration-300"></span>
+          <span class="hamburger-line absolute left-0 bottom-1 h-0.5 w-6 bg-current transition-all duration-300"></span>
+        </div>
       </button>
     </div>
   </div>
 
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden border-t border-border md:hidden">
-    <div class="space-y-1 px-4 py-3">
+  <div id="mobile-menu" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out border-t border-border md:hidden">
+    <div class="overflow-hidden">
+      <div class="space-y-1 px-4 py-3">
       {navItems.map((item) => (
         <a
           href={item.href}
@@ -94,15 +98,55 @@ const alternatePath = locale === 'en'
       >
         {t(locale, 'nav.getStarted')}
       </a>
+      </div>
     </div>
   </div>
 </header>
 
 <script>
-  const button = document.getElementById('mobile-menu-button');
-  const menu = document.getElementById('mobile-menu');
+  function initMobileMenu() {
+    const button = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
 
-  button?.addEventListener('click', () => {
-    menu?.classList.toggle('hidden');
-  });
+    if (!button || !menu) return;
+
+    // Remove existing listener by cloning the button
+    const newButton = button.cloneNode(true) as HTMLElement;
+    button.parentNode?.replaceChild(newButton, button);
+
+    const lines = newButton.querySelectorAll('.hamburger-line');
+    let isOpen = false;
+
+    newButton.addEventListener('click', () => {
+      isOpen = !isOpen;
+
+      // Animate hamburger to X
+      if (lines.length === 3) {
+        if (isOpen) {
+          lines[0].classList.add('translate-y-[7px]', 'rotate-45');
+          lines[1].classList.add('opacity-0', 'scale-0');
+          lines[2].classList.add('-translate-y-[7px]', '-rotate-45');
+        } else {
+          lines[0].classList.remove('translate-y-[7px]', 'rotate-45');
+          lines[1].classList.remove('opacity-0', 'scale-0');
+          lines[2].classList.remove('-translate-y-[7px]', '-rotate-45');
+        }
+      }
+
+      // Animate menu open/close
+      if (isOpen) {
+        menu.classList.remove('grid-rows-[0fr]');
+        menu.classList.add('grid-rows-[1fr]');
+      } else {
+        menu.classList.remove('grid-rows-[1fr]');
+        menu.classList.add('grid-rows-[0fr]');
+      }
+    });
+  }
+
+  // Initialize on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', initMobileMenu);
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', initMobileMenu);
 </script>

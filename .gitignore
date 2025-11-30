@@ -72,3 +72,6 @@ expo-env.d.ts
 .metro-health-check*
 
 **/.claude/settings.local.json
+
+# Astro
+.astro/
