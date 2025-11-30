@@ -18,7 +18,6 @@ export const settingsTable = {
               "INSERT INTO settings (id, show_antonyms_in_flashcard, show_reverse_flashcards) VALUES (?, ?, ?)",
             )
             .run([nanoid(), "hidden", 0]);
-          await db.push();
           return {
             show_antonyms_in_flashcard: "hidden",
             show_reverse_flashcards: false,
@@ -72,8 +71,6 @@ export const settingsTable = {
         await db
           .prepare(`UPDATE settings SET ${setClauses.join(", ")};`)
           .run(params);
-
-        await db.push();
 
         const res: RawSetting = await db
           .prepare("SELECT * FROM settings")

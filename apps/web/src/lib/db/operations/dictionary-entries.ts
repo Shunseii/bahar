@@ -119,8 +119,6 @@ export const dictionaryEntriesTable = {
             createdAtTimestampMs,
           ]);
 
-        await db.push();
-
         const res: RawDictionaryEntry | undefined = await db
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?;`)
           .get([id]);
@@ -235,8 +233,6 @@ export const dictionaryEntriesTable = {
           )
           .run(params);
 
-        await db.push();
-
         const res: RawDictionaryEntry | undefined = await db
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?;`)
           .get([id]);
@@ -279,8 +275,6 @@ export const dictionaryEntriesTable = {
         await db
           .prepare(`DELETE FROM dictionary_entries WHERE id = ?;`)
           .run([id]);
-
-        await db.push();
 
         const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
         if (!result.ok) {
