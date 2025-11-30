@@ -1,5 +1,5 @@
 import { create, insertMultiple } from "@orama/orama";
-import { getDb } from "../db";
+import { ensureDb } from "../db";
 import {
   RawDictionaryEntry,
   RootLettersSchema,
@@ -67,7 +67,7 @@ export const hydrateOramaDb = async () => {
   if (isOramaHydrated) return ok({ skippedCount: 0 });
 
   const BATCH_SIZE = 500;
-  const db = getDb();
+  const db = await ensureDb();
 
   let offset = 0;
   let skippedCount = 0;

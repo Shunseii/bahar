@@ -7,7 +7,7 @@ import {
   InsertFlashcard,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
-import { getDb } from "..";
+import { ensureDb } from "..";
 import { nanoid } from "nanoid";
 import {
   buildSelectWithNestedJson,
@@ -21,8 +21,13 @@ import { debounce } from "@tanstack/pacer";
 const DEBOUNCED_DELAY_MS = 2 * 1000;
 
 const debouncedPush = debounce(
-  () => {
-    getDb().push();
+  async () => {
+    try {
+      const db = await ensureDb();
+      await db.push();
+    } catch {
+      // Silently fail if DB can't be initialized
+    }
   },
   { wait: DEBOUNCED_DELAY_MS },
 );
@@ -50,7 +55,7 @@ export const flashcardsTable = {
       } = { showReverse: false },
     ): Promise<FlashcardWithDictionaryEntry[]> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const now = Date.now();
 
         const { tags = [], types: rawTypes, state: rawState } = filters ?? {};
@@ -158,7 +163,7 @@ export const flashcardsTable = {
       >;
     }): Promise<SelectFlashcard> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const id = nanoid();
         const dueDateMs = new Date(flashcard.due).getTime();
         const lastReviewDateMs = flashcard.last_review
@@ -225,7 +230,7 @@ export const flashcardsTable = {
       updates: Partial<Omit<RawFlashcard, "id" | "dictionary_entry_id">>;
     }): Promise<SelectFlashcard> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
 
         const setClauses: string[] = [];
         const params: unknown[] = [];
@@ -334,7 +339,7 @@ export const flashcardsTable = {
       direction: SelectFlashcard["direction"];
     }): Promise<SelectFlashcard> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const now = new Date();
         const dueDate = now.toISOString();
         const dueDateMs = now.getTime();

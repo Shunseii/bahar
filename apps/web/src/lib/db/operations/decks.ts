@@ -4,7 +4,7 @@ import {
   FlashcardState,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
-import { getDb } from "..";
+import { ensureDb } from "..";
 import { nanoid } from "nanoid";
 import { TableOperation } from "./types";
 
@@ -16,7 +16,7 @@ export const decksTable = {
       show_reverse?: boolean;
     }): Promise<(SelectDeck & { to_review: number; total_hits: number })[]> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const now = Date.now();
 
         const rawDecks: RawDeck[] = await db
@@ -130,7 +130,7 @@ export const decksTable = {
       deck: Omit<SelectDeck, "id">;
     }): Promise<SelectDeck> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const id = nanoid();
 
         await db
@@ -173,7 +173,7 @@ export const decksTable = {
       updates: Partial<Omit<SelectDeck, "id">>;
     }): Promise<SelectDeck> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
 
         const setClauses: string[] = [];
         const params: unknown[] = [];
@@ -223,7 +223,7 @@ export const decksTable = {
   delete: {
     mutation: async ({ id }: { id: string }): Promise<{ success: boolean }> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
 
         await db.prepare(`DELETE FROM decks WHERE id = ?;`).run([id]);
 

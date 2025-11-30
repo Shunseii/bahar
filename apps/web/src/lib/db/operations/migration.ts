@@ -1,12 +1,12 @@
 import { SelectMigration } from "@bahar/drizzle-user-db-schemas";
-import { getDb } from "..";
+import { ensureDb } from "..";
 import { TableOperation } from "./types";
 
 export const migrationTable = {
   latestMigration: {
     query: async (): Promise<SelectMigration> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const res: SelectMigration = await db
           .prepare("SELECT * FROM migrations ORDER BY version DESC LIMIT 1;")
           .get();
