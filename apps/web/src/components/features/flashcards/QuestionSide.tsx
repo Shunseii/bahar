@@ -55,60 +55,101 @@ export const QuestionSide: FC<{
   const showAntonyms = flashcardSettings?.show_antonyms_in_flashcard;
 
   return (
-    <motion.span
+    <motion.div
       className="w-full flex flex-col gap-y-4"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
     >
-      <p dir="rtl" className="rtl:text-right text-xl sm:text-2xl">
+      {/* Main word - large and prominent */}
+      <motion.p
+        dir="rtl"
+        className="rtl:text-right text-2xl sm:text-3xl text-foreground/90 leading-relaxed"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
         {currentCard.dictionary_entry.word}
-      </p>
+      </motion.p>
 
-      <div className="flex gap-x-2 items-center ltr:self-end rtl:self-start rtl:flex-row-reverse">
+      {/* Morphology details */}
+      <motion.div
+        className="flex flex-wrap gap-2 items-center ltr:self-end rtl:self-start rtl:flex-row-reverse"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
         {hasPlurals && (
-          <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+          <span
+            dir="rtl"
+            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
+          >
             (ج) {firstPlural}
-          </p>
+          </span>
         )}
         {hasSingular && (
-          <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+          <span
+            dir="rtl"
+            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
+          >
             (م) {singular}
-          </p>
+          </span>
         )}
 
         {hasMasdar && (
-          <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+          <span
+            dir="rtl"
+            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
+          >
             {firstMasdar}
-          </p>
+          </span>
         )}
 
         {hasPresentTense && (
-          <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+          <span
+            dir="rtl"
+            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
+          >
             {presentTense}
-          </p>
+          </span>
         )}
 
         {hasPastTense && (
-          <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+          <span
+            dir="rtl"
+            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
+          >
             {pastTense}
-          </p>
+          </span>
         )}
-      </div>
+      </motion.div>
 
       {isVerb && root && (
-        <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
-          {root.join("-")}
-        </p>
+        <motion.p
+          dir="rtl"
+          className="rtl:text-right text-lg sm:text-xl text-muted-foreground/70 tracking-wider"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+        >
+          {root.join(" - ")}
+        </motion.p>
       )}
 
       {showAntonyms === "hint" && hasAntonyms && (
-        <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+        <motion.p
+          dir="rtl"
+          className="rtl:text-right text-base sm:text-lg text-muted-foreground italic"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
           أضداد:{" "}
           {currentCard.dictionary_entry.antonyms
             ?.map((antonym) => antonym.word)
             .join(", ")}
-        </p>
+        </motion.p>
       )}
-    </motion.span>
+    </motion.div>
   );
 };

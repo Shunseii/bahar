@@ -3,6 +3,7 @@ import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { useLingui } from "@lingui/react/macro";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import {
   Card,
   CardHeader,
@@ -74,6 +75,7 @@ const Decks = () => {
 
   const { toast } = useToast();
   const { t } = useLingui();
+  const { formatNumber } = useFormatNumber();
 
   return (
     <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
@@ -143,7 +145,7 @@ const Decks = () => {
                     <TableCell className="font-medium">{deck.name}</TableCell>
 
                     <TableCell className="font-medium">
-                      {deck.to_review}
+                      {formatNumber(deck.to_review)}
                     </TableCell>
 
                     <TableCell className="flex justify-between">

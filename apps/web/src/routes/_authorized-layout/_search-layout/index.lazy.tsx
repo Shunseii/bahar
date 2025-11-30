@@ -1,25 +1,22 @@
 import { Plural, Trans } from "@lingui/react/macro";
 import { Link, createLazyFileRoute } from "@tanstack/react-router";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { InfiniteScroll } from "@/components/search/InfiniteScroll";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, PlusIcon } from "lucide-react";
+import { ArrowUp, PlusIcon, GraduationCap, BookOpen } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { cn } from "@bahar/design-system";
-import { Page } from "@/components/Page";
+import { Page, itemVariants } from "@/components/Page";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { settingsTable } from "@/lib/db/operations/settings";
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@/hooks/useSearch";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { motion } from "motion/react";
 
 const Index = () => {
+  const { formatNumber, formatElapsedTime } = useFormatNumber();
   const [{ y }, scrollTo] = useWindowScroll();
   const { results } = useSearch();
   const { height } = useWindowSize();
@@ -43,95 +40,142 @@ const Index = () => {
   const hasLoadedHeight = height !== null && height > 0 && y !== null;
   const hasScrolledPastInitialView = hasLoadedHeight ? y > height : false;
 
-  const processingTimeLabel = results?.elapsed?.formatted;
+  const processingTimeLabel = results?.elapsed?.raw
+    ? formatElapsedTime(results.elapsed.raw)
+    : undefined;
   const totalHits = results?.count;
+  const dueCount = data?.length ?? 0;
 
   return (
     <Page>
-      <div className="m-auto max-w-3xl flex flex-col gap-y-4">
-        <div className="flex flex-row justify-between">
-          <Button variant="outline" asChild>
-            <Link to="/dictionary/add">
-              <PlusIcon className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
-              <Trans>Add word</Trans>
-            </Link>
-          </Button>
+      <div className="m-auto max-w-3xl flex flex-col gap-y-5">
+        {/* Dictionary Card */}
+        <motion.div variants={itemVariants}>
+          <Card className="relative overflow-hidden border-0 shadow-2xl shadow-black/10 dark:shadow-black/30">
+            {/* Decorative gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02]" />
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
 
-          <FlashcardDrawer show_reverse={show_reverse}>
-            <Button
-              className="w-max self-end relative"
-              variant="outline"
-              disabled={isFetching}
-            >
-              {/* Notification */}
-              {data?.length ? (
-                <div className="motion-safe:animate-pulse absolute border-background border-2 -top-1 ltr:-right-1 rtl:-left-1 p-1 text-xs h-2.5 w-2.5 bg-red-500 rounded-full" />
-              ) : undefined}
+            {/* Header */}
+            <div className="relative px-4 sm:px-6 pt-5 sm:pt-6 pb-4">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 ring-1 ring-primary/20">
+                    <BookOpen className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h1 className="text-lg font-semibold tracking-tight">
+                      <Trans>Your Dictionary</Trans>
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                      {totalHits !== undefined ? (
+                        <>
+                          <span className="font-medium text-foreground/80 tabular-nums">
+                            {formatNumber(totalHits)}
+                          </span>{" "}
+                          <Plural
+                            value={totalHits}
+                            one="result"
+                            other="results"
+                          />
+                          {processingTimeLabel && (
+                            <span className="text-muted-foreground/60">
+                              {" · "}
+                              {processingTimeLabel}
+                            </span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="motion-safe:animate-pulse">
+                          <Trans>Loading...</Trans>
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
 
-              <p
-                className={cn(
-                  isFetching &&
-                    "motion-safe:animate-pulse motion-reduce:opacity-50",
-                )}
-              >
-                <Trans>Review flashcards</Trans>
-              </p>
-            </Button>
-          </FlashcardDrawer>
-        </div>
+                {/* Actions */}
+                <div className="flex items-center gap-2">
+                  <FlashcardDrawer show_reverse={show_reverse}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={isFetching}
+                      className={cn(
+                        "relative h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-primary/5",
+                        dueCount > 0 && "text-orange-600 dark:text-orange-400",
+                      )}
+                    >
+                      <GraduationCap className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5" />
+                      <span
+                        className={cn(
+                          "text-sm",
+                          isFetching &&
+                            "motion-safe:animate-pulse motion-reduce:opacity-50",
+                        )}
+                      >
+                        <Trans>Review</Trans>
+                      </span>
+                      {!isFetching && dueCount > 0 && (
+                        <span className="ltr:ml-1.5 rtl:mr-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-semibold rounded-full bg-orange-500 text-white shadow-sm">
+                          {formatNumber(dueCount)}
+                        </span>
+                      )}
+                    </Button>
+                  </FlashcardDrawer>
 
-        <div>
-          {processingTimeLabel !== undefined && totalHits ? (
-            <p className="text-center text-sm text-muted-foreground">
-              <Plural
-                value={totalHits}
-                one="# result found in"
-                other="# results found in"
-              />{" "}
-              {processingTimeLabel}
-            </p>
-          ) : undefined}
-        </div>
+                  <Button
+                    asChild
+                    size="sm"
+                    className="h-9 px-3 bg-primary hover:bg-primary/90 shadow-md shadow-primary/25"
+                  >
+                    <Link to="/dictionary/add">
+                      <PlusIcon className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5" />
+                      <span className="text-sm">
+                        <Trans>Add word</Trans>
+                      </span>
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
 
-        <Card>
-          <CardHeader className="text-center">
-            <CardTitle>
-              <Trans>Dictionary</Trans>
-            </CardTitle>
+            {/* Divider */}
+            <div className="mx-4 sm:mx-6 h-px bg-gradient-to-r from-border/50 via-border to-border/50" />
 
-            <CardDescription>
-              <Trans>View all the words in your personal dictionary.</Trans>
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent>
-            <InfiniteScroll />
-          </CardContent>
-        </Card>
+            {/* Content */}
+            <CardContent className="relative pt-4 pb-6 px-4 sm:px-6">
+              <InfiniteScroll />
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
       {/* Scroll to top button */}
-      <div
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{
+          opacity: hasScrolledPastInitialView ? 1 : 0,
+          scale: hasScrolledPastInitialView ? 1 : 0.8,
+        }}
+        transition={{ duration: 0.2 }}
         className={cn(
-          "fixed bottom-8 ltr:right-8 rtl:left-8 transition-opacity opacity-0 pointer-events-none cursor-auto",
-          hasScrolledPastInitialView &&
-            "opacity-100 pointer-events-auto cursor-pointer",
+          "fixed bottom-8 ltr:right-8 rtl:left-8",
+          !hasScrolledPastInitialView && "pointer-events-none",
         )}
       >
         <Button
-          onClick={() => {
-            scrollTo({ top: 0, behavior: "smooth" });
-          }}
+          onClick={() => scrollTo({ top: 0, behavior: "smooth" })}
           tabIndex={hasScrolledPastInitialView ? 0 : -1}
-          variant="secondary"
+          size="icon"
+          className="rounded-full shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 bg-primary hover:bg-primary/90 transition-all duration-300"
         >
           <ArrowUp className="w-5 h-5" />
-
           <span className="sr-only">
             <Trans>Back to top</Trans>
           </span>
         </Button>
-      </div>
+      </motion.div>
     </Page>
   );
 };

@@ -73,32 +73,32 @@ export const decksTable = {
               toReviewParams.push(...types);
               totalHitsParams.push(...types);
 
-              if (tags.length > 0) {
-                whereConditions.push(
-                  `EXISTS (SELECT 1 FROM json_each(d.tags) WHERE value IN (${tags
-                    .map(() => "?")
-                    .join(", ")}))`,
-                );
-                toReviewParams.push(...tags);
-                totalHitsParams.push(...tags);
-              }
-
               whereConditions.push("f.is_hidden = 0");
 
               const whereClause = whereConditions.join(" AND ");
 
-              const toReviewSql = `SELECT COUNT(*) as count FROM flashcards f LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id WHERE f.due_timestamp_ms <= ? AND ${whereClause}`;
-              const toReviewAllParams = [now, ...toReviewParams];
+              // When tags are specified, use JOIN with json_each to filter
+              const tagJoin =
+                tags.length > 0
+                  ? `, json_each(d.tags) AS jt`
+                  : "";
+              const tagCondition =
+                tags.length > 0
+                  ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
+                  : "";
+
+              const toReviewSql = `SELECT COUNT(DISTINCT f.id) as count FROM flashcards f LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin} WHERE f.due_timestamp_ms <= ? AND ${whereClause}${tagCondition}`;
+              const toReviewAllParams = [now, ...toReviewParams, ...tags];
 
               const toReviewCount: { count: number } = await db
                 .prepare(toReviewSql)
                 .get(toReviewAllParams);
 
-              const totalHitsSql = `SELECT COUNT(*) as count FROM flashcards f LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id WHERE ${whereClause}`;
+              const totalHitsSql = `SELECT COUNT(DISTINCT f.id) as count FROM flashcards f LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin} WHERE ${whereClause}${tagCondition}`;
 
               const totalHitsCount: { count: number } = await db
                 .prepare(totalHitsSql)
-                .get([...totalHitsParams]);
+                .get([...totalHitsParams, ...tags]);
 
               return {
                 ...deck,

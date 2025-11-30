@@ -74,32 +74,31 @@ export const flashcardsTable = {
 
         const directions = showReverse ? ["forward", "reverse"] : ["forward"];
 
-        const whereConditions: string[] = ["due_timestamp_ms <= ?"];
+        const whereConditions: string[] = ["f.due_timestamp_ms <= ?"];
         const params: unknown[] = [now];
 
         whereConditions.push(
-          `direction IN (${directions.map(() => "?").join(", ")})`,
+          `f.direction IN (${directions.map(() => "?").join(", ")})`,
         );
         params.push(...directions);
 
-        whereConditions.push(`state IN (${state.map(() => "?").join(", ")})`);
+        whereConditions.push(`f.state IN (${state.map(() => "?").join(", ")})`);
         params.push(...state);
 
-        whereConditions.push(`type IN (${types.map(() => "?").join(", ")})`);
+        whereConditions.push(`d.type IN (${types.map(() => "?").join(", ")})`);
         params.push(...types);
 
-        if (tags.length) {
-          whereConditions.push(
-            `EXISTS (SELECT 1 FROM json_each(tags) WHERE value IN (${tags
-              .map(() => "?")
-              .join(", ")}))`,
-          );
-          params.push(...tags);
-        }
-
-        whereConditions.push("is_hidden = 0");
+        whereConditions.push("f.is_hidden = 0");
 
         const whereClause = whereConditions.join(" AND ");
+
+        // When tags are specified, use JOIN with json_each to filter
+        const tagJoin = tags.length > 0 ? `, json_each(d.tags) AS jt` : "";
+        const tagCondition =
+          tags.length > 0
+            ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
+            : "";
+        const tagParams = tags.length > 0 ? tags : [];
 
         const nestedDictionary = buildSelectWithNestedJson({
           columns: DICTIONARY_ENTRY_COLUMNS,
@@ -107,15 +106,15 @@ export const flashcardsTable = {
           tableAlias: "d",
         });
 
-        const sql = `SELECT f.*, ${nestedDictionary}
+        const sql = `SELECT DISTINCT f.*, ${nestedDictionary}
         FROM flashcards f
-        LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id
-        WHERE ${whereClause}
+        LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin}
+        WHERE ${whereClause}${tagCondition}
         `;
 
         const rawResults: (RawFlashcard & {
           dictionary_entry: string;
-        })[] = await db.prepare(sql).all(params);
+        })[] = await db.prepare(sql).all([...params, ...tagParams]);
 
         return rawResults
           ?.map((raw) => {

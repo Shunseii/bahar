@@ -6,6 +6,7 @@ import {
   TagsSchema,
   AntonymSchema,
   ExampleSchema,
+  MorphologySchema,
 } from "@bahar/drizzle-user-db-schemas";
 import { multiLanguageTokenizer } from "./orama-tokenizer";
 import { pluginQPS } from "@orama/plugin-qps";
@@ -137,6 +138,21 @@ export const hydrateOramaDb = async () => {
             );
           }
 
+          const morphologyResult = safeJsonParse(
+            entry.morphology,
+            MorphologySchema,
+          );
+          if (!morphologyResult.ok && entry.morphology) {
+            Sentry.logger.warn(
+              "Orama hydration: morphology field validation failed",
+              {
+                entryId: entry.id,
+                word: entry.word,
+                error: String(morphologyResult.error),
+              },
+            );
+          }
+
           if (
             !rootResult.ok ||
             !tagsResult.ok ||
@@ -161,6 +177,7 @@ export const hydrateOramaDb = async () => {
             tags: tagsResult.value ?? undefined,
             antonyms: antonymsResult.value ?? undefined,
             examples: examplesResult.value ?? undefined,
+            morphology: morphologyResult.ok ? morphologyResult.value : undefined,
           };
         })
         .filter((entry) => entry !== null);
