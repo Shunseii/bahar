@@ -23,11 +23,20 @@ import { ErrorMessage } from "@/components/errors/ErrorMessage";
 import React from "react";
 import { useMeasure } from "@uidotdev/usehooks";
 import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
+import { AnimatedLogo } from "@/components/AnimatedLogo";
 
 /**
  * How often to sync the user database in the background.
  */
 const BACKGROUND_SYNC_INTERVAL = 60 * 1000;
+
+const PendingComponent = () => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-background">
+      <AnimatedLogo className="h-20 w-20" />
+    </div>
+  );
+};
 
 const AuthorizedLayout = () => {
   const { preloadResults } = useSearch();
@@ -237,4 +246,7 @@ export const Route = createFileRoute("/_authorized-layout")({
   },
   errorComponent: (props) => <AuthorizedLayoutError {...props} />,
   component: AuthorizedLayout,
+  pendingComponent: PendingComponent,
+  pendingMs: 500,
+  pendingMinMs: 600,
 });
