@@ -19,12 +19,6 @@ import { Highlight } from "./Highlight";
  */
 const PIXEL_HEIGHT_OFFSET = 800;
 
-export interface Hit extends Record<string, unknown> {
-  id?: string;
-  word?: string;
-  translation?: string;
-}
-
 export const InfiniteScroll: FC = () => {
   const navigate = useNavigate();
   const searchQuery = useAtomValue(searchQueryAtom);
