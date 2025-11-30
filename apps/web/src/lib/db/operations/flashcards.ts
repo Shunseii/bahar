@@ -25,8 +25,10 @@ const debouncedPush = debounce(
     try {
       const db = await ensureDb();
       await db.push();
-    } catch {
-      // Silently fail if DB can't be initialized
+    } catch (error) {
+      Sentry.logger.warn("Debounced push failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   },
   { wait: DEBOUNCED_DELAY_MS },
