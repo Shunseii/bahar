@@ -97,7 +97,10 @@ const _initDbInternal = async () => {
   );
 
   // If OPFS lock error, return immediately - don't try token refresh
-  if (!connectionResult.ok && connectionResult.error.type === "opfs_lock_error") {
+  if (
+    !connectionResult.ok &&
+    connectionResult.error.type === "opfs_lock_error"
+  ) {
     return connectionResult;
   }
 
@@ -122,7 +125,9 @@ const _initDbInternal = async () => {
         const reason = String(error);
         const isOpfsLock = reason.includes("createSyncAccessHandle");
         return {
-          type: isOpfsLock ? "opfs_lock_error" : "db_connection_failed_after_refresh",
+          type: isOpfsLock
+            ? "opfs_lock_error"
+            : "db_connection_failed_after_refresh",
           reason,
         };
       },
@@ -169,56 +174,45 @@ const _initDbInternal = async () => {
 const applyRequiredMigrations = async () => {
   if (!db) return ok(null);
 
-  const latestMigrationStatus = await tryCatch(
-    () => {
-      return db!
-        .prepare("SELECT * FROM migrations ORDER BY version DESC LIMIT 1;")
-        .get() as Promise<SelectMigration | undefined>;
-    },
-    (error) => ({
-      type: "latest_migration_status_query_failed",
-      reason: String(error),
-    }),
-  );
-  if (!latestMigrationStatus.ok) return latestMigrationStatus;
-
-  if (latestMigrationStatus.value?.status === "failed") {
-    return err({
-      type: "latest_migration_is_failing",
-      reason:
-        "The most recent migration for the client database had failed before. Must be fixed manually before proceeding with the remaining migrations.",
-    });
-  }
-
-  const currentSchemaVersionResult = await getCurrentSchemaVersion();
-  if (
-    !currentSchemaVersionResult.ok &&
-    currentSchemaVersionResult.error.type !== "migration_table_does_not_exist"
-  ) {
-    return err(currentSchemaVersionResult.error);
-  }
-
-  // Assume that if migration table doesn't exist, this is a fresh database
-  // and we need to apply all migrations onto it.
-  const currentSchemaVersion = currentSchemaVersionResult.ok
-    ? currentSchemaVersionResult.value
-    : 0;
-
-  const verifySchemaResult = await tryCatch(
-    () =>
-      trpcClient.migrations.verifySchema.query({
-        version: currentSchemaVersion,
-      }),
+  const allMigrationsResult = await tryCatch(
+    () => trpcClient.migrations.fullSchema.query(),
     (error) => ({
       type: "api_schema_verification_failed",
       reason: String(error),
     }),
   );
-  if (!verifySchemaResult.ok) return verifySchemaResult;
+  if (!allMigrationsResult.ok) return allMigrationsResult;
 
-  const { status, requiredMigrations } = verifySchemaResult.value;
+  const allMigrations = allMigrationsResult.value;
+  if (!allMigrations.length) return ok(null);
 
-  if (status === "latest" || !requiredMigrations?.length) return ok(null);
+  const localMigrationsResult = await getLocalAppliedMigrations();
+  if (!localMigrationsResult.ok) return localMigrationsResult;
+
+  const appliedVersions = new Set(
+    localMigrationsResult.value
+      .filter((m) => m.status === "applied")
+      .map((m) => m.version),
+  );
+
+  const migrationsLength = localMigrationsResult.value.length;
+  const lastMigrationFailed =
+    migrationsLength > 0 &&
+    localMigrationsResult.value[migrationsLength - 1].status === "failed";
+
+  if (lastMigrationFailed) {
+    return err({
+      type: "latest_migration_is_failing",
+      reason:
+        "The last migration failed. Must be fixed manually before proceeding.",
+    });
+  }
+
+  const requiredMigrations = allMigrations
+    .filter((m) => !appliedVersions.has(m.version))
+    .sort((a, b) => a.version - b.version);
+
+  if (!requiredMigrations.length) return ok(null);
 
   for (const migration of requiredMigrations) {
     const nowTimestampMs = Date.now();
@@ -281,7 +275,7 @@ const applyRequiredMigrations = async () => {
   return ok(null);
 };
 
-const getCurrentSchemaVersion = async () => {
+const getLocalAppliedMigrations = async () => {
   if (!db) return err({ type: "db_not_initialized" });
 
   const tableExists = await tryCatch(
@@ -291,28 +285,22 @@ const getCurrentSchemaVersion = async () => {
           "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';",
         )
         .get();
-
       return !!result;
     },
     () => ({ type: "check_migration_table_exists_query_failed" }),
   );
 
   if (!tableExists.ok) return tableExists;
-
-  if (!tableExists.value)
-    return err({ type: "migration_table_does_not_exist" });
+  if (!tableExists.value) return ok([] as SelectMigration[]);
 
   return tryCatch(
     async () => {
-      const row: Pick<SelectMigration, "version"> | undefined = await db!
-        .prepare(
-          "SELECT version FROM migrations WHERE status = 'applied' ORDER BY version DESC LIMIT 1;",
-        )
-        .get();
-
-      return row?.version ?? 0;
+      const rows: SelectMigration[] = await db!
+        .prepare("SELECT * FROM migrations;")
+        .all();
+      return rows;
     },
-    () => ({ type: "schema_version_query_failed" }),
+    () => ({ type: "local_migrations_query_failed" }),
   );
 };
 

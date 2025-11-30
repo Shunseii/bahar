@@ -109,7 +109,17 @@ export const migrationsRouter = router({
     }),
 
   fullSchema: protectedProcedure
-    .output(z.array(SelectMigrationsSchema))
+    .output(
+      z.array(
+        z.object({
+          version: z.number(),
+          description: z.string(),
+          sql_script: z.string(),
+          // TODO: specifically, z.date() breaks the type inference.
+          // created_at: z.date(),
+        }),
+      ),
+    )
     .query(async () => {
       const results = await db.select().from(migrations);
 

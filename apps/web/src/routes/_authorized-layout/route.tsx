@@ -172,7 +172,7 @@ export const Route = createFileRoute("/_authorized-layout")({
 
         case "db_not_initialized":
         case "check_migration_table_exists_query_failed":
-        case "schema_version_query_failed":
+        case "local_migrations_query_failed":
           throw new DisplayError({
             message: t`We're having trouble with your account setup. Please try again.`,
             details: t`Failed to retrieve data from local database.`,
@@ -184,13 +184,6 @@ export const Route = createFileRoute("/_authorized-layout")({
           throw new DisplayError({
             message: t`Your account needs maintenance. We've been notified. Please try again later.`,
             details: t`Failed to apply migration to local database.`,
-            cause: error.type,
-          });
-
-        case "latest_migration_status_query_failed":
-          throw new DisplayError({
-            message: t`We're having trouble accessing your account. Please try again.`,
-            details: t`Unable to query status of client database.`,
             cause: error.type,
           });
 
