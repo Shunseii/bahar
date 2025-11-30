@@ -31,7 +31,7 @@ import { useCallback, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
 import { useSearch } from "@/hooks/useSearch";
-import { getDb } from "@/lib/db";
+import { ensureDb } from "@/lib/db";
 import {
   readFileAsText,
   batchArray,
@@ -58,7 +58,7 @@ const Settings = () => {
       try {
         setIsLoading(true);
 
-        const db = getDb();
+        const db = await ensureDb();
 
         const entries: RawDictionaryEntry[] = await db
           .prepare("SELECT * FROM dictionary_entries")
@@ -143,7 +143,7 @@ const Settings = () => {
     try {
       setIsLoading(true);
 
-      const db = getDb();
+      const db = await ensureDb();
 
       // Delete from local DB (cascades to flashcards)
       await db.prepare("DELETE FROM dictionary_entries").run();
@@ -264,7 +264,7 @@ const Settings = () => {
 
                 const { version, entries: validatedDictionary } = parsedImport;
 
-                const db = getDb();
+                const db = await ensureDb();
                 const BATCH_SIZE = 100;
 
                 const insertBatch = db.transaction(

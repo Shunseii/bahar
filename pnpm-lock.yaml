@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  zod: 3.23.8
+  zod: 3.24.1
   zod-to-json-schema: 3.24.5
 
 importers:
@@ -77,7 +77,7 @@ importers:
         version: 0.36.4(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(react@19.0.0)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.36.4)(zod@3.23.8)
+        version: 0.5.1(drizzle-orm@0.36.4)(zod@3.24.1)
       express:
         specifier: ^4.18.2
         version: 4.18.2
@@ -109,8 +109,8 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 3.24.1
+        version: 3.24.1
     devDependencies:
       '@bahar/eslint-config':
         specifier: workspace:*
@@ -387,8 +387,8 @@ importers:
         specifier: ^4.5.1
         version: 4.5.1
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 3.24.1
+        version: 3.24.1
     devDependencies:
       '@babel/core':
         specifier: ^7.25.2
@@ -616,8 +616,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.0.0)(@types/react@19.0.0)(react-dom@19.0.0)(react@19.0.0)
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 3.24.1
+        version: 3.24.1
     devDependencies:
       '@bahar/design-system':
         specifier: workspace:*
@@ -639,7 +639,7 @@ importers:
         version: link:../../packages/config-typescript
       '@julr/vite-plugin-validate-env':
         specifier: ^1.2.0
-        version: 1.2.0(vite@5.1.3)(zod@3.23.8)
+        version: 1.2.0(vite@5.1.3)(zod@3.24.1)
       '@lingui/cli':
         specifier: ^5.3.2
         version: 5.3.2(typescript@5.8.3)
@@ -761,10 +761,10 @@ importers:
         version: 0.36.4(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(react@19.0.0)
       drizzle-zod:
         specifier: ^0.5.1
-        version: 0.5.1(drizzle-orm@0.36.4)(zod@3.23.8)
+        version: 0.5.1(drizzle-orm@0.36.4)(zod@3.24.1)
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 3.24.1
+        version: 3.24.1
     devDependencies:
       '@bahar/typescript-config':
         specifier: workspace:*
@@ -788,8 +788,8 @@ importers:
   packages/schemas:
     dependencies:
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 3.24.1
+        version: 3.24.1
     devDependencies:
       '@bahar/typescript-config':
         specifier: workspace:*
@@ -1136,7 +1136,7 @@ packages:
     dependencies:
       sitemap: 8.0.2
       stream-replace-string: 2.0.0
-      zod: 3.23.8
+      zod: 3.24.1
     dev: false
 
   /@astrojs/telemetry@3.3.0:
@@ -3328,7 +3328,7 @@ packages:
       '@better-fetch/fetch': 1.1.18
       better-auth: 1.2.10
       better-call: 1.0.16
-      zod: 3.23.8
+      zod: 3.24.1
     dev: false
 
   /@better-auth/utils@0.2.5:
@@ -3464,7 +3464,7 @@ packages:
     engines: {node: '>=16.7.0'}
     dependencies:
       mime: 3.0.0
-      zod: 3.23.8
+      zod: 3.24.1
     dev: true
 
   /@colors/colors@1.5.0:
@@ -3544,13 +3544,13 @@ packages:
     resolution: {integrity: sha512-97/BJ3iXHww3djw6hYIfErCZFee7qCtrneuLa20UXFCOTCfBM2cvQHjWJ2EG0s0MtdNwInarqCTz35i4wWXHsQ==}
     dependencies:
       tslib: 2.8.1
-    dev: false
 
   /@emnapi/runtime@1.7.1:
     resolution: {integrity: sha512-PVtJr5CmLwYAU9PZDMITZoR5iAOShYREoR45EyyLrbntV50mdePTgUn4AmOw90Ifcj+x2kRjdzr1HP3RrNiHGA==}
     requiresBuild: true
     dependencies:
       tslib: 2.8.1
+    dev: false
     optional: true
 
   /@emnapi/wasi-threads@1.1.0:
@@ -5653,7 +5653,7 @@ packages:
     cpu: [wasm32]
     requiresBuild: true
     dependencies:
-      '@emnapi/runtime': 1.7.1
+      '@emnapi/runtime': 1.5.0
     dev: true
     optional: true
 
@@ -6037,12 +6037,12 @@ packages:
     resolution: {integrity: sha512-4JQNk+3mVzK3xh2rqd6RB4J46qUR19azEHBneZyTZM+c456qOrbbM/5xcR8huNCCcbVt7+UmizG6GuUvPvKUYg==}
     dev: false
 
-  /@julr/vite-plugin-validate-env@1.2.0(vite@5.1.3)(zod@3.23.8):
+  /@julr/vite-plugin-validate-env@1.2.0(vite@5.1.3)(zod@3.24.1):
     resolution: {integrity: sha512-taAYS+7zOREHjiLiMp6S1ZhYRxWs4QfC7Usvqvbi4ni78vOuHREbk446A5u0im06eTxUOfqishLbZ879N0hHMg==}
     engines: {node: '>=16'}
     peerDependencies:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0 || ^6.0.0
-      zod: 3.23.8
+      zod: 3.24.1
     peerDependenciesMeta:
       zod:
         optional: true
@@ -6051,7 +6051,7 @@ packages:
       '@poppinss/validator-lite': 1.0.3
       unconfig: 0.6.0
       vite: 5.1.3(@types/node@20.10.6)
-      zod: 3.23.8
+      zod: 3.24.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -9806,7 +9806,7 @@ packages:
       '@tanstack/virtual-file-routes': 1.87.6
       prettier: 3.4.2
       tsx: 4.19.2
-      zod: 3.23.8
+      zod: 3.24.1
     dev: true
 
   /@tanstack/router-plugin@1.91.1(vite@5.1.3):
@@ -9842,7 +9842,7 @@ packages:
       chokidar: 3.6.0
       unplugin: 1.16.0
       vite: 5.1.3(@types/node@20.10.6)
-      zod: 3.23.8
+      zod: 3.24.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -11608,9 +11608,9 @@ packages:
       xxhash-wasm: 1.1.0
       yargs-parser: 21.1.1
       yocto-spinner: 0.2.3
-      zod: 3.23.8
-      zod-to-json-schema: 3.24.5(zod@3.23.8)
-      zod-to-ts: 1.2.0(typescript@5.9.2)(zod@3.23.8)
+      zod: 3.24.1
+      zod-to-json-schema: 3.24.5(zod@3.24.1)
+      zod-to-ts: 1.2.0(typescript@5.9.2)(zod@3.24.1)
     optionalDependencies:
       sharp: 0.34.5
     transitivePeerDependencies:
@@ -12010,7 +12010,7 @@ packages:
       jose: 5.10.0
       kysely: 0.28.5
       nanostores: 0.11.4
-      zod: 3.23.8
+      zod: 3.24.1
     dev: false
 
   /better-call@1.0.16:
@@ -12303,7 +12303,7 @@ packages:
   /capnp-ts@0.7.0:
     resolution: {integrity: sha512-XKxXAC3HVPv7r674zP0VC3RTXz+/JKhfyw94ljvF80yynK6VkTnqE3jMuN8b3dUVmmc43TjyxjW4KTsmB3c86g==}
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
@@ -13582,14 +13582,14 @@ packages:
       react: 19.0.0
     dev: false
 
-  /drizzle-zod@0.5.1(drizzle-orm@0.36.4)(zod@3.23.8):
+  /drizzle-zod@0.5.1(drizzle-orm@0.36.4)(zod@3.24.1):
     resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
     peerDependencies:
       drizzle-orm: '>=0.23.13'
-      zod: 3.23.8
+      zod: 3.24.1
     dependencies:
       drizzle-orm: 0.36.4(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(react@19.0.0)
-      zod: 3.23.8
+      zod: 3.24.1
     dev: false
 
   /dset@3.1.4:
@@ -16175,7 +16175,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -16184,7 +16184,7 @@ packages:
     engines: {node: '>= 14'}
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -18550,7 +18550,7 @@ packages:
     resolution: {integrity: sha512-eO7HD1O3aeNsbEe6NBZvx1lLJUrxgyATjnDmb7bm4eyF6yWOQot9XVtxTDLNifECuvsZ4jzRiTInrbmIHkTdGA==}
     engines: {node: '>=18.18'}
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       fb-watchman: 2.0.2
       flow-enums-runtime: 0.0.6
       graceful-fs: 4.2.11
@@ -18719,8 +18719,8 @@ packages:
     dependencies:
       '@babel/core': 7.28.3
       '@babel/generator': 7.28.3
-      '@babel/parser': 7.28.3
-      '@babel/types': 7.28.2
+      '@babel/parser': 7.28.5
+      '@babel/types': 7.28.5
       flow-enums-runtime: 0.0.6
       metro: 0.82.4
       metro-babel-transformer: 0.82.4
@@ -19273,7 +19273,7 @@ packages:
       workerd: 1.20241106.1
       ws: 8.18.0
       youch: 3.3.4
-      zod: 3.23.8
+      zod: 3.24.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -19295,7 +19295,7 @@ packages:
       workerd: 1.20250718.0
       ws: 8.18.0
       youch: 3.3.4
-      zod: 3.23.8
+      zod: 3.24.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -24956,26 +24956,26 @@ packages:
       stacktracey: 2.1.8
     dev: true
 
-  /zod-to-json-schema@3.24.5(zod@3.23.8):
+  /zod-to-json-schema@3.24.5(zod@3.24.1):
     resolution: {integrity: sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==}
     peerDependencies:
-      zod: 3.23.8
+      zod: 3.24.1
     dependencies:
-      zod: 3.23.8
+      zod: 3.24.1
     dev: false
 
-  /zod-to-ts@1.2.0(typescript@5.9.2)(zod@3.23.8):
+  /zod-to-ts@1.2.0(typescript@5.9.2)(zod@3.24.1):
     resolution: {integrity: sha512-x30XE43V+InwGpvTySRNz9kB7qFU8DlyEy7BsSTCHPH1R0QasMmHWZDCzYm6bVXtj/9NNJAZF3jW8rzFvH5OFA==}
     peerDependencies:
       typescript: ^4.9.4 || ^5.0.2
-      zod: 3.23.8
+      zod: 3.24.1
     dependencies:
       typescript: 5.9.2
-      zod: 3.23.8
+      zod: 3.24.1
     dev: false
 
-  /zod@3.23.8:
-    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+  /zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

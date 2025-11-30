@@ -3,7 +3,7 @@ import {
   RawDictionaryEntry,
   InsertDictionaryEntry,
 } from "@bahar/drizzle-user-db-schemas";
-import { getDb } from "..";
+import { ensureDb } from "..";
 import { nanoid } from "nanoid";
 import {
   convertRawDictionaryEntryToSelectDictionaryEntry,
@@ -25,7 +25,7 @@ export const dictionaryEntriesTable = {
   entry: {
     query: async (id: string): Promise<SelectDictionaryEntry> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const res: RawDictionaryEntry | undefined = await db
           .prepare(`SELECT * FROM dictionary_entries WHERE id = ?`)
           .get([id]);
@@ -53,7 +53,7 @@ export const dictionaryEntriesTable = {
       searchTerm: string,
     ): Promise<{ tag: string; count: number }[]> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
 
         const res: { tag: string; count: number }[] = await db
           .prepare(
@@ -89,7 +89,7 @@ export const dictionaryEntriesTable = {
       >;
     }): Promise<SelectDictionaryEntry> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const id = nanoid();
         const now = new Date();
         const createdAt = now.toISOString();
@@ -161,7 +161,7 @@ export const dictionaryEntriesTable = {
       >;
     }): Promise<SelectDictionaryEntry> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const now = new Date();
         const updatedAt = now.toISOString();
         const updatedAtTimestampMs = now.getTime();
@@ -266,7 +266,7 @@ export const dictionaryEntriesTable = {
       id: string;
     }): Promise<SelectDictionaryEntry> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
 
         const res: RawDictionaryEntry | undefined = await db
           .prepare("SELECT * FROM dictionary_entries WHERE id = ?;")

@@ -1,12 +1,12 @@
 import { SelectSetting, RawSetting } from "@bahar/drizzle-user-db-schemas";
-import { getDb } from "..";
+import { ensureDb } from "..";
 import { TableOperation } from "./types";
 
 export const settingsTable = {
   getSettings: {
     query: async (): Promise<Omit<SelectSetting, "id">> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
         const res: RawSetting = await db
           .prepare("SELECT * FROM settings")
           .get();
@@ -31,7 +31,7 @@ export const settingsTable = {
       updates: Partial<Omit<SelectSetting, "id">>;
     }): Promise<Omit<SelectSetting, "id">> => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
 
         const setClauses: string[] = [];
         const params: unknown[] = [];

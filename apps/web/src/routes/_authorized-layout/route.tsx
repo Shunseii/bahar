@@ -1,7 +1,7 @@
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { useSearch } from "@/hooks/useSearch";
-import { getDb, initDb } from "@/lib/db";
+import { ensureDb, initDb } from "@/lib/db";
 import { migrationTable } from "@/lib/db/operations/migration";
 import { hydrateOramaDb } from "@/lib/search";
 import { useToast } from "@/hooks/useToast";
@@ -71,7 +71,7 @@ const AuthorizedLayout = () => {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const db = getDb();
+        const db = await ensureDb();
 
         Sentry.logger.info("Background syncing...");
 
@@ -192,6 +192,14 @@ export const Route = createFileRoute("/_authorized-layout")({
             message: t`We're having trouble accessing your account. Please try again.`,
             details: t`Unable to query status of client database.`,
             cause: error.type,
+          });
+
+        case "opfs_lock_error":
+          throw new DisplayError({
+            message: t`The app may be open in another tab. Try closing other tabs and refreshing this page.`,
+            details: t`The local database is locked by another session.`,
+            cause: error.type,
+            hasManualFix: true,
           });
 
         default:

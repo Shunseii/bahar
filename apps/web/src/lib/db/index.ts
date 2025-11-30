@@ -25,6 +25,19 @@ export const getDb = () => {
   return db;
 };
 
+/**
+ * Ensures the database is initialized before returning it.
+ * Use this in DB operations to handle cases where the DB
+ * was closed (e.g., after visibility change).
+ */
+export const ensureDb = async () => {
+  const result = await initDb();
+  if (!result.ok) {
+    throw new Error(`Database initialization failed: ${result.error.type}`);
+  }
+  return getDb();
+};
+
 export const resetDb = async () => {
   if (!db) return;
 
@@ -73,11 +86,20 @@ const _initDbInternal = async () => {
         authToken: access_token,
         dbName: db_name,
       }),
-    (error) => ({
-      type: "db_connection_failed",
-      reason: String(error),
-    }),
+    (error) => {
+      const reason = String(error);
+      const isOpfsLock = reason.includes("createSyncAccessHandle");
+      return {
+        type: isOpfsLock ? "opfs_lock_error" : "db_connection_failed",
+        reason,
+      };
+    },
   );
+
+  // If OPFS lock error, return immediately - don't try token refresh
+  if (!connectionResult.ok && connectionResult.error.type === "opfs_lock_error") {
+    return connectionResult;
+  }
 
   if (!connectionResult.ok) {
     const refreshResult = await tryCatch(
@@ -96,10 +118,14 @@ const _initDbInternal = async () => {
           authToken: refreshResult.value.access_token,
           dbName: db_name,
         }),
-      (error) => ({
-        type: "db_connection_failed_after_refresh",
-        reason: String(error),
-      }),
+      (error) => {
+        const reason = String(error);
+        const isOpfsLock = reason.includes("createSyncAccessHandle");
+        return {
+          type: isOpfsLock ? "opfs_lock_error" : "db_connection_failed_after_refresh",
+          reason,
+        };
+      },
     );
 
     if (!connectionAfterRefreshResult.ok) return connectionAfterRefreshResult;
@@ -304,15 +330,9 @@ const _connectToLocalDb = async ({
   authToken: string;
   dbName: string;
 }) => {
-  try {
-    return connect({
-      path: _formatLocalDbName(dbName),
-      url: _formatDbUrl(hostname),
-      authToken,
-    });
-  } catch (err) {
-    console.error("Error connecting to local database: ", err);
-
-    throw new Error("Unable to connect to local database.");
-  }
+  return connect({
+    path: _formatLocalDbName(dbName),
+    url: _formatDbUrl(hostname),
+    authToken,
+  });
 };
