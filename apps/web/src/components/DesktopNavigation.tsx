@@ -34,6 +34,7 @@ export const DesktopNavigation = () => {
         >
           <motion.img
             src={Logo}
+            alt=""
             className="h-5 w-5"
             whileHover={{ scale: 1.15, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
@@ -84,7 +85,7 @@ export const DesktopNavigation = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="!ring-0 !outline-none overflow-hidden rounded-full hover:bg-muted/80 transition-colors duration-200"
+              className="overflow-hidden rounded-full hover:bg-muted/80 transition-colors duration-200"
             >
               <Settings className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors duration-200" />
             </Button>
@@ -113,7 +114,7 @@ export const DesktopNavigation = () => {
             <DropdownMenuItem asChild>
               <Button
                 variant="ghost"
-                className="cursor-pointer ltr:justify-start rtl:justify-end w-full !ring-0 !outline-none text-destructive hover:text-destructive hover:bg-destructive/10"
+                className="cursor-pointer ltr:justify-start rtl:justify-end w-full text-destructive hover:text-destructive hover:bg-destructive/10"
                 onClick={logout}
               >
                 <Trans>Logout</Trans>

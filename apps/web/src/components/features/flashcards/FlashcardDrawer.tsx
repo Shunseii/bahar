@@ -95,16 +95,15 @@ interface FlashcardDrawerProps extends PropsWithChildren {
 
 export type Flashcard = RouterOutput["flashcard"]["today"]["flashcards"][0];
 
-// Grade feedback animation component
 const GradeFeedback: FC<{
   grade: Grade | null;
   onComplete: () => void;
 }> = ({ grade, onComplete }) => {
   useEffect(() => {
-    if (grade !== null) {
-      const timer = setTimeout(onComplete, 600);
-      return () => clearTimeout(timer);
-    }
+    if (grade === null) return;
+
+    const timer = setTimeout(onComplete, 600);
+    return () => clearTimeout(timer);
   }, [grade, onComplete]);
 
   if (grade === null) return null;
@@ -147,7 +146,12 @@ const GradeFeedback: FC<{
           y: 0,
           opacity: 1,
         },
-        transition: { duration: 0.4, type: "spring", stiffness: 200, damping: 15 },
+        transition: {
+          duration: 0.4,
+          type: "spring",
+          stiffness: 200,
+          damping: 15,
+        },
       },
     },
     [Rating.Easy]: {
@@ -177,10 +181,7 @@ const GradeFeedback: FC<{
     >
       {/* Background pulse */}
       <motion.div
-        className={cn(
-          "absolute inset-0",
-          config.bgColor
-        )}
+        className={cn("absolute inset-0", config.bgColor)}
         initial={{ opacity: 0 }}
         animate={{ opacity: [0, 0.5, 0] }}
         transition={{ duration: 0.6 }}
@@ -188,10 +189,7 @@ const GradeFeedback: FC<{
 
       {/* Icon animation */}
       <motion.div
-        className={cn(
-          "p-6 rounded-full",
-          config.bgColor
-        )}
+        className={cn("p-6 rounded-full", config.bgColor)}
         {...config.animation}
       >
         <Icon className={cn("w-16 h-16", config.color)} />
@@ -511,9 +509,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                   <Trans>All done for today!</Trans>
                 </DrawerTitle>
                 <p className="text-sm text-muted-foreground text-center max-w-xs">
-                  <Trans>
-                    Great work! Come back later for more reviews.
-                  </Trans>
+                  <Trans>Great work! Come back later for more reviews.</Trans>
                 </p>
               </motion.div>
             )}
@@ -542,7 +538,6 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
                 {/* Flashcard content area */}
                 <div className="relative p-4 sm:p-8 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
-
                   {currentCard.direction === "reverse" ? (
                     <>
                       <ReverseQuestionSide currentCard={currentCard} />
@@ -610,7 +605,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       "w-full h-auto flex-col gap-1 py-3 px-2 sm:px-4",
                       "border-2 border-muted-foreground/20 hover:border-muted-foreground/40",
                       "hover:bg-muted/50 transition-all duration-200",
-                      "group"
+                      "group",
                     )}
                   >
                     <RotateCcw className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -641,7 +636,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       "w-full h-auto flex-col gap-1 py-3 px-2 sm:px-4",
                       "border-2 border-orange-500/30 hover:border-orange-500/50",
                       "hover:bg-orange-500/10 transition-all duration-200",
-                      "group"
+                      "group",
                     )}
                   >
                     <Brain className="w-5 h-5 text-orange-500" />
@@ -672,7 +667,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       "w-full h-auto flex-col gap-1 py-3 px-2 sm:px-4",
                       "border-2 border-primary/30 hover:border-primary/50",
                       "hover:bg-primary/10 transition-all duration-200",
-                      "group"
+                      "group",
                     )}
                   >
                     <ThumbsUp className="w-5 h-5 text-primary" />
@@ -703,7 +698,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       "w-full h-auto flex-col gap-1 py-3 px-2 sm:px-4",
                       "border-2 border-green-500/30 hover:border-green-500/50",
                       "hover:bg-green-500/10 transition-all duration-200",
-                      "group"
+                      "group",
                     )}
                   >
                     <Zap className="w-5 h-5 text-green-500" />
@@ -735,7 +730,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     "bg-primary hover:bg-primary/90",
                     "shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30",
                     "transition-all duration-300",
-                    "group relative overflow-hidden"
+                    "group relative overflow-hidden",
                   )}
                 >
                   <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
