@@ -15,24 +15,6 @@ import {
   DICTIONARY_ENTRY_COLUMNS,
 } from "../utils";
 import { TableOperation } from "./types";
-import * as Sentry from "@sentry/react";
-import { debounce } from "@tanstack/pacer";
-
-const DEBOUNCED_DELAY_MS = 2 * 1000;
-
-const debouncedPush = debounce(
-  async () => {
-    try {
-      const db = await ensureDb();
-      await db.push();
-    } catch (error) {
-      Sentry.logger.warn("Debounced push failed", {
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
-  },
-  { wait: DEBOUNCED_DELAY_MS },
-);
 
 /**
  * The threshold after which the UI won't display the
@@ -196,8 +178,6 @@ export const flashcardsTable = {
             0,
           ]);
 
-        await db.push();
-
         const res: RawFlashcard | undefined = await db
           .prepare(`SELECT * FROM flashcards WHERE id = ?;`)
           .get([id]);
@@ -306,8 +286,6 @@ export const flashcardsTable = {
           )
           .run(params);
 
-        debouncedPush();
-
         const res: RawFlashcard | undefined = await db
           .prepare(`SELECT * FROM flashcards WHERE id = ?;`)
           .get([id]);
@@ -366,8 +344,6 @@ export const flashcardsTable = {
             dictionary_entry_id,
             direction,
           ]);
-
-        await db.push();
 
         const res: RawFlashcard | undefined = await db
           .prepare(

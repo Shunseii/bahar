@@ -28,7 +28,7 @@ import { AnimatedLogo } from "@/components/AnimatedLogo";
 /**
  * How often to sync the user database in the background.
  */
-const BACKGROUND_SYNC_INTERVAL = 60 * 1000;
+const BACKGROUND_SYNC_INTERVAL = 15 * 1000;
 
 const PendingComponent = () => {
   return (

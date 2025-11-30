@@ -141,8 +141,6 @@ export const decksTable = {
             deck.filters ? JSON.stringify(deck.filters) : null,
           ]);
 
-        await db.push();
-
         const res: RawDeck | undefined = await db
           .prepare(`SELECT * FROM decks WHERE id = ?;`)
           .get([id]);
@@ -197,8 +195,6 @@ export const decksTable = {
           .prepare(`UPDATE decks SET ${setClauses.join(", ")} WHERE id = ?;`)
           .run(params);
 
-        await db.push();
-
         const res: RawDeck | undefined = await db
           .prepare(`SELECT * FROM decks WHERE id = ?;`)
           .get([id]);
@@ -226,8 +222,6 @@ export const decksTable = {
         const db = await ensureDb();
 
         await db.prepare(`DELETE FROM decks WHERE id = ?;`).run([id]);
-
-        await db.push();
 
         return { success: true };
       } catch (err) {
