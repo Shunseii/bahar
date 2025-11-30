@@ -26,7 +26,10 @@ const DrawerOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay
     ref={ref}
-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
+    className={cn(
+      "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm",
+      className,
+    )}
     {...props}
   />
 ));
@@ -41,12 +44,15 @@ const DrawerContent = React.forwardRef<
     <DrawerPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-4/5 flex-col rounded-t-[10px] border bg-background",
+        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-[85vh] flex-col rounded-t-3xl border-t border-x border-border/50 bg-background shadow-2xl shadow-black/20",
         className,
       )}
       {...props}
     >
-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+      {/* Premium handle */}
+      <div className="flex justify-center pt-4 pb-2">
+        <div className="h-1.5 w-12 rounded-full bg-muted-foreground/20 transition-colors hover:bg-muted-foreground/30" />
+      </div>
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
@@ -59,7 +65,7 @@ const DrawerHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "grid gap-1.5 p-4 text-center ltr:sm:text-left rtl:sm:text-right",
+      "grid gap-1.5 px-4 sm:px-6 py-3 sm:py-4 text-center ltr:sm:text-left rtl:sm:text-right",
       className,
     )}
     {...props}
@@ -72,7 +78,10 @@ const DrawerFooter = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+    className={cn(
+      "mt-auto flex flex-col gap-2 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-border/30 bg-muted/20",
+      className,
+    )}
     {...props}
   />
 );
@@ -85,7 +94,7 @@ const DrawerTitle = React.forwardRef<
   <DrawerPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
+      "text-xl font-semibold leading-none tracking-tight",
       className,
     )}
     {...props}

@@ -17,6 +17,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { Home, Settings, Layers } from "lucide-react";
 import { useLogout } from "@/hooks/useLogout";
+import { motion } from "motion/react";
 
 import Logo from "@/assets/logo.svg";
 
@@ -24,16 +25,19 @@ export const DesktopNavigation = () => {
   const { logout } = useLogout();
 
   return (
-    <aside className="fixed inset-y-0 ltr:left-0 rtl:right-0 z-10 hidden w-14 flex-col ltr:border-r rtl:border-l bg-background sm:flex">
+    <aside className="fixed inset-y-0 ltr:left-0 rtl:right-0 z-10 hidden w-14 flex-col ltr:border-r rtl:border-l bg-gradient-to-b from-background to-background/95 backdrop-blur-sm sm:flex">
       {/* Main nav buttons */}
       <nav className="flex flex-col items-center gap-4 px-2 py-4">
         <Link
           to="/"
           className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 text-lg font-semibold md:h-8 md:w-8 md:text-base"
         >
-          <img
+          <motion.img
             src={Logo}
-            className="h-5 w-5 transition-all group-hover:scale-110"
+            className="h-5 w-5"
+            whileHover={{ scale: 1.15, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           />
           <span className="sr-only">
             <Trans>Bahar</Trans>
@@ -51,7 +55,7 @@ export const DesktopNavigation = () => {
             </NavLink>
           </TooltipTrigger>
 
-          <TooltipContent side="right">
+          <TooltipContent side="right" sideOffset={8}>
             <Trans>Home</Trans>
           </TooltipContent>
         </Tooltip>
@@ -67,7 +71,7 @@ export const DesktopNavigation = () => {
             </NavLink>
           </TooltipTrigger>
 
-          <TooltipContent side="right">
+          <TooltipContent side="right" sideOffset={8}>
             <Trans>Decks</Trans>
           </TooltipContent>
         </Tooltip>
@@ -78,23 +82,28 @@ export const DesktopNavigation = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
-              className="!ring-0 !outline-none overflow-hidden rounded-full"
+              className="!ring-0 !outline-none overflow-hidden rounded-full hover:bg-muted/80 transition-colors duration-200"
             >
-              <Settings className="h-5 w-5" />
+              <Settings className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors duration-200" />
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>
+          <DropdownMenuContent align="end" sideOffset={8} className="w-48">
+            <DropdownMenuLabel className="text-xs font-medium text-muted-foreground rtl:text-right">
               <Trans>My Account</Trans>
             </DropdownMenuLabel>
 
             <DropdownMenuSeparator />
 
             <DropdownMenuItem asChild>
-              <Link className="cursor-pointer w-full" to="/settings" from="/">
+              <Link
+                className="cursor-pointer w-full flex items-center gap-2 rtl:flex-row-reverse"
+                to="/settings"
+                from="/"
+              >
+                <Settings className="w-4 h-4" />
                 <Trans>Settings</Trans>
               </Link>
             </DropdownMenuItem>
@@ -104,7 +113,7 @@ export const DesktopNavigation = () => {
             <DropdownMenuItem asChild>
               <Button
                 variant="ghost"
-                className="cursor-pointer justify-start w-full !ring-0 !outline-none"
+                className="cursor-pointer ltr:justify-start rtl:justify-end w-full !ring-0 !outline-none text-destructive hover:text-destructive hover:bg-destructive/10"
                 onClick={logout}
               >
                 <Trans>Logout</Trans>

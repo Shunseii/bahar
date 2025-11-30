@@ -26,25 +26,52 @@ export const ReverseQuestionSide: FC<{
   const showAntonyms = flashcardSettings?.show_antonyms_in_flashcard;
 
   return (
-    <motion.span
-      className="text-base sm:text-lg"
+    <motion.div
+      className="w-full flex flex-col gap-y-4"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
     >
-      <p dir="ltr">{currentCard.dictionary_entry.translation}</p>
+      {/* Main translation - large and prominent */}
+      <motion.p
+        dir="ltr"
+        className="ltr:text-left text-2xl sm:text-3xl text-foreground/90 leading-relaxed"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1, duration: 0.3 }}
+      >
+        {currentCard.dictionary_entry.translation}
+      </motion.p>
 
+      {/* Definition in Arabic */}
       {!!currentCard.dictionary_entry.definition && (
-        <p dir="rtl">المعنى: {currentCard.dictionary_entry.definition}</p>
+        <motion.p
+          dir="rtl"
+          className="text-lg sm:text-xl text-muted-foreground rtl:text-right"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <span className="text-muted-foreground/60">المعنى:</span>{" "}
+          {currentCard.dictionary_entry.definition}
+        </motion.p>
       )}
 
+      {/* Antonyms */}
       {showAntonyms === "answer" && hasAntonyms && (
-        <p dir="rtl" className="rtl:text-right font-light sm:text-xl">
+        <motion.p
+          dir="rtl"
+          className="rtl:text-right text-base sm:text-lg text-muted-foreground italic"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+        >
           أضداد:{" "}
           {currentCard.dictionary_entry.antonyms
             ?.map((antonym) => antonym.word)
             .join(", ")}
-        </p>
+        </motion.p>
       )}
-    </motion.span>
+    </motion.div>
   );
 };
