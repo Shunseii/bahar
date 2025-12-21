@@ -5,7 +5,6 @@
  * web and mobile apps.
  */
 
-// Arabic text utilities
 export {
   stripArabicDiacritics,
   normalizeArabicHamza,
@@ -15,7 +14,6 @@ export {
   detectLanguage,
 } from "./arabic";
 
-// Tokenizer
 export {
   arabicTokenizer,
   englishTokenizer,
@@ -23,17 +21,14 @@ export {
   type OramaLanguage,
 } from "./tokenizer";
 
-// Highlighting
 export { highlightWithDiacritics } from "./highlight";
 
-// Schema and types
 export {
   dictionarySchema,
   type DictionaryDocument,
   type DictionaryOrama,
 } from "./schema";
 
-// Database operations
 export {
   createDictionaryDatabase,
   insertDocuments,

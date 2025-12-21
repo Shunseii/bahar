@@ -80,7 +80,10 @@ export const highlightWithDiacritics = (
     // Find the end position including any trailing diacritics
     let originalEnd = lastCharOriginalPos + 1;
     const diacriticsRegex = /[\u064B-\u0652\u0640]/;
-    while (originalEnd < text.length && diacriticsRegex.test(text[originalEnd])) {
+    while (
+      originalEnd < text.length &&
+      diacriticsRegex.test(text[originalEnd])
+    ) {
       originalEnd++;
     }
 

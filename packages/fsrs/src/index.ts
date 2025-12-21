@@ -17,54 +17,21 @@ import {
   type FSRS,
   type FSRSParameters,
 } from "ts-fsrs";
+import {
+  type FlashcardDirection,
+  FlashcardState,
+  type SelectFlashcard,
+} from "@bahar/drizzle-user-db-schemas";
 
-// Re-export ts-fsrs functions and enums
 export { createEmptyCard, fsrs, Rating, State };
 
-// Re-export ts-fsrs types
 export type { Card, FSRS, FSRSParameters, Grade, RecordLog, RecordLogItem };
-
-/**
- * FlashcardState enum matching database schema
- */
-export enum FlashcardState {
-  NEW = 0,
-  LEARNING = 1,
-  REVIEW = 2,
-  RE_LEARNING = 3,
-}
-
-/**
- * Flashcard direction type
- */
-export type FlashcardDirection = "forward" | "reverse";
-
-/**
- * Database flashcard representation (with string dates and nullable fields)
- */
-export interface DatabaseFlashcard {
-  id: string;
-  dictionary_entry_id: string;
-  difficulty: number | null;
-  due: string;
-  due_timestamp_ms: number;
-  elapsed_days: number | null;
-  lapses: number | null;
-  last_review: string | null;
-  last_review_timestamp_ms: number | null;
-  reps: number | null;
-  scheduled_days: number | null;
-  stability: number | null;
-  state: number | null;
-  direction: FlashcardDirection;
-  is_hidden: boolean;
-}
 
 /**
  * Converts a database flashcard to an FSRS Card with Date objects
  */
 export const toFsrsCard = (
-  flashcard: DatabaseFlashcard,
+  flashcard: SelectFlashcard,
 ): Card & { id: string } => {
   return {
     id: flashcard.id,
@@ -89,7 +56,7 @@ export const fromFsrsCard = (
   card: Card,
   dictionaryEntryId: string,
   direction: FlashcardDirection,
-): Omit<DatabaseFlashcard, "id" | "is_hidden"> => {
+): Omit<SelectFlashcard, "id" | "is_hidden"> => {
   const dueTimestampMs = card.due.getTime();
   const lastReviewTimestampMs = card.last_review?.getTime() ?? null;
 
@@ -116,7 +83,7 @@ export const fromFsrsCard = (
 export const createNewFlashcard = (
   dictionaryEntryId: string,
   direction: FlashcardDirection,
-): Omit<DatabaseFlashcard, "id" | "is_hidden"> => {
+): Omit<SelectFlashcard, "id" | "is_hidden"> => {
   const emptyCard = createEmptyCard();
   return fromFsrsCard(emptyCard, dictionaryEntryId, direction);
 };
@@ -136,7 +103,7 @@ export const createScheduler = (params?: Partial<FSRSParameters>): FSRS => {
  */
 export const getSchedulingOptions = (
   scheduler: FSRS,
-  flashcard: DatabaseFlashcard,
+  flashcard: SelectFlashcard,
   now: Date = new Date(),
 ): RecordLog => {
   const fsrsCard = toFsrsCard(flashcard);
@@ -148,11 +115,11 @@ export const getSchedulingOptions = (
  */
 export const gradeFlashcard = (
   scheduler: FSRS,
-  flashcard: DatabaseFlashcard,
+  flashcard: SelectFlashcard,
   grade: Grade,
   now: Date = new Date(),
 ): Pick<
-  DatabaseFlashcard,
+  SelectFlashcard,
   | "due"
   | "due_timestamp_ms"
   | "last_review"
@@ -184,19 +151,5 @@ export const gradeFlashcard = (
     lapses: selectedCard.lapses,
     elapsed_days: selectedCard.elapsed_days,
     scheduled_days: selectedCard.scheduled_days,
-  };
-};
-
-/**
- * Returns a human-readable interval description for a grade option
- */
-export const getGradeInterval = (
-  scheduling: RecordLog,
-  grade: Grade,
-): { days: number; card: Card } => {
-  const item = scheduling[grade];
-  return {
-    days: item.card.scheduled_days,
-    card: item.card,
   };
 };

@@ -116,6 +116,42 @@ const AuthorizedLayout = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Sync when app visibility changes (e.g., user switches apps on mobile PWA)
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      try {
+        const db = await ensureDb();
+
+        if (document.hidden) {
+          // App going to background - push local changes
+          Sentry.logger.info("Visibility hidden, pushing...");
+          await db.push();
+        } else {
+          // App coming to foreground - pull remote changes
+          Sentry.logger.info("Visibility visible, pulling...");
+          store.set(isSyncingAtom, true);
+
+          const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
+          await db.pull();
+          const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
+          dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+
+          store.set(syncCompletedCountAtom, (c) => c + 1);
+        }
+      } catch (error) {
+        Sentry.logger.warn("Visibility sync failed", {
+          reason: String(error),
+        });
+      } finally {
+        store.set(isSyncingAtom, false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
   const syncCompletedCount = useAtomValue(syncCompletedCountAtom);
   const { refresh } = useSearch();
 

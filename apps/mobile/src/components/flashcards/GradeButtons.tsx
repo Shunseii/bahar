@@ -13,7 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Rating, type RecordLog, type Grade } from "@bahar/fsrs";
 import { RotateCcw, Brain, ThumbsUp, Zap } from "lucide-react-native";
-import { formatDistanceToNow } from "date-fns";
+import { intlFormatDistance } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { useThemeColors } from "@/lib/theme";
 
@@ -116,7 +116,7 @@ const GradeButton: React.FC<GradeButtonProps> = ({
   }));
 
   const { Icon, label, color, borderColor } = config;
-  const intervalText = formatDistanceToNow(interval);
+  const intervalText = intlFormatDistance(interval, new Date(), { style: "narrow" });
 
   return (
     <Pressable

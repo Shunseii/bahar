@@ -3,9 +3,11 @@
  */
 
 import type { Orama } from "@orama/orama";
+import type { Morphology, Antonym, Example } from "@bahar/drizzle-user-db-schemas";
 
 /**
  * Schema definition for dictionary entries in Orama
+ * Only these fields will be indexed for search
  */
 export const dictionarySchema = {
   created_at_timestamp_ms: "number",
@@ -20,6 +22,7 @@ export const dictionarySchema = {
 
 /**
  * Document type for dictionary entries in Orama
+ * Fields not in dictionarySchema are stored but not indexed
  */
 export interface DictionaryDocument {
   id: string;
@@ -33,6 +36,9 @@ export interface DictionaryDocument {
   type?: string;
   root?: string[];
   tags?: string[];
+  morphology?: Morphology;
+  antonyms?: Antonym[];
+  examples?: Example[];
 }
 
 /**

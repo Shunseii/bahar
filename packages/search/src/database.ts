@@ -2,9 +2,20 @@
  * Orama database factory for dictionary search
  */
 
-import { create, insertMultiple, insert, update, remove, search } from "@orama/orama";
+import {
+  create,
+  insertMultiple,
+  insert,
+  update,
+  remove,
+  search,
+} from "@orama/orama";
 import { pluginQPS } from "@orama/plugin-qps";
-import { dictionarySchema, type DictionaryDocument, type DictionaryOrama } from "./schema";
+import {
+  dictionarySchema,
+  type DictionaryDocument,
+  type DictionaryOrama,
+} from "./schema";
 import { multiLanguageTokenizer } from "./tokenizer";
 
 /**

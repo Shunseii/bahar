@@ -138,5 +138,7 @@ export const nullToUndefined = <T extends Record<string, unknown>>(
     }
   }
 
-  return result as { [K in keyof T]: T[K] extends null ? undefined : Exclude<T[K], null> };
+  return result as {
+    [K in keyof T]: T[K] extends null ? undefined : Exclude<T[K], null>;
+  };
 };

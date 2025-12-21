@@ -177,7 +177,9 @@ export const hydrateOramaDb = async () => {
             tags: tagsResult.value ?? undefined,
             antonyms: antonymsResult.value ?? undefined,
             examples: examplesResult.value ?? undefined,
-            morphology: morphologyResult.ok ? morphologyResult.value : undefined,
+            morphology: morphologyResult.ok
+              ? morphologyResult.value
+              : undefined,
           };
         })
         .filter((entry) => entry !== null);
@@ -226,6 +228,7 @@ export const rehydrateOramaDb = async () => {
   let offset = 0;
 
   try {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const results: RawDictionaryEntry[] = await db
         .prepare("SELECT * FROM dictionary_entries LIMIT ? OFFSET ?")
@@ -237,11 +240,25 @@ export const rehydrateOramaDb = async () => {
         .map((entry) => {
           const rootResult = safeJsonParse(entry.root, RootLettersSchema);
           const tagsResult = safeJsonParse(entry.tags, TagsSchema);
-          const antonymsResult = safeJsonParse(entry.antonyms, z.array(AntonymSchema));
-          const examplesResult = safeJsonParse(entry.examples, z.array(ExampleSchema));
-          const morphologyResult = safeJsonParse(entry.morphology, MorphologySchema);
+          const antonymsResult = safeJsonParse(
+            entry.antonyms,
+            z.array(AntonymSchema),
+          );
+          const examplesResult = safeJsonParse(
+            entry.examples,
+            z.array(ExampleSchema),
+          );
+          const morphologyResult = safeJsonParse(
+            entry.morphology,
+            MorphologySchema,
+          );
 
-          if (!rootResult.ok || !tagsResult.ok || !antonymsResult.ok || !examplesResult.ok) {
+          if (
+            !rootResult.ok ||
+            !tagsResult.ok ||
+            !antonymsResult.ok ||
+            !examplesResult.ok
+          ) {
             return null;
           }
 
@@ -259,7 +276,9 @@ export const rehydrateOramaDb = async () => {
             tags: tagsResult.value ?? undefined,
             antonyms: antonymsResult.value ?? undefined,
             examples: examplesResult.value ?? undefined,
-            morphology: morphologyResult.ok ? morphologyResult.value : undefined,
+            morphology: morphologyResult.ok
+              ? morphologyResult.value
+              : undefined,
           };
         })
         .filter((entry) => entry !== null);
@@ -363,7 +382,10 @@ export const highlightWithDiacritics = (
     // Find the end position including any trailing diacritics
     let originalEnd = lastCharOriginalPos + 1;
     const diacriticsRegex = /[\u064B-\u0652\u0640]/;
-    while (originalEnd < text.length && diacriticsRegex.test(text[originalEnd])) {
+    while (
+      originalEnd < text.length &&
+      diacriticsRegex.test(text[originalEnd])
+    ) {
       originalEnd++;
     }
 

@@ -4,7 +4,6 @@
  * Provides cross-platform database utilities for web and mobile apps.
  */
 
-// Database adapter interface
 export {
   type DatabaseAdapter,
   type DatabaseAdapterFactory,
@@ -19,14 +18,12 @@ export {
   generateId,
 } from "./utils";
 
-// Constants
 export {
   DICTIONARY_ENTRY_COLUMNS,
   FLASHCARD_LIMIT,
   BATCH_SIZE,
 } from "./constants";
 
-// Data converters
 export {
   safeJsonParse,
   convertRawDictionaryEntryToSelect,
@@ -34,5 +31,4 @@ export {
   type ConvertDictionaryEntryError,
 } from "./converters";
 
-// Types
 export { type TableOperation } from "./types";

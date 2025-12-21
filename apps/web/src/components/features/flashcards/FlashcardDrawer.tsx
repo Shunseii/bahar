@@ -3,9 +3,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { Tooltip, TooltipTrigger, TooltipContent } from "../../ui/tooltip";
 import { Button } from "../../ui/button";
-import { formatDistanceToNow } from "date-fns";
-import { ar } from "date-fns/locale/ar";
-import { enUS } from "date-fns/locale/en-US";
+import { intlFormatDistance } from "date-fns";
 import { Card, fsrs, Grade, Rating } from "ts-fsrs";
 import {
   Drawer,
@@ -268,6 +266,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   show_reverse = false,
 }) => {
   const dir = useDir();
+  const locale = dir === "rtl" ? "ar" : "en";
   const { formatNumber } = useFormatNumber();
   const [showAnswer, setShowAnswer] = useState(false);
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
@@ -613,9 +612,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       <Trans>Again</Trans>
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(
+                      {intlFormatDistance(
                         scheduling_cards[Rating.Again].card.due,
-                        { locale: dir === "ltr" ? enUS : ar },
+                        new Date(),
+                        { style: "narrow", locale },
                       )}
                     </span>
                   </Button>
@@ -644,9 +644,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       <Trans>Hard</Trans>
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(
+                      {intlFormatDistance(
                         scheduling_cards[Rating.Hard].card.due,
-                        { locale: dir === "ltr" ? enUS : ar },
+                        new Date(),
+                        { style: "narrow", locale },
                       )}
                     </span>
                   </Button>
@@ -675,9 +676,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       <Trans>Good</Trans>
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(
+                      {intlFormatDistance(
                         scheduling_cards[Rating.Good].card.due,
-                        { locale: dir === "ltr" ? enUS : ar },
+                        new Date(),
+                        { style: "narrow", locale },
                       )}
                     </span>
                   </Button>
@@ -706,9 +708,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       <Trans>Easy</Trans>
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(
+                      {intlFormatDistance(
                         scheduling_cards[Rating.Easy].card.due,
-                        { locale: dir === "ltr" ? enUS : ar },
+                        new Date(),
+                        { style: "narrow", locale },
                       )}
                     </span>
                   </Button>

@@ -820,6 +820,10 @@ importers:
         version: 0.28.1
 
   packages/fsrs:
+    dependencies:
+      '@bahar/drizzle-user-db-schemas':
+        specifier: workspace:*
+        version: link:../drizzle-user-db-schemas
     devDependencies:
       '@bahar/typescript-config':
         specifier: workspace:*
@@ -857,6 +861,10 @@ importers:
         version: link:../config-typescript
 
   packages/search:
+    dependencies:
+      '@bahar/drizzle-user-db-schemas':
+        specifier: workspace:*
+        version: link:../drizzle-user-db-schemas
     devDependencies:
       '@bahar/typescript-config':
         specifier: workspace:*
