@@ -218,6 +218,68 @@ export const resetOramaDb = () => {
   isOramaHydrated = false;
 };
 
+export const rehydrateOramaDb = async () => {
+  const BATCH_SIZE = 500;
+  const db = await ensureDb();
+  const newOramaDb = createOramaDb();
+
+  let offset = 0;
+
+  try {
+    while (true) {
+      const results: RawDictionaryEntry[] = await db
+        .prepare("SELECT * FROM dictionary_entries LIMIT ? OFFSET ?")
+        .all([BATCH_SIZE, offset]);
+
+      if (results.length === 0) break;
+
+      const dictionaryEntries = results
+        .map((entry) => {
+          const rootResult = safeJsonParse(entry.root, RootLettersSchema);
+          const tagsResult = safeJsonParse(entry.tags, TagsSchema);
+          const antonymsResult = safeJsonParse(entry.antonyms, z.array(AntonymSchema));
+          const examplesResult = safeJsonParse(entry.examples, z.array(ExampleSchema));
+          const morphologyResult = safeJsonParse(entry.morphology, MorphologySchema);
+
+          if (!rootResult.ok || !tagsResult.ok || !antonymsResult.ok || !examplesResult.ok) {
+            return null;
+          }
+
+          return {
+            id: entry.id,
+            word: entry.word,
+            translation: entry.translation,
+            created_at: entry.created_at ?? undefined,
+            created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
+            updated_at: entry.updated_at ?? undefined,
+            updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
+            definition: entry.definition ?? undefined,
+            type: entry.type ?? undefined,
+            root: rootResult.value ?? undefined,
+            tags: tagsResult.value ?? undefined,
+            antonyms: antonymsResult.value ?? undefined,
+            examples: examplesResult.value ?? undefined,
+            morphology: morphologyResult.ok ? morphologyResult.value : undefined,
+          };
+        })
+        .filter((entry) => entry !== null);
+
+      if (dictionaryEntries.length > 0) {
+        await insertMultiple(newOramaDb, dictionaryEntries, BATCH_SIZE);
+      }
+
+      offset += BATCH_SIZE;
+    }
+
+    oramaDb = newOramaDb;
+    isOramaHydrated = true;
+  } catch (error) {
+    Sentry.captureException(error, {
+      contexts: { orama_rehydration: { stage: "rehydration_failed" } },
+    });
+  }
+};
+
 interface HighlightOptions {
   HTMLTag?: string;
   CSSClass?: string;

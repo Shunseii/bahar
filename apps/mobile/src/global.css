@@ -1,3 +1,68 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "uniwind";
+
+@theme {
+  /* Border radius */
+  --radius-sm: 0.35rem;
+  --radius-md: 0.55rem;
+  --radius-lg: 0.75rem;
+
+  /* Font family */
+  --font-primary: 'Inter', 'Noto Naskh Arabic', sans-serif;
+}
+
+@layer theme {
+  :root {
+    @variant light {
+      --color-background: #ffffff;
+      --color-foreground: #020817;
+      --color-card: #ffffff;
+      --color-card-foreground: #020817;
+      --color-popover: #ffffff;
+      --color-popover-foreground: #020817;
+      --color-primary: #3b82f6;
+      --color-primary-foreground: #f8fafc;
+      --color-secondary: #f1f5f9;
+      --color-secondary-foreground: #1e293b;
+      --color-muted: #f1f5f9;
+      --color-muted-foreground: #64748b;
+      --color-accent: #f1f5f9;
+      --color-accent-foreground: #1e293b;
+      --color-destructive: #ef4444;
+      --color-destructive-foreground: #f8fafc;
+      --color-success: #22c55e;
+      --color-success-foreground: #f8fafc;
+      --color-warning: #f97316;
+      --color-warning-foreground: #f8fafc;
+      --color-border: #e2e8f0;
+      --color-input: #e2e8f0;
+      --color-ring: #3b82f6;
+    }
+
+    @variant dark {
+      --color-background: #020817;
+      --color-foreground: #f8fafc;
+      --color-card: #020817;
+      --color-card-foreground: #f8fafc;
+      --color-popover: #020817;
+      --color-popover-foreground: #f8fafc;
+      --color-primary: #60a5fa;
+      --color-primary-foreground: #1e293b;
+      --color-secondary: #1e293b;
+      --color-secondary-foreground: #f8fafc;
+      --color-muted: #1e293b;
+      --color-muted-foreground: #94a3b8;
+      --color-accent: #1e293b;
+      --color-accent-foreground: #f8fafc;
+      --color-destructive: #dc2626;
+      --color-destructive-foreground: #f8fafc;
+      --color-success: #4ade80;
+      --color-success-foreground: #1e293b;
+      --color-warning: #fb923c;
+      --color-warning-foreground: #1e293b;
+      --color-border: #1e293b;
+      --color-input: #1e293b;
+      --color-ring: #1d4ed8;
+    }
+  }
+}

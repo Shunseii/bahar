@@ -17,16 +17,16 @@ import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { vars } from "nativewind";
 import { View, Text, Appearance, useColorScheme } from "react-native";
 import { I18nProvider, TransRenderProps } from "@lingui/react";
 import { i18n } from "@lingui/core";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { getLocales } from "expo-localization";
-import { cssVariables } from "@bahar/design-system/theme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner-native";
+import { Provider as JotaiProvider } from "jotai";
+import { store } from "@/lib/store";
 
 import { messages as enMessages } from "@bahar/i18n/locales/en";
 import { messages as arMessages } from "@bahar/i18n/locales/ar";
@@ -36,10 +36,10 @@ import { queryClient } from "@/utils/trpc";
 
 const setRootViewBackgroundColor = async () => {
   const colorScheme = Appearance.getColorScheme();
-  const themeColors =
-    colorScheme === "dark" ? cssVariables.dark : cssVariables.light;
+  const backgroundColor =
+    colorScheme === "dark" ? "hsl(222.2, 84%, 4.9%)" : "hsl(0, 0%, 100%)";
 
-  setBackgroundColorAsync(`hsl(${themeColors["--background"]})`);
+  setBackgroundColorAsync(backgroundColor);
 };
 
 const setup = async () => {
@@ -72,48 +72,56 @@ export default function RootLayout() {
     }
   }, [loaded, isPending]);
 
-  const themeVars =
-    colorScheme === "dark" ? cssVariables.dark : cssVariables.light;
-
   if (!loaded || isPending) {
     return null;
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <SafeAreaProvider>
-          <View style={vars(themeVars)} className="flex-1">
-            <ThemeProvider
-              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-              <I18nProvider i18n={i18n} defaultComponent={DefaultComponent}>
-                <Stack>
-                  <Stack.Protected guard={!authData}>
-                    <Stack.Screen
-                      name="(auth)"
-                      options={{ headerShown: false, animation: "fade" }}
-                    />
-                  </Stack.Protected>
+    <JotaiProvider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <View className="flex-1 bg-background">
+              <ThemeProvider
+                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+              >
+                <I18nProvider i18n={i18n} defaultComponent={DefaultComponent}>
+                  <Stack>
+                    <Stack.Protected guard={!authData}>
+                      <Stack.Screen
+                        name="(auth)"
+                        options={{ headerShown: false, animation: "fade" }}
+                      />
+                    </Stack.Protected>
 
-                  <Stack.Protected guard={!!authData}>
-                    <Stack.Screen
-                      name="(search)"
-                      options={{ headerShown: false, animation: "fade" }}
-                    />
-                  </Stack.Protected>
+                    <Stack.Protected guard={!!authData}>
+                      <Stack.Screen
+                        name="(search)"
+                        options={{ headerShown: false, animation: "fade" }}
+                      />
+                      <Stack.Screen
+                        name="review"
+                        options={{
+                          headerShown: false,
+                          animation: "slide_from_bottom",
+                          gestureEnabled: true,
+                          gestureDirection: "vertical",
+                        }}
+                      />
+                    </Stack.Protected>
 
-                  <Stack.Screen name="+not-found" />
-                </Stack>
-                <StatusBar style="auto" />
-              </I18nProvider>
-            </ThemeProvider>
-          </View>
+                    <Stack.Screen name="+not-found" />
+                  </Stack>
+                  <StatusBar style="auto" />
+                </I18nProvider>
+              </ThemeProvider>
+            </View>
 
-          <Toaster />
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
-    </QueryClientProvider>
+            <Toaster />
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </QueryClientProvider>
+    </JotaiProvider>
   );
 }
 

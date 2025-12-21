@@ -1,8 +1,7 @@
 import { cn } from "@bahar/design-system";
 import { cva, VariantProps } from "class-variance-authority";
 import { FC, ElementType } from "react";
-import { Text, useColorScheme, View } from "react-native";
-import { Pressable, PressableProps } from "react-native-gesture-handler";
+import { Text, useColorScheme, View, Pressable, PressableProps } from "react-native";
 
 const buttonVariants = cva(
   "flex flex-row items-center gap-x-2 justify-center rounded-md transition-colors disabled:opacity-50",

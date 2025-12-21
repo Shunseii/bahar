@@ -95,6 +95,13 @@ export const useSearch = () => {
     setOffset(0);
   }, [setHits, setSearchResultsMetadata, setOffset]);
 
+  const refresh = useCallback(() => {
+    const { hits: newHits, ...metadata } = search({}, "english");
+    setHits(newHits);
+    setSearchResultsMetadata(metadata);
+    setOffset(0);
+  }, [search, setHits, setSearchResultsMetadata, setOffset]);
+
   return {
     /**
      * Thin wrapper around Orama's search function that uses
@@ -120,6 +127,11 @@ export const useSearch = () => {
      * Clears the cached search results.
      */
     reset,
+
+    /**
+     * Re-runs search with fresh data from Orama and updates the cache.
+     */
+    refresh,
   };
 };
 

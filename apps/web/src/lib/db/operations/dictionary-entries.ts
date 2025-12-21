@@ -290,4 +290,15 @@ export const dictionaryEntriesTable = {
       queryKey: ["turso.dictionaryEntries.delete"],
     },
   },
+  maxUpdatedAt: {
+    query: async (): Promise<number | null> => {
+      const db = await ensureDb();
+      const res = await db
+        .prepare<{ max_ts: number | null }>(
+          "SELECT MAX(updated_at_timestamp_ms) as max_ts FROM dictionary_entries",
+        )
+        .get([]);
+      return res?.max_ts ?? null;
+    },
+  },
 } satisfies Record<string, TableOperation>;

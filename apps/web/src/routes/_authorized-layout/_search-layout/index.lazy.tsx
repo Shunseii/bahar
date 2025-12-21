@@ -27,7 +27,7 @@ const Index = () => {
 
   const show_reverse = flashcardSettings?.show_reverse_flashcards ?? false;
 
-  const { data, isFetching } = useQuery({
+  const { data, isPending } = useQuery({
     queryFn: async ({ queryKey: [, showReverse] }) =>
       flashcardsTable.today.query({
         showReverse: showReverse as boolean,
@@ -100,7 +100,7 @@ const Index = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      disabled={isFetching}
+                      disabled={isPending}
                       className={cn(
                         "relative h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-primary/5",
                         dueCount > 0 && "text-orange-600 dark:text-orange-400",
@@ -110,13 +110,13 @@ const Index = () => {
                       <span
                         className={cn(
                           "text-sm",
-                          isFetching &&
+                          isPending &&
                             "motion-safe:animate-pulse motion-reduce:opacity-50",
                         )}
                       >
                         <Trans>Review</Trans>
                       </span>
-                      {!isFetching && dueCount > 0 && (
+                      {!isPending && dueCount > 0 && (
                         <span className="ltr:ml-1.5 rtl:mr-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-semibold rounded-full bg-orange-500 text-white shadow-sm">
                           {formatNumber(dueCount)}
                         </span>

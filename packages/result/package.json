@@ -1,0 +1,11 @@
+{
+  "name": "@bahar/result",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "devDependencies": {
+    "@bahar/typescript-config": "workspace:*"
+  }
+}
