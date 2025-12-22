@@ -1,0 +1,113 @@
+---
+import { t, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const steps = [
+  {
+    number: '01',
+    titleKey: 'howItWorks.step1.title',
+    descriptionKey: 'howItWorks.step1.description',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>`,
+    gradient: 'from-primary to-blue-500',
+  },
+  {
+    number: '02',
+    titleKey: 'howItWorks.step2.title',
+    descriptionKey: 'howItWorks.step2.description',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+    </svg>`,
+    gradient: 'from-blue-500 to-violet-500',
+  },
+  {
+    number: '03',
+    titleKey: 'howItWorks.step3.title',
+    descriptionKey: 'howItWorks.step3.description',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+    </svg>`,
+    gradient: 'from-violet-500 to-purple-500',
+  },
+];
+---
+
+<section class="relative py-24 sm:py-32 overflow-hidden">
+  <!-- Background decoration -->
+  <div class="absolute inset-0 -z-10">
+    <div class="absolute right-0 top-1/4 h-[400px] w-[400px] rounded-full bg-primary/5 blur-3xl"></div>
+    <div class="absolute left-0 bottom-1/4 h-[300px] w-[300px] rounded-full bg-violet-500/5 blur-3xl"></div>
+  </div>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <!-- Section header -->
+    <div class="mx-auto max-w-2xl text-center">
+      <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+        {t(locale, 'howItWorks.badge')}
+      </div>
+      <h2 class="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+        {t(locale, 'howItWorks.title')}
+      </h2>
+      <p class="mt-4 text-lg text-muted-foreground">
+        {t(locale, 'howItWorks.subtitle')}
+      </p>
+    </div>
+
+    <!-- Steps -->
+    <div class="mx-auto mt-16 max-w-5xl">
+      <div class="relative">
+        <!-- Connection line -->
+        <div class="absolute left-8 top-0 hidden h-full w-px bg-gradient-to-b from-primary/50 via-violet-500/50 to-purple-500/50 sm:block lg:left-1/2 lg:-translate-x-1/2"></div>
+
+        <div class="space-y-12 lg:space-y-16">
+          {steps.map((step, index) => (
+            <div class={`relative flex flex-col gap-6 sm:flex-row sm:gap-8 lg:gap-16 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+              <!-- Step number (mobile/tablet) -->
+              <div class="flex items-center gap-4 sm:hidden">
+                <div class={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${step.gradient} text-white shadow-lg`}>
+                  <Fragment set:html={step.icon} />
+                </div>
+                <div class="text-4xl font-bold text-muted-foreground/20">{step.number}</div>
+              </div>
+
+              <!-- Content card -->
+              <div class={`flex-1 ${index % 2 === 1 ? 'lg:text-right' : ''}`}>
+                <div class="group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-b from-card to-card/50 p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 sm:p-8">
+                  <div class={`absolute -right-20 -top-20 h-40 w-40 rounded-full bg-gradient-to-br ${step.gradient} opacity-10 blur-3xl transition-all duration-500 group-hover:opacity-20`}></div>
+
+                  <div class="relative">
+                    <!-- Desktop icon and number -->
+                    <div class={`mb-4 hidden items-center gap-4 sm:flex ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+                      <div class={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${step.gradient} text-white shadow-lg`}>
+                        <Fragment set:html={step.icon} />
+                      </div>
+                      <div class="text-3xl font-bold text-muted-foreground/20">{step.number}</div>
+                    </div>
+
+                    <h3 class="mb-3 text-xl font-bold sm:text-2xl">{t(locale, step.titleKey)}</h3>
+                    <p class="text-muted-foreground">{t(locale, step.descriptionKey)}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Center dot for desktop -->
+              <div class="absolute left-8 top-8 hidden h-4 w-4 rounded-full border-4 border-background bg-primary sm:block lg:left-1/2 lg:-translate-x-1/2"></div>
+
+              <!-- Spacer for alternating layout -->
+              <div class="hidden flex-1 lg:block"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

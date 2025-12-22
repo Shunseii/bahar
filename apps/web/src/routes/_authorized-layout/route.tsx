@@ -1,13 +1,17 @@
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
+import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/useSearch";
 import { ensureDb, initDb } from "@/lib/db";
 import { migrationTable } from "@/lib/db/operations/migration";
-import { hydrateOramaDb } from "@/lib/search";
+import { hydrateOramaDb, rehydrateOramaDb } from "@/lib/search";
+import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { useToast } from "@/hooks/useToast";
 import { store } from "@/lib/store";
 import { hydrationSkippedCountAtom } from "@/atoms/hydration";
-import { useAtom } from "jotai";
+import { syncCompletedCountAtom, isSyncingAtom } from "@/atoms/sync";
+import { useAtom, useAtomValue } from "jotai";
+import { queryClient } from "@/lib/query";
 import { t, plural } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
@@ -15,7 +19,7 @@ import {
   ErrorRouteComponent,
   Outlet,
 } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DisplayError } from "@/lib/db/errors";
 import * as Sentry from "@sentry/react";
@@ -76,10 +80,15 @@ const AuthorizedLayout = () => {
     return () => cancelAnimationFrame(id);
   }, [hydrationSkippedCount, toast]);
 
-  // Background sync
+  const dictionaryChangedRef = useRef(false);
+
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
+        store.set(isSyncingAtom, true);
+
+        const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
+
         const db = await ensureDb();
 
         Sentry.logger.info("Background syncing...");
@@ -87,21 +96,86 @@ const AuthorizedLayout = () => {
         await db.pull();
         await db.push();
 
-        Sentry.logger.info("Background sync complete");
+        const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
+        dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+
+        store.set(syncCompletedCountAtom, (c) => c + 1);
+
+        Sentry.logger.info("Background sync complete", {
+          dictionaryChanged: dictionaryChangedRef.current,
+        });
       } catch (error) {
         Sentry.logger.warn("Background sync failed", {
           reason: String(error),
         });
+      } finally {
+        store.set(isSyncingAtom, false);
       }
     }, BACKGROUND_SYNC_INTERVAL);
 
     return () => clearInterval(interval);
   }, []);
 
+  // Sync when app visibility changes (e.g., user switches apps on mobile PWA)
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      try {
+        const db = await ensureDb();
+
+        if (document.hidden) {
+          // App going to background - push local changes
+          Sentry.logger.info("Visibility hidden, pushing...");
+          await db.push();
+        } else {
+          // App coming to foreground - pull remote changes
+          Sentry.logger.info("Visibility visible, pulling...");
+          store.set(isSyncingAtom, true);
+
+          const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
+          await db.pull();
+          const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
+          dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+
+          store.set(syncCompletedCountAtom, (c) => c + 1);
+        }
+      } catch (error) {
+        Sentry.logger.warn("Visibility sync failed", {
+          reason: String(error),
+        });
+      } finally {
+        store.set(isSyncingAtom, false);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  const syncCompletedCount = useAtomValue(syncCompletedCountAtom);
+  const { refresh } = useSearch();
+
+  useEffect(() => {
+    if (syncCompletedCount === 0) return;
+
+    const refreshAfterSync = async () => {
+      if (dictionaryChangedRef.current) {
+        await rehydrateOramaDb();
+        refresh();
+        Sentry.logger.info("Orama reindexed after sync");
+      }
+
+      queryClient.invalidateQueries();
+    };
+
+    refreshAfterSync();
+  }, [syncCompletedCount, refresh]);
+
   return (
     <div style={schemaIsOutdated ? { marginTop: `${bannerHeight}px` } : {}}>
       {schemaIsOutdated && <SchemaOutdatedBanner ref={bannerRef} />}
       <Outlet />
+      <SyncIndicator />
     </div>
   );
 };

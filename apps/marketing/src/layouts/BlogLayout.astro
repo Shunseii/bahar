@@ -1,0 +1,46 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { t, getLocalizedPath, type Locale } from '../i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  author?: string;
+  locale: Locale;
+}
+
+const { title, description, pubDate, author = 'Bahar Team', locale } = Astro.props;
+
+const formattedDate = pubDate.toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={`${title} | ${t(locale, 'blog.title')}`} description={description} locale={locale}>
+  <article class="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mb-8">
+      <a
+        href={getLocalizedPath('blog', locale)}
+        class="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 rtl:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        {t(locale, 'blog.backToBlog')}
+      </a>
+      <h1 class="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">{title}</h1>
+      <div class="flex items-center gap-4 text-muted-foreground">
+        <span>{author}</span>
+        <span>•</span>
+        <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+      </div>
+    </div>
+
+    <div class="prose prose-lg max-w-none dark:prose-invert">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

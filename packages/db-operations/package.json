@@ -1,0 +1,23 @@
+{
+  "name": "@bahar/db-operations",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "peerDependencies": {
+    "@bahar/drizzle-user-db-schemas": "workspace:*",
+    "@bahar/result": "workspace:*",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@bahar/drizzle-user-db-schemas": "workspace:*",
+    "@bahar/result": "workspace:*",
+    "@bahar/typescript-config": "workspace:*",
+    "zod": "^3.24.1"
+  },
+  "dependencies": {
+    "nanoid": "^5.0.7",
+    "react-native-get-random-values": "^2.0.0"
+  }
+}
