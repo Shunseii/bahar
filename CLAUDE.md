@@ -9,7 +9,7 @@ Bahar is an Arabic language learning application with these key features:
 - Personal Arabic dictionary with detailed linguistic information
 - Flashcard system with spaced repetition (FSRS algorithm)
 - Custom study deck management with filtering capabilities
-- Bidirectional flashcards (Arabic → English and English → Arabic)
+- Bidirectional flashcards (Arabic to English and English to Arabic)
 - Support for RTL/LTR text and Arabic morphology
 
 ## Technical Architecture
@@ -17,8 +17,8 @@ Bahar is an Arabic language learning application with these key features:
 ### Frontend
 
 - Web app: React 19 with Vite, Tanstack Router, Shadcn/UI components
-- Mobile app: React Native with Expo framework and file-based routing
-- Shared styling: Tailwind CSS (web) and NativeWind (mobile)
+- Mobile app: React Native 0.81 with Expo SDK 54 and file-based routing
+- Shared styling: Tailwind CSS v4 (web) and UniWind (mobile)
 - Internationalization: Lingui (v5) for both web and mobile
 - State management: Tanstack Query for server state, Jotai for client state
 - Search: Orama (client-side WASM search engine with Arabic support)
@@ -34,6 +34,7 @@ Bahar is an Arabic language learning application with these key features:
 - **Central Database (Turso)**: Shared auth data, users, sessions, accounts
 - **Per-User Databases (Turso)**: Each user has individual SQLite database for personal data (dictionary, flashcards, decks)
 - **Local Database (Web)**: Browser-side SQLite via sync-wasm with bi-directional sync to user's Turso database
+- **Local Database (Mobile)**: Expo SQLite for offline-first data storage
 - **ORM**: Drizzle ORM for database operations
 - **Session Management**: Upstash Redis for session caching
 
@@ -43,6 +44,7 @@ Bahar is an Arabic language learning application with these key features:
 - API: Fly.io with Docker containers
 - Database: Turso Cloud (central + per-user databases)
 - Mobile app: Expo Application Services (EAS)
+- Marketing site: Cloudflare Pages (Astro 5)
 - Error tracking: Sentry
 
 ## Development Environment
@@ -88,6 +90,19 @@ Bahar is an Arabic language learning application with these key features:
 
 - Extract translations: `pnpm run i18n:extract`
 - Compile translations: `pnpm run i18n:compile`
+
+## Shared Packages
+
+The monorepo includes shared packages in `/packages`:
+
+- `@bahar/db-operations`: Shared database operation utilities
+- `@bahar/design-system`: Shared design tokens and components
+- `@bahar/drizzle-user-db-schemas`: Drizzle schemas for per-user databases
+- `@bahar/fsrs`: FSRS spaced repetition algorithm utilities
+- `@bahar/i18n`: Internationalization with Lingui
+- `@bahar/result`: Result type for explicit error handling
+- `@bahar/schemas`: Shared Zod validation schemas
+- `@bahar/search`: Orama search configuration and utilities
 
 ## Web App Data Flow
 
@@ -139,12 +154,12 @@ The web app uses a hybrid approach with local-first data handling:
 - Write self-documenting code and avoid overuse of comments
 - React components use functional style with hooks
 - Prefer using jotai atoms over React Context
-- Web app uses Shadcn/UI components and Tailwind for styling
+- Web app uses Shadcn/UI components and Tailwind CSS v4 for styling
   - Use the `cn()` utility function for combining and conditionally applying Tailwind classes
   - Example: `cn("px-4 py-2", isActive && "bg-blue-500", disabled && "opacity-50")`
-- Mobile app uses NativeWind (Tailwind for React Native)
+- Mobile app uses UniWind (Tailwind for React Native) with Tailwind CSS v4
 - Error handling with try/catch blocks and structured error types
 - State management: Tanstack Query for async state, Jotai for atomic state
 - Component naming: PascalCase for components, camelCase for functions/variables
-- Mobile app uses Expo with file-based routing
+- Mobile app uses Expo with file-based routing (Expo Router)
 - Web app uses Tanstack Router for client-side routing

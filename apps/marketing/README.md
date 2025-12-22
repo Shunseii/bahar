@@ -7,6 +7,7 @@ The marketing website and blog for Bahar - an Arabic language learning platform.
 - Astro 5 for static site generation
 - Tailwind CSS v4 with oklch color system
 - React 19 for interactive components
+- Motion for animations
 - MDX for blog content
 - Native Astro i18n for internationalization
 
@@ -35,6 +36,12 @@ To preview the production build locally:
 ```bash
 pnpm build
 pnpm preview
+```
+
+## Type Checking
+
+```bash
+pnpm type-check
 ```
 
 ## Architecture

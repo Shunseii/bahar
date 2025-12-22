@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Drawer } from "expo-router/drawer";
-import { DrawerItemList, DrawerNavigationProp } from "@react-navigation/drawer";
+import { DrawerContentComponentProps, DrawerItemList, DrawerNavigationProp } from "@react-navigation/drawer";
 import { ParamListBase } from "@react-navigation/native";
 import {
   PanelLeft,
@@ -112,7 +112,7 @@ function SearchBarHeader({
   );
 }
 
-function DrawerContent(props: any) {
+function DrawerContent(props: DrawerContentComponentProps) {
   const locales = useLocales();
   const insets = useSafeAreaInsets();
   const dir = locales[0].textDirection;
