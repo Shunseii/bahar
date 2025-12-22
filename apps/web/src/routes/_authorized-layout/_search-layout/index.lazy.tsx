@@ -95,10 +95,24 @@ const Index = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="h-9 px-3"
+                  >
+                    <Link to="/dictionary/add">
+                      <PlusIcon className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5" />
+                      <span className="text-sm">
+                        <Trans>Add word</Trans>
+                      </span>
+                    </Link>
+                  </Button>
+
                   <FlashcardDrawer show_reverse={show_reverse}>
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       disabled={isPending}
                       className={cn(
@@ -123,19 +137,6 @@ const Index = () => {
                       )}
                     </Button>
                   </FlashcardDrawer>
-
-                  <Button
-                    asChild
-                    size="sm"
-                    className="h-9 px-3 bg-primary hover:bg-primary/90 shadow-md shadow-primary/25"
-                  >
-                    <Link to="/dictionary/add">
-                      <PlusIcon className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5" />
-                      <span className="text-sm">
-                        <Trans>Add word</Trans>
-                      </span>
-                    </Link>
-                  </Button>
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { Page } from "@/components/Page";
 import { OtpInput } from "react-native-otp-entry";
-import { useColorScheme, Text } from "react-native";
-import { cssVariables } from "@bahar/design-system/theme";
+import { Text } from "react-native";
+import { useCSSVariable } from "uniwind";
 import { Trans } from "@lingui/react/macro";
 import { t } from "@lingui/core/macro";
 import { useLocalSearchParams } from "expo-router";
@@ -13,11 +13,10 @@ export default function EnterCodeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inputtedCode, setInputtedCode] = useState("");
-  const colorScheme = useColorScheme();
   const local = useLocalSearchParams<{ email: string }>();
 
-  const colors =
-    colorScheme === "dark" ? cssVariables.dark : cssVariables.light;
+  const primaryColor = useCSSVariable("--color-primary");
+  const foregroundColor = useCSSVariable("--color-foreground");
 
   const onSubmit = async (code: string) => {
     setIsSubmitting(true);
@@ -49,10 +48,10 @@ export default function EnterCodeScreen() {
       <OtpInput
         numberOfDigits={6}
         disabled={isSubmitting}
-        focusColor={`hsl(${colors["--primary"]})`}
+        focusColor={primaryColor}
         theme={{
           pinCodeTextStyle: {
-            color: `hsl(${colors["--foreground"]})`,
+            color: foregroundColor,
           },
         }}
         onTextChange={(text) => {

@@ -1,3 +1,11 @@
+/**
+ * Mobile app styles with UniWind.
+ *
+ * NOTE: Colors are duplicated here because UniWind requires the @variant syntax
+ * which is incompatible with standard CSS imports. Keep in sync with:
+ * packages/design-system/colors.css
+ */
+
 @import "tailwindcss";
 @import "uniwind";
 
@@ -14,55 +22,55 @@
 @layer theme {
   :root {
     @variant light {
-      --color-background: #ffffff;
-      --color-foreground: #020817;
-      --color-card: #ffffff;
-      --color-card-foreground: #020817;
-      --color-popover: #ffffff;
-      --color-popover-foreground: #020817;
-      --color-primary: #3b82f6;
-      --color-primary-foreground: #f8fafc;
-      --color-secondary: #f1f5f9;
-      --color-secondary-foreground: #1e293b;
-      --color-muted: #f1f5f9;
-      --color-muted-foreground: #64748b;
-      --color-accent: #f1f5f9;
-      --color-accent-foreground: #1e293b;
-      --color-destructive: #ef4444;
-      --color-destructive-foreground: #f8fafc;
-      --color-success: #22c55e;
-      --color-success-foreground: #f8fafc;
-      --color-warning: #f97316;
-      --color-warning-foreground: #f8fafc;
-      --color-border: #e2e8f0;
-      --color-input: #e2e8f0;
-      --color-ring: #3b82f6;
+      --color-background: oklch(100% 0 0);
+      --color-foreground: oklch(14% 0.03 265);
+      --color-card: oklch(100% 0 0);
+      --color-card-foreground: oklch(14% 0.03 265);
+      --color-popover: oklch(100% 0 0);
+      --color-popover-foreground: oklch(14% 0.03 265);
+      --color-primary: oklch(56% 0.2 263);
+      --color-primary-foreground: oklch(98.5% 0.01 248);
+      --color-secondary: oklch(97% 0.014 248);
+      --color-secondary-foreground: oklch(21% 0.03 265);
+      --color-muted: oklch(97% 0.014 248);
+      --color-muted-foreground: oklch(52% 0.04 255);
+      --color-accent: oklch(97% 0.014 248);
+      --color-accent-foreground: oklch(21% 0.03 265);
+      --color-destructive: oklch(64% 0.21 27);
+      --color-destructive-foreground: oklch(98.5% 0.01 248);
+      --color-success: oklch(52% 0.14 151);
+      --color-success-foreground: oklch(98.5% 0.01 248);
+      --color-warning: oklch(69% 0.18 41);
+      --color-warning-foreground: oklch(21% 0.03 265);
+      --color-border: oklch(92% 0.02 253);
+      --color-input: oklch(92% 0.02 253);
+      --color-ring: oklch(56% 0.2 263);
     }
 
     @variant dark {
-      --color-background: #020817;
-      --color-foreground: #f8fafc;
-      --color-card: #020817;
-      --color-card-foreground: #f8fafc;
-      --color-popover: #020817;
-      --color-popover-foreground: #f8fafc;
-      --color-primary: #60a5fa;
-      --color-primary-foreground: #1e293b;
-      --color-secondary: #1e293b;
-      --color-secondary-foreground: #f8fafc;
-      --color-muted: #1e293b;
-      --color-muted-foreground: #94a3b8;
-      --color-accent: #1e293b;
-      --color-accent-foreground: #f8fafc;
-      --color-destructive: #dc2626;
-      --color-destructive-foreground: #f8fafc;
-      --color-success: #4ade80;
-      --color-success-foreground: #1e293b;
-      --color-warning: #fb923c;
-      --color-warning-foreground: #1e293b;
-      --color-border: #1e293b;
-      --color-input: #1e293b;
-      --color-ring: #1d4ed8;
+      --color-background: oklch(14% 0.03 265);
+      --color-foreground: oklch(98.5% 0.01 248);
+      --color-card: oklch(14% 0.03 265);
+      --color-card-foreground: oklch(98.5% 0.01 248);
+      --color-popover: oklch(14% 0.03 265);
+      --color-popover-foreground: oklch(98.5% 0.01 248);
+      --color-primary: oklch(64% 0.2 260);
+      --color-primary-foreground: oklch(21% 0.03 265);
+      --color-secondary: oklch(25% 0.04 260);
+      --color-secondary-foreground: oklch(98.5% 0.01 248);
+      --color-muted: oklch(25% 0.04 260);
+      --color-muted-foreground: oklch(70% 0.035 255);
+      --color-accent: oklch(25% 0.04 260);
+      --color-accent-foreground: oklch(98.5% 0.01 248);
+      --color-destructive: oklch(40% 0.14 27);
+      --color-destructive-foreground: oklch(98.5% 0.01 248);
+      --color-success: oklch(60% 0.15 151);
+      --color-success-foreground: oklch(21% 0.03 265);
+      --color-warning: oklch(74% 0.18 56);
+      --color-warning-foreground: oklch(21% 0.03 265);
+      --color-border: oklch(25% 0.04 260);
+      --color-input: oklch(25% 0.04 260);
+      --color-ring: oklch(52% 0.19 267);
     }
   }
 }

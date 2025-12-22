@@ -8,7 +8,7 @@
   "exports": {
     ".": "./index.ts",
     "./globals.css": "./globals.css",
-    "./theme": "./theme.ts"
+    "./colors.css": "./colors.css"
   },
   "peerDependencies": {
     "clsx": "^2.1.0",
