@@ -124,7 +124,9 @@ export const dictionaryEntriesTable = {
           .get([id]);
 
         if (!res) {
-          throw new Error(`Failed to retrieve newly created dictionary entry: ${id}`);
+          throw new Error(
+            `Failed to retrieve newly created dictionary entry: ${id}`,
+          );
         }
 
         const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
@@ -288,6 +290,20 @@ export const dictionaryEntriesTable = {
     },
     cacheOptions: {
       queryKey: ["turso.dictionaryEntries.delete"],
+    },
+  },
+  maxUpdatedAt: {
+    query: async (): Promise<number | null> => {
+      const db = await ensureDb();
+      const res: { max_ts: number | null } | undefined = await db
+        .prepare(
+          "SELECT MAX(updated_at_timestamp_ms) as max_ts FROM dictionary_entries",
+        )
+        .get([]);
+      return res?.max_ts ?? null;
+    },
+    cacheOptions: {
+      queryKey: ["turso.dictionaryEntries.maxUpdatedAt"],
     },
   },
 } satisfies Record<string, TableOperation>;

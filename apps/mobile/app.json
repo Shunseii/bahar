@@ -50,10 +50,19 @@
       [
         "@digitalartlab/expo-plugin-localization",
         {
-          "locales": ["en", "ar"]
+          "locales": [
+            "en",
+            "ar"
+          ]
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-sqlite",
+        {
+          "useLibSQL": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

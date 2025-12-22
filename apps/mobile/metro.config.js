@@ -1,38 +1,26 @@
 // Learn more: https://docs.expo.dev/guides/monorepos/
 const { getDefaultConfig } = require("expo/metro-config");
-const { FileStore } = require("metro-cache");
-const { withNativeWind } = require("nativewind/metro");
+const { withUniwindConfig } = require("uniwind/metro");
 
 const path = require("path");
 
-const config = withMonorepoPaths(
-  withNativeWind(getDefaultConfig(__dirname), {
-    input: "./src/global.css",
-    configPath: "./tailwind.config.ts",
-  }),
-);
+// First apply monorepo paths
+const baseConfig = withMonorepoPaths(getDefaultConfig(__dirname));
 
-const { transformer, resolver } = config;
-
-config.transformer = {
-  ...transformer,
-  babelTransformerPath: require.resolve("@lingui/metro-transformer/expo"),
-};
-config.resolver = {
-  ...resolver,
-  sourceExts: [...resolver.sourceExts, "po", "pot"],
-};
-
-// const config = withMonorepoPaths(getDefaultConfig(__dirname), {
-//   input: "./src/styles.css",
-//   configPath: "./tailwind.config.ts",
-// });
+// Add Lingui extensions
+baseConfig.resolver.sourceExts = [...baseConfig.resolver.sourceExts, "po", "pot"];
 
 // XXX: Resolve our exports in workspace packages
 // https://github.com/expo/expo/issues/26926
 // Also needed for better auth:
 // https://www.better-auth.com/docs/integrations/expo#configure-metro-bundler
-config.resolver.unstable_enablePackageExports = true;
+baseConfig.resolver.unstable_enablePackageExports = true;
+
+// Apply Uniwind config
+const config = withUniwindConfig(baseConfig, {
+  cssEntryFile: "./src/global.css",
+  dtsFile: "./src/uniwind-types.d.ts",
+});
 
 module.exports = config;
 

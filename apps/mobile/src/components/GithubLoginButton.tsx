@@ -1,7 +1,6 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { View, Text, useColorScheme } from "react-native";
+import { View, Text, useColorScheme, Pressable } from "react-native";
 import { Trans } from "@lingui/react/macro";
-import { Pressable } from "react-native-gesture-handler";
 
 export const GithubLoginButton = () => {
   const colorScheme = useColorScheme();

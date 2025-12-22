@@ -4,8 +4,8 @@ import react from "@vitejs/plugin-react-swc";
 import { lingui } from "@lingui/vite-plugin";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vite";
-import { ValidateEnv } from "@julr/vite-plugin-validate-env";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   server: {
@@ -25,12 +25,13 @@ export default defineConfig({
     sourcemap: true,
   },
   optimizeDeps: {
+    include: ["react", "react-dom", "@uidotdev/usehooks"],
     esbuildOptions: {
       target: "es2022",
     },
   },
   plugins: [
-    ValidateEnv(),
+    tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
       manifest: {
@@ -71,5 +72,6 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ["react", "react-dom"],
   },
 });
