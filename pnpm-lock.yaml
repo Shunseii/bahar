@@ -178,6 +178,9 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.3.1
         version: 3.6.0
+      '@bahar/design-system':
+        specifier: workspace:*
+        version: link:../../packages/design-system
       astro:
         specifier: ^5.7.10
         version: 5.16.3(typescript@5.9.2)

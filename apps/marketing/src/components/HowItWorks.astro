@@ -1,5 +1,5 @@
 ---
-import { t, type Locale } from '../i18n';
+import { t, type Locale, type TranslationKey } from '../i18n';
 
 interface Props {
   locale: Locale;
@@ -7,7 +7,13 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const steps = [
+const steps: Array<{
+  number: string;
+  titleKey: TranslationKey;
+  descriptionKey: TranslationKey;
+  icon: string;
+  gradient: string;
+}> = [
   {
     number: '01',
     titleKey: 'howItWorks.step1.title',

@@ -8,6 +8,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "src/content.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/content.config.ts"]
 }

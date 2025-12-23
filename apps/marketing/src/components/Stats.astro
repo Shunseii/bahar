@@ -1,5 +1,5 @@
 ---
-import { t, type Locale } from '../i18n';
+import { t, type Locale, type TranslationKey } from '../i18n';
 
 interface Props {
   locale: Locale;
@@ -7,7 +7,11 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const stats = [
+const stats: Array<{
+  valueKey: TranslationKey;
+  labelKey: TranslationKey;
+  icon: string;
+}> = [
   {
     valueKey: 'stats.words.value',
     labelKey: 'stats.words.label',
@@ -50,7 +54,7 @@ const stats = [
 
       <div class="relative px-6 py-12 sm:px-12 sm:py-16">
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat, index) => (
+          {stats.map((stat) => (
             <div class="group text-center">
               <div class="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary/25">
                 <Fragment set:html={stat.icon} />

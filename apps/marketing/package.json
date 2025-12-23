@@ -10,6 +10,7 @@
     "type-check": "astro check && tsc --noEmit"
   },
   "dependencies": {
+    "@bahar/design-system": "workspace:*",
     "astro": "^5.7.10",
     "@astrojs/react": "^4.2.1",
     "@astrojs/mdx": "^4.1.0",
