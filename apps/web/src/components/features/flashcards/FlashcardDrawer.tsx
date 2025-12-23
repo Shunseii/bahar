@@ -34,9 +34,10 @@ import { ReverseAnswerSide } from "./ReverseAnswerSide";
 import { ReverseQuestionSide } from "./ReverseQuestionSide";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
-  FLASHCARD_LIMIT,
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
   FlashcardWithDictionaryEntry,
+  FlashcardQueue,
 } from "@/lib/db/operations/flashcards";
 import { decksTable } from "@/lib/db/operations/decks";
 import {
@@ -52,6 +53,7 @@ import {
   Zap,
   Sparkles,
   PartyPopper,
+  Archive,
 } from "lucide-react";
 
 const convertFlashcardToFsrsCard = (
@@ -89,6 +91,9 @@ const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
 interface FlashcardDrawerProps extends PropsWithChildren {
   filters?: SelectDeck["filters"];
   show_reverse?: boolean;
+  initialQueue?: FlashcardQueue;
+  /** If provided, shows queue counts and allows switching between queues */
+  queueCounts?: { regular: number; backlog: number };
 }
 
 export type Flashcard = RouterOutput["flashcard"]["today"]["flashcards"][0];
@@ -264,21 +269,54 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   children,
   filters = {},
   show_reverse = false,
+  initialQueue = "regular",
+  queueCounts,
 }) => {
   const dir = useDir();
   const locale = dir === "rtl" ? "ar" : "en";
   const { formatNumber } = useFormatNumber();
   const [showAnswer, setShowAnswer] = useState(false);
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
+  const [selectedQueue, setSelectedQueue] =
+    useState<FlashcardQueue>(initialQueue);
   const gradeCallbackRef = useRef<(() => void) | null>(null);
-  const { data, status } = useQuery({
+
+  useEffect(() => {
+    setShowAnswer(false);
+  }, [selectedQueue]);
+
+  const { data: fetchedCounts } = useQuery({
     queryFn: () =>
-      flashcardsTable.today.query({ filters, showReverse: show_reverse }),
+      flashcardsTable.counts.query({
+        filters,
+        showReverse: show_reverse,
+        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
+      }),
+    ...flashcardsTable.counts.cacheOptions,
+    queryKey: [
+      ...flashcardsTable.counts.cacheOptions.queryKey,
+      show_reverse,
+      filters,
+    ],
+    enabled: !queueCounts,
+  });
+
+  const counts = queueCounts ?? fetchedCounts ?? { regular: 0, backlog: 0 };
+
+  const { data } = useQuery({
+    queryFn: () =>
+      flashcardsTable.today.query({
+        filters,
+        showReverse: show_reverse,
+        queue: selectedQueue,
+        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
+      }),
     ...flashcardsTable.today.cacheOptions,
     queryKey: [
       ...flashcardsTable.today.cacheOptions.queryKey,
       show_reverse,
       filters,
+      selectedQueue,
     ],
   });
   const { mutateAsync: updateFlashcard } = trpc.flashcard.update.useMutation({
@@ -335,6 +373,9 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         queryKey: flashcardsTable.today.cacheOptions.queryKey,
       });
       queryClient.invalidateQueries({
+        queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+      });
+      queryClient.invalidateQueries({
         queryKey: decksTable.list.cacheOptions.queryKey,
       });
     },
@@ -348,8 +389,6 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     }
   }, [data]);
 
-  const totalHits = cards.length;
-  const hasMore = totalHits > FLASHCARD_LIMIT;
   const currentCard = cards[0] ?? null;
 
   const f = useMemo(() => fsrs({ enable_fuzz: true }), []);
@@ -435,24 +474,21 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     setPendingGrade(null);
   }, []);
 
-  // Initial load
-  if (status === "pending") {
-    return null;
-  }
-
   return (
-    <Drawer
-      onClose={() => {
-        setShowAnswer(false);
-      }}
-    >
+    <Drawer onClose={() => setShowAnswer(false)}>
       <Tooltip>
         <TooltipTrigger asChild>
           <DrawerTrigger asChild>{children}</DrawerTrigger>
         </TooltipTrigger>
 
         <TooltipContent>
-          <Trans>Review flashcards with spaced repetition</Trans>
+          {counts.backlog > 0 ? (
+            <Trans>
+              Review flashcards ({formatNumber(counts.backlog)} in backlog)
+            </Trans>
+          ) : (
+            <Trans>Review flashcards with spaced repetition</Trans>
+          )}
         </TooltipContent>
       </Tooltip>
 
@@ -468,6 +504,73 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         </AnimatePresence>
 
         <DrawerHeader className="border-b border-border/30 pb-4">
+          {/* Queue selector */}
+          {(counts.regular > 0 || counts.backlog > 0) && (
+            <>
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="inline-flex rounded-lg bg-muted/50 p-1 gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedQueue("regular")}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all",
+                      selectedQueue === "regular"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <Brain className="w-4 h-4" />
+                    <Trans>Review</Trans>
+                    {counts.regular > 0 && (
+                      <span
+                        className={cn(
+                          "inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-semibold rounded-full",
+                          selectedQueue === "regular"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted-foreground/20 text-muted-foreground",
+                        )}
+                      >
+                        {formatNumber(counts.regular)}
+                      </span>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedQueue("backlog")}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all",
+                      selectedQueue === "backlog"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <Archive className="w-4 h-4" />
+                    <Trans>Backlog</Trans>
+                    {counts.backlog > 0 && (
+                      <span
+                        className={cn(
+                          "inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-semibold rounded-full",
+                          selectedQueue === "backlog"
+                            ? "bg-orange-500 text-white"
+                            : "bg-orange-500/20 text-orange-600 dark:text-orange-400",
+                        )}
+                      >
+                        {formatNumber(counts.backlog)}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground text-center">
+                {selectedQueue === "regular" ? (
+                  <Trans>Cards due today or recently</Trans>
+                ) : (
+                  <Trans>Cards overdue by more than 7 days</Trans>
+                )}
+              </p>
+            </>
+          )}
+
           <div className="flex items-center justify-center gap-3">
             {cards?.length ? (
               <motion.div
@@ -475,24 +578,27 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                 animate={{ scale: 1, opacity: 1 }}
                 className="flex items-center gap-2"
               >
-                <div className="p-2 rounded-xl bg-primary/10">
-                  <Brain className="w-5 h-5 text-primary" />
+                <div
+                  className={cn(
+                    "p-2 rounded-xl",
+                    selectedQueue === "backlog"
+                      ? "bg-orange-500/10"
+                      : "bg-primary/10",
+                  )}
+                >
+                  {selectedQueue === "backlog" ? (
+                    <Archive className="w-5 h-5 text-orange-500" />
+                  ) : (
+                    <Brain className="w-5 h-5 text-primary" />
+                  )}
                 </div>
                 <DrawerTitle>
-                  {hasMore ? (
-                    <Trans>
-                      More than {formatNumber(FLASHCARD_LIMIT)} cards to review
-                    </Trans>
-                  ) : (
-                    <>
-                      {formatNumber(cards.length)}{" "}
-                      <Plural
-                        value={cards.length}
-                        one="card left"
-                        other="cards left"
-                      />
-                    </>
-                  )}
+                  {formatNumber(cards.length)}{" "}
+                  <Plural
+                    value={cards.length}
+                    one="card left"
+                    other="cards left"
+                  />
                 </DrawerTitle>
               </motion.div>
             ) : (
@@ -505,10 +611,26 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                   <PartyPopper className="w-8 h-8 text-green-500" />
                 </div>
                 <DrawerTitle className="text-center">
-                  <Trans>All done for today!</Trans>
+                  {selectedQueue === "backlog" ? (
+                    <Trans>Backlog cleared!</Trans>
+                  ) : (
+                    <Trans>All done for today!</Trans>
+                  )}
                 </DrawerTitle>
                 <p className="text-sm text-muted-foreground text-center max-w-xs">
-                  <Trans>Great work! Come back later for more reviews.</Trans>
+                  {selectedQueue === "backlog" && counts.regular > 0 ? (
+                    <Trans>
+                      Great work on the backlog! You still have{" "}
+                      {formatNumber(counts.regular)} regular reviews.
+                    </Trans>
+                  ) : counts.backlog > 0 ? (
+                    <Trans>
+                      You have {formatNumber(counts.backlog)} cards in your
+                      backlog when you're ready.
+                    </Trans>
+                  ) : (
+                    <Trans>Great work! Come back later for more reviews.</Trans>
+                  )}
                 </p>
               </motion.div>
             )}

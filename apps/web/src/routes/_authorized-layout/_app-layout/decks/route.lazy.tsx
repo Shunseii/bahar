@@ -128,7 +128,15 @@ const Decks = () => {
                   </TableHead>
 
                   <TableHead>
-                    <Trans>Cards to review today</Trans>
+                    <Trans>To review</Trans>
+                  </TableHead>
+
+                  <TableHead className="hidden sm:table-cell">
+                    <Trans>Backlog</Trans>
+                  </TableHead>
+
+                  <TableHead>
+                    <Trans>Total</Trans>
                   </TableHead>
 
                   <TableHead>
@@ -148,12 +156,26 @@ const Decks = () => {
                       {formatNumber(deck.to_review)}
                     </TableCell>
 
+                    <TableCell className="font-medium hidden sm:table-cell">
+                      {deck.to_review_backlog > 0
+                        ? formatNumber(deck.to_review_backlog)
+                        : "-"}
+                    </TableCell>
+
+                    <TableCell className="font-medium text-muted-foreground">
+                      {formatNumber(deck.total_hits)}
+                    </TableCell>
+
                     <TableCell className="flex justify-between">
                       <FlashcardDrawer
                         filters={deck.filters ?? undefined}
                         show_reverse={
                           settingsData?.show_reverse_flashcards ?? undefined
                         }
+                        queueCounts={{
+                          regular: deck.to_review,
+                          backlog: deck.to_review_backlog,
+                        }}
                       >
                         <Button variant="outline" size="sm">
                           <Trans>Study</Trans>

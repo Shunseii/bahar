@@ -8,7 +8,10 @@ import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { cn } from "@bahar/design-system";
 import { Page, itemVariants } from "@/components/Page";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import {
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  flashcardsTable,
+} from "@/lib/db/operations/flashcards";
 import { settingsTable } from "@/lib/db/operations/settings";
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@/hooks/useSearch";
@@ -27,13 +30,14 @@ const Index = () => {
 
   const show_reverse = flashcardSettings?.show_reverse_flashcards ?? false;
 
-  const { data, isPending } = useQuery({
+  const { data: counts, isPending } = useQuery({
     queryFn: async ({ queryKey: [, showReverse] }) =>
-      flashcardsTable.today.query({
+      flashcardsTable.counts.query({
         showReverse: showReverse as boolean,
+        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }),
-    ...flashcardsTable.today.cacheOptions,
-    queryKey: [...flashcardsTable.today.cacheOptions.queryKey, show_reverse],
+    ...flashcardsTable.counts.cacheOptions,
+    queryKey: [...flashcardsTable.counts.cacheOptions.queryKey, show_reverse],
   });
 
   // Check that the window dimensions are available
@@ -44,7 +48,8 @@ const Index = () => {
     ? formatElapsedTime(results.elapsed.raw)
     : undefined;
   const totalHits = results?.count;
-  const dueCount = data?.length ?? 0;
+  const regularCount = counts?.regular ?? 0;
+  const backlogCount = counts?.backlog ?? 0;
 
   return (
     <Page>
@@ -110,14 +115,17 @@ const Index = () => {
                     </Link>
                   </Button>
 
-                  <FlashcardDrawer show_reverse={show_reverse}>
+                  <FlashcardDrawer
+                    show_reverse={show_reverse}
+                    queueCounts={counts}
+                  >
                     <Button
                       variant="outline"
                       size="sm"
                       disabled={isPending}
                       className={cn(
                         "relative h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-primary/5",
-                        dueCount > 0 && "text-orange-600 dark:text-orange-400",
+                        regularCount > 0 && "text-foreground",
                       )}
                     >
                       <GraduationCap className="w-4 h-4 ltr:mr-1.5 rtl:ml-1.5" />
@@ -130,10 +138,13 @@ const Index = () => {
                       >
                         <Trans>Review</Trans>
                       </span>
-                      {!isPending && dueCount > 0 && (
-                        <span className="ltr:ml-1.5 rtl:mr-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-semibold rounded-full bg-orange-500 text-white shadow-sm">
-                          {formatNumber(dueCount)}
+                      {!isPending && regularCount > 0 && (
+                        <span className="ltr:ml-1.5 rtl:mr-1.5 inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-semibold rounded-full bg-primary text-primary-foreground shadow-sm">
+                          {formatNumber(regularCount)}
                         </span>
+                      )}
+                      {!isPending && backlogCount > 0 && (
+                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-orange-500 shadow-sm animate-pulse" />
                       )}
                     </Button>
                   </FlashcardDrawer>

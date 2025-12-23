@@ -846,7 +846,7 @@ importers:
         version: 5.3.2
       '@lingui/conf':
         specifier: ^5.3.2
-        version: 5.3.2(typescript@5.8.3)
+        version: 5.3.2(typescript@5.9.2)
       '@lingui/core':
         specifier: ^5.3.2
         version: 5.3.2(@lingui/babel-plugin-lingui-macro@5.3.2)(babel-plugin-macros@3.1.0)
@@ -5442,7 +5442,7 @@ packages:
       react-hook-form: ^7.55.0
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.56.4(react@19.1.0)
+      react-hook-form: 7.56.4(react@19.0.0)
     dev: false
 
   /@humanwhocodes/config-array@0.11.13:
@@ -6435,7 +6435,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    dev: true
 
   /@lingui/babel-plugin-lingui-macro@5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.2):
     resolution: {integrity: sha512-NdXrq8aZlPjN4jeA/LkSLNyx5vPGmrW+r2ywMNQDPQPVP28Hq8c3hF9SQc1t7hwBorGQ3qzIQ7i2Vm6Y8PnjQw==}
@@ -6456,6 +6455,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
+    dev: true
 
   /@lingui/babel-plugin-lingui-macro@5.3.2(typescript@5.9.2):
     resolution: {integrity: sha512-NdXrq8aZlPjN4jeA/LkSLNyx5vPGmrW+r2ywMNQDPQPVP28Hq8c3hF9SQc1t7hwBorGQ3qzIQ7i2Vm6Y8PnjQw==}
@@ -6599,7 +6599,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.26.7
       chalk: 4.1.2
-      cosmiconfig: 8.3.6(typescript@5.8.3)
+      cosmiconfig: 8.3.6(typescript@5.9.2)
       jest-validate: 29.7.0
       jiti: 1.21.7
     transitivePeerDependencies:
@@ -6660,7 +6660,7 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.26.7
-      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.2)
+      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lingui/message-utils': 5.3.2
       babel-plugin-macros: 3.1.0
       unraw: 3.0.0

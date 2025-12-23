@@ -3,6 +3,7 @@ import { MobileHeader } from "@/components/MobileHeader";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/useSearch";
 import { ensureDb, initDb } from "@/lib/db";
+import { enqueueSyncOperation } from "@/lib/db/queue";
 import { migrationTable } from "@/lib/db/operations/migration";
 import { hydrateOramaDb, rehydrateOramaDb } from "@/lib/search";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
@@ -87,23 +88,25 @@ const AuthorizedLayout = () => {
       try {
         store.set(isSyncingAtom, true);
 
-        const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
+        await enqueueSyncOperation(async () => {
+          const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
 
-        const db = await ensureDb();
+          const db = await ensureDb();
 
-        Sentry.logger.info("Background syncing...");
+          Sentry.logger.info("Background syncing...");
 
-        await db.pull();
-        await db.push();
+          await db.pull();
+          await db.push();
 
-        const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
-        dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+          const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
+          dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+
+          Sentry.logger.info("Background sync complete", {
+            dictionaryChanged: dictionaryChangedRef.current,
+          });
+        });
 
         store.set(syncCompletedCountAtom, (c) => c + 1);
-
-        Sentry.logger.info("Background sync complete", {
-          dictionaryChanged: dictionaryChangedRef.current,
-        });
       } catch (error) {
         Sentry.logger.warn("Background sync failed", {
           reason: String(error),
@@ -120,21 +123,25 @@ const AuthorizedLayout = () => {
   useEffect(() => {
     const handleVisibilityChange = async () => {
       try {
-        const db = await ensureDb();
-
         if (document.hidden) {
           // App going to background - push local changes
           Sentry.logger.info("Visibility hidden, pushing...");
-          await db.push();
+          await enqueueSyncOperation(async () => {
+            const db = await ensureDb();
+            await db.push();
+          });
         } else {
           // App coming to foreground - pull remote changes
           Sentry.logger.info("Visibility visible, pulling...");
           store.set(isSyncingAtom, true);
 
-          const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
-          await db.pull();
-          const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
-          dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+          await enqueueSyncOperation(async () => {
+            const db = await ensureDb();
+            const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
+            await db.pull();
+            const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
+            dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+          });
 
           store.set(syncCompletedCountAtom, (c) => c + 1);
         }

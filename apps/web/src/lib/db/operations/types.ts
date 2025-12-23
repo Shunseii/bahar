@@ -6,6 +6,8 @@ export type TableOperation = {
   query?: (...args: any[]) => Promise<unknown>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mutation?: (...args: any[]) => Promise<unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  generator?: (...args: any[]) => AsyncGenerator<unknown>;
   /**
    * The cache options for the query in tanstack query.
    */

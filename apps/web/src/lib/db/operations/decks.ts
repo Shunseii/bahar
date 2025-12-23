@@ -7,17 +7,32 @@ import {
 import { ensureDb } from "..";
 import { nanoid } from "nanoid";
 import { TableOperation } from "./types";
+import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "./flashcards";
+
+/**
+ * Converts days to milliseconds.
+ */
+const daysToMs = (days: number) => days * 24 * 60 * 60 * 1000;
 
 export const decksTable = {
   list: {
     query: async ({
       show_reverse,
+      backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
     }: {
       show_reverse?: boolean;
-    }): Promise<(SelectDeck & { to_review: number; total_hits: number })[]> => {
+      backlogThresholdDays?: number;
+    }): Promise<
+      (SelectDeck & {
+        to_review: number;
+        to_review_backlog: number;
+        total_hits: number;
+      })[]
+    > => {
       try {
         const db = await ensureDb();
         const now = Date.now();
+        const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
 
         const rawDecks: RawDeck[] = await db
           .prepare("SELECT id, name, filters FROM decks")
@@ -52,58 +67,57 @@ export const decksTable = {
                 : ["forward"];
 
               const whereConditions: string[] = [];
-              const toReviewParams: unknown[] = [];
-              const totalHitsParams: unknown[] = [];
+              const baseParams: unknown[] = [];
 
               whereConditions.push(
                 `f.direction IN (${directions.map(() => "?").join(", ")})`,
               );
-              toReviewParams.push(...directions);
-              totalHitsParams.push(...directions);
+              baseParams.push(...directions);
 
               whereConditions.push(
                 `f.state IN (${state.map(() => "?").join(", ")})`,
               );
-              toReviewParams.push(...state);
-              totalHitsParams.push(...state);
+              baseParams.push(...state);
 
               whereConditions.push(
                 `d.type IN (${types.map(() => "?").join(", ")})`,
               );
-              toReviewParams.push(...types);
-              totalHitsParams.push(...types);
+              baseParams.push(...types);
 
               whereConditions.push("f.is_hidden = 0");
 
               const whereClause = whereConditions.join(" AND ");
 
               // When tags are specified, use JOIN with json_each to filter
-              const tagJoin =
-                tags.length > 0
-                  ? `, json_each(d.tags) AS jt`
-                  : "";
+              const tagJoin = tags.length > 0 ? `, json_each(d.tags) AS jt` : "";
               const tagCondition =
                 tags.length > 0
                   ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
                   : "";
 
-              const toReviewSql = `SELECT COUNT(DISTINCT f.id) as count FROM flashcards f LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin} WHERE f.due_timestamp_ms <= ? AND ${whereClause}${tagCondition}`;
-              const toReviewAllParams = [now, ...toReviewParams, ...tags];
-
-              const toReviewCount: { count: number } = await db
-                .prepare(toReviewSql)
-                .get(toReviewAllParams);
-
-              const totalHitsSql = `SELECT COUNT(DISTINCT f.id) as count FROM flashcards f LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin} WHERE ${whereClause}${tagCondition}`;
-
-              const totalHitsCount: { count: number } = await db
-                .prepare(totalHitsSql)
-                .get([...totalHitsParams, ...tags]);
+              // Single query with conditional aggregation for all counts
+              const countsSql = `
+                SELECT
+                  COUNT(DISTINCT CASE WHEN f.due_timestamp_ms <= ? AND f.due_timestamp_ms > ? THEN f.id END) as to_review,
+                  COUNT(DISTINCT CASE WHEN f.due_timestamp_ms <= ? THEN f.id END) as to_review_backlog,
+                  COUNT(DISTINCT f.id) as total_hits
+                FROM flashcards f
+                LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin}
+                WHERE ${whereClause}${tagCondition}
+              `;
+              const counts: {
+                to_review: number;
+                to_review_backlog: number;
+                total_hits: number;
+              } = await db
+                .prepare(countsSql)
+                .get([now, backlogThresholdMs, backlogThresholdMs, ...baseParams, ...tags]);
 
               return {
                 ...deck,
-                to_review: toReviewCount?.count ?? 0,
-                total_hits: totalHitsCount?.count ?? 0,
+                to_review: counts?.to_review ?? 0,
+                to_review_backlog: counts?.to_review_backlog ?? 0,
+                total_hits: counts?.total_hits ?? 0,
               };
             } catch (err) {
               console.error("Error processing deck", err);

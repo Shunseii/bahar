@@ -32,6 +32,7 @@ import { authClient } from "@/lib/auth-client";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
 import { useSearch } from "@/hooks/useSearch";
 import { ensureDb } from "@/lib/db";
+import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
 import {
   readFileAsText,
   batchArray,
@@ -143,12 +144,17 @@ const Settings = () => {
     try {
       setIsLoading(true);
 
-      const db = await ensureDb();
-
       // Delete from local DB (cascades to flashcards)
-      await db.prepare("DELETE FROM dictionary_entries").run();
-      await db.push();
-      await db.checkpoint();
+      await enqueueDbOperation(async () => {
+        const db = await ensureDb();
+        await db.prepare("DELETE FROM dictionary_entries").run();
+      });
+
+      await enqueueSyncOperation(async () => {
+        const db = await ensureDb();
+        await db.push();
+        await db.checkpoint();
+      });
 
       tracedFetch(`${import.meta.env.VITE_API_BASE_URL}/dictionary`, {
         method: "DELETE",
@@ -265,37 +271,43 @@ const Settings = () => {
 
                 const { version, entries: validatedDictionary } = parsedImport;
 
-                const db = await ensureDb();
                 const BATCH_SIZE = 100;
 
-                const insertBatch = db.transaction(
-                  async (batch: typeof validatedDictionary) => {
-                    for (const word of batch) {
-                      const { dictEntry, flashcards } = createImportStatements(
-                        word,
-                        version,
-                      );
+                await enqueueDbOperation(async () => {
+                  const db = await ensureDb();
 
-                      await db.prepare(dictEntry.sql).run(dictEntry.args);
-                      await db
-                        .prepare(flashcards[0].sql)
-                        .run(flashcards[0].args);
-                      await db
-                        .prepare(flashcards[1].sql)
-                        .run(flashcards[1].args);
-                    }
-                  },
-                );
+                  const insertBatch = db.transaction(
+                    async (batch: typeof validatedDictionary) => {
+                      for (const word of batch) {
+                        const { dictEntry, flashcards } = createImportStatements(
+                          word,
+                          version,
+                        );
 
-                for (const batch of batchArray(
-                  validatedDictionary,
-                  BATCH_SIZE,
-                )) {
-                  await insertBatch(batch);
-                }
+                        await db.prepare(dictEntry.sql).run(dictEntry.args);
+                        await db
+                          .prepare(flashcards[0].sql)
+                          .run(flashcards[0].args);
+                        await db
+                          .prepare(flashcards[1].sql)
+                          .run(flashcards[1].args);
+                      }
+                    },
+                  );
 
-                await db.push();
-                await db.checkpoint();
+                  for (const batch of batchArray(
+                    validatedDictionary,
+                    BATCH_SIZE,
+                  )) {
+                    await insertBatch(batch);
+                  }
+                });
+
+                await enqueueSyncOperation(async () => {
+                  const db = await ensureDb();
+                  await db.push();
+                  await db.checkpoint();
+                });
 
                 const meilisearchFormData = new FormData();
                 meilisearchFormData.append("dictionary", file!);

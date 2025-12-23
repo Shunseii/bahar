@@ -14,29 +14,40 @@ msgstr ""
 "X-Generator: Poedit 3.4.4\n"
 
 #. placeholder {0}: cards.length
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:489
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:597
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {card left} other {cards left}}"
+
+#. placeholder {0}: clearingProgress.cleared
+#. placeholder {1}: clearingProgress.total
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:292
+msgid "{0} / {1} cards"
+msgstr "{0} / {1} cards"
 
 #. placeholder {0}: deck.due_count
 #: ../../apps/mobile/src/app/(search)/decks.tsx:55
 msgid "{0} cards due"
 msgstr "{0} cards due"
 
+#. placeholder {0}: lastProgress.cleared
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:104
+msgid "{0} cards have been rescheduled."
+msgstr "{0} cards have been rescheduled."
+
 #. placeholder {0}: deck.total_count
 #: ../../apps/mobile/src/app/(search)/decks.tsx:60
 msgid "{0} total"
 msgstr "{0} total"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:70
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:71
 msgid "{hydrationSkippedCount, plural, one {# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.} other {# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.}}"
 msgstr "{hydrationSkippedCount, plural, one {# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.} other {# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.}}"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:120
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:121
 msgid "{skippedCount} entries were skipped due to data corruption."
 msgstr "{skippedCount} entries were skipped due to data corruption."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:76
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:81
 msgid "{totalHits, plural, one {result} other {results}}"
 msgstr "{totalHits, plural, one {result} other {results}}"
 
@@ -66,8 +77,8 @@ msgstr "A preposition or conjunction."
 msgid "A verb."
 msgstr "A verb."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:136
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:178
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:144
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:200
 msgid "Actions"
 msgstr "Actions"
 
@@ -155,7 +166,7 @@ msgstr "Add tag {inputValue}"
 msgid "Add tags to your word."
 msgstr "Add tags to your word."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:108
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:113
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:50
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:150
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:77
@@ -168,11 +179,11 @@ msgstr "Add word"
 msgid "Additional Details"
 msgstr "Additional Details"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:612
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:734
 msgid "Again"
 msgstr "Again"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:508
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:617
 msgid "All done for today!"
 msgstr "All done for today!"
 
@@ -223,7 +234,7 @@ msgstr "Any additional details about this form such as frequency of usage or con
 msgid "Any plural forms of the word."
 msgstr "Any plural forms of the word."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:385
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:397
 msgid "Any words that have the same ID will be overwritten."
 msgstr "Any words that have the same ID will be overwritten."
 
@@ -231,7 +242,7 @@ msgstr "Any words that have the same ID will be overwritten."
 msgid "App language"
 msgstr "App language"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:194
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:200
 #: ../../apps/mobile/src/app/(search)/settings.tsx:222
 msgid "Appearance"
 msgstr "Appearance"
@@ -272,7 +283,7 @@ msgstr "Are you sure you want to delete this word? It will be removed from your 
 msgid "Are you sure you want to delete this word? This action cannot be undone."
 msgstr "Are you sure you want to delete this word? This action cannot be undone."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:460
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:472
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 
@@ -285,9 +296,19 @@ msgstr "Are you sure you want to reset this flashcard's progress? The word entry
 msgid "Back"
 msgstr "Back"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:176
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:187
 msgid "Back to top"
 msgstr "Back to top"
+
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:135
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:548
+msgid "Backlog"
+msgstr "Backlog"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:103
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:615
+msgid "Backlog cleared!"
+msgstr "Backlog cleared!"
 
 #: ../../apps/web/src/routes/__root.tsx:19
 #: ../../apps/web/src/components/MobileHeader.tsx:135
@@ -309,7 +330,7 @@ msgstr "BETA"
 msgid "By signing in, you agree to our <0>Privacy Policy</0>"
 msgstr "By signing in, you agree to our <0>Privacy Policy</0>"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:478
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:490
 #: ../../apps/mobile/src/app/(search)/settings.tsx:116
 #: ../../apps/mobile/src/app/(search)/decks.tsx:243
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:1067
@@ -318,9 +339,17 @@ msgstr "By signing in, you agree to our <0>Privacy Policy</0>"
 msgid "Cancel"
 msgstr "Cancel"
 
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:566
+msgid "Cards due today or recently"
+msgstr "Cards due today or recently"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:568
+msgid "Cards overdue by more than 7 days"
+msgstr "Cards overdue by more than 7 days"
+
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:131
-msgid "Cards to review today"
-msgstr "Cards to review today"
+#~ msgid "Cards to review today"
+#~ msgstr "Cards to review today"
 
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:44
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:441
@@ -335,6 +364,18 @@ msgstr "Cause:"
 #: ../../apps/web/src/components/InputFile.tsx:48
 msgid "Choose file"
 msgstr "Choose file"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:274
+msgid "Clear"
+msgstr "Clear"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:261
+msgid "Clear backlog"
+msgstr "Clear backlog"
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:255
+#~ msgid "Clearing..."
+#~ msgstr "Clearing..."
 
 #: ../../apps/web/src/components/SchemaOutdatedBanner.tsx:36
 msgid "Contact support"
@@ -395,11 +436,11 @@ msgstr "Create Deck"
 msgid "Create your first deck"
 msgstr "Create your first deck"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:107
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:160
 msgid "Customize how flashcards appear."
 msgstr "Customize how flashcards appear."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:198
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:204
 msgid "Customize how the application looks for you."
 msgstr "Customize how the application looks for you."
 
@@ -428,7 +469,7 @@ msgstr "Deck Name"
 msgid "Deck successfully created!"
 msgstr "Deck successfully created!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:195
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:217
 msgid "Deck successfully deleted!"
 msgstr "Deck successfully deleted!"
 
@@ -461,11 +502,11 @@ msgstr "Decks allow you to create subsets of your existing flashcards by using f
 msgid "Definition"
 msgstr "Definition"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:449
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:472
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:461
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:484
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:142
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:177
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:201
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:223
 #: ../../apps/mobile/src/app/(search)/decks.tsx:245
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:413
 msgid "Delete"
@@ -495,7 +536,7 @@ msgstr "Delete this word?"
 msgid "Delete word"
 msgstr "Delete word"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:456
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:468
 msgid "Delete your dictionary?"
 msgstr "Delete your dictionary?"
 
@@ -512,7 +553,7 @@ msgstr "Details"
 msgid "Details:"
 msgstr "Details:"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:211
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:217
 msgid "Dictionary"
 msgstr "Dictionary"
 
@@ -533,7 +574,7 @@ msgstr "Discard"
 msgid "Dismiss"
 msgstr "Dismiss"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:136
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:189
 msgid "Don't show"
 msgstr "Don't show"
 
@@ -550,11 +591,11 @@ msgstr "Dual"
 msgid "e.g. ك ت ب"
 msgstr "e.g. ك ت ب"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:708
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:830
 msgid "Easy"
 msgstr "Easy"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:183
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:205
 msgid "Edit"
 msgstr "Edit"
 
@@ -639,33 +680,33 @@ msgstr "Example usages of the word in different contexts."
 msgid "Examples"
 msgstr "Examples"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:393
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:429
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:405
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:441
 msgid "Export"
 msgstr "Export"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:119
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:120
 msgid "Export completed with issues"
 msgstr "Export completed with issues"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:132
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:133
 msgid "Export failed!"
 msgstr "Export failed!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:437
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:449
 msgid "Export with flashcards"
 msgstr "Export with flashcards"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:400
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:412
 msgid "Export your dictionary"
 msgstr "Export your dictionary"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:404
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:416
 msgid "Exporting dictionary with flaschards will save your flashcard progress along with all the content in your dictionary. Use this option if you want to make a backup of your data.<0/><1/>Exporting your dictionary without flashcards will not save any flashcard progress. Use this option if you want to share your dictionary.<2/><3/><4>Warning</4>: Importing your file without flashcards will reset all of your flashcards."
 msgstr "Exporting dictionary with flaschards will save your flashcard progress along with all the content in your dictionary. Use this option if you want to make a backup of your data.<0/><1/>Exporting your dictionary without flashcards will not save any flashcard progress. Use this option if you want to share your dictionary.<2/><3/><4>Warning</4>: Importing your file without flashcards will reset all of your flashcards."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:31
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:85
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:87
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:137
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:73
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:40
@@ -680,9 +721,13 @@ msgstr "Failed to add word"
 msgid "Failed to add word!"
 msgstr "Failed to add word!"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:269
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:276
 msgid "Failed to apply migration to local database."
 msgstr "Failed to apply migration to local database."
+
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:109
+msgid "Failed to clear backlog"
+msgstr "Failed to clear backlog"
 
 #: ../../apps/mobile/src/app/(search)/decks.tsx:119
 msgid "Failed to create deck"
@@ -700,15 +745,15 @@ msgstr "Failed to delete dictionary"
 msgid "Failed to delete word"
 msgstr "Failed to delete word"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:177
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:183
 msgid "Failed to delete!"
 msgstr "Failed to delete!"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:261
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:268
 msgid "Failed to retrieve data from local database."
 msgstr "Failed to retrieve data from local database."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:240
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:247
 msgid "Failed to retrieve database information."
 msgstr "Failed to retrieve database information."
 
@@ -716,7 +761,7 @@ msgstr "Failed to retrieve database information."
 msgid "Failed to update deck"
 msgstr "Failed to update deck"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:91
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:144
 msgid "Failed to update flashcard settings."
 msgstr "Failed to update flashcard settings."
 
@@ -747,11 +792,11 @@ msgstr "Feminine"
 msgid "Fi'l"
 msgstr "Fi'l"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:87
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:140
 msgid "Flashcard settings updated!"
 msgstr "Flashcard settings updated!"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:103
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:156
 #: ../../apps/mobile/src/app/(search)/settings.tsx:175
 msgid "Flashcards"
 msgstr "Flashcards"
@@ -793,15 +838,20 @@ msgstr "GitHub"
 msgid "Go back"
 msgstr "Go back"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:676
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:798
 msgid "Good"
 msgstr "Good"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:511
+#. placeholder {0}: formatNumber(counts.regular)
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:622
+msgid "Great work on the backlog! You still have {0} regular reviews."
+msgstr "Great work on the backlog! You still have {0} regular reviews."
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:632
 msgid "Great work! Come back later for more reviews."
 msgstr "Great work! Come back later for more reviews."
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:644
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:766
 msgid "Hard"
 msgstr "Hard"
 
@@ -842,7 +892,7 @@ msgstr "Hint"
 msgid "Home"
 msgstr "Home"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:121
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:174
 msgid "How should antonyms be shown in flashcards?"
 msgstr "How should antonyms be shown in flashcards?"
 
@@ -870,12 +920,12 @@ msgstr "if needed."
 msgid "Imperative"
 msgstr "Imperative"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:380
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:392
 msgid "Import"
 msgstr "Import"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:351
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:359
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:363
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:371
 msgid "Import failed!"
 msgstr "Import failed!"
 
@@ -883,7 +933,7 @@ msgstr "Import failed!"
 msgid "Include English to Arabic flashcards"
 msgstr "Include English to Arabic flashcards"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:232
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:238
 msgid "Incorrect file type"
 msgstr "Incorrect file type"
 
@@ -943,7 +993,7 @@ msgstr "Loading details..."
 msgid "Loading your dictionary..."
 msgstr "Loading your dictionary..."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:90
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:95
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:93
 msgid "Loading..."
 msgstr "Loading..."
@@ -963,7 +1013,7 @@ msgstr "Logout"
 msgid "Manage your decks and study them."
 msgstr "Manage your decks and study them."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:215
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:221
 msgid "Manage your dictionary."
 msgstr "Manage your dictionary."
 
@@ -1002,10 +1052,9 @@ msgstr "Menu"
 msgid "Migration successfully registered."
 msgstr "Migration successfully registered."
 
-#. placeholder {0}: formatNumber(FLASHCARD_LIMIT)
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:483
-msgid "More than {0} cards to review"
-msgstr "More than {0} cards to review"
+#~ msgid "More than {0} cards to review"
+#~ msgstr "More than {0} cards to review"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:126
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:186
@@ -1032,6 +1081,10 @@ msgstr "Name"
 msgid "Navigation menu"
 msgstr "Navigation menu"
 
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:100
+msgid "No backlog cards to clear."
+msgstr "No backlog cards to clear."
+
 #: ../../apps/mobile/src/app/(search)/decks.tsx:57
 msgid "No cards due"
 msgstr "No cards due"
@@ -1050,7 +1103,7 @@ msgid "No results found"
 msgstr "No results found"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:28
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:79
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:81
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:37
 msgid "Noun"
 msgstr "Noun"
@@ -1105,7 +1158,7 @@ msgstr "Please contact <0>support</0> with the following details:"
 msgid "Please enter a deck name"
 msgstr "Please enter a deck name"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:233
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:239
 msgid "Please select a JSON file with your dictionary."
 msgstr "Please select a JSON file with your dictionary."
 
@@ -1137,7 +1190,7 @@ msgstr "Plural form"
 msgid "Plurals"
 msgstr "Plurals"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:83
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:85
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:1006
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:1107
 msgid "Preposition"
@@ -1182,6 +1235,10 @@ msgstr "Remove"
 msgid "Required field"
 msgstr "Required field"
 
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:264
+msgid "Reschedule all backlog cards by grading them as \"Hard\"."
+msgstr "Reschedule all backlog cards by grading them as \"Hard\"."
+
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:84
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:123
 msgid "Reset flashcard"
@@ -1191,11 +1248,12 @@ msgstr "Reset flashcard"
 msgid "Reset flashcard progress?"
 msgstr "Reset flashcard progress?"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:174
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:227
 msgid "Reverse flashcards"
 msgstr "Reverse flashcards"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:131
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:139
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:523
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:119
 msgid "Review"
 msgstr "Review"
@@ -1204,11 +1262,16 @@ msgstr "Review"
 msgid "Review flashcards"
 msgstr "Review flashcards"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:455
+#. placeholder {0}: formatNumber(counts.backlog)
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:486
+msgid "Review flashcards ({0} in backlog)"
+msgstr "Review flashcards ({0} in backlog)"
+
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:490
 msgid "Review flashcards with spaced repetition"
 msgstr "Review flashcards with spaced repetition"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:517
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:639
 msgid "Review your Arabic flashcards and grade your understanding with Again, Hard, Good, or Easy options to adjust scheduling."
 msgstr "Review your Arabic flashcards and grade your understanding with Again, Hard, Good, or Easy options to adjust scheduling."
 
@@ -1225,7 +1288,7 @@ msgstr "Root Letters"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:420
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:208
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:235
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:198
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:251
 #: ../../apps/web/src/components/features/settings/AdminSettingsCardSection.tsx:137
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:1077
 msgid "Save"
@@ -1287,7 +1350,7 @@ msgstr "Sentence"
 msgid "Separate letters with spaces or commas"
 msgstr "Separate letters with spaces or commas"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:188
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:194
 #: ../../apps/web/src/components/MobileHeader.tsx:173
 #: ../../apps/web/src/components/DesktopNavigation.tsx:108
 #: ../../apps/mobile/src/app/(search)/settings.tsx:163
@@ -1295,11 +1358,11 @@ msgstr "Separate letters with spaces or commas"
 msgid "Settings"
 msgstr "Settings"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:156
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:209
 msgid "Show after revealing the answer"
 msgstr "Show after revealing the answer"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:741
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:863
 msgid "Show answer"
 msgstr "Show answer"
 
@@ -1307,7 +1370,7 @@ msgstr "Show answer"
 msgid "Show antonyms"
 msgstr "Show antonyms"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:146
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:199
 msgid "Show as a hint"
 msgstr "Show as a hint"
 
@@ -1315,7 +1378,7 @@ msgstr "Show as a hint"
 msgid "Show details"
 msgstr "Show details"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:179
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:232
 msgid "Show English to Arabic flashcards."
 msgstr "Show English to Arabic flashcards."
 
@@ -1331,7 +1394,7 @@ msgstr "Show reverse flashcards"
 msgid "Singular"
 msgstr "Singular"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:69
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:70
 msgid "Some dictionary entries couldn't be loaded"
 msgstr "Some dictionary entries couldn't be loaded"
 
@@ -1347,7 +1410,7 @@ msgstr "SQL Script"
 msgid "Still not working?"
 msgstr "Still not working?"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:159
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:181
 msgid "Study"
 msgstr "Study"
 
@@ -1355,15 +1418,15 @@ msgstr "Study"
 msgid "Successfully added word!"
 msgstr "Successfully added word!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:169
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:175
 msgid "Successfully deleted!"
 msgstr "Successfully deleted!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:124
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:125
 msgid "Successfully exported!"
 msgstr "Successfully exported!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:323
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:335
 msgid "Successfully imported!"
 msgstr "Successfully imported!"
 
@@ -1404,7 +1467,7 @@ msgstr "That email is invalid."
 msgid "That is not valid JSON."
 msgstr "That is not valid JSON."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:275
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:282
 msgid "The app may be open in another tab. Try closing other tabs and refreshing this page."
 msgstr "The app may be open in another tab. Try closing other tabs and refreshing this page."
 
@@ -1413,7 +1476,7 @@ msgid "The context of the sentence, ex. formal or colloquial."
 msgstr "The context of the sentence, ex. formal or colloquial."
 
 #. placeholder {0}: deck.name
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:196
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:218
 msgid "The deck \"{0}\" has been deleted."
 msgstr "The deck \"{0}\" has been deleted."
 
@@ -1425,7 +1488,7 @@ msgstr "The form of the verb ex. I, II, III, IV, etc..."
 msgid "The form of the verb in Arabic ex. فعل, أفعل, استفعل, etc..."
 msgstr "The form of the verb in Arabic ex. فعل, أفعل, استفعل, etc..."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:276
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:283
 msgid "The local database is locked by another session."
 msgstr "The local database is locked by another session."
 
@@ -1457,19 +1520,23 @@ msgstr "Theme"
 msgid "There was an error adding your word. Please try again."
 msgstr "There was an error adding your word. Please try again."
 
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:110
+msgid "There was an error clearing your backlog."
+msgstr "There was an error clearing your backlog."
+
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:220
 msgid "There was an error creating the deck"
 msgstr "There was an error creating the deck"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:178
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:184
 msgid "There was an error deleting your dictionary. Please try again later."
 msgstr "There was an error deleting your dictionary. Please try again later."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:133
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:134
 msgid "There was an error exporting your dictionary. Please try again later."
 msgstr "There was an error exporting your dictionary. Please try again later."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:360
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:372
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "There was an error importing your dictionary. Please try again later."
 
@@ -1477,7 +1544,7 @@ msgstr "There was an error importing your dictionary. Please try again later."
 msgid "There was an error updating the deck"
 msgstr "There was an error updating the deck"
 
-#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:92
+#: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:145
 msgid "There was an error updating your flashcard settings."
 msgstr "There was an error updating your flashcard settings."
 
@@ -1489,16 +1556,16 @@ msgstr "There was an error updating your word. Please try again."
 msgid "There was an error uploading your SQL migration"
 msgstr "There was an error uploading your SQL migration"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:298
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:305
 msgid "There was an error when indexing your data in the search engine."
 msgstr "There was an error when indexing your data in the search engine."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:283
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:305
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:290
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:312
 msgid "There was an unexpected error. Please try again."
 msgstr "There was an unexpected error. Please try again."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:239
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:246
 msgid "There's a temporary issue loading your account. Please try reloading the page."
 msgstr "There's a temporary issue loading your account. Please try reloading the page."
 
@@ -1531,9 +1598,17 @@ msgstr "This will permanently delete all your words, flashcards, and decks. This
 msgid "Time:"
 msgstr "Time:"
 
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:131
+msgid "To review"
+msgstr "To review"
+
 #: ../../apps/web/src/components/MobileHeader.tsx:110
 msgid "Toggle Menu"
 msgstr "Toggle Menu"
+
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:139
+msgid "Total"
+msgstr "Total"
 
 #: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:59
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:202
@@ -1561,16 +1636,16 @@ msgstr "Type"
 msgid "Types"
 msgstr "Types"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:196
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:203
 msgid "Uh oh! Something went wrong :/"
 msgstr "Uh oh! Something went wrong :/"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:251
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:258
 msgid "Unable to connect to remote database."
 msgstr "Unable to connect to remote database."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:284
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:306
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:291
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:313
 msgid "Unknown error."
 msgstr "Unknown error."
 
@@ -1585,7 +1660,7 @@ msgid "Value must be {0} or less"
 msgstr "Value must be {0} or less"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:29
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:81
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:83
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:38
 msgid "Verb"
 msgstr "Verb"
@@ -1617,12 +1692,12 @@ msgstr "Verbal Nouns (Masadir)"
 #~ msgid "View all the words in your personal dictionary."
 #~ msgstr "View all the words in your personal dictionary."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:250
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:257
 msgid "We can't reach our servers right now. Check your connection and try again."
 msgstr "We can't reach our servers right now. Check your connection and try again."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:260
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:297
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:267
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:304
 msgid "We're having trouble with your account setup. Please try again."
 msgstr "We're having trouble with your account setup. Please try again."
 
@@ -1668,6 +1743,11 @@ msgstr "Words that have the opposite meaning."
 msgid "You do not have access to upload schema migrations."
 msgstr "You do not have access to upload schema migrations."
 
+#. placeholder {0}: formatNumber(counts.backlog)
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:627
+msgid "You have {0} cards in your backlog when you're ready."
+msgstr "You have {0} cards in your backlog when you're ready."
+
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:111
 msgid "You have no decks yet."
 msgstr "You have no decks yet."
@@ -1676,7 +1756,7 @@ msgstr "You have no decks yet."
 msgid "You have no words in your dictionary yet."
 msgstr "You have no words in your dictionary yet."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:268
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:275
 msgid "Your account needs maintenance. We've been notified. Please try again later."
 msgstr "Your account needs maintenance. We've been notified. Please try again later."
 
@@ -1688,20 +1768,20 @@ msgstr "Your deck was not created. Please try again."
 msgid "Your deck was not updated. Please try again."
 msgstr "Your deck was not updated. Please try again."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:68
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:73
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:75
 msgid "Your Dictionary"
 msgstr "Your Dictionary"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:170
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:176
 msgid "Your dictionary has been deleted."
 msgstr "Your dictionary has been deleted."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:125
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:126
 msgid "Your dictionary has been downloaded."
 msgstr "Your dictionary has been downloaded."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:324
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:336
 msgid "Your dictionary has been updated!"
 msgstr "Your dictionary has been updated!"
 
@@ -1709,7 +1789,7 @@ msgstr "Your dictionary has been updated!"
 msgid "Your dictionary is empty"
 msgstr "Your dictionary is empty"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:352
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:364
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "Your dictionary is not valid. Please fix the errors and upload it again."
 
