@@ -42,12 +42,14 @@
 /* Base styles */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   font-family: var(--font-sans);
   background-color: var(--color-background);
   color: var(--color-foreground);
+  overflow-x: hidden;
 }
 
 /* View Transitions */
