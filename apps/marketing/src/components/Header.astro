@@ -4,9 +4,10 @@ import ThemeToggle from './ThemeToggle';
 
 interface Props {
   locale: Locale;
+  hideLanguageSwitcher?: boolean;
 }
 
-const { locale } = Astro.props;
+const { locale, hideLanguageSwitcher = false } = Astro.props;
 const alternateLocale = getAlternateLocale(locale);
 
 const navItems = [
@@ -48,12 +49,14 @@ const alternatePath = locale === 'en'
       <ThemeToggle client:only="react" />
 
       <!-- Language Switcher -->
-      <a
-        href={alternatePath}
-        class="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-      >
-        {alternateLocale === 'ar' ? 'العربية' : 'English'}
-      </a>
+      {!hideLanguageSwitcher && (
+        <a
+          href={alternatePath}
+          class="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        >
+          {alternateLocale === 'ar' ? 'العربية' : 'English'}
+        </a>
+      )}
 
       <!-- CTA Button -->
       <a

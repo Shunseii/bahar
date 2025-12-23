@@ -9,6 +9,7 @@ interface Props {
   title?: string;
   description?: string;
   locale?: Locale;
+  hideLanguageSwitcher?: boolean;
 }
 
 const currentLocale = Astro.props.locale ?? getLocaleFromUrl(Astro.url);
@@ -17,6 +18,7 @@ const dir = getDir(currentLocale);
 const {
   title = t(currentLocale, 'site.title'),
   description = t(currentLocale, 'site.description'),
+  hideLanguageSwitcher = false,
 } = Astro.props;
 ---
 
@@ -76,9 +78,12 @@ const {
 
     <!-- View Transitions -->
     <ClientRouter />
+
+    <!-- Additional head content from pages -->
+    <slot name="head" />
   </head>
   <body class="min-h-screen bg-background text-foreground antialiased">
-    <Header locale={currentLocale} />
+    <Header locale={currentLocale} hideLanguageSwitcher={hideLanguageSwitcher} />
     <main transition:animate="fade">
       <slot />
     </main>
