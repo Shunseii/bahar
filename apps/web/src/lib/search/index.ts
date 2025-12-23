@@ -153,12 +153,7 @@ export const hydrateOramaDb = async () => {
             );
           }
 
-          if (
-            !rootResult.ok ||
-            !tagsResult.ok ||
-            !antonymsResult.ok ||
-            !examplesResult.ok
-          ) {
+          if (!rootResult.ok || !tagsResult.ok) {
             ++skippedCount;
             return null;
           }
@@ -167,19 +162,12 @@ export const hydrateOramaDb = async () => {
             id: entry.id,
             word: entry.word,
             translation: entry.translation,
-            created_at: entry.created_at ?? undefined,
             created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
-            updated_at: entry.updated_at ?? undefined,
             updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
             definition: entry.definition ?? undefined,
             type: entry.type ?? undefined,
             root: rootResult.value ?? undefined,
             tags: tagsResult.value ?? undefined,
-            antonyms: antonymsResult.value ?? undefined,
-            examples: examplesResult.value ?? undefined,
-            morphology: morphologyResult.ok
-              ? morphologyResult.value
-              : undefined,
           };
         })
         .filter((entry) => entry !== null);
@@ -240,25 +228,8 @@ export const rehydrateOramaDb = async () => {
         .map((entry) => {
           const rootResult = safeJsonParse(entry.root, RootLettersSchema);
           const tagsResult = safeJsonParse(entry.tags, TagsSchema);
-          const antonymsResult = safeJsonParse(
-            entry.antonyms,
-            z.array(AntonymSchema),
-          );
-          const examplesResult = safeJsonParse(
-            entry.examples,
-            z.array(ExampleSchema),
-          );
-          const morphologyResult = safeJsonParse(
-            entry.morphology,
-            MorphologySchema,
-          );
 
-          if (
-            !rootResult.ok ||
-            !tagsResult.ok ||
-            !antonymsResult.ok ||
-            !examplesResult.ok
-          ) {
+          if (!rootResult.ok || !tagsResult.ok) {
             return null;
           }
 
@@ -266,19 +237,12 @@ export const rehydrateOramaDb = async () => {
             id: entry.id,
             word: entry.word,
             translation: entry.translation,
-            created_at: entry.created_at ?? undefined,
             created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
-            updated_at: entry.updated_at ?? undefined,
             updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
             definition: entry.definition ?? undefined,
             type: entry.type ?? undefined,
             root: rootResult.value ?? undefined,
             tags: tagsResult.value ?? undefined,
-            antonyms: antonymsResult.value ?? undefined,
-            examples: examplesResult.value ?? undefined,
-            morphology: morphologyResult.ok
-              ? morphologyResult.value
-              : undefined,
           };
         })
         .filter((entry) => entry !== null);

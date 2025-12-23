@@ -1,7 +1,11 @@
 @import "tailwindcss";
 @import "./colors.css";
+@plugin "tailwindcss-animate";
 
-@theme {
+/* Use .dark class instead of prefers-color-scheme for dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
   /* Colors - reference CSS variables */
   --color-background: var(--color-background);
   --color-foreground: var(--color-foreground);
@@ -33,7 +37,7 @@
   --radius-lg: var(--radius);
 
   /* Font family */
-  --font-primary: 'Inter', 'Noto Naskh Arabic', sans-serif;
+  --font-primary: "Inter", "Noto Naskh Arabic", sans-serif;
 
   /* Custom scale */
   --scale-flip: -1;
@@ -46,18 +50,33 @@
 
 /* Animation keyframes */
 @keyframes caret-blink {
-  0%, 70%, 100% { opacity: 1; }
-  20%, 50% { opacity: 0; }
+  0%,
+  70%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  50% {
+    opacity: 0;
+  }
 }
 
 @keyframes accordion-down {
-  from { height: 0; }
-  to { height: var(--radix-accordion-content-height); }
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
 }
 
 @keyframes accordion-up {
-  from { height: var(--radix-accordion-content-height); }
-  to { height: 0; }
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
 }
 
 :root {

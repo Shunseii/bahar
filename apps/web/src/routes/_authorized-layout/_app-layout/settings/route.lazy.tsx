@@ -148,6 +148,7 @@ const Settings = () => {
       // Delete from local DB (cascades to flashcards)
       await db.prepare("DELETE FROM dictionary_entries").run();
       await db.push();
+      await db.checkpoint();
 
       tracedFetch(`${import.meta.env.VITE_API_BASE_URL}/dictionary`, {
         method: "DELETE",
@@ -294,6 +295,7 @@ const Settings = () => {
                 }
 
                 await db.push();
+                await db.checkpoint();
 
                 const meilisearchFormData = new FormData();
                 meilisearchFormData.append("dictionary", file!);

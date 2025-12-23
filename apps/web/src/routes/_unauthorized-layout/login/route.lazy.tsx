@@ -154,6 +154,20 @@ const Login = () => {
       <GithubLoginButton>
         <Trans>GitHub</Trans>
       </GithubLoginButton>
+
+      <p className="text-xs text-muted-foreground text-center mt-4">
+        <Trans>
+          By signing in, you agree to our{" "}
+          <a
+            href="https://getbahar.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground"
+          >
+            Privacy Policy
+          </a>
+        </Trans>
+      </p>
     </Page>
   );
 };
