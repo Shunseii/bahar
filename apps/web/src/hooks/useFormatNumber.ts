@@ -1,6 +1,9 @@
 import { useLingui } from "@lingui/react/macro";
 import { useCallback, useMemo } from "react";
 
+/**
+ * Custom hook for locale-specific formatting of numbers.
+ */
 export const useFormatNumber = () => {
   const { i18n } = useLingui();
   const locale = i18n.locale;
@@ -39,5 +42,15 @@ export const useFormatNumber = () => {
     [locale, isArabic],
   );
 
-  return { formatNumber, formatElapsedTime };
+  return {
+    /**
+     * Formats a number to the locale-specific number format.
+     */
+    formatNumber,
+
+    /**
+     * Formats a number to the locale-specific elapsed time format.
+     */
+    formatElapsedTime,
+  };
 };

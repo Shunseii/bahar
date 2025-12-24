@@ -273,7 +273,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   queueCounts,
 }) => {
   const dir = useDir();
-  const locale = dir === "rtl" ? "ar" : "en";
+  const locale = dir === "rtl" ? "ar-u-nu-arab" : "en";
   const { formatNumber } = useFormatNumber();
   const [showAnswer, setShowAnswer] = useState(false);
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
