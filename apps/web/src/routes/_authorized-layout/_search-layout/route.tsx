@@ -4,15 +4,12 @@ import { SearchInput } from "@/components/search/SearchInput";
 import { authClient } from "@/lib/auth-client";
 import { queryClient } from "@/lib/query";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import * as Sentry from "@sentry/react";
 import { settingsTable } from "@/lib/db/operations/settings";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();
 
   if (!data?.user) return null;
-
-  Sentry.setUser({ id: data.user.id, email: data.user.email });
 
   return (
     <>

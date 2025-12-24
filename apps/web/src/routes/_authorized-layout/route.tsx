@@ -24,6 +24,7 @@ import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DisplayError } from "@/lib/db/errors";
 import * as Sentry from "@sentry/react";
+import { authClient } from "@/lib/auth-client";
 import { ErrorMessage } from "@/components/errors/ErrorMessage";
 import React from "react";
 import { useMeasure } from "@uidotdev/usehooks";
@@ -137,9 +138,11 @@ const AuthorizedLayout = () => {
 
           await enqueueSyncOperation(async () => {
             const db = await ensureDb();
-            const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
+            const maxTsBefore =
+              await dictionaryEntriesTable.maxUpdatedAt.query();
             await db.pull();
-            const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
+            const maxTsAfter =
+              await dictionaryEntriesTable.maxUpdatedAt.query();
             dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
           });
 
@@ -215,6 +218,12 @@ const AuthorizedLayoutError: ErrorRouteComponent = ({ error }) => {
 
 export const Route = createFileRoute("/_authorized-layout")({
   beforeLoad: async () => {
+    const { data: session } = await authClient.getSession();
+
+    if (session?.user) {
+      Sentry.setUser({ id: session.user.id, email: session.user.email });
+    }
+
     const initDbResult = await initDb();
 
     if (!initDbResult.ok) {

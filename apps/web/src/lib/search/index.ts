@@ -67,7 +67,7 @@ let isOramaHydrated = false;
 export const hydrateOramaDb = async () => {
   if (isOramaHydrated) return ok({ skippedCount: 0 });
 
-  const BATCH_SIZE = 500;
+  const BATCH_SIZE = 100;
   const db = await ensureDb();
 
   let offset = 0;
@@ -209,7 +209,7 @@ export const resetOramaDb = () => {
 };
 
 export const rehydrateOramaDb = async () => {
-  const BATCH_SIZE = 500;
+  const BATCH_SIZE = 100;
   const db = await ensureDb();
   const newOramaDb = createOramaDb();
 

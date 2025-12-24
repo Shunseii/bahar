@@ -2,14 +2,11 @@ import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { authClient } from "@/lib/auth-client";
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import * as Sentry from "@sentry/react";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();
 
   if (!data?.user) return null;
-
-  Sentry.setUser({ id: data.user.id, email: data.user.email });
 
   return (
     <>
