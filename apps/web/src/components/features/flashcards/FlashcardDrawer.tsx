@@ -578,21 +578,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                 animate={{ scale: 1, opacity: 1 }}
                 className="flex items-center gap-2"
               >
-                <div
-                  className={cn(
-                    "p-2 rounded-xl",
-                    selectedQueue === "backlog"
-                      ? "bg-orange-500/10"
-                      : "bg-primary/10",
-                  )}
-                >
-                  {selectedQueue === "backlog" ? (
-                    <Archive className="w-5 h-5 text-orange-500" />
-                  ) : (
-                    <Brain className="w-5 h-5 text-primary" />
-                  )}
-                </div>
-                <DrawerTitle>
+                <DrawerTitle className="text-md">
                   {formatNumber(cards.length)}{" "}
                   <Plural
                     value={cards.length}
