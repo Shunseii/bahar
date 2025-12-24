@@ -32,6 +32,14 @@ const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {
   };
 };
 
+const useGenderLabels = (): Record<"masculine" | "feminine", string> => {
+  const { t } = useLingui();
+  return {
+    masculine: t`Masculine`,
+    feminine: t`Feminine`,
+  };
+};
+
 const CopyButton: FC<{ text: string }> = memo(({ text }) => {
   const [copied, setCopied] = useState(false);
 
@@ -67,6 +75,7 @@ interface ExpandedDetailsProps {
 
 const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
   const wordTypeLabels = useWordTypeLabels();
+  const genderLabels = useGenderLabels();
 
   const { data: fullEntry, isLoading } = useQuery({
     queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, id],
@@ -170,8 +179,8 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
                 <p className="text-xs text-muted-foreground/70">
                   <Trans>Gender</Trans>
                 </p>
-                <p className="text-foreground/80 capitalize">
-                  {ismMorphology.gender}
+                <p className="text-foreground/80">
+                  {genderLabels[ismMorphology.gender]}
                 </p>
               </div>
             )}
