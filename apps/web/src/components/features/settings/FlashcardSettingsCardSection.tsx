@@ -45,14 +45,15 @@ export const FlashcardSettingsCardSection = () => {
     queryFn: () => settingsTable.getSettings.query(),
     ...settingsTable.getSettings.cacheOptions,
   });
-  const { mutate } = trpc.settings.update.useMutation({
-    onSuccess: (serverData) => {
-      queryClient.setQueryData(
-        getQueryKey(trpc.settings.get, undefined, "query"),
-        serverData,
-      );
-    },
-  });
+  const { mutateAsync: updateSettingsRemote } =
+    trpc.settings.update.useMutation({
+      onSuccess: (serverData) => {
+        queryClient.setQueryData(
+          getQueryKey(trpc.settings.get, undefined, "query"),
+          serverData,
+        );
+      },
+    });
 
   const { mutateAsync: updateSettingsLocal } = useMutation({
     mutationFn: settingsTable.update.mutation,
@@ -130,9 +131,7 @@ export const FlashcardSettingsCardSection = () => {
     async (formData: z.infer<typeof FormSchema>) => {
       try {
         await Promise.all([
-          new Promise<void>((resolve) => {
-            mutate(formData, { onSuccess: () => resolve() });
-          }),
+          updateSettingsRemote(formData),
           updateSettingsLocal({ updates: formData }),
         ]);
 
@@ -146,7 +145,7 @@ export const FlashcardSettingsCardSection = () => {
         });
       }
     },
-    [mutate, updateSettingsLocal, t, toast],
+    [updateSettingsRemote, updateSettingsLocal, t, toast],
   );
 
   return (

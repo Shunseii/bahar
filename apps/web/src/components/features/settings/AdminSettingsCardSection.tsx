@@ -32,22 +32,13 @@ const FormSchema = z.object({
 
 export const AdminSettingsCardSection = () => {
   const { t } = useLingui();
-  const { mutate, error, isError } = useMutation(
-    trpcNew.migrations.registerSchema.mutationOptions(),
-  );
   const { toast } = useToast();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      sqlScript: "",
-      description: "",
+  const { mutate } = useMutation({
+    ...trpcNew.migrations.registerSchema.mutationOptions(),
+    onSuccess: () => {
+      toast({ title: t`Migration successfully registered.` });
     },
-  });
-
-  const onSubmit = useCallback(async (data: z.infer<typeof FormSchema>) => {
-    mutate(data);
-
-    if (isError) {
+    onError: (error) => {
       if (error.message === "UNAUTHORIZED") {
         toast({
           title: t`Failed to upload migration`,
@@ -59,12 +50,22 @@ export const AdminSettingsCardSection = () => {
           description: t`There was an error uploading your SQL migration`,
         });
       }
-    } else {
-      toast({
-        title: t`Migration successfully registered.`,
-      });
-    }
-  }, []);
+    },
+  });
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      sqlScript: "",
+      description: "",
+    },
+  });
+
+  const onSubmit = useCallback(
+    (data: z.infer<typeof FormSchema>) => {
+      mutate(data);
+    },
+    [mutate],
+  );
 
   return (
     <Card>
