@@ -56,7 +56,7 @@ export default defineConfig({
     }),
     sentryVitePlugin({
       org: "bahar-app",
-      project: "typescript-react",
+      project: "bahar-web",
       telemetry: false,
       reactComponentAnnotation: {
         enabled: true,
