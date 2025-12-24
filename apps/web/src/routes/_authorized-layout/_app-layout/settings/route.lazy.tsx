@@ -51,6 +51,10 @@ const Settings = () => {
   const { reset } = useSearch();
   const [file, setFile] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
+  const [importProgress, setImportProgress] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
   const { toast } = useToast();
   const { data: userData } = authClient.useSession();
 
@@ -272,6 +276,10 @@ const Settings = () => {
                 const { version, entries: validatedDictionary } = parsedImport;
 
                 const BATCH_SIZE = 100;
+                const batches = [...batchArray(validatedDictionary, BATCH_SIZE)];
+                const totalBatches = batches.length;
+
+                setImportProgress({ current: 0, total: totalBatches });
 
                 await enqueueDbOperation(async () => {
                   const db = await ensureDb();
@@ -295,11 +303,9 @@ const Settings = () => {
                     },
                   );
 
-                  for (const batch of batchArray(
-                    validatedDictionary,
-                    BATCH_SIZE,
-                  )) {
-                    await insertBatch(batch);
+                  for (let i = 0; i < batches.length; i++) {
+                    await insertBatch(batches[i]);
+                    setImportProgress({ current: i + 1, total: totalBatches });
                   }
                 });
 
@@ -374,6 +380,7 @@ const Settings = () => {
                 }
               } finally {
                 setIsLoading(false);
+                setImportProgress(null);
               }
             }}
           >
@@ -392,6 +399,22 @@ const Settings = () => {
               <Trans>Import</Trans>
             </Button>
           </form>
+
+          {importProgress && (
+            <div className="space-y-2">
+              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all duration-150"
+                  style={{
+                    width: `${(importProgress.current / importProgress.total) * 100}%`,
+                  }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground text-center">
+                {Math.round((importProgress.current / importProgress.total) * 100)}%
+              </p>
+            </div>
+          )}
 
           <CardDescription className="text-destructive">
             <Trans>Any words that have the same ID will be overwritten.</Trans>

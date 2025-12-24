@@ -107,3 +107,35 @@ The old designs lacked any feedback and were just boring.
 The newer designs add feedback when selecting scheduling options. They also add nicer animations and transitions.
 
 In the (near) future, I will be improving these designs further and also updating designs on the other pages like Settings and Decks, along with adding more functionality, إن شاء الله تعالى.
+
+## Backlog Management
+
+As a power user myself, one challenge I often face is when I don't review for a few days or weeks, then get hit with a massive backlog when I come back.
+
+Due to the way reviewing flashcards worked in Bahar, it wasn't possible to ignore the backlog and focus on new words. This added more friction when trying to get back into the habit of reviewing after a hiatus.
+
+To help alleviate this, in the public release, I added a very early implementation of backlog management. What this does is it will automatically place any flashcards that are over a week past their due date into a backlog queue. This queue is separate from the regular queue.
+
+This means that if you come back after, say, two weeks, your regular queue will be clean but you can still chip away at your backlog.
+
+In the past, to clean up my backlog, I would go through all the flashcards and grade them as "Hard." This isn't ideal, but better than having hundreds of flashcards sitting in your queue. In this release, I've added a shortcut to do this on the settings page.
+
+<figure>
+  <video
+    controls
+    autoplay
+    loop
+    muted
+    playsinline
+    style="width: 100%; border-radius: 8px; border: 1px solid #374151;"
+  >
+    <source src="/videos/bahar-backlog.webm" type="video/webm" />
+  </video>
+  <figcaption>Figure 5: Backlog queue and clear backlog button</figcaption>
+</figure>
+
+This is a very early version of backlog management, but I already have lots of plans to expand upon it. For example, allowing the number of days after which flashcards enter the backlog to be configurable in the settings, automatically clearing backlog based on configurable parameters, and much more.
+
+As part of this release, a lot of the development effort had to go towards the rearchitecture so I wasn't able to put out as many features as I would've liked, but I have a lot planned for the future. Moreover, I've been working on a native mobile app (for both Android and iOS) which wasn't quite ready for this release, but it is a priority within the next few releases إن شاء الله تعالى.
+
+While the mobile app is exciting, there's even larger projects I have planned which I won't announce just yet, but will have a profound impact on the future of Bahar بإذن الله تعالى.
