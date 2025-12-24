@@ -1,9 +1,7 @@
 import { motion } from "motion/react";
 import { FC } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  FlashcardWithDictionaryEntry,
-} from "@/lib/db/operations/flashcards";
+import { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
 import { settingsTable } from "@/lib/db/operations/settings";
 
 /**
@@ -149,6 +147,20 @@ export const QuestionSide: FC<{
             ?.map((antonym) => antonym.word)
             .join(", ")}
         </motion.p>
+      )}
+
+      {/* Example sentence */}
+      {!!currentCard.dictionary_entry.examples?.[0]?.sentence && (
+        <motion.div
+          className="flex flex-col gap-y-1 pt-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+        >
+          <p dir="rtl" className="text-base sm:text-lg text-muted-foreground">
+            {currentCard.dictionary_entry.examples[0].sentence}
+          </p>
+        </motion.div>
       )}
     </motion.div>
   );
