@@ -93,7 +93,7 @@ const Decks = () => {
         <DeckDialogContent />
       </Dialog>
 
-      <Card className="w-full m-auto">
+      <Card className="w-full m-auto max-w-[90vw]">
         <CardHeader>
           <CardTitle>
             <Trans>Decks</Trans>
@@ -131,7 +131,7 @@ const Decks = () => {
                     <Trans>To review</Trans>
                   </TableHead>
 
-                  <TableHead className="hidden sm:table-cell">
+                  <TableHead>
                     <Trans>Backlog</Trans>
                   </TableHead>
 
@@ -156,7 +156,7 @@ const Decks = () => {
                       {formatNumber(deck.to_review)}
                     </TableCell>
 
-                    <TableCell className="font-medium hidden sm:table-cell">
+                    <TableCell className="font-medium">
                       {deck.to_review_backlog > 0
                         ? formatNumber(deck.to_review_backlog)
                         : "-"}
