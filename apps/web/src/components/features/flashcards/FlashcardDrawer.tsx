@@ -396,7 +396,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const schedulingData = useMemo(() => {
     if (!currentCard) return null;
     const now = new Date();
-    const scheduling_cards = f.repeat(convertFlashcardToFsrsCard(currentCard), now);
+    const scheduling_cards = f.repeat(
+      convertFlashcardToFsrsCard(currentCard),
+      now,
+    );
     return { scheduling_cards, now };
   }, [currentCard, f]);
 
