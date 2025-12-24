@@ -22,7 +22,7 @@ Applies all pending schema migrations to each user's database.
 
 **Purpose**: Ensures all user databases are up-to-date with the latest schema changes. This script checks the migrations table in each database and only applies migrations that haven't been run yet. It's safe to run multiple times.
 
-Note: this is only for initial testing. It should not be run when new migrations are added once clients are managing the user databases and applying schemas themselves.
+Note: This script is for initial testing and administrative purposes. In production, clients manage their own databases and apply schemas themselves.
 
 ## Environment Setup
 
@@ -37,12 +37,12 @@ Before running any scripts, ensure you have the required environment variables c
 
 2. **Required Environment Variables**:
 
-   - Database connection variables (Turso credentials)
-   - Meilisearch connection details
-   - Authentication tokens
-   - Refer to the main `.env` file for the complete list
+   - `DATABASE_URL` - Turso central database URL
+   - `DATABASE_AUTH_TOKEN` - Turso auth token
+   - `TURSO_API_TOKEN` - Turso API token
+   - `TURSO_ORGANIZATION` - Turso organization slug
 
-Note: When running in docker, make sure to first run the services, then update any references to docker urls with localhost.
+Note: When running in docker, make sure to first run the services, then update any references to docker URLs with localhost.
 
 3. **Install Dependencies**:
    ```bash
@@ -59,7 +59,6 @@ cd apps/api
 
 # Load environment variables when running tsx
 npx tsx --env-file=.env scripts/create-user-dbs.ts
-npx tsx --env-file=.env scripts/migrate-from-meilisearch.ts
 npx tsx --env-file=.env scripts/migrate-settings-decks-to-user-db.ts
 npx tsx --env-file=.env scripts/apply-user-db-migrations.ts
 ```
@@ -69,7 +68,6 @@ npx tsx --env-file=.env scripts/apply-user-db-migrations.ts
 - Ensure all dependencies are installed (`pnpm install`)
 - Verify environment variables are properly configured
 - Ensure database connections are working
-- For migration scripts, verify both source (Meilisearch) and target (Turso) services are accessible
 
 ## Safety Notes
 
@@ -81,6 +79,6 @@ npx tsx --env-file=.env scripts/apply-user-db-migrations.ts
 ## Troubleshooting
 
 - Check environment variables if connection issues occur
-- Verify service accessibility (Turso, Meilisearch)
+- Verify service accessibility (Turso)
 - Review logs for detailed error messages
 - Ensure proper permissions for database operations

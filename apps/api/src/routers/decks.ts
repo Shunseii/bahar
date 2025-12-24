@@ -10,7 +10,6 @@ import {
 import { z } from "zod";
 import { FLASHCARD_LIMIT, queryFlashcards } from "./flashcard";
 import { getUserDbClient } from "../clients/turso";
-import { LogCategory, logger } from "../utils/logger";
 
 export const decksRouter = router({
   list: protectedProcedure
@@ -89,45 +88,13 @@ export const decksRouter = router({
 
       const result = results[0];
 
-      try {
-        const userDbClient = await getUserDbClient(user.id);
-
-        if (userDbClient) {
-          await userDbClient.execute({
-            sql: `INSERT INTO decks (id, name, filters) VALUES (?, ?, ?)`,
-            args: [result.id, result.name, JSON.stringify(result.filters)],
-          });
-
-          logger.info(
-            {
-              userId: user.id,
-              category: LogCategory.DATABASE,
-              event: "decks.create.dual_write.success",
-            },
-            "Successfully wrote deck to user DB",
-          );
-        }
-      } catch (err) {
-        logger.error(
-          {
-            err,
-            userId: user.id,
-            category: LogCategory.DATABASE,
-            event: "decks.create.dual_write.error",
-          },
-          "Failed to write deck to user DB",
-        );
-      }
-
       return result;
     }),
 
   update: protectedProcedure
     .input(InsertDecksSchema.pick({ id: true, name: true, filters: true }))
     .output(SelectDecksSchema)
-    .mutation(async ({ ctx, input }) => {
-      const { user } = ctx;
-
+    .mutation(async ({ input }) => {
       const results = await db
         .update(decks)
         .set({ name: input.name, filters: input.filters })
@@ -136,44 +103,13 @@ export const decksRouter = router({
 
       const result = results[0];
 
-      try {
-        const userDbClient = await getUserDbClient(user.id);
-
-        if (userDbClient) {
-          await userDbClient.execute({
-            sql: `UPDATE decks SET name = ?, filters = ? WHERE id = ?`,
-            args: [result.name, JSON.stringify(result.filters), result.id],
-          });
-
-          logger.info(
-            {
-              userId: user.id,
-              category: LogCategory.DATABASE,
-              event: "decks.update.dual_write.success",
-            },
-            "Successfully updated deck in user DB",
-          );
-        }
-      } catch (err) {
-        logger.error(
-          {
-            err,
-            userId: user.id,
-            category: LogCategory.DATABASE,
-            event: "decks.update.dual_write.error",
-          },
-          "Failed to update deck in user DB",
-        );
-      }
-
       return result;
     }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .output(SelectDecksSchema)
-    .mutation(async ({ ctx, input }) => {
-      const { user } = ctx;
+    .mutation(async ({ input }) => {
       const { id } = input;
 
       const results = await db
@@ -182,36 +118,6 @@ export const decksRouter = router({
         .returning();
 
       const result = results[0];
-
-      try {
-        const userDbClient = await getUserDbClient(user.id);
-
-        if (userDbClient) {
-          await userDbClient.execute({
-            sql: `DELETE FROM decks WHERE id = ?`,
-            args: [id],
-          });
-
-          logger.info(
-            {
-              userId: user.id,
-              category: LogCategory.DATABASE,
-              event: "decks.delete.dual_write.success",
-            },
-            "Successfully deleted deck from user DB",
-          );
-        }
-      } catch (err) {
-        logger.error(
-          {
-            err,
-            userId: user.id,
-            category: LogCategory.DATABASE,
-            event: "decks.delete.dual_write.error",
-          },
-          "Failed to delete deck from user DB",
-        );
-      }
 
       return result;
     }),

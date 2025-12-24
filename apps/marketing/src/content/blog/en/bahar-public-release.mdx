@@ -1,0 +1,141 @@
+---
+title: "Announcing the Public Release of Bahar"
+description: "After two years of development, Bahar is now available to everyone. This release brings a new local-first architecture for instant performance and a redesigned interface."
+pubDate: 2025-12-23
+author: "Sufyan bin Muhammad"
+tags: ["announcement", "arabic"]
+---
+
+{/* prettier-ignore */}
+<p style="font-size: 1.25em; text-align: right; direction: rtl">السّلام عليكم ورحمة اللّه وبركاته</p>
+
+Roughly for the past two years, I've been working on Bahar during my spare time. During this period, I have been using Bahar regularly and have also
+previewed it to friends and students in my circle who began using it as well.
+
+I'm excited to announce that today بإذن الله تعالى I am releasing Bahar publicly.
+
+This public release is marked by a few significant changes.
+
+## Local-First Architecture
+
+This one is more technical, but still has a profound impact on the user experience.
+
+Initially when I built out Bahar, I was using a more standard approach of having a cloud database that stores all user data. What this means is that to use Bahar, you would need a steady Internet connection because any action you perform, such as adding words or reviewing flashcards, would need to send a request over the network since the data doesn't live on your device.
+
+In addition to being tied to Internet connectivity for simply reviewing your flashcards or viewing your dictionary, this led to a lot of latency for every action. This was particularly noticeable when reviewing flashcards.
+
+With this public release, I completely refactored this standard architecture to instead opt for a local-first design where your dictionary data lives on your device, so all user actions are instantaneous. It is also resilient to slow or unstable Internet connections.
+
+Besides that, I also had lots of design-related changes that I had been putting off to work on the main functionality.
+
+## Revamped User Interface
+
+As a developer, when I initially designed the UI in Bahar, it was meant to be a simple prototype while I focused on the core functionality. My goal was always to revise the UI from the ground up once I was happy with functionality. This revamp is a first step in that direction. It's still not where I want it to be, but the theme here is to flesh out the interface to add more functionality.
+
+Given that, not every part of the UI was touched. The sections I focused on for the public release were the two important parts which users will interact with the most: the homepage and the flashcard review.
+
+### Homepage
+
+The goal of the homepage redesign was to expand some of the functionality on the page by allowing you to see all the fields of your dictionary entries at a glance instead of having to navigate to the edit word page to see anything other than the word and translation.
+
+<figure>
+  <video
+    controls
+    autoplay
+    loop
+    muted
+    playsinline
+    style="width: 100%; border-radius: 8px; border: 1px solid #374151;"
+  >
+    <source src="/videos/bahar-before-homepage.webm" type="video/webm" />
+  </video>
+  <figcaption>Figure 1: Previous homepage design</figcaption>
+</figure>
+
+The old homepage designs just displayed the word and translation for each entry. To view all the other fields, you had to click the edit button and view them there.
+
+<figure>
+  <video
+    controls
+    autoplay
+    loop
+    muted
+    playsinline
+    style="width: 100%; border-radius: 8px; border: 1px solid #374151;"
+  >
+    <source src="/videos/bahar-after-homepage.webm" type="video/webm" />
+  </video>
+  <figcaption>Figure 2: New homepage design</figcaption>
+</figure>
+
+As you can see, in the new homepage, each result in the list allows expanding to see all the fields of that entry. You can also copy the word and its translation.
+
+### Flashcard Review
+
+The core functionality of Bahar is reviewing flashcards, so it's imperative that the flashcard review screen has good feedback and in general feels good to use, which was the theme of this redesign.
+
+<figure>
+  <video
+    controls
+    autoplay
+    loop
+    muted
+    playsinline
+    style="width: 100%; border-radius: 8px; border: 1px solid #374151;"
+  >
+    <source src="/videos/bahar-before-review.webm" type="video/webm" />
+  </video>
+  <figcaption>Figure 3: Previous flashcard review design</figcaption>
+</figure>
+
+The old designs lacked any feedback and were just boring.
+
+<figure>
+  <video
+    controls
+    autoplay
+    loop
+    muted
+    playsinline
+    style="width: 100%; border-radius: 8px; border: 1px solid #374151;"
+  >
+    <source src="/videos/bahar-after-review.webm" type="video/webm" />
+  </video>
+  <figcaption>Figure 4: New flashcard review design</figcaption>
+</figure>
+
+The newer designs add feedback when selecting scheduling options. They also add nicer animations and transitions.
+
+In the (near) future, I will be improving these designs further and also updating designs on the other pages like Settings and Decks, along with adding more functionality, إن شاء الله تعالى.
+
+## Backlog Management
+
+As a power user myself, one challenge I often face is when I don't review for a few days or weeks, then get hit with a massive backlog when I come back.
+
+Due to the way reviewing flashcards worked in Bahar, it wasn't possible to ignore the backlog and focus on new words. This added more friction when trying to get back into the habit of reviewing after a hiatus.
+
+To help alleviate this, in the public release, I added a very early implementation of backlog management. What this does is it will automatically place any flashcards that are over a week past their due date into a backlog queue. This queue is separate from the regular queue.
+
+This means that if you come back after, say, two weeks, your regular queue will be clean but you can still chip away at your backlog.
+
+In the past, to clean up my backlog, I would go through all the flashcards and grade them as "Hard." This isn't ideal, but better than having hundreds of flashcards sitting in your queue. In this release, I've added a shortcut to do this on the settings page.
+
+<figure>
+  <video
+    controls
+    autoplay
+    loop
+    muted
+    playsinline
+    style="width: 100%; border-radius: 8px; border: 1px solid #374151;"
+  >
+    <source src="/videos/bahar-backlog.webm" type="video/webm" />
+  </video>
+  <figcaption>Figure 5: Backlog queue and clear backlog button</figcaption>
+</figure>
+
+This is a very early version of backlog management, but I already have lots of plans to expand upon it. For example, allowing the number of days after which flashcards enter the backlog to be configurable in the settings, automatically clearing backlog based on configurable parameters, and much more.
+
+As part of this release, a lot of the development effort had to go towards the rearchitecture so I wasn't able to put out as many features as I would've liked, but I have a lot planned for the future. Moreover, I've been working on a native mobile app (for both Android and iOS) which wasn't quite ready for this release, but it is a priority within the next few releases إن شاء الله تعالى.
+
+While the mobile app is exciting, there's even larger projects I have planned which I won't announce just yet, but will have a profound impact on the future of Bahar بإذن الله تعالى.

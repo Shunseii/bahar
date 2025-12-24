@@ -2,7 +2,7 @@ import { Button } from "./ui/button";
 import { GithubLogo } from "./ui/icons";
 import { FC, ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
-import { Route } from "@/routes/_layout/login/route";
+import { Route } from "@/routes/_unauthorized-layout/login/route";
 
 export const GithubLoginButton: FC<{ children: ReactNode }> = ({
   children,

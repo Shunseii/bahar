@@ -1,0 +1,63 @@
+---
+import { t, getLocalizedPath, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const currentYear = new Date().getFullYear();
+---
+
+<footer transition:name="footer" class="border-t border-border bg-background">
+  <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div class="grid gap-8 md:grid-cols-4">
+      <!-- Brand -->
+      <div class="md:col-span-2">
+        <a href={getLocalizedPath('', locale)} class="flex items-center gap-2">
+          <img src="/favicon.svg" alt={t(locale, 'logo')} class="h-8 w-8" />
+          <span class="text-xl font-bold">{t(locale, 'logo')}</span>
+        </a>
+        <p class="mt-4 max-w-xs text-sm text-muted-foreground">
+          {t(locale, 'footer.tagline')}
+        </p>
+      </div>
+
+      <!-- Product Links -->
+      <div>
+        <h3 class="mb-4 text-sm font-semibold">{t(locale, 'footer.product')}</h3>
+        <ul class="space-y-3 text-sm">
+          <li>
+            <a href="https://bahar.dev" class="text-muted-foreground transition-colors hover:text-foreground">
+              {t(locale, 'nav.getStarted')}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Resources Links -->
+      <div>
+        <h3 class="mb-4 text-sm font-semibold">{t(locale, 'footer.resources')}</h3>
+        <ul class="space-y-3 text-sm">
+          <li>
+            <a href={getLocalizedPath('blog', locale)} class="text-muted-foreground transition-colors hover:text-foreground">
+              {t(locale, 'nav.blog')}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
+      <p class="text-sm text-muted-foreground">
+        &copy; {currentYear} {t(locale, 'footer.copyright')}
+      </p>
+      <div class="flex gap-6 text-sm">
+        <a href="/privacy" class="text-muted-foreground transition-colors hover:text-foreground">
+          {t(locale, 'footer.privacy')}
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,8 +1,7 @@
 import { cn } from "@bahar/design-system";
 import { Trans } from "@lingui/react/macro";
 import { FC } from "react";
-import { Text, View } from "react-native";
-import { Pressable, PressableProps } from "react-native-gesture-handler";
+import { Text, View, Pressable, PressableProps } from "react-native";
 
 interface ButtonProps extends PressableProps {
   onPress: () => void;

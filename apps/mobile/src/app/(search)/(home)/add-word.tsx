@@ -1,58 +1,81 @@
-import React from "react";
-import { Text, View, Pressable } from "react-native";
-import { Page } from "@/components/Page";
+import React, { useState, useRef } from "react";
+import {
+  Text,
+  View,
+  Pressable,
+  ScrollView,
+  ActivityIndicator,
+  TextInput,
+} from "react-native";
 import { Trans } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
-import { ChevronLeft, ChevronRight } from "lucide-react-native";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Plus,
+  X,
+} from "lucide-react-native";
 import { Button } from "@/components/ui/button";
 import { useLocales } from "expo-localization";
-import { useColorScheme } from "react-native";
-import { cn } from "@bahar/design-system";
-import { cssVariables } from "@bahar/design-system/theme";
+import { useThemeColors } from "@/lib/theme";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormSchema } from "@bahar/schemas";
 import { errorMap } from "@/utils/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { trpc } from "@/utils/trpc";
 import { toast } from "sonner-native";
 import { t } from "@lingui/core/macro";
+import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { addToSearchIndex } from "@/lib/search";
+import { queryClient, trpcClient } from "@/utils/trpc";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 z.setErrorMap(errorMap);
 
+type FormData = z.infer<typeof FormSchema>;
+
+const WORD_TYPES = [
+  { value: "ism", label: "Ism (Noun)" },
+  { value: "fi'l", label: "Fi'l (Verb)" },
+  { value: "harf", label: "Harf (Particle)" },
+  { value: "expression", label: "Expression" },
+] as const;
+
+const GENDERS = [
+  { value: "masculine", label: "Masculine" },
+  { value: "feminine", label: "Feminine" },
+] as const;
+
+const INFLECTIONS = [
+  { value: "triptote", label: "Triptote" },
+  { value: "diptote", label: "Diptote" },
+  { value: "indeclinable", label: "Indeclinable" },
+] as const;
+
 const Breadcrumbs = () => {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-
-  const themeColors =
-    colorScheme === "dark" ? cssVariables.dark : cssVariables.light;
+  const colors = useThemeColors();
 
   return (
-    <View className={cn("mb-8")}>
-      <View className="flex flex-row items-center gap-2.5">
-        <View className="items-center gap-1.5">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-sm text-muted-foreground">
-              <Trans>Home</Trans>
-            </Text>
-          </Pressable>
-        </View>
-
-        <View className="items-center">
-          <ChevronRight
-            size={14}
-            color={`hsl(${themeColors["--muted-foreground"]})`}
-          />
-        </View>
-
-        <View className="inline-flex items-center gap-1.5">
-          <Text className="text-sm font-normal text-foreground">
-            <Trans>Add word</Trans>
+    <View className="mb-6">
+      <View className="flex-row items-center gap-2">
+        <Pressable onPress={() => router.back()}>
+          <Text className="text-sm text-muted-foreground">
+            <Trans>Home</Trans>
           </Text>
-        </View>
+        </Pressable>
+        <ChevronRight
+          size={14}
+          color={colors.mutedForeground}
+        />
+        <Text className="text-sm font-normal text-foreground">
+          <Trans>Add word</Trans>
+        </Text>
       </View>
     </View>
   );
@@ -61,7 +84,7 @@ const Breadcrumbs = () => {
 const BackButton = () => {
   const router = useRouter();
   const locales = useLocales();
-  const colorScheme = useColorScheme();
+  const colors = useThemeColors();
   const dir = locales[0].textDirection;
 
   return (
@@ -69,31 +92,185 @@ const BackButton = () => {
       {dir === "rtl" ? (
         <ChevronRight
           size={16}
-          color={colorScheme === "dark" ? "white" : "black"}
+          color={colors.foreground}
         />
       ) : (
         <ChevronLeft
           size={16}
-          color={colorScheme === "dark" ? "white" : "black"}
+          color={colors.foreground}
         />
       )}
     </Button>
   );
 };
 
-type FormData = z.infer<typeof FormSchema>;
+const TagsInput = ({
+  value,
+  onChange,
+}: {
+  value: { name: string }[] | undefined;
+  onChange: (value: { name: string }[]) => void;
+}) => {
+  const [tagInput, setTagInput] = useState("");
+  const colors = useThemeColors();
+
+  const handleSubmit = () => {
+    const text = tagInput.trim();
+    if (text) {
+      onChange([...(value || []), { name: text }]);
+      setTagInput("");
+    }
+  };
+
+  return (
+    <View className="gap-3">
+      {value && value.length > 0 && (
+        <View className="flex-row flex-wrap gap-2">
+          {value.map((tag, index) => (
+            <View
+              key={index}
+              className="flex-row items-center px-3 py-1.5 rounded-full bg-primary/10"
+            >
+              <Text className="text-sm text-primary">{tag.name}</Text>
+              <Pressable
+                onPress={() => {
+                  const newTags = value.filter((_, i) => i !== index);
+                  onChange(newTags);
+                }}
+                className="ml-1.5"
+              >
+                <X size={14} color={colors.primary} />
+              </Pressable>
+            </View>
+          ))}
+        </View>
+      )}
+      <Input
+        placeholder={t`Add a tag and press enter`}
+        value={tagInput}
+        onChangeText={setTagInput}
+        onSubmitEditing={handleSubmit}
+        returnKeyType="done"
+      />
+    </View>
+  );
+};
+
+const SelectDropdown = ({
+  value,
+  options,
+  onChange,
+  placeholder,
+}: {
+  value: string | undefined;
+  options: readonly { value: string; label: string }[];
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const colors = useThemeColors();
+
+  return (
+    <View>
+      <Pressable
+        onPress={() => setIsOpen(!isOpen)}
+        className="flex-row items-center justify-between px-3 py-2.5 rounded-md border border-input bg-background"
+      >
+        <Text
+          className={
+            value ? "text-foreground" : "text-muted-foreground"
+          }
+        >
+          {value
+            ? options.find((o) => o.value === value)?.label
+            : placeholder}
+        </Text>
+        <ChevronDown
+          size={16}
+          color={colors.mutedForeground}
+        />
+      </Pressable>
+      {isOpen && (
+        <View className="mt-1 rounded-md border border-input bg-background overflow-hidden">
+          {options.map((option) => (
+            <Pressable
+              key={option.value}
+              onPress={() => {
+                onChange(option.value);
+                setIsOpen(false);
+              }}
+              className={`px-3 py-2.5 ${
+                value === option.value ? "bg-primary/10" : ""
+              } active:bg-muted`}
+            >
+              <Text
+                className={
+                  value === option.value
+                    ? "text-primary font-medium"
+                    : "text-foreground"
+                }
+              >
+                {option.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+};
 
 export default function AddWordScreen() {
-  const addWordMutation = useMutation(
-    trpc.dictionary.addWord.mutationOptions(),
-  );
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const colors = useThemeColors();
+
+  const addWordMutation = useMutation({
+    mutationFn: dictionaryEntriesTable.addWord.mutation,
+    onSuccess: async (newEntry) => {
+      await addToSearchIndex({
+        id: newEntry.id,
+        word: newEntry.word,
+        translation: newEntry.translation,
+        definition: newEntry.definition ?? undefined,
+        type: newEntry.type ?? undefined,
+        root: newEntry.root ?? undefined,
+        tags: newEntry.tags ?? undefined,
+      });
+
+      try {
+        await flashcardsTable.createForEntry.mutation({
+          dictionary_entry_id: newEntry.id,
+        });
+      } catch (error) {
+        console.warn("Failed to create flashcards:", error);
+      }
+
+      trpcClient.dictionary.addWord
+        .mutate({
+          word: newEntry.word,
+          translation: newEntry.translation,
+        })
+        .catch((error) => console.warn("Failed to sync to remote:", error));
+
+      await queryClient.invalidateQueries({
+        queryKey: flashcardsTable.today.cacheOptions.queryKey,
+      });
+
+      toast.success(t`Word added successfully`);
+      router.back();
+    },
+    onError: (error) => {
+      toast.error(t`Failed to add word`);
+      console.error("Add word error:", error);
+    },
+  });
 
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<FormData>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -128,112 +305,781 @@ export default function AddWordScreen() {
     },
   });
 
+  const wordType = watch("type");
+
+  const {
+    fields: exampleFields,
+    append: appendExample,
+    remove: removeExample,
+  } = useFieldArray({ control, name: "examples" });
+
+  const {
+    fields: antonymFields,
+    append: appendAntonym,
+    remove: removeAntonym,
+  } = useFieldArray({ control, name: "antonyms" });
+
+  const {
+    fields: pluralFields,
+    append: appendPlural,
+    remove: removePlural,
+  } = useFieldArray({ control, name: "morphology.ism.plurals" });
+
+  const {
+    fields: masadirFields,
+    append: appendMasdar,
+    remove: removeMasdar,
+  } = useFieldArray({ control, name: "morphology.verb.masadir" });
+
+  const {
+    fields: huroofFields,
+    append: appendHarf,
+    remove: removeHarf,
+  } = useFieldArray({ control, name: "morphology.verb.huroof" });
+
   const onSubmit = async (data: FormData) => {
-    try {
-      const { word, translation } = data;
-
-      await addWordMutation.mutateAsync({ word, translation });
-
-      reset();
-    } catch (error) {
-      console.error("Error saving word:", error);
-    }
+    await addWordMutation.mutateAsync({
+      entry: {
+        word: data.word,
+        translation: data.translation,
+        definition: data.definition || undefined,
+        type: data.type ?? "ism",
+        tags: data.tags?.length ? data.tags.map((t) => t.name) : undefined,
+        root: data.root ? data.root.split("") : undefined,
+        antonyms: data.antonyms?.length ? data.antonyms : undefined,
+        examples: data.examples?.length ? data.examples : undefined,
+        morphology: data.morphology,
+      },
+    });
   };
 
+  const showRootField = wordType === "ism" || wordType === "fi'l";
+  const showAntonyms =
+    wordType === "ism" || wordType === "fi'l" || wordType === "harf";
+  const showMorphology = wordType === "ism" || wordType === "fi'l";
+
   return (
-    <Page className="pt-0 px-4">
-      <View className="flex-1 pt-4">
+    <ScrollView
+      className="flex-1 bg-background"
+      contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+      keyboardShouldPersistTaps="handled"
+    >
+      <View className="flex-1 px-4 pt-4">
         <Breadcrumbs />
 
-        <View className="max-w-full flex-1 gap-y-4">
+        <View className="gap-y-4">
           <View className="flex-row items-center gap-4">
             <BackButton />
-
             <Text className="flex-1 text-xl font-semibold text-foreground tracking-tight">
-              <Trans>Add a new word to your dictionary</Trans>
+              <Trans>Add a new word</Trans>
             </Text>
           </View>
 
-          <View className="grid gap-4 lg:gap-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  <Trans>Basic Details</Trans>
-                </CardTitle>
-              </CardHeader>
+          {/* Basic Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Trans>Basic Details</Trans>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <View className="gap-5">
+                <View className="gap-2">
+                  <Text className="text-sm font-medium text-foreground">
+                    <Trans>Word</Trans> *
+                  </Text>
+                  <Controller
+                    control={control}
+                    name="word"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Input
+                        style={{ textAlign: "right" }}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        placeholder={t`Arabic word`}
+                      />
+                    )}
+                  />
+                  {errors.word && (
+                    <Text className="text-sm text-destructive">
+                      {errors.word.message}
+                    </Text>
+                  )}
+                </View>
 
-              <CardContent>
-                <View className="gap-6">
+                <View className="gap-2">
+                  <Text className="text-sm font-medium text-foreground">
+                    <Trans>Translation</Trans> *
+                  </Text>
+                  <Controller
+                    control={control}
+                    name="translation"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Input
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        placeholder={t`English translation`}
+                      />
+                    )}
+                  />
+                  {errors.translation && (
+                    <Text className="text-sm text-destructive">
+                      {errors.translation.message}
+                    </Text>
+                  )}
+                </View>
+              </View>
+            </CardContent>
+          </Card>
+
+          {/* Category */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Trans>Category</Trans>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <View className="gap-2">
+                <Text className="text-sm font-medium text-foreground">
+                  <Trans>Type</Trans>
+                </Text>
+                <Controller
+                  control={control}
+                  name="type"
+                  render={({ field: { onChange, value } }) => (
+                    <SelectDropdown
+                      value={value}
+                      options={WORD_TYPES}
+                      onChange={onChange}
+                      placeholder={t`Select type`}
+                    />
+                  )}
+                />
+              </View>
+            </CardContent>
+          </Card>
+
+          {/* Additional Details */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Trans>Additional Details</Trans>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <View className="gap-5">
+                <View className="gap-2">
+                  <Text className="text-sm font-medium text-foreground">
+                    <Trans>Definition</Trans>
+                  </Text>
+                  <Controller
+                    control={control}
+                    name="definition"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <Input
+                        style={{ textAlign: "right" }}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value ?? ""}
+                        placeholder={t`Arabic definition`}
+                        multiline
+                        numberOfLines={3}
+                      />
+                    )}
+                  />
+                </View>
+
+                {showRootField && (
                   <View className="gap-2">
-                    <Text className="text-sm font-medium leading-none text-foreground">
-                      <Trans>Word</Trans> *
+                    <Text className="text-sm font-medium text-foreground">
+                      <Trans>Root Letters</Trans>
                     </Text>
                     <Controller
                       control={control}
-                      name="word"
+                      name="root"
                       render={({ field: { onChange, onBlur, value } }) => (
                         <Input
-                          className="w-full"
                           style={{ textAlign: "right" }}
                           onBlur={onBlur}
                           onChangeText={onChange}
-                          value={value}
+                          value={value ?? ""}
+                          placeholder={t`e.g. ك ت ب`}
                         />
                       )}
                     />
-                    {errors.word && (
-                      <Text className="text-sm text-red-500">
-                        {errors.word.message}
+                    <Text className="text-xs text-muted-foreground">
+                      <Trans>Separate letters with spaces or commas</Trans>
+                    </Text>
+                  </View>
+                )}
+
+                {/* Examples */}
+                <View className="gap-3">
+                  <Text className="text-sm font-medium text-foreground">
+                    <Trans>Examples</Trans>
+                  </Text>
+                  {exampleFields.map((field, index) => (
+                    <View
+                      key={field.id}
+                      className="p-3 rounded-lg border border-border bg-muted/20"
+                    >
+                      <View className="flex-row justify-between items-center mb-2">
+                        <Text className="text-sm text-muted-foreground">
+                          <Trans>Example {index + 1}</Trans>
+                        </Text>
+                        <Pressable
+                          onPress={() => removeExample(index)}
+                          className="p-1"
+                        >
+                          <X
+                            size={16}
+                            color={
+                              colors.destructive
+                            }
+                          />
+                        </Pressable>
+                      </View>
+                      <View className="gap-3">
+                        <Controller
+                          control={control}
+                          name={`examples.${index}.sentence`}
+                          render={({ field: { onChange, onBlur, value } }) => (
+                            <Input
+                              style={{ textAlign: "right" }}
+                              onBlur={onBlur}
+                              onChangeText={onChange}
+                              value={value}
+                              placeholder={t`Arabic sentence`}
+                            />
+                          )}
+                        />
+                        <Controller
+                          control={control}
+                          name={`examples.${index}.translation`}
+                          render={({ field: { onChange, onBlur, value } }) => (
+                            <Input
+                              onBlur={onBlur}
+                              onChangeText={onChange}
+                              value={value ?? ""}
+                              placeholder={t`English translation`}
+                            />
+                          )}
+                        />
+                      </View>
+                    </View>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() =>
+                      appendExample({ sentence: "", translation: "" })
+                    }
+                  >
+                    <Plus
+                      size={14}
+                      color={colors.foreground}
+                    />
+                    <Text className="text-foreground ml-1">
+                      <Trans>Add Example</Trans>
+                    </Text>
+                  </Button>
+                </View>
+
+                {/* Antonyms */}
+                {showAntonyms && (
+                  <View className="gap-3">
+                    <Text className="text-sm font-medium text-foreground">
+                      <Trans>Antonyms</Trans>
+                    </Text>
+                    {antonymFields.map((field, index) => (
+                      <View
+                        key={field.id}
+                        className="flex-row items-center gap-2"
+                      >
+                        <View className="flex-1">
+                          <Controller
+                            control={control}
+                            name={`antonyms.${index}.word`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                style={{ textAlign: "right" }}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value ?? ""}
+                                placeholder={t`Antonym word`}
+                              />
+                            )}
+                          />
+                        </View>
+                        <Pressable
+                          onPress={() => removeAntonym(index)}
+                          className="p-2"
+                        >
+                          <X
+                            size={16}
+                            color={
+                              colors.destructive
+                            }
+                          />
+                        </Pressable>
+                      </View>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onPress={() => appendAntonym({ word: "" })}
+                    >
+                      <Plus
+                        size={14}
+                        color={colors.foreground}
+                      />
+                      <Text className="text-foreground ml-1">
+                        <Trans>Add Antonym</Trans>
                       </Text>
-                    )}
+                    </Button>
+                  </View>
+                )}
+              </View>
+            </CardContent>
+          </Card>
+
+          {/* Morphology for Ism */}
+          {showMorphology && wordType === "ism" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <Trans>Noun Morphology</Trans>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <View className="gap-5">
+                  <View className="flex-row gap-3">
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Singular</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.ism.singular"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <Input
+                            style={{ textAlign: "right" }}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value ?? ""}
+                          />
+                        )}
+                      />
+                    </View>
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Dual</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.ism.dual"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <Input
+                            style={{ textAlign: "right" }}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value ?? ""}
+                          />
+                        )}
+                      />
+                    </View>
                   </View>
 
-                  <View className="gap-2">
-                    <Text className="text-sm font-medium leading-none text-foreground">
-                      <Trans>Translation</Trans> *
+                  {/* Plurals */}
+                  <View className="gap-3">
+                    <Text className="text-sm font-medium text-foreground">
+                      <Trans>Plurals</Trans>
                     </Text>
-                    <Controller
-                      control={control}
-                      name="translation"
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <Input
-                          className="w-full"
-                          onBlur={onBlur}
-                          onChangeText={onChange}
-                          value={value}
-                        />
-                      )}
-                    />
-                    {errors.translation && (
-                      <Text className="text-sm text-red-500">
-                        {errors.translation.message}
+                    {pluralFields.map((field, index) => (
+                      <View
+                        key={field.id}
+                        className="flex-row items-center gap-2"
+                      >
+                        <View className="flex-1">
+                          <Controller
+                            control={control}
+                            name={`morphology.ism.plurals.${index}.word`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                style={{ textAlign: "right" }}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                placeholder={t`Plural form`}
+                              />
+                            )}
+                          />
+                        </View>
+                        <Pressable
+                          onPress={() => removePlural(index)}
+                          className="p-2"
+                        >
+                          <X
+                            size={16}
+                            color={
+                              colors.destructive
+                            }
+                          />
+                        </Pressable>
+                      </View>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onPress={() => appendPlural({ word: "" })}
+                    >
+                      <Plus
+                        size={14}
+                        color={colors.foreground}
+                      />
+                      <Text className="text-foreground ml-1">
+                        <Trans>Add Plural</Trans>
                       </Text>
-                    )}
-                    <Text className="text-sm text-muted-foreground">
-                      <Trans>An English translation of the word.</Trans>
-                    </Text>
+                    </Button>
+                  </View>
+
+                  <View className="flex-row gap-3">
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Gender</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.ism.gender"
+                        render={({ field: { onChange, value } }) => (
+                          <SelectDropdown
+                            value={value}
+                            options={GENDERS}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    </View>
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Inflection</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.ism.inflection"
+                        render={({ field: { onChange, value } }) => (
+                          <SelectDropdown
+                            value={value}
+                            options={INFLECTIONS}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    </View>
                   </View>
                 </View>
               </CardContent>
             </Card>
-          </View>
+          )}
 
-          <View className="flex flex-row self-center items-center gap-2">
-            <Button variant="outline" size="sm" onPress={() => router.back()}>
-              <Trans>Discard</Trans>
+          {/* Morphology for Verb */}
+          {showMorphology && wordType === "fi'l" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <Trans>Verb Morphology</Trans>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <View className="gap-5">
+                  <View className="flex-row gap-3">
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Past Tense</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.verb.past_tense"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <Input
+                            style={{ textAlign: "right" }}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value ?? ""}
+                          />
+                        )}
+                      />
+                    </View>
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Present Tense</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.verb.present_tense"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <Input
+                            style={{ textAlign: "right" }}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value ?? ""}
+                          />
+                        )}
+                      />
+                    </View>
+                  </View>
+
+                  <View className="flex-row gap-3">
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Imperative</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.verb.imperative"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <Input
+                            style={{ textAlign: "right" }}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value ?? ""}
+                          />
+                        )}
+                      />
+                    </View>
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Form</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.verb.form"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <Input
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value ?? ""}
+                            placeholder="I, II, III..."
+                          />
+                        )}
+                      />
+                    </View>
+                  </View>
+
+                  <View className="flex-row gap-3">
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Active Participle</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.verb.active_participle"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <Input
+                            style={{ textAlign: "right" }}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value ?? ""}
+                          />
+                        )}
+                      />
+                    </View>
+                    <View className="flex-1 gap-2">
+                      <Text className="text-sm font-medium text-foreground">
+                        <Trans>Passive Participle</Trans>
+                      </Text>
+                      <Controller
+                        control={control}
+                        name="morphology.verb.passive_participle"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <Input
+                            style={{ textAlign: "right" }}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value ?? ""}
+                          />
+                        )}
+                      />
+                    </View>
+                  </View>
+
+                  {/* Masadir (Verbal Nouns) */}
+                  <View className="gap-3">
+                    <Text className="text-sm font-medium text-foreground">
+                      <Trans>Verbal Nouns (Masadir)</Trans>
+                    </Text>
+                    {masadirFields.map((field, index) => (
+                      <View
+                        key={field.id}
+                        className="flex-row items-center gap-2"
+                      >
+                        <View className="flex-1">
+                          <Controller
+                            control={control}
+                            name={`morphology.verb.masadir.${index}.word`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                style={{ textAlign: "right" }}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                placeholder={t`Masdar`}
+                              />
+                            )}
+                          />
+                        </View>
+                        <Pressable
+                          onPress={() => removeMasdar(index)}
+                          className="p-2"
+                        >
+                          <X
+                            size={16}
+                            color={
+                              colors.destructive
+                            }
+                          />
+                        </Pressable>
+                      </View>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onPress={() => appendMasdar({ word: "" })}
+                    >
+                      <Plus
+                        size={14}
+                        color={colors.foreground}
+                      />
+                      <Text className="text-foreground ml-1">
+                        <Trans>Add Masdar</Trans>
+                      </Text>
+                    </Button>
+                  </View>
+
+                  {/* Huroof (Prepositions) */}
+                  <View className="gap-3">
+                    <Text className="text-sm font-medium text-foreground">
+                      <Trans>Prepositions (Huroof)</Trans>
+                    </Text>
+                    {huroofFields.map((field, index) => (
+                      <View
+                        key={field.id}
+                        className="p-3 rounded-lg border border-border bg-muted/20"
+                      >
+                        <View className="flex-row justify-between items-center mb-2">
+                          <Text className="text-sm text-muted-foreground">
+                            <Trans>Harf {index + 1}</Trans>
+                          </Text>
+                          <Pressable
+                            onPress={() => removeHarf(index)}
+                            className="p-1"
+                          >
+                            <X
+                              size={16}
+                              color={
+                                colors.destructive
+                              }
+                            />
+                          </Pressable>
+                        </View>
+                        <View className="gap-3">
+                          <Controller
+                            control={control}
+                            name={`morphology.verb.huroof.${index}.harf`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                style={{ textAlign: "right" }}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                placeholder={t`Preposition`}
+                              />
+                            )}
+                          />
+                          <Controller
+                            control={control}
+                            name={`morphology.verb.huroof.${index}.meaning`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value ?? ""}
+                                placeholder={t`Meaning with this preposition`}
+                              />
+                            )}
+                          />
+                        </View>
+                      </View>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onPress={() => appendHarf({ harf: "", meaning: "" })}
+                    >
+                      <Plus
+                        size={14}
+                        color={colors.foreground}
+                      />
+                      <Text className="text-foreground ml-1">
+                        <Trans>Add Harf</Trans>
+                      </Text>
+                    </Button>
+                  </View>
+                </View>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Tags */}
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Trans>Tags</Trans>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Controller
+                control={control}
+                name="tags"
+                render={({ field: { onChange, value } }) => (
+                  <TagsInput value={value} onChange={onChange} />
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <View className="flex-row justify-center items-center gap-3 pt-2">
+            <Button variant="outline" onPress={() => router.back()}>
+              <Trans>Cancel</Trans>
             </Button>
-
             <Button
               variant="default"
-              size="sm"
               onPress={() => handleSubmit(onSubmit)()}
-              disabled={isSubmitting}
+              disabled={isSubmitting || addWordMutation.isPending}
             >
-              <Trans>Save</Trans>
+              {addWordMutation.isPending ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Trans>Save</Trans>
+              )}
             </Button>
           </View>
         </View>
       </View>
-    </Page>
+    </ScrollView>
   );
 }

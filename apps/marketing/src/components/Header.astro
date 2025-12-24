@@ -1,0 +1,155 @@
+---
+import { t, getLocalizedPath, getAlternateLocale, type Locale } from '../i18n';
+import ThemeToggle from './ThemeToggle';
+
+interface Props {
+  locale: Locale;
+  hideLanguageSwitcher?: boolean;
+}
+
+const { locale, hideLanguageSwitcher = false } = Astro.props;
+const alternateLocale = getAlternateLocale(locale);
+
+const navItems = [
+  { label: t(locale, 'nav.home'), href: getLocalizedPath('', locale) },
+  { label: t(locale, 'nav.blog'), href: getLocalizedPath('blog', locale) },
+];
+
+// Get current path for language switcher
+const currentPath = Astro.url.pathname;
+const alternatePath = locale === 'en'
+  ? `/ar${currentPath}`
+  : currentPath.replace(/^\/ar/, '') || '/';
+
+---
+
+<header transition:name="main-header" class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <!-- Logo -->
+    <a href={getLocalizedPath('', locale)} class="flex items-center gap-2">
+      <img src="/favicon.svg" alt={t(locale, 'logo')} class="h-8 w-8" />
+      <span class="text-xl font-bold">{t(locale, 'logo')}</span>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="hidden items-center gap-6 md:flex">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-2 sm:gap-4">
+      <!-- Theme Toggle -->
+      <ThemeToggle client:only="react" />
+
+      <!-- Language Switcher -->
+      {!hideLanguageSwitcher && (
+        <a
+          href={alternatePath}
+          class="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        >
+          {alternateLocale === 'ar' ? 'العربية' : 'English'}
+        </a>
+      )}
+
+      <!-- CTA Button -->
+      <a
+        href="https://bahar.dev"
+        class="hidden rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:inline-flex"
+      >
+        {t(locale, 'nav.getStarted')}
+      </a>
+
+      <!-- Mobile Menu Button -->
+      <button
+        type="button"
+        class="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-foreground md:hidden"
+        aria-label="Open menu"
+        id="mobile-menu-button"
+      >
+        <div class="relative h-6 w-6">
+          <!-- Hamburger lines that animate to X -->
+          <span class="hamburger-line absolute left-0 top-1 h-0.5 w-6 bg-current transition-all duration-300"></span>
+          <span class="hamburger-line absolute left-0 top-[11px] h-0.5 w-6 bg-current transition-all duration-300"></span>
+          <span class="hamburger-line absolute left-0 bottom-1 h-0.5 w-6 bg-current transition-all duration-300"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out border-t border-border md:hidden">
+    <div class="overflow-hidden">
+      <div class="space-y-1 px-4 py-3">
+      {navItems.map((item) => (
+        <a
+          href={item.href}
+          class="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
+        >
+          {item.label}
+        </a>
+      ))}
+      <a
+        href="https://bahar.dev"
+        class="block rounded-md bg-primary px-3 py-2 text-center text-base font-medium text-primary-foreground"
+      >
+        {t(locale, 'nav.getStarted')}
+      </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  function initMobileMenu() {
+    const button = document.getElementById('mobile-menu-button');
+    const menu = document.getElementById('mobile-menu');
+
+    if (!button || !menu) return;
+
+    // Remove existing listener by cloning the button
+    const newButton = button.cloneNode(true) as HTMLElement;
+    button.parentNode?.replaceChild(newButton, button);
+
+    const lines = newButton.querySelectorAll('.hamburger-line');
+    let isOpen = false;
+
+    newButton.addEventListener('click', () => {
+      isOpen = !isOpen;
+
+      // Animate hamburger to X
+      if (lines.length === 3) {
+        if (isOpen) {
+          lines[0].classList.add('translate-y-[7px]', 'rotate-45');
+          lines[1].classList.add('opacity-0', 'scale-0');
+          lines[2].classList.add('-translate-y-[7px]', '-rotate-45');
+        } else {
+          lines[0].classList.remove('translate-y-[7px]', 'rotate-45');
+          lines[1].classList.remove('opacity-0', 'scale-0');
+          lines[2].classList.remove('-translate-y-[7px]', '-rotate-45');
+        }
+      }
+
+      // Animate menu open/close
+      if (isOpen) {
+        menu.classList.remove('grid-rows-[0fr]');
+        menu.classList.add('grid-rows-[1fr]');
+      } else {
+        menu.classList.remove('grid-rows-[1fr]');
+        menu.classList.add('grid-rows-[0fr]');
+      }
+    });
+  }
+
+  // Initialize on DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', initMobileMenu);
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', initMobileMenu);
+</script>

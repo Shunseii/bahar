@@ -16,7 +16,6 @@ import { authClient } from "@/lib/auth-client";
 
 const Root = () => {
   const { t } = useLingui();
-
   useDocumentTitle(t`Bahar`);
 
   useEffect(() => {

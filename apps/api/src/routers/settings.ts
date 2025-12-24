@@ -7,7 +7,6 @@ import {
 import { db } from "../db";
 import { nanoid } from "nanoid";
 import { getUserDbClient } from "../clients/turso";
-import { LogCategory, logger } from "../utils/logger";
 
 export const settingsRouter = router({
   get: protectedProcedure
@@ -54,44 +53,6 @@ export const settingsRouter = router({
         .returning();
 
       const result = results[0];
-
-      try {
-        const userDbClient = await getUserDbClient(user.id);
-
-        if (userDbClient) {
-          await userDbClient.execute({
-            sql: `INSERT INTO settings (id, show_reverse_flashcards, show_antonyms_in_flashcard)
-                  VALUES (?, ?, ?)
-                  ON CONFLICT(id) DO UPDATE SET
-                    show_reverse_flashcards = excluded.show_reverse_flashcards,
-                    show_antonyms_in_flashcard = excluded.show_antonyms_in_flashcard`,
-            args: [
-              result.id,
-              result.show_reverse_flashcards ? 1 : 0,
-              result.show_antonyms_in_flashcard,
-            ],
-          });
-
-          logger.info(
-            {
-              userId: user.id,
-              category: LogCategory.DATABASE,
-              event: "settings.dual_write.success",
-            },
-            "Successfully wrote settings to user DB",
-          );
-        }
-      } catch (err) {
-        logger.error(
-          {
-            err,
-            userId: user.id,
-            category: LogCategory.DATABASE,
-            event: "settings.dual_write.error",
-          },
-          "Failed to write settings to user DB",
-        );
-      }
 
       return result;
     }),

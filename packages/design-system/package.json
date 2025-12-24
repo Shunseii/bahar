@@ -5,15 +5,22 @@
   "license": "MIT",
   "main": "index.ts",
   "types": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./globals.css": "./globals.css",
+    "./colors.css": "./colors.css"
+  },
   "peerDependencies": {
     "clsx": "^2.1.0",
     "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
     "@bahar/typescript-config": "workspace:*",
-    "tailwindcss": "^3.4.17",
-    "tailwindcss-animate": "^1.0.7",
     "clsx": "^2.1.0",
-    "tailwind-merge": "^2.2.1"
+    "tailwind-merge": "^2.2.1",
+    "tailwindcss": "^4.1.7"
+  },
+  "dependencies": {
+    "tailwindcss-animate": "^1.0.7"
   }
 }

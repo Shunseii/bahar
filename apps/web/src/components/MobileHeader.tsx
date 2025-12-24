@@ -64,6 +64,12 @@ const DraggableSheetContent: typeof SheetContent = React.forwardRef(
             className={cn(sheetVariantsNoSlideAnimations({ side }), className)}
             {...props}
           >
+            <SheetPrimitive.Title className="sr-only">
+              <Trans>Menu</Trans>
+            </SheetPrimitive.Title>
+            <SheetPrimitive.Description className="sr-only">
+              <Trans>Navigation menu</Trans>
+            </SheetPrimitive.Description>
             {children}
 
             <button

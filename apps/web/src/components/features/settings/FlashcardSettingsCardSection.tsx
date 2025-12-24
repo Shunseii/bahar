@@ -26,8 +26,13 @@ import { z } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLingui } from "@lingui/react/macro";
 import { getQueryKey } from "@trpc/react-query";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { ensureDb } from "@/lib/db";
+import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
+import { settingsTable } from "@/lib/db/operations/settings";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
 
 const FormSchema = z.object({
   show_antonyms_in_flashcard: z.enum(["hidden", "answer", "hint"]).optional(),
@@ -36,16 +41,80 @@ const FormSchema = z.object({
 
 export const FlashcardSettingsCardSection = () => {
   const { t } = useLingui();
-  const { data } = trpc.settings.get.useQuery();
-  const { mutate } = trpc.settings.update.useMutation({
-    onSuccess: (serverData) => {
-      queryClient.setQueryData(
-        getQueryKey(trpc.settings.get, undefined, "query"),
-        serverData,
-      );
+  const { data } = useQuery({
+    queryFn: () => settingsTable.getSettings.query(),
+    ...settingsTable.getSettings.cacheOptions,
+  });
+  const { mutateAsync: updateSettingsRemote } =
+    trpc.settings.update.useMutation({
+      onSuccess: (serverData) => {
+        queryClient.setQueryData(
+          getQueryKey(trpc.settings.get, undefined, "query"),
+          serverData,
+        );
+      },
+    });
+
+  const { mutateAsync: updateSettingsLocal } = useMutation({
+    mutationFn: settingsTable.update.mutation,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: settingsTable.getSettings.cacheOptions.queryKey,
+      });
     },
   });
+
   const { toast } = useToast();
+  const [clearingProgress, setClearingProgress] = useState<{
+    total: number;
+    cleared: number;
+  } | null>(null);
+
+  const handleClearBacklog = useCallback(async () => {
+    try {
+      let lastProgress = { cleared: 0, total: 0 };
+
+      await enqueueDbOperation(async () => {
+        for await (const progress of flashcardsTable.clearBacklog.generator({
+          showReverse: data?.show_reverse_flashcards ?? false,
+        })) {
+          setClearingProgress(progress);
+          lastProgress = progress;
+        }
+      });
+
+      await enqueueSyncOperation(async () => {
+        const db = await ensureDb();
+        await db.push();
+        await db.checkpoint();
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: flashcardsTable.today.cacheOptions.queryKey,
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+      });
+
+      if (lastProgress.total === 0) {
+        toast({ title: t`No backlog cards to clear.` });
+      } else {
+        toast({
+          title: t`Backlog cleared!`,
+          description: t`${lastProgress.cleared} cards have been rescheduled.`,
+        });
+      }
+    } catch (err) {
+      toast({
+        title: t`Failed to clear backlog`,
+        description: t`There was an error clearing your backlog.`,
+      });
+    } finally {
+      setClearingProgress(null);
+    }
+  }, [data?.show_reverse_flashcards, t, toast]);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -58,20 +127,26 @@ export const FlashcardSettingsCardSection = () => {
     },
   });
 
-  const onSubmit = useCallback(async (data: z.infer<typeof FormSchema>) => {
-    try {
-      mutate(data);
+  const onSubmit = useCallback(
+    async (formData: z.infer<typeof FormSchema>) => {
+      try {
+        await Promise.all([
+          updateSettingsRemote(formData),
+          updateSettingsLocal({ updates: formData }),
+        ]);
 
-      toast({
-        title: t`Flashcard settings updated!`,
-      });
-    } catch (err) {
-      toast({
-        title: t`Failed to update flashcard settings.`,
-        description: t`There was an error updating your flashcard settings.`,
-      });
-    }
-  }, []);
+        toast({
+          title: t`Flashcard settings updated!`,
+        });
+      } catch (err) {
+        toast({
+          title: t`Failed to update flashcard settings.`,
+          description: t`There was an error updating your flashcard settings.`,
+        });
+      }
+    },
+    [updateSettingsRemote, updateSettingsLocal, t, toast],
+  );
 
   return (
     <Card>
@@ -176,6 +251,51 @@ export const FlashcardSettingsCardSection = () => {
             </Button>
           </form>
         </Form>
+
+        <div className="border-t pt-4 mt-4">
+          <div className="flex flex-col gap-3 rounded-lg border p-4">
+            <div className="flex flex-row items-center justify-between">
+              <div className="space-y-0.5">
+                <p className="text-sm font-medium">
+                  <Trans>Clear backlog</Trans>
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  <Trans>
+                    Reschedule all backlog cards by grading them as "Hard".
+                  </Trans>
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={handleClearBacklog}
+                disabled={!!clearingProgress}
+              >
+                <Trans>Clear</Trans>
+              </Button>
+            </div>
+
+            {clearingProgress && (
+              <div className="space-y-2">
+                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all duration-150"
+                    style={{
+                      width: `${
+                        (clearingProgress.cleared / clearingProgress.total) *
+                        100
+                      }%`,
+                    }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground text-center">
+                  <Trans>
+                    {clearingProgress.cleared} / {clearingProgress.total} cards
+                  </Trans>
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

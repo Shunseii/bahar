@@ -1,3 +1,76 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/**
+ * Mobile app styles with UniWind.
+ *
+ * NOTE: Colors are duplicated here because UniWind requires the @variant syntax
+ * which is incompatible with standard CSS imports. Keep in sync with:
+ * packages/design-system/colors.css
+ */
+
+@import "tailwindcss";
+@import "uniwind";
+
+@theme {
+  /* Border radius */
+  --radius-sm: 0.35rem;
+  --radius-md: 0.55rem;
+  --radius-lg: 0.75rem;
+
+  /* Font family */
+  --font-primary: 'Inter', 'Noto Naskh Arabic', sans-serif;
+}
+
+@layer theme {
+  :root {
+    @variant light {
+      --color-background: oklch(100% 0 0);
+      --color-foreground: oklch(14% 0.03 265);
+      --color-card: oklch(100% 0 0);
+      --color-card-foreground: oklch(14% 0.03 265);
+      --color-popover: oklch(100% 0 0);
+      --color-popover-foreground: oklch(14% 0.03 265);
+      --color-primary: oklch(56% 0.2 263);
+      --color-primary-foreground: oklch(98.5% 0.01 248);
+      --color-secondary: oklch(97% 0.014 248);
+      --color-secondary-foreground: oklch(21% 0.03 265);
+      --color-muted: oklch(97% 0.014 248);
+      --color-muted-foreground: oklch(52% 0.04 255);
+      --color-accent: oklch(97% 0.014 248);
+      --color-accent-foreground: oklch(21% 0.03 265);
+      --color-destructive: oklch(64% 0.21 27);
+      --color-destructive-foreground: oklch(98.5% 0.01 248);
+      --color-success: oklch(52% 0.14 151);
+      --color-success-foreground: oklch(98.5% 0.01 248);
+      --color-warning: oklch(69% 0.18 41);
+      --color-warning-foreground: oklch(21% 0.03 265);
+      --color-border: oklch(92% 0.02 253);
+      --color-input: oklch(92% 0.02 253);
+      --color-ring: oklch(56% 0.2 263);
+    }
+
+    @variant dark {
+      --color-background: oklch(14% 0.03 265);
+      --color-foreground: oklch(98.5% 0.01 248);
+      --color-card: oklch(14% 0.03 265);
+      --color-card-foreground: oklch(98.5% 0.01 248);
+      --color-popover: oklch(14% 0.03 265);
+      --color-popover-foreground: oklch(98.5% 0.01 248);
+      --color-primary: oklch(64% 0.2 260);
+      --color-primary-foreground: oklch(21% 0.03 265);
+      --color-secondary: oklch(25% 0.04 260);
+      --color-secondary-foreground: oklch(98.5% 0.01 248);
+      --color-muted: oklch(25% 0.04 260);
+      --color-muted-foreground: oklch(70% 0.035 255);
+      --color-accent: oklch(25% 0.04 260);
+      --color-accent-foreground: oklch(98.5% 0.01 248);
+      --color-destructive: oklch(40% 0.14 27);
+      --color-destructive-foreground: oklch(98.5% 0.01 248);
+      --color-success: oklch(60% 0.15 151);
+      --color-success-foreground: oklch(21% 0.03 265);
+      --color-warning: oklch(74% 0.18 56);
+      --color-warning-foreground: oklch(21% 0.03 265);
+      --color-border: oklch(25% 0.04 260);
+      --color-input: oklch(25% 0.04 260);
+      --color-ring: oklch(52% 0.19 267);
+    }
+  }
+}

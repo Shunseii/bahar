@@ -15,9 +15,11 @@ export const router = createRouter({
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   environment: import.meta.env.VITE_SENTRY_ENV,
+  enableLogs: true,
   integrations: [
     Sentry.tanstackRouterBrowserTracingIntegration(router),
     Sentry.replayIntegration(),
+    Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],
 
   // Setting a sample rate is required for sending performance data.
