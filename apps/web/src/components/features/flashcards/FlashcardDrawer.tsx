@@ -392,11 +392,16 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const currentCard = cards[0] ?? null;
 
   const f = useMemo(() => fsrs({ enable_fuzz: true }), []);
-  const now = new Date();
 
-  const scheduling_cards = currentCard
-    ? f.repeat(convertFlashcardToFsrsCard(currentCard), now)
-    : undefined;
+  const schedulingData = useMemo(() => {
+    if (!currentCard) return null;
+    const now = new Date();
+    const scheduling_cards = f.repeat(convertFlashcardToFsrsCard(currentCard), now);
+    return { scheduling_cards, now };
+  }, [currentCard, f]);
+
+  const scheduling_cards = schedulingData?.scheduling_cards;
+  const now = schedulingData?.now ?? new Date();
 
   const executeGrade = useCallback(
     async (grade: Grade) => {
@@ -722,7 +727,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <span className="text-xs text-muted-foreground">
                       {intlFormatDistance(
                         scheduling_cards[Rating.Again].card.due,
-                        new Date(),
+                        now,
                         { style: "narrow", locale },
                       )}
                     </span>
@@ -754,7 +759,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <span className="text-xs text-muted-foreground">
                       {intlFormatDistance(
                         scheduling_cards[Rating.Hard].card.due,
-                        new Date(),
+                        now,
                         { style: "narrow", locale },
                       )}
                     </span>
@@ -786,7 +791,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <span className="text-xs text-muted-foreground">
                       {intlFormatDistance(
                         scheduling_cards[Rating.Good].card.due,
-                        new Date(),
+                        now,
                         { style: "narrow", locale },
                       )}
                     </span>
@@ -818,7 +823,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <span className="text-xs text-muted-foreground">
                       {intlFormatDistance(
                         scheduling_cards[Rating.Easy].card.due,
-                        new Date(),
+                        now,
                         { style: "narrow", locale },
                       )}
                     </span>
