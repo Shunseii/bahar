@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@bahar/schemas";
+import { FormSchema } from "@/lib/schemas/dictionary";
 import { useLingui } from "@lingui/react/macro";
 import { InfoIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";

@@ -22,13 +22,12 @@ import {
   MorphologyFormSection,
   CategoryFormSection,
 } from "@/components/features/dictionary/add";
-import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
 import { useLingui } from "@lingui/react/macro";
 import { useEffect } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { FormSchema } from "@bahar/schemas";
+import { FormSchema } from "@/lib/schemas/dictionary";
 import { useAddDictionaryEntry } from "@/hooks/db";
 
 const Breadcrumbs = ({ className }: { className?: string }) => {
@@ -81,7 +80,6 @@ const BackButton = () => {
 };
 
 const Add = () => {
-  const { mutateAsync: addWord } = trpc.dictionary.addWord.useMutation();
   const { addDictionaryEntry } = useAddDictionaryEntry();
 
   const { toast } = useToast();
@@ -154,11 +152,7 @@ const Add = () => {
         }
       })();
 
-      await Promise.all([
-        addWord(wordData),
-        // TODO: type shouldnt be optional
-        addDictionaryEntry({ word: { ...wordData, type: data.type ?? "ism" } }),
-      ]);
+      await addDictionaryEntry({ word: { ...wordData, type: data.type ?? "ism" } });
 
       toast({
         title: t`Successfully added word!`,

@@ -35,9 +35,6 @@ const EnvironmentVariablesSchema = z.object({
   TURSO_ORG_SLUG: z.string(),
   TURSO_DB_GROUP: z.string(),
 
-  MEILISEARCH_HOST: z.string().url(),
-  MEILISEARCH_API_KEY: z.string().min(1),
-
   BETTER_AUTH_SECRET: z.string().min(1),
 
   SENTRY_DSN: z.string().min(1),

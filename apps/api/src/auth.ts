@@ -12,7 +12,6 @@ import { sendMail } from "./clients/mail";
 import { getAllowedDomains } from "./utils";
 import { config } from "./utils/config";
 import { redisClient } from "./clients/redis";
-import { createUserIndex } from "./clients/meilisearch";
 import { LogCategory, logger } from "./utils/logger";
 import { expo } from "@better-auth/expo";
 import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
@@ -378,8 +377,6 @@ export const auth = betterAuth({
             },
             "Created user.",
           );
-
-          await createUserIndex(user.id);
 
           await setUpUserDb(user.id);
         },

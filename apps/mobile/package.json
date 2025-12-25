@@ -80,7 +80,6 @@
     "@bahar/fsrs": "workspace:*",
     "@bahar/i18n": "workspace:*",
     "@bahar/result": "workspace:*",
-    "@bahar/schemas": "workspace:*",
     "@bahar/search": "workspace:*",
     "@lingui/babel-plugin-lingui-macro": "^5.3.2",
     "@lingui/cli": "^5.3.2",

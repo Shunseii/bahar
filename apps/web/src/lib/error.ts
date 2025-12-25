@@ -1,5 +1,5 @@
 import { t } from "@lingui/core/macro";
-import { FormSchema as DictionarySchema } from "@bahar/schemas";
+import { FormSchema as DictionarySchema } from "@/lib/schemas/dictionary";
 import { type ZodError, type ZodIssue, z } from "zod";
 
 // TODO: after migrating fully to turso user dbs, use the
@@ -9,15 +9,12 @@ type ZodDictionaryError = ZodError<z.infer<typeof DictionarySchema>>;
 
 /**
  * Error codes used when importing a dictionary.
- *
- * TODO: reuse the ones from the api
  */
 export enum ImportErrorCode {
   INVALID_JSON = "invalid_json",
   VALIDATION_ERROR = "validation_error",
 }
 
-// TODO: resue the ones from the api
 export type ImportResponseError = {
   code: ImportErrorCode;
   error: ZodError<z.infer<typeof DictionarySchema>>;

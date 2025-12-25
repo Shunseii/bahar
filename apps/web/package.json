@@ -16,7 +16,6 @@
     "@lingui/detect-locale": "^5.3.2",
     "@lingui/macro": "^5.3.2",
     "@lingui/react": "^5.3.2",
-    "@meilisearch/instant-meilisearch": "^0.16.0",
     "@orama/highlight": "^0.1.9",
     "@orama/orama": "^3.1.16",
     "@orama/plugin-qps": "^3.1.16",
@@ -66,7 +65,6 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.56.1",
-    "react-instantsearch": "^7.15.6",
     "tailwind-merge": "^2.2.1",
     "ts-fsrs": "^4.5.1",
     "vaul": "^1.1.2",
@@ -77,7 +75,6 @@
     "@bahar/drizzle-user-db-schemas": "workspace:*",
     "@bahar/eslint-config": "workspace:*",
     "@bahar/i18n": "workspace:*",
-    "@bahar/schemas": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
     "@julr/vite-plugin-validate-env": "^1.2.0",
     "@lingui/cli": "^5.3.2",
@@ -100,6 +97,6 @@
     "typescript": "^5.8.3",
     "vite": "^5.4.0",
     "vite-plugin-pwa": "^0.20.1",
-    "wrangler": "^3.91.0"
+    "wrangler": "^4.54.0"
   }
 }

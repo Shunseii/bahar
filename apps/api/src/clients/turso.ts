@@ -226,7 +226,6 @@ const refreshAccessToken = async (
 
 /**
  * Gets a database client for a user's database, handling token refresh if needed.
- * This is used for dual-write operations during migration from global DB to user DBs.
  *
  * @param userId - The user ID to get the database client for
  * @returns The database client or null if the user doesn't have a database yet

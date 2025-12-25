@@ -36,7 +36,6 @@ import { decksTable } from "../../lib/db/operations/decks";
 import { FlashcardCard } from "./FlashcardCard";
 import { GradeButtons, ShowAnswerButton } from "./GradeButtons";
 import { GradeFeedback } from "./GradeFeedback";
-import { trpcClient } from "../../utils/trpc";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 
 interface FlashcardReviewProps {
@@ -93,15 +92,6 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       });
     },
   });
-
-  // Mutation for API sync (dual write)
-  const updateFlashcardRemote = async (flashcard: Parameters<typeof trpcClient.flashcard.update.mutate>[0]) => {
-    try {
-      await trpcClient.flashcard.update.mutate(flashcard);
-    } catch (error) {
-      console.warn("Failed to sync flashcard to remote:", error);
-    }
-  };
 
   const currentCard = cards[0] ?? null;
   const totalHits = cards.length;
@@ -188,28 +178,6 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
     await updateFlashcardLocal({
       id: currentCard.id,
       updates,
-    });
-
-    // Sync to remote (fire and forget)
-    const selectedCard = schedulingCards[grade].card;
-    updateFlashcardRemote({
-      flashcard: {
-        due: selectedCard.due.toISOString(),
-        last_review: selectedCard.last_review?.toISOString() ?? null,
-        due_timestamp: Math.floor(selectedCard.due.getTime() / 1000),
-        last_review_timestamp: selectedCard.last_review
-          ? Math.floor(selectedCard.last_review.getTime() / 1000)
-          : null,
-        difficulty: selectedCard.difficulty,
-        stability: selectedCard.stability,
-        reps: selectedCard.reps,
-        lapses: selectedCard.lapses,
-        elapsed_days: selectedCard.elapsed_days,
-        scheduled_days: selectedCard.scheduled_days,
-        state: selectedCard.state,
-      },
-      id: currentCard.id,
-      reverse: currentCard.direction === "reverse",
     });
   }, [schedulingCards, currentCard, pendingGrade, scheduler, updateFlashcardLocal]);
 

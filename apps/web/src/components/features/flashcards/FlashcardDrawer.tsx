@@ -23,7 +23,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { RouterOutput, trpc } from "@/lib/trpc";
 import { queryClient } from "@/lib/query";
 import { motion, AnimatePresence } from "motion/react";
 import { useDir } from "@/hooks/useDir";
@@ -96,7 +95,6 @@ interface FlashcardDrawerProps extends PropsWithChildren {
   queueCounts?: { regular: number; backlog: number };
 }
 
-export type Flashcard = RouterOutput["flashcard"]["today"]["flashcards"][0];
 
 const GradeFeedback: FC<{
   grade: Grade | null;
@@ -319,54 +317,8 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       selectedQueue,
     ],
   });
-  const { mutateAsync: updateFlashcard } = trpc.flashcard.update.useMutation({
-    // TODO: Remove this with dual write logic
-    // onMutate: async (updatedCard) => {
-    //   const todayQueryKey = getQueryKey(
-    //     trpc.flashcard.today,
-    //     { filters, show_reverse },
-    //     "query",
-    //   );
-    //
-    //   await queryClient.cancelQueries({
-    //     queryKey: todayQueryKey,
-    //     exact: false,
-    //   });
-    //
-    //   // TODO: when you have 101 cards, grading the next one will cause the
-    //   // number to be off by one until the server response comes back.
-    //   // This is due to the optimistic update.
-    //
-    //   queryClient.setQueryData(todayQueryKey, (old: typeof data) => ({
-    //     total_hits: (old?.length ?? 0) - 1,
-    //     flashcards:
-    //       old?.filter(
-    //         (card) =>
-    //           card.id !== updatedCard.id ||
-    //           (card.direction === "reverse") !== updatedCard.reverse,
-    //       ) ?? [],
-    //   }));
-    // },
-    // onSettled: async () => {
-    //   const todayQueryKey = getQueryKey(
-    //     trpc.flashcard.today,
-    //     undefined,
-    //     "query",
-    //   );
-    //   const deckListQueryKey = getQueryKey(trpc.decks.list, undefined, "query");
-    //
-    //   await queryClient.invalidateQueries({
-    //     queryKey: deckListQueryKey,
-    //   });
-    //
-    //   await queryClient.invalidateQueries({
-    //     queryKey: todayQueryKey,
-    //     exact: false,
-    //   });
-    // },
-  });
 
-  const { mutateAsync: updateFlashcardLocal } = useMutation({
+  const { mutateAsync: updateFlashcard } = useMutation({
     mutationFn: flashcardsTable.update.mutation,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -446,18 +398,12 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       setShowAnswer(false);
       setCards((prev) => prev.filter((c) => c.id !== currentCard.id));
 
-      updateFlashcard({
-        flashcard: newCard,
-        id: newCard.id,
-        reverse: currentCard.direction === "reverse",
-      });
-
-      await updateFlashcardLocal({
+      await updateFlashcard({
         id: currentCard.id,
         updates: localUpdates,
       });
     },
-    [currentCard, scheduling_cards, updateFlashcard, updateFlashcardLocal],
+    [currentCard, scheduling_cards, updateFlashcard],
   );
 
   const gradeCard = useCallback(

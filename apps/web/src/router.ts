@@ -31,7 +31,6 @@ Sentry.init({
   tracePropagationTargets: [
     new RegExp("^/"), // Match all local routes
     new RegExp(`^${import.meta.env.VITE_API_BASE_URL}`),
-    new RegExp(`^${import.meta.env.VITE_MEILISEARCH_API_URL}`),
   ],
 
   // Capture Replay for 10% of all sessions,
