@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/table";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { MoreHorizontal, Plus } from "lucide-react";
-import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { queryClient } from "@/lib/query";
 import { useToast } from "@/hooks/useToast";
 import { Page } from "@/components/Page";

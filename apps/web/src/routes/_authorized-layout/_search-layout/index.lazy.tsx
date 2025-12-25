@@ -7,7 +7,7 @@ import { ArrowUp, PlusIcon, GraduationCap, BookOpen } from "lucide-react";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { cn } from "@bahar/design-system";
 import { Page, itemVariants } from "@/components/Page";
-import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
