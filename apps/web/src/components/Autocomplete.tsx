@@ -103,7 +103,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
           (tags.length > 0 || (tags.length === 0 && allowAdd)) && (
             <div
               ref={dropdownRef}
-              className="absolute top-12 rounded-lg right-0 left-0 bg-background border-2 border-border max-h-[164px] overflow-y-scroll"
+              className="absolute top-12 rounded-lg right-0 left-0 bg-background border-2 border-border max-h-[164px] overflow-y-auto"
             >
               {(() => {
                 if (isSearching) {
