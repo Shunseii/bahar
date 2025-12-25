@@ -35,7 +35,7 @@ import { updateSearchIndex, removeFromSearchIndex } from "@/lib/search";
 import { queryClient } from "@/utils/trpc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-z.setErrorMap(errorMap);
+z.config({ customError: errorMap });
 
 type FormData = z.infer<typeof FormSchema>;
 

@@ -43,6 +43,7 @@ export const toFsrsCard = (
     reps: flashcard.reps ?? 0,
     lapses: flashcard.lapses ?? 0,
     state: (flashcard.state ?? FlashcardState.NEW) as State,
+    learning_steps: flashcard.learning_steps ?? 0,
     last_review: flashcard.last_review
       ? new Date(flashcard.last_review)
       : undefined,
@@ -69,6 +70,7 @@ export const fromFsrsCard = (
     lapses: card.lapses,
     last_review: card.last_review?.toISOString() ?? null,
     last_review_timestamp_ms: lastReviewTimestampMs,
+    learning_steps: card.learning_steps,
     reps: card.reps,
     scheduled_days: card.scheduled_days,
     stability: card.stability,
@@ -131,6 +133,7 @@ export const gradeFlashcard = (
   | "lapses"
   | "elapsed_days"
   | "scheduled_days"
+  | "learning_steps"
 > => {
   const fsrsCard = toFsrsCard(flashcard);
   const scheduling = scheduler.repeat(fsrsCard, now);
@@ -151,5 +154,6 @@ export const gradeFlashcard = (
     lapses: selectedCard.lapses,
     elapsed_days: selectedCard.elapsed_days,
     scheduled_days: selectedCard.scheduled_days,
+    learning_steps: selectedCard.learning_steps,
   };
 };

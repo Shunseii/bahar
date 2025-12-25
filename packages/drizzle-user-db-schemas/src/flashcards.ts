@@ -30,6 +30,7 @@ export const flashcards = sqliteTable(
     lapses: integer("lapses").default(0),
     last_review: text("last_review"),
     last_review_timestamp_ms: integer("last_review_timestamp_ms"),
+    learning_steps: integer("learning_steps").default(0),
     reps: integer("reps").default(0),
     scheduled_days: integer("scheduled_days").default(0),
     stability: real("stability").default(0),

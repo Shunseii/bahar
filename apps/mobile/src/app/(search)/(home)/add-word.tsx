@@ -31,11 +31,11 @@ import { toast } from "sonner-native";
 import { t } from "@lingui/core/macro";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { addToSearchIndex } from "@/lib/search";
-import { queryClient, trpcClient } from "@/utils/trpc";
+import { queryClient } from "@/utils/trpc";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-z.setErrorMap(errorMap);
+z.config({ customError: errorMap });
 
 type FormData = z.infer<typeof FormSchema>;
 
@@ -69,10 +69,7 @@ const Breadcrumbs = () => {
             <Trans>Home</Trans>
           </Text>
         </Pressable>
-        <ChevronRight
-          size={14}
-          color={colors.mutedForeground}
-        />
+        <ChevronRight size={14} color={colors.mutedForeground} />
         <Text className="text-sm font-normal text-foreground">
           <Trans>Add word</Trans>
         </Text>
@@ -90,15 +87,9 @@ const BackButton = () => {
   return (
     <Button variant="outline" size="icon" onPress={() => router.back()}>
       {dir === "rtl" ? (
-        <ChevronRight
-          size={16}
-          color={colors.foreground}
-        />
+        <ChevronRight size={16} color={colors.foreground} />
       ) : (
-        <ChevronLeft
-          size={16}
-          color={colors.foreground}
-        />
+        <ChevronLeft size={16} color={colors.foreground} />
       )}
     </Button>
   );
@@ -176,19 +167,10 @@ const SelectDropdown = ({
         onPress={() => setIsOpen(!isOpen)}
         className="flex-row items-center justify-between px-3 py-2.5 rounded-md border border-input bg-background"
       >
-        <Text
-          className={
-            value ? "text-foreground" : "text-muted-foreground"
-          }
-        >
-          {value
-            ? options.find((o) => o.value === value)?.label
-            : placeholder}
+        <Text className={value ? "text-foreground" : "text-muted-foreground"}>
+          {value ? options.find((o) => o.value === value)?.label : placeholder}
         </Text>
-        <ChevronDown
-          size={16}
-          color={colors.mutedForeground}
-        />
+        <ChevronDown size={16} color={colors.mutedForeground} />
       </Pressable>
       {isOpen && (
         <View className="mt-1 rounded-md border border-input bg-background overflow-hidden">
@@ -245,13 +227,6 @@ export default function AddWordScreen() {
       } catch (error) {
         console.warn("Failed to create flashcards:", error);
       }
-
-      trpcClient.dictionary.addWord
-        .mutate({
-          word: newEntry.word,
-          translation: newEntry.translation,
-        })
-        .catch((error) => console.warn("Failed to sync to remote:", error));
 
       await queryClient.invalidateQueries({
         queryKey: flashcardsTable.today.cacheOptions.queryKey,
@@ -534,12 +509,7 @@ export default function AddWordScreen() {
                           onPress={() => removeExample(index)}
                           className="p-1"
                         >
-                          <X
-                            size={16}
-                            color={
-                              colors.destructive
-                            }
-                          />
+                          <X size={16} color={colors.destructive} />
                         </Pressable>
                       </View>
                       <View className="gap-3">
@@ -578,10 +548,7 @@ export default function AddWordScreen() {
                       appendExample({ sentence: "", translation: "" })
                     }
                   >
-                    <Plus
-                      size={14}
-                      color={colors.foreground}
-                    />
+                    <Plus size={14} color={colors.foreground} />
                     <Text className="text-foreground ml-1">
                       <Trans>Add Example</Trans>
                     </Text>
@@ -620,12 +587,7 @@ export default function AddWordScreen() {
                           onPress={() => removeAntonym(index)}
                           className="p-2"
                         >
-                          <X
-                            size={16}
-                            color={
-                              colors.destructive
-                            }
-                          />
+                          <X size={16} color={colors.destructive} />
                         </Pressable>
                       </View>
                     ))}
@@ -634,10 +596,7 @@ export default function AddWordScreen() {
                       size="sm"
                       onPress={() => appendAntonym({ word: "" })}
                     >
-                      <Plus
-                        size={14}
-                        color={colors.foreground}
-                      />
+                      <Plus size={14} color={colors.foreground} />
                       <Text className="text-foreground ml-1">
                         <Trans>Add Antonym</Trans>
                       </Text>
@@ -726,12 +685,7 @@ export default function AddWordScreen() {
                           onPress={() => removePlural(index)}
                           className="p-2"
                         >
-                          <X
-                            size={16}
-                            color={
-                              colors.destructive
-                            }
-                          />
+                          <X size={16} color={colors.destructive} />
                         </Pressable>
                       </View>
                     ))}
@@ -740,10 +694,7 @@ export default function AddWordScreen() {
                       size="sm"
                       onPress={() => appendPlural({ word: "" })}
                     >
-                      <Plus
-                        size={14}
-                        color={colors.foreground}
-                      />
+                      <Plus size={14} color={colors.foreground} />
                       <Text className="text-foreground ml-1">
                         <Trans>Add Plural</Trans>
                       </Text>
@@ -941,12 +892,7 @@ export default function AddWordScreen() {
                           onPress={() => removeMasdar(index)}
                           className="p-2"
                         >
-                          <X
-                            size={16}
-                            color={
-                              colors.destructive
-                            }
-                          />
+                          <X size={16} color={colors.destructive} />
                         </Pressable>
                       </View>
                     ))}
@@ -955,10 +901,7 @@ export default function AddWordScreen() {
                       size="sm"
                       onPress={() => appendMasdar({ word: "" })}
                     >
-                      <Plus
-                        size={14}
-                        color={colors.foreground}
-                      />
+                      <Plus size={14} color={colors.foreground} />
                       <Text className="text-foreground ml-1">
                         <Trans>Add Masdar</Trans>
                       </Text>
@@ -983,12 +926,7 @@ export default function AddWordScreen() {
                             onPress={() => removeHarf(index)}
                             className="p-1"
                           >
-                            <X
-                              size={16}
-                              color={
-                                colors.destructive
-                              }
-                            />
+                            <X size={16} color={colors.destructive} />
                           </Pressable>
                         </View>
                         <View className="gap-3">
@@ -1029,10 +967,7 @@ export default function AddWordScreen() {
                       size="sm"
                       onPress={() => appendHarf({ harf: "", meaning: "" })}
                     >
-                      <Plus
-                        size={14}
-                        color={colors.foreground}
-                      />
+                      <Plus size={14} color={colors.foreground} />
                       <Text className="text-foreground ml-1">
                         <Trans>Add Harf</Trans>
                       </Text>

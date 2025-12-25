@@ -14,7 +14,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@better-auth/expo": "1.2.10",
+    "@better-auth/expo": "1.4.9",
     "@digitalartlab/expo-plugin-localization": "^3.0.0",
     "@expo/vector-icons": "^15.0.3",
     "@formatjs/intl-locale": "^4.2.11",
@@ -34,7 +34,7 @@
     "@trpc/react-query": "^11.4.3",
     "@trpc/server": "^11.4.3",
     "@trpc/tanstack-react-query": "^11.4.3",
-    "better-auth": "1.2.10",
+    "better-auth": "1.4.9",
     "class-variance-authority": "^0.7.0",
     "date-fns": "^3.6.0",
     "expo": "~54.0.25",
@@ -68,7 +68,7 @@
     "react-native-web": "~0.21.2",
     "react-native-webview": "13.15.0",
     "sonner-native": "^0.21.0",
-    "ts-fsrs": "^4.5.1",
+    "ts-fsrs": "^5.2.3",
     "uniwind": "^1.2.2",
     "zod": "4.0.17"
   },

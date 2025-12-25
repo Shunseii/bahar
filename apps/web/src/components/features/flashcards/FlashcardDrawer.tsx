@@ -68,6 +68,7 @@ const convertFlashcardToFsrsCard = (
     reps: flashcard.reps ?? 0,
     lapses: flashcard.lapses ?? 0,
     state: flashcard.state ?? FlashcardState.NEW,
+    learning_steps: flashcard.learning_steps ?? 0,
     last_review: flashcard.last_review
       ? new Date(flashcard.last_review)
       : undefined,
@@ -94,7 +95,6 @@ interface FlashcardDrawerProps extends PropsWithChildren {
   /** If provided, shows queue counts and allows switching between queues */
   queueCounts?: { regular: number; backlog: number };
 }
-
 
 const GradeFeedback: FC<{
   grade: Grade | null;
@@ -363,23 +363,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       if (!scheduling_cards || !currentCard) return;
 
       const selectedCard = scheduling_cards[grade].card;
-      const dueTimestamp = Math.floor(selectedCard.due.getTime() / 1000);
       const dueTimestampMs = selectedCard.due.getTime();
-      const lastReviewTimestamp = selectedCard?.last_review
-        ? Math.floor(selectedCard.last_review.getTime() / 1000)
-        : null;
       const lastReviewTimestampMs = selectedCard?.last_review
         ? selectedCard.last_review.getTime()
         : null;
-
-      const newCard = {
-        ...selectedCard,
-        id: currentCard.id,
-        due: selectedCard.due.toISOString(),
-        last_review: selectedCard?.last_review?.toISOString() ?? null,
-        due_timestamp: dueTimestamp,
-        last_review_timestamp: lastReviewTimestamp,
-      };
 
       const localUpdates = {
         due: selectedCard.due.toISOString(),
