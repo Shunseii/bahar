@@ -1,11 +1,11 @@
 import { t } from "@lingui/core/macro";
 import { FormSchema as DictionarySchema } from "@/lib/schemas/dictionary";
-import { type ZodError, type ZodIssue, z } from "zod";
+import { z } from "zod/v4";
 
 // TODO: after migrating fully to turso user dbs, use the
 // client-side type from the lib/db/import-export/v1 dir
 // and also add version-specific error-handling
-type ZodDictionaryError = ZodError<z.infer<typeof DictionarySchema>>;
+type ZodDictionaryError = z.ZodError<z.infer<typeof DictionarySchema>>;
 
 /**
  * Error codes used when importing a dictionary.
@@ -17,7 +17,7 @@ export enum ImportErrorCode {
 
 export type ImportResponseError = {
   code: ImportErrorCode;
-  error: ZodError<z.infer<typeof DictionarySchema>>;
+  error: z.ZodError<z.infer<typeof DictionarySchema>>;
 };
 
 /**
@@ -106,24 +106,24 @@ const formattedErrorMessage = ({
   err,
   prefix,
 }: {
-  err: ZodIssue;
+  err: z.core.$ZodIssue;
   prefix: string;
 }) => {
   switch (err.code) {
     case "invalid_type": {
       // Handle required field errors
-      if (err.received === "undefined") {
+      if (err.input === undefined) {
         return `${prefix}${t`Required field`}`;
       }
 
-      return `${prefix}${t`Invalid type. Expected ${err.expected}, received ${err.received}`}`;
+      return `${prefix}${t`Invalid type. Expected ${err.expected}`}`;
     }
-    case "invalid_enum_value":
-      return `${prefix}${t`Invalid value. Expected one of: ${err.options.join(
+    case "invalid_value":
+      return `${prefix}${t`Invalid value. Expected one of: ${err.values.join(
         ", ",
       )}`}`;
-    case "invalid_string":
-      if (err.validation === "datetime") {
+    case "invalid_format":
+      if (err.format === "datetime") {
         return `${prefix}${t`Invalid datetime format`}`;
       }
       return `${prefix}${t`Invalid string format`}`;

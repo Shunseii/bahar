@@ -9,12 +9,12 @@
     "drizzle:gen": "drizzle-kit generate"
   },
   "peerDependencies": {
-    "zod": "^3.24.1",
-    "drizzle-orm": "^0.36.4",
-    "drizzle-zod": "^0.5.1"
+    "zod": "4.0.17",
+    "drizzle-orm": "^0.45.1",
+    "drizzle-zod": "^0.8.3"
   },
   "devDependencies": {
     "@bahar/typescript-config": "workspace:*",
-    "drizzle-kit": "^0.28.1"
+    "drizzle-kit": "^0.31.8"
   }
 }

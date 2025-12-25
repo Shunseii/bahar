@@ -5,7 +5,7 @@ export default defineConfig({
   validator: "zod",
   schema: {
     NODE_ENV: z.enum(["development", "production"]).default("development"),
-    PORT: z.string().transform(Number).default("4000"),
+    PORT: z.string().default("4000").transform(Number),
 
     VITE_API_BASE_URL: z.string().optional(),
 

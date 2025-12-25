@@ -8,13 +8,13 @@
   "peerDependencies": {
     "@bahar/drizzle-user-db-schemas": "workspace:*",
     "@bahar/result": "workspace:*",
-    "zod": "^3.24.1"
+    "zod": "4.0.17"
   },
   "devDependencies": {
     "@bahar/drizzle-user-db-schemas": "workspace:*",
     "@bahar/result": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
-    "zod": "^3.24.1"
+    "zod": "4.0.17"
   },
   "dependencies": {
     "nanoid": "^5.0.7",
