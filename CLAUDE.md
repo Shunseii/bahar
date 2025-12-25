@@ -81,11 +81,9 @@ pnpm run --filter api drizzle:migrate
 
 ### Production Setup
 
-- Build and run production: `make prod`
 - Build production web app: `make build`
-- Run production containers: `docker compose -f docker-compose.prod.yaml up -d`
-- Serve production web app: `make serve`
-- Cleanup production environment: `make cleanup`
+- Serve production web app locally: `make serve`
+- Delete local data (databases): `make delete-local-data`
 
 ## Testing
 

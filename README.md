@@ -19,7 +19,7 @@ Bahar is an Arabic language learning application built as a monorepo using pnpm 
 3. Access the web app at `http://localhost:4000`
 4. Access the API at `http://localhost:3000`
 
-To run a production setup locally, use `make prod`.
+To build and serve the production web app locally, use `make build` followed by `make serve`.
 
 ## Projects
 

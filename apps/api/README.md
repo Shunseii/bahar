@@ -96,7 +96,7 @@ When working with a fresh local database, you need to manually seed the user dat
    pnpm run --filter api drizzle:migrate
    ```
 
-4. Create a new user through the web app (sign up flow)
+4. Create a new user through the web app (sign-up flow)
 
 5. Manually convert the user to an admin in the local database:
 
