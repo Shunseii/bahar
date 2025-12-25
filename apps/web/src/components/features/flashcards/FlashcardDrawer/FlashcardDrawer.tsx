@@ -2,6 +2,7 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { Tooltip, TooltipTrigger, TooltipContent } from "../../../ui/tooltip";
 import { Button } from "../../../ui/button";
+import { toFsrsCard } from "@bahar/fsrs";
 import { fsrs, Grade, Rating } from "ts-fsrs";
 import {
   Drawer,
@@ -39,7 +40,6 @@ import { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { cn } from "@bahar/design-system";
 import { Brain, Sparkles, PartyPopper, Archive } from "lucide-react";
 import { GradeOption } from "./GradeOption";
-import { convertFlashcardToFsrsCard } from "./utils";
 import { GradeFeedback } from "./GradeFeedback";
 import { TagBadgesList } from "./TagBadgesList";
 
@@ -134,10 +134,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const schedulingData = useMemo(() => {
     if (!currentCard) return null;
     const now = new Date();
-    const schedulingCards = f.repeat(
-      convertFlashcardToFsrsCard(currentCard),
-      now,
-    );
+    const schedulingCards = f.repeat(toFsrsCard(currentCard), now);
     return { schedulingCards, now };
   }, [currentCard, f]);
 

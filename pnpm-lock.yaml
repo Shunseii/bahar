@@ -452,6 +452,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@bahar/fsrs':
+        specifier: workspace:*
+        version: link:../../packages/fsrs
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.56.4)
