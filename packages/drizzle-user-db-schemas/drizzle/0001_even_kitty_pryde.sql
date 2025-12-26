@@ -1,0 +1,1 @@
+ALTER TABLE `flashcards` ADD `learning_steps` integer DEFAULT 0;

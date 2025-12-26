@@ -25,15 +25,12 @@ import { X } from "lucide-react";
 import { Autocomplete } from "../../Autocomplete";
 import { Label } from "../../ui/label";
 import { Checkbox } from "../../ui/checkbox";
-import { trpc } from "@/lib/trpc";
 import { useToast } from "@/hooks/useToast";
 import { queryClient } from "@/lib/query";
-import { getQueryKey } from "@trpc/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { decksTable } from "@/lib/db/operations/decks";
 
-// TODO: reuse schema from the api
 const DeckSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -47,7 +44,6 @@ const DeckSchema = z.object({
         .optional(),
       types: z.array(z.enum(["ism", "fi'l", "harf", "expression"])).optional(),
     })
-    // API has this as object | null type even though we use optional
     .nullable(),
   total_hits: z.number(),
   to_review: z.number(),
@@ -115,22 +111,7 @@ export const DeckDialogContent = ({
 }) => {
   const allTypes: Types[] = ["ism", "fi'l", "harf", "expression"];
 
-  const { mutateAsync: createDeck } = trpc.decks.create.useMutation({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [...getQueryKey(trpc.decks.list), { type: "query" }],
-      });
-    },
-  });
-  const { mutateAsync: updateDeck } = trpc.decks.update.useMutation({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [...getQueryKey(trpc.decks.list), { type: "query" }],
-      });
-    },
-  });
-
-  const { mutateAsync: createDeckLocal } = useMutation({
+  const { mutateAsync: createDeck } = useMutation({
     mutationFn: decksTable.create.mutation,
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -139,7 +120,7 @@ export const DeckDialogContent = ({
     },
   });
 
-  const { mutateAsync: updateDeckLocal } = useMutation({
+  const { mutateAsync: updateDeck } = useMutation({
     mutationFn: decksTable.update.mutation,
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -176,29 +157,16 @@ export const DeckDialogContent = ({
 
     try {
       if (isEditing) {
-        await Promise.all([
-          updateDeck({
-            id: deck.id,
-            name,
-            filters,
-          }),
-          updateDeckLocal({
-            id: deck.id,
-            updates: { name, filters },
-          }),
-        ]);
+        await updateDeck({
+          id: deck.id,
+          updates: { name, filters },
+        });
 
         toast({
           title: t`Deck successfully updated!`,
         });
       } else {
-        await Promise.all([
-          createDeck({
-            name,
-            filters,
-          }),
-          createDeckLocal({ deck: { name, filters } }),
-        ]);
+        await createDeck({ deck: { name, filters } });
 
         toast({
           title: t`Deck successfully created!`,

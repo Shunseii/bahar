@@ -12,7 +12,6 @@ import { sendMail } from "./clients/mail";
 import { getAllowedDomains } from "./utils";
 import { config } from "./utils/config";
 import { redisClient } from "./clients/redis";
-import { createUserIndex } from "./clients/meilisearch";
 import { LogCategory, logger } from "./utils/logger";
 import { expo } from "@better-auth/expo";
 import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
@@ -167,27 +166,14 @@ export const auth = betterAuth({
     disabled: true,
     level: "debug",
     log: (level, message, ...args) => {
-      // TODO: refactor this once the following PR has been addressed
-      // https://github.com/better-auth/better-auth/issues/1115
-      const ANSI_ESCAPE_REGEXP = new RegExp(String.raw`\u001b\[\d+m`);
-
-      /**
-       * Better auth passes us a formatted message but
-       * we just want the raw message since pino will
-       * handle formatting.
-       */
-      const unformattedMessage = message
-        ?.split?.("[Better Auth]:")?.[1]
-        ?.replace(ANSI_ESCAPE_REGEXP, "")
-        ?.trim();
-
       const mergedArgs = args.reduce((acc, curr) => ({ ...acc, ...curr }), {});
 
-      logger[level](mergedArgs, unformattedMessage);
+      logger[level](mergedArgs, message);
     },
   },
   secondaryStorage: {
     // TODO: add trace ids to these logs
+
     // Upstash client will automatically deserialize JSON strings
     get: async (key) => {
       logger.debug(
@@ -378,8 +364,6 @@ export const auth = betterAuth({
             },
             "Created user.",
           );
-
-          await createUserIndex(user.id);
 
           await setUpUserDb(user.id);
         },

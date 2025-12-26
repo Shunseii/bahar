@@ -21,11 +21,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/useToast";
 import { queryClient } from "@/lib/query";
-import { trpc } from "@/lib/trpc";
 import { z } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLingui } from "@lingui/react/macro";
-import { getQueryKey } from "@trpc/react-query";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -45,17 +43,8 @@ export const FlashcardSettingsCardSection = () => {
     queryFn: () => settingsTable.getSettings.query(),
     ...settingsTable.getSettings.cacheOptions,
   });
-  const { mutateAsync: updateSettingsRemote } =
-    trpc.settings.update.useMutation({
-      onSuccess: (serverData) => {
-        queryClient.setQueryData(
-          getQueryKey(trpc.settings.get, undefined, "query"),
-          serverData,
-        );
-      },
-    });
 
-  const { mutateAsync: updateSettingsLocal } = useMutation({
+  const { mutateAsync: updateSettings } = useMutation({
     mutationFn: settingsTable.update.mutation,
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -130,10 +119,7 @@ export const FlashcardSettingsCardSection = () => {
   const onSubmit = useCallback(
     async (formData: z.infer<typeof FormSchema>) => {
       try {
-        await Promise.all([
-          updateSettingsRemote(formData),
-          updateSettingsLocal({ updates: formData }),
-        ]);
+        await updateSettings({ updates: formData });
 
         toast({
           title: t`Flashcard settings updated!`,
@@ -145,7 +131,7 @@ export const FlashcardSettingsCardSection = () => {
         });
       }
     },
-    [updateSettingsRemote, updateSettingsLocal, t, toast],
+    [updateSettings, t, toast],
   );
 
   return (

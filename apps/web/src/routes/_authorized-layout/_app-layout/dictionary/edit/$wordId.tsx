@@ -2,8 +2,6 @@ import { Trans } from "@lingui/react/macro";
 import { Page } from "@/components/Page";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { queryClient } from "@/lib/query";
-import { trpc } from "@/lib/trpc";
-import { getQueryKey } from "@trpc/react-query";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,7 +28,7 @@ import { useLingui } from "@lingui/react/macro";
 import { FC, useEffect } from "react";
 import { useDir } from "@/hooks/useDir";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { FormSchema } from "@bahar/schemas";
+import { FormSchema } from "@/lib/schemas/dictionary";
 import {
   Dialog,
   DialogClose,
@@ -47,15 +45,7 @@ import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
 
 const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
-  const { mutateAsync: resetFlashcard } = trpc.flashcard.reset.useMutation({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: getQueryKey(trpc.flashcard.today, undefined, "query"),
-      });
-    },
-  });
-
-  const { mutateAsync: resetFlashcardLocal } = useMutation({
+  const { mutateAsync: resetFlashcard } = useMutation({
     mutationFn: async ({
       dictionary_entry_id,
     }: {
@@ -110,10 +100,7 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
               type="button"
               className="w-max md:self-start self-center"
               onClick={async () => {
-                await Promise.all([
-                  resetFlashcard({ id }),
-                  resetFlashcardLocal({ dictionary_entry_id: id }),
-                ]);
+                await resetFlashcard({ dictionary_entry_id: id });
 
                 toast({
                   title: t`Successfully reset the flashcard.`,
@@ -130,7 +117,6 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
 };
 
 const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
-  const { mutateAsync: deleteWord } = trpc.dictionary.deleteWord.useMutation();
   const { deleteDictionaryEntry } = useDeleteDictionaryEntry();
 
   const navigate = useNavigate();
@@ -166,10 +152,7 @@ const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
             type="button"
             className="w-max md:self-start self-center"
             onClick={async () => {
-              await Promise.all([
-                deleteWord({ id }),
-                deleteDictionaryEntry({ id }),
-              ]);
+              await deleteDictionaryEntry({ id });
 
               navigate({ to: "/" });
             }}
@@ -281,19 +264,6 @@ const Edit = () => {
     queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, wordId],
   });
 
-  const { mutateAsync: editWord } = trpc.dictionary.editWord.useMutation({
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: getQueryKey(
-          trpc.dictionary.find,
-          {
-            id: wordId,
-          },
-          "query",
-        ),
-      });
-    },
-  });
   const { toast } = useToast();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -346,10 +316,7 @@ const Edit = () => {
         }
       })();
 
-      await Promise.all([
-        editWord(input),
-        editDictionaryEntry({ id: input.id, updates: input }),
-      ]);
+      await editDictionaryEntry({ id: input.id, updates: input });
 
       toast({
         title: t`Successfully updated the word!`,

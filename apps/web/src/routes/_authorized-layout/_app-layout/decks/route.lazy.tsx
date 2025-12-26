@@ -1,6 +1,5 @@
 import { Trans } from "@lingui/react/macro";
 import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent";
-import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { useLingui } from "@lingui/react/macro";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
@@ -29,9 +28,8 @@ import {
 } from "@/components/ui/table";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { MoreHorizontal, Plus } from "lucide-react";
-import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { queryClient } from "@/lib/query";
-import { getQueryKey } from "@trpc/react-query";
 import { useToast } from "@/hooks/useToast";
 import { Page } from "@/components/Page";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -56,15 +54,7 @@ const Decks = () => {
     ],
   });
 
-  const { mutateAsync: deleteDeck } = trpc.decks.delete.useMutation({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [...getQueryKey(trpc.decks.list), { type: "query" }],
-      });
-    },
-  });
-
-  const { mutateAsync: deleteDeckLocal } = useMutation({
+  const { mutateAsync: deleteDeck } = useMutation({
     mutationFn: decksTable.delete.mutation,
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -208,10 +198,7 @@ const Decks = () => {
 
                             <DropdownMenuItem
                               onClick={async () => {
-                                await Promise.all([
-                                  deleteDeck({ id: deck.id }),
-                                  deleteDeckLocal({ id: deck.id }),
-                                ]);
+                                await deleteDeck({ id: deck.id });
 
                                 toast({
                                   title: t`Deck successfully deleted!`,

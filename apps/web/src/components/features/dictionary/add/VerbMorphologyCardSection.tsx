@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { z } from "@/lib/zod";
-import { FormSchema } from "@bahar/schemas";
+import { FormSchema } from "@/lib/schemas/dictionary";
 import { Plus } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 

@@ -160,13 +160,6 @@ const Settings = () => {
         await db.checkpoint();
       });
 
-      tracedFetch(`${import.meta.env.VITE_API_BASE_URL}/dictionary`, {
-        method: "DELETE",
-        credentials: "include",
-      }).catch((err: unknown) => {
-        console.error("Failed to delete from Meilisearch:", err);
-      });
-
       reset();
       resetOramaDb();
       const hydrateResult = await hydrateOramaDb();
@@ -313,20 +306,6 @@ const Settings = () => {
                   const db = await ensureDb();
                   await db.push();
                   await db.checkpoint();
-                });
-
-                const meilisearchFormData = new FormData();
-                meilisearchFormData.append("dictionary", file!);
-
-                tracedFetch(
-                  `${import.meta.env.VITE_API_BASE_URL}/dictionary/import`,
-                  {
-                    method: "POST",
-                    body: meilisearchFormData,
-                    credentials: "include",
-                  },
-                ).catch((err: unknown) => {
-                  console.error("Failed to sync to Meilisearch:", err);
                 });
 
                 reset();

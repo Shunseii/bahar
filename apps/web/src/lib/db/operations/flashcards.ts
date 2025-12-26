@@ -269,6 +269,13 @@ export const flashcardsTable = {
           setClauses.push("lapses = ?");
           params.push(updates.lapses);
         }
+        if (
+          "learning_steps" in updates &&
+          updates.learning_steps !== undefined
+        ) {
+          setClauses.push("learning_steps = ?");
+          params.push(updates.learning_steps);
+        }
         if ("last_review" in updates && updates.last_review !== undefined) {
           setClauses.push("last_review = ?");
           params.push(updates.last_review);
@@ -593,6 +600,7 @@ export const flashcardsTable = {
             reps: rawCard.reps ?? 0,
             lapses: rawCard.lapses ?? 0,
             state: rawCard.state ?? FlashcardState.NEW,
+            learning_steps: rawCard.learning_steps ?? 0,
             last_review: rawCard.last_review
               ? new Date(rawCard.last_review)
               : undefined,

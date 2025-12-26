@@ -49,30 +49,41 @@ Bahar is an Arabic language learning application with these key features:
 
 ## Development Environment
 
-### Docker Development Setup (Recommended)
-
-- Start all services: `docker compose up`
-- Front-end available at: http://localhost:4000
-- API available at: http://localhost:3000
-- Drizzle Studio available at: http://localhost:4983
-- LibSQL Server available at: http://localhost:8080 (local development database)
-
 ### Local Development
 
-- Install packages: `pnpm install`
+Start each service in a separate terminal:
+
+```bash
+# Terminal 1: Local database (port 8080)
+make local-db
+
+# Terminal 2: API server (port 3000)
+pnpm run dev --filter api
+
+# Terminal 3: Web app (port 4000)
+pnpm run dev --filter web
+
+# Terminal 4 (optional): Database UI (port 4983)
+pnpm run --filter api drizzle:studio
+```
+
+First-time setup:
+```bash
+pnpm install
+pnpm run --filter api drizzle:migrate
+```
+
+### Other Commands
+
 - Build all: `pnpm run build` or `turbo build`
-- Dev mode: `pnpm run dev` or `turbo dev`
 - Lint all: `pnpm run lint` or `turbo lint`
 - Type check: `pnpm run type-check` or `turbo type-check`
-- Local database: `turso dev --db-file apps/api/local.db` or `make local-db`
 
 ### Production Setup
 
-- Build and run production: `make prod`
 - Build production web app: `make build`
-- Run production containers: `docker compose -f docker-compose.prod.yaml up -d`
-- Serve production web app: `make serve`
-- Cleanup production environment: `make cleanup`
+- Serve production web app locally: `make serve`
+- Delete local data (databases): `make delete-local-data`
 
 ## Testing
 
@@ -101,7 +112,6 @@ The monorepo includes shared packages in `/packages`:
 - `@bahar/fsrs`: FSRS spaced repetition algorithm utilities
 - `@bahar/i18n`: Internationalization with Lingui
 - `@bahar/result`: Result type for explicit error handling
-- `@bahar/schemas`: Shared Zod validation schemas
 - `@bahar/search`: Orama search configuration and utilities
 
 ## Web App Data Flow
@@ -126,7 +136,6 @@ The web app uses a hybrid approach with local-first data handling:
 3. **Writing Data**:
 
    - Create/update/delete operations write to local database immediately
-   - API also writes to remote user database (dual-write pattern during migration)
    - Background sync pushes local changes to remote every 60 seconds
 
 4. **Synchronization**:

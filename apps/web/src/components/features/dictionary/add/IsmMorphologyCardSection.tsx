@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
 import { z } from "@/lib/zod";
-import { FormSchema, Inflection } from "@bahar/schemas";
+import { FormSchema, Inflection } from "@/lib/schemas/dictionary";
 import { useLingui } from "@lingui/react/macro";
 import { Plus, InfoIcon } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";

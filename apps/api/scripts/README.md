@@ -10,12 +10,6 @@ Creates individual Turso databases for users who don't have one and applies all 
 
 **Purpose**: Sets up user-specific databases in Turso for all users that don't have a user database yet.
 
-### `migrate-settings-decks-to-user-db.ts`
-
-Migrates settings and decks data from the global database to each user's individual database.
-
-**Purpose**: Move settings and decks tables from the central database to user-specific databases. This script is idempotent and can be run multiple times safely - it will skip records that already exist in the user database.
-
 ### `apply-user-db-migrations.ts`
 
 Applies all pending schema migrations to each user's database.
@@ -59,7 +53,6 @@ cd apps/api
 
 # Load environment variables when running tsx
 npx tsx --env-file=.env scripts/create-user-dbs.ts
-npx tsx --env-file=.env scripts/migrate-settings-decks-to-user-db.ts
 npx tsx --env-file=.env scripts/apply-user-db-migrations.ts
 ```
 

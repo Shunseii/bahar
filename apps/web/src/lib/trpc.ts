@@ -26,7 +26,7 @@ export const trpcReactClient = trpc.createClient({
             ...opts?.headers,
             [TRACE_ID_HEADER]: generateTraceId(),
           },
-        });
+        } as RequestInit);
       },
     }),
   ],
@@ -44,7 +44,7 @@ export const trpcClient = createTRPCClient<AppRouter>({
             ...opts?.headers,
             [TRACE_ID_HEADER]: generateTraceId(),
           },
-        });
+        } as RequestInit);
       },
     }),
   ],

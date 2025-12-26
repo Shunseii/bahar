@@ -30,6 +30,7 @@ export const flashcards = sqliteTable(
     lapses: integer("lapses").default(0),
     last_review: text("last_review"),
     last_review_timestamp_ms: integer("last_review_timestamp_ms"),
+    learning_steps: integer("learning_steps").default(0),
     reps: integer("reps").default(0),
     scheduled_days: integer("scheduled_days").default(0),
     stability: real("stability").default(0),
@@ -43,17 +44,14 @@ export const flashcards = sqliteTable(
       .notNull()
       .default(false),
   },
-  (table) => ({
+  (table) => [
     // Unique constraint: each dictionary entry can have at most one flashcard per direction
-    entryDirectionIdx: uniqueIndex("flashcards_entry_direction_unique").on(
+    uniqueIndex("flashcards_entry_direction_unique").on(
       table.dictionary_entry_id,
       table.direction,
     ),
-
-    dueTimestampMsIdx: index("flashcards_due_timestamp_ms_index").on(
-      table.due_timestamp_ms,
-    ),
-  }),
+    index("flashcards_due_timestamp_ms_index").on(table.due_timestamp_ms),
+  ],
 );
 
 export type SelectFlashcard = typeof flashcards.$inferSelect;

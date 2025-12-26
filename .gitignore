@@ -8,6 +8,9 @@ node_modules
 # testing
 coverage
 
+# vite
+vite.config.ts.timestamp-*
+
 # next.js
 .next/
 out/

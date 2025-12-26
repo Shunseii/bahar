@@ -25,7 +25,6 @@ export const getLangDir = (lang?: TLocale) => {
 };
 
 export async function dynamicActivate(locale: TLocale) {
-  // TODO: ideally don't have to hardcode this path
   const { messages } = await import(
     `../../../../packages/i18n/locales/${locale}.po`
   );

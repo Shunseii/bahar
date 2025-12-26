@@ -1,10 +1,9 @@
-import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { Tooltip, TooltipTrigger, TooltipContent } from "../../ui/tooltip";
-import { Button } from "../../ui/button";
-import { intlFormatDistance } from "date-fns";
-import { Card, fsrs, Grade, Rating } from "ts-fsrs";
+import { Tooltip, TooltipTrigger, TooltipContent } from "../../../ui/tooltip";
+import { Button } from "../../../ui/button";
+import { toFsrsCard } from "@bahar/fsrs";
+import { fsrs, Grade, Rating } from "ts-fsrs";
 import {
   Drawer,
   DrawerTrigger,
@@ -13,7 +12,7 @@ import {
   DrawerTitle,
   DrawerDescription,
   DrawerFooter,
-} from "../../ui/drawer";
+} from "../../../ui/drawer";
 import {
   FC,
   PropsWithChildren,
@@ -23,15 +22,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { RouterOutput, trpc } from "@/lib/trpc";
 import { queryClient } from "@/lib/query";
 import { motion, AnimatePresence } from "motion/react";
-import { useDir } from "@/hooks/useDir";
-import { Badge } from "../../ui/badge";
-import { QuestionSide } from "./QuestionSide";
-import { AnswerSide } from "./AnswerSide";
-import { ReverseAnswerSide } from "./ReverseAnswerSide";
-import { ReverseQuestionSide } from "./ReverseQuestionSide";
+import { QuestionSide } from "../QuestionSide";
+import { AnswerSide } from "../AnswerSide";
+import { ReverseAnswerSide } from "../ReverseAnswerSide";
+import { ReverseQuestionSide } from "../ReverseQuestionSide";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -40,53 +36,12 @@ import {
   FlashcardQueue,
 } from "@/lib/db/operations/flashcards";
 import { decksTable } from "@/lib/db/operations/decks";
-import {
-  FlashcardState,
-  SelectDeck,
-  SelectFlashcard,
-} from "@bahar/drizzle-user-db-schemas";
+import { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { cn } from "@bahar/design-system";
-import {
-  RotateCcw,
-  Brain,
-  ThumbsUp,
-  Zap,
-  Sparkles,
-  PartyPopper,
-  Archive,
-} from "lucide-react";
-
-const convertFlashcardToFsrsCard = (
-  flashcard: SelectFlashcard,
-): Card & { id: string } => {
-  return {
-    ...flashcard,
-    due: new Date(flashcard.due),
-    stability: flashcard.stability ?? 0,
-    difficulty: flashcard.difficulty ?? 0,
-    elapsed_days: flashcard.elapsed_days ?? 0,
-    scheduled_days: flashcard.scheduled_days ?? 0,
-    reps: flashcard.reps ?? 0,
-    lapses: flashcard.lapses ?? 0,
-    state: flashcard.state ?? FlashcardState.NEW,
-    last_review: flashcard.last_review
-      ? new Date(flashcard.last_review)
-      : undefined,
-  };
-};
-
-const getTranslatedType = (str: "ism" | "fi'l" | "harf" | "expression") => {
-  switch (str) {
-    case "ism":
-      return t`Noun`;
-    case "fi'l":
-      return t`Verb`;
-    case "harf":
-      return t`Preposition`;
-    case "expression":
-      return t`Expression`;
-  }
-};
+import { Brain, Sparkles, PartyPopper, Archive } from "lucide-react";
+import { GradeOption } from "./GradeOption";
+import { GradeFeedback } from "./GradeFeedback";
+import { TagBadgesList } from "./TagBadgesList";
 
 interface FlashcardDrawerProps extends PropsWithChildren {
   filters?: SelectDeck["filters"];
@@ -96,175 +51,6 @@ interface FlashcardDrawerProps extends PropsWithChildren {
   queueCounts?: { regular: number; backlog: number };
 }
 
-export type Flashcard = RouterOutput["flashcard"]["today"]["flashcards"][0];
-
-const GradeFeedback: FC<{
-  grade: Grade | null;
-  onComplete: () => void;
-}> = ({ grade, onComplete }) => {
-  useEffect(() => {
-    if (grade === null) return;
-
-    const timer = setTimeout(onComplete, 600);
-    return () => clearTimeout(timer);
-  }, [grade, onComplete]);
-
-  if (grade === null) return null;
-
-  const feedbackConfig = {
-    [Rating.Again]: {
-      icon: RotateCcw,
-      color: "text-muted-foreground",
-      bgColor: "bg-muted/20",
-      animation: {
-        initial: { scale: 0, rotate: 0 },
-        animate: {
-          scale: [0, 1.2, 1],
-          rotate: [0, -10, 10, -10, 0],
-        },
-        transition: { duration: 0.5 },
-      },
-    },
-    [Rating.Hard]: {
-      icon: Brain,
-      color: "text-orange-500",
-      bgColor: "bg-orange-500/10",
-      animation: {
-        initial: { scale: 0 },
-        animate: {
-          scale: [0, 1.3, 1],
-          opacity: [0, 1, 1],
-        },
-        transition: { duration: 0.5, ease: "easeOut" },
-      },
-    },
-    [Rating.Good]: {
-      icon: ThumbsUp,
-      color: "text-primary",
-      bgColor: "bg-primary/10",
-      animation: {
-        initial: { scale: 0, y: 10, opacity: 0 },
-        animate: {
-          scale: 1,
-          y: 0,
-          opacity: 1,
-        },
-        transition: {
-          duration: 0.4,
-          type: "spring",
-          stiffness: 200,
-          damping: 15,
-        },
-      },
-    },
-    [Rating.Easy]: {
-      icon: Zap,
-      color: "text-green-500",
-      bgColor: "bg-green-500/10",
-      animation: {
-        initial: { scale: 0, rotate: -20 },
-        animate: {
-          scale: [0, 1.4, 1],
-          rotate: [-20, 10, 0],
-        },
-        transition: { duration: 0.4, ease: "easeOut" },
-      },
-    },
-  };
-
-  const config = feedbackConfig[grade];
-  const Icon = config.icon;
-
-  return (
-    <motion.div
-      className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      {/* Background pulse */}
-      <motion.div
-        className={cn("absolute inset-0", config.bgColor)}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0.5, 0] }}
-        transition={{ duration: 0.6 }}
-      />
-
-      {/* Icon animation */}
-      <motion.div
-        className={cn("p-6 rounded-full", config.bgColor)}
-        {...config.animation}
-      >
-        <Icon className={cn("w-16 h-16", config.color)} />
-      </motion.div>
-
-      {/* Sparkles for Easy */}
-      {grade === Rating.Easy && (
-        <>
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-2 h-2 rounded-full bg-green-400"
-              initial={{
-                scale: 0,
-                x: 0,
-                y: 0,
-              }}
-              animate={{
-                scale: [0, 1, 0],
-                x: Math.cos((i * Math.PI * 2) / 6) * 80,
-                y: Math.sin((i * Math.PI * 2) / 6) * 80,
-                opacity: [0, 1, 0],
-              }}
-              transition={{
-                duration: 0.5,
-                delay: 0.1,
-              }}
-            />
-          ))}
-        </>
-      )}
-    </motion.div>
-  );
-};
-
-const TagBadgesList: FC<{
-  currentCard: FlashcardWithDictionaryEntry;
-}> = ({ currentCard }) => {
-  return (
-    <motion.ul
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
-      className="flex flex-wrap gap-2"
-    >
-      {!!currentCard.dictionary_entry.type && (
-        <Badge
-          variant="secondary"
-          className="w-max bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 transition-colors"
-        >
-          {getTranslatedType(currentCard.dictionary_entry.type)}
-        </Badge>
-      )}
-      {currentCard.dictionary_entry.tags?.map((tag, index) => (
-        <motion.div
-          key={tag}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.15 + index * 0.05 }}
-        >
-          <Badge
-            variant="outline"
-            className="w-max border-border/50 hover:border-border transition-colors"
-          >
-            {tag}
-          </Badge>
-        </motion.div>
-      ))}
-    </motion.ul>
-  );
-};
-
 export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   children,
   filters = {},
@@ -272,8 +58,6 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   initialQueue = "regular",
   queueCounts,
 }) => {
-  const dir = useDir();
-  const locale = dir === "rtl" ? "ar-u-nu-arab" : "en";
   const { formatNumber } = useFormatNumber();
   const [showAnswer, setShowAnswer] = useState(false);
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
@@ -319,54 +103,8 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       selectedQueue,
     ],
   });
-  const { mutateAsync: updateFlashcard } = trpc.flashcard.update.useMutation({
-    // TODO: Remove this with dual write logic
-    // onMutate: async (updatedCard) => {
-    //   const todayQueryKey = getQueryKey(
-    //     trpc.flashcard.today,
-    //     { filters, show_reverse },
-    //     "query",
-    //   );
-    //
-    //   await queryClient.cancelQueries({
-    //     queryKey: todayQueryKey,
-    //     exact: false,
-    //   });
-    //
-    //   // TODO: when you have 101 cards, grading the next one will cause the
-    //   // number to be off by one until the server response comes back.
-    //   // This is due to the optimistic update.
-    //
-    //   queryClient.setQueryData(todayQueryKey, (old: typeof data) => ({
-    //     total_hits: (old?.length ?? 0) - 1,
-    //     flashcards:
-    //       old?.filter(
-    //         (card) =>
-    //           card.id !== updatedCard.id ||
-    //           (card.direction === "reverse") !== updatedCard.reverse,
-    //       ) ?? [],
-    //   }));
-    // },
-    // onSettled: async () => {
-    //   const todayQueryKey = getQueryKey(
-    //     trpc.flashcard.today,
-    //     undefined,
-    //     "query",
-    //   );
-    //   const deckListQueryKey = getQueryKey(trpc.decks.list, undefined, "query");
-    //
-    //   await queryClient.invalidateQueries({
-    //     queryKey: deckListQueryKey,
-    //   });
-    //
-    //   await queryClient.invalidateQueries({
-    //     queryKey: todayQueryKey,
-    //     exact: false,
-    //   });
-    // },
-  });
 
-  const { mutateAsync: updateFlashcardLocal } = useMutation({
+  const { mutateAsync: updateFlashcard } = useMutation({
     mutationFn: flashcardsTable.update.mutation,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -396,38 +134,22 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const schedulingData = useMemo(() => {
     if (!currentCard) return null;
     const now = new Date();
-    const scheduling_cards = f.repeat(
-      convertFlashcardToFsrsCard(currentCard),
-      now,
-    );
-    return { scheduling_cards, now };
+    const schedulingCards = f.repeat(toFsrsCard(currentCard), now);
+    return { schedulingCards, now };
   }, [currentCard, f]);
 
-  const scheduling_cards = schedulingData?.scheduling_cards;
+  const schedulingCards = schedulingData?.schedulingCards;
   const now = schedulingData?.now ?? new Date();
 
   const executeGrade = useCallback(
     async (grade: Grade) => {
-      if (!scheduling_cards || !currentCard) return;
+      if (!schedulingCards || !currentCard) return;
 
-      const selectedCard = scheduling_cards[grade].card;
-      const dueTimestamp = Math.floor(selectedCard.due.getTime() / 1000);
+      const selectedCard = schedulingCards[grade].card;
       const dueTimestampMs = selectedCard.due.getTime();
-      const lastReviewTimestamp = selectedCard?.last_review
-        ? Math.floor(selectedCard.last_review.getTime() / 1000)
-        : null;
       const lastReviewTimestampMs = selectedCard?.last_review
         ? selectedCard.last_review.getTime()
         : null;
-
-      const newCard = {
-        ...selectedCard,
-        id: currentCard.id,
-        due: selectedCard.due.toISOString(),
-        last_review: selectedCard?.last_review?.toISOString() ?? null,
-        due_timestamp: dueTimestamp,
-        last_review_timestamp: lastReviewTimestamp,
-      };
 
       const localUpdates = {
         due: selectedCard.due.toISOString(),
@@ -446,23 +168,17 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       setShowAnswer(false);
       setCards((prev) => prev.filter((c) => c.id !== currentCard.id));
 
-      updateFlashcard({
-        flashcard: newCard,
-        id: newCard.id,
-        reverse: currentCard.direction === "reverse",
-      });
-
-      await updateFlashcardLocal({
+      await updateFlashcard({
         id: currentCard.id,
         updates: localUpdates,
       });
     },
-    [currentCard, scheduling_cards, updateFlashcard, updateFlashcardLocal],
+    [currentCard, schedulingCards, updateFlashcard],
   );
 
   const gradeCard = useCallback(
     (grade: Grade) => {
-      if (!scheduling_cards || !currentCard) return;
+      if (!schedulingCards || !currentCard) return;
 
       // Store the callback to execute after animation
       gradeCallbackRef.current = () => executeGrade(grade);
@@ -470,7 +186,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       // Show feedback animation
       setPendingGrade(grade);
     },
-    [currentCard, scheduling_cards, executeGrade],
+    [currentCard, schedulingCards, executeGrade],
   );
 
   const handleAnimationComplete = useCallback(() => {
@@ -501,7 +217,6 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       </Tooltip>
 
       <DrawerContent className="overflow-hidden">
-        {/* Grade feedback animation overlay */}
         <AnimatePresence>
           {pendingGrade !== null && (
             <GradeFeedback
@@ -569,6 +284,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                   </button>
                 </div>
               </div>
+
               <p className="text-xs text-muted-foreground text-center">
                 {selectedQueue === "regular" ? (
                   <Trans>Cards due today or recently</Trans>
@@ -629,6 +345,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
               </motion.div>
             )}
           </div>
+
           <DrawerDescription className="sr-only">
             <Trans>
               Review your Arabic flashcards and grade your understanding with
@@ -696,7 +413,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
         <DrawerFooter>
           <AnimatePresence mode="wait">
-            {scheduling_cards && showAnswer ? (
+            {schedulingCards && showAnswer ? (
               <motion.div
                 key="grading-buttons"
                 initial={{ opacity: 0, y: 20 }}
@@ -705,135 +422,19 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                 transition={{ duration: 0.3 }}
                 className="flex gap-2 sm:gap-4 items-stretch justify-center w-full max-w-lg mx-auto"
               >
-                {/* Again Button */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.05 }}
-                  className="flex-1"
-                >
-                  <Button
-                    variant="outline"
-                    onClick={() => gradeCard(Rating.Again)}
-                    disabled={pendingGrade !== null}
-                    className={cn(
-                      "w-full h-auto flex-col gap-1 py-3 px-2 sm:px-4",
-                      "border-2 border-muted-foreground/20 hover:border-muted-foreground/40",
-                      "hover:bg-muted/50 transition-all duration-200",
-                      "group",
-                    )}
-                  >
-                    <RotateCcw className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <span className="font-medium">
-                      <Trans>Again</Trans>
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {intlFormatDistance(
-                        scheduling_cards[Rating.Again].card.due,
-                        now,
-                        { style: "narrow", locale },
-                      )}
-                    </span>
-                  </Button>
-                </motion.div>
-
-                {/* Hard Button */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="flex-1"
-                >
-                  <Button
-                    variant="outline"
-                    onClick={() => gradeCard(Rating.Hard)}
-                    disabled={pendingGrade !== null}
-                    className={cn(
-                      "w-full h-auto flex-col gap-1 py-3 px-2 sm:px-4",
-                      "border-2 border-orange-500/30 hover:border-orange-500/50",
-                      "hover:bg-orange-500/10 transition-all duration-200",
-                      "group",
-                    )}
-                  >
-                    <Brain className="w-5 h-5 text-orange-500" />
-                    <span className="font-medium text-orange-600 dark:text-orange-400">
-                      <Trans>Hard</Trans>
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {intlFormatDistance(
-                        scheduling_cards[Rating.Hard].card.due,
-                        now,
-                        { style: "narrow", locale },
-                      )}
-                    </span>
-                  </Button>
-                </motion.div>
-
-                {/* Good Button */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.15 }}
-                  className="flex-1"
-                >
-                  <Button
-                    variant="outline"
-                    onClick={() => gradeCard(Rating.Good)}
-                    disabled={pendingGrade !== null}
-                    className={cn(
-                      "w-full h-auto flex-col gap-1 py-3 px-2 sm:px-4",
-                      "border-2 border-primary/30 hover:border-primary/50",
-                      "hover:bg-primary/10 transition-all duration-200",
-                      "group",
-                    )}
-                  >
-                    <ThumbsUp className="w-5 h-5 text-primary" />
-                    <span className="font-medium text-primary">
-                      <Trans>Good</Trans>
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {intlFormatDistance(
-                        scheduling_cards[Rating.Good].card.due,
-                        now,
-                        { style: "narrow", locale },
-                      )}
-                    </span>
-                  </Button>
-                </motion.div>
-
-                {/* Easy Button */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="flex-1"
-                >
-                  <Button
-                    variant="outline"
-                    onClick={() => gradeCard(Rating.Easy)}
-                    disabled={pendingGrade !== null}
-                    className={cn(
-                      "w-full h-auto flex-col gap-1 py-3 px-2 sm:px-4",
-                      "border-2 border-green-500/30 hover:border-green-500/50",
-                      "hover:bg-green-500/10 transition-all duration-200",
-                      "group",
-                    )}
-                  >
-                    <Zap className="w-5 h-5 text-green-500" />
-                    <span className="font-medium text-green-600 dark:text-green-400">
-                      <Trans>Easy</Trans>
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {intlFormatDistance(
-                        scheduling_cards[Rating.Easy].card.due,
-                        now,
-                        { style: "narrow", locale },
-                      )}
-                    </span>
-                  </Button>
-                </motion.div>
+                {(
+                  [Rating.Again, Rating.Hard, Rating.Good, Rating.Easy] as const
+                ).map((grade) => (
+                  <GradeOption
+                    key={grade}
+                    grade={grade}
+                    due={schedulingCards[grade].card.due}
+                    now={now}
+                    onClick={() => gradeCard(grade)}
+                  />
+                ))}
               </motion.div>
-            ) : scheduling_cards ? (
+            ) : schedulingCards ? (
               <motion.div
                 key="show-answer"
                 initial={{ opacity: 0, y: 10 }}

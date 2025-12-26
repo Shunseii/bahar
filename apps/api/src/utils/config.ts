@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const EnvironmentVariablesSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("development"),
-  PORT: z.string().transform(Number).default("3000"),
+  PORT: z.string().default("3000").transform(Number),
   HOST: z.string().default("localhost"),
 
   /**
@@ -34,9 +34,6 @@ const EnvironmentVariablesSchema = z.object({
   TURSO_PLATFORM_API_KEY: z.string(),
   TURSO_ORG_SLUG: z.string(),
   TURSO_DB_GROUP: z.string(),
-
-  MEILISEARCH_HOST: z.string().url(),
-  MEILISEARCH_API_KEY: z.string().min(1),
 
   BETTER_AUTH_SECRET: z.string().min(1),
 

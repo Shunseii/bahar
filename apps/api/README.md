@@ -22,6 +22,7 @@ The API uses a database-per-user architecture:
 - **Per-User Databases**: Each user has their own Turso database for personal data (dictionary entries, flashcards, decks)
 
 This design provides:
+
 - Data isolation between users
 - Independent scaling per user
 - Simplified backup and restore
@@ -53,6 +54,7 @@ pnpm install
 ### Local Development
 
 1. Start the local database:
+
    ```bash
    turso dev --db-file local.db
    # or from project root:
@@ -60,16 +62,54 @@ pnpm install
    ```
 
 2. Run migrations:
+
    ```bash
    pnpm run drizzle:migrate
    ```
 
-3. Start the dev server:
+3. Start the dev servers (from project root):
    ```bash
-   pnpm dev
+   pnpm run dev
    ```
 
 The API runs on `http://localhost:3000`.
+
+### Setting Up a New User (Fresh Local DB)
+
+When working with a fresh local database, you need to manually seed the user database migrations:
+
+1. Start all dev servers from the project root:
+
+   ```bash
+   pnpm run dev
+   ```
+
+2. In a separate terminal, start the local database:
+
+   ```bash
+   make local-db
+   ```
+
+3. Run the (local) central database migrations:
+
+   ```bash
+   pnpm run --filter api drizzle:migrate
+   ```
+
+4. Create a new user through the web app (sign-up flow)
+
+5. Manually convert the user to an admin in the local database:
+
+   - Open Drizzle Studio: `pnpm run --filter api drizzle:studio`
+   - Find the user in the `users` table and set the role to `admin`
+
+6. Seed the user database migrations:
+
+   - Copy the migration SQL from `packages/drizzle-user-db-schemas/drizzle/*.sql`
+   - Remove the `--> statement-breakpoint` markers and replace with newlines
+   - Manually insert records into the `migrations` table in the user's database
+
+7. Log out and log back in for changes to take effect
 
 ## Database Commands
 
@@ -96,9 +136,9 @@ Utility scripts for database management are in `/scripts`:
 
 - `create-user-dbs.ts` - Create individual Turso databases for users
 - `apply-user-db-migrations.ts` - Apply schema migrations to user databases
-- `migrate-settings-decks-to-user-db.ts` - Migrate data from central to user databases
 
 Run scripts with:
+
 ```bash
 npx tsx --env-file=.env scripts/<script-name>.ts
 ```

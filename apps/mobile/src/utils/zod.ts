@@ -1,55 +1,46 @@
 import { plural, t } from "@lingui/core/macro";
-import z from "zod";
+import { z } from "zod/v4";
 
-// TODO: copied over from web client because upgrading to zod v4
-// is causing countless other type issues across the stack.
-// refactor this to reuse configuration between web, mobile, and api.
-export const errorMap: z.ZodErrorMap = (issue, ctx) => {
-  if (issue.code === z.ZodIssueCode.invalid_type) {
+export const errorMap: z.core.$ZodErrorMap = (issue) => {
+  if (issue.code === "invalid_type") {
     if (issue.expected === "string") {
-      return { message: t`This field is required.` };
+      return t`This field is required.`;
     }
   }
 
-  if (issue.code === z.ZodIssueCode.invalid_string) {
-    if (issue.validation === "email") {
-      return { message: t`That email is invalid.` };
+  if (issue.code === "invalid_format") {
+    if (issue.format === "email") {
+      return t`That email is invalid.`;
     }
   }
 
-  if (issue.code === z.ZodIssueCode.too_small) {
+  if (issue.code === "too_small") {
     const val = issue.minimum as number;
 
     if (issue.type === "string") {
       if (val === 1) {
-        return { message: t`This field is required.` };
+        return t`This field is required.`;
       }
 
-      return {
-        message: plural(val, {
-          one: "Must be at least # character",
-          other: "Must be at least # characters",
-        }),
-      };
+      return plural(val, {
+        one: "Must be at least # character",
+        other: "Must be at least # characters",
+      });
     }
   }
 
-  if (issue.code === z.ZodIssueCode.too_big) {
+  if (issue.code === "too_big") {
     const val = issue.maximum as number;
 
     if (issue.type === "string") {
-      return {
-        message: plural(val, {
-          one: "Cannot exceed # character",
-          other: "Cannot exceed # characters",
-        }),
-      };
+      return plural(val, {
+        one: "Cannot exceed # character",
+        other: "Cannot exceed # characters",
+      });
     }
   }
 
-  return {
-    message: ctx.defaultError,
-  };
+  return undefined;
 };
 
-// Exporting zod here like in web just doesnt work.
+z.config({ customError: errorMap });

@@ -24,7 +24,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormSchema } from "@bahar/schemas";
+import { FormSchema } from "@/lib/schemas/dictionary";
 import { errorMap } from "@/utils/zod";
 import * as z from "zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -35,7 +35,7 @@ import { updateSearchIndex, removeFromSearchIndex } from "@/lib/search";
 import { queryClient } from "@/utils/trpc";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-z.setErrorMap(errorMap);
+z.config({ customError: errorMap });
 
 type FormData = z.infer<typeof FormSchema>;
 
