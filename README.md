@@ -1,3 +1,5 @@
+[![StandWithPalestine](https://raw.githubusercontent.com/Safouene1/support-palestine-banner/master/StandWithPalestine.svg)](https://github.com/Safouene1/support-palestine-banner/blob/master/Markdown-pages/Support.md)
+
 # Bahar
 
 Bahar is an Arabic language learning application built as a monorepo using pnpm workspaces and Turborepo.
@@ -74,18 +76,17 @@ Static marketing site and blog:
 
 ### Packages
 
-| Package | Description |
-|---------|-------------|
-| `@bahar/db-operations` | Shared database operations |
-| `@bahar/design-system` | Shared design tokens and components |
-| `@bahar/drizzle-user-db-schemas` | Drizzle schemas for per-user databases |
-| `@bahar/fsrs` | FSRS spaced repetition algorithm utilities |
-| `@bahar/i18n` | Internationalization with Lingui |
-| `@bahar/result` | Result type for error handling |
-| `@bahar/schemas` | Shared Zod schemas |
-| `@bahar/search` | Orama search configuration |
-| `@bahar/eslint-config` | Shared ESLint configuration |
-| `@bahar/typescript-config` | Shared TypeScript configuration |
+| Package                          | Description                                |
+| -------------------------------- | ------------------------------------------ |
+| `@bahar/db-operations`           | Shared database operations                 |
+| `@bahar/design-system`           | Shared design tokens and components        |
+| `@bahar/drizzle-user-db-schemas` | Drizzle schemas for per-user databases     |
+| `@bahar/fsrs`                    | FSRS spaced repetition algorithm utilities |
+| `@bahar/i18n`                    | Internationalization with Lingui           |
+| `@bahar/result`                  | Result type for error handling             |
+| `@bahar/search`                  | Orama search configuration                 |
+| `@bahar/eslint-config`           | Shared ESLint configuration                |
+| `@bahar/typescript-config`       | Shared TypeScript configuration            |
 
 ## Development
 
@@ -93,7 +94,6 @@ Static marketing site and blog:
 
 - Node.js >= 18
 - pnpm 8.15.3
-- Docker (recommended)
 
 ### Commands
 
