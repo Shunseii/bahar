@@ -26,7 +26,7 @@ import {
   Rating,
   type Grade,
 } from "@bahar/fsrs";
-import { queryClient } from "../../utils/trpc";
+import { queryClient } from "../../utils/api";
 import {
   flashcardsTable,
   FlashcardWithDictionaryEntry,

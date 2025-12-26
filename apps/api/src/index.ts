@@ -1,88 +1,67 @@
-import "dotenv/config";
+// Sentry must be initialized before any other imports
+import * as Sentry from "@sentry/bun";
 
-import express from "express";
-import * as Sentry from "@sentry/node";
-import { router, createContext } from "./trpc";
-import * as trpcExpress from "@trpc/server/adapters/express";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import { getAllowedDomains } from "./utils";
-import { Session, User, auth } from "./auth";
-import { toNodeHandler } from "better-auth/node";
+// Ensure to call this before importing any other modules!
+Sentry.init({
+  environment: process.env.SENTRY_ENV,
+  dsn: process.env.SENTRY_DSN,
+  release: process.env.GITHUB_SHA,
+  tracesSampleRate: 1.0,
+});
+
+import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
 import { config } from "./utils/config";
-import { logger, requestLogger } from "./utils/logger";
-import { traceContextMiddleware } from "./middleware";
+import { logger, traceContext } from "./utils/logger";
+import { getAllowedDomains } from "./utils";
+import { betterAuthGuard } from "./middleware";
 import { migrationsRouter } from "./routers/migrations";
 import { databasesRouter } from "./routers/databases";
-
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Express {
-    interface Request {
-      user: User;
-      session: Session;
-    }
-  }
-}
 
 const port = config.PORT;
 const host = config.HOST;
 
-const appRouter = router({
-  migrations: migrationsRouter,
-  databases: databasesRouter,
-});
-
-const app = express();
-
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
-app.set("trust proxy", true);
+const app = new Elysia()
+  .use(
+    cors({
+      origin: (request) => {
+        const origin = request.headers.get("origin") ?? "";
 
-app.use(traceContextMiddleware);
+        logger.debug({ origin, allowedDomains }, "Verifying CORS");
 
-app.use(requestLogger);
+        return allowedDomains.includes(origin) || !origin;
+      },
+      credentials: true,
+    }),
+  )
+  .use(betterAuthGuard)
+  .onRequest(({ request, set }) => {
+    const existingId = request.headers.get("x-request-id");
+    const traceId = existingId || crypto.randomUUID();
 
-app.use(
-  cors({
-    origin: (origin = "", callback) => {
-      logger.debug({ origin, allowedDomains }, "Verifying CORS");
+    set.headers["X-Request-Id"] = traceId;
 
-      if (allowedDomains.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS."));
-      }
-    },
-    credentials: true,
-  }),
-);
+    // Store trace context for this request
+    traceContext.enterWith({
+      traceId,
+      seqNum: 0,
+    });
+  })
+  .get("/health", () => "OK")
+  .use(migrationsRouter)
+  .use(databasesRouter)
+  .onError(({ error, code }) => {
+    Sentry.captureException(error);
 
-// NOTE: Make sure this is before express.json middleware
-// https://github.com/better-auth/better-auth/issues/320#issuecomment-2434543200
-app.all("/api/auth/*", toNodeHandler(auth));
+    logger.error({ error, code }, "Request error");
+  })
+  .listen({
+    port,
+    hostname: host,
+  });
 
-app.use(express.json());
-app.use(cookieParser());
+logger.info(`Listening on ${host}:${port}.`);
 
-app.use(
-  "/trpc",
-  trpcExpress.createExpressMiddleware({
-    router: appRouter,
-    createContext,
-  }),
-);
-
-app.get("/health", (_req, res) => {
-  return res.send("OK");
-});
-
-Sentry.setupExpressErrorHandler(app);
-
-app.listen(port, host, () => {
-  logger.info(`Listening on ${host}:${port}.`);
-});
-
-// Export type router type signature,
-// NOT the router itself.
-export type AppRouter = typeof appRouter;
+export type App = typeof app;

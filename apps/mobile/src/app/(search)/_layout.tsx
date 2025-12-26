@@ -24,7 +24,7 @@ import { usePathname } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAtomValue } from "jotai";
 import { store, syncCompletedCountAtom, isSyncingAtom } from "@/lib/store";
-import { queryClient } from "@/utils/trpc";
+import { queryClient } from "@/utils/api";
 import { rehydrateOramaDb } from "@/lib/search";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { syncDatabase } from "@/lib/db/adapter";

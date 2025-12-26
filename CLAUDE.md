@@ -25,7 +25,8 @@ Bahar is an Arabic language learning application with these key features:
 
 ### Backend
 
-- Node.js API with Express and tRPC for type-safe APIs
+- Bun runtime with Elysia framework
+- Type-safe API client: Eden Treaty
 - Authentication: Better Auth with email OTP and OAuth support
 - Logging: Pino for structured logging, Sentry for error tracking
 

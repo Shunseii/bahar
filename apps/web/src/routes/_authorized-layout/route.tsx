@@ -230,6 +230,8 @@ export const Route = createFileRoute("/_authorized-layout")({
       const error = initDbResult.error;
       const errReason = "reason" in error ? error.reason : null;
 
+      console.log(errReason);
+
       Sentry.captureException(new Error(error.type), {
         contexts: {
           db_init: {

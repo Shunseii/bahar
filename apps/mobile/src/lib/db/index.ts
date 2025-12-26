@@ -7,7 +7,7 @@
 
 import { ok, err, tryCatch, type Result } from "@bahar/result";
 import { connect, type DatabaseAdapter, syncDatabase } from "./adapter";
-import { trpcClient } from "../../utils/trpc";
+import { api } from "../../utils/api";
 
 const LOCAL_DB_NAME = "bahar-user.db";
 export const SYNC_INTERVAL_MS = 60_000;
@@ -75,7 +75,11 @@ export const initDb = async (): Promise<Result<null, DbError>> => {
 const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   // Get database connection info from API
   const infoResult = await tryCatch(
-    () => trpcClient.databases.userDatabase.query(),
+    async () => {
+      const { data, error } = await api.databases.user.get();
+      if (error) throw error;
+      return data;
+    },
     (error) => ({
       type: "get_db_info_failed",
       reason: String(error),
@@ -104,7 +108,11 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   if (!connectionResult.ok) {
     // Try refreshing token and reconnecting
     const refreshResult = await tryCatch(
-      () => trpcClient.databases.refreshUserToken.mutate(),
+      async () => {
+        const { data, error } = await api.databases["refresh-token"].post();
+        if (error) throw error;
+        return data;
+      },
       (error) => ({
         type: "token_refresh_failed",
         reason: String(error),
@@ -181,7 +189,11 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
 
   // Get migrations from API
   const migrationsResult = await tryCatch(
-    () => trpcClient.migrations.fullSchema.query(),
+    async () => {
+      const { data, error } = await api.migrations.full.get();
+      if (error) throw error;
+      return data;
+    },
     (error) => ({
       type: "get_migrations_failed",
       reason: String(error),

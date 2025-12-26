@@ -19,7 +19,7 @@ import { Plus, Layers, Play, Trash2, Edit, X } from "lucide-react-native";
 import { decksTable } from "@/lib/db/operations/decks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { queryClient } from "@/utils/trpc";
+import { queryClient } from "@/utils/api";
 import { toast } from "sonner-native";
 import { useThemeColors } from "@/lib/theme";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";

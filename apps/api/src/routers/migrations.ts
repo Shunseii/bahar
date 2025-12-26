@@ -1,92 +1,58 @@
-import { router, protectedProcedure, adminProcedure } from "../trpc";
-import { db } from "../db";
+import { Elysia } from "elysia";
 import { z } from "zod";
-import { migrations, SelectMigrationsSchema } from "../db/schema/migrations";
+import { db } from "../db";
+import { migrations } from "../db/schema/migrations";
 import { asc, desc, gt } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
+import { betterAuthGuard } from "../middleware";
 
-export const migrationsRouter = router({
-  /**
-   * Register a new migration that will be
-   * pulled by all clients and applied to
-   * the local schemas.
-   */
-  registerSchema: adminProcedure
-    .input(z.object({ sqlScript: z.string(), description: z.string() }))
-    .output(SelectMigrationsSchema)
-    .mutation(async ({ input: { sqlScript, description } }) => {
+export const migrationsRouter = new Elysia({ prefix: "/migrations" })
+  .use(betterAuthGuard)
+  .post(
+    "/register",
+    async ({ body, status }) => {
       const results = await db
         .insert(migrations)
-        .values({ sql_script: sqlScript, description })
+        .values({ sql_script: body.sqlScript, description: body.description })
         .returning();
 
       if (results.length === 0) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to register schema",
-        });
+        return status(400, "Failed to register schema");
       }
 
-      const migration = results[0];
-
-      return migration;
-    }),
-
-  /**
-   * Get the latest schema version.
-   */
-  currentVersion: protectedProcedure
-    .output(SelectMigrationsSchema.shape.version)
-    .query(async () => {
+      return results[0];
+    },
+    {
+      auth: "admin",
+      body: z.object({
+        sqlScript: z.string(),
+        description: z.string(),
+      }),
+    },
+  )
+  .get(
+    "/current-version",
+    async () => {
       const results = await db
         .select({ version: migrations.version })
         .from(migrations)
         .orderBy(desc(migrations.version))
         .limit(1);
 
-      // When no migrations exist in the database.
-      // Ideally this should never happen.
       if (results.length === 0) {
-        return 0;
+        return { version: 0 };
       }
 
-      return results[0].version;
-    }),
-
-  /**
-   * Verify the schema version against the current version.
-   * If an update is required, returns the required migrations.
-   *
-   * Clients should apply each of these migrations locally.
-   */
-  verifySchema: protectedProcedure
-    .input(z.object({ version: z.number() }))
-    .output(
-      z.object({
-        status: z.enum(["latest", "update_required"]),
-        currentVersion: z.number(),
-        clientVersion: z.number(),
-        // TODO: Using the SelectMigrationsSchema results in ts not being
-        // able to infer the type on the client and just types as any.
-        // requiredMigrations: z.array(SelectMigrationsSchema).optional(),
-        requiredMigrations: z
-          .array(
-            z.object({
-              version: z.number(),
-              description: z.string(),
-              sql_script: z.string(),
-              // TODO: specifically, z.date() breaks the type inference.
-              // created_at: z.date(),
-            }),
-          )
-          .optional(),
-      }),
-    )
-    .query(async ({ input }) => {
+      return { version: results[0].version };
+    },
+    { auth: "user" },
+  )
+  .post(
+    "/verify",
+    async ({ body }) => {
       const requiredMigrations = await db
         .select()
         .from(migrations)
-        .where(gt(migrations.version, input.version))
+        .where(gt(migrations.version, body.version))
         .orderBy(asc(migrations.version));
 
       if (requiredMigrations.length > 0) {
@@ -94,35 +60,32 @@ export const migrationsRouter = router({
           requiredMigrations[requiredMigrations.length - 1].version;
 
         return {
-          status: "update_required",
+          status: "update_required" as const,
           currentVersion,
-          clientVersion: input.version,
+          clientVersion: body.version,
           requiredMigrations,
         };
       }
 
       return {
-        status: "latest",
-        currentVersion: input.version,
-        clientVersion: input.version,
+        status: "latest" as const,
+        currentVersion: body.version,
+        clientVersion: body.version,
       };
-    }),
-
-  fullSchema: protectedProcedure
-    .output(
-      z.array(
-        z.object({
-          version: z.number(),
-          description: z.string(),
-          sql_script: z.string(),
-          // TODO: specifically, z.date() breaks the type inference.
-          // created_at: z.date(),
-        }),
-      ),
-    )
-    .query(async () => {
+    },
+    {
+      auth: "user",
+      body: z.object({
+        version: z.number(),
+      }),
+    },
+  )
+  .get(
+    "/full",
+    async () => {
       const results = await db.select().from(migrations);
 
       return results;
-    }),
-});
+    },
+    { auth: "user" },
+  );

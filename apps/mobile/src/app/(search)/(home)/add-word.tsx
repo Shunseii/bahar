@@ -31,7 +31,7 @@ import { toast } from "sonner-native";
 import { t } from "@lingui/core/macro";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { addToSearchIndex } from "@/lib/search";
-import { queryClient } from "@/utils/trpc";
+import { queryClient } from "@/utils/api";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

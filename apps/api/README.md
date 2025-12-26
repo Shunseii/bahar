@@ -4,7 +4,9 @@ The backend API for Bahar - an Arabic language learning platform.
 
 ## Tech Stack
 
-- **Framework**: Express with tRPC for type-safe APIs
+- **Runtime**: Bun
+- **Framework**: Elysia
+- **Type-safe Client**: Eden Treaty
 - **Database**: Turso (LibSQL) - central database + per-user databases
 - **ORM**: Drizzle ORM
 - **Auth**: Better Auth (email OTP, OAuth)
@@ -41,7 +43,7 @@ When adding migrations, SQL statements should be separated by newlines.
 
 ### Prerequisites
 
-- Node.js >= 18
+- Bun >= 1.3
 - pnpm
 - Turso CLI (for local development)
 
@@ -145,17 +147,52 @@ npx tsx --env-file=.env scripts/<script-name>.ts
 
 ## Building
 
+### Binary (Local)
+
+Build standalone Bun binaries:
+
 ```bash
-pnpm run build
+# Build server binary
+cd apps/api
+pnpm run build:binary
+
+# Build migrate binary
+bun build --compile --minify-whitespace --minify-syntax \
+  --external @libsql/linux-x64-gnu \
+  --outfile migrate src/db/migrate.ts
 ```
 
-The built output is in `/dist`.
+Run the binaries (must have `node_modules/@libsql/linux-x64-gnu` available):
+
+```bash
+# Run migrations
+./migrate
+
+# Start server
+./server
+```
+
+**Note:** The `@libsql/linux-x64-gnu` native module must be in `node_modules/` - it's marked as external because Bun can't bundle native modules.
+
+### Docker
+
+Build the Docker image:
+
+```bash
+docker build -t bahar-api -f apps/api/Dockerfile .
+```
+
+Run the container:
+
+```bash
+docker run --network host -p 3000:3000 --env-file apps/api/.env bahar-api
+```
+
+**Important:** When using `--env-file`, values should NOT have quotes around them:
 
 ## Running in Production
 
-```bash
-pnpm start
-```
+The Docker container runs the compiled `server` binary. Migrations run automatically via Fly.io's `release_command` before deployment.
 
 ## Environment Variables
 
