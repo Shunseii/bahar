@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/useToast";
 import { ImportError, parseImportErrors, ImportErrorCode } from "@/lib/error";
-import { tracedFetch } from "@/lib/fetch";
 import { useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
@@ -269,7 +268,9 @@ const Settings = () => {
                 const { version, entries: validatedDictionary } = parsedImport;
 
                 const BATCH_SIZE = 100;
-                const batches = [...batchArray(validatedDictionary, BATCH_SIZE)];
+                const batches = [
+                  ...batchArray(validatedDictionary, BATCH_SIZE),
+                ];
                 const totalBatches = batches.length;
 
                 setImportProgress({ current: 0, total: totalBatches });
@@ -280,10 +281,8 @@ const Settings = () => {
                   const insertBatch = db.transaction(
                     async (batch: typeof validatedDictionary) => {
                       for (const word of batch) {
-                        const { dictEntry, flashcards } = createImportStatements(
-                          word,
-                          version,
-                        );
+                        const { dictEntry, flashcards } =
+                          createImportStatements(word, version);
 
                         await db.prepare(dictEntry.sql).run(dictEntry.args);
                         await db
@@ -385,12 +384,17 @@ const Settings = () => {
                 <div
                   className="h-full bg-primary transition-all duration-150"
                   style={{
-                    width: `${(importProgress.current / importProgress.total) * 100}%`,
+                    width: `${
+                      (importProgress.current / importProgress.total) * 100
+                    }%`,
                   }}
                 />
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                {Math.round((importProgress.current / importProgress.total) * 100)}%
+                {Math.round(
+                  (importProgress.current / importProgress.total) * 100,
+                )}
+                %
               </p>
             </div>
           )}

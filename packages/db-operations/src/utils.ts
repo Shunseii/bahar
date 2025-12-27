@@ -2,8 +2,6 @@
  * SQL utility functions for database operations.
  */
 
-// Polyfill for React Native (must be imported before nanoid)
-import "react-native-get-random-values";
 import { nanoid } from "nanoid/non-secure";
 
 /**

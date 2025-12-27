@@ -17,7 +17,6 @@
     "zod": "4.0.17"
   },
   "dependencies": {
-    "nanoid": "^5.0.7",
-    "react-native-get-random-values": "^2.0.0"
+    "nanoid": "^5.0.7"
   }
 }

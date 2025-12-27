@@ -6,9 +6,9 @@ import {
 import { ensureDb } from "..";
 import { nanoid } from "nanoid";
 import {
-  convertRawDictionaryEntryToSelectDictionaryEntry,
+  convertRawDictionaryEntryToSelect,
   type ConvertDictionaryEntryError,
-} from "../utils";
+} from "@bahar/db-operations";
 import { NullToUndefined } from "../../utils";
 import { TableOperation } from "./types";
 
@@ -34,7 +34,7 @@ export const dictionaryEntriesTable = {
           throw new Error(`Dictionary entry not found: ${id}`);
         }
 
-        const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        const result = convertRawDictionaryEntryToSelect(res);
         if (!result.ok) {
           throw new DictionaryEntryParseError(result.error);
         }
@@ -129,7 +129,7 @@ export const dictionaryEntriesTable = {
           );
         }
 
-        const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        const result = convertRawDictionaryEntryToSelect(res);
         if (!result.ok) {
           throw new DictionaryEntryParseError(result.error);
         }
@@ -243,7 +243,7 @@ export const dictionaryEntriesTable = {
           throw new Error(`Dictionary entry not found: ${id}`);
         }
 
-        const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        const result = convertRawDictionaryEntryToSelect(res);
         if (!result.ok) {
           throw new DictionaryEntryParseError(result.error);
         }
@@ -278,7 +278,7 @@ export const dictionaryEntriesTable = {
           .prepare(`DELETE FROM dictionary_entries WHERE id = ?;`)
           .run([id]);
 
-        const result = convertRawDictionaryEntryToSelectDictionaryEntry(res);
+        const result = convertRawDictionaryEntryToSelect(res);
         if (!result.ok) {
           throw new DictionaryEntryParseError(result.error);
         }

@@ -1,4 +1,4 @@
-import { highlightWithDiacritics } from "@/lib/search";
+import { highlightWithDiacritics } from "@bahar/search";
 import { useAtomValue } from "jotai";
 import { FC, useMemo, memo } from "react";
 import { searchQueryAtom } from "./state";

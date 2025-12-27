@@ -5,8 +5,6 @@ import { Brain, RotateCcw, ThumbsUp, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { FC, ReactNode, useMemo } from "react";
 import { Rating } from "ts-fsrs";
-import { formatInterval } from "./utils";
-import { useDir } from "@/hooks/useDir";
 
 type ReviewRating = Rating.Again | Rating.Hard | Rating.Good | Rating.Easy;
 
@@ -19,16 +17,14 @@ type GradeOptionConfig = {
 type GradeOptionProps = {
   grade: ReviewRating;
   disabled?: boolean;
-  now: Date;
-  due: Date;
+  intervalLabel: string;
   onClick: () => void;
 };
 
 export const GradeOption: FC<GradeOptionProps> = ({
   grade,
   onClick,
-  now,
-  due,
+  intervalLabel,
   disabled = false,
 }) => {
   const options = useMemo(() => {
@@ -64,9 +60,6 @@ export const GradeOption: FC<GradeOptionProps> = ({
     return config;
   }, []);
 
-  const dir = useDir();
-  const locale = dir === "rtl" ? "ar-u-nu-arab" : "en";
-
   const { label, icon, borderStyles } = options[grade];
 
   return (
@@ -87,9 +80,7 @@ export const GradeOption: FC<GradeOptionProps> = ({
       >
         {icon}
         <span className="font-medium">{label}</span>
-        <span className="text-xs text-muted-foreground">
-          {formatInterval(due, now, locale)}
-        </span>
+        <span className="text-xs text-muted-foreground">{intervalLabel}</span>
       </Button>
     </motion.div>
   );
