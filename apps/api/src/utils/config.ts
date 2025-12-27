@@ -49,7 +49,7 @@ const validateEnv = () => {
   if (!result.success) {
     console.error(
       "❌ Error starting server, invalid environment variables:",
-      result.error.flatten().fieldErrors,
+      result.error.flatten().fieldErrors
     );
 
     process.exit(1);

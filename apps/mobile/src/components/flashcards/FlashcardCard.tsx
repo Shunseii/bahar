@@ -8,19 +8,20 @@
  * - Haptic feedback
  */
 
-import React, { useCallback, useEffect } from "react";
-import { View, Text, Dimensions, StyleSheet } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  interpolate,
-  Extrapolation,
-  runOnJS,
-  FadeIn,
-} from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
+import type React from "react";
+import { useCallback, useEffect } from "react";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  Extrapolation,
+  FadeIn,
+  interpolate,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import type { FlashcardWithDictionaryEntry } from "../../lib/db/operations/flashcards";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -70,7 +71,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
         event.translationX,
         [-SCREEN_WIDTH, 0, SCREEN_WIDTH],
         [-15, 0, 15],
-        Extrapolation.CLAMP,
+        Extrapolation.CLAMP
       );
     })
     .onEnd((event) => {
@@ -80,11 +81,21 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       const canSwipe = isAnswerShown.value;
 
       if (event.translationX > SWIPE_THRESHOLD && canSwipe && onSwipeRight) {
-        translateX.value = withSpring(SCREEN_WIDTH * 1.5, { damping: 20, stiffness: 200 });
+        translateX.value = withSpring(SCREEN_WIDTH * 1.5, {
+          damping: 20,
+          stiffness: 200,
+        });
         runOnJS(triggerSuccessHaptic)();
         runOnJS(onSwipeRight)();
-      } else if (event.translationX < -SWIPE_THRESHOLD && canSwipe && onSwipeLeft) {
-        translateX.value = withSpring(-SCREEN_WIDTH * 1.5, { damping: 20, stiffness: 200 });
+      } else if (
+        event.translationX < -SWIPE_THRESHOLD &&
+        canSwipe &&
+        onSwipeLeft
+      ) {
+        translateX.value = withSpring(-SCREEN_WIDTH * 1.5, {
+          damping: 20,
+          stiffness: 200,
+        });
         runOnJS(triggerHaptic)();
         runOnJS(onSwipeLeft)();
       } else {
@@ -94,11 +105,10 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       }
     });
 
-  const tapGesture = Gesture.Tap()
-    .onStart(() => {
-      runOnJS(triggerHaptic)();
-      runOnJS(onFlip)();
-    });
+  const tapGesture = Gesture.Tap().onStart(() => {
+    runOnJS(triggerHaptic)();
+    runOnJS(onFlip)();
+  });
 
   const gesture = Gesture.Simultaneous(panGesture, tapGesture);
 
@@ -116,7 +126,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       translateX.value,
       [-SWIPE_THRESHOLD, 0],
       [0.8, 0],
-      Extrapolation.CLAMP,
+      Extrapolation.CLAMP
     ),
   }));
 
@@ -125,7 +135,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       translateX.value,
       [0, SWIPE_THRESHOLD],
       [0, 0.8],
-      Extrapolation.CLAMP,
+      Extrapolation.CLAMP
     ),
   }));
 
@@ -142,31 +152,31 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View
+        className="min-h-[320px] rounded-3xl border border-border/50 bg-card p-6 shadow-xl"
         style={[cardStyle]}
-        className="bg-card rounded-3xl p-6 shadow-xl border border-border/50 min-h-[320px]"
       >
         {/* Swipe indicators */}
         <Animated.View
-          style={[leftOverlayStyle, StyleSheet.absoluteFill]}
           className="rounded-3xl bg-destructive/20"
           pointerEvents="none"
+          style={[leftOverlayStyle, StyleSheet.absoluteFill]}
         />
         <Animated.View
-          style={[rightOverlayStyle, StyleSheet.absoluteFill]}
           className="rounded-3xl bg-green-500/20"
           pointerEvents="none"
+          style={[rightOverlayStyle, StyleSheet.absoluteFill]}
         />
 
         {/* Card content */}
-        <View className="flex-1 justify-center items-center py-4">
+        <View className="flex-1 items-center justify-center py-4">
           {/* Question side */}
           {isReverse ? (
             <View className="items-center px-4">
-              <Text className="text-foreground text-2xl text-center leading-relaxed">
+              <Text className="text-center text-2xl text-foreground leading-relaxed">
                 {entry.translation}
               </Text>
               {entry.definition && (
-                <Text className="text-muted-foreground text-base text-center mt-3">
+                <Text className="mt-3 text-center text-base text-muted-foreground">
                   {entry.definition}
                 </Text>
               )}
@@ -174,14 +184,14 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
           ) : (
             <View className="items-center px-4">
               <Text
-                className="text-foreground text-4xl font-bold text-center"
+                className="text-center font-bold text-4xl text-foreground"
                 style={{ writingDirection: "rtl" }}
               >
                 {entry.word}
               </Text>
               {entry.type && (
-                <View className="mt-3 px-3 py-1 rounded-full bg-primary/10">
-                  <Text className="text-primary text-sm font-medium">
+                <View className="mt-3 rounded-full bg-primary/10 px-3 py-1">
+                  <Text className="font-medium text-primary text-sm">
                     {typeLabels[entry.type] || entry.type}
                   </Text>
                 </View>
@@ -192,23 +202,23 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
           {/* Answer side with animation */}
           {showAnswer && (
             <Animated.View
+              className="mt-6 w-full items-center border-border/50 border-t pt-6"
               entering={FadeIn.duration(200)}
-              className="mt-6 pt-6 border-t border-border/50 w-full items-center"
             >
               {isReverse ? (
                 <Text
-                  className="text-foreground text-4xl font-bold text-center"
+                  className="text-center font-bold text-4xl text-foreground"
                   style={{ writingDirection: "rtl" }}
                 >
                   {entry.word}
                 </Text>
               ) : (
                 <View className="items-center">
-                  <Text className="text-foreground text-2xl text-center leading-relaxed">
+                  <Text className="text-center text-2xl text-foreground leading-relaxed">
                     {entry.translation}
                   </Text>
                   {entry.definition && (
-                    <Text className="text-muted-foreground text-base text-center mt-3">
+                    <Text className="mt-3 text-center text-base text-muted-foreground">
                       {entry.definition}
                     </Text>
                   )}
@@ -217,8 +227,11 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
               {/* Root letters */}
               {entry.root && entry.root.length > 0 && (
-                <View className="mt-3 px-3 py-1 rounded-full bg-muted">
-                  <Text className="text-muted-foreground text-sm" style={{ writingDirection: "rtl" }}>
+                <View className="mt-3 rounded-full bg-muted px-3 py-1">
+                  <Text
+                    className="text-muted-foreground text-sm"
+                    style={{ writingDirection: "rtl" }}
+                  >
                     {entry.root.join(" - ")}
                   </Text>
                 </View>
@@ -229,15 +242,17 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
         {/* Tags */}
         {entry.tags && entry.tags.length > 0 && (
-          <View className="flex-row flex-wrap justify-center gap-2 mt-2">
-            {entry.tags.slice(0, 3).map((tag, index) => (
-              <View key={index} className="bg-muted px-2.5 py-1 rounded-full">
+          <View className="mt-2 flex-row flex-wrap justify-center gap-2">
+            {entry.tags.slice(0, 3).map((tag) => (
+              <View className="rounded-full bg-muted px-2.5 py-1" key={tag}>
                 <Text className="text-muted-foreground text-xs">{tag}</Text>
               </View>
             ))}
             {entry.tags.length > 3 && (
-              <View className="bg-muted px-2.5 py-1 rounded-full">
-                <Text className="text-muted-foreground text-xs">+{entry.tags.length - 3}</Text>
+              <View className="rounded-full bg-muted px-2.5 py-1">
+                <Text className="text-muted-foreground text-xs">
+                  +{entry.tags.length - 3}
+                </Text>
               </View>
             )}
           </View>
@@ -245,7 +260,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
         {/* Tap hint */}
         {!showAnswer && (
-          <Text className="text-muted-foreground/60 text-xs text-center mt-4">
+          <Text className="mt-4 text-center text-muted-foreground/60 text-xs">
             Tap to reveal answer
           </Text>
         )}

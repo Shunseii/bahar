@@ -1,9 +1,9 @@
-import { Search } from "lucide-react";
-import { Input } from "../ui/input";
-import { useLingui } from "@lingui/react/macro";
-import { FC, useRef, useState } from "react";
 import { cn } from "@bahar/design-system";
+import { Input } from "@bahar/web-ui/components/input";
+import { useLingui } from "@lingui/react/macro";
 import { useAtom } from "jotai";
+import { Search } from "lucide-react";
+import { type FC, useRef, useState } from "react";
 import { searchQueryAtom } from "./state";
 
 interface SearchInputProps {
@@ -23,18 +23,9 @@ export const SearchInput: FC<SearchInputProps> = ({ className = "" }) => {
 
   return (
     <form
-      className={cn("relative flex-1 md:grow-0", className)}
-      role="search"
-      noValidate
       action=""
-      onSubmit={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
-
-        if (inputRef.current) {
-          inputRef.current.blur();
-        }
-      }}
+      className={cn("relative flex-1 md:grow-0", className)}
+      noValidate
       onReset={(event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -45,26 +36,35 @@ export const SearchInput: FC<SearchInputProps> = ({ className = "" }) => {
           inputRef.current.focus();
         }
       }}
+      onSubmit={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (inputRef.current) {
+          inputRef.current.blur();
+        }
+      }}
+      role="search"
     >
-      <Search className="absolute ltr:left-2.5 rtl:right-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <Search className="absolute top-2.5 h-4 w-4 text-muted-foreground ltr:left-2.5 rtl:right-2.5" />
 
       <Input
-        type="search"
-        placeholder={t`Search...`}
-        className="w-full rounded-lg bg-background ltr:pl-8 rtl:pr-8 md:w-[450px] lg:w-[450px]"
-        ref={inputRef}
+        autoCapitalize="off"
         autoComplete="off"
         autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck={false}
-        maxLength={512}
         autoFocus
-        value={inputValue}
+        className="w-full rounded-lg bg-background md:w-[450px] lg:w-[450px] ltr:pl-8 rtl:pr-8"
+        maxLength={512}
         onChange={(e) => {
           const newQuery = e.currentTarget.value;
 
           setQuery(newQuery);
         }}
+        placeholder={t`Search...`}
+        ref={inputRef}
+        spellCheck={false}
+        type="search"
+        value={inputValue}
       />
     </form>
   );

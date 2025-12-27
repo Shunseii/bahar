@@ -1,12 +1,11 @@
-import { Trans } from "@lingui/react/macro";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
+} from "@bahar/web-ui/components/accordion";
+import { Button } from "@bahar/web-ui/components/button";
+import { CardContent } from "@bahar/web-ui/components/card";
 import {
   FormControl,
   FormDescription,
@@ -14,13 +13,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { z } from "@/lib/zod";
-import { FormSchema } from "@/lib/schemas/dictionary";
+} from "@bahar/web-ui/components/form";
+import { Input } from "@bahar/web-ui/components/input";
+import { Separator } from "@bahar/web-ui/components/separator";
+import { Trans } from "@lingui/react/macro";
 import { Plus } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import type { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 export const VerbMorphologyCardSection = () => {
   const form = useFormContext<z.infer<typeof FormSchema>>();
@@ -57,10 +57,10 @@ export const VerbMorphologyCardSection = () => {
 
               <FormControl>
                 <Input
-                  type="text"
+                  className="w-full text-xl"
                   dir="rtl"
                   lang="ar"
-                  className="w-full text-xl"
+                  type="text"
                   {...field}
                 />
               </FormControl>
@@ -81,10 +81,10 @@ export const VerbMorphologyCardSection = () => {
 
               <FormControl>
                 <Input
-                  type="text"
+                  className="w-full text-xl"
                   dir="rtl"
                   lang="ar"
-                  className="w-full text-xl"
+                  type="text"
                   {...field}
                 />
               </FormControl>
@@ -105,10 +105,10 @@ export const VerbMorphologyCardSection = () => {
 
               <FormControl>
                 <Input
-                  type="text"
+                  className="w-full text-xl"
                   dir="rtl"
                   lang="ar"
-                  className="w-full text-xl"
+                  type="text"
                   {...field}
                 />
               </FormControl>
@@ -129,10 +129,10 @@ export const VerbMorphologyCardSection = () => {
 
               <FormControl>
                 <Input
-                  type="text"
+                  className="w-full text-xl"
                   dir="rtl"
                   lang="ar"
-                  className="w-full text-xl"
+                  type="text"
                   {...field}
                 />
               </FormControl>
@@ -153,10 +153,10 @@ export const VerbMorphologyCardSection = () => {
 
               <FormControl>
                 <Input
-                  type="text"
+                  className="w-full text-xl"
                   dir="rtl"
                   lang="ar"
-                  className="w-full text-xl"
+                  type="text"
                   {...field}
                 />
               </FormControl>
@@ -170,11 +170,11 @@ export const VerbMorphologyCardSection = () => {
           <Trans>Masadir</Trans>
         </h3>
 
-        <p className="ltr:text-sm rtl:text-base text-muted-foreground">
+        <p className="text-muted-foreground ltr:text-sm rtl:text-base">
           <Trans>Verbal noun forms (masadir) of the verb.</Trans>
         </p>
 
-        <Accordion type="single" collapsible>
+        <Accordion collapsible type="single">
           {masadirFields.map((field, index) => {
             return (
               <AccordionItem key={field.id} value={field.id}>
@@ -194,12 +194,12 @@ export const VerbMorphologyCardSection = () => {
 
                         <FormControl>
                           <Input
-                            type="text"
+                            className="w-[98%] text-xl ltr:ml-1 rtl:mr-1"
                             dir="rtl"
                             lang="ar"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
+                            type="text"
                             {...renderField}
                           />
                         </FormControl>
@@ -220,11 +220,11 @@ export const VerbMorphologyCardSection = () => {
 
                         <FormControl>
                           <Input
-                            type="text"
+                            className="w-[98%] ltr:ml-1 rtl:mr-1"
                             dir="ltr"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1"
+                            type="text"
                             {...renderField}
                           />
                         </FormControl>
@@ -242,11 +242,11 @@ export const VerbMorphologyCardSection = () => {
                   />
 
                   <Button
-                    variant="outline"
-                    size="sm"
                     className="w-max"
-                    type="button"
                     onClick={() => removeMasdar(index)}
+                    size="sm"
+                    type="button"
+                    variant="outline"
                   >
                     <Trans>Remove</Trans>
                   </Button>
@@ -258,12 +258,12 @@ export const VerbMorphologyCardSection = () => {
 
         <Button
           className="w-max"
-          type="button"
           onClick={() => {
             appendMasdar({ word: "" });
           }}
-          variant="outline"
           size="sm"
+          type="button"
+          variant="outline"
         >
           <Plus className="mr-2 h-4 w-4" />
           <Trans>Add Masdar</Trans>
@@ -279,7 +279,7 @@ export const VerbMorphologyCardSection = () => {
               </FormLabel>
 
               <FormControl>
-                <Input type="text" dir="ltr" className="w-full" {...field} />
+                <Input className="w-full" dir="ltr" type="text" {...field} />
               </FormControl>
 
               <FormDescription>
@@ -301,10 +301,10 @@ export const VerbMorphologyCardSection = () => {
 
               <FormControl>
                 <Input
-                  type="text"
+                  className="w-full text-xl"
                   dir="rtl"
                   lang="ar"
-                  className="w-full text-xl"
+                  type="text"
                   {...field}
                 />
               </FormControl>
@@ -325,14 +325,14 @@ export const VerbMorphologyCardSection = () => {
           <Trans>Huroof</Trans>
         </h3>
 
-        <p className="ltr:text-sm rtl:text-base text-muted-foreground">
+        <p className="text-muted-foreground ltr:text-sm rtl:text-base">
           <Trans>
             Prepositions (huroof) that can be used with the verb to change its
             meaning.
           </Trans>
         </p>
 
-        <Accordion type="single" collapsible>
+        <Accordion collapsible type="single">
           {huroofFields.map((field, index) => {
             return (
               <AccordionItem key={field.id} value={field.id}>
@@ -352,12 +352,12 @@ export const VerbMorphologyCardSection = () => {
 
                         <FormControl>
                           <Input
-                            type="text"
+                            className="w-[98%] text-xl ltr:ml-1 rtl:mr-1"
                             dir="rtl"
                             lang="ar"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
+                            type="text"
                             {...renderField}
                           />
                         </FormControl>
@@ -378,11 +378,11 @@ export const VerbMorphologyCardSection = () => {
 
                         <FormControl>
                           <Input
-                            type="text"
+                            className="w-[98%] ltr:ml-1 rtl:mr-1"
                             dir="ltr"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1"
+                            type="text"
                             {...renderField}
                           />
                         </FormControl>
@@ -399,11 +399,11 @@ export const VerbMorphologyCardSection = () => {
                   />
 
                   <Button
-                    variant="outline"
-                    size="sm"
                     className="w-max"
-                    type="button"
                     onClick={() => removeHarf(index)}
+                    size="sm"
+                    type="button"
+                    variant="outline"
                   >
                     <Trans>Remove</Trans>
                   </Button>
@@ -415,12 +415,12 @@ export const VerbMorphologyCardSection = () => {
 
         <Button
           className="w-max"
-          type="button"
           onClick={() => {
             appendHarf({ harf: "" });
           }}
-          variant="outline"
           size="sm"
+          type="button"
+          variant="outline"
         >
           <Plus className="mr-2 h-4 w-4" />
           <Trans>Add harf</Trans>

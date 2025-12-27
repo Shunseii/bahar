@@ -1,21 +1,21 @@
-import { Trans } from "@lingui/react/macro";
-import { InfoIcon } from "lucide-react";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@bahar/web-ui/components/popover";
+import { Trans } from "@lingui/react/macro";
+import { InfoIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useFormContext } from "react-hook-form";
-import { FormSchema } from "@/lib/schemas/dictionary";
-import { z } from "@/lib/zod";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import type { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 import { IsmMorphologyCardSection } from "./IsmMorphologyCardSection";
 import { VerbMorphologyCardSection } from "./VerbMorphologyCardSection";
 
@@ -32,13 +32,13 @@ export const MorphologyFormSection = () => {
     <AnimatePresence>
       {hasMorphology ? (
         <motion.div
-          initial={{
+          animate={{ opacity: 1, y: 0, x: 0 }}
+          exit={{
             opacity: 0,
             y: isMobile ? undefined : -100,
             x: isMobile ? -100 : undefined,
           }}
-          animate={{ opacity: 1, y: 0, x: 0 }}
-          exit={{
+          initial={{
             opacity: 0,
             y: isMobile ? undefined : -100,
             x: isMobile ? -100 : undefined,
@@ -47,7 +47,7 @@ export const MorphologyFormSection = () => {
         >
           <Card>
             <CardHeader>
-              <div className="flex gap-x-2 items-center">
+              <div className="flex items-center gap-x-2">
                 <CardTitle>
                   <Trans>Morphology</Trans>
                 </CardTitle>

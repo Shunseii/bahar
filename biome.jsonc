@@ -1,0 +1,75 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite/core", "ultracite/react", "ultracite/astro"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "includes": [
+      "!**/drizzle/meta",
+      "!**/routeTree.gen.ts",
+      "!packages/i18n/locales"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "rules": {
+      "a11y": {
+        "noNoninteractiveElementToInteractiveRole": "info",
+        "noNoninteractiveElementInteractions": "info",
+        "noStaticElementInteractions": "info",
+        "useButtonType": "info",
+        "useAltText": "info",
+        "useSemanticElements": "info",
+        "useFocusableInteractive": "info"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "noExcessiveCognitiveComplexity": "info",
+        "noUselessSwitchCase": "info",
+        "noUselessFragments": "info"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "off",
+        "noUnusedVariables": "info",
+        "useImageSize": "info"
+      },
+      "performance": {
+        "noNamespaceImport": "off",
+        "noBarrelFile": "off",
+        "noAccumulatingSpread": "info"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "info"
+      },
+      "style": {
+        "noEnum": "off",
+        "useFilenamingConvention": "off",
+        "useConsistentTypeDefinitions": "off",
+        "useBlockStatements": "off",
+        "noNonNullAssertion": "off",
+        "useConsistentBuiltinInstantiation": "info",
+        "useConsistentMemberAccessibility": "info",
+        "useReadonlyClassProperties": "info",
+        "useDefaultSwitchClause": "info",
+        "noExportedImports": "info",
+        "noNestedTernary": "info",
+        "useAtIndex": "info",
+        "noParameterProperties": "info"
+      },
+      "suspicious": {
+        "noExplicitAny": "info",
+        "useAwait": "info",
+        "noImplicitAnyLet": "info",
+        "noEvolvingTypes": "info",
+        "noArrayIndexKey": "info",
+        "noAssignInExpressions": "info"
+      }
+    }
+  }
+}

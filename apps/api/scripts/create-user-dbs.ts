@@ -1,9 +1,9 @@
+import { eq, isNull } from "drizzle-orm";
+import { setUpUserDb } from "../src/auth";
 import { db } from "../src/db";
 import { users } from "../src/db/schema/auth";
 import { databases } from "../src/db/schema/databases";
-import { eq, isNull } from "drizzle-orm";
 import { logger } from "../src/utils/logger";
-import { setUpUserDb } from "../src/auth";
 
 /**
  * Script that creates user databases in turso
@@ -21,13 +21,13 @@ const createUserDbs = async () => {
       .where(isNull(databases.db_id));
 
     logger.info(
-      `Found ${usersWithoutDb.length} users without a user database.`,
+      `Found ${usersWithoutDb.length} users without a user database.`
     );
 
     for (const { users: user } of usersWithoutDb) {
       logger.info(
         { email: user.email, user_id: user.id },
-        `Creating user database for user...`,
+        "Creating user database for user..."
       );
 
       try {
@@ -35,7 +35,7 @@ const createUserDbs = async () => {
 
         logger.info(
           { email: user.email, user_id: user.id },
-          `Successfully created user database for user.`,
+          "Successfully created user database for user."
         );
       } catch (err) {
         logger.error(
@@ -44,7 +44,7 @@ const createUserDbs = async () => {
             email: user.email,
             user_id: user.id,
           },
-          `Failed to create user database for user. Skipping.`,
+          "Failed to create user database for user. Skipping."
         );
       }
     }

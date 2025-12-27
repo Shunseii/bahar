@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import { Button } from "@bahar/web-ui/components/button";
 import { Trans } from "@lingui/react/macro";
-import { FC, ReactNode, useMemo, useState } from "react";
-import { DisplayError } from "@/lib/db/errors";
 import { Copy } from "lucide-react";
+import { type FC, type ReactNode, useMemo, useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { DisplayError } from "@/lib/db/errors";
 
 const ContactSupportSection = () => (
-  <p className="text-sm text-muted-foreground">
+  <p className="text-muted-foreground text-sm">
     <Trans>
       Please contact{" "}
       <a
@@ -65,7 +65,7 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
 
   return (
     <>
-      <div className="mt-2 text-muted-foreground text-sm flex flex-col gap-2">
+      <div className="mt-2 flex flex-col gap-2 text-muted-foreground text-sm">
         {isDisplayError ? (
           <p>{error.message}</p>
         ) : (
@@ -76,8 +76,8 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
         )}
 
         <button
+          className="w-fit cursor-pointer text-left text-primary hover:underline"
           onClick={() => setShowDetails(!showDetails)}
-          className="text-left text-primary hover:underline cursor-pointer w-fit"
         >
           {showDetails ? (
             <Trans>Hide details</Trans>
@@ -92,11 +92,11 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
           <div>
             <ContactSupportSection />
 
-            <div className="mt-3 bg-background rounded border border-border space-y-2 p-2">
-              <div className="flex items-center justify-between float-end">
+            <div className="mt-3 space-y-2 rounded border border-border bg-background p-2">
+              <div className="float-end flex items-center justify-between">
                 <button
+                  className="flex flex-row items-center gap-1 text-muted-foreground text-xs transition-colors hover:text-foreground rtl:flex-row-reverse"
                   onClick={handleCopyDetails}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors rtl:flex-row-reverse flex-row"
                   title={copied ? "Copied!" : "Copy error details"}
                 >
                   <Copy size={14} />
@@ -105,31 +105,31 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
               </div>
 
               <ErrorDetailField
-                fieldName={<Trans>ID:</Trans>}
                 detail={session?.user?.id ?? "Unknown"}
+                fieldName={<Trans>ID:</Trans>}
               />
 
               <ErrorDetailField
-                fieldName={<Trans>Time:</Trans>}
                 detail={timestamp}
+                fieldName={<Trans>Time:</Trans>}
               />
 
               {isDisplayError && error.cause && (
                 <>
                   <ErrorDetailField
-                    fieldName={<Trans>Cause:</Trans>}
                     detail={error.cause}
+                    fieldName={<Trans>Cause:</Trans>}
                   />
                 </>
               )}
 
               <ErrorDetailField
-                fieldName={<Trans>Details:</Trans>}
                 detail={
                   isDisplayError
                     ? error.details
                     : `${error.name}: ${error.message}`
                 }
+                fieldName={<Trans>Details:</Trans>}
               />
             </div>
           </div>
@@ -138,7 +138,7 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
 
       {hasManualFix && (
         <div className="mt-4 flex gap-2">
-          <Button variant="default" onClick={() => window.location.reload()}>
+          <Button onClick={() => window.location.reload()} variant="default">
             <Trans>Reload</Trans>
           </Button>
         </div>

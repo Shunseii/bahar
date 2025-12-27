@@ -1,48 +1,47 @@
-import { Trans } from "@lingui/react/macro";
-import { InputFile } from "@/components/InputFile";
-import { LanguageMenu } from "@/components/LanguageMenu";
-import { Page } from "@/components/Page";
-import { ThemeMenu } from "@/components/ThemeMenu";
-import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
-import { Button } from "@/components/ui/button";
+import type {
+  RawDictionaryEntry,
+  SelectFlashcard,
+} from "@bahar/drizzle-user-db-schemas";
+import { Button } from "@bahar/web-ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
-  DialogHeader,
-  DialogFooter,
   Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
   DialogClose,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/useToast";
-import { ImportError, parseImportErrors, ImportErrorCode } from "@/lib/error";
-import { useLingui } from "@lingui/react/macro";
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@bahar/web-ui/components/dialog";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
+import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
+import { InputFile } from "@/components/InputFile";
+import { LanguageMenu } from "@/components/LanguageMenu";
+import { Page } from "@/components/Page";
+import { ThemeMenu } from "@/components/ThemeMenu";
 import { useSearch } from "@/hooks/useSearch";
+import { authClient } from "@/lib/auth-client";
 import { ensureDb } from "@/lib/db";
-import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
+import { transformForExport } from "@/lib/db/export";
 import {
-  readFileAsText,
   batchArray,
   createImportStatements,
   parseImportData,
+  readFileAsText,
 } from "@/lib/db/import";
-import { transformForExport } from "@/lib/db/export";
-import {
-  RawDictionaryEntry,
-  SelectFlashcard,
-} from "@bahar/drizzle-user-db-schemas";
+import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
+import { ImportError, ImportErrorCode, parseImportErrors } from "@/lib/error";
 import { hydrateOramaDb, resetOramaDb } from "@/lib/search";
 
 const Settings = () => {
@@ -54,7 +53,6 @@ const Settings = () => {
     current: number;
     total: number;
   } | null>(null);
-  const { toast } = useToast();
   const { data: userData } = authClient.useSession();
 
   const exportDictionary = useCallback(
@@ -74,7 +72,7 @@ const Settings = () => {
         for (const entry of entries) {
           const flashcards: SelectFlashcard[] = await db
             .prepare(
-              "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction",
+              "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction"
             )
             .all([entry.id]);
 
@@ -86,7 +84,7 @@ const Settings = () => {
 
           if (!result.ok) {
             console.warn(
-              `Skipping corrupted entry "${result.error.word}" (${result.error.entryId}): ${result.error.field} - ${result.error.reason}`,
+              `Skipping corrupted entry "${result.error.word}" (${result.error.entryId}): ${result.error.field} - ${result.error.reason}`
             );
             skippedCount++;
             continue;
@@ -97,7 +95,7 @@ const Settings = () => {
 
         if (skippedCount > 0) {
           console.warn(
-            `Export completed with ${skippedCount} entries skipped due to data corruption`,
+            `Export completed with ${skippedCount} entries skipped due to data corruption`
           );
         }
 
@@ -118,29 +116,24 @@ const Settings = () => {
         URL.revokeObjectURL(url);
 
         if (skippedCount > 0) {
-          toast({
-            variant: "destructive",
-            title: t`Export completed with issues`,
+          toast.error(t`Export completed with issues`, {
             description: t`${skippedCount} entries were skipped due to data corruption.`,
           });
         } else {
-          toast({
-            title: t`Successfully exported!`,
+          toast.success(t`Successfully exported!`, {
             description: t`Your dictionary has been downloaded.`,
           });
         }
       } catch (err: unknown) {
         console.error(err);
-        toast({
-          variant: "destructive",
-          title: t`Export failed!`,
+        toast.error(t`Export failed!`, {
           description: t`There was an error exporting your dictionary. Please try again later.`,
         });
       } finally {
         setIsLoading(false);
       }
     },
-    [toast, t],
+    [t]
   );
 
   const deleteDictionary = useCallback(async () => {
@@ -167,26 +160,23 @@ const Settings = () => {
         return;
       }
 
-      toast({
-        title: t`Successfully deleted!`,
+      toast.success(t`Successfully deleted!`, {
         description: t`Your dictionary has been deleted.`,
       });
     } catch (err: unknown) {
       console.error(err);
 
-      toast({
-        variant: "destructive",
-        title: t`Failed to delete!`,
+      toast.error(t`Failed to delete!`, {
         description: t`There was an error deleting your dictionary. Please try again later.`,
       });
     } finally {
       setIsLoading(false);
     }
-  }, [reset, toast, t]);
+  }, [reset, t]);
 
   return (
-    <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
-      <h1 className="text-center text-3xl font-primary font-semibold">
+    <Page className="m-auto flex w-full max-w-4xl flex-col gap-y-8">
+      <h1 className="text-center font-primary font-semibold text-3xl">
         <Trans>Settings</Trans>
       </h1>
 
@@ -220,8 +210,8 @@ const Settings = () => {
 
         <CardContent className="flex flex-col gap-y-4">
           <form
-            className="flex flex-col sm:flex-row items-start sm:items-end gap-x-4 gap-y-4"
             action="#"
+            className="flex flex-col items-start gap-x-4 gap-y-4 sm:flex-row sm:items-end"
             encType="multipart/form-data"
             onSubmit={async (e) => {
               e.preventDefault();
@@ -229,9 +219,7 @@ const Settings = () => {
               setIsLoading(true);
 
               if (!file || file.type !== "application/json") {
-                toast({
-                  variant: "destructive",
-                  title: t`Incorrect file type`,
+                toast.error(t`Incorrect file type`, {
                   description: t`Please select a JSON file with your dictionary.`,
                 });
 
@@ -292,7 +280,7 @@ const Settings = () => {
                           .prepare(flashcards[1].sql)
                           .run(flashcards[1].args);
                       }
-                    },
+                    }
                   );
 
                   for (let i = 0; i < batches.length; i++) {
@@ -315,8 +303,7 @@ const Settings = () => {
                   return;
                 }
 
-                toast({
-                  title: t`Successfully imported!`,
+                toast.success(t`Successfully imported!`, {
                   description: t`Your dictionary has been updated!`,
                 });
               } catch (err: unknown) {
@@ -327,7 +314,7 @@ const Settings = () => {
                     "Error importing dictionary: ",
                     message,
                     code,
-                    error,
+                    error
                   );
 
                   const importErrors = parseImportErrors({
@@ -336,23 +323,16 @@ const Settings = () => {
                   });
 
                   importErrors.forEach((importError) => {
-                    toast({
-                      variant: "destructive",
-                      description: importError,
-                    });
+                    toast.error(importError);
                   });
 
-                  toast({
-                    variant: "destructive",
-                    title: t`Import failed!`,
+                  toast.error(t`Import failed!`, {
                     description: t`Your dictionary is not valid. Please fix the errors and upload it again.`,
                   });
                 } else {
                   console.error(err);
 
-                  toast({
-                    variant: "destructive",
-                    title: t`Import failed!`,
+                  toast.error(t`Import failed!`, {
                     description: t`There was an error importing your dictionary. Please try again later.`,
                   });
                 }
@@ -363,16 +343,16 @@ const Settings = () => {
             }}
           >
             <InputFile
+              accept="application/json"
               onChange={(file) => {
                 setFile(file);
               }}
-              accept="application/json"
             />
 
             <Button
+              disabled={!file || isLoading}
               id="import-dictionary-button"
               type="submit"
-              disabled={!file || isLoading}
             >
               <Trans>Import</Trans>
             </Button>
@@ -380,7 +360,7 @@ const Settings = () => {
 
           {importProgress && (
             <div className="space-y-2">
-              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full bg-primary transition-all duration-150"
                   style={{
@@ -390,9 +370,9 @@ const Settings = () => {
                   }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-center text-muted-foreground text-xs">
                 {Math.round(
-                  (importProgress.current / importProgress.total) * 100,
+                  (importProgress.current / importProgress.total) * 100
                 )}
                 %
               </p>
@@ -407,7 +387,7 @@ const Settings = () => {
         <CardContent>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="secondary" disabled={isLoading}>
+              <Button disabled={isLoading} variant="secondary">
                 <Trans>Export</Trans>
               </Button>
             </DialogTrigger>
@@ -438,19 +418,19 @@ const Settings = () => {
               </DialogHeader>
 
               <DialogFooter>
-                <div className="flex gap-4 justify-end">
+                <div className="flex justify-end gap-4">
                   <Button
-                    variant="secondary"
-                    type="button"
                     onClick={() => exportDictionary(false)}
+                    type="button"
+                    variant="secondary"
                   >
                     <Trans>Export</Trans>
                   </Button>
 
                   <Button
-                    variant="secondary"
-                    type="button"
                     onClick={() => exportDictionary(true)}
+                    type="button"
+                    variant="secondary"
                   >
                     <Trans>Export with flashcards</Trans>
                   </Button>
@@ -463,7 +443,7 @@ const Settings = () => {
         <CardContent>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="destructive" disabled={isLoading}>
+              <Button disabled={isLoading} variant="destructive">
                 <Trans>Delete</Trans>
               </Button>
             </DialogTrigger>
@@ -486,7 +466,7 @@ const Settings = () => {
 
               <DialogFooter className="gap-y-4">
                 <DialogClose asChild>
-                  <Button variant="destructive" onClick={deleteDictionary}>
+                  <Button onClick={deleteDictionary} variant="destructive">
                     <Trans>Delete</Trans>
                   </Button>
                 </DialogClose>
@@ -510,7 +490,7 @@ const Settings = () => {
 };
 
 export const Route = createLazyFileRoute(
-  "/_authorized-layout/_app-layout/settings",
+  "/_authorized-layout/_app-layout/settings"
 )({
   component: Settings,
 });

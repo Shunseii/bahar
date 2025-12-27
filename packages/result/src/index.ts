@@ -33,7 +33,7 @@ export const err = <const E>(error: E): Result<never, E> => ({
  */
 export const tryCatch = async <T, const E>(
   fn: () => Promise<T>,
-  mapError: (error: unknown) => E,
+  mapError: (error: unknown) => E
 ): Promise<Result<T, E>> => {
   try {
     const value = await fn();
@@ -47,7 +47,7 @@ export const tryCatch = async <T, const E>(
  * Type guard to check if a Result is Ok
  */
 export const isOk = <T, E>(
-  result: Result<T, E>,
+  result: Result<T, E>
 ): result is { ok: true; value: T } => {
   return result.ok;
 };
@@ -56,7 +56,7 @@ export const isOk = <T, E>(
  * Type guard to check if a Result is Err
  */
 export const isErr = <T, E>(
-  result: Result<T, E>,
+  result: Result<T, E>
 ): result is { ok: false; error: E } => {
   return !result.ok;
 };

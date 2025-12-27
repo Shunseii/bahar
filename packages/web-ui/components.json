@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "../design-system/globals.css",
+    "baseColor": "slate",
+    "cssVariables": true
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@bahar/web-ui/components",
+    "utils": "@bahar/web-ui/lib/utils",
+    "hooks": "@bahar/web-ui/hooks",
+    "lib": "@bahar/web-ui/lib",
+    "ui": "@bahar/web-ui/components"
+  }
+}

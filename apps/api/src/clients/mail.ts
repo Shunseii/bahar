@@ -1,5 +1,5 @@
+import { type CreateEmailOptions, Resend } from "resend";
 import { config } from "../utils/config";
-import { CreateEmailOptions, Resend } from "resend";
 
 const resend = new Resend(config.RESEND_API_KEY);
 

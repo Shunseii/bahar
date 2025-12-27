@@ -1,35 +1,35 @@
-import { t } from "@lingui/core/macro";
-import { Trans, useLingui } from "@lingui/react/macro";
-import { Button } from "../../ui/button";
+import { Badge } from "@bahar/web-ui/components/badge";
+import { Button } from "@bahar/web-ui/components/button";
+import { Checkbox } from "@bahar/web-ui/components/checkbox";
 import {
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../ui/dialog";
-import { Input } from "../../ui/input";
-import { z } from "@/lib/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+} from "@bahar/web-ui/components/dialog";
 import {
+  Form,
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
-  FormDescription,
   FormMessage,
-  Form,
-} from "../../ui/form";
-import { Badge } from "../../ui/badge";
-import { X } from "lucide-react";
-import { Autocomplete } from "../../Autocomplete";
-import { Label } from "../../ui/label";
-import { Checkbox } from "../../ui/checkbox";
-import { useToast } from "@/hooks/useToast";
-import { queryClient } from "@/lib/query";
+} from "@bahar/web-ui/components/form";
+import { Input } from "@bahar/web-ui/components/input";
+import { Label } from "@bahar/web-ui/components/label";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { t } from "@lingui/core/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
+import { X } from "lucide-react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { decksTable } from "@/lib/db/operations/decks";
+import { queryClient } from "@/lib/query";
+import { z } from "@/lib/zod";
+import { Autocomplete } from "../../Autocomplete";
 
 const DeckSchema = z.object({
   id: z.string(),
@@ -39,7 +39,7 @@ const DeckSchema = z.object({
       tags: z.array(z.string()).optional(),
       state: z
         .array(
-          z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
+          z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)])
         )
         .optional(),
       types: z.array(z.enum(["ism", "fi'l", "harf", "expression"])).optional(),
@@ -129,7 +129,6 @@ export const DeckDialogContent = ({
     },
   });
 
-  const { toast } = useToast();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof DeckFormSchema>>({
     resolver: zodResolver(DeckFormSchema),
@@ -162,15 +161,11 @@ export const DeckDialogContent = ({
           updates: { name, filters },
         });
 
-        toast({
-          title: t`Deck successfully updated!`,
-        });
+        toast.success(t`Deck successfully updated!`);
       } else {
         await createDeck({ deck: { name, filters } });
 
-        toast({
-          title: t`Deck successfully created!`,
-        });
+        toast.success(t`Deck successfully created!`);
       }
 
       if (!isEditing) {
@@ -178,16 +173,12 @@ export const DeckDialogContent = ({
       }
     } catch (err) {
       if (isEditing) {
-        toast({
-          title: t`There was an error updating the deck`,
+        toast.error(t`There was an error updating the deck`, {
           description: t`Your deck was not updated. Please try again.`,
-          variant: "destructive",
         });
       } else {
-        toast({
-          title: t`There was an error creating the deck`,
+        toast.error(t`There was an error creating the deck`, {
           description: t`Your deck was not created. Please try again.`,
-          variant: "destructive",
         });
       }
     }
@@ -232,15 +223,15 @@ export const DeckDialogContent = ({
             />
           </div>
 
-          <div className="flex flex-col gap-y-4 mb-2">
+          <div className="mb-2 flex flex-col gap-y-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="ltr:text-sm rtl:text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <Label className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ltr:text-sm rtl:text-base">
                 <Trans>Tags</Trans>
               </Label>
 
               <Autocomplete
-                className="col-span-3"
                 allowAdd={false}
+                className="col-span-3"
                 filter={tagFields.map((field) => field.word)}
                 onClick={(val) => {
                   appendTag({ word: val });
@@ -248,21 +239,21 @@ export const DeckDialogContent = ({
               />
             </div>
 
-            <p className="ltr:text-sm rtl:text-base text-muted-foreground">
+            <p className="text-muted-foreground ltr:text-sm rtl:text-base">
               <Trans>
                 Words that have any of these tags will be included in the deck.
               </Trans>
             </p>
           </div>
 
-          <ul className="flex flex-wrap gap-2 mb-3">
+          <ul className="mb-3 flex flex-wrap gap-2">
             {tagFields.map((field, index) => {
               return (
                 <Badge
-                  key={field.id}
-                  variant="secondary"
                   className="cursor-pointer"
+                  key={field.id}
                   onClick={() => removeTag(index)}
+                  variant="secondary"
                 >
                   <span className="mr-1">{field.word}</span>
 
@@ -294,8 +285,8 @@ export const DeckDialogContent = ({
                   {allTypes.map((type) => (
                     <FormField
                       control={form.control}
-                      name="types"
                       key={type}
+                      name="types"
                       render={({ field }) => {
                         return (
                           <FormItem className="flex flex-row items-center gap-x-3 gap-y-0">
@@ -307,18 +298,18 @@ export const DeckDialogContent = ({
                                     ? field.onChange(
                                         field.value
                                           ? [...field.value, type]
-                                          : [type],
+                                          : [type]
                                       )
                                     : field.onChange(
                                         field.value?.filter(
-                                          (value) => value !== type,
-                                        ),
+                                          (value) => value !== type
+                                        )
                                       );
                                 }}
                               />
                             </FormControl>
 
-                            <FormLabel className="text-sm font-normal cursor-pointer !mt-0">
+                            <FormLabel className="!mt-0 cursor-pointer font-normal text-sm">
                               {getTypeLabel(type)}
                             </FormLabel>
                           </FormItem>
@@ -335,9 +326,9 @@ export const DeckDialogContent = ({
 
           <DialogFooter>
             <Button
-              size="sm"
               className="mt-4"
               disabled={form.formState.isSubmitting || !form.formState.isDirty}
+              size="sm"
               type="submit"
             >
               <Trans>Save changes</Trans>

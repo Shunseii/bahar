@@ -1,17 +1,17 @@
-import { Trans } from "@lingui/react/macro";
-import { Autocomplete } from "@/components/Autocomplete";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@bahar/web-ui/components/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { z } from "@/lib/zod";
-import { FormSchema } from "@/lib/schemas/dictionary";
+} from "@bahar/web-ui/components/card";
+import { Trans } from "@lingui/react/macro";
 import { X } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { Autocomplete } from "@/components/Autocomplete";
+import type { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 export const TagsFormSection = () => {
   const form = useFormContext<z.infer<typeof FormSchema>>();
@@ -38,14 +38,14 @@ export const TagsFormSection = () => {
       </CardHeader>
 
       <CardContent>
-        <ul className="flex flex-wrap gap-2 mb-2">
+        <ul className="mb-2 flex flex-wrap gap-2">
           {tagFields.map((field, index) => {
             return (
               <Badge
-                key={field.id}
-                variant="secondary"
                 className="cursor-pointer"
+                key={field.id}
                 onClick={() => removeTag(index)}
+                variant="secondary"
               >
                 <span className="mr-1">{field.name}</span>
 

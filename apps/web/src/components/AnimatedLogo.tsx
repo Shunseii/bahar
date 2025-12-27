@@ -9,13 +9,13 @@ export const AnimatedLogo = ({ className }: AnimatedLogoProps) => {
   return (
     <>
       <img
-        src={Logo}
         alt="Bahar"
         className={cn(
           "h-16 w-16",
           "animate-[blurReveal_500ms_ease-out_forwards]",
-          className,
+          className
         )}
+        src={Logo}
         style={{ filter: "blur(12px)", transform: "scale(0.9)" }}
       />
       <style>{`

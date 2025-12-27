@@ -2,33 +2,44 @@
  * Settings screen component.
  */
 
-import React from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  FadeIn,
-} from "react-native-reanimated";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import {
-  Settings,
-  Eye,
-  Moon,
-  Info,
-  ChevronRight,
-  LogOut,
-  Check,
-} from "lucide-react-native";
-import * as Haptics from "expo-haptics";
-import { queryClient } from "../../utils/api";
-import { settingsTable, type UserSettings } from "../../lib/db/operations/settings";
 import type { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import * as Haptics from "expo-haptics";
+import {
+  Check,
+  ChevronRight,
+  Eye,
+  Info,
+  LogOut,
+  Settings,
+} from "lucide-react-native";
+import type React from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import Animated, {
+  FadeIn,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import { settingsTable } from "../../lib/db/operations/settings";
+import { queryClient } from "../../utils/api";
 
-const ANTONYMS_MODES: { value: ShowAntonymsMode; label: string; description: string }[] = [
+const ANTONYMS_MODES: {
+  value: ShowAntonymsMode;
+  label: string;
+  description: string;
+}[] = [
   { value: "hidden", label: "Hidden", description: "Never show antonyms" },
-  { value: "hint", label: "As Hint", description: "Show as a hint before revealing" },
-  { value: "answer", label: "With Answer", description: "Show when answer is revealed" },
+  {
+    value: "hint",
+    label: "As Hint",
+    description: "Show as a hint before revealing",
+  },
+  {
+    value: "answer",
+    label: "With Answer",
+    description: "Show when answer is revealed",
+  },
 ];
 
 interface SettingsScreenProps {
@@ -63,7 +74,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
   if (status === "pending") {
     return (
       <View className="flex-1 items-center justify-center">
-        <Settings size={48} className="text-muted-foreground animate-pulse" />
+        <Settings className="animate-pulse text-muted-foreground" size={48} />
       </View>
     );
   }
@@ -74,18 +85,18 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
       contentContainerClassName="p-4"
     >
       {/* Header */}
-      <Text className="text-foreground text-2xl font-bold mb-6">Settings</Text>
+      <Text className="mb-6 font-bold text-2xl text-foreground">Settings</Text>
 
       {/* Flashcard Settings */}
       <Animated.View entering={FadeIn.delay(100).duration(300)}>
-        <Text className="text-muted-foreground text-sm font-medium mb-2 uppercase tracking-wide">
+        <Text className="mb-2 font-medium text-muted-foreground text-sm uppercase tracking-wide">
           Flashcards
         </Text>
-        <View className="bg-card rounded-2xl border border-border/30 overflow-hidden">
-          <View className="p-4 border-b border-border/30">
-            <View className="flex-row items-center mb-3">
-              <Eye size={20} color="#3B82F6" />
-              <Text className="text-foreground font-medium ml-2">
+        <View className="overflow-hidden rounded-2xl border border-border/30 bg-card">
+          <View className="border-border/30 border-b p-4">
+            <View className="mb-3 flex-row items-center">
+              <Eye className="text-primary" size={20} />
+              <Text className="ml-2 font-medium text-foreground">
                 Show Antonyms
               </Text>
             </View>
@@ -94,8 +105,8 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
                 <AntonymsModeOption
                   key={mode.value}
                   mode={mode}
-                  selected={settings?.show_antonyms_mode === mode.value}
                   onSelect={() => handleAntonymsModeChange(mode.value)}
+                  selected={settings?.show_antonyms_mode === mode.value}
                 />
               ))}
             </View>
@@ -104,13 +115,16 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
       </Animated.View>
 
       {/* App Info */}
-      <Animated.View entering={FadeIn.delay(200).duration(300)} className="mt-6">
-        <Text className="text-muted-foreground text-sm font-medium mb-2 uppercase tracking-wide">
+      <Animated.View
+        className="mt-6"
+        entering={FadeIn.delay(200).duration(300)}
+      >
+        <Text className="mb-2 font-medium text-muted-foreground text-sm uppercase tracking-wide">
           About
         </Text>
-        <View className="bg-card rounded-2xl border border-border/30 overflow-hidden">
+        <View className="overflow-hidden rounded-2xl border border-border/30 bg-card">
           <SettingsRow
-            icon={<Info size={20} color="#3B82F6" />}
+            icon={<Info className="text-primary" size={20} />}
             label="Version"
             value="1.0.0"
           />
@@ -118,13 +132,16 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
       </Animated.View>
 
       {/* Logout */}
-      <Animated.View entering={FadeIn.delay(300).duration(300)} className="mt-6">
+      <Animated.View
+        className="mt-6"
+        entering={FadeIn.delay(300).duration(300)}
+      >
         <Pressable
+          className="flex-row items-center justify-center rounded-2xl bg-destructive/10 p-4"
           onPress={handleLogout}
-          className="bg-destructive/10 rounded-2xl p-4 flex-row items-center justify-center"
         >
-          <LogOut size={20} color="#EF4444" />
-          <Text className="text-destructive font-medium ml-2">Log Out</Text>
+          <LogOut className="text-destructive" size={20} />
+          <Text className="ml-2 font-medium text-destructive">Log Out</Text>
         </Pressable>
       </Animated.View>
     </ScrollView>
@@ -158,15 +175,15 @@ const AntonymsModeOption: React.FC<AntonymsModeOptionProps> = ({
 
   return (
     <Pressable
+      onPress={onSelect}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={onSelect}
     >
       <Animated.View
-        style={animatedStyle}
-        className={`flex-row items-center p-3 rounded-xl ${
+        className={`flex-row items-center rounded-xl p-3 ${
           selected ? "bg-primary/10" : "bg-muted/30"
         }`}
+        style={animatedStyle}
       >
         <View className="flex-1">
           <Text
@@ -176,9 +193,11 @@ const AntonymsModeOption: React.FC<AntonymsModeOptionProps> = ({
           >
             {mode.label}
           </Text>
-          <Text className="text-muted-foreground text-sm">{mode.description}</Text>
+          <Text className="text-muted-foreground text-sm">
+            {mode.description}
+          </Text>
         </View>
-        {selected && <Check size={20} color="#3B82F6" />}
+        {selected && <Check className="text-primary" size={20} />}
       </Animated.View>
     </Pressable>
   );
@@ -200,11 +219,11 @@ const SettingsRow: React.FC<SettingsRowProps> = ({
   const content = (
     <View className="flex-row items-center p-4">
       {icon}
-      <Text className="text-foreground font-medium ml-3 flex-1">{label}</Text>
-      {value && (
-        <Text className="text-muted-foreground">{value}</Text>
+      <Text className="ml-3 flex-1 font-medium text-foreground">{label}</Text>
+      {value && <Text className="text-muted-foreground">{value}</Text>}
+      {onPress && (
+        <ChevronRight className="ml-2 text-muted-foreground" size={20} />
       )}
-      {onPress && <ChevronRight size={20} color="#9CA3AF" className="ml-2" />}
     </View>
   );
 

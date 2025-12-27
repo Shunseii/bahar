@@ -7,14 +7,14 @@ const FlashcardSchema = z
       .string()
       .datetime({ offset: true })
       .describe(
-        "The date when the card needs to be reviewed. Set to the current time for new cards.",
+        "The date when the card needs to be reviewed. Set to the current time for new cards."
       ),
     due_timestamp: z
       .number()
       .int()
       .gte(0)
       .describe(
-        "A UNIX timestamp in seconds that represents the same date as `due`.",
+        "A UNIX timestamp in seconds that represents the same date as `due`."
       ),
     elapsed_days: z.number().int().gte(0).default(0),
     lapses: z.number().int().gte(0).default(0),
@@ -28,16 +28,16 @@ const FlashcardSchema = z
           .int()
           .gte(0)
           .describe(
-            "A UNIX timestamp in seconds that represents the same date as `last_review`, if present.",
+            "A UNIX timestamp in seconds that represents the same date as `last_review`, if present."
           ),
         z
           .null()
           .describe(
-            "A UNIX timestamp in seconds that represents the same date as `last_review`, if present.",
+            "A UNIX timestamp in seconds that represents the same date as `last_review`, if present."
           ),
       ])
       .describe(
-        "A UNIX timestamp in seconds that represents the same date as `last_review`, if present.",
+        "A UNIX timestamp in seconds that represents the same date as `last_review`, if present."
       )
       .optional(),
     reps: z.number().int().gte(0).default(0),
@@ -49,7 +49,7 @@ const FlashcardSchema = z
       .default(0),
   })
   .describe(
-    "Properties used for scheduling the flashcards associated with the word using FSRS.",
+    "Properties used for scheduling the flashcards associated with the word using FSRS."
   );
 
 const FullExportSchema = z.object({
@@ -59,7 +59,7 @@ const FullExportSchema = z.object({
     .number()
     .int()
     .describe(
-      "A UNIX timestamp in seconds that represents the same date as `created_at`.",
+      "A UNIX timestamp in seconds that represents the same date as `created_at`."
     )
     .optional(),
   updated_at: z.string().datetime({ offset: true }).optional(),
@@ -67,7 +67,7 @@ const FullExportSchema = z.object({
     .number()
     .int()
     .describe(
-      "A UNIX timestamp in seconds that represents the same date as `updated_at`.",
+      "A UNIX timestamp in seconds that represents the same date as `updated_at`."
     )
     .optional(),
   word: z.string().describe("A word or expression in Arabic."),
@@ -87,7 +87,7 @@ const FullExportSchema = z.object({
   tags: z
     .array(z.string())
     .describe(
-      "Any tags associated with the word. These can denote things like the context.",
+      "Any tags associated with the word. These can denote things like the context."
     )
     .optional(),
   antonyms: z
@@ -101,14 +101,14 @@ const FullExportSchema = z.object({
         context: z
           .string()
           .describe(
-            "The context of the sentence. This can refer to casual or formal contexts, for example.",
+            "The context of the sentence. This can refer to casual or formal contexts, for example."
           )
           .optional(),
         translation: z
           .string()
           .describe("The English translation of the sentence.")
           .optional(),
-      }),
+      })
     )
     .describe("Examples using the word.")
     .optional(),
@@ -120,7 +120,7 @@ const FullExportSchema = z.object({
           dual: z.string().optional(),
           plurals: z
             .array(
-              z.object({ word: z.string(), details: z.string().optional() }),
+              z.object({ word: z.string(), details: z.string().optional() })
             )
             .optional(),
           gender: z.enum(["masculine", "feminine"]).optional(),
@@ -136,7 +136,7 @@ const FullExportSchema = z.object({
               z.object({
                 harf: z.string(),
                 meaning: z.string().optional(),
-              }),
+              })
             )
             .optional(),
           past_tense: z.string().optional(),
@@ -149,7 +149,7 @@ const FullExportSchema = z.object({
               z.object({
                 word: z.string(),
                 details: z.string().optional(),
-              }),
+              })
             )
             .optional(),
           form: z.string().optional(),

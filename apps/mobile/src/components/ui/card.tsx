@@ -1,6 +1,6 @@
-import React from "react";
-import { View, Text, ViewProps, TextProps } from "react-native";
 import { cn } from "@bahar/design-system";
+import type React from "react";
+import { Text, type TextProps, View, type ViewProps } from "react-native";
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
@@ -32,7 +32,7 @@ const Card = ({ children, className, ...props }: CardProps) => {
     <View
       className={cn(
         "rounded-lg border border-border bg-card text-card-foreground shadow-sm",
-        className,
+        className
       )}
       {...props}
     >
@@ -53,8 +53,8 @@ const CardTitle = ({ children, className, ...props }: CardTitleProps) => {
   return (
     <Text
       className={cn(
-        "text-2xl font-semibold text-foreground leading-none tracking-tight",
-        className,
+        "font-semibold text-2xl text-foreground leading-none tracking-tight",
+        className
       )}
       {...props}
     >
@@ -70,7 +70,7 @@ const CardDescription = ({
 }: CardDescriptionProps) => {
   return (
     <Text
-      className={cn("ltr:text-sm rtl:text-lg text-muted-foreground", className)}
+      className={cn("text-muted-foreground ltr:text-sm rtl:text-lg", className)}
       {...props}
     >
       {children}
@@ -87,4 +87,3 @@ const CardContent = ({ children, className, ...props }: CardContentProps) => {
 };
 
 export { Card, CardHeader, CardTitle, CardDescription, CardContent };
-

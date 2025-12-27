@@ -1,0 +1,14 @@
+{
+  "extends": "@bahar/typescript-config/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "baseUrl": ".",
+    "paths": {
+      "@bahar/web-ui/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

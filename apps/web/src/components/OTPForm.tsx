@@ -1,9 +1,5 @@
-import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
-import { Button } from "@/components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { OTPInput, SlotProps } from "input-otp";
-import { authClient } from "@/lib/auth-client";
+import { cn } from "@bahar/design-system";
+import { Button } from "@bahar/web-ui/components/button";
 import {
   Form,
   FormControl,
@@ -11,21 +7,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { useForm, SubmitHandler, useFormContext } from "react-hook-form";
-import z from "zod";
-import {
-  REGEXP_ONLY_EN_AR_DIGITS,
-  convertArabicNumToEnglish,
-} from "@/lib/utils";
-import { cn } from "@bahar/design-system";
+} from "@bahar/web-ui/components/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Trans } from "@lingui/react/macro";
+import { OTPInput, type SlotProps } from "input-otp";
 import { useSetAtom } from "jotai";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { FC } from "react";
+import { type SubmitHandler, useForm, useFormContext } from "react-hook-form";
+import z from "zod";
 import { showOTPFormAtom } from "@/atoms/otp";
-import { TLocale, getLangDir } from "@/lib/i18n";
-import { FC } from "react";
-import { LoginFormSchema } from "@/routes/_unauthorized-layout/login/route.lazy";
+import { authClient } from "@/lib/auth-client";
+import { getLangDir, type TLocale } from "@/lib/i18n";
+import {
+  convertArabicNumToEnglish,
+  REGEXP_ONLY_EN_AR_DIGITS,
+} from "@/lib/utils";
+import type { LoginFormSchema } from "@/routes/_unauthorized-layout/login/route.lazy";
 
 const schema = z.object({
   code: z.string().length(6, {
@@ -37,15 +37,15 @@ function Slot(props: SlotProps) {
   return (
     <div
       className={cn(
-        "relative w-10 h-14 text-[2rem]",
+        "relative h-14 w-10 text-[2rem]",
         "flex items-center justify-center",
         "transition-all duration-300",
         "border-border border-y",
-        "ltr:border-r ltr:first:border-l ltr:first:rounded-l-md ltr:last:rounded-r-md",
-        "rtl:border-l rtl:first:border-r rtl:first:rounded-r-md rtl:last:rounded-l-md",
-        "group-hover:border-accent-foreground/20 group-focus-within:border-accent-foreground/20",
+        "ltr:border-r ltr:last:rounded-r-md ltr:first:rounded-l-md ltr:first:border-l",
+        "rtl:border-l rtl:last:rounded-l-md rtl:first:rounded-r-md rtl:first:border-r",
+        "group-focus-within:border-accent-foreground/20 group-hover:border-accent-foreground/20",
         "outline outline-0 outline-accent-foreground/20",
-        { "outline-4 outline-accent-foreground": props.isActive },
+        { "outline-4 outline-accent-foreground": props.isActive }
       )}
     >
       {props.char !== null && <div>{props.char}</div>}
@@ -56,16 +56,16 @@ function Slot(props: SlotProps) {
 
 function FakeCaret() {
   return (
-    <div className="absolute pointer-events-none inset-0 flex items-center justify-center animate-caret-blink">
-      <div className="w-px h-8 bg-white" />
+    <div className="pointer-events-none absolute inset-0 flex animate-caret-blink items-center justify-center">
+      <div className="h-8 w-px bg-white" />
     </div>
   );
 }
 
 function FakeDash() {
   return (
-    <div className="flex w-10 justify-center items-center">
-      <div className="w-3 h-1 rounded-full bg-border" />
+    <div className="flex w-10 items-center justify-center">
+      <div className="h-1 w-3 rounded-full bg-border" />
     </div>
   );
 }
@@ -119,38 +119,38 @@ export const OTPForm: FC<{
   return (
     <div>
       <Button
+        className="p-0 text-sm"
         onClick={() => {
           setShowOTPForm(false);
         }}
-        className="p-0 text-sm"
         variant="link"
       >
         {dir === "ltr" ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
         <Trans>Go back</Trans>
       </Button>
 
-      <div className="flex flex-col gap-y-4 items-center">
-        <h1 className="tracking-tight font-bold text-xl dark:text-white text-center text-gray-900">
+      <div className="flex flex-col items-center gap-y-4">
+        <h1 className="text-center font-bold text-gray-900 text-xl tracking-tight dark:text-white">
           <Trans>Enter your 6-digit code from your email</Trans>
         </h1>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-y-4 mb-4">
+            <div className="mb-4 flex flex-col gap-y-4">
               <FormField
                 control={form.control}
                 name="code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel hidden aria-hidden>
+                    <FormLabel aria-hidden hidden>
                       Code
                     </FormLabel>
                     <FormControl>
                       <OTPInput
                         {...field}
+                        containerClassName="group flex items-center has-[:disabled]:opacity-30"
                         maxLength={6}
                         pattern={REGEXP_ONLY_EN_AR_DIGITS}
-                        containerClassName="group flex items-center has-[:disabled]:opacity-30"
                         render={({ slots }) => (
                           <>
                             <div className="flex">
@@ -178,9 +178,9 @@ export const OTPForm: FC<{
             </div>
 
             <Button
-              type="submit"
-              disabled={form.formState.isSubmitting}
               className="w-full"
+              disabled={form.formState.isSubmitting}
+              type="submit"
             >
               <Trans>Continue</Trans>
             </Button>

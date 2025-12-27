@@ -1,9 +1,9 @@
 ---
-import { ClientRouter } from 'astro:transitions';
-import '../styles/global.css';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { getLocaleFromUrl, getDir, t, type Locale } from '../i18n';
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+import { getDir, getLocaleFromUrl, type Locale, t } from "../i18n";
 
 interface Props {
   title?: string;
@@ -16,8 +16,8 @@ const currentLocale = Astro.props.locale ?? getLocaleFromUrl(Astro.url);
 const dir = getDir(currentLocale);
 
 const {
-  title = t(currentLocale, 'site.title'),
-  description = t(currentLocale, 'site.description'),
+  title = t(currentLocale, "site.title"),
+  description = t(currentLocale, "site.description"),
   hideLanguageSwitcher = false,
 } = Astro.props;
 ---
@@ -25,46 +25,53 @@ const {
 <!doctype html>
 <html lang={currentLocale} dir={dir}>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="generator" content={Astro.generator}>
 
     <!-- Primary Meta Tags -->
     <title>{title}</title>
-    <meta name="title" content={title} />
-    <meta name="description" content={description} />
+    <meta name="title" content={title}>
+    <meta name="description" content={description}>
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url.href} />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:locale" content={currentLocale === 'ar' ? 'ar_SA' : 'en_US'} />
+    <meta property="og:type" content="website">
+    <meta property="og:url" content={Astro.url.href}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta
+      property="og:locale"
+      content={currentLocale === 'ar' ? 'ar_SA' : 'en_US'}
+    >
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={Astro.url.href} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content={Astro.url.href}>
+    <meta property="twitter:title" content={title}>
+    <meta property="twitter:description" content={description}>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap"
       rel="stylesheet"
-    />
+    >
 
     <!-- Theme detection script (prevent flash) -->
     <script is:inline>
-      (function() {
+      (() => {
         function applyTheme() {
-          const theme = localStorage.getItem('theme');
-          if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
+          const theme = localStorage.getItem("theme");
+          if (
+            theme === "dark" ||
+            (!theme &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches)
+          ) {
+            document.documentElement.classList.add("dark");
           } else {
-            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.remove("dark");
           }
         }
 
@@ -72,21 +79,21 @@ const {
         applyTheme();
 
         // Re-apply after view transitions
-        document.addEventListener('astro:after-swap', applyTheme);
+        document.addEventListener("astro:after-swap", applyTheme);
       })();
     </script>
 
     <!-- View Transitions -->
-    <ClientRouter />
+    <ClientRouter/>
 
     <!-- Additional head content from pages -->
-    <slot name="head" />
+    <slot name="head"/>
   </head>
   <body class="min-h-screen bg-background text-foreground antialiased">
-    <Header locale={currentLocale} hideLanguageSwitcher={hideLanguageSwitcher} />
+    <Header locale={currentLocale} hideLanguageSwitcher={hideLanguageSwitcher}/>
     <main transition:animate="fade">
-      <slot />
+      <slot/>
     </main>
-    <Footer locale={currentLocale} />
+    <Footer locale={currentLocale}/>
   </body>
 </html>

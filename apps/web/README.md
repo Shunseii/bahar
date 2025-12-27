@@ -55,6 +55,28 @@ This app uses a local-first architecture with cloud sync:
 4. Background sync pushes changes to the server every 60 seconds
 5. Search queries run against Orama's in-memory index
 
+## UI Components (shadcn)
+
+This app uses shadcn/ui components from the shared `@bahar/web-ui` package.
+
+### Adding New Components
+
+```bash
+npx shadcn@latest add [component]
+```
+
+This installs components to `packages/web-ui/src/components/`.
+
+### Importing Components
+
+```tsx
+import { Button } from "@bahar/web-ui/components/button";
+import { Card } from "@bahar/web-ui/components/card";
+import { cn } from "@bahar/web-ui/lib/utils";
+```
+
+See `packages/web-ui/README.md` for the full list of available components.
+
 ## Environment Variables
 
 Required environment variables:

@@ -6,7 +6,8 @@
     "declarationMap": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@bahar/web-ui/*": ["../../packages/web-ui/src/*"]
     },
     "types": ["vite-plugin-pwa/client"]
   }

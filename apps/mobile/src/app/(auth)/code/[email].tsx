@@ -1,13 +1,13 @@
-import { Page } from "@/components/Page";
-import { OtpInput } from "react-native-otp-entry";
-import { Text } from "react-native";
-import { useCSSVariable } from "uniwind";
-import { Trans } from "@lingui/react/macro";
 import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { useLocalSearchParams } from "expo-router";
+import { useState } from "react";
+import { Text } from "react-native";
+import { OtpInput } from "react-native-otp-entry";
+import { useCSSVariable } from "uniwind";
+import { Page } from "@/components/Page";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/utils/auth-client";
-import { useState } from "react";
 
 export default function EnterCodeScreen() {
   const [error, setError] = useState<string | null>(null);
@@ -41,23 +41,23 @@ export default function EnterCodeScreen() {
 
   return (
     <Page className="!bg-background">
-      <Text className="tracking-tight font-bold text-xl text-foreground text-center">
+      <Text className="text-center font-bold text-foreground text-xl tracking-tight">
         <Trans>Enter your 6-digit code from your email</Trans>
       </Text>
 
       <OtpInput
-        numberOfDigits={6}
         disabled={isSubmitting}
         focusColor={primaryColor}
+        numberOfDigits={6}
+        onFilled={onSubmit}
+        onTextChange={(text) => {
+          setInputtedCode(text);
+        }}
         theme={{
           pinCodeTextStyle: {
             color: foregroundColor,
           },
         }}
-        onTextChange={(text) => {
-          setInputtedCode(text);
-        }}
-        onFilled={onSubmit}
       />
 
       {error && (
@@ -67,11 +67,11 @@ export default function EnterCodeScreen() {
       )}
 
       <Button
+        className="w-full"
+        disabled={isSubmitting}
         onPress={async () => {
           await onSubmit(inputtedCode);
         }}
-        disabled={isSubmitting}
-        className="w-full"
       >
         <Trans>Continue</Trans>
       </Button>

@@ -1,36 +1,35 @@
-import { Trans } from "@lingui/react/macro";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-} from "@/components/ui/form";
+} from "@bahar/web-ui/components/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@bahar/web-ui/components/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useDir } from "@/hooks/useDir";
-import { z } from "@/lib/zod";
-import { FormSchema } from "@/lib/schemas/dictionary";
-import { useLingui } from "@lingui/react/macro";
+} from "@bahar/web-ui/components/select";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { InfoIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
+import { useDir } from "@/hooks/useDir";
+import type { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 export const CategoryFormSection = () => {
   const { t } = useLingui();
@@ -113,12 +112,12 @@ export const CategoryFormSection = () => {
                   </div>
 
                   <Select
+                    dir={dir}
                     onValueChange={field.onChange}
                     value={field.value}
-                    dir={dir}
                   >
                     <FormControl>
-                      <SelectTrigger id="type" aria-label={t`Select type`}>
+                      <SelectTrigger aria-label={t`Select type`} id="type">
                         <SelectValue placeholder={t`Select type`} />
                       </SelectTrigger>
                     </FormControl>

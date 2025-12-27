@@ -1,14 +1,15 @@
 // Import the generated route tree
+
+import * as Sentry from "@sentry/react";
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import * as Sentry from "@sentry/react";
 
 // Create a new router instance
 export const router = createRouter({
   routeTree,
   defaultPreload: "render",
   context: {
-    authState: undefined!,
+    authState: null,
   },
 });
 
@@ -29,7 +30,7 @@ Sentry.init({
 
   // Set `tracePropagationTargets` to control for which URLs trace propagation should be enabled
   tracePropagationTargets: [
-    new RegExp("^/"), // Match all local routes
+    /^\//, // Match all local routes
     new RegExp(`^${import.meta.env.VITE_API_BASE_URL}`),
   ],
 

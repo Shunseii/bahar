@@ -9,14 +9,14 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
+import { Elysia } from "elysia";
+import { betterAuthGuard, httpLogger } from "./middleware";
+import { databasesRouter } from "./routers/databases";
+import { migrationsRouter } from "./routers/migrations";
+import { getAllowedDomains } from "./utils";
 import { config } from "./utils/config";
 import { logger, traceContext } from "./utils/logger";
-import { getAllowedDomains } from "./utils";
-import { betterAuthGuard, httpLogger } from "./middleware";
-import { migrationsRouter } from "./routers/migrations";
-import { databasesRouter } from "./routers/databases";
 
 const port = config.PORT;
 const host = config.HOST;
@@ -35,7 +35,7 @@ const app = new Elysia()
         return allowedDomains.includes(origin) || !origin;
       },
       credentials: true,
-    }),
+    })
   )
   .use(betterAuthGuard)
   .onRequest(({ request, set }) => {

@@ -1,5 +1,5 @@
-import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 import * as Sentry from "@sentry/react";
+import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient({
   defaultOptions: {

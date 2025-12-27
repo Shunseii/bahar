@@ -16,7 +16,7 @@ export const FormSchema = z.object({
     .array(
       z.object({
         word: z.string(),
-      }),
+      })
     )
     .optional(),
   examples: z
@@ -25,7 +25,7 @@ export const FormSchema = z.object({
         sentence: z.string(),
         context: z.string().optional(),
         translation: z.string().optional(),
-      }),
+      })
     )
     .optional(),
   type: z.enum(["ism", "fi'l", "harf", "expression"]).optional(),
@@ -37,7 +37,7 @@ export const FormSchema = z.object({
           dual: z.string().optional(),
           plurals: z
             .array(
-              z.object({ word: z.string(), details: z.string().optional() }),
+              z.object({ word: z.string(), details: z.string().optional() })
             )
             .optional(),
           gender: z.enum(["masculine", "feminine"]).optional(),
@@ -53,7 +53,7 @@ export const FormSchema = z.object({
               z.object({
                 harf: z.string(),
                 meaning: z.string().optional(),
-              }),
+              })
             )
             .optional(),
           past_tense: z.string().optional(),
@@ -66,7 +66,7 @@ export const FormSchema = z.object({
               z.object({
                 word: z.string(),
                 details: z.string().optional(),
-              }),
+              })
             )
             .optional(),
           form: z.string().optional(),

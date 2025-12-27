@@ -1,10 +1,10 @@
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/search/SearchInput";
 import { authClient } from "@/lib/auth-client";
-import { queryClient } from "@/lib/query";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import { settingsTable } from "@/lib/db/operations/settings";
+import { queryClient } from "@/lib/query";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();
@@ -39,17 +39,17 @@ export const Route = createFileRoute("/_authorized-layout/_search-layout")({
 
     const isAuthenticated = !!data?.user;
 
-    if (!isAuthenticated) {
+    if (isAuthenticated) {
+      await queryClient.ensureQueryData({
+        queryKey: settingsTable.getSettings.cacheOptions.queryKey,
+        queryFn: settingsTable.getSettings.query,
+      });
+    } else {
       throw redirect({
         to: "/login",
         search: {
           redirect: location.href,
         },
-      });
-    } else {
-      await queryClient.ensureQueryData({
-        queryKey: settingsTable.getSettings.cacheOptions.queryKey,
-        queryFn: settingsTable.getSettings.query,
       });
     }
   },

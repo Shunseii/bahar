@@ -3,11 +3,11 @@
  * This prevents drawer swipe gestures from interfering with card swiping.
  */
 
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { View } from "react-native";
-import { FlashcardReview } from "@/components/flashcards/FlashcardReview";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { FlashcardReview } from "@/components/flashcards/FlashcardReview";
 
 export default function ReviewScreen() {
   const router = useRouter();
@@ -36,8 +36,8 @@ export default function ReviewScreen() {
     >
       <FlashcardReview
         filters={filters}
-        showReverse={showReverse}
         onClose={handleClose}
+        showReverse={showReverse}
       />
     </View>
   );

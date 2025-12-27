@@ -5,10 +5,10 @@
 /**
  * Table operation definition for tanstack-query integration.
  */
-export type TableOperation = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface TableOperation {
+  // biome-ignore lint/suspicious/noExplicitAny: need any here
   query?: (...args: any[]) => Promise<unknown>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: need any here
   mutation?: (...args: any[]) => Promise<unknown>;
   /**
    * Cache options for tanstack-query.
@@ -17,4 +17,4 @@ export type TableOperation = {
     queryKey: `turso.${string}`[];
     staleTime?: number;
   };
-};
+}

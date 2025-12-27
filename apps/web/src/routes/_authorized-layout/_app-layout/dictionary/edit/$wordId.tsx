@@ -1,7 +1,4 @@
-import { Trans } from "@lingui/react/macro";
-import { Page } from "@/components/Page";
-import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
-import { queryClient } from "@/lib/query";
+import { cn } from "@bahar/design-system";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,26 +6,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { z } from "@/lib/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/components/ui/form";
-import { cn } from "@bahar/design-system";
-import {
-  AdditionalDetailsFormSection,
-  BasicDetailsFormSection,
-  MorphologyFormSection,
-  CategoryFormSection,
-} from "@/components/features/dictionary/add";
-import { useToast } from "@/hooks/useToast";
-import { useLingui } from "@lingui/react/macro";
-import { FC, useEffect } from "react";
-import { useDir } from "@/hooks/useDir";
-import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { FormSchema } from "@/lib/schemas/dictionary";
+} from "@bahar/web-ui/components/breadcrumb";
+import { Button } from "@bahar/web-ui/components/button";
 import {
   Dialog,
   DialogClose,
@@ -38,11 +17,31 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useQuery, useMutation } from "@tanstack/react-query";
+} from "@bahar/web-ui/components/dialog";
+import { Form } from "@bahar/web-ui/components/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { type FC, useEffect } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import {
+  AdditionalDetailsFormSection,
+  BasicDetailsFormSection,
+  CategoryFormSection,
+  MorphologyFormSection,
+} from "@/components/features/dictionary/add";
+import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
+import { Page } from "@/components/Page";
+import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
+import { useDir } from "@/hooks/useDir";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
-import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
+import { queryClient } from "@/lib/query";
+import { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
   const { mutateAsync: resetFlashcard } = useMutation({
@@ -64,13 +63,12 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
     },
   });
 
-  const { toast } = useToast();
   const { t } = useLingui();
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive" type="button" size="sm">
+        <Button size="sm" type="button" variant="destructive">
           <Trans>Reset flashcard</Trans>
         </Button>
       </DialogTrigger>
@@ -96,16 +94,14 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
         <DialogFooter>
           <DialogClose asChild>
             <Button
-              variant="destructive"
-              type="button"
-              className="w-max md:self-start self-center"
+              className="w-max self-center md:self-start"
               onClick={async () => {
                 await resetFlashcard({ dictionary_entry_id: id });
 
-                toast({
-                  title: t`Successfully reset the flashcard.`,
-                });
+                toast.success(t`Successfully reset the flashcard.`);
               }}
+              type="button"
+              variant="destructive"
             >
               <Trans>Reset flashcard</Trans>
             </Button>
@@ -124,7 +120,7 @@ const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="destructive" type="button" size="sm">
+        <Button size="sm" type="button" variant="destructive">
           <Trans>Delete</Trans>
         </Button>
       </DialogTrigger>
@@ -148,14 +144,14 @@ const DeleteWordButton: FC<{ id: string }> = ({ id }) => {
 
         <DialogFooter>
           <Button
-            variant="destructive"
-            type="button"
-            className="w-max md:self-start self-center"
+            className="w-max self-center md:self-start"
             onClick={async () => {
               await deleteDictionaryEntry({ id });
 
               navigate({ to: "/" });
             }}
+            type="button"
+            variant="destructive"
           >
             <Trans>Delete</Trans>
           </Button>
@@ -197,11 +193,11 @@ const BackButton = () => {
 
   return (
     <Button
-      variant="outline"
-      type="button"
-      size="icon"
-      className="h-7 w-7"
       asChild
+      className="h-7 w-7"
+      size="icon"
+      type="button"
+      variant="outline"
     >
       <Link to="/">
         {dir === "rtl" ? (
@@ -218,7 +214,7 @@ const BackButton = () => {
 };
 
 const getDefaultFormValues = (
-  data?: Awaited<ReturnType<typeof dictionaryEntriesTable.entry.query>>,
+  data?: Awaited<ReturnType<typeof dictionaryEntriesTable.entry.query>>
 ): z.infer<typeof FormSchema> => {
   const defaultMorphology = {
     ism: {
@@ -264,7 +260,6 @@ const Edit = () => {
     queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, wordId],
   });
 
-  const { toast } = useToast();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -297,7 +292,8 @@ const Edit = () => {
             tags,
             morphology: { ism: data?.morphology?.ism },
           };
-        } else if (data.type === "fi'l") {
+        }
+        if (data.type === "fi'l") {
           return {
             ...data,
             id,
@@ -305,21 +301,19 @@ const Edit = () => {
             tags,
             morphology: { verb: data?.morphology?.verb },
           };
-        } else {
-          return {
-            ...data,
-            id,
-            root,
-            tags,
-            morphology: undefined,
-          };
         }
+        return {
+          ...data,
+          id,
+          root,
+          tags,
+          morphology: undefined,
+        };
       })();
 
       await editDictionaryEntry({ id: input.id, updates: input });
 
-      toast({
-        title: t`Successfully updated the word!`,
+      toast.success(t`Successfully updated the word!`, {
         description: t`The word has been updated.`,
       });
     } catch (err) {
@@ -327,10 +321,8 @@ const Edit = () => {
         console.error(err.message);
       }
 
-      toast({
-        title: t`Failed to update the word!`,
+      toast.error(t`Failed to update the word!`, {
         description: t`There was an error updating your word. Please try again.`,
-        variant: "destructive",
       });
     }
   };
@@ -347,7 +339,7 @@ const Edit = () => {
             <div className="flex items-center gap-4">
               <BackButton />
 
-              <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+              <h1 className="flex-1 shrink-0 whitespace-nowrap font-semibold text-xl tracking-tight sm:grow-0">
                 {content}
               </h1>
 
@@ -395,7 +387,7 @@ const Edit = () => {
 };
 
 export const Route = createFileRoute(
-  "/_authorized-layout/_app-layout/dictionary/edit/$wordId",
+  "/_authorized-layout/_app-layout/dictionary/edit/$wordId"
 )({
   component: Edit,
   beforeLoad: async ({ params }) => {

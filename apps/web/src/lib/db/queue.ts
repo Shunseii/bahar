@@ -1,5 +1,5 @@
-import { asyncQueue } from "@tanstack/pacer";
 import * as Sentry from "@sentry/react";
+import { asyncQueue } from "@tanstack/pacer";
 
 type DbOperation<T> = () => Promise<T>;
 
@@ -20,14 +20,16 @@ const dbQueue = asyncQueue(
         error: String(error),
       });
     },
-  },
+  }
 );
 
 /**
  * Enqueue a database operation to be executed serially.
  * Returns a promise that resolves when the operation completes.
  */
-export const enqueueDbOperation = <T>(operation: DbOperation<T>): Promise<T> => {
+export const enqueueDbOperation = <T>(
+  operation: DbOperation<T>
+): Promise<T> => {
   return new Promise((resolve, reject) => {
     const wrappedOperation = async () => {
       try {
@@ -56,7 +58,7 @@ let syncPromise: Promise<void> | null = null;
  * This prevents sync operations from stacking up.
  */
 export const enqueueSyncOperation = (
-  operation: () => Promise<void>,
+  operation: () => Promise<void>
 ): Promise<void> => {
   if (syncPending && syncPromise) {
     Sentry.logger.info("Sync already pending, merging request");

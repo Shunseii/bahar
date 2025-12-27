@@ -1,13 +1,15 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import PostCard from '../../../components/blog/PostCard.astro';
-import { t } from '../../../i18n';
+import { getCollection } from "astro:content";
+import PostCard from "../../../components/blog/PostCard.astro";
+import { t } from "../../../i18n";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
 
-const locale = 'ar';
+const locale = "ar";
 
-const posts = await getCollection('blog-ar', ({ data }) => !data.draft);
-const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = await getCollection("blog-ar", ({ data }) => !data.draft);
+const sortedPosts = posts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 ---
 
 <BaseLayout
@@ -26,7 +28,9 @@ const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDa
         </p>
       </div>
 
-      <div class="mx-auto mt-16 grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        class="mx-auto mt-16 grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3"
+      >
         {sortedPosts.map((post) => (
           <PostCard
             title={post.data.title}

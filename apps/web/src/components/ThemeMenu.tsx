@@ -1,4 +1,3 @@
-import { Trans } from "@lingui/react/macro";
 import {
   Select,
   SelectContent,
@@ -6,11 +5,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Monitor, Moon, Sun } from "lucide-react";
-import { FC } from "react";
+} from "@bahar/web-ui/components/select";
+import { Trans } from "@lingui/react/macro";
 import { useAtom } from "jotai";
-import { Theme, getAllThemes, themeAtom } from "@/atoms/theme";
+import { Monitor, Moon, Sun } from "lucide-react";
+import type { FC } from "react";
+import { getAllThemes, Theme, themeAtom } from "@/atoms/theme";
 import { useDir } from "@/hooks/useDir";
 
 export const ThemeIcon: FC<{ theme: Theme }> = ({ theme }) => {
@@ -47,8 +47,8 @@ export const ThemeMenu = () => {
 
   return (
     <Select
-      dir={dir}
       defaultValue={theme}
+      dir={dir}
       onValueChange={(theme: Theme) => {
         setTheme(theme);
       }}

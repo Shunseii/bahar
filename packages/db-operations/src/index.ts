@@ -4,31 +4,30 @@
  * Provides cross-platform database utilities for web and mobile apps.
  */
 
-export {
-  type DatabaseAdapter,
-  type DatabaseAdapterFactory,
-  type PreparedStatement,
+export type {
+  DatabaseAdapter,
+  DatabaseAdapterFactory,
+  PreparedStatement,
 } from "./adapter";
 
-// SQL utilities
 export {
-  buildSelectWithNestedJson,
-  buildInClause,
-  buildSetClause,
-  generateId,
-} from "./utils";
-
-export {
+  BATCH_SIZE,
   DICTIONARY_ENTRY_COLUMNS,
   FLASHCARD_LIMIT,
-  BATCH_SIZE,
 } from "./constants";
 
 export {
-  safeJsonParse,
+  type ConvertDictionaryEntryError,
   convertRawDictionaryEntryToSelect,
   nullToUndefined,
-  type ConvertDictionaryEntryError,
+  safeJsonParse,
 } from "./converters";
+export type { TableOperation } from "./types";
 
-export { type TableOperation } from "./types";
+// SQL utilities
+export {
+  buildInClause,
+  buildSelectWithNestedJson,
+  buildSetClause,
+  generateId,
+} from "./utils";

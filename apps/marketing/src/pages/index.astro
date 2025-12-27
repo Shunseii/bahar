@@ -1,21 +1,21 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import AnimatedBackground from '../components/AnimatedBackground';
-import Hero from '../components/Hero.astro';
-import Features from '../components/Features.astro';
-import HowItWorks from '../components/HowItWorks.astro';
-// import Stats from '../components/Stats.astro';
-import CTA from '../components/CTA.astro';
+import AnimatedBackground from "../components/AnimatedBackground";
+// import Stats from "../components/Stats.astro";
+import CTA from "../components/CTA.astro";
+import Features from "../components/Features.astro";
+import Hero from "../components/Hero.astro";
+import HowItWorks from "../components/HowItWorks.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
-const locale = 'en';
+const locale = "en";
 ---
 
 <BaseLayout locale={locale}>
-  <AnimatedBackground client:only="react" transition:persist />
-  <Hero locale={locale} />
-  <Features locale={locale} />
-  <HowItWorks locale={locale} />
+  <AnimatedBackground client:only="react" transition:persist/>
+  <Hero locale={locale}/>
+  <Features locale={locale}/>
+  <HowItWorks locale={locale}/>
   <!-- Commented out until I get actual stats -->
   <!-- <Stats locale={locale} /> -->
-  <CTA locale={locale} />
+  <CTA locale={locale}/>
 </BaseLayout>

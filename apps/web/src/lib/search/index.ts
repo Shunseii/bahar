@@ -1,21 +1,21 @@
-import { ensureDb } from "../db";
+import { safeJsonParse } from "@bahar/db-operations";
 import {
-  RawDictionaryEntry,
-  RootLettersSchema,
-  TagsSchema,
   AntonymSchema,
   ExampleSchema,
   MorphologySchema,
+  type RawDictionaryEntry,
+  RootLettersSchema,
+  TagsSchema,
 } from "@bahar/drizzle-user-db-schemas";
-import { ok, err } from "@bahar/result";
-import { safeJsonParse } from "@bahar/db-operations";
+import { err, ok } from "@bahar/result";
 import {
   createDictionaryDatabase,
   insertDocuments,
-  type DictionaryOrama,
-} from "@bahar/search";
+} from "@bahar/search/database";
+import type { DictionaryOrama } from "@bahar/search/schema";
 import * as Sentry from "@sentry/react";
 import { z } from "zod";
+import { ensureDb } from "../db";
 
 let oramaDb = createDictionaryDatabase();
 
@@ -55,7 +55,7 @@ export const hydrateOramaDb = async () => {
                 entryId: entry.id,
                 word: entry.word,
                 error: String(rootResult.error),
-              },
+              }
             );
           }
 
@@ -67,13 +67,13 @@ export const hydrateOramaDb = async () => {
                 entryId: entry.id,
                 word: entry.word,
                 error: String(tagsResult.error),
-              },
+              }
             );
           }
 
           const antonymsResult = safeJsonParse(
             entry.antonyms,
-            z.array(AntonymSchema),
+            z.array(AntonymSchema)
           );
           if (!antonymsResult.ok) {
             Sentry.logger.warn(
@@ -82,13 +82,13 @@ export const hydrateOramaDb = async () => {
                 entryId: entry.id,
                 word: entry.word,
                 error: String(antonymsResult.error),
-              },
+              }
             );
           }
 
           const examplesResult = safeJsonParse(
             entry.examples,
-            z.array(ExampleSchema),
+            z.array(ExampleSchema)
           );
           if (!examplesResult.ok) {
             Sentry.logger.warn(
@@ -97,13 +97,13 @@ export const hydrateOramaDb = async () => {
                 entryId: entry.id,
                 word: entry.word,
                 error: String(examplesResult.error),
-              },
+              }
             );
           }
 
           const morphologyResult = safeJsonParse(
             entry.morphology,
-            MorphologySchema,
+            MorphologySchema
           );
           if (!morphologyResult.ok && entry.morphology) {
             Sentry.logger.warn(
@@ -112,11 +112,11 @@ export const hydrateOramaDb = async () => {
                 entryId: entry.id,
                 word: entry.word,
                 error: String(morphologyResult.error),
-              },
+              }
             );
           }
 
-          if (!rootResult.ok || !tagsResult.ok) {
+          if (!(rootResult.ok && tagsResult.ok)) {
             ++skippedCount;
             return null;
           }
@@ -139,7 +139,7 @@ export const hydrateOramaDb = async () => {
         await insertDocuments(
           oramaDb as DictionaryOrama,
           dictionaryEntries,
-          BATCH_SIZE,
+          BATCH_SIZE
         );
       }
 
@@ -151,7 +151,7 @@ export const hydrateOramaDb = async () => {
     if (skippedCount > 0) {
       Sentry.captureMessage(
         `Orama hydration completed with ${skippedCount} entries skipped`,
-        { level: "warning" },
+        { level: "warning" }
       );
     }
 
@@ -196,7 +196,7 @@ export const rehydrateOramaDb = async () => {
           const rootResult = safeJsonParse(entry.root, RootLettersSchema);
           const tagsResult = safeJsonParse(entry.tags, TagsSchema);
 
-          if (!rootResult.ok || !tagsResult.ok) {
+          if (!(rootResult.ok && tagsResult.ok)) {
             return null;
           }
 
@@ -218,7 +218,7 @@ export const rehydrateOramaDb = async () => {
         await insertDocuments(
           newOramaDb as DictionaryOrama,
           dictionaryEntries,
-          BATCH_SIZE,
+          BATCH_SIZE
         );
       }
 

@@ -1,17 +1,21 @@
+import { TooltipProvider } from "@bahar/web-ui/components/tooltip";
+import { i18n } from "@lingui/core";
+import { detect, fromNavigator, fromStorage } from "@lingui/detect-locale";
+import { I18nProvider } from "@lingui/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { router } from "./router";
-import { queryClient } from "./lib/query";
-import { I18nProvider } from "@lingui/react";
-import { i18n } from "@lingui/core";
-import { useEffect } from "react";
-import { DEFAULT_LOCALE, LOCALES, TLocale, dynamicActivate } from "./lib/i18n";
-import { detect, fromStorage, fromNavigator } from "@lingui/detect-locale";
-import { TooltipProvider } from "./components/ui/tooltip";
 import { useToggle } from "@uidotdev/usehooks";
 import { Provider as JotaiProvider } from "jotai";
+import { useEffect } from "react";
+import {
+  DEFAULT_LOCALE,
+  dynamicActivate,
+  LOCALES,
+  type TLocale,
+} from "./lib/i18n";
+import { queryClient } from "./lib/query";
 import { store } from "./lib/store";
+import { router } from "./router";
 
 function App() {
   const [isI18nActivated, toggleIsI18nActivated] = useToggle(false);
@@ -21,7 +25,7 @@ function App() {
       const detectedLocale = detect(
         fromStorage("lang"),
         fromNavigator(),
-        DEFAULT_LOCALE,
+        DEFAULT_LOCALE
       )!;
 
       // Convert en-US format to just en
@@ -29,7 +33,7 @@ function App() {
       const isSupported = Object.keys(LOCALES).includes(lang);
 
       // If language is not supported, then use default
-      const supportedLang = (!isSupported ? DEFAULT_LOCALE : lang) as TLocale;
+      const supportedLang = (isSupported ? lang : DEFAULT_LOCALE) as TLocale;
 
       await dynamicActivate(supportedLang);
 

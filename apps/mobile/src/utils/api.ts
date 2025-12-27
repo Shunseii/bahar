@@ -1,7 +1,7 @@
 import { treaty } from "@elysiajs/eden";
+import { QueryClient } from "@tanstack/react-query";
 import type { App } from "../../../api/src/index";
 import { authClient } from "./auth-client";
-import { QueryClient } from "@tanstack/react-query";
 
 export const queryClient = new QueryClient();
 

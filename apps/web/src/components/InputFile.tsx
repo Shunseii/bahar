@@ -1,10 +1,10 @@
-import { Trans } from "@lingui/react/macro";
-import { Input, type InputProps } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@bahar/design-system";
-import { FC, useCallback, useRef, useState } from "react";
-import { Separator } from "./ui/separator";
+import { Input, type InputProps } from "@bahar/web-ui/components/input";
+import { Label } from "@bahar/web-ui/components/label";
+import { Separator } from "@bahar/web-ui/components/separator";
+import { Trans } from "@lingui/react/macro";
 import { XIcon } from "lucide-react";
+import { type FC, useCallback, useRef, useState } from "react";
 
 type InputFileProps = Omit<InputProps, "onChange"> & {
   onChange?: (value?: File) => void;
@@ -33,32 +33,37 @@ export const InputFile: FC<InputFileProps> = ({
   return (
     <div className="w-full sm:w-auto">
       <Label
-        htmlFor="dictionary"
-        tabIndex={0}
         className={cn(
-          "flex cursor-pointer w-max h-10 py-2 px-4 items-center rounded-md border border-input gap-x-3",
-          className,
+          "flex h-10 w-max cursor-pointer items-center gap-x-3 rounded-md border border-input px-4 py-2",
+          className
         )}
+        htmlFor="dictionary"
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             inputRef.current?.click();
           }
         }}
+        tabIndex={0}
       >
         <Trans>Choose file</Trans>
 
         <Separator orientation="vertical" />
 
-        <p className="font-medium text-muted-foreground flex gap-x-2 items-center">
-          {!fileName ? (
-            <Trans>No file chosen</Trans>
+        <p className="flex items-center gap-x-2 font-medium text-muted-foreground">
+          {fileName ? (
+            <span className="max-w-[180px] truncate">{fileName}</span>
           ) : (
-            <span className="truncate max-w-[180px]">{fileName}</span>
+            <Trans>No file chosen</Trans>
           )}
 
           {fileName && (
             <button
-              tabIndex={0}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                resetFileInput();
+              }}
               onKeyDown={(e) => {
                 e.stopPropagation();
 
@@ -66,12 +71,7 @@ export const InputFile: FC<InputFileProps> = ({
                   resetFileInput();
                 }
               }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-
-                resetFileInput();
-              }}
+              tabIndex={0}
             >
               <XIcon className="h-4 w-4" />
             </button>
@@ -80,18 +80,18 @@ export const InputFile: FC<InputFileProps> = ({
       </Label>
 
       <Input
-        id="dictionary"
-        name="dictionary"
         aria-labelledby="import-dictionary-button"
-        type="file"
-        multiple={false}
         className="hidden"
-        ref={inputRef}
+        id="dictionary"
+        multiple={false}
+        name="dictionary"
         onChange={(e) => {
           setFileName(e?.target?.files?.[0]?.name ?? "");
 
           onChange?.(e.target.files?.[0]);
         }}
+        ref={inputRef}
+        type="file"
         {...rest}
       />
     </div>

@@ -1,17 +1,22 @@
-import { Trans } from "@lingui/react/macro";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@bahar/web-ui/components/card";
+import {
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  FormDescription,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { z } from "@/lib/zod";
-import { FormSchema } from "@/lib/schemas/dictionary";
+} from "@bahar/web-ui/components/form";
+import { Input } from "@bahar/web-ui/components/input";
+import { Trans } from "@lingui/react/macro";
 import { useFormContext } from "react-hook-form";
+import type { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 export const BasicDetailsFormSection = () => {
   const form = useFormContext<z.infer<typeof FormSchema>>();
@@ -37,10 +42,10 @@ export const BasicDetailsFormSection = () => {
 
                 <FormControl>
                   <Input
-                    type="text"
+                    className="w-full text-xl"
                     dir="rtl"
                     lang="ar"
-                    className="w-full text-xl"
+                    type="text"
                     {...field}
                   />
                 </FormControl>
@@ -60,7 +65,7 @@ export const BasicDetailsFormSection = () => {
                 </FormLabel>
 
                 <FormControl>
-                  <Input type="text" className="w-full" {...field} />
+                  <Input className="w-full" type="text" {...field} />
                 </FormControl>
 
                 <FormDescription>

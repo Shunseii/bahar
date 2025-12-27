@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { logger, LogCategory } from "../utils/logger";
+import { LogCategory, logger } from "../utils/logger";
 
 /**
  * Custom HTTP logging middleware that replicates pino-http functionality.
@@ -19,7 +19,7 @@ export const httpLogger = new Elysia({ name: "http-logger" })
         event: "request_received",
         req: serializeRequest(request),
       },
-      "request received",
+      "request received"
     );
   })
   .onAfterResponse(
@@ -39,9 +39,9 @@ export const httpLogger = new Elysia({ name: "http-logger" })
           req: serializeRequest(request),
           res: { statusCode: status },
         },
-        "request completed",
+        "request completed"
       );
-    },
+    }
   )
   .onError(({ request, requestPath, error, requestStartTime }) => {
     if (request.method === "OPTIONS" || requestPath === "/health") return;
@@ -56,7 +56,7 @@ export const httpLogger = new Elysia({ name: "http-logger" })
         req: serializeRequest(request),
         err: error,
       },
-      "request failed",
+      "request failed"
     );
   });
 

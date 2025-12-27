@@ -1,13 +1,11 @@
-import { Trans } from "@lingui/react/macro";
-import { BetaBadge } from "@/components/BetaBadge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@bahar/web-ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
   Form,
   FormControl,
@@ -16,21 +14,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/hooks/useToast";
-import { queryClient } from "@/lib/query";
-import { z } from "@/lib/zod";
+} from "@bahar/web-ui/components/form";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@bahar/web-ui/components/radio-group";
+import { Switch } from "@bahar/web-ui/components/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLingui } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { BetaBadge } from "@/components/BetaBadge";
 import { ensureDb } from "@/lib/db";
-import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
-import { settingsTable } from "@/lib/db/operations/settings";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { settingsTable } from "@/lib/db/operations/settings";
+import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
+import { queryClient } from "@/lib/query";
+import { z } from "@/lib/zod";
 
 const FormSchema = z.object({
   show_antonyms_in_flashcard: z.enum(["hidden", "answer", "hint"]).optional(),
@@ -53,7 +55,6 @@ export const FlashcardSettingsCardSection = () => {
     },
   });
 
-  const { toast } = useToast();
   const [clearingProgress, setClearingProgress] = useState<{
     total: number;
     cleared: number;
@@ -87,22 +88,20 @@ export const FlashcardSettingsCardSection = () => {
       });
 
       if (lastProgress.total === 0) {
-        toast({ title: t`No backlog cards to clear.` });
+        toast.info(t`No backlog cards to clear.`);
       } else {
-        toast({
-          title: t`Backlog cleared!`,
+        toast.success(t`Backlog cleared!`, {
           description: t`${lastProgress.cleared} cards have been rescheduled.`,
         });
       }
     } catch (err) {
-      toast({
-        title: t`Failed to clear backlog`,
+      toast.error(t`Failed to clear backlog`, {
         description: t`There was an error clearing your backlog.`,
       });
     } finally {
       setClearingProgress(null);
     }
-  }, [data?.show_reverse_flashcards, t, toast]);
+  }, [data?.show_reverse_flashcards, t]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -121,17 +120,14 @@ export const FlashcardSettingsCardSection = () => {
       try {
         await updateSettings({ updates: formData });
 
-        toast({
-          title: t`Flashcard settings updated!`,
-        });
+        toast.success(t`Flashcard settings updated!`);
       } catch (err) {
-        toast({
-          title: t`Failed to update flashcard settings.`,
+        toast.error(t`Failed to update flashcard settings.`, {
           description: t`There was an error updating your flashcard settings.`,
         });
       }
     },
-    [updateSettings, t, toast],
+    [updateSettings, t]
   );
 
   return (
@@ -149,7 +145,7 @@ export const FlashcardSettingsCardSection = () => {
       <CardContent className="flex flex-col gap-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-y-4 mb-4">
+            <div className="mb-4 flex flex-col gap-y-4">
               <FormField
                 control={form.control}
                 name="show_antonyms_in_flashcard"
@@ -161,16 +157,16 @@ export const FlashcardSettingsCardSection = () => {
 
                     <FormControl>
                       <RadioGroup
+                        className="flex flex-col space-y-1"
                         onValueChange={field.onChange}
                         value={field.value}
-                        className="flex flex-col space-y-1"
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
                             <RadioGroupItem value="hidden" />
                           </FormControl>
 
-                          <FormLabel className="font-normal cursor-pointer">
+                          <FormLabel className="cursor-pointer font-normal">
                             <Trans>Don't show</Trans>
                           </FormLabel>
                         </FormItem>
@@ -180,7 +176,7 @@ export const FlashcardSettingsCardSection = () => {
                             <RadioGroupItem value="hint" />
                           </FormControl>
 
-                          <FormLabel className="font-normal cursor-pointer">
+                          <FormLabel className="cursor-pointer font-normal">
                             <Trans>Show as a hint</Trans>
                           </FormLabel>
                         </FormItem>
@@ -190,7 +186,7 @@ export const FlashcardSettingsCardSection = () => {
                             <RadioGroupItem value="answer" />
                           </FormControl>
 
-                          <FormLabel className="font-normal cursor-pointer">
+                          <FormLabel className="cursor-pointer font-normal">
                             <Trans>Show after revealing the answer</Trans>
                           </FormLabel>
                         </FormItem>
@@ -208,7 +204,7 @@ export const FlashcardSettingsCardSection = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base flex items-center gap-x-2">
+                      <FormLabel className="flex items-center gap-x-2 text-base">
                         <Trans>Reverse flashcards</Trans>
                         <BetaBadge />
                       </FormLabel>
@@ -230,31 +226,31 @@ export const FlashcardSettingsCardSection = () => {
             </div>
 
             <Button
-              type="submit"
               disabled={!form.formState.isDirty || form.formState.isSubmitting}
+              type="submit"
             >
               <Trans>Save</Trans>
             </Button>
           </form>
         </Form>
 
-        <div className="border-t pt-4 mt-4">
+        <div className="mt-4 border-t pt-4">
           <div className="flex flex-col gap-3 rounded-lg border p-4">
             <div className="flex flex-row items-center justify-between">
               <div className="space-y-0.5">
-                <p className="text-sm font-medium">
+                <p className="font-medium text-sm">
                   <Trans>Clear backlog</Trans>
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   <Trans>
                     Reschedule all backlog cards by grading them as "Hard".
                   </Trans>
                 </p>
               </div>
               <Button
-                variant="outline"
-                onClick={handleClearBacklog}
                 disabled={!!clearingProgress}
+                onClick={handleClearBacklog}
+                variant="outline"
               >
                 <Trans>Clear</Trans>
               </Button>
@@ -262,7 +258,7 @@ export const FlashcardSettingsCardSection = () => {
 
             {clearingProgress && (
               <div className="space-y-2">
-                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                   <div
                     className="h-full bg-primary transition-all duration-150"
                     style={{
@@ -273,7 +269,7 @@ export const FlashcardSettingsCardSection = () => {
                     }}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground text-center">
+                <p className="text-center text-muted-foreground text-xs">
                   <Trans>
                     {clearingProgress.cleared} / {clearingProgress.total} cards
                   </Trans>

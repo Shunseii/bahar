@@ -1,15 +1,15 @@
-import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
-import mdx from '@astrojs/mdx';
-import sitemap from '@astrojs/sitemap';
-import tailwindcss from '@tailwindcss/vite';
+import mdx from "@astrojs/mdx";
+import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: 'https://get-bahar.com',
-  output: 'static',
+  site: "https://getbahar.com",
+  output: "static",
   i18n: {
-    locales: ['en', 'ar'],
-    defaultLocale: 'en',
+    locales: ["en", "ar"],
+    defaultLocale: "en",
     routing: {
       prefixDefaultLocale: false,
     },
@@ -19,10 +19,10 @@ export default defineConfig({
     mdx(),
     sitemap({
       i18n: {
-        defaultLocale: 'en',
+        defaultLocale: "en",
         locales: {
-          en: 'en',
-          ar: 'ar',
+          en: "en",
+          ar: "ar",
         },
       },
     }),

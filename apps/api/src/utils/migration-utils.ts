@@ -1,13 +1,13 @@
 import { createClient } from "@libsql/client";
+import { eq } from "drizzle-orm";
+import { tursoPlatformClient } from "../clients/turso";
 import { db } from "../db";
 import { databases } from "../db/schema/databases";
-import { eq } from "drizzle-orm";
 import { logger } from "./logger";
-import { tursoPlatformClient } from "../clients/turso";
 
 export const refreshAccessToken = async (
   dbName: string,
-  dbId: string,
+  dbId: string
 ): Promise<string> => {
   logger.info({ dbName, dbId }, "Access token expired, creating new token...");
 
@@ -30,7 +30,7 @@ export const createUserDbClient = async (
   hostname: string,
   accessToken: string,
   dbName: string,
-  dbId: string,
+  dbId: string
 ) => {
   const client = createClient({
     url: `libsql://${hostname}`,
@@ -45,7 +45,7 @@ export const createUserDbClient = async (
     if (errorMessage.includes("status 401")) {
       logger.info(
         { dbName, dbId },
-        "Token appears to be expired, refreshing...",
+        "Token appears to be expired, refreshing..."
       );
       const newToken = await refreshAccessToken(dbName, dbId);
       const newClient = createClient({

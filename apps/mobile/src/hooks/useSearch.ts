@@ -4,11 +4,11 @@
  * Provides search functionality and infinite scroll pagination.
  */
 
-import { useState, useCallback, useEffect, useMemo } from "react";
-import { search as oramaSearch, type Results, type Result } from "@orama/orama";
+import { detectLanguage, stripArabicDiacritics } from "@bahar/search/arabic";
+import type { DictionaryDocument } from "@bahar/search/schema";
+import { search as oramaSearch, type Result, type Results } from "@orama/orama";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
-import { detectLanguage, stripArabicDiacritics } from "@bahar/search";
-import type { DictionaryDocument } from "@bahar/search";
 
 const SEARCH_RESULTS_PER_PAGE = 20;
 
@@ -42,14 +42,16 @@ export const useSearch = (): UseSearchResult => {
         term,
         mode: "fulltext",
         limit: SEARCH_RESULTS_PER_PAGE,
-        properties: term ? ["word", "translation", "definition", "tags"] : undefined,
+        properties: term
+          ? ["word", "translation", "definition", "tags"]
+          : undefined,
         boost: {
           word: 10,
           translation: 10,
         },
         tolerance,
       },
-      oramaLanguage,
+      oramaLanguage
     ) as SearchResults;
   }, []);
 
@@ -73,7 +75,9 @@ interface UseInfiniteSearchResult {
 /**
  * Hook for infinite scroll search.
  */
-export const useInfiniteSearch = (searchTerm: string): UseInfiniteSearchResult => {
+export const useInfiniteSearch = (
+  searchTerm: string
+): UseInfiniteSearchResult => {
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -95,7 +99,7 @@ export const useInfiniteSearch = (searchTerm: string): UseInfiniteSearchResult =
   }, [searchTerm]);
 
   const performSearch = useCallback(
-    (currentOffset: number, append: boolean = false) => {
+    (currentOffset: number, append = false) => {
       setIsLoading(true);
 
       try {
@@ -106,14 +110,16 @@ export const useInfiniteSearch = (searchTerm: string): UseInfiniteSearchResult =
             mode: "fulltext",
             limit: SEARCH_RESULTS_PER_PAGE,
             offset: currentOffset,
-            properties: searchTerm ? ["word", "translation", "definition", "tags"] : undefined,
+            properties: searchTerm
+              ? ["word", "translation", "definition", "tags"]
+              : undefined,
             boost: {
               word: 10,
               translation: 10,
             },
             tolerance,
           },
-          oramaLanguage,
+          oramaLanguage
         ) as SearchResults;
 
         if (append) {
@@ -134,7 +140,7 @@ export const useInfiniteSearch = (searchTerm: string): UseInfiniteSearchResult =
         setIsLoading(false);
       }
     },
-    [searchTerm, tolerance, oramaLanguage],
+    [searchTerm, tolerance, oramaLanguage]
   );
 
   // Reset and search when term changes

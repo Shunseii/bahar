@@ -1,13 +1,13 @@
 import {
-  SelectFlashcard,
-  RawDictionaryEntry,
-} from "@bahar/drizzle-user-db-schemas";
-import {
-  convertRawDictionaryEntryToSelect,
   type ConvertDictionaryEntryError,
+  convertRawDictionaryEntryToSelect,
 } from "@bahar/db-operations";
-import { ImportWordV1 } from "../import/v1/schema";
-import { ok, err, type Result } from "@bahar/result";
+import type {
+  RawDictionaryEntry,
+  SelectFlashcard,
+} from "@bahar/drizzle-user-db-schemas";
+import { err, ok, type Result } from "@bahar/result";
+import type { ImportWordV1 } from "../import/v1/schema";
 
 /**
  * Transforms a dictionary entry with its flashcards into export format.

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, type Variants } from "motion/react";
-import { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren } from "react";
 
 interface PageProps extends PropsWithChildren {
   className?: string;
@@ -47,11 +47,11 @@ export const Page: FC<PageProps> = ({ children, className }) => {
   return (
     <AnimatePresence mode="wait">
       <motion.div
-        variants={pageVariants}
-        initial="initial"
         animate="animate"
-        exit="exit"
         className={className}
+        exit="exit"
+        initial="initial"
+        variants={pageVariants}
       >
         {children}
       </motion.div>

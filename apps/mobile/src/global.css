@@ -16,7 +16,7 @@
   --radius-lg: 0.75rem;
 
   /* Font family */
-  --font-primary: 'Inter', 'Noto Naskh Arabic', sans-serif;
+  --font-primary: "Inter", "Noto Naskh Arabic", sans-serif;
 }
 
 @layer theme {

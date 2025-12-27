@@ -1,16 +1,15 @@
-import { View, Text } from "react-native";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { Button } from "@/components/ui/button";
-
-import { Page } from "@/components/Page";
-import { Input } from "@/components/ui/input";
-import { GithubLoginButton } from "@/components/GithubLoginButton";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import z from "zod";
-import { authClient } from "@/utils/auth-client";
 import { useRouter } from "expo-router";
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
+import { Text, View } from "react-native";
+import z from "zod";
+import { GithubLoginButton } from "@/components/GithubLoginButton";
+import { Page } from "@/components/Page";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { authClient } from "@/utils/auth-client";
 
 const LoginFormSchema = z.object({
   email: z.string().email().min(5).max(256),
@@ -56,34 +55,34 @@ export default function LoginScreen() {
 
   return (
     <Page className="!bg-background">
-      <Text className="tracking-tight font-bold text-2xl text-foreground text-center">
+      <Text className="text-center font-bold text-2xl text-foreground tracking-tight">
         <Trans>Welcome to Bahar!</Trans>
       </Text>
 
-      <Text className="text-muted-foreground mt-2 text-center text-sm">
+      <Text className="mt-2 text-center text-muted-foreground text-sm">
         <Trans>Log in to your existing account or sign up for a new one</Trans>
       </Text>
 
-      <View className="w-full gap-y-2 mb-6">
-        <Text className="flex flex-col gap-y-4 w-full text-foreground">
+      <View className="mb-6 w-full gap-y-2">
+        <Text className="flex w-full flex-col gap-y-4 text-foreground">
           <Trans>Email</Trans>
         </Text>
 
         <Controller
           control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              autoCapitalize="none"
+              keyboardType="email-address"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
           rules={{
             required: true,
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
-          )}
-          name="email"
         />
         {errors.email && (
           <Text className="font-medium text-destructive">
@@ -91,7 +90,7 @@ export default function LoginScreen() {
           </Text>
         )}
 
-        <Text className="text-sm text-muted-foreground">
+        <Text className="text-muted-foreground text-sm">
           <Trans>This is case insensitive.</Trans>
         </Text>
       </View>
@@ -106,12 +105,12 @@ export default function LoginScreen() {
         <Trans>Continue with Email</Trans>
       </Button>
 
-      <View className="flex-row items-center my-6">
-        <View className="flex-1 h-[1px] bg-gray-300 dark:bg-gray-700" />
-        <Text className="mx-4 text-sm text-gray-500 dark:text-gray-400">
+      <View className="my-6 flex-row items-center">
+        <View className="h-[1px] flex-1 bg-gray-300 dark:bg-gray-700" />
+        <Text className="mx-4 text-gray-500 text-sm dark:text-gray-400">
           <Trans>Or continue with</Trans>
         </Text>
-        <View className="flex-1 h-[1px] bg-gray-300 dark:bg-gray-700" />
+        <View className="h-[1px] flex-1 bg-gray-300 dark:bg-gray-700" />
       </View>
 
       <GithubLoginButton />
