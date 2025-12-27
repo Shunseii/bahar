@@ -230,8 +230,6 @@ export const Route = createFileRoute("/_authorized-layout")({
       const error = initDbResult.error;
       const errReason = "reason" in error ? error.reason : null;
 
-      console.log(errReason);
-
       Sentry.captureException(new Error(error.type), {
         contexts: {
           db_init: {
@@ -261,7 +259,6 @@ export const Route = createFileRoute("/_authorized-layout")({
           });
 
         case "token_refresh_failed":
-        case "turso_remote_sync_failed":
         case "api_schema_verification_failed":
         case "db_connection_failed_after_refresh":
           throw new DisplayError({
@@ -295,6 +292,11 @@ export const Route = createFileRoute("/_authorized-layout")({
             cause: error.type,
             hasManualFix: true,
           });
+
+        // Don't throw on turso_remote_sync_failed error
+        // since user can still use local db
+        case "turso_remote_sync_failed":
+          break;
 
         default:
           throw new DisplayError({

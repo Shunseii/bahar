@@ -114,7 +114,7 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
                 detail={timestamp}
               />
 
-              {isDisplayError && (
+              {isDisplayError && error.cause && (
                 <>
                   <ErrorDetailField
                     fieldName={<Trans>Cause:</Trans>}
