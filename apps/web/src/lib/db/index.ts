@@ -1,7 +1,7 @@
 import { connect, Database } from "@tursodatabase/sync-wasm/vite";
 import { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import { api } from "../api";
-import { err, ok, tryCatch } from "../result";
+import { err, ok, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react";
 
 /**

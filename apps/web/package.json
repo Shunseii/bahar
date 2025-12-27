@@ -11,7 +11,10 @@
     "wrangler:dev": "wrangler pages dev"
   },
   "dependencies": {
+    "@bahar/db-operations": "workspace:*",
     "@bahar/fsrs": "workspace:*",
+    "@bahar/result": "workspace:*",
+    "@bahar/search": "workspace:*",
     "@elysiajs/eden": "^1.4.6",
     "@hookform/resolvers": "^5.2.2",
     "@lingui/core": "^5.3.2",

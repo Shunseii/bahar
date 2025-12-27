@@ -11,9 +11,9 @@ import { ensureDb } from "..";
 import { nanoid } from "nanoid";
 import {
   buildSelectWithNestedJson,
-  convertRawDictionaryEntryToSelectDictionaryEntry,
+  convertRawDictionaryEntryToSelect,
   DICTIONARY_ENTRY_COLUMNS,
-} from "../utils";
+} from "@bahar/db-operations";
 import { TableOperation } from "./types";
 import * as Sentry from "@sentry/react";
 import { fsrs, Rating, Card } from "ts-fsrs";
@@ -130,7 +130,7 @@ export const flashcardsTable = {
 
         return rawResults
           ?.map((raw) => {
-            const result = convertRawDictionaryEntryToSelectDictionaryEntry(
+            const result = convertRawDictionaryEntryToSelect(
               JSON.parse(raw.dictionary_entry),
             );
 
