@@ -1,11 +1,11 @@
-import { showOTPFormAtom } from "@/atoms/otp";
-import { authClient } from "@/lib/auth-client";
+import * as Sentry from "@sentry/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useSetAtom } from "jotai";
-import * as Sentry from "@sentry/react";
-import { resetOramaDb } from "@/lib/search";
+import { showOTPFormAtom } from "@/atoms/otp";
+import { authClient } from "@/lib/auth-client";
 import { resetDb } from "@/lib/db";
+import { resetOramaDb } from "@/lib/search";
 
 /**
  * A hook that logs the user out of the application

@@ -1,2 +1,2 @@
-export { DictionaryList } from "./DictionaryList";
 export { DictionaryEntryCard } from "./DictionaryEntryCard";
+export { DictionaryList } from "./DictionaryList";

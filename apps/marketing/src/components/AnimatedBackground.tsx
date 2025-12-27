@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 interface Particle {
   x: number;
@@ -62,10 +62,14 @@ export default function AnimatedBackground() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
 
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) {
+      return;
+    }
 
     const initParticles = (width: number, height: number, count: number) => {
       // Clear and reinitialize all particles with proper positions
@@ -109,8 +113,11 @@ export default function AnimatedBackground() {
 
     window.addEventListener("resize", resizeCanvas);
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Particle animation requires nested loops and conditionals
     const animate = () => {
-      if (!ctx || !canvas) return;
+      if (!(ctx && canvas)) {
+        return;
+      }
 
       const width = window.innerWidth;
       const height = window.innerHeight;
@@ -190,15 +197,15 @@ export default function AnimatedBackground() {
 
   return (
     <motion.div
-      className="fixed inset-0 -z-10 pointer-events-none"
-      aria-hidden="true"
-      initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 -z-10"
+      initial={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
       <canvas
-        ref={canvasRef}
         className="absolute inset-0"
+        ref={canvasRef}
         style={{ width: "100%", height: "100%" }}
       />
       {/* Subtle gradient overlay for depth */}

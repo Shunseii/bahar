@@ -1,4 +1,8 @@
 import { Trans } from "@lingui/react/macro";
+import { Link } from "@tanstack/react-router";
+import { Home, Layers, Settings } from "lucide-react";
+import { motion } from "motion/react";
+import Logo from "@/assets/logo.svg";
 import { NavLink } from "@/components/NavLink";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,31 +18,26 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Link } from "@tanstack/react-router";
-import { Home, Settings, Layers } from "lucide-react";
 import { useLogout } from "@/hooks/useLogout";
-import { motion } from "motion/react";
-
-import Logo from "@/assets/logo.svg";
 
 export const DesktopNavigation = () => {
   const { logout } = useLogout();
 
   return (
-    <aside className="fixed inset-y-0 ltr:left-0 rtl:right-0 z-10 hidden w-14 flex-col ltr:border-r rtl:border-l bg-gradient-to-b from-background to-background/95 backdrop-blur-sm sm:flex">
+    <aside className="fixed inset-y-0 z-10 hidden w-14 flex-col bg-gradient-to-b from-background to-background/95 backdrop-blur-sm sm:flex ltr:left-0 ltr:border-r rtl:right-0 rtl:border-l">
       {/* Main nav buttons */}
       <nav className="flex flex-col items-center gap-4 px-2 py-4">
         <Link
+          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 font-semibold text-lg md:h-8 md:w-8 md:text-base"
           to="/"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 text-lg font-semibold md:h-8 md:w-8 md:text-base"
         >
           <motion.img
-            src={Logo}
             alt=""
             className="h-5 w-5"
+            src={Logo}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
             whileHover={{ scale: 1.15, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           />
           <span className="sr-only">
             <Trans>Bahar</Trans>
@@ -47,7 +46,7 @@ export const DesktopNavigation = () => {
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <NavLink to="/" params={{}}>
+            <NavLink params={{}} to="/">
               <Home className="h-5 w-5" />
 
               <span className="sr-only">
@@ -63,7 +62,7 @@ export const DesktopNavigation = () => {
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <NavLink to="/decks" params={{}}>
+            <NavLink params={{}} to="/decks">
               <Layers className="h-5 w-5" />
 
               <span className="sr-only">
@@ -83,16 +82,16 @@ export const DesktopNavigation = () => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="ghost"
+              className="overflow-hidden rounded-full transition-colors duration-200 hover:bg-muted/80"
               size="icon"
-              className="overflow-hidden rounded-full hover:bg-muted/80 transition-colors duration-200"
+              variant="ghost"
             >
-              <Settings className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors duration-200" />
+              <Settings className="h-5 w-5 text-muted-foreground transition-colors duration-200 hover:text-foreground" />
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" sideOffset={8} className="w-48">
-            <DropdownMenuLabel className="text-xs font-medium text-muted-foreground rtl:text-right">
+          <DropdownMenuContent align="end" className="w-48" sideOffset={8}>
+            <DropdownMenuLabel className="font-medium text-muted-foreground text-xs rtl:text-right">
               <Trans>My Account</Trans>
             </DropdownMenuLabel>
 
@@ -100,11 +99,11 @@ export const DesktopNavigation = () => {
 
             <DropdownMenuItem asChild>
               <Link
-                className="cursor-pointer w-full flex items-center gap-2 rtl:flex-row-reverse"
-                to="/settings"
+                className="flex w-full cursor-pointer items-center gap-2 rtl:flex-row-reverse"
                 from="/"
+                to="/settings"
               >
-                <Settings className="w-4 h-4" />
+                <Settings className="h-4 w-4" />
                 <Trans>Settings</Trans>
               </Link>
             </DropdownMenuItem>
@@ -113,9 +112,9 @@ export const DesktopNavigation = () => {
 
             <DropdownMenuItem asChild>
               <Button
-                variant="ghost"
-                className="cursor-pointer ltr:justify-start rtl:justify-end w-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                className="w-full cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive ltr:justify-start rtl:justify-end"
                 onClick={logout}
+                variant="ghost"
               >
                 <Trans>Logout</Trans>
               </Button>

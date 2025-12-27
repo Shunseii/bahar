@@ -4,25 +4,25 @@
  * Displays a dictionary entry with expandable details.
  */
 
-import { FC, useState, memo } from "react";
-import { View, Text, Pressable, Share } from "react-native";
-import { useRouter } from "expo-router";
-import { Trans, useLingui } from "@lingui/react/macro";
-import { ChevronDown, Edit, Share2 } from "lucide-react-native";
 import { cn } from "@bahar/design-system";
+import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import { Trans, useLingui } from "@lingui/react/macro";
 import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
+import { ChevronDown, Edit, Share2 } from "lucide-react-native";
+import { type FC, memo, useState } from "react";
+import { Pressable, Share, Text, View } from "react-native";
 import Animated, {
+  Extrapolation,
+  FadeIn,
+  FadeOut,
+  interpolate,
+  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  FadeIn,
-  FadeOut,
-  LinearTransition,
-  interpolate,
-  Extrapolation,
 } from "react-native-reanimated";
 import { useThemeColors } from "@/lib/theme";
-import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 
 interface DictionaryEntryCardProps {
   entry: SelectDictionaryEntry;
@@ -50,8 +50,7 @@ const useGenderLabels = (): Record<"masculine" | "feminine", string> => {
 const ShareButton: FC<{
   word: string;
   translation: string;
-  iconColor: string;
-}> = ({ word, translation, iconColor }) => {
+}> = ({ word, translation }) => {
   const handleShare = async () => {
     try {
       await Share.share({
@@ -65,11 +64,11 @@ const ShareButton: FC<{
 
   return (
     <Pressable
-      onPress={handleShare}
-      className="p-2 rounded-md active:bg-primary/10"
+      className="rounded-md p-2 active:bg-primary/10"
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      onPress={handleShare}
     >
-      <Share2 size={18} color={iconColor} />
+      <Share2 className="text-muted-foreground" size={18} />
     </Pressable>
   );
 };
@@ -88,19 +87,19 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
 
   return (
     <Animated.View
+      className="mt-3 border-border/50 border-t pt-3"
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(100)}
-      className="pt-3 mt-3 border-t border-border/50"
     >
       {/* Type and Root row */}
-      <View className="flex-row flex-wrap items-center gap-2 mb-3">
-        <View className="px-2 py-1 rounded-md bg-primary/10">
-          <Text className="text-primary text-sm font-medium">
+      <View className="mb-3 flex-row flex-wrap items-center gap-2">
+        <View className="rounded-md bg-primary/10 px-2 py-1">
+          <Text className="font-medium text-primary text-sm">
             {wordTypeLabels[entry.type]}
           </Text>
         </View>
         {hasRoot && (
-          <View className="px-2 py-1 rounded-md bg-muted">
+          <View className="rounded-md bg-muted px-2 py-1">
             <Text
               className="text-muted-foreground text-sm"
               style={{ writingDirection: "rtl" }}
@@ -114,23 +113,23 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
       {/* Definition */}
       {hasDefinition && (
         <View className="mb-3">
-          <Text className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-1">
+          <Text className="mb-1 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Definition</Trans>
           </Text>
-          <Text className="text-sm text-foreground/80">{entry.definition}</Text>
+          <Text className="text-foreground/80 text-sm">{entry.definition}</Text>
         </View>
       )}
 
       {/* Ism Morphology */}
       {ismMorphology && (
         <View className="mb-3">
-          <Text className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-2">
+          <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Morphology</Trans>
           </Text>
           <View className="flex-row flex-wrap gap-4">
             {ismMorphology.singular && (
               <View>
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Singular</Trans>
                 </Text>
                 <Text
@@ -143,7 +142,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
             )}
             {ismMorphology.dual && (
               <View>
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Dual</Trans>
                 </Text>
                 <Text
@@ -156,7 +155,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
             )}
             {ismMorphology.plurals && ismMorphology.plurals.length > 0 && (
               <View>
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Plural</Trans>
                 </Text>
                 <Text
@@ -169,7 +168,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
             )}
             {ismMorphology.gender && (
               <View>
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Gender</Trans>
                 </Text>
                 <Text className="text-foreground/80">
@@ -184,13 +183,13 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
       {/* Verb Morphology */}
       {verbMorphology && (
         <View className="mb-3">
-          <Text className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-2">
+          <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Morphology</Trans>
           </Text>
           <View className="flex-row flex-wrap gap-4">
             {verbMorphology.past_tense && (
               <View>
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Past</Trans>
                 </Text>
                 <Text
@@ -203,7 +202,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
             )}
             {verbMorphology.present_tense && (
               <View>
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Present</Trans>
                 </Text>
                 <Text
@@ -216,7 +215,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
             )}
             {verbMorphology.imperative && (
               <View>
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Imperative</Trans>
                 </Text>
                 <Text
@@ -229,7 +228,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
             )}
             {verbMorphology.form && (
               <View>
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Form</Trans>
                 </Text>
                 <Text className="text-foreground/80">
@@ -241,7 +240,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
             )}
             {verbMorphology.masadir && verbMorphology.masadir.length > 0 && (
               <View className="w-full">
-                <Text className="text-xs text-muted-foreground/70">
+                <Text className="text-muted-foreground/70 text-xs">
                   <Trans>Verbal nouns</Trans>
                 </Text>
                 <Text
@@ -259,14 +258,14 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
       {/* Examples */}
       {hasExamples && (
         <View className="mb-3">
-          <Text className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-2">
+          <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Examples</Trans>
           </Text>
           <View className="gap-2">
             {entry.examples!.slice(0, 2).map((example, i) => (
               <View
+                className="rounded-lg border border-border/30 bg-muted/30 p-3"
                 key={i}
-                className="p-3 rounded-lg bg-muted/30 border border-border/30"
               >
                 <Text
                   className="text-base text-foreground/90"
@@ -275,7 +274,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
                   {example.sentence}
                 </Text>
                 {example.translation && (
-                  <Text className="text-sm text-muted-foreground mt-1">
+                  <Text className="mt-1 text-muted-foreground text-sm">
                     {example.translation}
                   </Text>
                 )}
@@ -288,13 +287,13 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
       {/* Tags */}
       {hasTags && (
         <View>
-          <Text className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-2">
+          <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Tags</Trans>
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {entry.tags!.map((tag) => (
-              <View key={tag} className="px-2 py-1 rounded-full bg-muted">
-                <Text className="text-xs text-muted-foreground">{tag}</Text>
+              <View className="rounded-full bg-muted px-2 py-1" key={tag}>
+                <Text className="text-muted-foreground text-xs">{tag}</Text>
               </View>
             ))}
           </View>
@@ -312,8 +311,6 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
     const rotation = useSharedValue(0);
     const scale = useSharedValue(1);
     const pressed = useSharedValue(0);
-
-    const iconColor = colors.mutedForeground;
 
     const hasExpandableContent =
       entry.definition ||
@@ -350,13 +347,13 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
         pressed.value,
         [0, 1],
         [0.08, 0.15],
-        Extrapolation.CLAMP,
+        Extrapolation.CLAMP
       );
       const translateY = interpolate(
         pressed.value,
         [0, 1],
         [0, 1],
-        Extrapolation.CLAMP,
+        Extrapolation.CLAMP
       );
       return {
         transform: [{ scale: scale.value }, { translateY }],
@@ -366,11 +363,15 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
 
     return (
       <Pressable
+        onPress={toggleExpanded}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        onPress={toggleExpanded}
       >
         <Animated.View
+          className={cn(
+            "rounded-xl border border-border/50 bg-card p-4",
+            isExpanded && "border-primary/30"
+          )}
           layout={LinearTransition.springify().damping(18).stiffness(180)}
           style={[
             cardAnimatedStyle,
@@ -381,44 +382,36 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
               elevation: 4,
             },
           ]}
-          className={cn(
-            "p-4 rounded-xl bg-card border border-border/50",
-            isExpanded && "border-primary/30",
-          )}
         >
-          <View className="flex-row justify-between items-start">
+          <View className="flex-row items-start justify-between">
             {/* Word and Translation */}
-            <View className="flex-1 mr-2">
+            <View className="mr-2 flex-1">
               <Text
-                className="text-2xl font-semibold text-foreground"
+                className="font-semibold text-2xl text-foreground"
                 style={{ writingDirection: "rtl", textAlign: "left" }}
               >
                 {entry.word}
               </Text>
-              <Text className="text-base text-muted-foreground mt-1">
+              <Text className="mt-1 text-base text-muted-foreground">
                 {entry.translation}
               </Text>
             </View>
 
             {/* Actions */}
             <View className="flex-row items-center">
-              <ShareButton
-                word={entry.word}
-                translation={entry.translation}
-                iconColor={iconColor}
-              />
+              <ShareButton translation={entry.translation} word={entry.word} />
               <Pressable
+                className="rounded-md p-2 active:bg-primary/10"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 onPress={() =>
                   router.push(`/(search)/(home)/edit-word/${entry.id}`)
                 }
-                className="p-2 rounded-md active:bg-primary/10"
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <Edit size={18} color={iconColor} />
+                <Edit className="text-muted-foreground" size={18} />
               </Pressable>
               {hasExpandableContent && (
                 <Animated.View style={chevronStyle}>
-                  <ChevronDown size={18} color={iconColor} />
+                  <ChevronDown className="text-muted-foreground" size={18} />
                 </Animated.View>
               )}
             </View>
@@ -431,5 +424,5 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
         </Animated.View>
       </Pressable>
     );
-  },
+  }
 );

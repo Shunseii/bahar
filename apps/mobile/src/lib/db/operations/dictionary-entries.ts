@@ -3,25 +3,29 @@
  */
 
 import {
-  SelectDictionaryEntry,
-  RawDictionaryEntry,
-  InsertDictionaryEntry,
-} from "@bahar/drizzle-user-db-schemas";
-import {
   convertRawDictionaryEntryToSelect,
   generateId,
   type TableOperation,
 } from "@bahar/db-operations";
+import type {
+  InsertDictionaryEntry,
+  RawDictionaryEntry,
+  SelectDictionaryEntry,
+} from "@bahar/drizzle-user-db-schemas";
 import { ensureDb } from "..";
 
 export const dictionaryEntriesTable = {
   entry: {
-    query: async ({ id }: { id: string }): Promise<SelectDictionaryEntry | null> => {
+    query: async ({
+      id,
+    }: {
+      id: string;
+    }): Promise<SelectDictionaryEntry | null> => {
       const db = await ensureDb();
 
       const raw = await db
         .prepare<RawDictionaryEntry>(
-          `SELECT * FROM dictionary_entries WHERE id = ?;`,
+          "SELECT * FROM dictionary_entries WHERE id = ?;"
         )
         .get([id]);
 
@@ -57,7 +61,7 @@ export const dictionaryEntriesTable = {
           `INSERT INTO dictionary_entries (
           id, word, translation, definition, type, root, tags, antonyms, examples, morphology,
           created_at, created_at_timestamp_ms, updated_at, updated_at_timestamp_ms
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         )
         .run([
           id,
@@ -78,17 +82,21 @@ export const dictionaryEntriesTable = {
 
       const raw = await db
         .prepare<RawDictionaryEntry>(
-          `SELECT * FROM dictionary_entries WHERE id = ?;`,
+          "SELECT * FROM dictionary_entries WHERE id = ?;"
         )
         .get([id]);
 
       if (!raw) {
-        throw new Error(`Failed to retrieve newly created dictionary entry: ${id}`);
+        throw new Error(
+          `Failed to retrieve newly created dictionary entry: ${id}`
+        );
       }
 
       const result = convertRawDictionaryEntryToSelect(raw);
       if (!result.ok) {
-        throw new Error(`Failed to parse newly created entry: ${JSON.stringify(result.error)}`);
+        throw new Error(
+          `Failed to parse newly created entry: ${JSON.stringify(result.error)}`
+        );
       }
 
       return result.value;
@@ -105,7 +113,10 @@ export const dictionaryEntriesTable = {
     }: {
       id: string;
       updates: Partial<
-        Omit<InsertDictionaryEntry, "id" | "created_at" | "created_at_timestamp_ms">
+        Omit<
+          InsertDictionaryEntry,
+          "id" | "created_at" | "created_at_timestamp_ms"
+        >
       >;
     }): Promise<SelectDictionaryEntry> => {
       const db = await ensureDb();
@@ -148,7 +159,9 @@ export const dictionaryEntriesTable = {
       }
       if (updates.morphology !== undefined) {
         setClauses.push("morphology = ?");
-        params.push(updates.morphology ? JSON.stringify(updates.morphology) : null);
+        params.push(
+          updates.morphology ? JSON.stringify(updates.morphology) : null
+        );
       }
 
       // Always update the updated_at timestamp
@@ -161,13 +174,13 @@ export const dictionaryEntriesTable = {
 
       await db
         .prepare(
-          `UPDATE dictionary_entries SET ${setClauses.join(", ")} WHERE id = ?;`,
+          `UPDATE dictionary_entries SET ${setClauses.join(", ")} WHERE id = ?;`
         )
         .run(params);
 
       const raw = await db
         .prepare<RawDictionaryEntry>(
-          `SELECT * FROM dictionary_entries WHERE id = ?;`,
+          "SELECT * FROM dictionary_entries WHERE id = ?;"
         )
         .get([id]);
 
@@ -177,7 +190,9 @@ export const dictionaryEntriesTable = {
 
       const result = convertRawDictionaryEntryToSelect(raw);
       if (!result.ok) {
-        throw new Error(`Failed to parse updated entry: ${JSON.stringify(result.error)}`);
+        throw new Error(
+          `Failed to parse updated entry: ${JSON.stringify(result.error)}`
+        );
       }
 
       return result.value;
@@ -188,12 +203,16 @@ export const dictionaryEntriesTable = {
   },
 
   delete: {
-    mutation: async ({ id }: { id: string }): Promise<SelectDictionaryEntry> => {
+    mutation: async ({
+      id,
+    }: {
+      id: string;
+    }): Promise<SelectDictionaryEntry> => {
       const db = await ensureDb();
 
       const raw = await db
         .prepare<RawDictionaryEntry>(
-          `SELECT * FROM dictionary_entries WHERE id = ?;`,
+          "SELECT * FROM dictionary_entries WHERE id = ?;"
         )
         .get([id]);
 
@@ -203,10 +222,14 @@ export const dictionaryEntriesTable = {
 
       const result = convertRawDictionaryEntryToSelect(raw);
       if (!result.ok) {
-        throw new Error(`Failed to parse entry for deletion: ${JSON.stringify(result.error)}`);
+        throw new Error(
+          `Failed to parse entry for deletion: ${JSON.stringify(result.error)}`
+        );
       }
 
-      await db.prepare(`DELETE FROM dictionary_entries WHERE id = ?;`).run([id]);
+      await db
+        .prepare("DELETE FROM dictionary_entries WHERE id = ?;")
+        .run([id]);
 
       return result.value;
     },
@@ -227,7 +250,7 @@ export const dictionaryEntriesTable = {
 
       const raws = await db
         .prepare<RawDictionaryEntry>(
-          `SELECT * FROM dictionary_entries ORDER BY created_at_timestamp_ms DESC LIMIT ? OFFSET ?;`,
+          "SELECT * FROM dictionary_entries ORDER BY created_at_timestamp_ms DESC LIMIT ? OFFSET ?;"
         )
         .all([limit, offset]);
 
@@ -235,7 +258,7 @@ export const dictionaryEntriesTable = {
         .map((raw) => {
           const result = convertRawDictionaryEntryToSelect(raw);
           if (!result.ok) {
-            console.warn(`Failed to parse dictionary entry:`, result.error);
+            console.warn("Failed to parse dictionary entry:", result.error);
             return null;
           }
           return result.value;
@@ -252,7 +275,7 @@ export const dictionaryEntriesTable = {
       const db = await ensureDb();
       const res = await db
         .prepare<{ max_ts: number | null }>(
-          "SELECT MAX(updated_at_timestamp_ms) as max_ts FROM dictionary_entries",
+          "SELECT MAX(updated_at_timestamp_ms) as max_ts FROM dictionary_entries"
         )
         .get([]);
       return res?.max_ts ?? null;

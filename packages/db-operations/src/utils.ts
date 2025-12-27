@@ -36,10 +36,9 @@ export const buildSelectWithNestedJson = ({
       if (JSON_COLUMNS.includes(col)) {
         // JSON columns should be used directly without escaping
         return `'${col}', ${tableAlias}.${col}`;
-      } else {
-        // Escape backslashes and quotes in string columns
-        return `'${col}', REPLACE(REPLACE(${tableAlias}.${col}, '\\', '\\\\'), '"', '\\"')`;
       }
+      // Escape backslashes and quotes in string columns
+      return `'${col}', REPLACE(REPLACE(${tableAlias}.${col}, '\\', '\\\\'), '"', '\\"')`;
     })
     .join(", ");
 
@@ -52,7 +51,7 @@ export const buildSelectWithNestedJson = ({
 export const buildInClause = (
   column: string,
   values: unknown[],
-  tableAlias?: string,
+  tableAlias?: string
 ): { clause: string; params: unknown[] } => {
   const prefix = tableAlias ? `${tableAlias}.` : "";
   const placeholders = values.map(() => "?").join(", ");
@@ -66,7 +65,7 @@ export const buildInClause = (
  * Builds SET clause for UPDATE statements.
  */
 export const buildSetClause = (
-  updates: Record<string, unknown>,
+  updates: Record<string, unknown>
 ): { clause: string; params: unknown[] } => {
   const setClauses: string[] = [];
   const params: unknown[] = [];

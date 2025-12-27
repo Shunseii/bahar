@@ -1,14 +1,14 @@
-import { atom, useAtom, useSetAtom } from "jotai";
+import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import {
-  InternalTypedDocument,
-  Result,
-  Results,
+  type InternalTypedDocument,
   search as oramaSearch,
+  type Result,
+  type Results,
   type SearchParams,
 } from "@orama/orama";
-import { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
-import { getOramaDb } from "@/lib/search";
+import { atom, useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { getOramaDb } from "@/lib/search";
 import { detectLanguage, stripArabicDiacritics } from "@/lib/utils";
 
 const SEARCH_RESULTS_PER_PAGE = 20;
@@ -33,7 +33,7 @@ export const useSearch = () => {
 
   const [hits, setHits] = useAtom(hitsAtom);
   const [searchResultsMetadata, setSearchResultsMetadata] = useAtom(
-    searchResultsMetadataAtom,
+    searchResultsMetadataAtom
   );
 
   const search = useCallback(
@@ -42,7 +42,7 @@ export const useSearch = () => {
         SearchParams<ReturnType<typeof getOramaDb>>,
         "limit" | "mode"
       > = {},
-      language: "arabic" | "english" = "english",
+      language: "arabic" | "english" = "english"
     ) => {
       const tolerance = (() => {
         if (!params.term) return 0;
@@ -74,14 +74,14 @@ export const useSearch = () => {
           },
           tolerance,
         },
-        language,
+        language
       ) as Results<InternalTypedDocument<SelectDictionaryEntry>>;
     },
-    [],
+    []
   );
 
   const preloadResults = useCallback(() => {
-    if (!hits && !searchResultsMetadata) {
+    if (!(hits || searchResultsMetadata)) {
       const { hits: newHits, ...metadata } = search({}, "english");
 
       setHits(newHits);
@@ -143,7 +143,7 @@ export const useInfiniteScroll = (
   params: Omit<
     SearchParams<ReturnType<typeof getOramaDb>>,
     "limit" | "offset" | "mode"
-  > = {},
+  > = {}
 ) => {
   const { search } = useSearch();
 
@@ -152,7 +152,7 @@ export const useInfiniteScroll = (
   const [offset, setOffset] = useAtom(offsetAtom);
   const [hits, setHits] = useAtom(hitsAtom);
   const [searchResultsMetadata, setSearchResultsMetadata] = useAtom(
-    searchResultsMetadataAtom,
+    searchResultsMetadataAtom
   );
 
   // For checking if the search params have changed
@@ -184,11 +184,11 @@ export const useInfiniteScroll = (
         ...params,
         offset,
       },
-      searchQueryLanguage,
+      searchQueryLanguage
     );
 
     setHits((previousHits) =>
-      previousHits ? [...previousHits, ...hits] : hits,
+      previousHits ? [...previousHits, ...hits] : hits
     );
   }, [offset, setHits, search]);
 
@@ -200,7 +200,7 @@ export const useInfiniteScroll = (
         ...params,
         offset: 0,
       },
-      searchQueryLanguage,
+      searchQueryLanguage
     );
 
     setOffset(0);
@@ -210,7 +210,7 @@ export const useInfiniteScroll = (
   }, [paramsKey, setOffset, setHits, setSearchResultsMetadata, search]);
 
   useEffect(() => {
-    if (!hits || !searchResultsMetadata) return;
+    if (!(hits && searchResultsMetadata)) return;
 
     if (hits.length === searchResultsMetadata.count) {
       setHasMore(false);

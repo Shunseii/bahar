@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -16,7 +16,9 @@ export default function ThemeToggle() {
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -33,8 +35,9 @@ export default function ThemeToggle() {
   if (!mounted) {
     return (
       <button
-        className="relative flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
         aria-label="Toggle theme"
+        className="relative flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        type="button"
       >
         <span className="h-5 w-5" />
       </button>
@@ -43,29 +46,31 @@ export default function ThemeToggle() {
 
   return (
     <button
-      onClick={toggleTheme}
-      className="relative cursor-pointer flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
       aria-label={
         theme === "light" ? "Switch to dark mode" : "Switch to light mode"
       }
+      className="relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+      onClick={toggleTheme}
+      type="button"
     >
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence initial={false} mode="wait">
         {theme === "light" ? (
           <motion.svg
-            key="sun"
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
+            animate={{ scale: 1, rotate: 0 }}
+            aria-hidden="true"
+            exit={{ scale: 0, rotate: 90 }}
             fill="none"
+            height="20"
+            initial={{ scale: 0, rotate: -90 }}
+            key="sun"
             stroke="currentColor"
-            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            initial={{ scale: 0, rotate: -90 }}
-            animate={{ scale: 1, rotate: 0 }}
-            exit={{ scale: 0, rotate: 90 }}
+            strokeWidth="2"
             transition={{ duration: 0.2 }}
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
           >
             <circle cx="12" cy="12" r="4" />
             <path d="M12 2v2" />
@@ -79,20 +84,21 @@ export default function ThemeToggle() {
           </motion.svg>
         ) : (
           <motion.svg
-            key="moon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
+            animate={{ scale: 1, rotate: 0 }}
+            aria-hidden="true"
+            exit={{ scale: 0, rotate: -90 }}
             fill="none"
+            height="20"
+            initial={{ scale: 0, rotate: 90 }}
+            key="moon"
             stroke="currentColor"
-            strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            initial={{ scale: 0, rotate: 90 }}
-            animate={{ scale: 1, rotate: 0 }}
-            exit={{ scale: 0, rotate: -90 }}
+            strokeWidth="2"
             transition={{ duration: 0.2 }}
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
           >
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
           </motion.svg>

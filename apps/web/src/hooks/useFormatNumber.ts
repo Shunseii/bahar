@@ -18,7 +18,7 @@ export const useFormatNumber = () => {
 
   const formatNumber = useCallback(
     (num: number) => formatter.format(num),
-    [formatter],
+    [formatter]
   );
 
   const formatElapsedTime = useCallback(
@@ -31,15 +31,16 @@ export const useFormatNumber = () => {
 
       if (ns < 1000) {
         return `${decimalFormatter.format(ns)}ns`;
-      } else if (ns < 1_000_000) {
-        return `${decimalFormatter.format(ns / 1000)}μs`;
-      } else if (ns < 1_000_000_000) {
-        return `${decimalFormatter.format(ns / 1_000_000)}ms`;
-      } else {
-        return `${decimalFormatter.format(ns / 1_000_000_000)}s`;
       }
+      if (ns < 1_000_000) {
+        return `${decimalFormatter.format(ns / 1000)}μs`;
+      }
+      if (ns < 1_000_000_000) {
+        return `${decimalFormatter.format(ns / 1_000_000)}ms`;
+      }
+      return `${decimalFormatter.format(ns / 1_000_000_000)}s`;
     },
-    [locale, isArabic],
+    [locale, isArabic]
   );
 
   return {

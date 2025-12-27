@@ -1,7 +1,6 @@
-import * as React from "react";
-import { TextInput, TextInputProps } from "react-native";
-
 import { cn } from "@bahar/design-system";
+import * as React from "react";
+import { TextInput, type TextInputProps } from "react-native";
 
 // TODO: add disabled styles
 // On native, "disabled:" is only available for components with a disabled prop.
@@ -13,15 +12,15 @@ const Input = React.forwardRef<TextInput, TextInputProps>(
     return (
       <TextInput
         className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm cursor-pointer text-foreground",
+          "flex h-10 w-full cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-foreground text-sm",
           "placeholder:text-muted-foreground",
-          className,
+          className
         )}
         ref={ref}
         {...props}
       />
     );
-  },
+  }
 );
 Input.displayName = "Input";
 

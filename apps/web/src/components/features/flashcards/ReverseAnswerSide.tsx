@@ -1,12 +1,10 @@
 import { Trans } from "@lingui/react/macro";
-import { motion } from "motion/react";
-import { FC } from "react";
-import {
-  FlashcardWithDictionaryEntry,
-} from "@/lib/db/operations/flashcards";
-import { settingsTable } from "@/lib/db/operations/settings";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2 } from "lucide-react";
+import { motion } from "motion/react";
+import type { FC } from "react";
+import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
+import { settingsTable } from "@/lib/db/operations/settings";
 
 /**
  * This displays the back side of the reverse flashcard which
@@ -58,30 +56,30 @@ export const ReverseAnswerSide: FC<{
 
   return (
     <motion.div
-      className="w-full flex flex-col gap-y-4"
-      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      className="flex w-full flex-col gap-y-4"
+      initial={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
     >
       {/* Answer indicator */}
       <motion.div
+        animate={{ opacity: 1, x: 0 }}
         className="flex items-center gap-2 text-green-600 dark:text-green-400"
         initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <CheckCircle2 className="w-4 h-4" />
-        <span className="text-sm font-medium uppercase tracking-wide">
+        <CheckCircle2 className="h-4 w-4" />
+        <span className="font-medium text-sm uppercase tracking-wide">
           <Trans>Answer</Trans>
         </span>
       </motion.div>
 
       {/* Main Arabic word - large and prominent */}
       <motion.p
-        dir="rtl"
-        className="rtl:text-right text-2xl sm:text-3xl text-foreground/90 leading-relaxed"
-        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
+        className="text-2xl text-foreground/90 leading-relaxed sm:text-3xl rtl:text-right"
+        dir="rtl"
+        initial={{ opacity: 0, scale: 0.95 }}
         transition={{ delay: 0.15, duration: 0.3 }}
       >
         {currentCard.dictionary_entry.word}
@@ -89,23 +87,23 @@ export const ReverseAnswerSide: FC<{
 
       {/* Morphology details */}
       <motion.div
-        className="flex flex-wrap gap-2 items-center ltr:self-end rtl:self-start rtl:flex-row-reverse"
-        initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        className="flex flex-wrap items-center gap-2 ltr:self-end rtl:flex-row-reverse rtl:self-start"
+        initial={{ opacity: 0 }}
         transition={{ delay: 0.25 }}
       >
         {hasPlurals && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             (ج) {firstPlural}
           </span>
         )}
         {hasSingular && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             (م) {singular}
           </span>
@@ -113,8 +111,8 @@ export const ReverseAnswerSide: FC<{
 
         {hasMasdar && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             {firstMasdar}
           </span>
@@ -122,8 +120,8 @@ export const ReverseAnswerSide: FC<{
 
         {hasPresentTense && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             {presentTense}
           </span>
@@ -131,8 +129,8 @@ export const ReverseAnswerSide: FC<{
 
         {hasPastTense && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             {pastTense}
           </span>
@@ -141,10 +139,10 @@ export const ReverseAnswerSide: FC<{
 
       {isVerb && root && (
         <motion.p
-          dir="rtl"
-          className="rtl:text-right text-lg sm:text-xl text-muted-foreground/70 tracking-wider"
-          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
+          className="text-lg text-muted-foreground/70 tracking-wider sm:text-xl rtl:text-right"
+          dir="rtl"
+          initial={{ opacity: 0 }}
           transition={{ delay: 0.3 }}
         >
           {root.join(" - ")}
@@ -153,10 +151,10 @@ export const ReverseAnswerSide: FC<{
 
       {showAntonyms === "hint" && hasAntonyms && (
         <motion.p
-          dir="rtl"
-          className="rtl:text-right text-base sm:text-lg text-muted-foreground italic"
-          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
+          className="text-base text-muted-foreground italic sm:text-lg rtl:text-right"
+          dir="rtl"
+          initial={{ opacity: 0 }}
           transition={{ delay: 0.35 }}
         >
           أضداد:{" "}

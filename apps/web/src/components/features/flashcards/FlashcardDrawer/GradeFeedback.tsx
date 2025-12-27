@@ -1,8 +1,8 @@
 import { cn } from "@bahar/design-system";
-import { RotateCcw, Brain, ThumbsUp, Zap } from "lucide-react";
+import { Brain, RotateCcw, ThumbsUp, Zap } from "lucide-react";
 import { motion } from "motion/react";
-import { FC, useEffect } from "react";
-import { Grade, Rating } from "ts-fsrs";
+import { type FC, useEffect } from "react";
+import { type Grade, Rating } from "ts-fsrs";
 
 /**
  * Grade feedback animation overlay for flashcards.
@@ -88,25 +88,25 @@ export const GradeFeedback: FC<{
 
   return (
     <motion.div
-      className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
-      initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center"
       exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }}
     >
       {/* Background pulse */}
       <motion.div
+        animate={{ opacity: [0, 0.5, 0] }}
         className={cn("absolute inset-0", config.bgColor)}
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 0.5, 0] }}
         transition={{ duration: 0.6 }}
       />
 
       {/* Icon animation */}
       <motion.div
-        className={cn("p-6 rounded-full", config.bgColor)}
+        className={cn("rounded-full p-6", config.bgColor)}
         {...config.animation}
       >
-        <Icon className={cn("w-16 h-16", config.color)} />
+        <Icon className={cn("h-16 w-16", config.color)} />
       </motion.div>
 
       {/* Sparkles for Easy */}
@@ -114,19 +114,19 @@ export const GradeFeedback: FC<{
         <>
           {[...Array(6)].map((_, i) => (
             <motion.div
-              key={i}
-              className="absolute w-2 h-2 rounded-full bg-green-400"
-              initial={{
-                scale: 0,
-                x: 0,
-                y: 0,
-              }}
               animate={{
                 scale: [0, 1, 0],
                 x: Math.cos((i * Math.PI * 2) / 6) * 80,
                 y: Math.sin((i * Math.PI * 2) / 6) * 80,
                 opacity: [0, 1, 0],
               }}
+              className="absolute h-2 w-2 rounded-full bg-green-400"
+              initial={{
+                scale: 0,
+                x: 0,
+                y: 0,
+              }}
+              key={i}
               transition={{
                 duration: 0.5,
                 delay: 0.1,

@@ -50,10 +50,7 @@
       [
         "@digitalartlab/expo-plugin-localization",
         {
-          "locales": [
-            "en",
-            "ar"
-          ]
+          "locales": ["en", "ar"]
         }
       ],
       "expo-secure-store",

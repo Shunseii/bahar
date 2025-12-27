@@ -1,4 +1,7 @@
 import { Trans } from "@lingui/react/macro";
+import { Plus } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import {
   Accordion,
   AccordionContent,
@@ -14,20 +17,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { z } from "@/lib/zod";
-import { FormSchema } from "@/lib/schemas/dictionary";
-import { AnimatePresence, motion } from "motion/react";
-import { Plus } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import type { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 export const AdditionalDetailsFormSection = () => {
   const form = useFormContext<z.infer<typeof FormSchema>>();
@@ -83,10 +83,10 @@ export const AdditionalDetailsFormSection = () => {
 
                 <FormControl>
                   <Input
-                    type="text"
-                    lang="ar"
-                    dir="rtl"
                     className="w-full text-xl"
+                    dir="rtl"
+                    lang="ar"
+                    type="text"
                     {...field}
                   />
                 </FormControl>
@@ -103,11 +103,11 @@ export const AdditionalDetailsFormSection = () => {
           <AnimatePresence>
             {hasMorphology ? (
               <motion.div
-                initial={{
-                  opacity: 0,
-                }}
                 animate={{ opacity: 1 }}
                 exit={{
+                  opacity: 0,
+                }}
+                initial={{
                   opacity: 0,
                 }}
               >
@@ -122,11 +122,11 @@ export const AdditionalDetailsFormSection = () => {
 
                       <FormControl>
                         <Input
-                          type="text"
-                          lang="ar"
-                          dir="rtl"
-                          placeholder="ف ع ل"
                           className="w-full text-xl"
+                          dir="rtl"
+                          lang="ar"
+                          placeholder="ف ع ل"
+                          type="text"
                           {...field}
                         />
                       </FormControl>
@@ -154,11 +154,11 @@ export const AdditionalDetailsFormSection = () => {
               <Trans>Examples</Trans>
             </h3>
 
-            <p className="ltr:text-sm rtl:text-base text-muted-foreground">
+            <p className="text-muted-foreground ltr:text-sm rtl:text-base">
               <Trans>Example usages of the word in different contexts.</Trans>
             </p>
 
-            <Accordion type="single" collapsible>
+            <Accordion collapsible type="single">
               {examplesFields.map((field, index) => {
                 return (
                   <AccordionItem key={field.id} value={field.id}>
@@ -178,12 +178,12 @@ export const AdditionalDetailsFormSection = () => {
 
                             <FormControl>
                               <Input
-                                type="text"
+                                className="w-[98%] text-xl ltr:ml-1 rtl:mr-1"
                                 // Need to do this otherwise the focus border will get cut off
                                 // in the dropdown
-                                className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
-                                lang="ar"
                                 dir="rtl"
+                                lang="ar"
+                                type="text"
                                 {...renderField}
                               />
                             </FormControl>
@@ -204,10 +204,10 @@ export const AdditionalDetailsFormSection = () => {
 
                             <FormControl>
                               <Input
-                                type="text"
+                                className="ml-1 w-[98%]"
                                 // Need to do this otherwise the focus border will get cut off
                                 // in the dropdown
-                                className="w-[98%] ml-1"
+                                type="text"
                                 {...renderField}
                               />
                             </FormControl>
@@ -233,10 +233,10 @@ export const AdditionalDetailsFormSection = () => {
 
                             <FormControl>
                               <Input
-                                type="text"
+                                className="ml-1 w-[98%]"
                                 // Need to do this otherwise the focus border will get cut off
                                 // in the dropdown
-                                className="w-[98%] ml-1"
+                                type="text"
                                 {...renderField}
                               />
                             </FormControl>
@@ -254,11 +254,11 @@ export const AdditionalDetailsFormSection = () => {
                       />
 
                       <Button
-                        variant="outline"
-                        size="sm"
                         className="w-max"
-                        type="button"
                         onClick={() => removeExample(index)}
+                        size="sm"
+                        type="button"
+                        variant="outline"
                       >
                         <Trans>Remove</Trans>
                       </Button>
@@ -270,12 +270,12 @@ export const AdditionalDetailsFormSection = () => {
 
             <Button
               className="w-max"
-              type="button"
               onClick={() => {
                 appendExample({ sentence: "" });
               }}
-              variant="outline"
               size="sm"
+              type="button"
+              variant="outline"
             >
               <Plus className="mr-2 h-4 w-4" />
               <Trans>Add example</Trans>
@@ -288,11 +288,11 @@ export const AdditionalDetailsFormSection = () => {
                 <Trans>Antonyms</Trans>
               </h3>
 
-              <p className="ltr:text-sm rtl:text-base text-muted-foreground">
+              <p className="text-muted-foreground ltr:text-sm rtl:text-base">
                 <Trans>Words that have the opposite meaning.</Trans>
               </p>
 
-              <Accordion type="single" collapsible>
+              <Accordion collapsible type="single">
                 {antonymsFields.map((field, index) => {
                   return (
                     <AccordionItem key={field.id} value={field.id}>
@@ -312,12 +312,12 @@ export const AdditionalDetailsFormSection = () => {
 
                               <FormControl>
                                 <Input
-                                  type="text"
+                                  className="w-[98%] text-xl ltr:ml-1 rtl:mr-1"
                                   // Need to do this otherwise the focus border will get cut off
                                   // in the dropdown
-                                  className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
-                                  lang="ar"
                                   dir="rtl"
+                                  lang="ar"
+                                  type="text"
                                   {...renderField}
                                 />
                               </FormControl>
@@ -328,11 +328,11 @@ export const AdditionalDetailsFormSection = () => {
                         />
 
                         <Button
-                          variant="outline"
-                          size="sm"
                           className="w-max"
-                          type="button"
                           onClick={() => removeAntonym(index)}
+                          size="sm"
+                          type="button"
+                          variant="outline"
                         >
                           <Trans>Remove</Trans>
                         </Button>
@@ -344,12 +344,12 @@ export const AdditionalDetailsFormSection = () => {
 
               <Button
                 className="w-max"
-                type="button"
                 onClick={() => {
                   appendAntonym({ word: "" });
                 }}
-                variant="outline"
                 size="sm"
+                type="button"
+                variant="outline"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 <Trans>Add antonym</Trans>

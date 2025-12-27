@@ -5,21 +5,21 @@
 export const FLASHCARD_LIMIT = 100;
 
 import {
-  SelectFlashcard,
-  RawFlashcard,
-  SelectDeck,
-  FlashcardState,
-  InsertFlashcard,
-  WORD_TYPES,
-  SelectDictionaryEntry,
-} from "@bahar/drizzle-user-db-schemas";
-import {
   buildSelectWithNestedJson,
   convertRawDictionaryEntryToSelect,
   DICTIONARY_ENTRY_COLUMNS,
   generateId,
   type TableOperation,
 } from "@bahar/db-operations";
+import {
+  FlashcardState,
+  type InsertFlashcard,
+  type RawFlashcard,
+  type SelectDeck,
+  type SelectDictionaryEntry,
+  type SelectFlashcard,
+  WORD_TYPES,
+} from "@bahar/drizzle-user-db-schemas";
 import { ensureDb } from "..";
 
 export type FlashcardWithDictionaryEntry = SelectFlashcard & {
@@ -35,7 +35,7 @@ export const flashcardsTable = {
       }: {
         showReverse?: boolean;
         filters?: SelectDeck["filters"];
-      } = { showReverse: false },
+      } = { showReverse: false }
     ): Promise<FlashcardWithDictionaryEntry[]> => {
       const db = await ensureDb();
       const now = Date.now();
@@ -58,7 +58,7 @@ export const flashcardsTable = {
       const params: unknown[] = [now];
 
       whereConditions.push(
-        `f.direction IN (${directions.map(() => "?").join(", ")})`,
+        `f.direction IN (${directions.map(() => "?").join(", ")})`
       );
       params.push(...directions);
 
@@ -73,7 +73,7 @@ export const flashcardsTable = {
       const whereClause = whereConditions.join(" AND ");
 
       // When tags are specified, use JOIN with json_each to filter
-      const tagJoin = tags.length > 0 ? `, json_each(d.tags) AS jt` : "";
+      const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
       const tagCondition =
         tags.length > 0
           ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
@@ -100,25 +100,28 @@ export const flashcardsTable = {
       return rawResults
         .map((raw) => {
           const result = convertRawDictionaryEntryToSelect(
-            JSON.parse(raw.dictionary_entry),
+            JSON.parse(raw.dictionary_entry)
           );
 
           if (!result.ok) {
             console.warn(
               `Flashcard query: failed to parse dictionary entry for flashcard ${raw.id}`,
-              result.error,
+              result.error
             );
             return null;
           }
 
           return {
             ...raw,
-            direction: (raw.direction ?? "forward") as SelectFlashcard["direction"],
+            direction: (raw.direction ??
+              "forward") as SelectFlashcard["direction"],
             is_hidden: Boolean(raw.is_hidden),
             dictionary_entry: result.value,
           };
         })
-        .filter((entry): entry is FlashcardWithDictionaryEntry => entry !== null);
+        .filter(
+          (entry): entry is FlashcardWithDictionaryEntry => entry !== null
+        );
     },
     cacheOptions: {
       queryKey: ["turso.flashcards.today.query"] as const,
@@ -146,7 +149,7 @@ export const flashcardsTable = {
           `INSERT INTO flashcards (
         id, dictionary_entry_id, difficulty, due, due_timestamp_ms, elapsed_days,
         lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state, direction, is_hidden
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         )
         .run([
           id,
@@ -167,7 +170,7 @@ export const flashcardsTable = {
         ]);
 
       const res = await db
-        .prepare<RawFlashcard>(`SELECT * FROM flashcards WHERE id = ?;`)
+        .prepare<RawFlashcard>("SELECT * FROM flashcards WHERE id = ?;")
         .get([id]);
 
       if (!res) {
@@ -231,7 +234,7 @@ export const flashcardsTable = {
         .run(params);
 
       const res = await db
-        .prepare<RawFlashcard>(`SELECT * FROM flashcards WHERE id = ?;`)
+        .prepare<RawFlashcard>("SELECT * FROM flashcards WHERE id = ?;")
         .get([id]);
 
       if (!res) {
@@ -268,7 +271,7 @@ export const flashcardsTable = {
             `INSERT INTO flashcards (
           id, dictionary_entry_id, difficulty, due, due_timestamp_ms, elapsed_days,
           lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state, direction, is_hidden
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
           )
           .run([
             id,
@@ -289,7 +292,7 @@ export const flashcardsTable = {
           ]);
 
         const res = await db
-          .prepare<RawFlashcard>(`SELECT * FROM flashcards WHERE id = ?;`)
+          .prepare<RawFlashcard>("SELECT * FROM flashcards WHERE id = ?;")
           .get([id]);
 
         if (!res) {
@@ -298,7 +301,8 @@ export const flashcardsTable = {
 
         return {
           ...res,
-          direction: (res.direction ?? "forward") as SelectFlashcard["direction"],
+          direction: (res.direction ??
+            "forward") as SelectFlashcard["direction"],
           is_hidden: Boolean(res.is_hidden),
         };
       };
@@ -334,7 +338,7 @@ export const flashcardsTable = {
          SET state = ?, difficulty = ?, stability = ?, reps = ?, lapses = ?,
              elapsed_days = ?, scheduled_days = ?, last_review = NULL,
              last_review_timestamp_ms = NULL, due = ?, due_timestamp_ms = ?
-         WHERE dictionary_entry_id = ? AND direction = ?;`,
+         WHERE dictionary_entry_id = ? AND direction = ?;`
         )
         .run([
           FlashcardState.NEW,
@@ -352,13 +356,13 @@ export const flashcardsTable = {
 
       const res = await db
         .prepare<RawFlashcard>(
-          `SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;`,
+          "SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;"
         )
         .get([dictionary_entry_id, direction]);
 
       if (!res) {
         throw new Error(
-          `Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`,
+          `Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`
         );
       }
 

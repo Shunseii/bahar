@@ -5,9 +5,9 @@
  * with the user's Turso database.
  */
 
-import { ok, err, tryCatch, type Result } from "@bahar/result";
-import { connect, type DatabaseAdapter, syncDatabase } from "./adapter";
+import { err, ok, type Result, tryCatch } from "@bahar/result";
 import { api } from "../../utils/api";
+import { connect, type DatabaseAdapter } from "./adapter";
 
 const LOCAL_DB_NAME = "bahar-user.db";
 export const SYNC_INTERVAL_MS = 60_000;
@@ -83,7 +83,7 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     (error) => ({
       type: "get_db_info_failed",
       reason: String(error),
-    }),
+    })
   );
 
   if (!infoResult.ok) return infoResult;
@@ -102,10 +102,12 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     (error) => ({
       type: "db_connection_failed",
       reason: String(error),
-    }),
+    })
   );
 
-  if (!connectionResult.ok) {
+  if (connectionResult.ok) {
+    db = connectionResult.value;
+  } else {
     // Try refreshing token and reconnecting
     const refreshResult = await tryCatch(
       async () => {
@@ -116,7 +118,7 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
       (error) => ({
         type: "token_refresh_failed",
         reason: String(error),
-      }),
+      })
     );
 
     if (!refreshResult.ok) return refreshResult;
@@ -132,13 +134,11 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
       (error) => ({
         type: "db_connection_failed_after_refresh",
         reason: String(error),
-      }),
+      })
     );
 
     if (!retryResult.ok) return retryResult;
     db = retryResult.value;
-  } else {
-    db = connectionResult.value;
   }
 
   // Apply any required migrations
@@ -155,19 +155,21 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
       console.log(`[db] Initial sync completed in ${syncDuration}ms`);
 
       // Check how many rows we have after sync
-      const countResult = await db!.prepare<{ count: number }>(
-        "SELECT COUNT(*) as count FROM dictionary_entries"
-      ).get();
+      const countResult = await db!
+        .prepare<{ count: number }>(
+          "SELECT COUNT(*) as count FROM dictionary_entries"
+        )
+        .get();
       console.log(`[db] Dictionary entries count: ${countResult?.count ?? 0}`);
 
-      const decksCount = await db!.prepare<{ count: number }>(
-        "SELECT COUNT(*) as count FROM decks"
-      ).get();
+      const decksCount = await db!
+        .prepare<{ count: number }>("SELECT COUNT(*) as count FROM decks")
+        .get();
       console.log(`[db] Decks count: ${decksCount?.count ?? 0}`);
 
-      const flashcardsCount = await db!.prepare<{ count: number }>(
-        "SELECT COUNT(*) as count FROM flashcards"
-      ).get();
+      const flashcardsCount = await db!
+        .prepare<{ count: number }>("SELECT COUNT(*) as count FROM flashcards")
+        .get();
       console.log(`[db] Flashcards count: ${flashcardsCount?.count ?? 0}`);
 
       return null;
@@ -175,7 +177,7 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     (error) => ({
       type: "initial_sync_failed",
       reason: String(error),
-    }),
+    })
   );
 
   return syncResult;
@@ -197,7 +199,7 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
     (error) => ({
       type: "get_migrations_failed",
       reason: String(error),
-    }),
+    })
   );
 
   if (!migrationsResult.ok) return migrationsResult;
@@ -212,7 +214,7 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
   const appliedVersions = new Set(
     localMigrationsResult.value
       .filter((m) => m.status === "applied")
-      .map((m) => m.version),
+      .map((m) => m.version)
   );
 
   // Apply new migrations
@@ -230,7 +232,7 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
       (error) => ({
         type: "migration_failed",
         reason: String(error),
-      }),
+      })
     );
 
     if (!execResult.ok) {
@@ -239,7 +241,7 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
         () =>
           db!
             .prepare(
-              "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)",
+              "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)"
             )
             .run([
               migration.version,
@@ -247,7 +249,7 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
               nowTimestampMs,
               "failed",
             ]),
-        () => null,
+        () => null
       );
       return execResult;
     }
@@ -257,7 +259,7 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
       () =>
         db!
           .prepare(
-            "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)",
+            "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)"
           )
           .run([
             migration.version,
@@ -265,7 +267,7 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
             nowTimestampMs,
             "applied",
           ]),
-      () => null,
+      () => null
     );
   }
 
@@ -289,12 +291,12 @@ const getLocalAppliedMigrations = async (): Promise<
     async () => {
       const result = await db!
         .prepare<{ name: string }>(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';",
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';"
         )
         .get();
       return !!result;
     },
-    () => ({ type: "check_migration_table_failed", reason: "" }),
+    () => ({ type: "check_migration_table_failed", reason: "" })
   );
 
   if (!tableExists.ok) return tableExists as Result<never, DbError>;
@@ -307,6 +309,6 @@ const getLocalAppliedMigrations = async (): Promise<
         .all();
       return rows;
     },
-    () => ({ type: "get_local_migrations_failed", reason: "" }),
+    () => ({ type: "get_local_migrations_failed", reason: "" })
   );
 };

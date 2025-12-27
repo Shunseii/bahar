@@ -31,12 +31,14 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
 
-  --font-sans: 'Inter', 'Noto Naskh Arabic', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    "Inter", "Noto Naskh Arabic", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* RTL support */
 [dir="rtl"] {
-  --font-sans: 'Noto Naskh Arabic', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:
+    "Noto Naskh Arabic", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Base styles */

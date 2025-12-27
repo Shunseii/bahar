@@ -1,21 +1,21 @@
 import {
-  SelectDictionaryEntry,
-  RawDictionaryEntry,
-  InsertDictionaryEntry,
-} from "@bahar/drizzle-user-db-schemas";
-import { ensureDb } from "..";
-import { nanoid } from "nanoid";
-import {
-  convertRawDictionaryEntryToSelect,
   type ConvertDictionaryEntryError,
+  convertRawDictionaryEntryToSelect,
 } from "@bahar/db-operations";
-import { NullToUndefined } from "../../utils";
-import { TableOperation } from "./types";
+import type {
+  InsertDictionaryEntry,
+  RawDictionaryEntry,
+  SelectDictionaryEntry,
+} from "@bahar/drizzle-user-db-schemas";
+import { nanoid } from "nanoid";
+import type { NullToUndefined } from "../../utils";
+import { ensureDb } from "..";
+import type { TableOperation } from "./types";
 
 class DictionaryEntryParseError extends Error {
   constructor(public details: ConvertDictionaryEntryError) {
     super(
-      `Failed to parse dictionary entry "${details.word}" (${details.entryId}): field "${details.field}" - ${details.reason}`,
+      `Failed to parse dictionary entry "${details.word}" (${details.entryId}): field "${details.field}" - ${details.reason}`
     );
     this.name = "DictionaryEntryParseError";
   }
@@ -27,7 +27,7 @@ export const dictionaryEntriesTable = {
       try {
         const db = await ensureDb();
         const res: RawDictionaryEntry | undefined = await db
-          .prepare(`SELECT * FROM dictionary_entries WHERE id = ?`)
+          .prepare("SELECT * FROM dictionary_entries WHERE id = ?")
           .get([id]);
 
         if (!res) {
@@ -50,7 +50,7 @@ export const dictionaryEntriesTable = {
   },
   tags: {
     query: async (
-      searchTerm: string,
+      searchTerm: string
     ): Promise<{ tag: string; count: number }[]> => {
       try {
         const db = await ensureDb();
@@ -61,7 +61,7 @@ export const dictionaryEntriesTable = {
              FROM dictionary_entries, json_each(tags)
              WHERE value IS NOT NULL AND value LIKE '%' || ? || '%'
              GROUP BY value
-             ORDER BY count DESC;`,
+             ORDER BY count DESC;`
           )
           .all([searchTerm]);
 
@@ -100,7 +100,7 @@ export const dictionaryEntriesTable = {
             `INSERT INTO dictionary_entries (
             id, word, translation, definition, type, root, tags, antonyms, examples, morphology,
             created_at, created_at_timestamp_ms, updated_at, updated_at_timestamp_ms
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
           )
           .run([
             id,
@@ -120,12 +120,12 @@ export const dictionaryEntriesTable = {
           ]);
 
         const res: RawDictionaryEntry | undefined = await db
-          .prepare(`SELECT * FROM dictionary_entries WHERE id = ?;`)
+          .prepare("SELECT * FROM dictionary_entries WHERE id = ?;")
           .get([id]);
 
         if (!res) {
           throw new Error(
-            `Failed to retrieve newly created dictionary entry: ${id}`,
+            `Failed to retrieve newly created dictionary entry: ${id}`
           );
         }
 
@@ -188,25 +188,25 @@ export const dictionaryEntriesTable = {
         if ("root" in updates && updates.root !== undefined) {
           setClauses.push("root = ?");
           params.push(
-            updates.root !== null ? JSON.stringify(updates.root) : null,
+            updates.root !== null ? JSON.stringify(updates.root) : null
           );
         }
         if ("tags" in updates && updates.tags !== undefined) {
           setClauses.push("tags = ?");
           params.push(
-            updates.tags !== null ? JSON.stringify(updates.tags) : null,
+            updates.tags !== null ? JSON.stringify(updates.tags) : null
           );
         }
         if ("antonyms" in updates && updates.antonyms !== undefined) {
           setClauses.push("antonyms = ?");
           params.push(
-            updates.antonyms !== null ? JSON.stringify(updates.antonyms) : null,
+            updates.antonyms !== null ? JSON.stringify(updates.antonyms) : null
           );
         }
         if ("examples" in updates && updates.examples !== undefined) {
           setClauses.push("examples = ?");
           params.push(
-            updates.examples !== null ? JSON.stringify(updates.examples) : null,
+            updates.examples !== null ? JSON.stringify(updates.examples) : null
           );
         }
         if ("morphology" in updates && updates.morphology !== undefined) {
@@ -214,7 +214,7 @@ export const dictionaryEntriesTable = {
           params.push(
             updates.morphology !== null
               ? JSON.stringify(updates.morphology)
-              : null,
+              : null
           );
         }
 
@@ -230,13 +230,13 @@ export const dictionaryEntriesTable = {
         await db
           .prepare(
             `UPDATE dictionary_entries SET ${setClauses.join(
-              ", ",
-            )} WHERE id = ?;`,
+              ", "
+            )} WHERE id = ?;`
           )
           .run(params);
 
         const res: RawDictionaryEntry | undefined = await db
-          .prepare(`SELECT * FROM dictionary_entries WHERE id = ?;`)
+          .prepare("SELECT * FROM dictionary_entries WHERE id = ?;")
           .get([id]);
 
         if (!res) {
@@ -275,7 +275,7 @@ export const dictionaryEntriesTable = {
         }
 
         await db
-          .prepare(`DELETE FROM dictionary_entries WHERE id = ?;`)
+          .prepare("DELETE FROM dictionary_entries WHERE id = ?;")
           .run([id]);
 
         const result = convertRawDictionaryEntryToSelect(res);
@@ -297,7 +297,7 @@ export const dictionaryEntriesTable = {
       const db = await ensureDb();
       const res: { max_ts: number | null } | undefined = await db
         .prepare(
-          "SELECT MAX(updated_at_timestamp_ms) as max_ts FROM dictionary_entries",
+          "SELECT MAX(updated_at_timestamp_ms) as max_ts FROM dictionary_entries"
         )
         .get([]);
       return res?.max_ts ?? null;

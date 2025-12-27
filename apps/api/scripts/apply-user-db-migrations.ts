@@ -1,19 +1,19 @@
-import { db } from "../src/db";
-import { users } from "../src/db/schema/auth";
-import { databases } from "../src/db/schema/databases";
 import { eq } from "drizzle-orm";
-import { logger } from "../src/utils/logger";
 import {
   applyAllNewMigrations,
   tursoPlatformClient,
 } from "../src/clients/turso";
+import { db } from "../src/db";
+import { users } from "../src/db/schema/auth";
+import { databases } from "../src/db/schema/databases";
+import { logger } from "../src/utils/logger";
 
 /**
  * Refreshes an expired access token for a user database
  */
 const refreshAccessToken = async (
   dbName: string,
-  dbId: string,
+  dbId: string
 ): Promise<string> => {
   logger.info({ dbName, dbId }, "Access token expired, creating new token...");
 
@@ -57,7 +57,7 @@ const applyUserDbMigrations = async () => {
     for (const { users: user, databases: userDb } of usersWithDb) {
       logger.info(
         { email: user.email, user_id: user.id, db_name: userDb.db_name },
-        `Processing user database...`,
+        "Processing user database..."
       );
 
       try {
@@ -71,7 +71,7 @@ const applyUserDbMigrations = async () => {
 
           logger.info(
             { email: user.email, user_id: user.id, db_name: userDb.db_name },
-            "Successfully applied migrations to user database",
+            "Successfully applied migrations to user database"
           );
 
           successCount++;
@@ -81,13 +81,13 @@ const applyUserDbMigrations = async () => {
           if (errorMessage.includes("status 401")) {
             logger.info(
               { email: user.email, user_id: user.id, db_name: userDb.db_name },
-              "Token appears to be expired, refreshing and retrying...",
+              "Token appears to be expired, refreshing and retrying..."
             );
 
             // Refresh token and retry
             const newToken = await refreshAccessToken(
               userDb.db_name,
-              userDb.db_id,
+              userDb.db_id
             );
 
             await applyAllNewMigrations({
@@ -98,7 +98,7 @@ const applyUserDbMigrations = async () => {
 
             logger.info(
               { email: user.email, user_id: user.id, db_name: userDb.db_name },
-              "Successfully applied migrations after token refresh",
+              "Successfully applied migrations after token refresh"
             );
 
             successCount++;
@@ -116,7 +116,7 @@ const applyUserDbMigrations = async () => {
             user_id: user.id,
             db_name: userDb.db_name,
           },
-          `Failed to apply migrations for user. Skipping.`,
+          "Failed to apply migrations for user. Skipping."
         );
       }
     }
@@ -127,7 +127,7 @@ const applyUserDbMigrations = async () => {
         successCount,
         errorCount,
       },
-      "Migration application completed!",
+      "Migration application completed!"
     );
   } catch (error) {
     logger.error(error, "Migration application failed");

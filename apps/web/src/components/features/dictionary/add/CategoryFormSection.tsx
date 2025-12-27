@@ -1,4 +1,6 @@
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { InfoIcon } from "lucide-react";
+import { useFormContext } from "react-hook-form";
 import {
   Card,
   CardContent,
@@ -7,10 +9,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -26,11 +28,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
-import { z } from "@/lib/zod";
-import { FormSchema } from "@/lib/schemas/dictionary";
-import { useLingui } from "@lingui/react/macro";
-import { InfoIcon } from "lucide-react";
-import { useFormContext } from "react-hook-form";
+import type { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 export const CategoryFormSection = () => {
   const { t } = useLingui();
@@ -113,12 +112,12 @@ export const CategoryFormSection = () => {
                   </div>
 
                   <Select
+                    dir={dir}
                     onValueChange={field.onChange}
                     value={field.value}
-                    dir={dir}
                   >
                     <FormControl>
-                      <SelectTrigger id="type" aria-label={t`Select type`}>
+                      <SelectTrigger aria-label={t`Select type`} id="type">
                         <SelectValue placeholder={t`Select type`} />
                       </SelectTrigger>
                     </FormControl>

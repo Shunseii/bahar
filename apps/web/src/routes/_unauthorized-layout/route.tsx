@@ -1,8 +1,8 @@
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { LanguageMenu } from "@/components/LanguageMenu";
 import { ThemeMenu } from "@/components/ThemeMenu";
 import { resetDb } from "@/lib/db";
 import { resetOramaDb } from "@/lib/search";
-import { Outlet, createFileRoute } from "@tanstack/react-router";
 
 const Layout = () => {
   return (

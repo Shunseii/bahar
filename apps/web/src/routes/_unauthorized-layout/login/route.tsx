@@ -1,6 +1,5 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { authClient } from "@/lib/auth-client";
-import { redirect } from "@tanstack/react-router";
-import { createFileRoute } from "@tanstack/react-router";
 
 type LoginSearch = {
   redirect?: string;

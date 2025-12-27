@@ -2,22 +2,20 @@
  * Decks database operations for mobile app.
  */
 
+import { generateId, type TableOperation } from "@bahar/db-operations";
 import {
-  SelectDeck,
-  RawDeck,
-  InsertDeck,
   FlashcardState,
+  type InsertDeck,
+  type RawDeck,
+  type SelectDeck,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
-import { generateId, type TableOperation } from "@bahar/db-operations";
 import { ensureDb } from "..";
 
 /**
  * Parse deck filters from JSON string.
  */
-const parseFilters = (
-  filtersJson: string | null,
-): SelectDeck["filters"] => {
+const parseFilters = (filtersJson: string | null): SelectDeck["filters"] => {
   if (!filtersJson) return {};
   try {
     return JSON.parse(filtersJson);
@@ -46,16 +44,23 @@ export const decksTable = {
 
       // Get all decks with their flashcard counts
       const decks = await db
-        .prepare<RawDeck>(`SELECT * FROM decks ORDER BY name ASC;`)
+        .prepare<RawDeck>("SELECT * FROM decks ORDER BY name ASC;")
         .all();
 
       console.log(`[decks] Found ${decks.length} decks in database`);
 
-      const result: (SelectDeck & { due_count: number; total_count: number })[] = [];
+      const result: (SelectDeck & {
+        due_count: number;
+        total_count: number;
+      })[] = [];
 
       for (const rawDeck of decks) {
         const deck = toSelectDeck(rawDeck);
-        const { tags = [], types: rawTypes, state: rawState } = deck.filters ?? {};
+        const {
+          tags = [],
+          types: rawTypes,
+          state: rawState,
+        } = deck.filters ?? {};
 
         const types = rawTypes?.length ? rawTypes : [...WORD_TYPES];
         const state = rawState?.length
@@ -70,7 +75,7 @@ export const decksTable = {
         const directions = ["forward"];
 
         // Build count query
-        const tagJoin = tags.length > 0 ? `, json_each(d.tags) AS jt` : "";
+        const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
         const tagCondition =
           tags.length > 0
             ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
@@ -93,7 +98,9 @@ export const decksTable = {
           .prepare<{ due_count: number; total_count: number }>(countSql)
           .get([now, ...directions, ...state, ...types, ...tags]);
 
-        console.log(`[decks] Deck "${deck.name}": due=${countResult?.due_count ?? 0}, total=${countResult?.total_count ?? 0}`);
+        console.log(
+          `[decks] Deck "${deck.name}": due=${countResult?.due_count ?? 0}, total=${countResult?.total_count ?? 0}`
+        );
 
         result.push({
           ...deck,
@@ -115,7 +122,7 @@ export const decksTable = {
       const db = await ensureDb();
 
       const raw = await db
-        .prepare<RawDeck>(`SELECT * FROM decks WHERE id = ?;`)
+        .prepare<RawDeck>("SELECT * FROM decks WHERE id = ?;")
         .get([id]);
 
       if (!raw) return null;
@@ -140,7 +147,7 @@ export const decksTable = {
         .prepare(
           `INSERT INTO decks (
           id, name, filters
-        ) VALUES (?, ?, ?)`,
+        ) VALUES (?, ?, ?)`
         )
         .run([
           id,
@@ -149,7 +156,7 @@ export const decksTable = {
         ]);
 
       const raw = await db
-        .prepare<RawDeck>(`SELECT * FROM decks WHERE id = ?;`)
+        .prepare<RawDeck>("SELECT * FROM decks WHERE id = ?;")
         .get([id]);
 
       if (!raw) {
@@ -196,7 +203,7 @@ export const decksTable = {
         .run(params);
 
       const raw = await db
-        .prepare<RawDeck>(`SELECT * FROM decks WHERE id = ?;`)
+        .prepare<RawDeck>("SELECT * FROM decks WHERE id = ?;")
         .get([id]);
 
       if (!raw) {
@@ -213,7 +220,7 @@ export const decksTable = {
   delete: {
     mutation: async ({ id }: { id: string }): Promise<void> => {
       const db = await ensureDb();
-      await db.prepare(`DELETE FROM decks WHERE id = ?;`).run([id]);
+      await db.prepare("DELETE FROM decks WHERE id = ?;").run([id]);
     },
     cacheOptions: {
       queryKey: ["turso.decks.delete"] as const,

@@ -8,35 +8,35 @@
  * - Progress tracking
  */
 
-import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { View, Text, Pressable } from "react-native";
-import { X } from "lucide-react-native";
+import { cn } from "@bahar/design-system";
+import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
+import {
+  createScheduler,
+  getSchedulingOptions,
+  gradeFlashcard,
+} from "@bahar/fsrs";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Brain, PartyPopper, X } from "lucide-react-native";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Pressable, Text, View } from "react-native";
 import Animated, {
   FadeIn,
   SlideInRight,
   SlideOutLeft,
 } from "react-native-reanimated";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Brain, PartyPopper } from "lucide-react-native";
+import { type Grade, Rating } from "ts-fsrs";
 import { useThemeColors } from "@/lib/theme";
-import {
-  createScheduler,
-  gradeFlashcard,
-  getSchedulingOptions,
-  Rating,
-  type Grade,
-} from "@bahar/fsrs";
-import { queryClient } from "../../utils/api";
-import {
-  flashcardsTable,
-  FlashcardWithDictionaryEntry,
-  FLASHCARD_LIMIT,
-} from "../../lib/db/operations/flashcards";
 import { decksTable } from "../../lib/db/operations/decks";
+import {
+  FLASHCARD_LIMIT,
+  type FlashcardWithDictionaryEntry,
+  flashcardsTable,
+} from "../../lib/db/operations/flashcards";
+import { queryClient } from "../../utils/api";
 import { FlashcardCard } from "./FlashcardCard";
 import { GradeButtons, ShowAnswerButton } from "./GradeButtons";
 import { GradeFeedback } from "./GradeFeedback";
-import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 
 interface FlashcardReviewProps {
   filters?: SelectDeck["filters"];
@@ -59,8 +59,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
 
   // Fetch flashcards
   const { data, status } = useQuery({
-    queryFn: () =>
-      flashcardsTable.today.query({ filters, showReverse }),
+    queryFn: () => flashcardsTable.today.query({ filters, showReverse }),
     ...flashcardsTable.today.cacheOptions,
     queryKey: [
       ...flashcardsTable.today.cacheOptions.queryKey,
@@ -115,6 +114,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
         stability: currentCard.stability,
         state: currentCard.state,
         direction: currentCard.direction,
+        learning_steps: currentCard.learning_steps,
         is_hidden: currentCard.is_hidden,
       })
     : null;
@@ -124,13 +124,13 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   }, []);
 
   const handleGrade = useCallback(
-    async (grade: Grade) => {
-      if (!schedulingCards || !currentCard) return;
+    (grade: Grade) => {
+      if (!(schedulingCards && currentCard)) return;
 
       // Show feedback animation
       setPendingGrade(grade);
     },
-    [schedulingCards, currentCard],
+    [schedulingCards, currentCard]
   );
 
   const handleSwipeRight = useCallback(() => {
@@ -148,26 +148,31 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   }, [showAnswer, schedulingCards, handleGrade]);
 
   const handleGradeComplete = useCallback(async () => {
-    if (!schedulingCards || !currentCard || pendingGrade === null) return;
+    if (!(schedulingCards && currentCard) || pendingGrade === null) return;
 
     const grade = pendingGrade;
-    const updates = gradeFlashcard(scheduler, {
-      id: currentCard.id,
-      dictionary_entry_id: currentCard.dictionary_entry_id,
-      difficulty: currentCard.difficulty,
-      due: currentCard.due,
-      due_timestamp_ms: currentCard.due_timestamp_ms,
-      elapsed_days: currentCard.elapsed_days,
-      lapses: currentCard.lapses,
-      last_review: currentCard.last_review,
-      last_review_timestamp_ms: currentCard.last_review_timestamp_ms,
-      reps: currentCard.reps,
-      scheduled_days: currentCard.scheduled_days,
-      stability: currentCard.stability,
-      state: currentCard.state,
-      direction: currentCard.direction,
-      is_hidden: currentCard.is_hidden,
-    }, grade);
+    const updates = gradeFlashcard(
+      scheduler,
+      {
+        id: currentCard.id,
+        dictionary_entry_id: currentCard.dictionary_entry_id,
+        difficulty: currentCard.difficulty,
+        due: currentCard.due,
+        due_timestamp_ms: currentCard.due_timestamp_ms,
+        elapsed_days: currentCard.elapsed_days,
+        lapses: currentCard.lapses,
+        last_review: currentCard.last_review,
+        last_review_timestamp_ms: currentCard.last_review_timestamp_ms,
+        reps: currentCard.reps,
+        scheduled_days: currentCard.scheduled_days,
+        stability: currentCard.stability,
+        state: currentCard.state,
+        direction: currentCard.direction,
+        learning_steps: currentCard.learning_steps,
+        is_hidden: currentCard.is_hidden,
+      },
+      grade
+    );
 
     // Update local state immediately
     setShowAnswer(false);
@@ -179,30 +184,34 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       id: currentCard.id,
       updates,
     });
-  }, [schedulingCards, currentCard, pendingGrade, scheduler, updateFlashcardLocal]);
+  }, [
+    schedulingCards,
+    currentCard,
+    pendingGrade,
+    scheduler,
+    updateFlashcardLocal,
+  ]);
 
-  // Loading state
   if (status === "pending") {
     return (
       <View className="flex-1 items-center justify-center bg-background">
-        <Brain size={48} color={colors.primary} />
+        <Brain className={cn("text-primary")} size={48} />
       </View>
     );
   }
 
-  // Empty state
   if (!currentCard) {
     return (
       <View className="flex-1 bg-background">
         {/* Header with close button */}
         {onClose && (
-          <View className="px-4 py-3 border-b border-border/30">
+          <View className="border-border/30 border-b px-4 py-3">
             <View className="flex-row items-center">
               <Pressable
+                className="-ml-2 rounded-lg p-2 active:bg-muted"
                 onPress={onClose}
-                className="p-2 -ml-2 rounded-lg active:bg-muted"
               >
-                <X size={24} color={colors.foreground} />
+                <X className="text-foreground" size={24} />
               </Pressable>
               <View className="flex-1" />
             </View>
@@ -210,17 +219,17 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
         )}
 
         <Animated.View
-          entering={FadeIn.duration(300)}
           className="flex-1 items-center justify-center p-8"
+          entering={FadeIn.duration(300)}
         >
           <View className="items-center">
-            <View className="p-6 rounded-3xl bg-success/10 mb-4">
-              <PartyPopper size={48} color={colors.success} />
+            <View className="mb-4 rounded-3xl bg-success/10 p-6">
+              <PartyPopper className="text-success" size={48} />
             </View>
-            <Text className="text-foreground text-2xl font-bold text-center mb-2">
+            <Text className="mb-2 text-center font-bold text-2xl text-foreground">
               All done for today!
             </Text>
-            <Text className="text-muted-foreground text-center max-w-xs">
+            <Text className="max-w-xs text-center text-muted-foreground">
               Great work! Come back later for more reviews.
             </Text>
           </View>
@@ -232,24 +241,24 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View className="px-4 py-3 border-b border-border/30">
+      <View className="border-border/30 border-b px-4 py-3">
         <View className="flex-row items-center">
           {/* Close button */}
           {onClose && (
             <Pressable
+              className="-ml-2 rounded-lg p-2 active:bg-muted"
               onPress={onClose}
-              className="p-2 -ml-2 rounded-lg active:bg-muted"
             >
-              <X size={24} color={colors.foreground} />
+              <X className="text-foreground" size={24} />
             </Pressable>
           )}
 
           {/* Center content */}
           <View className="flex-1 flex-row items-center justify-center gap-2">
-            <View className="p-2 rounded-xl bg-primary/10">
-              <Brain size={20} color={colors.primary} />
+            <View className="rounded-xl bg-primary/10 p-2">
+              <Brain className="text-primary" size={20} />
             </View>
-            <Text className="text-foreground font-semibold">
+            <Text className="font-semibold text-foreground">
               {hasMore
                 ? `${FLASHCARD_LIMIT}+ cards to review`
                 : `${cards.length} card${cards.length === 1 ? "" : "s"} left`}
@@ -262,37 +271,32 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       </View>
 
       {/* Card area */}
-      <View className="flex-1 p-4 justify-center">
-        {/* Grade feedback overlay */}
-        <GradeFeedback
-          grade={pendingGrade}
-          onComplete={handleGradeComplete}
-        />
+      <View className="flex-1 justify-center p-4">
+        <GradeFeedback grade={pendingGrade} onComplete={handleGradeComplete} />
 
-        {/* Flashcard */}
         <Animated.View
-          key={currentCard.id}
           entering={SlideInRight.duration(300).springify()}
           exiting={SlideOutLeft.duration(200)}
+          key={currentCard.id}
         >
           <FlashcardCard
             flashcard={currentCard}
-            showAnswer={showAnswer}
             onFlip={handleFlip}
             onSwipeLeft={handleSwipeLeft}
             onSwipeRight={handleSwipeRight}
+            showAnswer={showAnswer}
           />
         </Animated.View>
       </View>
 
       {/* Footer with grade buttons */}
-      <View className="pb-8 pt-4">
+      <View className="pt-4 pb-8">
         {showAnswer && schedulingCards ? (
           <Animated.View entering={FadeIn.duration(200)}>
             <GradeButtons
-              schedulingCards={schedulingCards}
-              onGrade={handleGrade}
               disabled={pendingGrade !== null}
+              onGrade={handleGrade}
+              schedulingCards={schedulingCards}
             />
           </Animated.View>
         ) : (

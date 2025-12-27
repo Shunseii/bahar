@@ -13,7 +13,10 @@
         "SENTRY_API_AUTH_TOKEN"
       ]
     },
-    "lint": {},
+    "//#format-and-lint": {},
+    "//#format-and-lint:fix": {
+      "cache": false
+    },
     "type-check": {},
     "messages:extract": {
       "cache": false

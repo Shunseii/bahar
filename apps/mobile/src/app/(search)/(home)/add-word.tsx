@@ -1,39 +1,37 @@
-import React, { useState, useRef } from "react";
-import {
-  Text,
-  View,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  TextInput,
-} from "react-native";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import { useMutation } from "@tanstack/react-query";
+import { useLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import {
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   Plus,
   X,
 } from "lucide-react-native";
-import { Button } from "@/components/ui/button";
-import { useLocales } from "expo-localization";
-import { useThemeColors } from "@/lib/theme";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormSchema } from "@/lib/schemas/dictionary";
-import { errorMap } from "@/utils/zod";
-import * as z from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
-import { t } from "@lingui/core/macro";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { FormSchema } from "@/lib/schemas/dictionary";
 import { addToSearchIndex } from "@/lib/search";
 import { queryClient } from "@/utils/api";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { errorMap } from "@/utils/zod";
 
 z.config({ customError: errorMap });
 
@@ -59,18 +57,17 @@ const INFLECTIONS = [
 
 const Breadcrumbs = () => {
   const router = useRouter();
-  const colors = useThemeColors();
 
   return (
     <View className="mb-6">
       <View className="flex-row items-center gap-2">
         <Pressable onPress={() => router.back()}>
-          <Text className="text-sm text-muted-foreground">
+          <Text className="text-muted-foreground text-sm">
             <Trans>Home</Trans>
           </Text>
         </Pressable>
-        <ChevronRight size={14} color={colors.mutedForeground} />
-        <Text className="text-sm font-normal text-foreground">
+        <ChevronRight className="text-muted-foreground" size={14} />
+        <Text className="font-normal text-foreground text-sm">
           <Trans>Add word</Trans>
         </Text>
       </View>
@@ -81,15 +78,14 @@ const Breadcrumbs = () => {
 const BackButton = () => {
   const router = useRouter();
   const locales = useLocales();
-  const colors = useThemeColors();
   const dir = locales[0].textDirection;
 
   return (
-    <Button variant="outline" size="icon" onPress={() => router.back()}>
+    <Button onPress={() => router.back()} size="icon" variant="outline">
       {dir === "rtl" ? (
-        <ChevronRight size={16} color={colors.foreground} />
+        <ChevronRight className="text-foreground" size={16} />
       ) : (
-        <ChevronLeft size={16} color={colors.foreground} />
+        <ChevronLeft className="text-foreground" size={16} />
       )}
     </Button>
   );
@@ -103,7 +99,6 @@ const TagsInput = ({
   onChange: (value: { name: string }[]) => void;
 }) => {
   const [tagInput, setTagInput] = useState("");
-  const colors = useThemeColors();
 
   const handleSubmit = () => {
     const text = tagInput.trim();
@@ -119,29 +114,29 @@ const TagsInput = ({
         <View className="flex-row flex-wrap gap-2">
           {value.map((tag, index) => (
             <View
+              className="flex-row items-center rounded-full bg-primary/10 px-3 py-1.5"
               key={index}
-              className="flex-row items-center px-3 py-1.5 rounded-full bg-primary/10"
             >
-              <Text className="text-sm text-primary">{tag.name}</Text>
+              <Text className="text-primary text-sm">{tag.name}</Text>
               <Pressable
+                className="ml-1.5"
                 onPress={() => {
                   const newTags = value.filter((_, i) => i !== index);
                   onChange(newTags);
                 }}
-                className="ml-1.5"
               >
-                <X size={14} color={colors.primary} />
+                <X className="text-primary" size={14} />
               </Pressable>
             </View>
           ))}
         </View>
       )}
       <Input
-        placeholder={t`Add a tag and press enter`}
-        value={tagInput}
         onChangeText={setTagInput}
         onSubmitEditing={handleSubmit}
+        placeholder={t`Add a tag and press enter`}
         returnKeyType="done"
+        value={tagInput}
       />
     </View>
   );
@@ -159,36 +154,35 @@ const SelectDropdown = ({
   placeholder?: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const colors = useThemeColors();
 
   return (
     <View>
       <Pressable
+        className="flex-row items-center justify-between rounded-md border border-input bg-background px-3 py-2.5"
         onPress={() => setIsOpen(!isOpen)}
-        className="flex-row items-center justify-between px-3 py-2.5 rounded-md border border-input bg-background"
       >
         <Text className={value ? "text-foreground" : "text-muted-foreground"}>
           {value ? options.find((o) => o.value === value)?.label : placeholder}
         </Text>
-        <ChevronDown size={16} color={colors.mutedForeground} />
+        <ChevronDown className="text-muted-foreground" size={16} />
       </Pressable>
       {isOpen && (
-        <View className="mt-1 rounded-md border border-input bg-background overflow-hidden">
+        <View className="mt-1 overflow-hidden rounded-md border border-input bg-background">
           {options.map((option) => (
             <Pressable
+              className={`px-3 py-2.5 ${
+                value === option.value ? "bg-primary/10" : ""
+              } active:bg-muted`}
               key={option.value}
               onPress={() => {
                 onChange(option.value);
                 setIsOpen(false);
               }}
-              className={`px-3 py-2.5 ${
-                value === option.value ? "bg-primary/10" : ""
-              } active:bg-muted`}
             >
               <Text
                 className={
                   value === option.value
-                    ? "text-primary font-medium"
+                    ? "font-medium text-primary"
                     : "text-foreground"
                 }
               >
@@ -205,7 +199,6 @@ const SelectDropdown = ({
 export default function AddWordScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const colors = useThemeColors();
 
   const addWordMutation = useMutation({
     mutationFn: dictionaryEntriesTable.addWord.mutation,
@@ -345,7 +338,7 @@ export default function AddWordScreen() {
         <View className="gap-y-4">
           <View className="flex-row items-center gap-4">
             <BackButton />
-            <Text className="flex-1 text-xl font-semibold text-foreground tracking-tight">
+            <Text className="flex-1 font-semibold text-foreground text-xl tracking-tight">
               <Trans>Add a new word</Trans>
             </Text>
           </View>
@@ -360,7 +353,7 @@ export default function AddWordScreen() {
             <CardContent>
               <View className="gap-5">
                 <View className="gap-2">
-                  <Text className="text-sm font-medium text-foreground">
+                  <Text className="font-medium text-foreground text-sm">
                     <Trans>Word</Trans> *
                   </Text>
                   <Controller
@@ -368,23 +361,23 @@ export default function AddWordScreen() {
                     name="word"
                     render={({ field: { onChange, onBlur, value } }) => (
                       <Input
-                        style={{ textAlign: "right" }}
                         onBlur={onBlur}
                         onChangeText={onChange}
-                        value={value}
                         placeholder={t`Arabic word`}
+                        style={{ textAlign: "right" }}
+                        value={value}
                       />
                     )}
                   />
                   {errors.word && (
-                    <Text className="text-sm text-destructive">
+                    <Text className="text-destructive text-sm">
                       {errors.word.message}
                     </Text>
                   )}
                 </View>
 
                 <View className="gap-2">
-                  <Text className="text-sm font-medium text-foreground">
+                  <Text className="font-medium text-foreground text-sm">
                     <Trans>Translation</Trans> *
                   </Text>
                   <Controller
@@ -394,13 +387,13 @@ export default function AddWordScreen() {
                       <Input
                         onBlur={onBlur}
                         onChangeText={onChange}
-                        value={value}
                         placeholder={t`English translation`}
+                        value={value}
                       />
                     )}
                   />
                   {errors.translation && (
-                    <Text className="text-sm text-destructive">
+                    <Text className="text-destructive text-sm">
                       {errors.translation.message}
                     </Text>
                   )}
@@ -418,7 +411,7 @@ export default function AddWordScreen() {
             </CardHeader>
             <CardContent>
               <View className="gap-2">
-                <Text className="text-sm font-medium text-foreground">
+                <Text className="font-medium text-foreground text-sm">
                   <Trans>Type</Trans>
                 </Text>
                 <Controller
@@ -426,10 +419,10 @@ export default function AddWordScreen() {
                   name="type"
                   render={({ field: { onChange, value } }) => (
                     <SelectDropdown
-                      value={value}
-                      options={WORD_TYPES}
                       onChange={onChange}
+                      options={WORD_TYPES}
                       placeholder={t`Select type`}
+                      value={value}
                     />
                   )}
                 />
@@ -447,7 +440,7 @@ export default function AddWordScreen() {
             <CardContent>
               <View className="gap-5">
                 <View className="gap-2">
-                  <Text className="text-sm font-medium text-foreground">
+                  <Text className="font-medium text-foreground text-sm">
                     <Trans>Definition</Trans>
                   </Text>
                   <Controller
@@ -455,13 +448,13 @@ export default function AddWordScreen() {
                     name="definition"
                     render={({ field: { onChange, onBlur, value } }) => (
                       <Input
-                        style={{ textAlign: "right" }}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value ?? ""}
-                        placeholder={t`Arabic definition`}
                         multiline
                         numberOfLines={3}
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        placeholder={t`Arabic definition`}
+                        style={{ textAlign: "right" }}
+                        value={value ?? ""}
                       />
                     )}
                   />
@@ -469,7 +462,7 @@ export default function AddWordScreen() {
 
                 {showRootField && (
                   <View className="gap-2">
-                    <Text className="text-sm font-medium text-foreground">
+                    <Text className="font-medium text-foreground text-sm">
                       <Trans>Root Letters</Trans>
                     </Text>
                     <Controller
@@ -477,15 +470,15 @@ export default function AddWordScreen() {
                       name="root"
                       render={({ field: { onChange, onBlur, value } }) => (
                         <Input
-                          style={{ textAlign: "right" }}
                           onBlur={onBlur}
                           onChangeText={onChange}
-                          value={value ?? ""}
                           placeholder={t`e.g. ك ت ب`}
+                          style={{ textAlign: "right" }}
+                          value={value ?? ""}
                         />
                       )}
                     />
-                    <Text className="text-xs text-muted-foreground">
+                    <Text className="text-muted-foreground text-xs">
                       <Trans>Separate letters with spaces or commas</Trans>
                     </Text>
                   </View>
@@ -493,23 +486,23 @@ export default function AddWordScreen() {
 
                 {/* Examples */}
                 <View className="gap-3">
-                  <Text className="text-sm font-medium text-foreground">
+                  <Text className="font-medium text-foreground text-sm">
                     <Trans>Examples</Trans>
                   </Text>
                   {exampleFields.map((field, index) => (
                     <View
+                      className="rounded-lg border border-border bg-muted/20 p-3"
                       key={field.id}
-                      className="p-3 rounded-lg border border-border bg-muted/20"
                     >
-                      <View className="flex-row justify-between items-center mb-2">
-                        <Text className="text-sm text-muted-foreground">
+                      <View className="mb-2 flex-row items-center justify-between">
+                        <Text className="text-muted-foreground text-sm">
                           <Trans>Example {index + 1}</Trans>
                         </Text>
                         <Pressable
-                          onPress={() => removeExample(index)}
                           className="p-1"
+                          onPress={() => removeExample(index)}
                         >
-                          <X size={16} color={colors.destructive} />
+                          <X className="text-destructive" size={16} />
                         </Pressable>
                       </View>
                       <View className="gap-3">
@@ -518,11 +511,11 @@ export default function AddWordScreen() {
                           name={`examples.${index}.sentence`}
                           render={({ field: { onChange, onBlur, value } }) => (
                             <Input
-                              style={{ textAlign: "right" }}
                               onBlur={onBlur}
                               onChangeText={onChange}
-                              value={value}
                               placeholder={t`Arabic sentence`}
+                              style={{ textAlign: "right" }}
+                              value={value}
                             />
                           )}
                         />
@@ -533,8 +526,8 @@ export default function AddWordScreen() {
                             <Input
                               onBlur={onBlur}
                               onChangeText={onChange}
-                              value={value ?? ""}
                               placeholder={t`English translation`}
+                              value={value ?? ""}
                             />
                           )}
                         />
@@ -542,14 +535,14 @@ export default function AddWordScreen() {
                     </View>
                   ))}
                   <Button
-                    variant="outline"
-                    size="sm"
                     onPress={() =>
                       appendExample({ sentence: "", translation: "" })
                     }
+                    size="sm"
+                    variant="outline"
                   >
-                    <Plus size={14} color={colors.foreground} />
-                    <Text className="text-foreground ml-1">
+                    <Plus className="text-foreground" size={14} />
+                    <Text className="ml-1 text-foreground">
                       <Trans>Add Example</Trans>
                     </Text>
                   </Button>
@@ -558,13 +551,13 @@ export default function AddWordScreen() {
                 {/* Antonyms */}
                 {showAntonyms && (
                   <View className="gap-3">
-                    <Text className="text-sm font-medium text-foreground">
+                    <Text className="font-medium text-foreground text-sm">
                       <Trans>Antonyms</Trans>
                     </Text>
                     {antonymFields.map((field, index) => (
                       <View
-                        key={field.id}
                         className="flex-row items-center gap-2"
+                        key={field.id}
                       >
                         <View className="flex-1">
                           <Controller
@@ -574,30 +567,30 @@ export default function AddWordScreen() {
                               field: { onChange, onBlur, value },
                             }) => (
                               <Input
-                                style={{ textAlign: "right" }}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
-                                value={value ?? ""}
                                 placeholder={t`Antonym word`}
+                                style={{ textAlign: "right" }}
+                                value={value ?? ""}
                               />
                             )}
                           />
                         </View>
                         <Pressable
-                          onPress={() => removeAntonym(index)}
                           className="p-2"
+                          onPress={() => removeAntonym(index)}
                         >
-                          <X size={16} color={colors.destructive} />
+                          <X className="text-destructive" size={16} />
                         </Pressable>
                       </View>
                     ))}
                     <Button
-                      variant="outline"
-                      size="sm"
                       onPress={() => appendAntonym({ word: "" })}
+                      size="sm"
+                      variant="outline"
                     >
-                      <Plus size={14} color={colors.foreground} />
-                      <Text className="text-foreground ml-1">
+                      <Plus className="text-foreground" size={14} />
+                      <Text className="ml-1 text-foreground">
                         <Trans>Add Antonym</Trans>
                       </Text>
                     </Button>
@@ -619,7 +612,7 @@ export default function AddWordScreen() {
                 <View className="gap-5">
                   <View className="flex-row gap-3">
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Singular</Trans>
                       </Text>
                       <Controller
@@ -627,16 +620,16 @@ export default function AddWordScreen() {
                         name="morphology.ism.singular"
                         render={({ field: { onChange, onBlur, value } }) => (
                           <Input
-                            style={{ textAlign: "right" }}
                             onBlur={onBlur}
                             onChangeText={onChange}
+                            style={{ textAlign: "right" }}
                             value={value ?? ""}
                           />
                         )}
                       />
                     </View>
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Dual</Trans>
                       </Text>
                       <Controller
@@ -644,9 +637,9 @@ export default function AddWordScreen() {
                         name="morphology.ism.dual"
                         render={({ field: { onChange, onBlur, value } }) => (
                           <Input
-                            style={{ textAlign: "right" }}
                             onBlur={onBlur}
                             onChangeText={onChange}
+                            style={{ textAlign: "right" }}
                             value={value ?? ""}
                           />
                         )}
@@ -656,13 +649,13 @@ export default function AddWordScreen() {
 
                   {/* Plurals */}
                   <View className="gap-3">
-                    <Text className="text-sm font-medium text-foreground">
+                    <Text className="font-medium text-foreground text-sm">
                       <Trans>Plurals</Trans>
                     </Text>
                     {pluralFields.map((field, index) => (
                       <View
-                        key={field.id}
                         className="flex-row items-center gap-2"
+                        key={field.id}
                       >
                         <View className="flex-1">
                           <Controller
@@ -672,30 +665,30 @@ export default function AddWordScreen() {
                               field: { onChange, onBlur, value },
                             }) => (
                               <Input
-                                style={{ textAlign: "right" }}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
-                                value={value}
                                 placeholder={t`Plural form`}
+                                style={{ textAlign: "right" }}
+                                value={value}
                               />
                             )}
                           />
                         </View>
                         <Pressable
-                          onPress={() => removePlural(index)}
                           className="p-2"
+                          onPress={() => removePlural(index)}
                         >
-                          <X size={16} color={colors.destructive} />
+                          <X className="text-destructive" size={16} />
                         </Pressable>
                       </View>
                     ))}
                     <Button
-                      variant="outline"
-                      size="sm"
                       onPress={() => appendPlural({ word: "" })}
+                      size="sm"
+                      variant="outline"
                     >
-                      <Plus size={14} color={colors.foreground} />
-                      <Text className="text-foreground ml-1">
+                      <Plus className="text-foreground" size={14} />
+                      <Text className="ml-1 text-foreground">
                         <Trans>Add Plural</Trans>
                       </Text>
                     </Button>
@@ -703,7 +696,7 @@ export default function AddWordScreen() {
 
                   <View className="flex-row gap-3">
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Gender</Trans>
                       </Text>
                       <Controller
@@ -711,15 +704,15 @@ export default function AddWordScreen() {
                         name="morphology.ism.gender"
                         render={({ field: { onChange, value } }) => (
                           <SelectDropdown
-                            value={value}
-                            options={GENDERS}
                             onChange={onChange}
+                            options={GENDERS}
+                            value={value}
                           />
                         )}
                       />
                     </View>
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Inflection</Trans>
                       </Text>
                       <Controller
@@ -727,9 +720,9 @@ export default function AddWordScreen() {
                         name="morphology.ism.inflection"
                         render={({ field: { onChange, value } }) => (
                           <SelectDropdown
-                            value={value}
-                            options={INFLECTIONS}
                             onChange={onChange}
+                            options={INFLECTIONS}
+                            value={value}
                           />
                         )}
                       />
@@ -752,7 +745,7 @@ export default function AddWordScreen() {
                 <View className="gap-5">
                   <View className="flex-row gap-3">
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Past Tense</Trans>
                       </Text>
                       <Controller
@@ -760,16 +753,16 @@ export default function AddWordScreen() {
                         name="morphology.verb.past_tense"
                         render={({ field: { onChange, onBlur, value } }) => (
                           <Input
-                            style={{ textAlign: "right" }}
                             onBlur={onBlur}
                             onChangeText={onChange}
+                            style={{ textAlign: "right" }}
                             value={value ?? ""}
                           />
                         )}
                       />
                     </View>
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Present Tense</Trans>
                       </Text>
                       <Controller
@@ -777,9 +770,9 @@ export default function AddWordScreen() {
                         name="morphology.verb.present_tense"
                         render={({ field: { onChange, onBlur, value } }) => (
                           <Input
-                            style={{ textAlign: "right" }}
                             onBlur={onBlur}
                             onChangeText={onChange}
+                            style={{ textAlign: "right" }}
                             value={value ?? ""}
                           />
                         )}
@@ -789,7 +782,7 @@ export default function AddWordScreen() {
 
                   <View className="flex-row gap-3">
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Imperative</Trans>
                       </Text>
                       <Controller
@@ -797,16 +790,16 @@ export default function AddWordScreen() {
                         name="morphology.verb.imperative"
                         render={({ field: { onChange, onBlur, value } }) => (
                           <Input
-                            style={{ textAlign: "right" }}
                             onBlur={onBlur}
                             onChangeText={onChange}
+                            style={{ textAlign: "right" }}
                             value={value ?? ""}
                           />
                         )}
                       />
                     </View>
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Form</Trans>
                       </Text>
                       <Controller
@@ -816,8 +809,8 @@ export default function AddWordScreen() {
                           <Input
                             onBlur={onBlur}
                             onChangeText={onChange}
-                            value={value ?? ""}
                             placeholder="I, II, III..."
+                            value={value ?? ""}
                           />
                         )}
                       />
@@ -826,7 +819,7 @@ export default function AddWordScreen() {
 
                   <View className="flex-row gap-3">
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Active Participle</Trans>
                       </Text>
                       <Controller
@@ -834,16 +827,16 @@ export default function AddWordScreen() {
                         name="morphology.verb.active_participle"
                         render={({ field: { onChange, onBlur, value } }) => (
                           <Input
-                            style={{ textAlign: "right" }}
                             onBlur={onBlur}
                             onChangeText={onChange}
+                            style={{ textAlign: "right" }}
                             value={value ?? ""}
                           />
                         )}
                       />
                     </View>
                     <View className="flex-1 gap-2">
-                      <Text className="text-sm font-medium text-foreground">
+                      <Text className="font-medium text-foreground text-sm">
                         <Trans>Passive Participle</Trans>
                       </Text>
                       <Controller
@@ -851,9 +844,9 @@ export default function AddWordScreen() {
                         name="morphology.verb.passive_participle"
                         render={({ field: { onChange, onBlur, value } }) => (
                           <Input
-                            style={{ textAlign: "right" }}
                             onBlur={onBlur}
                             onChangeText={onChange}
+                            style={{ textAlign: "right" }}
                             value={value ?? ""}
                           />
                         )}
@@ -863,13 +856,13 @@ export default function AddWordScreen() {
 
                   {/* Masadir (Verbal Nouns) */}
                   <View className="gap-3">
-                    <Text className="text-sm font-medium text-foreground">
+                    <Text className="font-medium text-foreground text-sm">
                       <Trans>Verbal Nouns (Masadir)</Trans>
                     </Text>
                     {masadirFields.map((field, index) => (
                       <View
-                        key={field.id}
                         className="flex-row items-center gap-2"
+                        key={field.id}
                       >
                         <View className="flex-1">
                           <Controller
@@ -879,30 +872,30 @@ export default function AddWordScreen() {
                               field: { onChange, onBlur, value },
                             }) => (
                               <Input
-                                style={{ textAlign: "right" }}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
-                                value={value}
                                 placeholder={t`Masdar`}
+                                style={{ textAlign: "right" }}
+                                value={value}
                               />
                             )}
                           />
                         </View>
                         <Pressable
-                          onPress={() => removeMasdar(index)}
                           className="p-2"
+                          onPress={() => removeMasdar(index)}
                         >
-                          <X size={16} color={colors.destructive} />
+                          <X className="text-destructive" size={16} />
                         </Pressable>
                       </View>
                     ))}
                     <Button
-                      variant="outline"
-                      size="sm"
                       onPress={() => appendMasdar({ word: "" })}
+                      size="sm"
+                      variant="outline"
                     >
-                      <Plus size={14} color={colors.foreground} />
-                      <Text className="text-foreground ml-1">
+                      <Plus className="text-foreground" size={14} />
+                      <Text className="ml-1 text-foreground">
                         <Trans>Add Masdar</Trans>
                       </Text>
                     </Button>
@@ -910,23 +903,23 @@ export default function AddWordScreen() {
 
                   {/* Huroof (Prepositions) */}
                   <View className="gap-3">
-                    <Text className="text-sm font-medium text-foreground">
+                    <Text className="font-medium text-foreground text-sm">
                       <Trans>Prepositions (Huroof)</Trans>
                     </Text>
                     {huroofFields.map((field, index) => (
                       <View
+                        className="rounded-lg border border-border bg-muted/20 p-3"
                         key={field.id}
-                        className="p-3 rounded-lg border border-border bg-muted/20"
                       >
-                        <View className="flex-row justify-between items-center mb-2">
-                          <Text className="text-sm text-muted-foreground">
+                        <View className="mb-2 flex-row items-center justify-between">
+                          <Text className="text-muted-foreground text-sm">
                             <Trans>Harf {index + 1}</Trans>
                           </Text>
                           <Pressable
-                            onPress={() => removeHarf(index)}
                             className="p-1"
+                            onPress={() => removeHarf(index)}
                           >
-                            <X size={16} color={colors.destructive} />
+                            <X className="text-destructive" size={16} />
                           </Pressable>
                         </View>
                         <View className="gap-3">
@@ -937,11 +930,11 @@ export default function AddWordScreen() {
                               field: { onChange, onBlur, value },
                             }) => (
                               <Input
-                                style={{ textAlign: "right" }}
                                 onBlur={onBlur}
                                 onChangeText={onChange}
-                                value={value}
                                 placeholder={t`Preposition`}
+                                style={{ textAlign: "right" }}
+                                value={value}
                               />
                             )}
                           />
@@ -954,8 +947,8 @@ export default function AddWordScreen() {
                               <Input
                                 onBlur={onBlur}
                                 onChangeText={onChange}
-                                value={value ?? ""}
                                 placeholder={t`Meaning with this preposition`}
+                                value={value ?? ""}
                               />
                             )}
                           />
@@ -963,12 +956,12 @@ export default function AddWordScreen() {
                       </View>
                     ))}
                     <Button
-                      variant="outline"
-                      size="sm"
                       onPress={() => appendHarf({ harf: "", meaning: "" })}
+                      size="sm"
+                      variant="outline"
                     >
-                      <Plus size={14} color={colors.foreground} />
-                      <Text className="text-foreground ml-1">
+                      <Plus className="text-foreground" size={14} />
+                      <Text className="ml-1 text-foreground">
                         <Trans>Add Harf</Trans>
                       </Text>
                     </Button>
@@ -990,24 +983,24 @@ export default function AddWordScreen() {
                 control={control}
                 name="tags"
                 render={({ field: { onChange, value } }) => (
-                  <TagsInput value={value} onChange={onChange} />
+                  <TagsInput onChange={onChange} value={value} />
                 )}
               />
             </CardContent>
           </Card>
 
           {/* Action Buttons */}
-          <View className="flex-row justify-center items-center gap-3 pt-2">
-            <Button variant="outline" onPress={() => router.back()}>
+          <View className="flex-row items-center justify-center gap-3 pt-2">
+            <Button onPress={() => router.back()} variant="outline">
               <Trans>Cancel</Trans>
             </Button>
             <Button
-              variant="default"
-              onPress={() => handleSubmit(onSubmit)()}
               disabled={isSubmitting || addWordMutation.isPending}
+              onPress={() => handleSubmit(onSubmit)()}
+              variant="default"
             >
               {addWordMutation.isPending ? (
-                <ActivityIndicator size="small" color="white" />
+                <ActivityIndicator color="white" size="small" />
               ) : (
                 <Trans>Save</Trans>
               )}

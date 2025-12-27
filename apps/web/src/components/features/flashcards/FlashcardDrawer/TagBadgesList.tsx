@@ -1,9 +1,9 @@
-import { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
-import { motion } from "motion/react";
-import { FC } from "react";
-import { Badge } from "../../../ui/badge";
+import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { t } from "@lingui/core/macro";
-import { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import { motion } from "motion/react";
+import type { FC } from "react";
+import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
+import { Badge } from "../../../ui/badge";
 
 const getTranslatedType = (entryType: SelectDictionaryEntry["type"]) => {
   switch (entryType) {
@@ -23,29 +23,29 @@ export const TagBadgesList: FC<{
 }> = ({ currentCard }) => {
   return (
     <motion.ul
-      initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
       className="flex flex-wrap gap-2"
+      initial={{ opacity: 0, y: -10 }}
+      transition={{ delay: 0.1 }}
     >
       {!!currentCard.dictionary_entry.type && (
         <Badge
+          className="w-max border-primary/20 bg-primary/10 text-primary transition-colors hover:bg-primary/15"
           variant="secondary"
-          className="w-max bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 transition-colors"
         >
           {getTranslatedType(currentCard.dictionary_entry.type)}
         </Badge>
       )}
       {currentCard.dictionary_entry.tags?.map((tag, index) => (
         <motion.div
-          key={tag}
-          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          key={tag}
           transition={{ delay: 0.15 + index * 0.05 }}
         >
           <Badge
+            className="w-max border-border/50 transition-colors hover:border-border"
             variant="outline"
-            className="w-max border-border/50 hover:border-border transition-colors"
           >
             {tag}
           </Badge>

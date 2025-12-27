@@ -1,8 +1,8 @@
+import { asc, desc, gt } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { z } from "zod";
 import { db } from "../db";
 import { migrations } from "../db/schema/migrations";
-import { asc, desc, gt } from "drizzle-orm";
 import { betterAuthGuard } from "../middleware";
 
 export const migrationsRouter = new Elysia({ prefix: "/migrations" })
@@ -27,7 +27,7 @@ export const migrationsRouter = new Elysia({ prefix: "/migrations" })
         sqlScript: z.string(),
         description: z.string(),
       }),
-    },
+    }
   )
   .get(
     "/current-version",
@@ -44,7 +44,7 @@ export const migrationsRouter = new Elysia({ prefix: "/migrations" })
 
       return { version: results[0].version };
     },
-    { auth: "user" },
+    { auth: "user" }
   )
   .post(
     "/verify",
@@ -78,7 +78,7 @@ export const migrationsRouter = new Elysia({ prefix: "/migrations" })
       body: z.object({
         version: z.number(),
       }),
-    },
+    }
   )
   .get(
     "/full",
@@ -87,5 +87,5 @@ export const migrationsRouter = new Elysia({ prefix: "/migrations" })
 
       return results;
     },
-    { auth: "user" },
+    { auth: "user" }
   );

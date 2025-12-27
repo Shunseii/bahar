@@ -51,7 +51,7 @@ export const DAYS_IN_YEAR = 365.2425;
  * new Date(8640000000000001);
  * //=> Invalid Date
  */
-export const MAX_TIME = Math.pow(10, 8) * 24 * 60 * 60 * 1000;
+export const MAX_TIME = 10 ** 8 * 24 * 60 * 60 * 1000;
 
 /**
  * @constant
@@ -74,28 +74,28 @@ export const MIN_TIME = -MAX_TIME;
  * @name MILLISECONDS_IN_WEEK
  * @summary Milliseconds in 1 week.
  */
-export const MILLISECONDS_IN_WEEK = 604800000;
+export const MILLISECONDS_IN_WEEK = 604_800_000;
 
 /**
  * @constant
  * @name MILLISECONDS_IN_DAY
  * @summary Milliseconds in 1 day.
  */
-export const MILLISECONDS_IN_DAY = 86400000;
+export const MILLISECONDS_IN_DAY = 86_400_000;
 
 /**
  * @constant
  * @name MILLISECONDS_IN_MINUTE
  * @summary Milliseconds in 1 minute
  */
-export const MILLISECONDS_IN_MINUTE = 60000;
+export const MILLISECONDS_IN_MINUTE = 60_000;
 
 /**
  * @constant
  * @name MILLISECONDS_IN_HOUR
  * @summary Milliseconds in 1 hour
  */
-export const MILLISECONDS_IN_HOUR = 3600000;
+export const MILLISECONDS_IN_HOUR = 3_600_000;
 
 /**
  * @constant
@@ -109,14 +109,14 @@ export const MILLISECONDS_IN_SECOND = 1000;
  * @name MINUTES_IN_YEAR
  * @summary Minutes in 1 year.
  */
-export const MINUTES_IN_YEAR = 525600;
+export const MINUTES_IN_YEAR = 525_600;
 
 /**
  * @constant
  * @name MINUTES_IN_MONTH
  * @summary Minutes in 1 month.
  */
-export const MINUTES_IN_MONTH = 43200;
+export const MINUTES_IN_MONTH = 43_200;
 
 /**
  * @constant

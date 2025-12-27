@@ -1,22 +1,22 @@
+import { expo } from "@better-auth/expo";
 import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
+  admin,
   createAuthMiddleware,
   emailOTP,
   openAPI,
-  admin,
 } from "better-auth/plugins";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "./db";
-import { users, verifications, sessions, accounts } from "./db/schema/auth";
+import { nanoid } from "nanoid";
 import { sendMail } from "./clients/mail";
+import { redisClient } from "./clients/redis";
+import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
+import { db } from "./db";
+import { accounts, sessions, users, verifications } from "./db/schema/auth";
+import { databases } from "./db/schema/databases";
 import { getAllowedDomains } from "./utils";
 import { config } from "./utils/config";
-import { redisClient } from "./clients/redis";
 import { LogCategory, logger } from "./utils/logger";
-import { expo } from "@better-auth/expo";
-import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
-import { databases } from "./db/schema/databases";
-import { nanoid } from "nanoid";
 
 const APP_NAME = "Bahar";
 const OTP_LENGTH = 6;
@@ -44,7 +44,7 @@ export const auth = betterAuth({
             category: LogCategory.AUTH,
             error,
           },
-          "There was an unexpected error.",
+          "There was an unexpected error."
         );
       }
     },
@@ -65,7 +65,7 @@ export const auth = betterAuth({
           {
             event: "get_session.start",
           },
-          "Getting user session...",
+          "Getting user session..."
         );
       } else if (path === "/email-otp/send-verification-otp") {
         authLogger.info(
@@ -73,7 +73,7 @@ export const auth = betterAuth({
             event: "send_verification_otp_email.start",
             body: ctx.body,
           },
-          "Sending verification otp email...",
+          "Sending verification otp email..."
         );
 
         return {
@@ -90,7 +90,7 @@ export const auth = betterAuth({
           {
             event: "verify_email.start",
           },
-          "Verifying email otp...",
+          "Verifying email otp..."
         );
 
         return {
@@ -107,7 +107,7 @@ export const auth = betterAuth({
           {
             event: "login_email_otp.start",
           },
-          "Signing in with email otp...",
+          "Signing in with email otp..."
         );
 
         return {
@@ -136,28 +136,28 @@ export const auth = betterAuth({
           {
             event: "get_session.end",
           },
-          "Retrieved user session.",
+          "Retrieved user session."
         );
       } else if (path === "/email-otp/send-verification-otp") {
         authLogger.info(
           {
             event: "send_verification_otp_email.end",
           },
-          "Sent verification otp email.",
+          "Sent verification otp email."
         );
       } else if (path === "/email-otp/verify-email") {
         authLogger.info(
           {
             event: "verify_email.end",
           },
-          "Verified email otp.",
+          "Verified email otp."
         );
       } else if (path === "/sign-in/email-otp") {
         authLogger.info(
           {
             event: "login_email_otp.end",
           },
-          "Signed in with email otp.",
+          "Signed in with email otp."
         );
       }
     }),
@@ -178,7 +178,7 @@ export const auth = betterAuth({
     get: async (key) => {
       logger.debug(
         { key, category: LogCategory.DATABASE, event: "redis_get" },
-        "Better auth get from redis.",
+        "Better auth get from redis."
       );
 
       return await redisClient.get(key);
@@ -191,7 +191,7 @@ export const auth = betterAuth({
           category: LogCategory.DATABASE,
           event: "redis_set",
         },
-        "Better auth set to redis.",
+        "Better auth set to redis."
       );
 
       if (ttl) {
@@ -207,7 +207,7 @@ export const auth = betterAuth({
           category: LogCategory.DATABASE,
           event: "redis_delete",
         },
-        "Better auth delete from redis.",
+        "Better auth delete from redis."
       );
 
       await redisClient.del(key);
@@ -248,7 +248,7 @@ export const auth = betterAuth({
             category: LogCategory.AUTH,
             email,
           },
-          "Sending verification email...",
+          "Sending verification email..."
         );
 
         // TODO: Translate this
@@ -268,7 +268,7 @@ export const auth = betterAuth({
               email,
               error: emailResp.error,
             },
-            "Error sending verification email.",
+            "Error sending verification email."
           );
         } else {
           logger.info(
@@ -277,7 +277,7 @@ export const auth = betterAuth({
               category: LogCategory.AUTH,
               email,
             },
-            "Sent verification email.",
+            "Sent verification email."
           );
         }
       },
@@ -304,7 +304,7 @@ export const auth = betterAuth({
               category: LogCategory.DATABASE,
               event: "account_create.start",
             },
-            "Creating account...",
+            "Creating account..."
           );
         },
         after: async (account) => {
@@ -314,7 +314,7 @@ export const auth = betterAuth({
               category: LogCategory.DATABASE,
               event: "account_create.end",
             },
-            "Created account.",
+            "Created account."
           );
         },
       },
@@ -328,7 +328,7 @@ export const auth = betterAuth({
               category: LogCategory.DATABASE,
               event: "session_create.start",
             },
-            "Creating session...",
+            "Creating session..."
           );
         },
         after: async (session) => {
@@ -338,7 +338,7 @@ export const auth = betterAuth({
               category: LogCategory.DATABASE,
               event: "session_create.end",
             },
-            "Created session.",
+            "Created session."
           );
         },
       },
@@ -352,7 +352,7 @@ export const auth = betterAuth({
               category: LogCategory.DATABASE,
               event: "user_create.start",
             },
-            "Creating user...",
+            "Creating user..."
           );
         },
         after: async (user) => {
@@ -362,7 +362,7 @@ export const auth = betterAuth({
               category: LogCategory.DATABASE,
               event: "user_create.end",
             },
-            "Created user.",
+            "Created user."
           );
 
           await setUpUserDb(user.id);

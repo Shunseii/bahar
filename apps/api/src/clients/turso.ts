@@ -1,12 +1,12 @@
-import { createClient as createPlatformClient } from "@tursodatabase/api";
-import { config } from "../utils/config";
 import { createClient as createDbClient } from "@libsql/client";
+import { createClient as createPlatformClient } from "@tursodatabase/api";
+import { asc, eq, gt } from "drizzle-orm";
 import { customAlphabet } from "nanoid";
 import { db as centralDb } from "../db";
-import { migrations } from "../db/schema/migrations";
 import { databases } from "../db/schema/databases";
+import { migrations } from "../db/schema/migrations";
+import { config } from "../utils/config";
 import { LogCategory, logger } from "../utils/logger";
-import { gt, asc, eq } from "drizzle-orm";
 
 // Explicitly typed with this return type to fix
 // a type error on build when enabling declaration: true
@@ -39,7 +39,7 @@ export const createNewUserDb = async () => {
 
   logger.info(
     { dbName, category: LogCategory.DATABASE, event: "user_db_create.start" },
-    "Creating user database in Turso...",
+    "Creating user database in Turso..."
   );
 
   const newDb = await tursoPlatformClient.databases.create(dbName, {
@@ -48,7 +48,7 @@ export const createNewUserDb = async () => {
 
   logger.info(
     { dbName, category: LogCategory.DATABASE, event: "user_db_create.end" },
-    "Created user database in Turso.",
+    "Created user database in Turso."
   );
 
   logger.info(
@@ -57,7 +57,7 @@ export const createNewUserDb = async () => {
       category: LogCategory.DATABASE,
       event: "user_db_token_create.start",
     },
-    "Creating user database token in Turso...",
+    "Creating user database token in Turso..."
   );
 
   const accessToken = await tursoPlatformClient.databases.createToken(
@@ -65,7 +65,7 @@ export const createNewUserDb = async () => {
     {
       authorization: "full-access",
       expiration: "2w",
-    },
+    }
   );
 
   logger.info(
@@ -74,7 +74,7 @@ export const createNewUserDb = async () => {
       category: LogCategory.DATABASE,
       event: "user_db_token_create.end",
     },
-    "Created user database token in Turso.",
+    "Created user database token in Turso."
   );
 
   return { newDb, accessToken };
@@ -101,7 +101,7 @@ export const applyAllNewMigrations = async ({
   const lastAppliedVersion = await (async () => {
     try {
       const { rows } = await userDbClient.execute(
-        "SELECT version FROM migrations WHERE status = 'applied' ORDER BY version DESC LIMIT 1",
+        "SELECT version FROM migrations WHERE status = 'applied' ORDER BY version DESC LIMIT 1"
       );
 
       // Versioning starts at 1 in the schema registry
@@ -129,7 +129,7 @@ export const applyAllNewMigrations = async ({
       category: LogCategory.DATABASE,
       event: "user_db_migrations_apply.start",
     },
-    "Applying migrations to user database...",
+    "Applying migrations to user database..."
   );
 
   for (const migration of pendingMigrations) {
@@ -155,7 +155,7 @@ export const applyAllNewMigrations = async ({
             ],
           },
         ],
-        "write",
+        "write"
       );
     } catch (err) {
       logger.error(
@@ -166,7 +166,7 @@ export const applyAllNewMigrations = async ({
           migration,
           dbUrl,
         },
-        "Error applying migration to user database. Skipping remaining migrations.",
+        "Error applying migration to user database. Skipping remaining migrations."
       );
 
       await userDbClient.execute({
@@ -190,7 +190,7 @@ export const applyAllNewMigrations = async ({
       category: LogCategory.DATABASE,
       event: "user_db_migrations_apply.end",
     },
-    "Applied migrations to user database.",
+    "Applied migrations to user database."
   );
 };
 
@@ -199,11 +199,11 @@ export const applyAllNewMigrations = async ({
  */
 const refreshAccessToken = async (
   dbName: string,
-  dbId: string,
+  dbId: string
 ): Promise<string> => {
   logger.info(
     { dbName, dbId, category: LogCategory.DATABASE },
-    "Refreshing access token...",
+    "Refreshing access token..."
   );
 
   const newToken = await tursoPlatformClient.databases.createToken(dbName, {
@@ -218,7 +218,7 @@ const refreshAccessToken = async (
 
   logger.info(
     { dbName, dbId, category: LogCategory.DATABASE },
-    "Created and saved new access token",
+    "Created and saved new access token"
   );
 
   return newToken.jwt;
@@ -258,7 +258,7 @@ export const getUserDbClient = async (userId: string) => {
     if (errorMessage.includes("status 401")) {
       logger.info(
         { dbName: db_name, dbId: db_id, category: LogCategory.DATABASE },
-        "Token appears to be expired, refreshing...",
+        "Token appears to be expired, refreshing..."
       );
 
       const newToken = await refreshAccessToken(db_name, db_id);

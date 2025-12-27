@@ -1,4 +1,4 @@
-export { BasicDetailsFormSection } from "./BasicDetailsFormSection";
 export { AdditionalDetailsFormSection } from "./AdditionalDetailsFormSection";
-export { MorphologyFormSection } from "./MorphologyFormSection";
+export { BasicDetailsFormSection } from "./BasicDetailsFormSection";
 export { CategoryFormSection } from "./CategoryFormSection";
+export { MorphologyFormSection } from "./MorphologyFormSection";

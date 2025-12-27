@@ -2,13 +2,17 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const { withUniwindConfig } = require("uniwind/metro");
 
-const path = require("path");
+const path = require("node:path");
 
 // First apply monorepo paths
 const baseConfig = withMonorepoPaths(getDefaultConfig(__dirname));
 
 // Add Lingui extensions
-baseConfig.resolver.sourceExts = [...baseConfig.resolver.sourceExts, "po", "pot"];
+baseConfig.resolver.sourceExts = [
+  ...baseConfig.resolver.sourceExts,
+  "po",
+  "pot",
+];
 
 // XXX: Resolve our exports in workspace packages
 // https://github.com/expo/expo/issues/26926
@@ -33,7 +37,7 @@ module.exports = config;
  * @returns {import('expo/metro-config').MetroConfig}
  */
 function withMonorepoPaths(config) {
-  const projectRoot = __dirname;
+  const projectRoot = import.meta.dirname;
   const workspaceRoot = path.resolve(projectRoot, "../..");
 
   // #1 - Watch all files in the monorepo

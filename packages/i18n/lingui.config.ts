@@ -1,6 +1,6 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { LinguiConfig } from "@lingui/conf";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url));
 

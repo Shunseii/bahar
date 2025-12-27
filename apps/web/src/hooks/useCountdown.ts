@@ -6,7 +6,7 @@ const isCountdownCompleteAtom = atom(false);
 export const useCountdown = (duration: number, intervalMs = 1000) => {
   const [, setElapsedTime] = useState(0);
   const [isCountdownComplete, setIsCountdownComplete] = useAtom(
-    isCountdownCompleteAtom,
+    isCountdownCompleteAtom
   );
 
   useEffect(() => {

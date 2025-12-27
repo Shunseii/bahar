@@ -1,4 +1,6 @@
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { InfoIcon, Plus } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import {
   Accordion,
   AccordionContent,
@@ -29,11 +31,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
-import { z } from "@/lib/zod";
-import { FormSchema, Inflection } from "@/lib/schemas/dictionary";
-import { useLingui } from "@lingui/react/macro";
-import { Plus, InfoIcon } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { type FormSchema, Inflection } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 export const IsmMorphologyCardSection = () => {
   const { t } = useLingui();
@@ -63,10 +62,10 @@ export const IsmMorphologyCardSection = () => {
 
               <FormControl>
                 <Input
-                  type="text"
+                  className="w-full text-xl"
                   dir="rtl"
                   lang="ar"
-                  className="w-full text-xl"
+                  type="text"
                   {...field}
                 />
               </FormControl>
@@ -87,10 +86,10 @@ export const IsmMorphologyCardSection = () => {
 
               <FormControl>
                 <Input
-                  type="text"
+                  className="w-full text-xl"
                   dir="rtl"
                   lang="ar"
-                  className="w-full text-xl"
+                  type="text"
                   {...field}
                 />
               </FormControl>
@@ -104,11 +103,11 @@ export const IsmMorphologyCardSection = () => {
           <Trans>Plurals</Trans>
         </h3>
 
-        <p className="ltr:text-sm rtl:text-base text-muted-foreground">
+        <p className="text-muted-foreground ltr:text-sm rtl:text-base">
           <Trans>Any plural forms of the word.</Trans>
         </p>
 
-        <Accordion type="single" collapsible>
+        <Accordion collapsible type="single">
           {pluralsFields.map((field, index) => {
             return (
               <AccordionItem key={field.id} value={field.id}>
@@ -128,12 +127,12 @@ export const IsmMorphologyCardSection = () => {
 
                         <FormControl>
                           <Input
-                            type="text"
+                            className="w-[98%] text-xl ltr:ml-1 rtl:mr-1"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1 text-xl"
                             dir="rtl"
                             lang="ar"
+                            type="text"
                             {...renderField}
                           />
                         </FormControl>
@@ -154,10 +153,10 @@ export const IsmMorphologyCardSection = () => {
 
                         <FormControl>
                           <Input
-                            type="text"
+                            className="w-[98%] ltr:ml-1 rtl:mr-1"
                             // Need to do this otherwise the focus border will get cut off
                             // in the dropdown
-                            className="w-[98%] ltr:ml-1 rtl:mr-1"
+                            type="text"
                             {...renderField}
                           />
                         </FormControl>
@@ -175,11 +174,11 @@ export const IsmMorphologyCardSection = () => {
                   />
 
                   <Button
-                    variant="outline"
-                    size="sm"
                     className="w-max"
-                    type="button"
                     onClick={() => removePlural(index)}
+                    size="sm"
+                    type="button"
+                    variant="outline"
                   >
                     <Trans>Remove</Trans>
                   </Button>
@@ -191,12 +190,12 @@ export const IsmMorphologyCardSection = () => {
 
         <Button
           className="w-max"
-          type="button"
           onClick={() => {
             appendPlural({ word: "" });
           }}
-          variant="outline"
           size="sm"
+          type="button"
+          variant="outline"
         >
           <Plus className="mr-2 h-4 w-4" />
           <Trans>Add plural</Trans>
@@ -213,12 +212,12 @@ export const IsmMorphologyCardSection = () => {
                 </FormLabel>
 
                 <Select
-                  onValueChange={field.onChange}
                   defaultValue={field.value}
                   dir={dir}
+                  onValueChange={field.onChange}
                 >
                   <FormControl>
-                    <SelectTrigger id="gender" aria-label={t`Select gender`}>
+                    <SelectTrigger aria-label={t`Select gender`} id="gender">
                       <SelectValue placeholder={t`Select gender`} />
                     </SelectTrigger>
                   </FormControl>
@@ -243,7 +242,7 @@ export const IsmMorphologyCardSection = () => {
             name="morphology.ism.inflection"
             render={({ field }) => (
               <FormItem>
-                <div className="flex gap-x-2 items-center">
+                <div className="flex items-center gap-x-2">
                   <FormLabel>
                     <Trans>Inflection</Trans>
                   </FormLabel>
@@ -281,14 +280,14 @@ export const IsmMorphologyCardSection = () => {
                 </div>
 
                 <Select
-                  onValueChange={field.onChange}
                   defaultValue={field.value}
                   dir={dir}
+                  onValueChange={field.onChange}
                 >
                   <FormControl>
                     <SelectTrigger
-                      id="inflection"
                       aria-label={t`Select inflection`}
+                      id="inflection"
                     >
                       <SelectValue placeholder={t`Select inflection`} />
                     </SelectTrigger>

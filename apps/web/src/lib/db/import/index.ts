@@ -3,12 +3,12 @@ import {
   extractEntries,
   LATEST_VERSION,
 } from "./detect-version";
-import { ImportSchemaV1 } from "./v1/schema";
 import { createImportStatements as createImportStatementsV1 } from "./v1";
+import { ImportSchemaV1 } from "./v1/schema";
 
 export { detectVersion, extractEntries, LATEST_VERSION };
-export { ImportSchemaV1 } from "./v1/schema";
 export { createImportStatements as createImportStatementsV1 } from "./v1";
+export { ImportSchemaV1 } from "./v1/schema";
 
 /**
  * Parses and validates import data based on detected version.
@@ -38,7 +38,7 @@ export function createImportStatements(entry: unknown, version: number) {
   switch (version) {
     case 1:
       return createImportStatementsV1(
-        entry as Parameters<typeof createImportStatementsV1>[0],
+        entry as Parameters<typeof createImportStatementsV1>[0]
       );
     default:
       throw new Error(`Unsupported import version: ${version}`);

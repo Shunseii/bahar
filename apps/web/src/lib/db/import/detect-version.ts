@@ -47,9 +47,7 @@ export function extractEntries(data: unknown): unknown[] {
     return (data as { entries: unknown[] }).entries;
   }
 
-  throw new Error(
-    "Unknown import format: could not extract entries from data",
-  );
+  throw new Error("Unknown import format: could not extract entries from data");
 }
 
 export { LATEST_VERSION };

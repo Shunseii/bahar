@@ -2,8 +2,12 @@
  * Orama schema for dictionary entries
  */
 
+import type {
+  Antonym,
+  Example,
+  Morphology,
+} from "@bahar/drizzle-user-db-schemas";
 import type { Orama } from "@orama/orama";
-import type { Morphology, Antonym, Example } from "@bahar/drizzle-user-db-schemas";
 
 /**
  * Schema definition for dictionary entries in Orama

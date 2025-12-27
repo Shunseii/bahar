@@ -1,11 +1,11 @@
-import { sentryVitePlugin } from "@sentry/vite-plugin";
-import path from "path";
-import react from "@vitejs/plugin-react-swc";
+import path from "node:path";
 import { lingui } from "@lingui/vite-plugin";
-import { VitePWA } from "vite-plugin-pwa";
-import { defineConfig } from "vite";
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   server: {
@@ -34,6 +34,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
+      workbox: {
+        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // 15 MB
+      },
       manifest: {
         name: "Bahar",
         short_name: "Bahar",

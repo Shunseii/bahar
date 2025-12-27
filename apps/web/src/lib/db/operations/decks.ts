@@ -1,13 +1,13 @@
 import {
-  SelectDeck,
-  RawDeck,
   FlashcardState,
+  type RawDeck,
+  type SelectDeck,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
-import { ensureDb } from "..";
 import { nanoid } from "nanoid";
-import { TableOperation } from "./types";
+import { ensureDb } from "..";
 import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "./flashcards";
+import type { TableOperation } from "./types";
 
 /**
  * Converts days to milliseconds.
@@ -70,17 +70,17 @@ export const decksTable = {
               const baseParams: unknown[] = [];
 
               whereConditions.push(
-                `f.direction IN (${directions.map(() => "?").join(", ")})`,
+                `f.direction IN (${directions.map(() => "?").join(", ")})`
               );
               baseParams.push(...directions);
 
               whereConditions.push(
-                `f.state IN (${state.map(() => "?").join(", ")})`,
+                `f.state IN (${state.map(() => "?").join(", ")})`
               );
               baseParams.push(...state);
 
               whereConditions.push(
-                `d.type IN (${types.map(() => "?").join(", ")})`,
+                `d.type IN (${types.map(() => "?").join(", ")})`
               );
               baseParams.push(...types);
 
@@ -89,7 +89,8 @@ export const decksTable = {
               const whereClause = whereConditions.join(" AND ");
 
               // When tags are specified, use JOIN with json_each to filter
-              const tagJoin = tags.length > 0 ? `, json_each(d.tags) AS jt` : "";
+              const tagJoin =
+                tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
               const tagCondition =
                 tags.length > 0
                   ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
@@ -111,7 +112,13 @@ export const decksTable = {
                 total_hits: number;
               } = await db
                 .prepare(countsSql)
-                .get([now, backlogThresholdMs, backlogThresholdMs, ...baseParams, ...tags]);
+                .get([
+                  now,
+                  backlogThresholdMs,
+                  backlogThresholdMs,
+                  ...baseParams,
+                  ...tags,
+                ]);
 
               return {
                 ...deck,
@@ -123,7 +130,7 @@ export const decksTable = {
               console.error("Error processing deck", err);
               throw err;
             }
-          }),
+          })
         );
 
         return enrichedDecks;
@@ -148,7 +155,7 @@ export const decksTable = {
         const id = nanoid();
 
         await db
-          .prepare(`INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);`)
+          .prepare("INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);")
           .run([
             id,
             deck.name,
@@ -156,7 +163,7 @@ export const decksTable = {
           ]);
 
         const res: RawDeck | undefined = await db
-          .prepare(`SELECT * FROM decks WHERE id = ?;`)
+          .prepare("SELECT * FROM decks WHERE id = ?;")
           .get([id]);
 
         if (!res) {
@@ -210,7 +217,7 @@ export const decksTable = {
           .run(params);
 
         const res: RawDeck | undefined = await db
-          .prepare(`SELECT * FROM decks WHERE id = ?;`)
+          .prepare("SELECT * FROM decks WHERE id = ?;")
           .get([id]);
 
         if (!res) {
@@ -235,7 +242,7 @@ export const decksTable = {
       try {
         const db = await ensureDb();
 
-        await db.prepare(`DELETE FROM decks WHERE id = ?;`).run([id]);
+        await db.prepare("DELETE FROM decks WHERE id = ?;").run([id]);
 
         return { success: true };
       } catch (err) {

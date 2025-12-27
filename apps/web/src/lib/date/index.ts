@@ -1,20 +1,20 @@
 import {
-  differenceInSeconds,
-  differenceInMinutes,
   differenceInCalendarDays,
-  differenceInHours,
-  differenceInCalendarWeeks,
   differenceInCalendarMonths,
+  differenceInCalendarWeeks,
   differenceInCalendarYears,
-  IntlFormatDistanceOptions,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
+  type IntlFormatDistanceOptions,
 } from "date-fns";
 import {
-  SECONDS_IN_MINUTE,
-  SECONDS_IN_HOUR,
   SECONDS_IN_DAY,
-  SECONDS_IN_WEEK,
+  SECONDS_IN_HOUR,
+  SECONDS_IN_MINUTE,
   SECONDS_IN_MONTH,
   SECONDS_IN_QUARTER,
+  SECONDS_IN_WEEK,
   SECONDS_IN_YEAR,
 } from "./constants";
 
@@ -118,12 +118,30 @@ import {
 export function intlFormatDistance(
   laterDate: Date,
   earlierDate: Date,
-  options?: IntlFormatDistanceOptions,
+  options?: IntlFormatDistanceOptions
 ) {
-  let value: number = 0;
+  let value = 0;
   let unit: Intl.RelativeTimeFormatUnit;
 
-  if (!options?.unit) {
+  if (options?.unit) {
+    // Get the value if unit is specified
+    unit = options?.unit;
+    if (unit === "second") {
+      value = differenceInSeconds(laterDate, earlierDate);
+    } else if (unit === "minute") {
+      value = differenceInMinutes(laterDate, earlierDate);
+    } else if (unit === "hour") {
+      value = differenceInHours(laterDate, earlierDate);
+    } else if (unit === "day") {
+      value = differenceInCalendarDays(laterDate, earlierDate);
+    } else if (unit === "week") {
+      value = differenceInCalendarWeeks(laterDate, earlierDate);
+    } else if (unit === "month") {
+      value = differenceInCalendarMonths(laterDate, earlierDate);
+    } else if (unit === "year") {
+      value = differenceInCalendarYears(laterDate, earlierDate);
+    }
+  } else {
     // Get the unit based on diffInSeconds calculations if no unit is specified
     const diffInSeconds = differenceInSeconds(laterDate, earlierDate); // The smallest unit
 
@@ -157,24 +175,6 @@ export function intlFormatDistance(
     } else {
       value = differenceInCalendarYears(laterDate, earlierDate);
       unit = "year";
-    }
-  } else {
-    // Get the value if unit is specified
-    unit = options?.unit;
-    if (unit === "second") {
-      value = differenceInSeconds(laterDate, earlierDate);
-    } else if (unit === "minute") {
-      value = differenceInMinutes(laterDate, earlierDate);
-    } else if (unit === "hour") {
-      value = differenceInHours(laterDate, earlierDate);
-    } else if (unit === "day") {
-      value = differenceInCalendarDays(laterDate, earlierDate);
-    } else if (unit === "week") {
-      value = differenceInCalendarWeeks(laterDate, earlierDate);
-    } else if (unit === "month") {
-      value = differenceInCalendarMonths(laterDate, earlierDate);
-    } else if (unit === "year") {
-      value = differenceInCalendarYears(laterDate, earlierDate);
     }
   }
 

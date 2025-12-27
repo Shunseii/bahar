@@ -1,7 +1,7 @@
-import { getTraceContext } from "./utils/logger";
+import * as Sentry from "@sentry/bun";
 import Elysia from "elysia";
 import { auth } from "./auth";
-import * as Sentry from "@sentry/bun";
+import { getTraceContext } from "./utils/logger";
 
 export { httpLogger } from "./middleware/http-logger";
 

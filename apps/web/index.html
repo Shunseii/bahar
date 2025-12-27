@@ -1,38 +1,39 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
 
-    <link rel="icon" sizes="any" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" sizes="48x48" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" sizes="any" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Noto+Naskh+Arabic:wght@400..700&display=swap"
       rel="stylesheet"
-    />
+    >
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
 
     <title>Bahar</title>
     <meta
       name="description"
       content="Use Bahar to create your personalized Arabic to English dictionary to help you in your journey of learning Arabic."
-    />
+    >
     <meta
       name="keywords"
       content="arabic dictionary, bahar dictionary, arabic flashcards, personalized arabic dictionary, arabic vocabulary, arabic to english dictionary, personalized dictionary, learn arabic, flashcards"
-    />
+    >
   </head>
   <body>
     <div id="root"></div>
     <script>
+      "use strict";
       const theme = localStorage.getItem("theme");
       const isSystemDark = window.matchMedia(
-        "(prefers-color-scheme: dark)",
+        "(prefers-color-scheme: dark)"
       ).matches;
 
       document.body.style.height = "100vh";

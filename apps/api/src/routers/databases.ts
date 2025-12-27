@@ -1,10 +1,10 @@
-import { Elysia } from "elysia";
-import { db } from "../db";
 import { eq } from "drizzle-orm";
-import { databases } from "../db/schema/databases";
+import { Elysia } from "elysia";
 import { tursoPlatformClient } from "../clients/turso";
-import { isJwtExpired } from "../utils";
+import { db } from "../db";
+import { databases } from "../db/schema/databases";
 import { betterAuthGuard } from "../middleware";
+import { isJwtExpired } from "../utils";
 
 export const databasesRouter = new Elysia({ prefix: "/databases" })
   .use(betterAuthGuard)
@@ -25,7 +25,7 @@ export const databasesRouter = new Elysia({ prefix: "/databases" })
 
       return results[0];
     },
-    { auth: "user" },
+    { auth: "user" }
   )
   .post(
     "/refresh-token",
@@ -46,7 +46,7 @@ export const databasesRouter = new Elysia({ prefix: "/databases" })
 
       if (userDb?.access_token && isJwtExpired(userDb.access_token)) {
         const newToken = await tursoPlatformClient.databases.createToken(
-          userDb.db_name,
+          userDb.db_name
         );
 
         await db
@@ -59,5 +59,5 @@ export const databasesRouter = new Elysia({ prefix: "/databases" })
 
       return userDb;
     },
-    { auth: "user" },
+    { auth: "user" }
   );

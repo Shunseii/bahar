@@ -1,22 +1,22 @@
 import {
-  SelectFlashcard,
-  RawFlashcard,
-  SelectDeck,
-  FlashcardState,
-  SelectDictionaryEntry,
-  InsertFlashcard,
-  WORD_TYPES,
-} from "@bahar/drizzle-user-db-schemas";
-import { ensureDb } from "..";
-import { nanoid } from "nanoid";
-import {
   buildSelectWithNestedJson,
   convertRawDictionaryEntryToSelect,
   DICTIONARY_ENTRY_COLUMNS,
 } from "@bahar/db-operations";
-import { TableOperation } from "./types";
+import {
+  FlashcardState,
+  type InsertFlashcard,
+  type RawFlashcard,
+  type SelectDeck,
+  type SelectDictionaryEntry,
+  type SelectFlashcard,
+  WORD_TYPES,
+} from "@bahar/drizzle-user-db-schemas";
 import * as Sentry from "@sentry/react";
-import { fsrs, Rating, Card } from "ts-fsrs";
+import { nanoid } from "nanoid";
+import { type Card, fsrs, Rating } from "ts-fsrs";
+import { ensureDb } from "..";
+import type { TableOperation } from "./types";
 
 /**
  * The threshold after which the UI won't display the
@@ -55,7 +55,7 @@ export const flashcardsTable = {
         filters?: SelectDeck["filters"];
         queue?: FlashcardQueue;
         backlogThresholdDays?: number;
-      } = { showReverse: false },
+      } = { showReverse: false }
     ): Promise<FlashcardWithDictionaryEntry[]> => {
       try {
         const db = await ensureDb();
@@ -90,7 +90,7 @@ export const flashcardsTable = {
         }
 
         whereConditions.push(
-          `f.direction IN (${directions.map(() => "?").join(", ")})`,
+          `f.direction IN (${directions.map(() => "?").join(", ")})`
         );
         params.push(...directions);
 
@@ -105,7 +105,7 @@ export const flashcardsTable = {
         const whereClause = whereConditions.join(" AND ");
 
         // When tags are specified, use JOIN with json_each to filter
-        const tagJoin = tags.length > 0 ? `, json_each(d.tags) AS jt` : "";
+        const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
         const tagCondition =
           tags.length > 0
             ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
@@ -131,7 +131,7 @@ export const flashcardsTable = {
         return rawResults
           ?.map((raw) => {
             const result = convertRawDictionaryEntryToSelect(
-              JSON.parse(raw.dictionary_entry),
+              JSON.parse(raw.dictionary_entry)
             );
 
             if (!result.ok) {
@@ -143,7 +143,7 @@ export const flashcardsTable = {
                     flashcardId: raw.id,
                     error: result.error,
                   },
-                },
+                }
               );
               return null;
             }
@@ -188,7 +188,7 @@ export const flashcardsTable = {
             `INSERT INTO flashcards (
           id, dictionary_entry_id, difficulty, due, due_timestamp_ms, elapsed_days,
           lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state, direction, is_hidden
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
           )
           .run([
             id,
@@ -209,7 +209,7 @@ export const flashcardsTable = {
           ]);
 
         const res: RawFlashcard | undefined = await db
-          .prepare(`SELECT * FROM flashcards WHERE id = ?;`)
+          .prepare("SELECT * FROM flashcards WHERE id = ?;")
           .get([id]);
 
         if (!res) {
@@ -319,12 +319,12 @@ export const flashcardsTable = {
 
         await db
           .prepare(
-            `UPDATE flashcards SET ${setClauses.join(", ")} WHERE id = ?;`,
+            `UPDATE flashcards SET ${setClauses.join(", ")} WHERE id = ?;`
           )
           .run(params);
 
         const res: RawFlashcard | undefined = await db
-          .prepare(`SELECT * FROM flashcards WHERE id = ?;`)
+          .prepare("SELECT * FROM flashcards WHERE id = ?;")
           .get([id]);
 
         if (!res) {
@@ -366,7 +366,7 @@ export const flashcardsTable = {
            SET state = ?, difficulty = ?, stability = ?, reps = ?, lapses = ?,
                elapsed_days = ?, scheduled_days = ?, last_review = NULL,
                last_review_timestamp_ms = NULL, due = ?, due_timestamp_ms = ?
-           WHERE dictionary_entry_id = ? AND direction = ?;`,
+           WHERE dictionary_entry_id = ? AND direction = ?;`
           )
           .run([
             FlashcardState.NEW,
@@ -384,13 +384,13 @@ export const flashcardsTable = {
 
         const res: RawFlashcard | undefined = await db
           .prepare(
-            `SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;`,
+            "SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;"
           )
           .get([dictionary_entry_id, direction]);
 
         if (!res) {
           throw new Error(
-            `Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`,
+            `Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`
           );
         }
 
@@ -447,7 +447,7 @@ export const flashcardsTable = {
         const baseParams: unknown[] = [];
 
         baseConditions.push(
-          `f.direction IN (${directions.map(() => "?").join(", ")})`,
+          `f.direction IN (${directions.map(() => "?").join(", ")})`
         );
         baseParams.push(...directions);
 
@@ -462,7 +462,7 @@ export const flashcardsTable = {
         const baseWhereClause = baseConditions.join(" AND ");
 
         // Tag filtering
-        const tagJoin = tags.length > 0 ? `, json_each(d.tags) AS jt` : "";
+        const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
         const tagCondition =
           tags.length > 0
             ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
@@ -515,7 +515,7 @@ export const flashcardsTable = {
    * Uses an async generator for progress tracking.
    */
   clearBacklog: {
-    generator: async function* ({
+    async *generator({
       showReverse = false,
       filters,
       backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -547,7 +547,7 @@ export const flashcardsTable = {
       const params: unknown[] = [backlogThresholdMs];
 
       whereConditions.push(
-        `f.direction IN (${directions.map(() => "?").join(", ")})`,
+        `f.direction IN (${directions.map(() => "?").join(", ")})`
       );
       params.push(...directions);
 
@@ -561,7 +561,7 @@ export const flashcardsTable = {
 
       const whereClause = whereConditions.join(" AND ");
 
-      const tagJoin = tags.length > 0 ? `, json_each(d.tags) AS jt` : "";
+      const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
       const tagCondition =
         tags.length > 0
           ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
@@ -623,7 +623,7 @@ export const flashcardsTable = {
                 lapses = ?,
                 elapsed_days = ?,
                 scheduled_days = ?
-              WHERE id = ?`,
+              WHERE id = ?`
             )
             .run([
               newCard.due.toISOString(),

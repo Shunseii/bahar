@@ -1,6 +1,6 @@
-import { text, sqliteTable, integer } from "drizzle-orm/sqlite-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const migrations = sqliteTable("migrations", {
   version: integer("version").primaryKey({ autoIncrement: true }),

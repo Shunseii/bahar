@@ -1,6 +1,6 @@
 import { t } from "@lingui/core/macro";
-import { FormSchema as DictionarySchema } from "@/lib/schemas/dictionary";
-import { z } from "zod/v4";
+import type { z } from "zod/v4";
+import type { FormSchema as DictionarySchema } from "@/lib/schemas/dictionary";
 
 type ZodDictionaryError = z.ZodError<z.infer<typeof DictionarySchema>>;
 
@@ -117,7 +117,7 @@ const formattedErrorMessage = ({
     }
     case "invalid_value":
       return `${prefix}${t`Invalid value. Expected one of: ${err.values.join(
-        ", ",
+        ", "
       )}`}`;
     case "invalid_format":
       if (err.format === "datetime") {

@@ -6,10 +6,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -58,15 +55,8 @@
     "translation": "art of building",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ع",
-      "م",
-      "ر"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["ع", "م", "ر"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -269,11 +259,7 @@
     "translation": "to give attention to",
     "definition": "اهتمّ بـ",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ن",
-      "ي"
-    ],
+    "root": ["ع", "ن", "ي"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -469,11 +455,7 @@
     "translation": "to relax",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ر",
-      "و",
-      "ح"
-    ],
+    "root": ["ر", "و", "ح"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -820,10 +802,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -1509,15 +1488,8 @@
     "translation": "craftmanship",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ص",
-      "ن",
-      "ع"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["ص", "ن", "ع"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -1566,15 +1538,8 @@
     "translation": "servant",
     "definition": "",
     "type": "ism",
-    "root": [
-      "خ",
-      "د",
-      "م"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["خ", "د", "م"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -1727,15 +1692,8 @@
     "translation": "marvelous, wonderful",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ب",
-      "د",
-      "ع"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["ب", "د", "ع"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -1836,11 +1794,7 @@
     "translation": "to take care of",
     "definition": "اعتنى بـ",
     "type": "fi'l",
-    "root": [
-      "ه",
-      "م",
-      "م"
-    ],
+    "root": ["ه", "م", "م"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -2040,15 +1994,8 @@
     "translation": "argument",
     "definition": "",
     "type": "ism",
-    "root": [
-      "م",
-      "ر",
-      "ي"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["م", "ر", "ي"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -2384,11 +2331,7 @@
     "translation": "to treat, cure",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ل",
-      "ج"
-    ],
+    "root": ["ع", "ل", "ج"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -2440,15 +2383,8 @@
     "translation": "burning desire, craving",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ن",
-      "ه",
-      "م"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ن", "ه", "م"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -2597,15 +2533,8 @@
     "translation": "to distract, divert",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ش",
-      "غ",
-      "ل"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ش", "غ", "ل"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -2703,9 +2632,7 @@
     "word": "مَزَّقَ",
     "translation": "Tore",
     "type": "fi'l",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:40.613Z",
     "created_at_timestamp": 1762921600,
     "updated_at": "2025-11-12T04:26:40.613Z",
@@ -2834,15 +2761,8 @@
     "translation": "to accept, to be acceptable",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "و",
-      "ف",
-      "ق"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["و", "ف", "ق"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -2896,9 +2816,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -3207,9 +3125,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "examples": [],
     "morphology": {
       "ism": {
@@ -3299,9 +3215,7 @@
     "word": "خُبَز",
     "translation": "Baked (pastries)",
     "type": "ism",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:40.672Z",
     "created_at_timestamp": 1762921600,
     "updated_at": "2025-11-12T04:26:40.672Z",
@@ -3391,11 +3305,7 @@
     "translation": "to rent, lease",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "أ",
-      "ج",
-      "ر"
-    ],
+    "root": ["أ", "ج", "ر"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -3446,9 +3356,7 @@
     "word": "سَئِمْتُ",
     "translation": "I am fed up",
     "type": "fi'l",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:40.686Z",
     "created_at_timestamp": 1762921600,
     "updated_at": "2025-11-12T04:26:40.686Z",
@@ -3486,11 +3394,7 @@
     "translation": "to leave",
     "definition": "خرج",
     "type": "fi'l",
-    "root": [
-      "غ",
-      "د",
-      "ر"
-    ],
+    "root": ["غ", "د", "ر"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -3793,9 +3697,7 @@
     "word": "لَا أُصَدِّق",
     "translation": "I don't believe",
     "type": "expression",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:40.717Z",
     "created_at_timestamp": 1762921600,
     "updated_at": "2025-11-12T04:26:40.717Z",
@@ -3833,15 +3735,8 @@
     "translation": "barren",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ج",
-      "ر",
-      "ز"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ج", "ر", "ز"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -3890,15 +3785,8 @@
     "translation": "farness",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ب",
-      "ع",
-      "د"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ب", "ع", "د"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -3948,10 +3836,7 @@
     "definition": "",
     "type": "expression",
     "root": [],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "created_at": "2025-11-12T04:26:40.732Z",
@@ -4079,9 +3964,7 @@
     "word": "فَجْأَة",
     "translation": "Suddenly",
     "type": "expression",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:40.749Z",
     "created_at_timestamp": 1762921600,
     "updated_at": "2025-11-12T04:26:40.749Z",
@@ -4658,15 +4541,8 @@
     "translation": "to dispute",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ن",
-      "ز",
-      "ع"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ن", "ز", "ع"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -4819,11 +4695,7 @@
     "translation": "to develop",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ط",
-      "و",
-      "ر"
-    ],
+    "root": ["ط", "و", "ر"],
     "tags": [],
     "antonyms": [],
     "examples": [],
@@ -4968,15 +4840,8 @@
     "translation": "to boast",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ف",
-      "خ",
-      "ر"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ف", "خ", "ر"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -5484,15 +5349,8 @@
     "translation": "intensity, vigor",
     "definition": "حِدَّة ونشاط",
     "type": "ism",
-    "root": [
-      "ش",
-      "ر",
-      "ر"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ش", "ر", "ر"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "شِرَّة",
@@ -5594,15 +5452,8 @@
     "translation": "adornment",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ز",
-      "ي",
-      "ن"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ز", "ي", "ن"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -5799,15 +5650,8 @@
     "translation": "to inherit",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "و",
-      "ر",
-      "ث"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["و", "ر", "ث"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -6012,15 +5856,8 @@
     "translation": "to carve, engrave",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ن",
-      "ق",
-      "ش"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["ن", "ق", "ش"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -6289,15 +6126,8 @@
     "translation": "to move, get going",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "س",
-      "ي",
-      "ر"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["س", "ي", "ر"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -6354,15 +6184,8 @@
     "translation": "to be weak, incapable (of)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ج",
-      "ز"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ع", "ج", "ز"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -6420,10 +6243,7 @@
     "definition": "فُوم",
     "type": "ism",
     "root": [],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -6663,15 +6483,8 @@
     "translation": "to glorify",
     "definition": "كبّر",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ظ",
-      "م"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ع", "ظ", "م"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -6723,15 +6536,8 @@
     "translation": "to benefit",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ن",
-      "ف",
-      "ع"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ن", "ف", "ع"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -6787,15 +6593,8 @@
     "translation": "to harm",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ض",
-      "ر",
-      "ر"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ض", "ر", "ر"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -6890,15 +6689,8 @@
     "translation": "to seek help",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "غ",
-      "و",
-      "ث"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["غ", "و", "ث"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -7147,15 +6939,8 @@
     "translation": "support, something to lean on",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ر",
-      "ف",
-      "ق"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ر", "ف", "ق"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -7348,15 +7133,8 @@
     "translation": "to climb, ascend",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ص",
-      "ع",
-      "د"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ص", "ع", "د"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -7461,11 +7239,7 @@
     "translation": "to repair, fix",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ص",
-      "ل",
-      "ح"
-    ],
+    "root": ["ص", "ل", "ح"],
     "tags": [],
     "antonyms": [],
     "examples": [],
@@ -7711,15 +7485,8 @@
     "translation": "beast",
     "definition": "ما لا يَستأنسُ من دوابّ البَرّ",
     "type": "ism",
-    "root": [
-      "و",
-      "ح",
-      "ش"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["و", "ح", "ش"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -7814,11 +7581,7 @@
     "translation": "to plant",
     "definition": "ضد قلَع",
     "type": "fi'l",
-    "root": [
-      "ز",
-      "ر",
-      "ع"
-    ],
+    "root": ["ز", "ر", "ع"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -8009,11 +7772,7 @@
     "translation": "to ring",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ر",
-      "ن",
-      "ن"
-    ],
+    "root": ["ر", "ن", "ن"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -8104,11 +7863,7 @@
     "translation": "to press (a button, etc...)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ض",
-      "غ",
-      "ط"
-    ],
+    "root": ["ض", "غ", "ط"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -8251,11 +8006,7 @@
     "translation": "to suffer",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ن",
-      "ي"
-    ],
+    "root": ["ع", "ن", "ي"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -8750,15 +8501,8 @@
     "translation": "to be barren",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ج",
-      "ر",
-      "ز"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ج", "ر", "ز"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -8859,15 +8603,8 @@
     "translation": "to be lost, wasted, ruined",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ض",
-      "ي",
-      "ع"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ض", "ي", "ع"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -9289,9 +9026,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "examples": [],
     "morphology": {
       "ism": {
@@ -9482,15 +9217,8 @@
     "translation": "recknoning, calamity",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ح",
-      "س",
-      "ب"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ح", "س", "ب"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -9978,15 +9706,8 @@
     "translation": "to come home, return",
     "definition": "رجع",
     "type": "fi'l",
-    "root": [
-      "ق",
-      "ف",
-      "ل"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ق", "ف", "ل"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -10043,11 +9764,7 @@
     "translation": "to reserve",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "ج",
-      "ز"
-    ],
+    "root": ["ح", "ج", "ز"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -10143,10 +9860,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -10392,9 +10106,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "معهد الخليل"
-    ],
+    "tags": ["معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -10835,11 +10547,7 @@
     "translation": "to cut into pieces",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ق",
-      "ط",
-      "ع"
-    ],
+    "root": ["ق", "ط", "ع"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -10987,11 +10695,7 @@
     "translation": "to bother, make tired",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ت",
-      "ع",
-      "ب"
-    ],
+    "root": ["ت", "ع", "ب"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -11580,15 +11284,8 @@
     "translation": "to guard, protect",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "و",
-      "ط"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ح", "و", "ط"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -11696,15 +11393,8 @@
     "translation": "to suffer",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ش",
-      "ك",
-      "ي"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ش", "ك", "ي"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [
       {
@@ -11970,15 +11660,8 @@
     "translation": "to execute, perform",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ق",
-      "ض",
-      "ي"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ق", "ض", "ي"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -12031,15 +11714,8 @@
     "translation": "face; intention, objective",
     "definition": "",
     "type": "ism",
-    "root": [
-      "و",
-      "ج",
-      "ه"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["و", "ج", "ه"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -12192,15 +11868,8 @@
     "translation": "return",
     "definition": "رجوع",
     "type": "ism",
-    "root": [
-      "ق",
-      "ف",
-      "ل"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ق", "ف", "ل"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -12249,15 +11918,8 @@
     "translation": "military expedition",
     "definition": "",
     "type": "ism",
-    "root": [
-      "غ",
-      "ز",
-      "و"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["غ", "ز", "و"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -12306,15 +11968,8 @@
     "translation": "to postpone, delay, put off",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "م",
-      "ط",
-      "ل"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["م", "ط", "ل"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -12563,15 +12218,8 @@
     "translation": "arrival, coming",
     "definition": "الوصول إلى مكان معين",
     "type": "ism",
-    "root": [
-      "ق",
-      "د",
-      "م"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["ق", "د", "م"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "morphology": {
       "ism": {
         "singular": "قُدُوم",
@@ -12616,15 +12264,8 @@
     "translation": "to make narrow, restrain, confine",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ض",
-      "ي",
-      "ق"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ض", "ي", "ق"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -12677,15 +12318,8 @@
     "translation": "forbearing, patient",
     "definition": "الَّذي يَمتَنِعُ عَنِ الانتِقامِ مَعَ القُدرَةِ عَلَيهِ",
     "type": "ism",
-    "root": [
-      "ح",
-      "ل",
-      "م"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ح", "ل", "م"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "حَليم",
@@ -12733,16 +12367,8 @@
     "translation": "major part, greater portion; arrogance",
     "definition": "مُعْظَم الشَّيْءِ وَأَكْثَرُهُ",
     "type": "ism",
-    "root": [
-      "ك",
-      "ب",
-      "ر"
-    ],
-    "tags": [
-      "القرآن",
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["ك", "ب", "ر"],
+    "tags": ["القرآن", "معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -12842,11 +12468,7 @@
     "translation": "to fail",
     "definition": "ضد نجَح",
     "type": "fi'l",
-    "root": [
-      "ر",
-      "س",
-      "ب"
-    ],
+    "root": ["ر", "س", "ب"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -12902,11 +12524,7 @@
     "translation": "to pull out, extract",
     "definition": "ضد زرَع",
     "type": "fi'l",
-    "root": [
-      "ق",
-      "ل",
-      "ع"
-    ],
+    "root": ["ق", "ل", "ع"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -13010,15 +12628,8 @@
     "translation": "to ring",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ج",
-      "ر",
-      "س"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ج", "ر", "س"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13075,15 +12686,8 @@
     "translation": "to think, believe",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "س",
-      "ب"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ح", "س", "ب"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13140,15 +12744,8 @@
     "translation": "low, despicable, humiliated",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ذ",
-      "ل",
-      "ل"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ذ", "ل", "ل"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13301,15 +12898,8 @@
     "translation": "to bypass, omit",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "د",
-      "و"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ع", "د", "و"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13366,15 +12956,8 @@
     "translation": "source of sound, instrument",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ز",
-      "م",
-      "ر"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ز", "م", "ر"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13427,15 +13010,8 @@
     "translation": "to go away, leave; to go on, continue",
     "definition": "ذهب",
     "type": "fi'l",
-    "root": [
-      "م",
-      "ض",
-      "ي"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["م", "ض", "ي"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13492,15 +13068,8 @@
     "translation": "to live",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ي",
-      "ش"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ع", "ي", "ش"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13557,15 +13126,8 @@
     "translation": "magic, sorcery",
     "definition": "ما خفي ولطف سببه",
     "type": "ism",
-    "root": [
-      "س",
-      "ح",
-      "ر"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["س", "ح", "ر"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "سِحْر",
@@ -13615,15 +13177,8 @@
     "translation": "fortunate, blessed",
     "definition": "من نجا من الفتن والمصائب",
     "type": "ism",
-    "root": [
-      "س",
-      "ع",
-      "د"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["س", "ع", "د"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "سَعِيد",
@@ -13673,15 +13228,8 @@
     "translation": "period of decline, lull",
     "definition": "ضعف وسكون بعد نشاط",
     "type": "ism",
-    "root": [
-      "ف",
-      "ت",
-      "ر"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ف", "ت", "ر"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "فَتْرَة",
@@ -13731,15 +13279,8 @@
     "translation": "to show love, show affection",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "و",
-      "د",
-      "د"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["و", "د", "د"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13792,15 +13333,8 @@
     "translation": "smart",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ك",
-      "ي",
-      "س"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ك", "ي", "س"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13854,10 +13388,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -13945,16 +13476,8 @@
     "translation": "to befall, strike, afflict",
     "definition": "يُقال: أَصابَتْه مُصِيبَةٌ أَي نَزَلَتْ عَلَيْهِ",
     "type": "fi'l",
-    "root": [
-      "ص",
-      "و",
-      "ب"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين",
-      "الحديث"
-    ],
+    "root": ["ص", "و", "ب"],
+    "tags": ["معهد الخليل", "قصص النبيين", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -14008,15 +13531,8 @@
     "translation": "to excel, surpass",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ف",
-      "و",
-      "ق"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["ف", "و", "ق"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -14121,11 +13637,7 @@
     "translation": "to puke",
     "definition": "تقيّأ و راجع",
     "type": "fi'l",
-    "root": [
-      "ف",
-      "ر",
-      "غ"
-    ],
+    "root": ["ف", "ر", "غ"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -14322,9 +13834,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "examples": [],
     "morphology": {
       "ism": {
@@ -14524,16 +14034,8 @@
     "translation": "to meet",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ل",
-      "ق",
-      "ي"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين",
-      "الحديث"
-    ],
+    "root": ["ل", "ق", "ي"],
+    "tags": ["معهد الخليل", "قصص النبيين", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -14589,9 +14091,7 @@
     "word": "حَسَنًا",
     "translation": "Alright",
     "type": "expression",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:41.862Z",
     "created_at_timestamp": 1762921601,
     "updated_at": "2025-11-12T04:26:41.862Z",
@@ -14628,9 +14128,7 @@
     "word": "غُرفَة",
     "translation": "Room",
     "type": "ism",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:41.866Z",
     "created_at_timestamp": 1762921601,
     "updated_at": "2025-11-12T04:26:41.866Z",
@@ -14668,15 +14166,8 @@
     "translation": "to repent",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ت",
-      "و",
-      "ب"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ت", "و", "ب"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -14821,10 +14312,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -14921,11 +14409,7 @@
     "translation": "to soar, fly",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "ل",
-      "ق"
-    ],
+    "root": ["ح", "ل", "ق"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -14977,11 +14461,7 @@
     "translation": "to meet, encounter",
     "definition": "مثل لَقِيَ",
     "type": "fi'l",
-    "root": [
-      "ق",
-      "ب",
-      "ل"
-    ],
+    "root": ["ق", "ب", "ل"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -15282,9 +14762,7 @@
     "word": "حُجرَة",
     "translation": "Room, Prison cell",
     "type": "ism",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:41.930Z",
     "created_at_timestamp": 1762921601,
     "updated_at": "2025-11-12T04:26:41.930Z",
@@ -15322,15 +14800,8 @@
     "translation": "anger, wrath",
     "definition": "سَخَط وانفعال شديد",
     "type": "ism",
-    "root": [
-      "غ",
-      "ض",
-      "ب"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["غ", "ض", "ب"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "غَضَب",
@@ -15380,11 +14851,7 @@
     "translation": "to sew",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "خ",
-      "ي",
-      "ط"
-    ],
+    "root": ["خ", "ي", "ط"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -15435,9 +14902,7 @@
     "word": "أَصْلَب مِن",
     "translation": "Harder than",
     "type": "expression",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:41.948Z",
     "created_at_timestamp": 1762921601,
     "updated_at": "2025-11-12T04:26:41.948Z",
@@ -15474,9 +14939,7 @@
     "word": "ساقِط",
     "translation": "Bastard",
     "type": "ism",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:41.955Z",
     "created_at_timestamp": 1762921601,
     "updated_at": "2025-11-12T04:26:41.955Z",
@@ -15553,15 +15016,8 @@
     "translation": "provision, sustenance",
     "definition": "ما يَنتفِع به الإنسان",
     "type": "ism",
-    "root": [
-      "ر",
-      "ز",
-      "ق"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ر", "ز", "ق"],
+    "tags": ["الحديث", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -15613,15 +15069,8 @@
     "translation": "to complete, to fulfill",
     "definition": "تُتِمُّ وتُكمِل",
     "type": "fi'l",
-    "root": [
-      "ك",
-      "م",
-      "ل"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ك", "م", "ل"],
+    "tags": ["الحديث", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -15727,15 +15176,8 @@
     "translation": "to surpass, to exceed",
     "definition": "تَزيد وتَتفوَّق",
     "type": "fi'l",
-    "root": [
-      "ف",
-      "ض",
-      "ل"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ف", "ض", "ل"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "verb": {
         "past_tense": "فَضَلَ",
@@ -15784,15 +15226,8 @@
     "translation": "piety, God-consciousness",
     "definition": "خَشية الله والعَمَل بطاعته",
     "type": "ism",
-    "root": [
-      "و",
-      "ق",
-      "ي"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["و", "ق", "ي"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "تَقوى",
@@ -15889,15 +15324,8 @@
     "translation": "lofty",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ر",
-      "ف",
-      "ع"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ر", "ف", "ع"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -15998,15 +15426,8 @@
     "translation": "to be corrupt",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ف",
-      "س",
-      "د"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ف", "س", "د"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -16063,15 +15484,8 @@
     "translation": "to become narrow",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ض",
-      "ي",
-      "ق"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ض", "ي", "ق"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -16267,15 +15681,8 @@
     "translation": "to look, to see",
     "definition": "يَرى ويُشاهِد",
     "type": "fi'l",
-    "root": [
-      "ن",
-      "ظ",
-      "ر"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ن", "ظ", "ر"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "verb": {
         "past_tense": "نَظَرَ",
@@ -16324,15 +15731,8 @@
     "translation": "heart",
     "definition": "العُضو المسؤول عن ضَخّ الدَّم، ومَحَلّ العَواطِف والمَشاعِر",
     "type": "ism",
-    "root": [
-      "ق",
-      "ل",
-      "ب"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ق", "ل", "ب"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "قَلْب",
@@ -16381,15 +15781,8 @@
     "word": "مَعروف",
     "translation": "good deed, kindness; known (lit.)",
     "type": "ism",
-    "root": [
-      "ع",
-      "ر",
-      "ف"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ع", "ر", "ف"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "مَعروف",
@@ -16439,15 +15832,8 @@
     "translation": "cheerful, bright",
     "definition": "مُشرِق ومُبتَسِم",
     "type": "ism",
-    "root": [
-      "ط",
-      "ل",
-      "ق"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ط", "ل", "ق"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "gender": "masculine",
@@ -16491,15 +15877,8 @@
     "translation": "form, appearance; image",
     "definition": "الشَّكل والهَيئة الظاهِرة",
     "type": "ism",
-    "root": [
-      "ص",
-      "و",
-      "ر"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ص", "و", "ر"],
+    "tags": ["الحديث", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -16551,15 +15930,8 @@
     "translation": "falsehood, slander",
     "definition": "كَذِبٌ مُخْتَلَقٌ مَصْرُوفٌ عَنِ الحَقِّ",
     "type": "ism",
-    "root": [
-      "أ",
-      "ف",
-      "ك"
-    ],
-    "tags": [
-      "القرآن",
-      "معهد الخليل"
-    ],
+    "root": ["أ", "ف", "ك"],
+    "tags": ["القرآن", "معهد الخليل"],
     "examples": [
       {
         "sentence": "جاؤوا بالإفك",
@@ -16611,11 +15983,7 @@
     "translation": "to catch someone red-handed; to set a clock or device",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ض",
-      "ب",
-      "ط"
-    ],
+    "root": ["ض", "ب", "ط"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -16868,9 +16236,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "examples": [],
     "morphology": {
       "ism": {
@@ -16922,15 +16288,8 @@
     "translation": "to transmit, report (from someone)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ا",
-      "ث",
-      "ر"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ا", "ث", "ر"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -16987,15 +16346,8 @@
     "translation": "lineage, kinship",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ن",
-      "س",
-      "ب"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ن", "س", "ب"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -17247,9 +16599,7 @@
     "word": "أُقْسِم",
     "translation": "I swear",
     "type": "fi'l",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.106Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.106Z",
@@ -17288,10 +16638,7 @@
     "definition": "",
     "type": "expression",
     "root": [],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "created_at": "2025-11-12T04:26:42.111Z",
@@ -17330,9 +16677,7 @@
     "word": "أَنتِ فِي مُنتَهى الجَمَال",
     "translation": "You are very beautiful",
     "type": "expression",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.115Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.115Z",
@@ -17369,9 +16714,7 @@
     "word": "أُقَدِّم",
     "translation": "I present",
     "type": "fi'l",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.120Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.120Z",
@@ -17409,15 +16752,8 @@
     "translation": "to put to the test (someone, something)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ب",
-      "ل",
-      "و"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ب", "ل", "و"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -17565,9 +16901,7 @@
     "word": "مَولاتي",
     "translation": "Your Majesty (female)",
     "type": "expression",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.137Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.137Z",
@@ -17604,9 +16938,7 @@
     "word": "مَولايَ",
     "translation": "Your Majesty (male)",
     "type": "expression",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.142Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.142Z",
@@ -17644,11 +16976,7 @@
     "translation": "to face (s.th.)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "و",
-      "ج",
-      "ه"
-    ],
+    "root": ["و", "ج", "ه"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -17699,9 +17027,7 @@
     "word": "مُسْتَحِيل",
     "translation": "Impossible",
     "type": "ism",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.151Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.151Z",
@@ -18121,11 +17447,7 @@
     "translation": "to encompass, to include, to cover",
     "definition": "أحاط به من جميع جوانبه",
     "type": "fi'l",
-    "root": [
-      "ش",
-      "م",
-      "ل"
-    ],
+    "root": ["ش", "م", "ل"],
     "morphology": {
       "verb": {
         "past_tense": "شَمِلَ",
@@ -18175,9 +17497,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "examples": [],
     "morphology": {
       "ism": {
@@ -18277,11 +17597,7 @@
     "translation": "to move away",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ب",
-      "ع",
-      "د"
-    ],
+    "root": ["ب", "ع", "د"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -18380,9 +17696,7 @@
     "word": "اهتَمّ",
     "translation": "Interested",
     "type": "fi'l",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.217Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.217Z",
@@ -19390,9 +18704,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "examples": [],
     "morphology": {
       "ism": {
@@ -19444,11 +18756,7 @@
     "translation": "to melt, to dissolve",
     "definition": "تحوَّل من الحالة الصلبة إلى الحالة السائلة",
     "type": "fi'l",
-    "root": [
-      "ذ",
-      "و",
-      "ب"
-    ],
+    "root": ["ذ", "و", "ب"],
     "morphology": {
       "verb": {
         "past_tense": "ذابَ",
@@ -19500,15 +18808,8 @@
     "translation": "to bring back",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ر",
-      "د",
-      "د"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ر", "د", "د"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -19565,15 +18866,8 @@
     "translation": "to refuse",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ا",
-      "ب",
-      "ي"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ا", "ب", "ي"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -20099,15 +19393,8 @@
     "translation": "to remain",
     "definition": "بقِي",
     "type": "fi'l",
-    "root": [
-      "م",
-      "ك",
-      "ث"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["م", "ك", "ث"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -20164,15 +19451,8 @@
     "translation": "to decorate",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ز",
-      "ي",
-      "ن"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ز", "ي", "ن"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -20277,16 +19557,8 @@
     "translation": "to surround (s.o.)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "و",
-      "ط"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين",
-      "القرآن"
-    ],
+    "root": ["ح", "و", "ط"],
+    "tags": ["معهد الخليل", "قصص النبيين", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -20338,9 +19610,7 @@
     "word": "طَارَدَ",
     "translation": "Chased",
     "type": "fi'l",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.405Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.405Z",
@@ -20535,15 +19805,8 @@
     "translation": "to gush forth",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ن",
-      "ب",
-      "ع"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ن", "ب", "ع"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -20600,15 +19863,8 @@
     "translation": "to form",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "س",
-      "و",
-      "ي"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["س", "و", "ي"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -20713,15 +19969,8 @@
     "translation": "calamity, disaster, affliction",
     "definition": "حَادِثَةٌ مُؤْلِمَةٌ تَنْزِلُ بِالإِنْسَانِ",
     "type": "ism",
-    "root": [
-      "ص",
-      "و",
-      "ب"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "قصص النبيين"
-    ],
+    "root": ["ص", "و", "ب"],
+    "tags": ["معهد الخليل", "قصص النبيين"],
     "morphology": {
       "ism": {
         "singular": "مُصِيبَة",
@@ -20974,15 +20223,8 @@
     "translation": "to be sick",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "م",
-      "ر",
-      "ض"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["م", "ر", "ض"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -21039,15 +20281,8 @@
     "translation": "to excuse, absolve",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ذ",
-      "ر"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ع", "ذ", "ر"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -21104,15 +20339,8 @@
     "translation": "to choose",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "خ",
-      "ي",
-      "ر"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["خ", "ي", "ر"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -21165,15 +20393,8 @@
     "translation": "to be reliable, trustworthy",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ا",
-      "م",
-      "ن"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ا", "م", "ن"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -21230,16 +20451,8 @@
     "translation": "to be victorious",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "غ",
-      "ل",
-      "ب"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن",
-      "قصص النبيين"
-    ],
+    "root": ["غ", "ل", "ب"],
+    "tags": ["معهد الخليل", "القرآن", "قصص النبيين"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -21296,15 +20509,8 @@
     "translation": "to be good, righteous",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ص",
-      "ل",
-      "ح"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ص", "ل", "ح"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -21361,11 +20567,7 @@
     "translation": "to determine, to resolve, to decide firmly",
     "definition": "قَرَّرَ بِشَكْلٍ قَاطِعٍ وَحَاسِمٍ",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ز",
-      "م"
-    ],
+    "root": ["ع", "ز", "م"],
     "morphology": {
       "verb": {
         "huroof": [
@@ -21469,11 +20671,7 @@
     "translation": "to succeed",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ن",
-      "ج",
-      "ح"
-    ],
+    "root": ["ن", "ج", "ح"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -21629,15 +20827,8 @@
     "translation": "to long, yearn (for), desire",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ش",
-      "و",
-      "ق"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ش", "و", "ق"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -21730,11 +20921,7 @@
     "translation": "to run",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ج",
-      "ر",
-      "ي"
-    ],
+    "root": ["ج", "ر", "ي"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -21790,11 +20977,7 @@
     "translation": "to wake up, recover",
     "definition": "استيقظ",
     "type": "fi'l",
-    "root": [
-      "ف",
-      "و",
-      "ق"
-    ],
+    "root": ["ف", "و", "ق"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -21894,11 +21077,7 @@
     "translation": "to despise, to look down upon, to disdain",
     "definition": "نَظَرَ إِلَى شَخْصٍ أَوْ شَيْءٍ نَظْرَةَ ازْدِرَاءٍ وَاسْتِصْغَارٍ",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "ق",
-      "ر"
-    ],
+    "root": ["ح", "ق", "ر"],
     "morphology": {
       "verb": {
         "past_tense": "احتَقَرَ",
@@ -22127,15 +21306,8 @@
     "translation": "to confute, defeat (s.o. with an argument)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "ج",
-      "ج"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "الحديث"
-    ],
+    "root": ["ح", "ج", "ج"],
+    "tags": ["معهد الخليل", "الحديث"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -22277,15 +21449,8 @@
     "translation": "to be despicable, lowly",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ر",
-      "ذ",
-      "ل"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ر", "ذ", "ل"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -22390,15 +21555,8 @@
     "translation": "following, followers",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ت",
-      "ب",
-      "ع"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ت", "ب", "ع"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -22447,15 +21605,8 @@
     "translation": "to miss; to make a mistake",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "خ",
-      "ط",
-      "ء"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["خ", "ط", "ء"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -22508,15 +21659,8 @@
     "translation": "to pass by, leave behind",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ج",
-      "و",
-      "ز"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ج", "و", "ز"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -22569,15 +21713,8 @@
     "translation": "to give up all hope",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ي",
-      "ء",
-      "س"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ي", "ء", "س"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -22634,15 +21771,8 @@
     "translation": "to argue",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ج",
-      "د",
-      "ل"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ج", "د", "ل"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -22695,15 +21825,8 @@
     "translation": "to purify, to cleanse",
     "definition": "نَظُفَ وخَلا من النَّجَس",
     "type": "fi'l",
-    "root": [
-      "ط",
-      "ه",
-      "ر"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["ط", "ه", "ر"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "verb": {
         "past_tense": "طَهَرَ",
@@ -22752,15 +21875,8 @@
     "translation": "lamp",
     "definition": "",
     "type": "ism",
-    "root": [
-      "س",
-      "ر",
-      "ج"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["س", "ر", "ج"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -22813,11 +21929,7 @@
     "translation": "to purify, to cleanse spiritually",
     "definition": "طَهَّرَ وَنَقَّى مِنَ الذُّنُوبِ وَالْمَعَاصِي",
     "type": "fi'l",
-    "root": [
-      "ز",
-      "ك",
-      "و"
-    ],
+    "root": ["ز", "ك", "و"],
     "morphology": {
       "verb": {
         "past_tense": "زَكَّى",
@@ -23155,11 +22267,7 @@
     "translation": "to detest, hate",
     "definition": "ضد أحبّ",
     "type": "fi'l",
-    "root": [
-      "ك",
-      "ر",
-      "ه"
-    ],
+    "root": ["ك", "ر", "ه"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -23298,15 +22406,8 @@
     "translation": "to remain",
     "definition": "بقي",
     "type": "fi'l",
-    "root": [
-      "ل",
-      "ب",
-      "ث"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ل", "ب", "ث"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -23411,15 +22512,8 @@
     "translation": "to touch",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ل",
-      "م",
-      "س"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ل", "م", "س"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -23476,15 +22570,8 @@
     "translation": "to lower",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "خ",
-      "ف",
-      "ض"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["خ", "ف", "ض"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -23628,15 +22715,8 @@
     "translation": "to bow down, kneel",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ر",
-      "ك",
-      "ع"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ر", "ك", "ع"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -23745,15 +22825,8 @@
     "translation": "to become small in number",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ق",
-      "ل",
-      "ل"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ق", "ل", "ل"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -23858,15 +22931,8 @@
     "translation": "to plow, till (soil, land)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "ر",
-      "ث"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ح", "ر", "ث"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -23923,15 +22989,8 @@
     "translation": "to realize, comprehend",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ع",
-      "ق",
-      "ل"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ع", "ق", "ل"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -24036,15 +23095,8 @@
     "translation": "to have the ability to do (smth)",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ق",
-      "د",
-      "ر"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ق", "د", "ر"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -24140,11 +23192,7 @@
     "translation": "to deserve, be worthy",
     "definition": "",
     "type": "fi'l",
-    "root": [
-      "ح",
-      "ق",
-      "ق"
-    ],
+    "root": ["ح", "ق", "ق"],
     "examples": [],
     "morphology": {
       "verb": {
@@ -24195,9 +23243,7 @@
     "word": "تَأهِيل",
     "translation": "Prepare, training, rehabilitation",
     "type": "ism",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.748Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.748Z",
@@ -24404,11 +23450,7 @@
     "translation": "to witness, to testify",
     "definition": "حَضَرَ وَرَأَى بِعَيْنِهِ",
     "type": "fi'l",
-    "root": [
-      "ش",
-      "ه",
-      "د"
-    ],
+    "root": ["ش", "ه", "د"],
     "morphology": {
       "verb": {
         "past_tense": "شَهِدَ",
@@ -24535,15 +23577,8 @@
     "translation": "across from, opposite to; in exchange for",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ق",
-      "ب",
-      "ل"
-    ],
-    "tags": [
-      "قصص النبيين",
-      "معهد الخليل"
-    ],
+    "root": ["ق", "ب", "ل"],
+    "tags": ["قصص النبيين", "معهد الخليل"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -24739,9 +23774,7 @@
     "word": "اهْدَأ",
     "translation": "Calm down",
     "type": "fi'l",
-    "tags": [
-      "film"
-    ],
+    "tags": ["film"],
     "created_at": "2025-11-12T04:26:42.821Z",
     "created_at_timestamp": 1762921602,
     "updated_at": "2025-11-12T04:26:42.821Z",
@@ -24779,15 +23812,8 @@
     "translation": "piety, devotion",
     "definition": "التَّقوى والكَفّ عن المَحارِم",
     "type": "ism",
-    "root": [
-      "و",
-      "ر",
-      "ع"
-    ],
-    "tags": [
-      "الحديث",
-      "معهد الخليل"
-    ],
+    "root": ["و", "ر", "ع"],
+    "tags": ["الحديث", "معهد الخليل"],
     "morphology": {
       "ism": {
         "singular": "وَرَع",
@@ -24988,10 +24014,7 @@
     "definition": "",
     "type": "ism",
     "root": [],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -25189,15 +24212,8 @@
     "translation": "to take refuge",
     "definition": "التجأ",
     "type": "fi'l",
-    "root": [
-      "ل",
-      "ح",
-      "د"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن"
-    ],
+    "root": ["ل", "ح", "د"],
+    "tags": ["معهد الخليل", "القرآن"],
     "antonyms": [],
     "examples": [],
     "morphology": {
@@ -25289,16 +24305,8 @@
     "translation": "clan, tribe",
     "definition": "",
     "type": "ism",
-    "root": [
-      "ق",
-      "ب",
-      "ل"
-    ],
-    "tags": [
-      "معهد الخليل",
-      "القرآن",
-      "سورة الحجرات"
-    ],
+    "root": ["ق", "ب", "ل"],
+    "tags": ["معهد الخليل", "القرآن", "سورة الحجرات"],
     "antonyms": [],
     "examples": [],
     "morphology": {

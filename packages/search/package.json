@@ -3,8 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "exports": {
+    "./arabic": "./src/arabic.ts",
+    "./database": "./src/database.ts",
+    "./highlight": "./src/highlight.ts",
+    "./schema": "./src/schema.ts",
+    "./tokenizer": "./src/tokenizer.ts"
+  },
   "dependencies": {
     "@bahar/drizzle-user-db-schemas": "workspace:*"
   },

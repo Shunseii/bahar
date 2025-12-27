@@ -1,5 +1,5 @@
 import { cn } from "@bahar/design-system";
-import { Link, LinkProps } from "@tanstack/react-router";
+import { Link, type LinkProps } from "@tanstack/react-router";
 import { forwardRef } from "react";
 
 type NavLinkProps = Omit<LinkProps, "activeProps" | "inactiveProps"> & {
@@ -11,20 +11,20 @@ export const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(
   ({ className, to, children, ...props }, ref) => {
     return (
       <Link
-        ref={ref}
-        to={to}
+        activeProps={{ className: "hover:text-foreground" }}
         className={cn(
           "flex h-9 w-9 items-center justify-center rounded-lg transition-colors md:h-8 md:w-8",
-          className,
+          className
         )}
-        activeProps={{ className: "hover:text-foreground" }}
         inactiveProps={{
           className: "hover:text-foreground text-muted-foreground",
         }}
+        ref={ref}
+        to={to}
         {...props}
       >
         {children}
       </Link>
     );
-  },
+  }
 );

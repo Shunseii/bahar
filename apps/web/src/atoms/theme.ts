@@ -12,7 +12,7 @@ export const getAllThemes = () => {
 
 export const updateThemeInDOM = (val: Theme) => {
   const isSystemDark = window.matchMedia(
-    "(prefers-color-scheme: dark)",
+    "(prefers-color-scheme: dark)"
   ).matches;
 
   if (val === Theme.DARK || (val === Theme.SYSTEM && isSystemDark)) {
@@ -39,5 +39,5 @@ export const themeAtom = atomWithStorage<Theme>(
       localStorage.setItem(key, val);
     },
     removeItem: (key) => localStorage.removeItem(key),
-  },
+  }
 );

@@ -1,6 +1,6 @@
-import { intlFormatDistance } from "@/lib/date";
-import { IntlFormatDistanceUnit } from "date-fns";
+import type { IntlFormatDistanceUnit } from "date-fns";
 import { Rating } from "ts-fsrs";
+import { intlFormatDistance } from "@/lib/date";
 
 type ReviewRating = Rating.Again | Rating.Hard | Rating.Good | Rating.Easy;
 
@@ -19,7 +19,7 @@ export const formatInterval = ({
 };
 
 const getSmallerUnit = (
-  unit: IntlFormatDistanceUnit,
+  unit: IntlFormatDistanceUnit
 ): IntlFormatDistanceUnit => {
   switch (unit) {
     case "year":

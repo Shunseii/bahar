@@ -1,7 +1,7 @@
-import { SelectSetting, RawSetting } from "@bahar/drizzle-user-db-schemas";
-import { ensureDb } from "..";
-import { TableOperation } from "./types";
+import type { RawSetting, SelectSetting } from "@bahar/drizzle-user-db-schemas";
 import { nanoid } from "nanoid";
+import { ensureDb } from "..";
+import type { TableOperation } from "./types";
 
 export const settingsTable = {
   getSettings: {
@@ -15,7 +15,7 @@ export const settingsTable = {
         if (!res) {
           await db
             .prepare(
-              "INSERT INTO settings (id, show_antonyms_in_flashcard, show_reverse_flashcards) VALUES (?, ?, ?)",
+              "INSERT INTO settings (id, show_antonyms_in_flashcard, show_reverse_flashcards) VALUES (?, ?, ?)"
             )
             .run([nanoid(), "hidden", 0]);
           return {

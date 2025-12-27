@@ -1,26 +1,26 @@
-import { Trans, useLingui } from "@lingui/react/macro";
-import { FC, useEffect, useState, useCallback, memo } from "react";
-import { useDebounce, useMeasure, useWindowScroll } from "@uidotdev/usehooks";
-import {
-  Edit,
-  BookOpenText,
-  ChevronDown,
-  Copy,
-  Check,
-  SearchX,
-  Loader2,
-} from "lucide-react";
-import { Button } from "../ui/button";
-import { useNavigate } from "@tanstack/react-router";
-import { useInfiniteScroll } from "@/hooks/useSearch";
-import { useAtomValue } from "jotai";
-import { searchQueryAtom } from "./state";
-import { Highlight } from "./Highlight";
-import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { useDebounce, useMeasure, useWindowScroll } from "@uidotdev/usehooks";
+import { useAtomValue } from "jotai";
+import {
+  BookOpenText,
+  Check,
+  ChevronDown,
+  Copy,
+  Edit,
+  Loader2,
+  SearchX,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { type FC, memo, useCallback, useEffect, useState } from "react";
+import { useInfiniteScroll } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { Button } from "../ui/button";
+import { Highlight } from "./Highlight";
+import { searchQueryAtom } from "./state";
 
 const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {
   const { t } = useLingui();
@@ -51,15 +51,15 @@ const CopyButton: FC<{ text: string }> = memo(({ text }) => {
 
   return (
     <Button
-      variant="ghost"
-      size="icon"
-      className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-primary/10"
+      className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-foreground"
       onClick={handleCopy}
+      size="icon"
+      variant="ghost"
     >
       {copied ? (
-        <Check className="w-4 h-4 text-green-500" />
+        <Check className="h-4 w-4 text-green-500" />
       ) : (
-        <Copy className="w-4 h-4" />
+        <Copy className="h-4 w-4" />
       )}
     </Button>
   );
@@ -92,16 +92,16 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
   const verbMorphology = hasMorphology ? fullEntry?.morphology?.verb : null;
 
   return (
-    <div className="flex flex-col gap-3 pt-3 mt-3 border-t border-border/50">
+    <div className="mt-3 flex flex-col gap-3 border-border/50 border-t pt-3">
       {/* Type and Root row */}
       <div className="flex flex-wrap items-center gap-2 text-sm">
-        <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary font-medium">
+        <span className="rounded-md bg-primary/10 px-2 py-0.5 font-medium text-primary">
           {wordTypeLabels[document.type]}
         </span>
         {hasRoot && (
           <span
+            className="rounded-md bg-muted px-2 py-0.5 font-arabic text-muted-foreground ltr:text-left"
             dir="rtl"
-            className="px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-arabic ltr:text-left"
           >
             {document.root!.join(" - ")}
           </span>
@@ -111,17 +111,17 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
       {/* Definition */}
       {hasDefinition && (
         <div>
-          <p className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-1">
+          <p className="mb-1 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Definition</Trans>
           </p>
-          <p className="text-sm text-foreground/80">{document.definition}</p>
+          <p className="text-foreground/80 text-sm">{document.definition}</p>
         </div>
       )}
 
       {/* Loading state for heavy fields */}
       {isLoading && (
         <div className="flex items-center gap-2 text-muted-foreground">
-          <Loader2 className="w-4 h-4 animate-spin" />
+          <Loader2 className="h-4 w-4 animate-spin" />
           <span className="text-sm">
             <Trans>Loading details...</Trans>
           </span>
@@ -131,18 +131,18 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
       {/* Ism Morphology */}
       {ismMorphology && (
         <div>
-          <p className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-2">
+          <p className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Morphology</Trans>
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+          <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
             {ismMorphology.singular && (
               <div>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Singular</Trans>
                 </p>
                 <p
-                  dir="rtl"
                   className="font-arabic text-base text-foreground/80 ltr:text-left"
+                  dir="rtl"
                 >
                   {ismMorphology.singular}
                 </p>
@@ -150,12 +150,12 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
             )}
             {ismMorphology.dual && (
               <div>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Dual</Trans>
                 </p>
                 <p
-                  dir="rtl"
                   className="font-arabic text-base text-foreground/80 ltr:text-left"
+                  dir="rtl"
                 >
                   {ismMorphology.dual}
                 </p>
@@ -163,12 +163,12 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
             )}
             {ismMorphology.plurals && ismMorphology.plurals.length > 0 && (
               <div>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Plural</Trans>
                 </p>
                 <p
-                  dir="rtl"
                   className="font-arabic text-base text-foreground/80 ltr:text-left"
+                  dir="rtl"
                 >
                   {ismMorphology.plurals.map((p) => p.word).join("، ")}
                 </p>
@@ -176,7 +176,7 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
             )}
             {ismMorphology.gender && (
               <div>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Gender</Trans>
                 </p>
                 <p className="text-foreground/80">
@@ -191,18 +191,18 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
       {/* Verb Morphology */}
       {verbMorphology && (
         <div>
-          <p className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-2">
+          <p className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Morphology</Trans>
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm">
+          <div className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
             {verbMorphology.past_tense && (
               <div>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Past</Trans>
                 </p>
                 <p
-                  dir="rtl"
                   className="font-arabic text-base text-foreground/80 ltr:text-left"
+                  dir="rtl"
                 >
                   {verbMorphology.past_tense}
                 </p>
@@ -210,12 +210,12 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
             )}
             {verbMorphology.present_tense && (
               <div>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Present</Trans>
                 </p>
                 <p
-                  dir="rtl"
                   className="font-arabic text-base text-foreground/80 ltr:text-left"
+                  dir="rtl"
                 >
                   {verbMorphology.present_tense}
                 </p>
@@ -223,12 +223,12 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
             )}
             {verbMorphology.imperative && (
               <div>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Imperative</Trans>
                 </p>
                 <p
-                  dir="rtl"
                   className="font-arabic text-base text-foreground/80 ltr:text-left"
+                  dir="rtl"
                 >
                   {verbMorphology.imperative}
                 </p>
@@ -236,13 +236,13 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
             )}
             {verbMorphology.form && (
               <div>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Form</Trans>
                 </p>
                 <p className="text-foreground/80">
                   {verbMorphology.form}
                   {verbMorphology.form_arabic && (
-                    <span dir="rtl" className="font-arabic ltr:ml-1 rtl:mr-1">
+                    <span className="font-arabic ltr:ml-1 rtl:mr-1" dir="rtl">
                       ({verbMorphology.form_arabic})
                     </span>
                   )}
@@ -251,12 +251,12 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
             )}
             {verbMorphology.masadir && verbMorphology.masadir.length > 0 && (
               <div className="col-span-2">
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-muted-foreground/70 text-xs">
                   <Trans>Verbal nouns</Trans>
                 </p>
                 <p
-                  dir="rtl"
                   className="font-arabic text-base text-foreground/80 ltr:text-left"
+                  dir="rtl"
                 >
                   {verbMorphology.masadir.map((m) => m.word).join("، ")}
                 </p>
@@ -269,23 +269,23 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
       {/* Examples */}
       {hasExamples && (
         <div>
-          <p className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-2">
+          <p className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Examples</Trans>
           </p>
           <div className="space-y-2">
             {fullEntry!.examples!.slice(0, 2).map((example, i) => (
               <div
+                className="rounded-lg border border-border/30 bg-muted/30 p-2"
                 key={i}
-                className="p-2 rounded-lg bg-muted/30 border border-border/30"
               >
                 <p
-                  dir="rtl"
                   className="font-arabic text-base text-foreground/90 ltr:text-left"
+                  dir="rtl"
                 >
                   {example.sentence}
                 </p>
                 {example.translation && (
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="mt-1 text-muted-foreground text-sm">
                     {example.translation}
                   </p>
                 )}
@@ -298,14 +298,14 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
       {/* Tags */}
       {hasTags && (
         <div>
-          <p className="text-xs font-medium text-muted-foreground/70 uppercase tracking-wide mb-2">
+          <p className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Tags</Trans>
           </p>
           <div className="flex flex-wrap gap-1.5">
             {document.tags!.map((tag) => (
               <span
+                className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs"
                 key={tag}
-                className="px-2 py-0.5 text-xs rounded-full bg-muted text-muted-foreground"
               >
                 {tag}
               </span>
@@ -338,20 +338,20 @@ const WordCardContent: FC<WordCardContentProps> = memo(
     return (
       <article
         className={cn(
-          "group relative p-4 rounded-xl",
+          "group relative rounded-xl p-4",
           "bg-gradient-to-br from-muted/30 to-muted/10",
           "hover:from-muted/50 hover:to-muted/30",
           "border border-transparent hover:border-border/50",
           "transition-colors duration-200 ease-out",
-          "hover:shadow-md hover:shadow-black/5",
-          isExpanded && "from-muted/50 to-muted/30 border-border/50",
+          "hover:shadow-black/5 hover:shadow-md",
+          isExpanded && "border-border/50 from-muted/50 to-muted/30"
         )}
       >
         <div className="flex flex-col gap-y-2">
-          <div className="flex justify-between items-start">
+          <div className="flex items-start justify-between">
             <h2
+              className="font-semibold text-3xl text-foreground/90 transition-colors duration-200 group-hover:text-foreground sm:text-3xl rtl:text-right"
               dir="rtl"
-              className="rtl:text-right text-3xl sm:text-3xl font-semibold text-foreground/90 group-hover:text-foreground transition-colors duration-200"
             >
               <Highlight text={document.word} />
             </h2>
@@ -359,33 +359,33 @@ const WordCardContent: FC<WordCardContentProps> = memo(
             <div className="flex items-center gap-1">
               <CopyButton text={document.word} />
               <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-primary/10"
+                className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-foreground"
                 onClick={handleEdit}
+                size="icon"
+                variant="ghost"
               >
-                <Edit className="w-4 h-4" />
+                <Edit className="h-4 w-4" />
               </Button>
 
               <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-primary/10"
+                className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-foreground"
                 onClick={handleToggle}
+                size="icon"
+                variant="ghost"
               >
                 <motion.div
                   animate={{ rotate: isExpanded ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChevronDown className="w-4 h-4" />
+                  <ChevronDown className="h-4 w-4" />
                 </motion.div>
               </Button>
             </div>
           </div>
 
           <p
+            className="text-base text-muted-foreground transition-colors duration-200 group-hover:text-muted-foreground/80 sm:text-base ltr:text-left rtl:text-right"
             dir="ltr"
-            className="ltr:text-left rtl:text-right text-base sm:text-base text-muted-foreground group-hover:text-muted-foreground/80 transition-colors duration-200"
           >
             <Highlight text={document.translation} />
           </p>
@@ -395,22 +395,22 @@ const WordCardContent: FC<WordCardContentProps> = memo(
         <AnimatePresence>
           {isExpanded && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
               className="overflow-hidden"
+              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
             >
-              <ExpandedDetails id={hit.id!} document={document} />
+              <ExpandedDetails document={document} id={hit.id!} />
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Subtle accent line */}
-        <div className="absolute ltr:left-0 rtl:right-0 top-1/2 -translate-y-1/2 w-1 h-0 group-hover:h-8 bg-gradient-to-b from-primary/60 to-primary/20 rounded-full transition-all duration-300 ease-out" />
+        <div className="absolute top-1/2 h-0 w-1 -translate-y-1/2 rounded-full bg-gradient-to-b from-primary/60 to-primary/20 transition-all duration-300 ease-out group-hover:h-8 ltr:left-0 rtl:right-0" />
       </article>
     );
-  },
+  }
 );
 
 /**
@@ -449,11 +449,11 @@ export const InfiniteScroll: FC = () => {
   const handleNavigateEdit = useCallback(
     (id: string) => {
       navigate({
-        to: `/dictionary/edit/$wordId`,
+        to: "/dictionary/edit/$wordId",
         params: { wordId: id },
       });
     },
-    [navigate],
+    [navigate]
   );
 
   const heightIsLoaded = height !== null && height > 0 && y !== null;
@@ -468,21 +468,21 @@ export const InfiniteScroll: FC = () => {
   }, [shouldLoadMore]);
 
   const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
-  const showEmptyDictionary = !hits?.length && !hasSearchQuery;
+  const showEmptyDictionary = !(hits?.length || hasSearchQuery);
   const debouncedShowEmptyDictionary = useDebounce(showEmptyDictionary, 150);
 
   if (!hits?.length) {
     if (hasSearchQuery) {
       return (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center justify-center py-12 text-center"
+          initial={{ opacity: 0, y: 10 }}
         >
-          <div className="p-4 rounded-full bg-muted/50 mb-4">
-            <SearchX className="w-8 h-8 text-muted-foreground" />
+          <div className="mb-4 rounded-full bg-muted/50 p-4">
+            <SearchX className="h-8 w-8 text-muted-foreground" />
           </div>
-          <p className="text-lg font-medium mb-1">
+          <p className="mb-1 font-medium text-lg">
             <Trans>No results found</Trans>
           </p>
           <p className="text-muted-foreground">
@@ -495,14 +495,14 @@ export const InfiniteScroll: FC = () => {
     if (debouncedShowEmptyDictionary) {
       return (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center justify-center py-12 text-center"
+          initial={{ opacity: 0, y: 10 }}
         >
-          <div className="p-4 rounded-full bg-muted/50 mb-4">
-            <BookOpenText className="w-8 h-8 text-muted-foreground" />
+          <div className="mb-4 rounded-full bg-muted/50 p-4">
+            <BookOpenText className="h-8 w-8 text-muted-foreground" />
           </div>
-          <p className="text-lg font-medium mb-1">
+          <p className="mb-1 font-medium text-lg">
             <Trans>You have no words in your dictionary yet.</Trans>
           </p>
           <p className="text-muted-foreground">
@@ -525,8 +525,8 @@ export const InfiniteScroll: FC = () => {
                 hit as { id: string | null; document: SelectDictionaryEntry }
               }
               isExpanded={expandedIds.has(hit.id!)}
-              onToggleExpanded={toggleExpanded}
               onNavigateEdit={handleNavigateEdit}
+              onToggleExpanded={toggleExpanded}
             />
           </li>
         ))}
@@ -538,15 +538,15 @@ export const InfiniteScroll: FC = () => {
           <div className="flex gap-1">
             {[0, 1, 2].map((i) => (
               <motion.div
-                key={i}
-                className="w-2 h-2 rounded-full bg-primary/40"
                 animate={{
                   scale: [1, 1.2, 1],
                   opacity: [0.4, 1, 0.4],
                 }}
+                className="h-2 w-2 rounded-full bg-primary/40"
+                key={i}
                 transition={{
                   duration: 1,
-                  repeat: Infinity,
+                  repeat: Number.POSITIVE_INFINITY,
                   delay: i * 0.15,
                 }}
               />

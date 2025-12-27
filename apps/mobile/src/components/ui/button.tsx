@@ -1,10 +1,10 @@
 import { cn } from "@bahar/design-system";
-import { cva, VariantProps } from "class-variance-authority";
-import { FC, ElementType } from "react";
-import { Text, useColorScheme, View, Pressable, PressableProps } from "react-native";
+import { cva, type VariantProps } from "class-variance-authority";
+import type { ElementType, FC } from "react";
+import { Pressable, type PressableProps, Text, View } from "react-native";
 
 const buttonVariants = cva(
-  "flex flex-row items-center gap-x-2 justify-center rounded-md transition-colors disabled:opacity-50",
+  "flex flex-row items-center justify-center gap-x-2 rounded-md transition-colors disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -26,7 +26,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
 const textVariants = cva("font-medium text-sm", {
@@ -66,7 +66,6 @@ export const Button: FC<ButtonProps> = ({
   Icon,
   ...rest
 }) => {
-  const colorScheme = useColorScheme();
   const variantsWithFeedback = [
     "default",
     "destructive",
@@ -83,9 +82,7 @@ export const Button: FC<ButtonProps> = ({
       {...rest}
     >
       <View className={cn(buttonVariants({ variant, size, className }))}>
-        {Icon && (
-          <Icon size={16} color={colorScheme === "dark" ? "white" : "black"} />
-        )}
+        {Icon && <Icon className="text-black dark:text-white" size={16} />}
 
         <Text
           className={cn(textVariants({ variant, className }), "text-center")}

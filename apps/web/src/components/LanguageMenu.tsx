@@ -1,4 +1,6 @@
+import { i18n } from "@lingui/core";
 import { Trans } from "@lingui/react/macro";
+import type { FC } from "react";
 import {
   Select,
   SelectContent,
@@ -8,9 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDir } from "@/hooks/useDir";
-import { dynamicActivate, getLocaleKeys, TLocale } from "@/lib/i18n";
-import { i18n } from "@lingui/core";
-import { FC } from "react";
+import { dynamicActivate, getLocaleKeys, type TLocale } from "@/lib/i18n";
 
 export const LocaleLabel: FC<{ locale: TLocale }> = ({ locale }) => {
   switch (locale) {
@@ -28,8 +28,8 @@ export const LanguageMenu = () => {
 
   return (
     <Select
-      dir={dir}
       defaultValue={i18n.locale}
+      dir={dir}
       onValueChange={(lng: TLocale) => {
         dynamicActivate(lng);
       }}

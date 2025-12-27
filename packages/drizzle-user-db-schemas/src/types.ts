@@ -39,7 +39,7 @@ export const MorphologySchema = z
             z.object({
               word: z.string(),
               details: z.string().optional(),
-            }),
+            })
           )
           .optional(),
         gender: z.enum(["masculine", "feminine"]).optional(),
@@ -53,7 +53,7 @@ export const MorphologySchema = z
             z.object({
               harf: z.string(),
               meaning: z.string().optional(),
-            }),
+            })
           )
           .optional(),
         past_tense: z.string().optional(),
@@ -66,7 +66,7 @@ export const MorphologySchema = z
             z.object({
               word: z.string(),
               details: z.string().optional(),
-            }),
+            })
           )
           .optional(),
         form: z.string().optional(),

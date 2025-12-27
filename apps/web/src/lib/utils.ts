@@ -1,4 +1,4 @@
-import { TLocale } from "./i18n";
+import type { TLocale } from "./i18n";
 
 /**
  * Converts all `null` union types to `undefined` in an object type
@@ -34,14 +34,14 @@ export const nullToUndefined = <T>(obj: T): NullToUndefined<T> => {
         ? nullToUndefined(item)
         : item === null
           ? undefined
-          : item,
+          : item
     ) as NullToUndefined<T>;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: any = {};
   for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    if (Object.hasOwn(obj, key)) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const value = (obj as any)[key];
       if (value === null) {
@@ -63,12 +63,12 @@ export const convertArabicNumToEnglish = (arabicNumber: string) => {
   const englishNumerals = "0123456789";
 
   const arabicToEnglishMap = new Map(
-    [...arabicNumerals].map((num, index) => [num, englishNumerals[index]]),
+    [...arabicNumerals].map((num, index) => [num, englishNumerals[index]])
   );
 
   const englishNumber = arabicNumber.replace(
     /[٠-٩]/g,
-    (match) => arabicToEnglishMap.get(match) as string,
+    (match) => arabicToEnglishMap.get(match) as string
   );
 
   return englishNumber;
@@ -107,13 +107,14 @@ export const detectLanguage = (text: string): TLocale | "unknown" => {
 
   if (arabicCount > englishCount) {
     return "ar";
-  } else if (englishCount > arabicCount) {
+  }
+  if (englishCount > arabicCount) {
     return "en";
-  } else if (arabicCount === 0 && englishCount === 0) {
-    return "unknown";
-  } else {
+  }
+  if (arabicCount === 0 && englishCount === 0) {
     return "unknown";
   }
+  return "unknown";
 };
 
 export const stripArabicDiacritics = (text: string): string => {

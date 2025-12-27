@@ -1,8 +1,8 @@
-import { connect, Database } from "@tursodatabase/sync-wasm/vite";
-import { SelectMigration } from "@bahar/drizzle-user-db-schemas";
-import { api } from "../api";
+import type { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import { err, ok, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react";
+import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
+import { api } from "../api";
 
 /**
  * Singleton database instance connected to
@@ -77,7 +77,7 @@ const _initDbInternal = async () => {
     (error) => ({
       type: "get_db_info_failed",
       reason: String(error),
-    }),
+    })
   );
   if (!infoResult.ok) return infoResult;
 
@@ -97,7 +97,7 @@ const _initDbInternal = async () => {
         type: isOpfsLock ? "opfs_lock_error" : "db_connection_failed",
         reason,
       };
-    },
+    }
   );
 
   // If OPFS lock error, return immediately - don't try token refresh
@@ -108,7 +108,9 @@ const _initDbInternal = async () => {
     return connectionResult;
   }
 
-  if (!connectionResult.ok) {
+  if (connectionResult.ok) {
+    db = connectionResult.value;
+  } else {
     const refreshResult = await tryCatch(
       async () => {
         const { data, error } = await api.databases["refresh-token"].post();
@@ -118,7 +120,7 @@ const _initDbInternal = async () => {
       (error) => ({
         type: "token_refresh_failed",
         reason: String(error),
-      }),
+      })
     );
     if (!refreshResult.ok) return refreshResult;
 
@@ -138,14 +140,12 @@ const _initDbInternal = async () => {
             : "db_connection_failed_after_refresh",
           reason,
         };
-      },
+      }
     );
 
     if (!connectionAfterRefreshResult.ok) return connectionAfterRefreshResult;
 
     db = connectionAfterRefreshResult.value;
-  } else {
-    db = connectionResult.value;
   }
 
   const migrationResult = await applyRequiredMigrations();
@@ -159,7 +159,7 @@ const _initDbInternal = async () => {
     (error) => ({
       type: "turso_remote_sync_failed",
       reason: String(error),
-    }),
+    })
   );
 
   return syncResult;
@@ -191,7 +191,7 @@ const applyRequiredMigrations = async () => {
     (error) => ({
       type: "api_schema_verification_failed",
       reason: String(error),
-    }),
+    })
   );
   if (!allMigrationsResult.ok) return allMigrationsResult;
 
@@ -204,7 +204,7 @@ const applyRequiredMigrations = async () => {
   const appliedVersions = new Set(
     localMigrationsResult.value
       .filter((m) => m.status === "applied")
-      .map((m) => m.version),
+      .map((m) => m.version)
   );
 
   const migrationsLength = localMigrationsResult.value.length;
@@ -234,7 +234,7 @@ const applyRequiredMigrations = async () => {
       (error) => ({
         type: "migration_failed",
         reason: String(error),
-      }),
+      })
     );
 
     if (!execResult.ok) {
@@ -242,7 +242,7 @@ const applyRequiredMigrations = async () => {
         () =>
           db!
             .prepare(
-              "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)",
+              "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)"
             )
             .run([
               migration.version,
@@ -256,7 +256,7 @@ const applyRequiredMigrations = async () => {
             reason: String(error),
           });
           return null;
-        },
+        }
       );
 
       return execResult;
@@ -266,7 +266,7 @@ const applyRequiredMigrations = async () => {
       () =>
         db!
           .prepare(
-            "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)",
+            "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)"
           )
           .run([
             migration.version,
@@ -280,7 +280,7 @@ const applyRequiredMigrations = async () => {
           reason: String(error),
         });
         return null;
-      },
+      }
     );
   }
 
@@ -294,12 +294,12 @@ const getLocalAppliedMigrations = async () => {
     async () => {
       const result = await db!
         .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';",
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';"
         )
         .get();
       return !!result;
     },
-    () => ({ type: "check_migration_table_exists_query_failed" }),
+    () => ({ type: "check_migration_table_exists_query_failed" })
   );
 
   if (!tableExists.ok) return tableExists;
@@ -312,7 +312,7 @@ const getLocalAppliedMigrations = async () => {
         .all();
       return rows;
     },
-    () => ({ type: "local_migrations_query_failed" }),
+    () => ({ type: "local_migrations_query_failed" })
   );
 };
 
