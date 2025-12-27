@@ -1,4 +1,6 @@
 import { cn } from "@bahar/design-system";
+import { Button } from "@bahar/web-ui/components/button";
+import { Card, CardContent } from "@bahar/web-ui/components/card";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
@@ -8,8 +10,6 @@ import { motion } from "motion/react";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { itemVariants, Page } from "@/components/Page";
 import { InfiniteScroll } from "@/components/search/InfiniteScroll";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useSearch } from "@/hooks/useSearch";
 import {

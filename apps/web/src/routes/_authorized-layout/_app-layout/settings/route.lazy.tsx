@@ -2,6 +2,24 @@ import type {
   RawDictionaryEntry,
   SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
+import { Button } from "@bahar/web-ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@bahar/web-ui/components/card";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@bahar/web-ui/components/dialog";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
@@ -12,24 +30,6 @@ import { InputFile } from "@/components/InputFile";
 import { LanguageMenu } from "@/components/LanguageMenu";
 import { Page } from "@/components/Page";
 import { ThemeMenu } from "@/components/ThemeMenu";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { useSearch } from "@/hooks/useSearch";
 import { authClient } from "@/lib/auth-client";
 import { ensureDb } from "@/lib/db";

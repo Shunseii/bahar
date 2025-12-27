@@ -53,3 +53,13 @@ Run tests with `pnpm test` or run specific tests with `pnpm test -t "test name"`
 The app is built and deployed using Expo Application Services (EAS).
 
 See `eas.json` in the project root for build configuration.
+
+## UI Components
+
+This app uses UniWind (Tailwind CSS for React Native) for styling. It does **not** use shadcn/ui components since those are web-only (built on Radix UI primitives).
+
+For shared utilities like `cn()`, import from `@bahar/design-system`:
+
+```tsx
+import { cn } from "@bahar/design-system";
+```

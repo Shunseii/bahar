@@ -1,4 +1,13 @@
 import { cn } from "@bahar/design-system";
+import { Button } from "@bahar/web-ui/components/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@bahar/web-ui/components/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
@@ -10,15 +19,6 @@ import type { FC } from "react";
 import { type SubmitHandler, useForm, useFormContext } from "react-hook-form";
 import z from "zod";
 import { showOTPFormAtom } from "@/atoms/otp";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { authClient } from "@/lib/auth-client";
 import { getLangDir, type TLocale } from "@/lib/i18n";
 import {

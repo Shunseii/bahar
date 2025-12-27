@@ -1,7 +1,7 @@
+import { Button } from "@bahar/web-ui/components/button";
 import { Trans } from "@lingui/react/macro";
 import { Copy } from "lucide-react";
 import { type FC, type ReactNode, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { DisplayError } from "@/lib/db/errors";
 

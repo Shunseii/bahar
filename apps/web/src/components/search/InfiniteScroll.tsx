@@ -1,5 +1,6 @@
 import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import { Button } from "@bahar/web-ui/components/button";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -18,7 +19,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { type FC, memo, useCallback, useEffect, useState } from "react";
 import { useInfiniteScroll } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { Button } from "../ui/button";
 import { Highlight } from "./Highlight";
 import { searchQueryAtom } from "./state";
 

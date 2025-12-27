@@ -1,21 +1,17 @@
-import { Trans } from "@lingui/react/macro";
-import { Plus } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useFieldArray, useFormContext } from "react-hook-form";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+} from "@bahar/web-ui/components/accordion";
+import { Button } from "@bahar/web-ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
   FormControl,
   FormDescription,
@@ -23,9 +19,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+} from "@bahar/web-ui/components/form";
+import { Input } from "@bahar/web-ui/components/input";
+import { Separator } from "@bahar/web-ui/components/separator";
+import { Trans } from "@lingui/react/macro";
+import { Plus } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import type { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 

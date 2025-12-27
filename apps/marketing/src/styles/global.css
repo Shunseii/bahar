@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@bahar/design-system/colors.css";
+@import "@bahar/design-system/globals.css";
 @plugin "@tailwindcss/typography";
 
 @theme {

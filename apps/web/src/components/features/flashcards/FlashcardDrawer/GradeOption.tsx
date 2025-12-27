@@ -1,10 +1,10 @@
 import { cn } from "@bahar/design-system";
+import { Button } from "@bahar/web-ui/components/button";
 import { Trans } from "@lingui/react/macro";
 import { Brain, RotateCcw, ThumbsUp, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { type FC, type ReactNode, useMemo } from "react";
 import { Rating } from "ts-fsrs";
-import { Button } from "@/components/ui/button";
 
 type ReviewRating = Rating.Again | Rating.Hard | Rating.Good | Rating.Easy;
 

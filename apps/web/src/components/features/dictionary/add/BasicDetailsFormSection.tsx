@@ -1,6 +1,9 @@
-import { Trans } from "@lingui/react/macro";
-import { useFormContext } from "react-hook-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@bahar/web-ui/components/card";
 import {
   FormControl,
   FormDescription,
@@ -8,8 +11,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@bahar/web-ui/components/form";
+import { Input } from "@bahar/web-ui/components/input";
+import { Trans } from "@lingui/react/macro";
+import { useFormContext } from "react-hook-form";
 import type { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 

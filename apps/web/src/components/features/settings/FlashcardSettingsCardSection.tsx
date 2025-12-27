@@ -1,18 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Trans, useLingui } from "@lingui/react/macro";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { BetaBadge } from "@/components/BetaBadge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@bahar/web-ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
   Form,
   FormControl,
@@ -21,9 +14,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
+} from "@bahar/web-ui/components/form";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@bahar/web-ui/components/radio-group";
+import { Switch } from "@bahar/web-ui/components/switch";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { BetaBadge } from "@/components/BetaBadge";
 import { ensureDb } from "@/lib/db";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { settingsTable } from "@/lib/db/operations/settings";

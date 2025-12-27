@@ -1,9 +1,9 @@
 import { cn } from "@bahar/design-system";
+import { Input } from "@bahar/web-ui/components/input";
 import { useLingui } from "@lingui/react/macro";
 import { useAtom } from "jotai";
 import { Search } from "lucide-react";
 import { type FC, useRef, useState } from "react";
-import { Input } from "../ui/input";
 import { searchQueryAtom } from "./state";
 
 interface SearchInputProps {

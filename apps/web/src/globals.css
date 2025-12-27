@@ -1,5 +1,8 @@
 @import "@bahar/design-system/globals.css";
 
+/* Include web-ui components in Tailwind's content scanning */
+@source "../../../packages/web-ui/src/**/*.tsx";
+
 @layer base {
   * {
     @apply border-border;

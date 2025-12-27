@@ -1,3 +1,24 @@
+import { Badge } from "@bahar/web-ui/components/badge";
+import { Button } from "@bahar/web-ui/components/button";
+import { Checkbox } from "@bahar/web-ui/components/checkbox";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@bahar/web-ui/components/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@bahar/web-ui/components/form";
+import { Input } from "@bahar/web-ui/components/input";
+import { Label } from "@bahar/web-ui/components/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
@@ -9,27 +30,6 @@ import { decksTable } from "@/lib/db/operations/decks";
 import { queryClient } from "@/lib/query";
 import { z } from "@/lib/zod";
 import { Autocomplete } from "../../Autocomplete";
-import { Badge } from "../../ui/badge";
-import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
-import {
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../../ui/form";
-import { Input } from "../../ui/input";
-import { Label } from "../../ui/label";
 
 const DeckSchema = z.object({
   id: z.string(),

@@ -1,15 +1,15 @@
-import { Trans } from "@lingui/react/macro";
-import { X } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { Autocomplete } from "@/components/Autocomplete";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@bahar/web-ui/components/badge";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
+import { Trans } from "@lingui/react/macro";
+import { X } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { Autocomplete } from "@/components/Autocomplete";
 import type { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 

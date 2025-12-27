@@ -1,6 +1,21 @@
 import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { toFsrsCard } from "@bahar/fsrs";
+import { Button } from "@bahar/web-ui/components/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@bahar/web-ui/components/drawer";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@bahar/web-ui/components/tooltip";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Archive, Brain, PartyPopper, Sparkles } from "lucide-react";
@@ -25,17 +40,6 @@ import {
   flashcardsTable,
 } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";
-import { Button } from "../../../ui/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "../../../ui/drawer";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/tooltip";
 import { AnswerSide } from "../AnswerSide";
 import { QuestionSide } from "../QuestionSide";
 import { ReverseAnswerSide } from "../ReverseAnswerSide";

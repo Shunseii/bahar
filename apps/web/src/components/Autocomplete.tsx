@@ -1,10 +1,10 @@
 import { cn } from "@bahar/design-system";
+import { Input } from "@bahar/web-ui/components/input";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useClickAway, useDebounce } from "@uidotdev/usehooks";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { Input } from "./ui/input";
 
 interface AutocompleteProps {
   className?: string;

@@ -1,8 +1,3 @@
-import { Trans } from "@lingui/react/macro";
-import { useAtom } from "jotai";
-import { Monitor, Moon, Sun } from "lucide-react";
-import type { FC } from "react";
-import { getAllThemes, Theme, themeAtom } from "@/atoms/theme";
 import {
   Select,
   SelectContent,
@@ -10,7 +5,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@bahar/web-ui/components/select";
+import { Trans } from "@lingui/react/macro";
+import { useAtom } from "jotai";
+import { Monitor, Moon, Sun } from "lucide-react";
+import type { FC } from "react";
+import { getAllThemes, Theme, themeAtom } from "@/atoms/theme";
 import { useDir } from "@/hooks/useDir";
 
 export const ThemeIcon: FC<{ theme: Theme }> = ({ theme }) => {

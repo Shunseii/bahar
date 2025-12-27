@@ -1,17 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Trans, useLingui } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
-import { useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button } from "@bahar/web-ui/components/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
   Form,
   FormControl,
@@ -19,8 +13,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+} from "@bahar/web-ui/components/form";
+import { Textarea } from "@bahar/web-ui/components/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { api } from "@/lib/api";
 import { z } from "@/lib/zod";
 

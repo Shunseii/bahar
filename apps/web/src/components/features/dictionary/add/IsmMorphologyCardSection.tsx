@@ -1,14 +1,11 @@
-import { Trans, useLingui } from "@lingui/react/macro";
-import { InfoIcon, Plus } from "lucide-react";
-import { useFieldArray, useFormContext } from "react-hook-form";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
+} from "@bahar/web-ui/components/accordion";
+import { Button } from "@bahar/web-ui/components/button";
+import { CardContent } from "@bahar/web-ui/components/card";
 import {
   FormControl,
   FormDescription,
@@ -16,20 +13,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@bahar/web-ui/components/form";
+import { Input } from "@bahar/web-ui/components/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@bahar/web-ui/components/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@bahar/web-ui/components/select";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { InfoIcon, Plus } from "lucide-react";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { useDir } from "@/hooks/useDir";
 import { type FormSchema, Inflection } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";

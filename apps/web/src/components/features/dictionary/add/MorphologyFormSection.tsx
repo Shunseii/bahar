@@ -1,18 +1,18 @@
-import { Trans } from "@lingui/react/macro";
-import { InfoIcon } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useFormContext } from "react-hook-form";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@bahar/web-ui/components/popover";
+import { Trans } from "@lingui/react/macro";
+import { InfoIcon } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { useFormContext } from "react-hook-form";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import type { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";

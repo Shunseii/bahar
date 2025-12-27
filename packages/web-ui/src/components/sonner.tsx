@@ -9,10 +9,32 @@ import { Toaster as Sonner } from "sonner";
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
-const Toaster = ({ ...props }: ToasterProps) => {
+const getDirection = (): "ltr" | "rtl" => {
+  const documentDir = document.documentElement.dir;
+
+  if (documentDir === "rtl") {
+    return "rtl";
+  }
+
+  if (documentDir === "ltr") {
+    return "ltr";
+  }
+
+  return "ltr";
+};
+
+const Toaster = ({ position, ...props }: ToasterProps) => {
+  const dir = getDirection();
+  const isRtl = dir === "rtl";
+
+  // Flip position for RTL if not explicitly set
+  const resolvedPosition: ToasterProps["position"] =
+    position ?? (isRtl ? "bottom-left" : "bottom-right");
+
   return (
     <Sonner
       className="toaster group"
+      dir={dir}
       icons={{
         success: <CircleCheck className="h-4 w-4" />,
         info: <Info className="h-4 w-4" />,
@@ -20,6 +42,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         error: <OctagonX className="h-4 w-4" />,
         loading: <LoaderCircle className="h-4 w-4 animate-spin" />,
       }}
+      position={resolvedPosition}
       toastOptions={{
         classNames: {
           toast:

@@ -1,8 +1,8 @@
+import { Toaster } from "@bahar/web-ui/components/sonner";
 import { useLingui } from "@lingui/react/macro";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { useDocumentTitle } from "@uidotdev/usehooks";
 import { useEffect } from "react";
-import { Toaster } from "@/components/ui/sonner";
 import type { authClient } from "@/lib/auth-client";
 
 // const TanStackRouterDevtools = import.meta.env.PROD

@@ -80,13 +80,13 @@ Static marketing site and blog:
 | Package                          | Description                                |
 | -------------------------------- | ------------------------------------------ |
 | `@bahar/db-operations`           | Shared database operations                 |
-| `@bahar/design-system`           | Shared design tokens and components        |
+| `@bahar/design-system`           | Shared design tokens (`cn()`, CSS)         |
 | `@bahar/drizzle-user-db-schemas` | Drizzle schemas for per-user databases     |
 | `@bahar/fsrs`                    | FSRS spaced repetition algorithm utilities |
 | `@bahar/i18n`                    | Internationalization with Lingui           |
 | `@bahar/result`                  | Result type for error handling             |
 | `@bahar/search`                  | Orama search configuration                 |
-| `@bahar/eslint-config`           | Shared ESLint configuration                |
+| `@bahar/web-ui`                  | Shared shadcn/ui components (web only)     |
 | `@bahar/typescript-config`       | Shared TypeScript configuration            |
 
 ## Development

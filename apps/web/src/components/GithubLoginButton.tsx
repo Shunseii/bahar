@@ -1,7 +1,7 @@
+import { Button } from "@bahar/web-ui/components/button";
 import type { FC, ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Route } from "@/routes/_unauthorized-layout/login/route";
-import { Button } from "./ui/button";
 import { GithubLogo } from "./ui/icons";
 
 export const GithubLoginButton: FC<{ children: ReactNode }> = ({

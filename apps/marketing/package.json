@@ -13,6 +13,7 @@
     "@astrojs/react": "^4.2.1",
     "@astrojs/sitemap": "^3.3.1",
     "@bahar/design-system": "workspace:*",
+    "@bahar/web-ui": "workspace:*",
     "astro": "^5.7.10",
     "motion": "^12.0.0",
     "react": "19.0.0",

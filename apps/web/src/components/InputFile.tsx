@@ -1,10 +1,10 @@
 import { cn } from "@bahar/design-system";
+import { Input, type InputProps } from "@bahar/web-ui/components/input";
+import { Label } from "@bahar/web-ui/components/label";
+import { Separator } from "@bahar/web-ui/components/separator";
 import { Trans } from "@lingui/react/macro";
 import { XIcon } from "lucide-react";
 import { type FC, useCallback, useRef, useState } from "react";
-import { Input, type InputProps } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "./ui/separator";
 
 type InputFileProps = Omit<InputProps, "onChange"> & {
   onChange?: (value?: File) => void;

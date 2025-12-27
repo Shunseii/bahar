@@ -1,32 +1,32 @@
-import { Trans, useLingui } from "@lingui/react/macro";
-import { InfoIcon } from "lucide-react";
-import { useFormContext } from "react-hook-form";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@bahar/web-ui/components/card";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@bahar/web-ui/components/form";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@bahar/web-ui/components/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@bahar/web-ui/components/select";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { InfoIcon } from "lucide-react";
+import { useFormContext } from "react-hook-form";
 import { useDir } from "@/hooks/useDir";
 import type { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";

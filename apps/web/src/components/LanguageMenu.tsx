@@ -1,6 +1,3 @@
-import { i18n } from "@lingui/core";
-import { Trans } from "@lingui/react/macro";
-import type { FC } from "react";
 import {
   Select,
   SelectContent,
@@ -8,7 +5,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@bahar/web-ui/components/select";
+import { i18n } from "@lingui/core";
+import { Trans } from "@lingui/react/macro";
+import type { FC } from "react";
 import { useDir } from "@/hooks/useDir";
 import { dynamicActivate, getLocaleKeys, type TLocale } from "@/lib/i18n";
 

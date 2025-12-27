@@ -1,9 +1,9 @@
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import { Badge } from "@bahar/web-ui/components/badge";
 import { t } from "@lingui/core/macro";
 import { motion } from "motion/react";
 import type { FC } from "react";
 import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
-import { Badge } from "../../../ui/badge";
 
 const getTranslatedType = (entryType: SelectDictionaryEntry["type"]) => {
   switch (entryType) {

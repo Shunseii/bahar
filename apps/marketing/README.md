@@ -76,3 +76,25 @@ Each post requires frontmatter with title, description, pubDate, and optional ta
 ### Styling
 
 The site uses Tailwind CSS v4 with oklch colors matching the main app's design system. Theme colors are defined in `src/styles/global.css` with light and dark mode support.
+
+## UI Components (shadcn)
+
+This app uses shadcn/ui components from the shared `@bahar/web-ui` package.
+
+### Adding New Components
+
+```bash
+npx shadcn@latest add [component]
+```
+
+This installs components to `packages/web-ui/src/components/`.
+
+### Importing Components
+
+```tsx
+import { Button } from "@bahar/web-ui/components/button";
+import { Card } from "@bahar/web-ui/components/card";
+import { cn } from "@bahar/web-ui/lib/utils";
+```
+
+See `packages/web-ui/README.md` for the full list of available components.

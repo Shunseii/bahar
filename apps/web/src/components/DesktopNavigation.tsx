@@ -1,10 +1,4 @@
-import { Trans } from "@lingui/react/macro";
-import { Link } from "@tanstack/react-router";
-import { Home, Layers, Settings } from "lucide-react";
-import { motion } from "motion/react";
-import Logo from "@/assets/logo.svg";
-import { NavLink } from "@/components/NavLink";
-import { Button } from "@/components/ui/button";
+import { Button } from "@bahar/web-ui/components/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,12 +6,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@bahar/web-ui/components/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@bahar/web-ui/components/tooltip";
+import { Trans } from "@lingui/react/macro";
+import { Link } from "@tanstack/react-router";
+import { Home, Layers, Settings } from "lucide-react";
+import { motion } from "motion/react";
+import Logo from "@/assets/logo.svg";
+import { NavLink } from "@/components/NavLink";
 import { useLogout } from "@/hooks/useLogout";
 
 export const DesktopNavigation = () => {

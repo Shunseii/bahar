@@ -1,3 +1,4 @@
+import { TooltipProvider } from "@bahar/web-ui/components/tooltip";
 import { i18n } from "@lingui/core";
 import { detect, fromNavigator, fromStorage } from "@lingui/detect-locale";
 import { I18nProvider } from "@lingui/react";
@@ -6,7 +7,6 @@ import { RouterProvider } from "@tanstack/react-router";
 import { useToggle } from "@uidotdev/usehooks";
 import { Provider as JotaiProvider } from "jotai";
 import { useEffect } from "react";
-import { TooltipProvider } from "./components/ui/tooltip";
 import {
   DEFAULT_LOCALE,
   dynamicActivate,
