@@ -5,11 +5,8 @@
  * for cross-platform database operations using expo-sqlite.
  */
 
+import type { DatabaseAdapter, PreparedStatement } from "@bahar/db-operations";
 import * as SQLite from "expo-sqlite";
-import type {
-  DatabaseAdapter,
-  PreparedStatement,
-} from "@bahar/db-operations";
 
 // Store the database instance for sync operations
 let dbInstance: SQLite.SQLiteDatabase | null = null;
@@ -25,11 +22,17 @@ const createAdapter = (db: SQLite.SQLiteDatabase): DatabaseAdapter => {
     prepare<T = unknown>(sql: string): PreparedStatement<T> {
       return {
         async all(params: unknown[] = []): Promise<T[]> {
-          const result = await db.getAllAsync<T>(sql, params as SQLite.SQLiteBindParams);
+          const result = await db.getAllAsync<T>(
+            sql,
+            params as SQLite.SQLiteBindParams
+          );
           return result;
         },
         async get(params: unknown[] = []): Promise<T | undefined> {
-          const result = await db.getFirstAsync<T>(sql, params as SQLite.SQLiteBindParams);
+          const result = await db.getFirstAsync<T>(
+            sql,
+            params as SQLite.SQLiteBindParams
+          );
           return result ?? undefined;
         },
         async run(params: unknown[] = []): Promise<void> {
@@ -87,7 +90,9 @@ export interface ConnectOptions {
 /**
  * Opens a local SQLite database that syncs with a remote Turso database.
  */
-export const connect = async (options: ConnectOptions): Promise<DatabaseAdapter> => {
+export const connect = async (
+  options: ConnectOptions
+): Promise<DatabaseAdapter> => {
   const db = await SQLite.openDatabaseAsync(options.name, {
     libSQLOptions: {
       url: options.url,

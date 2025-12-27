@@ -1,14 +1,17 @@
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { MoreHorizontal, Plus } from "lucide-react";
 import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
+import { Page } from "@/components/Page";
 import { Button } from "@/components/ui/button";
-import { useLingui } from "@lingui/react/macro";
-import { useFormatNumber } from "@/hooks/useFormatNumber";
 import {
   Card,
+  CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
 } from "@/components/ui/card";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
@@ -20,21 +23,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { MoreHorizontal, Plus } from "lucide-react";
-import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
-import { queryClient } from "@/lib/query";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useToast } from "@/hooks/useToast";
-import { Page } from "@/components/Page";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { settingsTable } from "@/lib/db/operations/settings";
 import { decksTable } from "@/lib/db/operations/decks";
+import { settingsTable } from "@/lib/db/operations/settings";
+import { queryClient } from "@/lib/query";
 
 const Decks = () => {
   const { data: settingsData } = useQuery({
@@ -68,11 +67,11 @@ const Decks = () => {
   const { formatNumber } = useFormatNumber();
 
   return (
-    <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
+    <Page className="m-auto flex w-full max-w-4xl flex-col gap-y-8">
       <Dialog>
         <DialogTrigger asChild className="w-max self-end">
           <Button size="sm" variant="outline">
-            <span className="flex gap-x-2 items-center">
+            <span className="flex items-center gap-x-2">
               <Plus className="h-5 w-5" />
 
               <Trans>Create deck</Trans>
@@ -83,7 +82,7 @@ const Decks = () => {
         <DeckDialogContent />
       </Dialog>
 
-      <Card className="w-full m-auto max-w-[90vw]">
+      <Card className="m-auto w-full max-w-[90vw]">
         <CardHeader>
           <CardTitle>
             <Trans>Decks</Trans>
@@ -159,15 +158,15 @@ const Decks = () => {
                     <TableCell className="flex justify-between">
                       <FlashcardDrawer
                         filters={deck.filters ?? undefined}
-                        show_reverse={
-                          settingsData?.show_reverse_flashcards ?? undefined
-                        }
                         queueCounts={{
                           regular: deck.to_review,
                           backlog: deck.to_review_backlog,
                         }}
+                        show_reverse={
+                          settingsData?.show_reverse_flashcards ?? undefined
+                        }
                       >
-                        <Button variant="outline" size="sm">
+                        <Button size="sm" variant="outline">
                           <Trans>Study</Trans>
                         </Button>
                       </FlashcardDrawer>
@@ -197,6 +196,7 @@ const Decks = () => {
                             </DialogTrigger>
 
                             <DropdownMenuItem
+                              className="cursor-pointer"
                               onClick={async () => {
                                 await deleteDeck({ id: deck.id });
 
@@ -205,7 +205,6 @@ const Decks = () => {
                                   description: t`The deck "${deck.name}" has been deleted.`,
                                 });
                               }}
-                              className="cursor-pointer"
                             >
                               <Trans>Delete</Trans>
                             </DropdownMenuItem>
@@ -227,7 +226,7 @@ const Decks = () => {
 };
 
 export const Route = createLazyFileRoute(
-  "/_authorized-layout/_app-layout/decks",
+  "/_authorized-layout/_app-layout/decks"
 )({
   component: Decks,
 });

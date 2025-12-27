@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { useLingui } from "@lingui/react/macro";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { useDocumentTitle } from "@uidotdev/usehooks";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { authClient } from "@/lib/auth-client";
+import type { authClient } from "@/lib/auth-client";
 
 // const TanStackRouterDevtools = import.meta.env.PROD
 //   ? () => null // Render nothing in production

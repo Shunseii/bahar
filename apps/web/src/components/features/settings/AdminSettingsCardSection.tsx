@@ -1,4 +1,8 @@
-import { Trans } from "@lingui/react/macro";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,15 +19,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/useToast";
 import { api } from "@/lib/api";
 import { z } from "@/lib/zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useLingui } from "@lingui/react/macro";
-import { useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
-import { useMutation } from "@tanstack/react-query";
 
 const FormSchema = z.object({
   sqlScript: z.string(),
@@ -35,7 +34,7 @@ export const AdminSettingsCardSection = () => {
   const { toast } = useToast();
   const { mutate } = useMutation({
     mutationFn: async (
-      data: Parameters<typeof api.migrations.register.post>[0],
+      data: Parameters<typeof api.migrations.register.post>[0]
     ) => {
       const { data: result, error } = await api.migrations.register.post(data);
 
@@ -76,7 +75,7 @@ export const AdminSettingsCardSection = () => {
     (data: z.infer<typeof FormSchema>) => {
       mutate(data);
     },
-    [mutate],
+    [mutate]
   );
 
   return (
@@ -94,11 +93,10 @@ export const AdminSettingsCardSection = () => {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-y-4 mb-4">
+            <div className="mb-4 flex flex-col gap-y-4">
               <FormField
                 control={form.control}
                 name="sqlScript"
-                rules={{ required: true }}
                 render={({ field }) => (
                   <FormItem className="space-y-3">
                     <FormLabel>
@@ -108,14 +106,15 @@ export const AdminSettingsCardSection = () => {
                     <FormControl>
                       <Textarea
                         {...field}
-                        placeholder={t`Enter your SQL migration script here`}
                         className="w-full"
+                        placeholder={t`Enter your SQL migration script here`}
                       />
                     </FormControl>
 
                     <FormMessage />
                   </FormItem>
                 )}
+                rules={{ required: true }}
               />
 
               <FormField
@@ -130,8 +129,8 @@ export const AdminSettingsCardSection = () => {
                     <FormControl>
                       <Textarea
                         {...field}
-                        placeholder={t`Enter a description for your migration`}
                         className="w-full"
+                        placeholder={t`Enter a description for your migration`}
                       />
                     </FormControl>
 
@@ -141,11 +140,11 @@ export const AdminSettingsCardSection = () => {
               />
 
               <Button
-                type="submit"
                 className="w-max"
                 disabled={
                   !form.formState.isDirty || form.formState.isSubmitting
                 }
+                type="submit"
               >
                 <Trans>Save</Trans>
               </Button>

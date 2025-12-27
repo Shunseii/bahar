@@ -1,8 +1,8 @@
 import { highlightWithDiacritics } from "@bahar/search";
-import { useAtomValue } from "jotai";
-import { FC, useMemo, memo } from "react";
-import { searchQueryAtom } from "./state";
 import DOMPurify from "dompurify";
+import { useAtomValue } from "jotai";
+import { type FC, memo, useMemo } from "react";
+import { searchQueryAtom } from "./state";
 
 export const Highlight: FC<{ text: string }> = memo(({ text }) => {
   const searchTerm = useAtomValue(searchQueryAtom);

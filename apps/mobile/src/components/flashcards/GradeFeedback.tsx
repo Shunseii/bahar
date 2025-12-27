@@ -4,20 +4,20 @@
  * Shows animated feedback based on the grade selected.
  */
 
-import React, { useEffect } from "react";
-import { View } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withSequence,
-  withTiming,
-  runOnJS,
-  Easing,
-} from "react-native-reanimated";
-import { Rating, type Grade } from "@bahar/fsrs";
-import { RotateCcw, Brain, ThumbsUp, Zap } from "lucide-react-native";
+import { type Grade, Rating } from "@bahar/fsrs";
 import * as Haptics from "expo-haptics";
+import { Brain, RotateCcw, ThumbsUp, Zap } from "lucide-react-native";
+import type React from "react";
+import { useEffect } from "react";
+import Animated, {
+  Easing,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 import { useThemeColors } from "@/lib/theme";
 
 interface GradeFeedbackProps {
@@ -29,23 +29,32 @@ const ICON_SIZE = 48;
 
 type ThemeColors = ReturnType<typeof useThemeColors>;
 
-const getFeedbackConfig = (colors: ThemeColors): Record<Grade, { Icon: typeof RotateCcw; color: string; bgColor: string }> => ({
-  1: { // Again
+const getFeedbackConfig = (
+  colors: ThemeColors
+): Record<
+  Grade,
+  { Icon: typeof RotateCcw; color: string; bgColor: string }
+> => ({
+  1: {
+    // Again
     Icon: RotateCcw,
     color: colors.mutedForeground,
     bgColor: "bg-muted/30",
   },
-  2: { // Hard
+  2: {
+    // Hard
     Icon: Brain,
     color: colors.warning,
     bgColor: "bg-warning/20",
   },
-  3: { // Good
+  3: {
+    // Good
     Icon: ThumbsUp,
     color: colors.primary,
     bgColor: "bg-primary/20",
   },
-  4: { // Easy
+  4: {
+    // Easy
     Icon: Zap,
     color: colors.success,
     bgColor: "bg-success/20",
@@ -79,7 +88,7 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
     opacity.value = withTiming(1, { duration: 100 });
     bgOpacity.value = withSequence(
       withTiming(1, { duration: 150 }),
-      withTiming(0, { duration: 400 }),
+      withTiming(0, { duration: 400 })
     );
 
     // Scale and rotation based on grade
@@ -88,25 +97,25 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
         withTiming(-10, { duration: 50 }),
         withTiming(10, { duration: 100 }),
         withTiming(-10, { duration: 100 }),
-        withTiming(0, { duration: 50 }),
+        withTiming(0, { duration: 50 })
       );
       scale.value = withSequence(
         withSpring(1.2, { damping: 10, stiffness: 300 }),
-        withTiming(1, { duration: 200 }),
+        withTiming(1, { duration: 200 })
       );
     } else if (grade === Rating.Easy) {
       rotation.value = withSequence(
         withTiming(-15, { duration: 100 }),
-        withSpring(0, { damping: 8, stiffness: 200 }),
+        withSpring(0, { damping: 8, stiffness: 200 })
       );
       scale.value = withSequence(
         withSpring(1.4, { damping: 8, stiffness: 300 }),
-        withTiming(1, { duration: 200 }),
+        withTiming(1, { duration: 200 })
       );
     } else {
       scale.value = withSequence(
         withSpring(1.3, { damping: 10, stiffness: 300 }),
-        withTiming(1, { duration: 200 }),
+        withTiming(1, { duration: 200 })
       );
     }
 
@@ -129,10 +138,7 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
   }));
 
   const iconContainerStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { rotate: `${rotation.value}deg` },
-    ],
+    transform: [{ scale: scale.value }, { rotate: `${rotation.value}deg` }],
   }));
 
   if (grade === null) return null;
@@ -142,36 +148,42 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
 
   return (
     <Animated.View
-      style={[containerStyle, {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 50,
-      }]}
       pointerEvents="none"
-    >
-      {/* Background pulse */}
-      <Animated.View
-        style={[bgStyle, {
+      style={[
+        containerStyle,
+        {
           position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-        }]}
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 50,
+        },
+      ]}
+    >
+      {/* Background pulse */}
+      <Animated.View
         className={config.bgColor}
+        style={[
+          bgStyle,
+          {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+          },
+        ]}
       />
 
       {/* Icon */}
       <Animated.View
+        className={`rounded-full p-6 ${config.bgColor}`}
         style={iconContainerStyle}
-        className={`p-6 rounded-full ${config.bgColor}`}
       >
-        <Icon size={ICON_SIZE} color={config.color} />
+        <Icon color={config.color} size={ICON_SIZE} />
       </Animated.View>
 
       {/* Sparkles for Easy grade */}
@@ -189,13 +201,16 @@ const Sparkles: React.FC<{ color: string }> = ({ color }) => {
   return (
     <>
       {sparkles.map(({ angle, key }) => (
-        <SparkleParticle key={key} angle={angle} color={color} />
+        <SparkleParticle angle={angle} color={color} key={key} />
       ))}
     </>
   );
 };
 
-const SparkleParticle: React.FC<{ angle: number; color: string }> = ({ angle, color }) => {
+const SparkleParticle: React.FC<{ angle: number; color: string }> = ({
+  angle,
+  color,
+}) => {
   const scale = useSharedValue(0);
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -208,14 +223,20 @@ const SparkleParticle: React.FC<{ angle: number; color: string }> = ({ angle, co
 
     opacity.value = withSequence(
       withTiming(1, { duration: 100 }),
-      withTiming(0, { duration: 300, easing: Easing.out(Easing.ease) }),
+      withTiming(0, { duration: 300, easing: Easing.out(Easing.ease) })
     );
     scale.value = withSequence(
       withTiming(1, { duration: 150 }),
-      withTiming(0, { duration: 300 }),
+      withTiming(0, { duration: 300 })
     );
-    translateX.value = withTiming(x, { duration: 400, easing: Easing.out(Easing.ease) });
-    translateY.value = withTiming(y, { duration: 400, easing: Easing.out(Easing.ease) });
+    translateX.value = withTiming(x, {
+      duration: 400,
+      easing: Easing.out(Easing.ease),
+    });
+    translateY.value = withTiming(y, {
+      duration: 400,
+      easing: Easing.out(Easing.ease),
+    });
   }, [angle, scale, translateX, translateY, opacity]);
 
   const style = useAnimatedStyle(() => ({
@@ -229,13 +250,16 @@ const SparkleParticle: React.FC<{ angle: number; color: string }> = ({ angle, co
 
   return (
     <Animated.View
-      style={[style, {
-        position: "absolute",
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: color,
-      }]}
+      style={[
+        style,
+        {
+          position: "absolute",
+          width: 8,
+          height: 8,
+          borderRadius: 4,
+          backgroundColor: color,
+        },
+      ]}
     />
   );
 };

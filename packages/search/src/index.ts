@@ -6,39 +6,37 @@
  */
 
 export {
-  stripArabicDiacritics,
+  detectLanguage,
+  isArabicText,
+  normalizeArabicForSearch,
   normalizeArabicHamza,
   normalizeArabicWeakLetters,
-  normalizeArabicForSearch,
-  isArabicText,
-  detectLanguage,
+  stripArabicDiacritics,
 } from "./arabic";
+export {
+  createDictionaryDatabase,
+  insert,
+  insertDocument,
+  insertDocuments,
+  insertMultiple,
+  remove,
+  removeDocument,
+  search,
+  searchDictionary,
+  update,
+  updateDocument,
+} from "./database";
 
+export { highlightWithDiacritics } from "./highlight";
+
+export {
+  type DictionaryDocument,
+  type DictionaryOrama,
+  dictionarySchema,
+} from "./schema";
 export {
   arabicTokenizer,
   englishTokenizer,
   multiLanguageTokenizer,
   type OramaLanguage,
 } from "./tokenizer";
-
-export { highlightWithDiacritics } from "./highlight";
-
-export {
-  dictionarySchema,
-  type DictionaryDocument,
-  type DictionaryOrama,
-} from "./schema";
-
-export {
-  createDictionaryDatabase,
-  insertDocuments,
-  insertDocument,
-  updateDocument,
-  removeDocument,
-  searchDictionary,
-  insert,
-  update,
-  remove,
-  search,
-  insertMultiple,
-} from "./database";

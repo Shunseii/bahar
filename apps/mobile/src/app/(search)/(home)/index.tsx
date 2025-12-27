@@ -1,15 +1,15 @@
-import React, { useState, useCallback, useMemo } from "react";
-import { View, Text, ActivityIndicator, Pressable } from "react-native";
-import { PlusIcon, BookOpen, GraduationCap } from "lucide-react-native";
-import { Trans, Plural } from "@lingui/react/macro";
-import { useRouter } from "expo-router";
-import { useSearchQuery } from "../_layout";
-import { useAppInit } from "@/hooks/useAppInit";
-import { DictionaryList } from "@/components/dictionary";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
+import { BookOpen, GraduationCap, PlusIcon } from "lucide-react-native";
+import { useCallback, useMemo, useState } from "react";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DictionaryList } from "@/components/dictionary";
+import { useAppInit } from "@/hooks/useAppInit";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { useThemeColors } from "@/lib/theme";
+import { useSearchQuery } from "../_layout";
 
 /**
  * Formats nanoseconds to a human-readable elapsed time string.
@@ -17,13 +17,14 @@ import { useThemeColors } from "@/lib/theme";
 const formatElapsedTime = (nanoseconds: number): string => {
   if (nanoseconds < 1000) {
     return `${nanoseconds.toFixed(0)}ns`;
-  } else if (nanoseconds < 1_000_000) {
-    return `${(nanoseconds / 1000).toFixed(2)}μs`;
-  } else if (nanoseconds < 1_000_000_000) {
-    return `${(nanoseconds / 1_000_000).toFixed(2)}ms`;
-  } else {
-    return `${(nanoseconds / 1_000_000_000).toFixed(2)}s`;
   }
+  if (nanoseconds < 1_000_000) {
+    return `${(nanoseconds / 1000).toFixed(2)}μs`;
+  }
+  if (nanoseconds < 1_000_000_000) {
+    return `${(nanoseconds / 1_000_000).toFixed(2)}ms`;
+  }
+  return `${(nanoseconds / 1_000_000_000).toFixed(2)}s`;
 };
 
 // Header component that scrolls with the list
@@ -46,7 +47,7 @@ const HeaderCard = ({
 
   return (
     <View
-      className="mt-1 mb-4 rounded-xl bg-card overflow-hidden"
+      className="mt-1 mb-4 overflow-hidden rounded-xl bg-card"
       style={{
         shadowColor: colors.foreground,
         shadowOffset: { width: 0, height: 4 },
@@ -60,27 +61,27 @@ const HeaderCard = ({
 
       <View className="px-4 pt-4 pb-3">
         {/* Top row: Icon + Title + Count */}
-        <View className="flex-row items-center gap-3 mb-3">
+        <View className="mb-3 flex-row items-center gap-3">
           <View
-            className="w-10 h-10 rounded-xl bg-primary/10 items-center justify-center"
+            className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
             style={{
               borderWidth: 1,
               borderColor: `${colors.primary}33`, // 20% opacity
             }}
           >
-            <BookOpen size={20} color={colors.primary} />
+            <BookOpen color={colors.primary} size={20} />
           </View>
           <View className="flex-1">
-            <Text className="text-lg font-semibold text-foreground tracking-tight">
+            <Text className="font-semibold text-foreground text-lg tracking-tight">
               <Trans>Your Dictionary</Trans>
             </Text>
-            <Text className="text-sm text-muted-foreground">
+            <Text className="text-muted-foreground text-sm">
               {totalResults !== null ? (
                 <>
                   <Plural
-                    value={totalResults}
                     one={`${totalResults} result`}
                     other={`${totalResults} results`}
+                    value={totalResults}
                   />
                   {elapsedTimeNs !== null && (
                     <Text className="text-muted-foreground/60">
@@ -100,30 +101,33 @@ const HeaderCard = ({
         <View className="flex-row items-center gap-2">
           {/* Review Button */}
           <Pressable
-            onPress={onReviewPress}
-            disabled={isPending}
-            className={`flex-row items-center gap-1.5 px-3 h-9 rounded-lg ${
+            className={`h-9 flex-row items-center gap-1.5 rounded-lg px-3 ${
               dueCount > 0 ? "bg-warning/10" : "active:bg-primary/5"
             }`}
+            disabled={isPending}
+            onPress={onReviewPress}
           >
             <GraduationCap
-              size={16}
               color={dueCount > 0 ? colors.warning : colors.mutedForeground}
+              size={16}
             />
             <Text
-              style={dueCount > 0 ? { color: colors.warning } : undefined}
               className={`text-sm ${
                 dueCount > 0 ? "" : "text-muted-foreground"
               } ${isPending ? "opacity-50" : ""}`}
+              style={dueCount > 0 ? { color: colors.warning } : undefined}
             >
               <Trans>Review</Trans>
             </Text>
             {!isPending && dueCount > 0 && (
               <View
+                className="ml-0.5 h-5 min-w-5 items-center justify-center rounded-full px-1.5"
                 style={{ backgroundColor: colors.warning }}
-                className="rounded-full px-1.5 min-w-5 h-5 items-center justify-center ml-0.5"
               >
-                <Text style={{ color: colors.warningForeground }} className="text-xs font-semibold">
+                <Text
+                  className="font-semibold text-xs"
+                  style={{ color: colors.warningForeground }}
+                >
                   {dueCount}
                 </Text>
               </View>
@@ -135,8 +139,8 @@ const HeaderCard = ({
 
           {/* Add Word Button */}
           <Pressable
+            className="h-9 flex-row items-center gap-1.5 rounded-md bg-primary px-3 active:opacity-80"
             onPress={onAddPress}
-            className="flex-row items-center gap-1.5 h-9 px-3 rounded-md bg-primary active:opacity-80"
             style={{
               shadowColor: colors.primary,
               shadowOffset: { width: 0, height: 2 },
@@ -145,8 +149,8 @@ const HeaderCard = ({
               elevation: 3,
             }}
           >
-            <PlusIcon size={16} color={colors.primaryForeground} />
-            <Text className="text-primary-foreground text-sm font-medium">
+            <PlusIcon color={colors.primaryForeground} size={16} />
+            <Text className="font-medium text-primary-foreground text-sm">
               <Trans>Add word</Trans>
             </Text>
           </Pressable>
@@ -195,23 +199,23 @@ export default function HomeScreen() {
   const listHeader = useMemo(
     () => (
       <HeaderCard
-        totalResults={totalResults}
-        elapsedTimeNs={elapsedTimeNs}
         dueCount={dueCount}
+        elapsedTimeNs={elapsedTimeNs}
         isPending={isPending}
-        onReviewPress={handleReviewPress}
         onAddPress={handleAddPress}
+        onReviewPress={handleReviewPress}
+        totalResults={totalResults}
       />
     ),
-    [totalResults, elapsedTimeNs, dueCount, isPending],
+    [totalResults, elapsedTimeNs, dueCount, isPending]
   );
 
   // Show loading state while initializing
   if (state === "loading" || state === "idle") {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text className="text-muted-foreground mt-4">
+      <View className="flex-1 items-center justify-center bg-background">
+        <ActivityIndicator color={colors.primary} size="large" />
+        <Text className="mt-4 text-muted-foreground">
           <Trans>Loading your dictionary...</Trans>
         </Text>
       </View>
@@ -221,11 +225,11 @@ export default function HomeScreen() {
   // Show error state
   if (state === "error") {
     return (
-      <View className="flex-1 bg-background items-center justify-center px-8">
-        <Text className="text-destructive text-lg font-medium mb-2">
+      <View className="flex-1 items-center justify-center bg-background px-8">
+        <Text className="mb-2 font-medium text-destructive text-lg">
           <Trans>Something went wrong</Trans>
         </Text>
-        <Text className="text-muted-foreground text-center">{error}</Text>
+        <Text className="text-center text-muted-foreground">{error}</Text>
       </View>
     );
   }
@@ -234,11 +238,11 @@ export default function HomeScreen() {
     <View className="flex-1 bg-background">
       {/* Dictionary list with header */}
       <DictionaryList
-        searchQuery={searchQuery}
         bottomInset={insets.bottom}
-        onTotalCountChange={handleTotalCountChange}
-        onElapsedTimeChange={handleElapsedTimeChange}
         ListHeaderComponent={listHeader}
+        onElapsedTimeChange={handleElapsedTimeChange}
+        onTotalCountChange={handleTotalCountChange}
+        searchQuery={searchQuery}
       />
     </View>
   );

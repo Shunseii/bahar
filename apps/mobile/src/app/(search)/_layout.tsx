@@ -1,36 +1,36 @@
-import React, { useState, useRef, createContext, useContext, useEffect } from "react";
+import { cn } from "@bahar/design-system";
+import { Trans, useLingui } from "@lingui/react/macro";
 import {
-  View,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+  type DrawerContentComponentProps,
+  DrawerItemList,
+  type DrawerNavigationProp,
+} from "@react-navigation/drawer";
+import type { ParamListBase } from "@react-navigation/native";
+import { useLocales } from "expo-localization";
+import { usePathname } from "expo-router";
 import { Drawer } from "expo-router/drawer";
-import { DrawerContentComponentProps, DrawerItemList, DrawerNavigationProp } from "@react-navigation/drawer";
-import { ParamListBase } from "@react-navigation/native";
+import { useAtomValue } from "jotai";
 import {
-  PanelLeft,
-  PanelRight,
   Home,
   Layers,
+  PanelLeft,
+  PanelRight,
   Settings,
 } from "lucide-react-native";
-import { Trans, useLingui } from "@lingui/react/macro";
-import { useLocales } from "expo-localization";
-import { authClient } from "@/utils/auth-client";
-import { Button } from "@/components/ui/button";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { cn } from "@bahar/design-system";
-import { usePathname } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAtomValue } from "jotai";
-import { store, syncCompletedCountAtom, isSyncingAtom } from "@/lib/store";
-import { queryClient } from "@/utils/api";
-import { rehydrateOramaDb } from "@/lib/search";
 import { SyncIndicator } from "@/components/SyncIndicator";
-import { syncDatabase } from "@/lib/db/adapter";
+import { Button } from "@/components/ui/button";
 import { SYNC_INTERVAL_MS } from "@/lib/db";
+import { syncDatabase } from "@/lib/db/adapter";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { rehydrateOramaDb } from "@/lib/search";
+import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
+import { queryClient } from "@/utils/api";
+import { authClient } from "@/utils/auth-client";
 
 // Search context to share search query between layout and screens
 interface SearchContextValue {
@@ -70,41 +70,35 @@ function SearchBarHeader({
 
   return (
     <View
-      className="bg-background border-b border-border"
+      className="border-border border-b bg-background"
       style={{ paddingTop: insets.top }}
     >
-      <View className="flex-row items-center px-4 h-14">
+      <View className="h-14 flex-row items-center px-4">
         <TouchableOpacity
-          onPress={() => navigation.openDrawer()}
-          className="p-2 -ml-2"
+          className="-ml-2 p-2"
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          onPress={() => navigation.openDrawer()}
         >
           {dir === "rtl" ? (
-            <PanelRight
-              size={24}
-              color={colors.foreground}
-            />
+            <PanelRight color={colors.foreground} size={24} />
           ) : (
-            <PanelLeft
-              size={24}
-              color={colors.foreground}
-            />
+            <PanelLeft color={colors.foreground} size={24} />
           )}
         </TouchableOpacity>
 
         {showSearchBar && (
           <TextInput
-            className="flex-1 ml-2 border border-border rounded-md px-3 h-10 text-foreground"
-            placeholder={t`Search...`}
-            placeholderTextColor={colors.mutedForeground}
-            ref={inputRef}
-            value={searchQuery}
-            onChangeText={onSearchChange}
-            clearButtonMode="while-editing"
             autoCapitalize="none"
             autoComplete="off"
             autoCorrect={false}
+            className="ml-2 h-10 flex-1 rounded-md border border-border px-3 text-foreground"
+            clearButtonMode="while-editing"
+            onChangeText={onSearchChange}
+            placeholder={t`Search...`}
+            placeholderTextColor={colors.mutedForeground}
+            ref={inputRef}
             spellCheck={false}
+            value={searchQuery}
           />
         )}
       </View>
@@ -120,9 +114,9 @@ function DrawerContent(props: DrawerContentComponentProps) {
   return (
     <View
       className={cn(
-        "flex-1 bg-background border-border",
+        "flex-1 border-border bg-background",
         dir === "rtl" && "border-l",
-        dir === "ltr" && "border-r",
+        dir === "ltr" && "border-r"
       )}
       style={{
         paddingTop: insets.top,
@@ -136,10 +130,10 @@ function DrawerContent(props: DrawerContentComponentProps) {
 
         <View className="mt-4">
           <Button
-            variant="secondary"
             onPress={async () => {
               await authClient.signOut();
             }}
+            variant="secondary"
           >
             <Trans>Logout</Trans>
           </Button>
@@ -211,8 +205,8 @@ export default function Layout() {
           header: ({ navigation }) => (
             <SearchBarHeader
               navigation={navigation}
-              searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              searchQuery={searchQuery}
             />
           ),
         }}

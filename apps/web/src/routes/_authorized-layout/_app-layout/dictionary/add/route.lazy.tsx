@@ -1,6 +1,18 @@
-import { Trans } from "@lingui/react/macro";
+import { cn } from "@bahar/design-system";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import {
+  AdditionalDetailsFormSection,
+  BasicDetailsFormSection,
+  CategoryFormSection,
+  MorphologyFormSection,
+} from "@/components/features/dictionary/add";
+import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { Page } from "@/components/Page";
-import { Link, createLazyFileRoute } from "@tanstack/react-router";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,26 +21,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { z } from "@/lib/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { cn } from "@bahar/design-system";
-import {
-  AdditionalDetailsFormSection,
-  BasicDetailsFormSection,
-  MorphologyFormSection,
-  CategoryFormSection,
-} from "@/components/features/dictionary/add";
-import { useToast } from "@/hooks/useToast";
-import { useLingui } from "@lingui/react/macro";
-import { useEffect } from "react";
-import { useDir } from "@/hooks/useDir";
-import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { FormSchema } from "@/lib/schemas/dictionary";
 import { useAddDictionaryEntry } from "@/hooks/db";
+import { useDir } from "@/hooks/useDir";
+import { useToast } from "@/hooks/useToast";
+import { FormSchema } from "@/lib/schemas/dictionary";
+import type { z } from "@/lib/zod";
 
 const Breadcrumbs = ({ className }: { className?: string }) => {
   return (
@@ -59,11 +58,11 @@ const BackButton = () => {
 
   return (
     <Button
-      variant="outline"
-      type="button"
-      size="icon"
-      className="h-7 w-7"
       asChild
+      className="h-7 w-7"
+      size="icon"
+      type="button"
+      variant="outline"
     >
       <Link to="/">
         {dir === "rtl" ? (
@@ -135,24 +134,26 @@ const Add = () => {
             tags,
             morphology: { ism: data?.morphology?.ism },
           };
-        } else if (data.type === "fi'l") {
+        }
+        if (data.type === "fi'l") {
           return {
             ...data,
             root,
             tags,
             morphology: { verb: data?.morphology?.verb },
           };
-        } else {
-          return {
-            ...data,
-            root,
-            tags,
-            morphology: undefined,
-          };
         }
+        return {
+          ...data,
+          root,
+          tags,
+          morphology: undefined,
+        };
       })();
 
-      await addDictionaryEntry({ word: { ...wordData, type: data.type ?? "ism" } });
+      await addDictionaryEntry({
+        word: { ...wordData, type: data.type ?? "ism" },
+      });
 
       toast({
         title: t`Successfully added word!`,
@@ -187,12 +188,12 @@ const Add = () => {
             <div className="flex items-center gap-4">
               <BackButton />
 
-              <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+              <h1 className="flex-1 shrink-0 whitespace-nowrap font-semibold text-xl tracking-tight sm:grow-0">
                 <Trans>Add a new word to your dictionary</Trans>
               </h1>
 
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" type="button" size="sm" asChild>
+                <Button asChild size="sm" type="button" variant="outline">
                   <Link to="/">
                     <Trans>Discard</Trans>
                   </Link>
@@ -219,7 +220,7 @@ const Add = () => {
             </div>
 
             <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button variant="outline" size="sm" type="button" asChild>
+              <Button asChild size="sm" type="button" variant="outline">
                 <Link to="/">
                   <Trans>Discard</Trans>
                 </Link>
@@ -237,7 +238,7 @@ const Add = () => {
 };
 
 export const Route = createLazyFileRoute(
-  "/_authorized-layout/_app-layout/dictionary/add",
+  "/_authorized-layout/_app-layout/dictionary/add"
 )({
   component: Add,
 });

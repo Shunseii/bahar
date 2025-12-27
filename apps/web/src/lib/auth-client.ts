@@ -1,11 +1,11 @@
 import {
-  inferAdditionalFields,
-  emailOTPClient,
   adminClient,
+  emailOTPClient,
+  inferAdditionalFields,
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
-import { TRACE_ID_HEADER, generateTraceId } from "./utils";
 import type { auth } from "../../../api/src/auth";
+import { generateTraceId, TRACE_ID_HEADER } from "./utils";
 
 export const authClient = createAuthClient({
   baseURL: import.meta.env.VITE_API_BASE_URL,

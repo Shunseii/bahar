@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { ToastActionElement, ToastProps } from "@/components/ui/toast";
+import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
 
 /**
  * The maximum number of toasts that can be displayed at once.
@@ -68,7 +68,7 @@ const addToRemoveQueue = (toastId: string) => {
     toastTimeouts.delete(toastId);
     dispatch({
       type: "REMOVE_TOAST",
-      toastId: toastId,
+      toastId,
     });
   }, TOAST_REMOVE_DELAY);
 
@@ -87,7 +87,7 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         toasts: state.toasts.map((t) =>
-          t.id === action.toast.id ? { ...t, ...action.toast } : t,
+          t.id === action.toast.id ? { ...t, ...action.toast } : t
         ),
       };
 
@@ -112,7 +112,7 @@ export const reducer = (state: State, action: Action): State => {
                 ...t,
                 open: false,
               }
-            : t,
+            : t
         ),
       };
     }
@@ -166,7 +166,7 @@ const toast = ({ ...props }: Toast) => {
   });
 
   return {
-    id: id,
+    id,
     dismiss,
     update,
   };

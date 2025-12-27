@@ -1,6 +1,5 @@
 ---
-import BaseLayout from './BaseLayout.astro';
-import { t, getLocalizedPath, type Locale } from '../i18n';
+import type { Locale } from "../i18n";
 
 interface Props {
   title: string;
@@ -10,13 +9,22 @@ interface Props {
   locale: Locale;
 }
 
-const { title, description, pubDate, author = 'Bahar Team', locale } = Astro.props;
+const {
+  title,
+  description,
+  pubDate,
+  author = "Bahar Team",
+  locale,
+} = Astro.props;
 
-const formattedDate = pubDate.toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const formattedDate = pubDate.toLocaleDateString(
+  locale === "ar" ? "ar-SA" : "en-US",
+  {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }
+);
 ---
 
 <BaseLayout title={`${title} | ${t(locale, 'blog.title')}`} description={description} locale={locale}>

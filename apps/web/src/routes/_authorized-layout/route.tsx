@@ -1,35 +1,34 @@
-import { DesktopNavigation } from "@/components/DesktopNavigation";
-import { MobileHeader } from "@/components/MobileHeader";
-import { SyncIndicator } from "@/components/SyncIndicator";
-import { useSearch } from "@/hooks/useSearch";
-import { ensureDb, initDb } from "@/lib/db";
-import { enqueueSyncOperation } from "@/lib/db/queue";
-import { migrationTable } from "@/lib/db/operations/migration";
-import { hydrateOramaDb, rehydrateOramaDb } from "@/lib/search";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { useToast } from "@/hooks/useToast";
-import { store } from "@/lib/store";
-import { hydrationSkippedCountAtom } from "@/atoms/hydration";
-import { syncCompletedCountAtom, isSyncingAtom } from "@/atoms/sync";
-import { useAtom, useAtomValue } from "jotai";
-import { queryClient } from "@/lib/query";
-import { t, plural } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react";
+import { useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,
-  ErrorRouteComponent,
+  type ErrorRouteComponent,
   Outlet,
 } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { DisplayError } from "@/lib/db/errors";
-import * as Sentry from "@sentry/react";
-import { authClient } from "@/lib/auth-client";
-import { ErrorMessage } from "@/components/errors/ErrorMessage";
-import React from "react";
 import { useMeasure } from "@uidotdev/usehooks";
-import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
+import { useAtom, useAtomValue } from "jotai";
+import { useEffect, useRef } from "react";
+import { hydrationSkippedCountAtom } from "@/atoms/hydration";
+import { isSyncingAtom, syncCompletedCountAtom } from "@/atoms/sync";
 import { AnimatedLogo } from "@/components/AnimatedLogo";
+import { DesktopNavigation } from "@/components/DesktopNavigation";
+import { ErrorMessage } from "@/components/errors/ErrorMessage";
+import { MobileHeader } from "@/components/MobileHeader";
+import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
+import { SyncIndicator } from "@/components/SyncIndicator";
+import { useSearch } from "@/hooks/useSearch";
+import { useToast } from "@/hooks/useToast";
+import { authClient } from "@/lib/auth-client";
+import { ensureDb, initDb } from "@/lib/db";
+import { DisplayError } from "@/lib/db/errors";
+import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { migrationTable } from "@/lib/db/operations/migration";
+import { enqueueSyncOperation } from "@/lib/db/queue";
+import { queryClient } from "@/lib/query";
+import { hydrateOramaDb, rehydrateOramaDb } from "@/lib/search";
+import { store } from "@/lib/store";
 
 /**
  * How often to sync the user database in the background.
@@ -48,7 +47,7 @@ const AuthorizedLayout = () => {
   const { preloadResults } = useSearch();
   const { toast } = useToast();
   const [hydrationSkippedCount, setHydrationSkippedCount] = useAtom(
-    hydrationSkippedCountAtom,
+    hydrationSkippedCountAtom
   );
   const { data: latestMigration } = useQuery({
     queryKey: migrationTable.latestMigration.cacheOptions.queryKey,
@@ -200,7 +199,7 @@ const AuthorizedLayoutError: ErrorRouteComponent = ({ error }) => {
           <MobileHeader />
 
           <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-            <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6 flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center rounded-lg border border-destructive/50 bg-destructive/10 p-6">
               <div className="max-w-md">
                 <h2 className="font-semibold text-destructive">
                   <Trans>Uh oh! Something went wrong :/</Trans>
@@ -335,7 +334,7 @@ export const Route = createFileRoute("/_authorized-layout")({
       // display this to the user.
       store.set(
         hydrationSkippedCountAtom,
-        hydrateOramaDbResult.value.skippedCount,
+        hydrateOramaDbResult.value.skippedCount
       );
     }
   },

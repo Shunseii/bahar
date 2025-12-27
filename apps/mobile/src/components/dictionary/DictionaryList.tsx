@@ -2,19 +2,19 @@
  * Dictionary list component with infinite scroll using FlashList.
  */
 
-import { FC, useCallback, useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, RefreshControl } from "react-native";
-import { FlashList } from "@shopify/flash-list";
-import { Trans } from "@lingui/react/macro";
-import { BookOpen, SearchX } from "lucide-react-native";
-import Animated, { FadeIn, FadeInDown, FadeInUp } from "react-native-reanimated";
-import { DictionaryEntryCard } from "./DictionaryEntryCard";
-import { useInfiniteSearch } from "@/hooks/useSearch";
-import { useThemeColors } from "@/lib/theme";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
-import { syncDatabase } from "@/lib/db/adapter";
-import { store, syncCompletedCountAtom, isSyncingAtom } from "@/lib/store";
+import { Trans } from "@lingui/react/macro";
+import { FlashList } from "@shopify/flash-list";
+import { BookOpen, SearchX } from "lucide-react-native";
 import type { ReactNode } from "react";
+import { type FC, useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, RefreshControl, Text, View } from "react-native";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import { useInfiniteSearch } from "@/hooks/useSearch";
+import { syncDatabase } from "@/lib/db/adapter";
+import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
+import { useThemeColors } from "@/lib/theme";
+import { DictionaryEntryCard } from "./DictionaryEntryCard";
 
 interface DictionaryListProps {
   searchQuery: string;
@@ -29,16 +29,16 @@ const EmptyDictionary: FC = () => {
 
   return (
     <Animated.View
-      entering={FadeIn.delay(150).duration(300)}
       className="flex-1 items-center justify-center py-16"
+      entering={FadeIn.delay(150).duration(300)}
     >
-      <View className="p-4 rounded-full bg-muted/50 mb-4">
-        <BookOpen size={32} color={colors.mutedForeground} />
+      <View className="mb-4 rounded-full bg-muted/50 p-4">
+        <BookOpen color={colors.mutedForeground} size={32} />
       </View>
-      <Text className="text-lg font-medium text-foreground mb-1">
+      <Text className="mb-1 font-medium text-foreground text-lg">
         <Trans>Your dictionary is empty</Trans>
       </Text>
-      <Text className="text-muted-foreground text-center px-8">
+      <Text className="px-8 text-center text-muted-foreground">
         <Trans>Add some words to get started!</Trans>
       </Text>
     </Animated.View>
@@ -50,16 +50,16 @@ const NoResults: FC = () => {
 
   return (
     <Animated.View
-      entering={FadeIn.delay(150).duration(300)}
       className="flex-1 items-center justify-center py-16"
+      entering={FadeIn.delay(150).duration(300)}
     >
-      <View className="p-4 rounded-full bg-muted/50 mb-4">
-        <SearchX size={32} color={colors.mutedForeground} />
+      <View className="mb-4 rounded-full bg-muted/50 p-4">
+        <SearchX color={colors.mutedForeground} size={32} />
       </View>
-      <Text className="text-lg font-medium text-foreground mb-1">
+      <Text className="mb-1 font-medium text-foreground text-lg">
         <Trans>No results found</Trans>
       </Text>
-      <Text className="text-muted-foreground text-center px-8">
+      <Text className="px-8 text-center text-muted-foreground">
         <Trans>Try a different search term</Trans>
       </Text>
     </Animated.View>
@@ -67,7 +67,7 @@ const NoResults: FC = () => {
 };
 
 const LoadingIndicator: FC = () => (
-  <View className="py-6 items-center">
+  <View className="items-center py-6">
     <ActivityIndicator size="small" />
   </View>
 );
@@ -79,7 +79,15 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   onElapsedTimeChange,
   ListHeaderComponent,
 }) => {
-  const { hits, hasMore, isLoading, loadMore, refresh, totalCount, elapsedTimeNs } = useInfiniteSearch(searchQuery);
+  const {
+    hits,
+    hasMore,
+    isLoading,
+    loadMore,
+    refresh,
+    totalCount,
+    elapsedTimeNs,
+  } = useInfiniteSearch(searchQuery);
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -119,7 +127,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
         <DictionaryEntryCard entry={item.document as SelectDictionaryEntry} />
       </Animated.View>
     ),
-    [],
+    []
   );
 
   const keyExtractor = useCallback((item: (typeof hits)[0]) => item.id!, []);
@@ -131,28 +139,32 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   }, [isLoading, hasMore, loadMore]);
 
   // Empty state component that shows below the header
-  const emptyComponent = !isLoading ? (
-    searchQuery.trim() ? <NoResults /> : <EmptyDictionary />
-  ) : null;
+  const emptyComponent = isLoading ? null : searchQuery.trim() ? (
+    <NoResults />
+  ) : (
+    <EmptyDictionary />
+  );
 
   return (
     <FlashList
-      data={hits}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
       contentContainerStyle={{
         paddingHorizontal: 16,
         paddingBottom: bottomInset + 16,
       }}
+      data={hits}
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-      ListHeaderComponent={ListHeaderComponent ? <>{ListHeaderComponent}</> : null}
+      keyExtractor={keyExtractor}
       ListEmptyComponent={emptyComponent}
+      ListFooterComponent={hasMore ? <LoadingIndicator /> : null}
+      ListHeaderComponent={
+        ListHeaderComponent ? <>{ListHeaderComponent}</> : null
+      }
       onEndReached={onEndReached}
       onEndReachedThreshold={0.3}
-      ListFooterComponent={hasMore ? <LoadingIndicator /> : null}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        <RefreshControl onRefresh={handleRefresh} refreshing={refreshing} />
       }
+      renderItem={renderItem}
       showsVerticalScrollIndicator={false}
     />
   );

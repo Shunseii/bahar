@@ -11,25 +11,24 @@ import {
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { authClient } from "@/utils/auth-client";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import { useEffect } from "react";
+import { authClient } from "@/utils/auth-client";
 import "react-native-reanimated";
-import { View, Text, Appearance, useColorScheme } from "react-native";
-import { I18nProvider, TransRenderProps } from "@lingui/react";
-import { i18n } from "@lingui/core";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { getLocales } from "expo-localization";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner-native";
-import { Provider as JotaiProvider } from "jotai";
-import { store } from "@/lib/store";
-
-import { messages as enMessages } from "@bahar/i18n/locales/en";
 import { messages as arMessages } from "@bahar/i18n/locales/ar";
+import { messages as enMessages } from "@bahar/i18n/locales/en";
+import { i18n } from "@lingui/core";
+import { I18nProvider, type TransRenderProps } from "@lingui/react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { getLocales } from "expo-localization";
+import { Provider as JotaiProvider } from "jotai";
+import { Appearance, Text, useColorScheme, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Toaster } from "sonner-native";
+import { store } from "@/lib/store";
 
 import "@/global.css";
 import { queryClient } from "@/utils/api";
@@ -85,7 +84,7 @@ export default function RootLayout() {
               <ThemeProvider
                 value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
               >
-                <I18nProvider i18n={i18n} defaultComponent={DefaultComponent}>
+                <I18nProvider defaultComponent={DefaultComponent} i18n={i18n}>
                   <Stack>
                     <Stack.Protected guard={!authData}>
                       <Stack.Screen

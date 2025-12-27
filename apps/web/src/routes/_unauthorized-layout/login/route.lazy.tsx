@@ -1,10 +1,16 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
-import { GithubLoginButton } from "@/components/GithubLoginButton";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { showOTPFormAtom } from "@/atoms/otp";
+import { GithubLoginButton } from "@/components/GithubLoginButton";
+import { OTPForm } from "@/components/OTPForm";
+import { Page } from "@/components/Page";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,13 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { OTPForm } from "@/components/OTPForm";
-import { useAtom } from "jotai";
-import { showOTPFormAtom } from "@/atoms/otp";
-import { useEffect } from "react";
-import { Page } from "@/components/Page";
 import { authClient } from "@/lib/auth-client";
 
 export const LoginFormSchema = z.object({
@@ -83,13 +83,13 @@ const Login = () => {
   }
 
   return (
-    <Page className="flex flex-col justify-center items-center gap-y-6 mx-auto max-w-96">
-      <div className="flex flex-col gap-y-2 mt-8 md:mt-0">
-        <h1 className="tracking-tight font-bold text-2xl dark:text-white text-center text-gray-900">
+    <Page className="mx-auto flex max-w-96 flex-col items-center justify-center gap-y-6">
+      <div className="mt-8 flex flex-col gap-y-2 md:mt-0">
+        <h1 className="text-center font-bold text-2xl text-gray-900 tracking-tight dark:text-white">
           <Trans>Welcome to Bahar!</Trans>
         </h1>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+        <p className="mt-2 text-gray-600 text-sm dark:text-gray-400">
           <Trans>
             Log in to your existing account or sign up for a new one
           </Trans>
@@ -98,13 +98,13 @@ const Login = () => {
 
       <Form {...form}>
         <form
+          className="flex w-full flex-col items-center gap-y-6"
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-y-6 items-center w-full"
         >
-          <div className="flex flex-col gap-y-4 w-full">
+          <div className="flex w-full flex-col gap-y-4">
             <FormField
-              name="email"
               control={form.control}
+              name="email"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
@@ -125,14 +125,14 @@ const Login = () => {
             />
           </div>
 
-          <p className="ltr:text-sm rtl:text-base font-medium text-destructive">
+          <p className="font-medium text-destructive ltr:text-sm rtl:text-base">
             {form.formState.errors.root?.message}
           </p>
 
           <Button
+            className="w-full"
             disabled={form.formState.isSubmitting}
             type="submit"
-            className="w-full"
           >
             <Trans>Continue with Email</Trans>
           </Button>
@@ -140,11 +140,11 @@ const Login = () => {
       </Form>
 
       <div className="relative mt-10 w-full">
-        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <div className="w-full border-t border-muted" />
+        <div aria-hidden="true" className="absolute inset-0 flex items-center">
+          <div className="w-full border-muted border-t" />
         </div>
 
-        <div className="relative flex justify-center ltr:text-sm rtl:text-base font-medium leading-6">
+        <div className="relative flex justify-center font-medium leading-6 ltr:text-sm rtl:text-base">
           <span className="bg-background px-6 text-muted-foreground">
             <Trans>Or continue with</Trans>
           </span>
@@ -155,14 +155,14 @@ const Login = () => {
         <Trans>GitHub</Trans>
       </GithubLoginButton>
 
-      <p className="text-xs text-muted-foreground text-center mt-4">
+      <p className="mt-4 text-center text-muted-foreground text-xs">
         <Trans>
           By signing in, you agree to our{" "}
           <a
-            href="https://getbahar.com/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
             className="underline hover:text-foreground"
+            href="https://getbahar.com/privacy"
+            rel="noopener noreferrer"
+            target="_blank"
           >
             Privacy Policy
           </a>

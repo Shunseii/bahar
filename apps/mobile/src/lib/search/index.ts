@@ -4,28 +4,28 @@
  * Uses the @bahar/search package for Arabic-aware search functionality.
  */
 
+import { safeJsonParse } from "@bahar/db-operations";
 import {
-  createDictionaryDatabase,
-  insertDocuments,
-  insertDocument,
-  updateDocument,
-  removeDocument,
-  searchDictionary,
-  type DictionaryDocument,
-  type DictionaryOrama,
-} from "@bahar/search";
-import { ok, err, type Result } from "@bahar/result";
-import { ensureDb } from "../db";
-import {
-  RawDictionaryEntry,
-  RootLettersSchema,
-  TagsSchema,
   AntonymSchema,
   ExampleSchema,
   MorphologySchema,
+  type RawDictionaryEntry,
+  RootLettersSchema,
+  TagsSchema,
 } from "@bahar/drizzle-user-db-schemas";
-import { safeJsonParse, nullToUndefined } from "@bahar/db-operations";
+import { err, ok, type Result } from "@bahar/result";
+import {
+  createDictionaryDatabase,
+  type DictionaryDocument,
+  type DictionaryOrama,
+  insertDocument,
+  insertDocuments,
+  removeDocument,
+  searchDictionary,
+  updateDocument,
+} from "@bahar/search";
 import { z } from "zod";
+import { ensureDb } from "../db";
 
 const BATCH_SIZE = 500;
 
@@ -64,7 +64,7 @@ export const rehydrateOramaDb = async (): Promise<void> => {
     while (true) {
       const results = await db
         .prepare<RawDictionaryEntry>(
-          "SELECT * FROM dictionary_entries LIMIT ? OFFSET ?",
+          "SELECT * FROM dictionary_entries LIMIT ? OFFSET ?"
         )
         .all([BATCH_SIZE, offset]);
 
@@ -75,10 +75,23 @@ export const rehydrateOramaDb = async (): Promise<void> => {
       for (const entry of results) {
         const rootResult = safeJsonParse(entry.root, RootLettersSchema);
         const tagsResult = safeJsonParse(entry.tags, TagsSchema);
-        const antonymsResult = safeJsonParse(entry.antonyms, z.array(AntonymSchema));
-        const examplesResult = safeJsonParse(entry.examples, z.array(ExampleSchema));
+        const antonymsResult = safeJsonParse(
+          entry.antonyms,
+          z.array(AntonymSchema)
+        );
+        const examplesResult = safeJsonParse(
+          entry.examples,
+          z.array(ExampleSchema)
+        );
 
-        if (!rootResult.ok || !tagsResult.ok || !antonymsResult.ok || !examplesResult.ok) {
+        if (
+          !(
+            rootResult.ok &&
+            tagsResult.ok &&
+            antonymsResult.ok &&
+            examplesResult.ok
+          )
+        ) {
           continue;
         }
 
@@ -131,11 +144,13 @@ export const hydrateOramaDb = async (): Promise<
     while (true) {
       const results = await db
         .prepare<RawDictionaryEntry>(
-          "SELECT * FROM dictionary_entries LIMIT ? OFFSET ?",
+          "SELECT * FROM dictionary_entries LIMIT ? OFFSET ?"
         )
         .all([BATCH_SIZE, offset]);
 
-      console.log(`[orama] Fetched ${results.length} entries at offset ${offset}`);
+      console.log(
+        `[orama] Fetched ${results.length} entries at offset ${offset}`
+      );
       if (results.length === 0) break;
 
       const documents: DictionaryDocument[] = [];
@@ -143,34 +158,73 @@ export const hydrateOramaDb = async (): Promise<
       for (const entry of results) {
         // Log data types for first entry to debug
         if (offset === 0 && documents.length === 0) {
-          console.log(`[orama] First entry data types:`, {
+          console.log("[orama] First entry data types:", {
             root: typeof entry.root,
             tags: typeof entry.tags,
             antonyms: typeof entry.antonyms,
-            examples: typeof entry.examples
+            examples: typeof entry.examples,
           });
         }
 
         const rootResult = safeJsonParse(entry.root, RootLettersSchema);
         const tagsResult = safeJsonParse(entry.tags, TagsSchema);
-        const antonymsResult = safeJsonParse(entry.antonyms, z.array(AntonymSchema));
-        const examplesResult = safeJsonParse(entry.examples, z.array(ExampleSchema));
-        const morphologyResult = safeJsonParse(entry.morphology, MorphologySchema);
+        const antonymsResult = safeJsonParse(
+          entry.antonyms,
+          z.array(AntonymSchema)
+        );
+        const examplesResult = safeJsonParse(
+          entry.examples,
+          z.array(ExampleSchema)
+        );
+        const morphologyResult = safeJsonParse(
+          entry.morphology,
+          MorphologySchema
+        );
 
-        if (!rootResult.ok || !tagsResult.ok || !antonymsResult.ok || !examplesResult.ok) {
+        if (
+          !(
+            rootResult.ok &&
+            tagsResult.ok &&
+            antonymsResult.ok &&
+            examplesResult.ok
+          )
+        ) {
           if (skippedCount < 5) {
             // Only log first 5 parse errors to avoid spam
             console.warn(`[orama] Skipping entry ${entry.id} (${entry.word})`);
-            if (!rootResult.ok) console.warn(`  root error:`, JSON.stringify(rootResult.error, null, 2));
-            if (!tagsResult.ok) console.warn(`  tags error:`, JSON.stringify(tagsResult.error, null, 2));
-            if (!antonymsResult.ok) console.warn(`  antonyms error:`, JSON.stringify(antonymsResult.error, null, 2));
-            if (!examplesResult.ok) console.warn(`  examples error:`, JSON.stringify(examplesResult.error, null, 2));
-            console.warn(`  Raw data:`, JSON.stringify({
-              root: entry.root,
-              tags: entry.tags,
-              antonyms: entry.antonyms,
-              examples: entry.examples
-            }, null, 2));
+            if (!rootResult.ok)
+              console.warn(
+                "  root error:",
+                JSON.stringify(rootResult.error, null, 2)
+              );
+            if (!tagsResult.ok)
+              console.warn(
+                "  tags error:",
+                JSON.stringify(tagsResult.error, null, 2)
+              );
+            if (!antonymsResult.ok)
+              console.warn(
+                "  antonyms error:",
+                JSON.stringify(antonymsResult.error, null, 2)
+              );
+            if (!examplesResult.ok)
+              console.warn(
+                "  examples error:",
+                JSON.stringify(examplesResult.error, null, 2)
+              );
+            console.warn(
+              "  Raw data:",
+              JSON.stringify(
+                {
+                  root: entry.root,
+                  tags: entry.tags,
+                  antonyms: entry.antonyms,
+                  examples: entry.examples,
+                },
+                null,
+                2
+              )
+            );
           }
           skippedCount++;
           continue;
@@ -192,7 +246,9 @@ export const hydrateOramaDb = async (): Promise<
       }
 
       if (documents.length > 0) {
-        console.log(`[orama] Inserting ${documents.length} documents into Orama`);
+        console.log(
+          `[orama] Inserting ${documents.length} documents into Orama`
+        );
         await insertDocuments(orama, documents, BATCH_SIZE);
         totalProcessed += documents.length;
       }
@@ -201,7 +257,9 @@ export const hydrateOramaDb = async (): Promise<
     }
 
     isHydrated = true;
-    console.log(`[orama] Hydration complete. Processed: ${totalProcessed}, Skipped: ${skippedCount}`);
+    console.log(
+      `[orama] Hydration complete. Processed: ${totalProcessed}, Skipped: ${skippedCount}`
+    );
     return ok({ skippedCount });
   } catch (error) {
     console.error("[orama] Hydration failed:", error);
@@ -215,7 +273,9 @@ export const hydrateOramaDb = async (): Promise<
 /**
  * Adds a document to the Orama index.
  */
-export const addToSearchIndex = async (entry: DictionaryDocument): Promise<void> => {
+export const addToSearchIndex = async (
+  entry: DictionaryDocument
+): Promise<void> => {
   const orama = getOramaDb();
   await insertDocument(orama, entry);
 };
@@ -225,7 +285,7 @@ export const addToSearchIndex = async (entry: DictionaryDocument): Promise<void>
  */
 export const updateSearchIndex = async (
   id: string,
-  entry: Partial<DictionaryDocument>,
+  entry: Partial<DictionaryDocument>
 ): Promise<void> => {
   const orama = getOramaDb();
   await updateDocument(orama, id, entry);
@@ -244,7 +304,7 @@ export const removeFromSearchIndex = async (id: string): Promise<void> => {
  */
 export const search = async (
   term: string,
-  options?: { limit?: number; offset?: number },
+  options?: { limit?: number; offset?: number }
 ) => {
   const orama = getOramaDb();
   return searchDictionary(orama, term, options);

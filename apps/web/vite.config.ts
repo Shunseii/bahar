@@ -1,11 +1,11 @@
-import { sentryVitePlugin } from "@sentry/vite-plugin";
-import path from "path";
-import react from "@vitejs/plugin-react-swc";
 import { lingui } from "@lingui/vite-plugin";
-import { VitePWA } from "vite-plugin-pwa";
-import { defineConfig } from "vite";
-import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import react from "@vitejs/plugin-react-swc";
+import path from "path";
+import { defineConfig } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   server: {

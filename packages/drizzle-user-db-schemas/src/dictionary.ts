@@ -1,10 +1,10 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import {
-  type RootLetters,
-  type Tags,
   type Antonym,
   type Example,
   type Morphology,
+  type RootLetters,
+  type Tags,
   WORD_TYPES,
 } from "./types";
 

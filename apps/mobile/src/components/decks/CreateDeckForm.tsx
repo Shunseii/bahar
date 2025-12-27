@@ -2,21 +2,26 @@
  * Create/Edit deck form component.
  */
 
-import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, ScrollView, Switch } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  FadeIn,
-} from "react-native-reanimated";
+import type {
+  DeckFilters,
+  SelectDeck,
+  WordType,
+} from "@bahar/drizzle-user-db-schemas";
 import { useMutation } from "@tanstack/react-query";
-import { X, Check, Tag, Filter } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
-import { queryClient } from "../../utils/api";
-import { decksTable } from "../../lib/db/operations/decks";
+import { Check, Filter, Tag, X } from "lucide-react-native";
+import type React from "react";
+import { useState } from "react";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import Animated, {
+  FadeIn,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { useThemeColors } from "@/lib/theme";
-import type { SelectDeck, DeckFilters, WordType, FlashcardState } from "@bahar/drizzle-user-db-schemas";
+import { decksTable } from "../../lib/db/operations/decks";
+import { queryClient } from "../../utils/api";
 
 interface CreateDeckFormProps {
   deck?: SelectDeck;
@@ -40,7 +45,7 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
   const colors = useThemeColors();
   const [name, setName] = useState(deck?.name ?? "");
   const [selectedTypes, setSelectedTypes] = useState<WordType[]>(
-    deck?.filters?.types ?? [],
+    deck?.filters?.types ?? []
   );
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>(deck?.filters?.tags ?? []);
@@ -106,9 +111,7 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
   const toggleType = (type: WordType) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedTypes((prev) =>
-      prev.includes(type)
-        ? prev.filter((t) => t !== type)
-        : [...prev, type],
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
 
@@ -127,52 +130,57 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
 
   return (
     <Animated.View
-      entering={FadeIn.duration(200)}
       className="flex-1 bg-background"
+      entering={FadeIn.duration(200)}
     >
       {/* Header */}
-      <View className="flex-row items-center justify-between p-4 border-b border-border/30">
-        <Pressable onPress={onClose} className="p-2">
-          <X size={24} color={colors.mutedForeground} />
+      <View className="flex-row items-center justify-between border-border/30 border-b p-4">
+        <Pressable className="p-2" onPress={onClose}>
+          <X color={colors.mutedForeground} size={24} />
         </Pressable>
-        <Text className="text-foreground text-lg font-semibold">
+        <Text className="font-semibold text-foreground text-lg">
           {isEdit ? "Edit Deck" : "New Deck"}
         </Text>
         <Pressable
-          onPress={handleSubmit}
+          className={`rounded-lg p-2 ${name.trim() ? "bg-primary" : "bg-muted"}`}
           disabled={isPending || !name.trim()}
-          className={`p-2 rounded-lg ${name.trim() ? "bg-primary" : "bg-muted"}`}
+          onPress={handleSubmit}
         >
-          <Check size={24} color={name.trim() ? colors.primaryForeground : colors.mutedForeground} />
+          <Check
+            color={
+              name.trim() ? colors.primaryForeground : colors.mutedForeground
+            }
+            size={24}
+          />
         </Pressable>
       </View>
 
       <ScrollView className="flex-1" contentContainerClassName="p-4">
         {/* Name input */}
         <View className="mb-6">
-          <Text className="text-foreground font-medium mb-2">Deck Name</Text>
+          <Text className="mb-2 font-medium text-foreground">Deck Name</Text>
           <TextInput
-            value={name}
+            className="rounded-xl border border-border/30 bg-card px-4 py-3 text-foreground"
             onChangeText={setName}
             placeholder="My Deck"
             placeholderTextColor={colors.mutedForeground}
-            className="bg-card border border-border/30 rounded-xl px-4 py-3 text-foreground"
+            value={name}
           />
         </View>
 
         {/* Word type filter */}
         <View className="mb-6">
-          <View className="flex-row items-center mb-2">
-            <Filter size={16} color={colors.mutedForeground} />
-            <Text className="text-foreground font-medium ml-2">Word Types</Text>
+          <View className="mb-2 flex-row items-center">
+            <Filter color={colors.mutedForeground} size={16} />
+            <Text className="ml-2 font-medium text-foreground">Word Types</Text>
           </View>
           <View className="flex-row flex-wrap gap-2">
             {WORD_TYPES.map((type) => (
               <TypeChip
                 key={type}
                 label={WORD_TYPE_LABELS[type]}
-                selected={selectedTypes.includes(type)}
                 onPress={() => toggleType(type)}
+                selected={selectedTypes.includes(type)}
               />
             ))}
           </View>
@@ -180,36 +188,40 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
 
         {/* Tags filter */}
         <View className="mb-6">
-          <View className="flex-row items-center mb-2">
-            <Tag size={16} color={colors.mutedForeground} />
-            <Text className="text-foreground font-medium ml-2">Tags</Text>
+          <View className="mb-2 flex-row items-center">
+            <Tag color={colors.mutedForeground} size={16} />
+            <Text className="ml-2 font-medium text-foreground">Tags</Text>
           </View>
-          <View className="flex-row items-center mb-2">
+          <View className="mb-2 flex-row items-center">
             <TextInput
-              value={tagInput}
+              className="flex-1 rounded-xl border border-border/30 bg-card px-4 py-3 text-foreground"
               onChangeText={setTagInput}
               onSubmitEditing={addTag}
               placeholder="Add tag..."
               placeholderTextColor={colors.mutedForeground}
-              className="flex-1 bg-card border border-border/30 rounded-xl px-4 py-3 text-foreground"
+              value={tagInput}
             />
             <Pressable
+              className="ml-2 rounded-xl bg-primary px-4 py-3"
               onPress={addTag}
-              className="ml-2 bg-primary px-4 py-3 rounded-xl"
             >
-              <Text className="text-primary-foreground font-medium">Add</Text>
+              <Text className="font-medium text-primary-foreground">Add</Text>
             </Pressable>
           </View>
           {tags.length > 0 && (
             <View className="flex-row flex-wrap gap-2">
               {tags.map((tag) => (
                 <Pressable
+                  className="flex-row items-center rounded-lg bg-secondary px-3 py-1.5"
                   key={tag}
                   onPress={() => removeTag(tag)}
-                  className="bg-secondary flex-row items-center px-3 py-1.5 rounded-lg"
                 >
                   <Text className="text-secondary-foreground">{tag}</Text>
-                  <X size={14} color={colors.mutedForeground} className="ml-1" />
+                  <X
+                    className="ml-1"
+                    color={colors.mutedForeground}
+                    size={14}
+                  />
                 </Pressable>
               ))}
             </View>
@@ -243,21 +255,19 @@ const TypeChip: React.FC<TypeChipProps> = ({ label, selected, onPress }) => {
 
   return (
     <Pressable
+      onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={onPress}
     >
       <Animated.View
-        style={animatedStyle}
-        className={`px-4 py-2 rounded-xl border ${
-          selected
-            ? "bg-primary border-primary"
-            : "bg-card border-border/30"
+        className={`rounded-xl border px-4 py-2 ${
+          selected ? "border-primary bg-primary" : "border-border/30 bg-card"
         }`}
+        style={animatedStyle}
       >
         <Text
           className={
-            selected ? "text-primary-foreground font-medium" : "text-foreground"
+            selected ? "font-medium text-primary-foreground" : "text-foreground"
           }
         >
           {label}

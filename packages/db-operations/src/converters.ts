@@ -2,17 +2,17 @@
  * Data converters for transforming raw database results to typed objects.
  */
 
-import { z } from "zod";
-import { ok, err, type Result } from "@bahar/result";
 import {
-  RawDictionaryEntry,
-  SelectDictionaryEntry,
-  RootLettersSchema,
-  TagsSchema,
   AntonymSchema,
   ExampleSchema,
   MorphologySchema,
+  type RawDictionaryEntry,
+  RootLettersSchema,
+  type SelectDictionaryEntry,
+  TagsSchema,
 } from "@bahar/drizzle-user-db-schemas";
+import { err, ok, type Result } from "@bahar/result";
+import { z } from "zod";
 
 /**
  * Error type for dictionary entry conversion failures.
@@ -30,7 +30,7 @@ export type ConvertDictionaryEntryError = {
  */
 export const safeJsonParse = <T extends z.ZodTypeAny>(
   json: string | null | undefined,
-  schema: T,
+  schema: T
 ): Result<z.infer<T> | null> => {
   if (!json) return ok(null);
 
@@ -53,7 +53,7 @@ export const safeJsonParse = <T extends z.ZodTypeAny>(
  * Converts a raw dictionary entry (with JSON strings) to a typed SelectDictionaryEntry.
  */
 export const convertRawDictionaryEntryToSelect = (
-  raw: RawDictionaryEntry,
+  raw: RawDictionaryEntry
 ): Result<SelectDictionaryEntry, ConvertDictionaryEntryError> => {
   const rootResult = safeJsonParse(raw.root, RootLettersSchema);
   if (!rootResult.ok) {
@@ -127,12 +127,12 @@ export const convertRawDictionaryEntryToSelect = (
  * Converts all null values in an object to undefined.
  */
 export const nullToUndefined = <T extends Record<string, unknown>>(
-  obj: T,
+  obj: T
 ): { [K in keyof T]: T[K] extends null ? undefined : Exclude<T[K], null> } => {
   const result = {} as Record<string, unknown>;
 
   for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    if (Object.hasOwn(obj, key)) {
       const value = obj[key];
       result[key] = value === null ? undefined : value;
     }

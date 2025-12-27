@@ -1,16 +1,15 @@
-import * as React from "react";
-import * as LabelPrimitive from "@radix-ui/react-label";
+import { cn } from "@bahar/design-system";
+import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
+import * as React from "react";
 import {
   Controller,
-  ControllerProps,
-  FieldPath,
-  FieldValues,
+  type ControllerProps,
+  type FieldPath,
+  type FieldValues,
   FormProvider,
   useFormContext,
 } from "react-hook-form";
-
-import { cn } from "@bahar/design-system";
 import { Label } from "@/components/ui/label";
 
 const Form = FormProvider;
@@ -23,7 +22,7 @@ type FormFieldContextValue<
 };
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue,
+  {} as FormFieldContextValue
 );
 
 const FormField = <
@@ -67,7 +66,7 @@ type FormItemContextValue = {
 };
 
 const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue,
+  {} as FormItemContextValue
 );
 
 const FormItem = React.forwardRef<
@@ -78,7 +77,7 @@ const FormItem = React.forwardRef<
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <div className={cn("space-y-2", className)} ref={ref} {...props} />
     </FormItemContext.Provider>
   );
 });
@@ -92,9 +91,9 @@ const FormLabel = React.forwardRef<
 
   return (
     <Label
-      ref={ref}
       className={cn(error && "text-destructive", "block", className)}
       htmlFor={formItemId}
+      ref={ref}
       {...props}
     />
   );
@@ -110,14 +109,12 @@ const FormControl = React.forwardRef<
 
   return (
     <Slot
-      ref={ref}
-      id={formItemId}
       aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
+        error ? `${formDescriptionId} ${formMessageId}` : `${formDescriptionId}`
       }
       aria-invalid={!!error}
+      id={formItemId}
+      ref={ref}
       {...props}
     />
   );
@@ -132,12 +129,12 @@ const FormDescription = React.forwardRef<
 
   return (
     <p
-      ref={ref}
-      id={formDescriptionId}
       className={cn(
-        "ltr:text-sm rtl:text-base text-muted-foreground",
-        className,
+        "text-muted-foreground ltr:text-sm rtl:text-base",
+        className
       )}
+      id={formDescriptionId}
+      ref={ref}
       {...props}
     />
   );
@@ -157,12 +154,12 @@ const FormMessage = React.forwardRef<
 
   return (
     <p
-      ref={ref}
-      id={formMessageId}
       className={cn(
-        "ltr:text-sm rtl:text-base font-medium text-destructive",
-        className,
+        "font-medium text-destructive ltr:text-sm rtl:text-base",
+        className
       )}
+      id={formMessageId}
+      ref={ref}
       {...props}
     >
       {body}

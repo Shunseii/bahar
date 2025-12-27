@@ -1,10 +1,10 @@
 import {
-  sqliteTable,
-  text,
+  index,
   integer,
   real,
+  sqliteTable,
+  text,
   uniqueIndex,
-  index,
 } from "drizzle-orm/sqlite-core";
 import { dictionaryEntries } from "./dictionary";
 import { FLASHCARD_DIRECTIONS } from "./types";
@@ -48,10 +48,10 @@ export const flashcards = sqliteTable(
     // Unique constraint: each dictionary entry can have at most one flashcard per direction
     uniqueIndex("flashcards_entry_direction_unique").on(
       table.dictionary_entry_id,
-      table.direction,
+      table.direction
     ),
     index("flashcards_due_timestamp_ms_index").on(table.due_timestamp_ms),
-  ],
+  ]
 );
 
 export type SelectFlashcard = typeof flashcards.$inferSelect;

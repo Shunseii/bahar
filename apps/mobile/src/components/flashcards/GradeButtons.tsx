@@ -4,17 +4,17 @@
  * Shows Again, Hard, Good, Easy buttons with interval previews.
  */
 
-import React from "react";
-import { View, Text, Pressable } from "react-native";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
-import { Rating, type RecordLog, type Grade } from "@bahar/fsrs";
-import { RotateCcw, Brain, ThumbsUp, Zap } from "lucide-react-native";
+import { type Grade, Rating, type RecordLog } from "@bahar/fsrs";
 import { intlFormatDistance } from "date-fns";
 import * as Haptics from "expo-haptics";
+import { Brain, RotateCcw, ThumbsUp, Zap } from "lucide-react-native";
+import type React from "react";
+import { Pressable, Text, View } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { useThemeColors } from "@/lib/theme";
 
 interface GradeButtonsProps {
@@ -72,11 +72,11 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
     <View className="flex-row gap-2 px-4">
       {gradeConfig.map((config) => (
         <GradeButton
-          key={config.grade}
           config={config}
-          interval={schedulingCards[config.grade].card.due}
-          onPress={() => onGrade(config.grade)}
           disabled={disabled}
+          interval={schedulingCards[config.grade].card.due}
+          key={config.grade}
+          onPress={() => onGrade(config.grade)}
         />
       ))}
     </View>
@@ -116,28 +116,27 @@ const GradeButton: React.FC<GradeButtonProps> = ({
   }));
 
   const { Icon, label, color, borderColor } = config;
-  const intervalText = intlFormatDistance(interval, new Date(), { style: "narrow" });
+  const intervalText = intlFormatDistance(interval, new Date(), {
+    style: "narrow",
+  });
 
   return (
     <Pressable
+      className="flex-1"
+      disabled={disabled}
+      onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={onPress}
-      disabled={disabled}
-      className="flex-1"
     >
       <Animated.View
+        className={`border-2 ${borderColor} items-center rounded-xl bg-card py-3`}
         style={animatedStyle}
-        className={`border-2 ${borderColor} rounded-xl py-3 items-center bg-card`}
       >
-        <Icon size={20} color={color} />
-        <Text
-          style={{ color }}
-          className="font-medium mt-1"
-        >
+        <Icon color={color} size={20} />
+        <Text className="mt-1 font-medium" style={{ color }}>
           {label}
         </Text>
-        <Text className="text-muted-foreground text-xs mt-0.5">
+        <Text className="mt-0.5 text-muted-foreground text-xs">
           {intervalText}
         </Text>
       </Animated.View>
@@ -149,7 +148,9 @@ interface ShowAnswerButtonProps {
   onPress: () => void;
 }
 
-export const ShowAnswerButton: React.FC<ShowAnswerButtonProps> = ({ onPress }) => {
+export const ShowAnswerButton: React.FC<ShowAnswerButtonProps> = ({
+  onPress,
+}) => {
   const scale = useSharedValue(1);
 
   const handlePressIn = () => {
@@ -167,16 +168,16 @@ export const ShowAnswerButton: React.FC<ShowAnswerButtonProps> = ({ onPress }) =
 
   return (
     <Pressable
+      className="px-4"
+      onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={onPress}
-      className="px-4"
     >
       <Animated.View
+        className="items-center rounded-xl bg-primary py-4 shadow-lg"
         style={animatedStyle}
-        className="bg-primary py-4 rounded-xl items-center shadow-lg"
       >
-        <Text className="text-primary-foreground font-semibold text-lg">
+        <Text className="font-semibold text-lg text-primary-foreground">
           Show Answer
         </Text>
       </Animated.View>

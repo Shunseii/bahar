@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import { createEmptyCard } from "ts-fsrs";
 import { toMs } from "@/lib/utils";
-import { ImportWordV1 } from "./schema";
+import type { ImportWordV1 } from "./schema";
 
 interface SqlStatement {
   sql: string;

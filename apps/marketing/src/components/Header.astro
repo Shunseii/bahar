@@ -1,6 +1,5 @@
 ---
-import { t, getLocalizedPath, getAlternateLocale, type Locale } from '../i18n';
-import ThemeToggle from './ThemeToggle';
+import { getAlternateLocale, getLocalizedPath, type Locale, t } from "../i18n";
 
 interface Props {
   locale: Locale;
@@ -11,16 +10,16 @@ const { locale, hideLanguageSwitcher = false } = Astro.props;
 const alternateLocale = getAlternateLocale(locale);
 
 const navItems = [
-  { label: t(locale, 'nav.home'), href: getLocalizedPath('', locale) },
-  { label: t(locale, 'nav.blog'), href: getLocalizedPath('blog', locale) },
+  { label: t(locale, "nav.home"), href: getLocalizedPath("", locale) },
+  { label: t(locale, "nav.blog"), href: getLocalizedPath("blog", locale) },
 ];
 
 // Get current path for language switcher
 const currentPath = Astro.url.pathname;
-const alternatePath = locale === 'en'
-  ? `/ar${currentPath}`
-  : currentPath.replace(/^\/ar/, '') || '/';
-
+const alternatePath =
+  locale === "en"
+    ? `/ar${currentPath}`
+    : currentPath.replace(/^\/ar/, "") || "/";
 ---
 
 <header transition:name="main-header" class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

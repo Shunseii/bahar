@@ -1,7 +1,7 @@
-import { motion } from "motion/react";
-import { FC } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
+import { motion } from "motion/react";
+import type { FC } from "react";
+import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
 import { settingsTable } from "@/lib/db/operations/settings";
 
 /**
@@ -54,17 +54,17 @@ export const QuestionSide: FC<{
 
   return (
     <motion.div
-      className="w-full flex flex-col gap-y-4"
-      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      className="flex w-full flex-col gap-y-4"
+      initial={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
     >
       {/* Main word - large and prominent */}
       <motion.p
-        dir="rtl"
-        className="rtl:text-right text-2xl sm:text-3xl text-foreground/90 leading-relaxed"
-        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
+        className="text-2xl text-foreground/90 leading-relaxed sm:text-3xl rtl:text-right"
+        dir="rtl"
+        initial={{ opacity: 0, scale: 0.95 }}
         transition={{ delay: 0.1, duration: 0.3 }}
       >
         {currentCard.dictionary_entry.word}
@@ -72,23 +72,23 @@ export const QuestionSide: FC<{
 
       {/* Morphology details */}
       <motion.div
-        className="flex flex-wrap gap-2 items-center ltr:self-end rtl:self-start rtl:flex-row-reverse"
-        initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        className="flex flex-wrap items-center gap-2 ltr:self-end rtl:flex-row-reverse rtl:self-start"
+        initial={{ opacity: 0 }}
         transition={{ delay: 0.2 }}
       >
         {hasPlurals && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             (ج) {firstPlural}
           </span>
         )}
         {hasSingular && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             (م) {singular}
           </span>
@@ -96,8 +96,8 @@ export const QuestionSide: FC<{
 
         {hasMasdar && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             {firstMasdar}
           </span>
@@ -105,8 +105,8 @@ export const QuestionSide: FC<{
 
         {hasPresentTense && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             {presentTense}
           </span>
@@ -114,8 +114,8 @@ export const QuestionSide: FC<{
 
         {hasPastTense && (
           <span
+            className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
             dir="rtl"
-            className="rtl:text-right text-lg sm:text-xl text-muted-foreground px-2 py-0.5 rounded-md bg-muted/50"
           >
             {pastTense}
           </span>
@@ -124,10 +124,10 @@ export const QuestionSide: FC<{
 
       {isVerb && root && (
         <motion.p
-          dir="rtl"
-          className="rtl:text-right text-lg sm:text-xl text-muted-foreground/70 tracking-wider"
-          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
+          className="text-lg text-muted-foreground/70 tracking-wider sm:text-xl rtl:text-right"
+          dir="rtl"
+          initial={{ opacity: 0 }}
           transition={{ delay: 0.25 }}
         >
           {root.join(" - ")}
@@ -136,10 +136,10 @@ export const QuestionSide: FC<{
 
       {showAntonyms === "hint" && hasAntonyms && (
         <motion.p
-          dir="rtl"
-          className="rtl:text-right text-base sm:text-lg text-muted-foreground italic"
-          initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
+          className="text-base text-muted-foreground italic sm:text-lg rtl:text-right"
+          dir="rtl"
+          initial={{ opacity: 0 }}
           transition={{ delay: 0.3 }}
         >
           أضداد:{" "}
@@ -152,12 +152,12 @@ export const QuestionSide: FC<{
       {/* Example sentence */}
       {!!currentCard.dictionary_entry.examples?.[0]?.sentence && (
         <motion.div
+          animate={{ opacity: 1 }}
           className="flex flex-col gap-y-1 pt-2"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
           transition={{ delay: 0.35 }}
         >
-          <p dir="rtl" className="text-base sm:text-lg text-muted-foreground">
+          <p className="text-base text-muted-foreground sm:text-lg" dir="rtl">
             {currentCard.dictionary_entry.examples[0].sentence}
           </p>
         </motion.div>

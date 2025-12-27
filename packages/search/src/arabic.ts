@@ -32,7 +32,7 @@ export const normalizeArabicWeakLetters = (text: string): string => {
  */
 export const normalizeArabicForSearch = (text: string): string => {
   return normalizeArabicWeakLetters(
-    normalizeArabicHamza(stripArabicDiacritics(text)),
+    normalizeArabicHamza(stripArabicDiacritics(text))
   );
 };
 

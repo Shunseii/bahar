@@ -1,9 +1,16 @@
-import { Trans } from "@lingui/react/macro";
+import type {
+  RawDictionaryEntry,
+  SelectFlashcard,
+} from "@bahar/drizzle-user-db-schemas";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { useCallback, useState } from "react";
+import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
+import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
 import { InputFile } from "@/components/InputFile";
 import { LanguageMenu } from "@/components/LanguageMenu";
 import { Page } from "@/components/Page";
 import { ThemeMenu } from "@/components/ThemeMenu";
-import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,36 +20,28 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  DialogHeader,
-  DialogFooter,
   Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
   DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/useToast";
-import { ImportError, parseImportErrors, ImportErrorCode } from "@/lib/error";
-import { useLingui } from "@lingui/react/macro";
-import { createLazyFileRoute } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
-import { authClient } from "@/lib/auth-client";
-import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
 import { useSearch } from "@/hooks/useSearch";
+import { useToast } from "@/hooks/useToast";
+import { authClient } from "@/lib/auth-client";
 import { ensureDb } from "@/lib/db";
-import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
+import { transformForExport } from "@/lib/db/export";
 import {
-  readFileAsText,
   batchArray,
   createImportStatements,
   parseImportData,
+  readFileAsText,
 } from "@/lib/db/import";
-import { transformForExport } from "@/lib/db/export";
-import {
-  RawDictionaryEntry,
-  SelectFlashcard,
-} from "@bahar/drizzle-user-db-schemas";
+import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
+import { ImportError, ImportErrorCode, parseImportErrors } from "@/lib/error";
 import { hydrateOramaDb, resetOramaDb } from "@/lib/search";
 
 const Settings = () => {
@@ -74,7 +73,7 @@ const Settings = () => {
         for (const entry of entries) {
           const flashcards: SelectFlashcard[] = await db
             .prepare(
-              "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction",
+              "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction"
             )
             .all([entry.id]);
 
@@ -86,7 +85,7 @@ const Settings = () => {
 
           if (!result.ok) {
             console.warn(
-              `Skipping corrupted entry "${result.error.word}" (${result.error.entryId}): ${result.error.field} - ${result.error.reason}`,
+              `Skipping corrupted entry "${result.error.word}" (${result.error.entryId}): ${result.error.field} - ${result.error.reason}`
             );
             skippedCount++;
             continue;
@@ -97,7 +96,7 @@ const Settings = () => {
 
         if (skippedCount > 0) {
           console.warn(
-            `Export completed with ${skippedCount} entries skipped due to data corruption`,
+            `Export completed with ${skippedCount} entries skipped due to data corruption`
           );
         }
 
@@ -140,7 +139,7 @@ const Settings = () => {
         setIsLoading(false);
       }
     },
-    [toast, t],
+    [toast, t]
   );
 
   const deleteDictionary = useCallback(async () => {
@@ -185,8 +184,8 @@ const Settings = () => {
   }, [reset, toast, t]);
 
   return (
-    <Page className="m-auto max-w-4xl w-full flex flex-col gap-y-8">
-      <h1 className="text-center text-3xl font-primary font-semibold">
+    <Page className="m-auto flex w-full max-w-4xl flex-col gap-y-8">
+      <h1 className="text-center font-primary font-semibold text-3xl">
         <Trans>Settings</Trans>
       </h1>
 
@@ -220,8 +219,8 @@ const Settings = () => {
 
         <CardContent className="flex flex-col gap-y-4">
           <form
-            className="flex flex-col sm:flex-row items-start sm:items-end gap-x-4 gap-y-4"
             action="#"
+            className="flex flex-col items-start gap-x-4 gap-y-4 sm:flex-row sm:items-end"
             encType="multipart/form-data"
             onSubmit={async (e) => {
               e.preventDefault();
@@ -292,7 +291,7 @@ const Settings = () => {
                           .prepare(flashcards[1].sql)
                           .run(flashcards[1].args);
                       }
-                    },
+                    }
                   );
 
                   for (let i = 0; i < batches.length; i++) {
@@ -327,7 +326,7 @@ const Settings = () => {
                     "Error importing dictionary: ",
                     message,
                     code,
-                    error,
+                    error
                   );
 
                   const importErrors = parseImportErrors({
@@ -363,16 +362,16 @@ const Settings = () => {
             }}
           >
             <InputFile
+              accept="application/json"
               onChange={(file) => {
                 setFile(file);
               }}
-              accept="application/json"
             />
 
             <Button
+              disabled={!file || isLoading}
               id="import-dictionary-button"
               type="submit"
-              disabled={!file || isLoading}
             >
               <Trans>Import</Trans>
             </Button>
@@ -380,7 +379,7 @@ const Settings = () => {
 
           {importProgress && (
             <div className="space-y-2">
-              <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full bg-primary transition-all duration-150"
                   style={{
@@ -390,9 +389,9 @@ const Settings = () => {
                   }}
                 />
               </div>
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-center text-muted-foreground text-xs">
                 {Math.round(
-                  (importProgress.current / importProgress.total) * 100,
+                  (importProgress.current / importProgress.total) * 100
                 )}
                 %
               </p>
@@ -407,7 +406,7 @@ const Settings = () => {
         <CardContent>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="secondary" disabled={isLoading}>
+              <Button disabled={isLoading} variant="secondary">
                 <Trans>Export</Trans>
               </Button>
             </DialogTrigger>
@@ -438,19 +437,19 @@ const Settings = () => {
               </DialogHeader>
 
               <DialogFooter>
-                <div className="flex gap-4 justify-end">
+                <div className="flex justify-end gap-4">
                   <Button
-                    variant="secondary"
-                    type="button"
                     onClick={() => exportDictionary(false)}
+                    type="button"
+                    variant="secondary"
                   >
                     <Trans>Export</Trans>
                   </Button>
 
                   <Button
-                    variant="secondary"
-                    type="button"
                     onClick={() => exportDictionary(true)}
+                    type="button"
+                    variant="secondary"
                   >
                     <Trans>Export with flashcards</Trans>
                   </Button>
@@ -463,7 +462,7 @@ const Settings = () => {
         <CardContent>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="destructive" disabled={isLoading}>
+              <Button disabled={isLoading} variant="destructive">
                 <Trans>Delete</Trans>
               </Button>
             </DialogTrigger>
@@ -486,7 +485,7 @@ const Settings = () => {
 
               <DialogFooter className="gap-y-4">
                 <DialogClose asChild>
-                  <Button variant="destructive" onClick={deleteDictionary}>
+                  <Button onClick={deleteDictionary} variant="destructive">
                     <Trans>Delete</Trans>
                   </Button>
                 </DialogClose>
@@ -510,7 +509,7 @@ const Settings = () => {
 };
 
 export const Route = createLazyFileRoute(
-  "/_authorized-layout/_app-layout/settings",
+  "/_authorized-layout/_app-layout/settings"
 )({
   component: Settings,
 });

@@ -2,17 +2,17 @@
  * Deck card component with animated interactions.
  */
 
-import React from "react";
-import { View, Text, Pressable } from "react-native";
+import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
+import * as Haptics from "expo-haptics";
+import { ChevronRight, Layers, Sparkles } from "lucide-react-native";
+import type React from "react";
+import { Pressable, Text, View } from "react-native";
 import Animated, {
-  useSharedValue,
   useAnimatedStyle,
+  useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { Layers, ChevronRight, Sparkles } from "lucide-react-native";
-import * as Haptics from "expo-haptics";
 import { useThemeColors } from "@/lib/theme";
-import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 
 interface DeckCardProps {
   deck: SelectDeck & { due_count: number; total_count: number };
@@ -56,37 +56,40 @@ export const DeckCard: React.FC<DeckCardProps> = ({
 
   return (
     <Pressable
+      onLongPress={handleLongPress}
+      onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={handlePress}
-      onLongPress={handleLongPress}
     >
       <Animated.View
+        className="rounded-2xl border border-border/30 bg-card p-4 shadow-sm"
         style={animatedStyle}
-        className="bg-card rounded-2xl p-4 border border-border/30 shadow-sm"
       >
         <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center flex-1">
+          <View className="flex-1 flex-row items-center">
             {/* Icon */}
             <View
-              className={`p-3 rounded-xl ${hasDueCards ? "bg-primary/10" : "bg-muted/50"}`}
+              className={`rounded-xl p-3 ${hasDueCards ? "bg-primary/10" : "bg-muted/50"}`}
             >
-              <Layers size={24} color={hasDueCards ? colors.primary : colors.mutedForeground} />
+              <Layers
+                color={hasDueCards ? colors.primary : colors.mutedForeground}
+                size={24}
+              />
             </View>
 
             {/* Info */}
             <View className="ml-3 flex-1">
-              <Text className="text-foreground font-semibold text-lg">
+              <Text className="font-semibold text-foreground text-lg">
                 {deck.name}
               </Text>
-              <View className="flex-row items-center mt-1">
+              <View className="mt-1 flex-row items-center">
                 {hasDueCards ? (
                   <>
-                    <Sparkles size={14} color={colors.primary} />
-                    <Text className="text-primary ml-1 font-medium">
+                    <Sparkles color={colors.primary} size={14} />
+                    <Text className="ml-1 font-medium text-primary">
                       {deck.due_count} due
                     </Text>
-                    <Text className="text-muted-foreground ml-2">
+                    <Text className="ml-2 text-muted-foreground">
                       / {deck.total_count} total
                     </Text>
                   </>
@@ -100,19 +103,19 @@ export const DeckCard: React.FC<DeckCardProps> = ({
           </View>
 
           {/* Arrow */}
-          <ChevronRight size={20} color={colors.mutedForeground} />
+          <ChevronRight color={colors.mutedForeground} size={20} />
         </View>
 
         {/* Filters preview */}
         {deck.filters && Object.keys(deck.filters).length > 0 && (
           <View className="mt-3 flex-row flex-wrap gap-1">
             {deck.filters.tags?.map((tag, i) => (
-              <View key={i} className="bg-secondary px-2 py-0.5 rounded">
+              <View className="rounded bg-secondary px-2 py-0.5" key={i}>
                 <Text className="text-secondary-foreground text-xs">{tag}</Text>
               </View>
             ))}
             {deck.filters.types?.map((type, i) => (
-              <View key={i} className="bg-primary/10 px-2 py-0.5 rounded">
+              <View className="rounded bg-primary/10 px-2 py-0.5" key={i}>
                 <Text className="text-primary text-xs">{type}</Text>
               </View>
             ))}

@@ -1,5 +1,5 @@
-import { TLocale } from "@/lib/i18n";
 import { useLingui } from "@lingui/react/macro";
+import type { TLocale } from "@/lib/i18n";
 
 export const useDir = () => {
   const { i18n } = useLingui();

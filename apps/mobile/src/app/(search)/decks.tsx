@@ -1,30 +1,30 @@
+import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
+import { t } from "@lingui/core/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
+import { Edit, Layers, Play, Plus, Trash2, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Text,
-  View,
-  FlatList,
   ActivityIndicator,
-  Modal,
-  TextInput,
   Alert,
+  FlatList,
+  Modal,
   Pressable,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import { Trans, useLingui } from "@lingui/react/macro";
-import { t } from "@lingui/core/macro";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
-import { Plus, Layers, Play, Trash2, Edit, X } from "lucide-react-native";
-import { decksTable } from "@/lib/db/operations/decks";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { queryClient } from "@/utils/api";
-import { toast } from "sonner-native";
-import { useThemeColors } from "@/lib/theme";
-import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { syncDatabase } from "@/lib/db/adapter";
-import { store, syncCompletedCountAtom, isSyncingAtom } from "@/lib/store";
+import { decksTable } from "@/lib/db/operations/decks";
+import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
+import { useThemeColors } from "@/lib/theme";
+import { queryClient } from "@/utils/api";
 
 interface DeckCardProps {
   deck: SelectDeck & { due_count: number; total_count: number };
@@ -33,7 +33,12 @@ interface DeckCardProps {
   onDelete: () => void;
 }
 
-const DeckCard: React.FC<DeckCardProps> = ({ deck, onStudy, onEdit, onDelete }) => {
+const DeckCard: React.FC<DeckCardProps> = ({
+  deck,
+  onStudy,
+  onEdit,
+  onDelete,
+}) => {
   const colors = useThemeColors();
 
   return (
@@ -46,11 +51,13 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onStudy, onEdit, onDelete }) 
         <CardContent className="pt-4">
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <View className="flex-row items-center gap-2 mb-1">
-                <Layers size={18} color={colors.mutedForeground} />
-                <Text className="text-lg font-semibold text-foreground">{deck.name}</Text>
+              <View className="mb-1 flex-row items-center gap-2">
+                <Layers color={colors.mutedForeground} size={18} />
+                <Text className="font-semibold text-foreground text-lg">
+                  {deck.name}
+                </Text>
               </View>
-              <Text className="text-sm text-muted-foreground">
+              <Text className="text-muted-foreground text-sm">
                 {deck.due_count > 0 ? (
                   <Trans>{deck.due_count} cards due</Trans>
                 ) : (
@@ -63,21 +70,29 @@ const DeckCard: React.FC<DeckCardProps> = ({ deck, onStudy, onEdit, onDelete }) 
 
             <View className="flex-row items-center gap-1">
               <Pressable
-                onPress={onStudy}
-                className="p-2 rounded-md active:bg-primary/10"
+                className="rounded-md p-2 active:bg-primary/10"
                 disabled={deck.due_count === 0}
+                onPress={onStudy}
               >
                 <Play
-                  size={20}
-                  color={deck.due_count > 0 ? colors.primary : colors.mutedForeground}
+                  color={
+                    deck.due_count > 0 ? colors.primary : colors.mutedForeground
+                  }
                   fill={deck.due_count > 0 ? colors.primary : "transparent"}
+                  size={20}
                 />
               </Pressable>
-              <Pressable onPress={onEdit} className="p-2 rounded-md active:bg-primary/10">
-                <Edit size={18} color={colors.mutedForeground} />
+              <Pressable
+                className="rounded-md p-2 active:bg-primary/10"
+                onPress={onEdit}
+              >
+                <Edit color={colors.mutedForeground} size={18} />
               </Pressable>
-              <Pressable onPress={onDelete} className="p-2 rounded-md active:bg-destructive/10">
-                <Trash2 size={18} color={colors.destructive} />
+              <Pressable
+                className="rounded-md p-2 active:bg-destructive/10"
+                onPress={onDelete}
+              >
+                <Trash2 color={colors.destructive} size={18} />
               </Pressable>
             </View>
           </View>
@@ -112,7 +127,9 @@ const CreateEditDeckModal: React.FC<CreateEditDeckModalProps> = ({
   const createMutation = useMutation({
     mutationFn: decksTable.create.mutation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: decksTable.list.cacheOptions.queryKey });
+      queryClient.invalidateQueries({
+        queryKey: decksTable.list.cacheOptions.queryKey,
+      });
       toast.success(t`Deck created`);
       onClose();
     },
@@ -122,7 +139,9 @@ const CreateEditDeckModal: React.FC<CreateEditDeckModalProps> = ({
   const updateMutation = useMutation({
     mutationFn: decksTable.update.mutation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: decksTable.list.cacheOptions.queryKey });
+      queryClient.invalidateQueries({
+        queryKey: decksTable.list.cacheOptions.queryKey,
+      });
       toast.success(t`Deck updated`);
       onClose();
     },
@@ -136,7 +155,10 @@ const CreateEditDeckModal: React.FC<CreateEditDeckModalProps> = ({
     }
 
     if (editingDeck) {
-      updateMutation.mutate({ id: editingDeck.id, updates: { name: name.trim() } });
+      updateMutation.mutate({
+        id: editingDeck.id,
+        updates: { name: name.trim() },
+      });
     } else {
       createMutation.mutate({ deck: { name: name.trim() } });
     }
@@ -145,41 +167,49 @@ const CreateEditDeckModal: React.FC<CreateEditDeckModalProps> = ({
   const isLoading = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+    <Modal
+      animationType="slide"
+      presentationStyle="pageSheet"
+      visible={visible}
+    >
       <View
         className="flex-1 bg-background"
         style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
       >
         {/* Header */}
-        <View className="flex-row items-center justify-between px-4 py-3 border-b border-border">
-          <Pressable onPress={onClose} className="p-2 -ml-2">
-            <X size={24} color={colors.foreground} />
+        <View className="flex-row items-center justify-between border-border border-b px-4 py-3">
+          <Pressable className="-ml-2 p-2" onPress={onClose}>
+            <X color={colors.foreground} size={24} />
           </Pressable>
-          <Text className="text-lg font-semibold text-foreground">
-            {editingDeck ? <Trans>Edit Deck</Trans> : <Trans>Create Deck</Trans>}
+          <Text className="font-semibold text-foreground text-lg">
+            {editingDeck ? (
+              <Trans>Edit Deck</Trans>
+            ) : (
+              <Trans>Create Deck</Trans>
+            )}
           </Text>
           <View style={{ width: 40 }} />
         </View>
 
         {/* Content */}
         <View className="flex-1 px-4 pt-6">
-          <View className="gap-2 mb-6">
-            <Text className="text-sm font-medium text-foreground">
+          <View className="mb-6 gap-2">
+            <Text className="font-medium text-foreground text-sm">
               <Trans>Deck Name</Trans>
             </Text>
             <TextInput
-              className="border border-border rounded-md px-3 py-3 text-foreground bg-background"
+              autoFocus
+              className="rounded-md border border-border bg-background px-3 py-3 text-foreground"
+              onChangeText={setName}
               placeholder={translate`Enter deck name`}
               placeholderTextColor={colors.mutedForeground}
               value={name}
-              onChangeText={setName}
-              autoFocus
             />
           </View>
 
-          <Button onPress={handleSave} disabled={isLoading || !name.trim()}>
+          <Button disabled={isLoading || !name.trim()} onPress={handleSave}>
             {isLoading ? (
-              <ActivityIndicator size="small" color="white" />
+              <ActivityIndicator color="white" size="small" />
             ) : editingDeck ? (
               <Trans>Save Changes</Trans>
             ) : (
@@ -200,7 +230,11 @@ export default function DecksScreen() {
   const [editingDeck, setEditingDeck] = useState<SelectDeck | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data: decks, isLoading, refetch } = useQuery({
+  const {
+    data: decks,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryFn: decksTable.list.query,
     ...decksTable.list.cacheOptions,
   });
@@ -232,26 +266,32 @@ export default function DecksScreen() {
   const deleteMutation = useMutation({
     mutationFn: decksTable.delete.mutation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: decksTable.list.cacheOptions.queryKey });
+      queryClient.invalidateQueries({
+        queryKey: decksTable.list.cacheOptions.queryKey,
+      });
       toast.success(t`Deck deleted`);
     },
     onError: () => toast.error(t`Failed to delete deck`),
   });
 
   const handleDelete = (deck: SelectDeck) => {
-    Alert.alert(t`Delete Deck`, t`Are you sure you want to delete "${deck.name}"?`, [
-      { text: t`Cancel`, style: "cancel" },
-      {
-        text: t`Delete`,
-        style: "destructive",
-        onPress: () => deleteMutation.mutate({ id: deck.id }),
-      },
-    ]);
+    Alert.alert(
+      t`Delete Deck`,
+      t`Are you sure you want to delete "${deck.name}"?`,
+      [
+        { text: t`Cancel`, style: "cancel" },
+        {
+          text: t`Delete`,
+          style: "destructive",
+          onPress: () => deleteMutation.mutate({ id: deck.id }),
+        },
+      ]
+    );
   };
 
   if (isLoading) {
     return (
-      <View className="flex-1 bg-background items-center justify-center">
+      <View className="flex-1 items-center justify-center bg-background">
         <ActivityIndicator size="large" />
       </View>
     );
@@ -260,60 +300,64 @@ export default function DecksScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-b border-border">
-        <Text className="text-xl font-bold text-foreground">
+      <View className="flex-row items-center justify-between border-border border-b px-4 py-3">
+        <Text className="font-bold text-foreground text-xl">
           <Trans>Decks</Trans>
         </Text>
-        <Button variant="outline" onPress={() => setShowCreateModal(true)} Icon={Plus}>
+        <Button
+          Icon={Plus}
+          onPress={() => setShowCreateModal(true)}
+          variant="outline"
+        >
           <Trans>Create</Trans>
         </Button>
       </View>
 
       {/* Deck list */}
-      {!decks?.length ? (
-        <View className="flex-1 items-center justify-center px-8">
-          <View className="p-4 rounded-full bg-muted/50 mb-4">
-            <Layers size={32} color={colors.mutedForeground} />
-          </View>
-          <Text className="text-lg font-medium text-foreground mb-1 text-center">
-            <Trans>No decks yet</Trans>
-          </Text>
-          <Text className="text-muted-foreground text-center mb-4">
-            <Trans>Create a deck to organize your flashcard reviews</Trans>
-          </Text>
-          <Button onPress={() => setShowCreateModal(true)} Icon={Plus}>
-            <Trans>Create your first deck</Trans>
-          </Button>
-        </View>
-      ) : (
+      {decks?.length ? (
         <FlatList
+          contentContainerStyle={{ padding: 16 }}
           data={decks}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16 }}
+          onRefresh={handleRefresh}
+          refreshing={refreshing}
           renderItem={({ item }) => (
             <DeckCard
               deck={item}
-              onStudy={() => handleStudy(item)}
+              onDelete={() => handleDelete(item)}
               onEdit={() => {
                 setEditingDeck(item);
                 setShowCreateModal(true);
               }}
-              onDelete={() => handleDelete(item)}
+              onStudy={() => handleStudy(item)}
             />
           )}
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
         />
+      ) : (
+        <View className="flex-1 items-center justify-center px-8">
+          <View className="mb-4 rounded-full bg-muted/50 p-4">
+            <Layers color={colors.mutedForeground} size={32} />
+          </View>
+          <Text className="mb-1 text-center font-medium text-foreground text-lg">
+            <Trans>No decks yet</Trans>
+          </Text>
+          <Text className="mb-4 text-center text-muted-foreground">
+            <Trans>Create a deck to organize your flashcard reviews</Trans>
+          </Text>
+          <Button Icon={Plus} onPress={() => setShowCreateModal(true)}>
+            <Trans>Create your first deck</Trans>
+          </Button>
+        </View>
       )}
 
       {/* Create/Edit Modal */}
       <CreateEditDeckModal
-        visible={showCreateModal}
+        editingDeck={editingDeck}
         onClose={() => {
           setShowCreateModal(false);
           setEditingDeck(null);
         }}
-        editingDeck={editingDeck}
+        visible={showCreateModal}
       />
     </View>
   );

@@ -1,7 +1,7 @@
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { authClient } from "@/lib/auth-client";
-import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();

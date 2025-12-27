@@ -1,4 +1,8 @@
-import { Trans } from "@lingui/react/macro";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
 import { BetaBadge } from "@/components/BetaBadge";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,17 +24,12 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/useToast";
+import { ensureDb } from "@/lib/db";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { settingsTable } from "@/lib/db/operations/settings";
+import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
 import { queryClient } from "@/lib/query";
 import { z } from "@/lib/zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useLingui } from "@lingui/react/macro";
-import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { ensureDb } from "@/lib/db";
-import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
-import { settingsTable } from "@/lib/db/operations/settings";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
 
 const FormSchema = z.object({
   show_antonyms_in_flashcard: z.enum(["hidden", "answer", "hint"]).optional(),
@@ -131,7 +130,7 @@ export const FlashcardSettingsCardSection = () => {
         });
       }
     },
-    [updateSettings, t, toast],
+    [updateSettings, t, toast]
   );
 
   return (
@@ -149,7 +148,7 @@ export const FlashcardSettingsCardSection = () => {
       <CardContent className="flex flex-col gap-y-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-y-4 mb-4">
+            <div className="mb-4 flex flex-col gap-y-4">
               <FormField
                 control={form.control}
                 name="show_antonyms_in_flashcard"
@@ -161,16 +160,16 @@ export const FlashcardSettingsCardSection = () => {
 
                     <FormControl>
                       <RadioGroup
+                        className="flex flex-col space-y-1"
                         onValueChange={field.onChange}
                         value={field.value}
-                        className="flex flex-col space-y-1"
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
                             <RadioGroupItem value="hidden" />
                           </FormControl>
 
-                          <FormLabel className="font-normal cursor-pointer">
+                          <FormLabel className="cursor-pointer font-normal">
                             <Trans>Don't show</Trans>
                           </FormLabel>
                         </FormItem>
@@ -180,7 +179,7 @@ export const FlashcardSettingsCardSection = () => {
                             <RadioGroupItem value="hint" />
                           </FormControl>
 
-                          <FormLabel className="font-normal cursor-pointer">
+                          <FormLabel className="cursor-pointer font-normal">
                             <Trans>Show as a hint</Trans>
                           </FormLabel>
                         </FormItem>
@@ -190,7 +189,7 @@ export const FlashcardSettingsCardSection = () => {
                             <RadioGroupItem value="answer" />
                           </FormControl>
 
-                          <FormLabel className="font-normal cursor-pointer">
+                          <FormLabel className="cursor-pointer font-normal">
                             <Trans>Show after revealing the answer</Trans>
                           </FormLabel>
                         </FormItem>
@@ -208,7 +207,7 @@ export const FlashcardSettingsCardSection = () => {
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base flex items-center gap-x-2">
+                      <FormLabel className="flex items-center gap-x-2 text-base">
                         <Trans>Reverse flashcards</Trans>
                         <BetaBadge />
                       </FormLabel>
@@ -230,31 +229,31 @@ export const FlashcardSettingsCardSection = () => {
             </div>
 
             <Button
-              type="submit"
               disabled={!form.formState.isDirty || form.formState.isSubmitting}
+              type="submit"
             >
               <Trans>Save</Trans>
             </Button>
           </form>
         </Form>
 
-        <div className="border-t pt-4 mt-4">
+        <div className="mt-4 border-t pt-4">
           <div className="flex flex-col gap-3 rounded-lg border p-4">
             <div className="flex flex-row items-center justify-between">
               <div className="space-y-0.5">
-                <p className="text-sm font-medium">
+                <p className="font-medium text-sm">
                   <Trans>Clear backlog</Trans>
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   <Trans>
                     Reschedule all backlog cards by grading them as "Hard".
                   </Trans>
                 </p>
               </div>
               <Button
-                variant="outline"
-                onClick={handleClearBacklog}
                 disabled={!!clearingProgress}
+                onClick={handleClearBacklog}
+                variant="outline"
               >
                 <Trans>Clear</Trans>
               </Button>
@@ -262,7 +261,7 @@ export const FlashcardSettingsCardSection = () => {
 
             {clearingProgress && (
               <div className="space-y-2">
-                <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                   <div
                     className="h-full bg-primary transition-all duration-150"
                     style={{
@@ -273,7 +272,7 @@ export const FlashcardSettingsCardSection = () => {
                     }}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground text-center">
+                <p className="text-center text-muted-foreground text-xs">
                   <Trans>
                     {clearingProgress.cleared} / {clearingProgress.total} cards
                   </Trans>

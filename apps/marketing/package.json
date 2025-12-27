@@ -6,7 +6,6 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "lint": "eslint .",
     "type-check": "astro check && tsc --noEmit"
   },
   "dependencies": {

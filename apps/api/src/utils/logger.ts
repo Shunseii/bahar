@@ -1,6 +1,6 @@
+import { AsyncLocalStorage } from "async_hooks";
 import pino from "pino";
 import { config } from "./config";
-import { AsyncLocalStorage } from "async_hooks";
 
 interface TraceContext {
   traceId?: string;
@@ -23,7 +23,7 @@ export const getTraceContext = (): TraceContext => {
   return context;
 };
 
-export const enum LogCategory {
+export enum LogCategory {
   AUTH = "auth",
   DATABASE = "database",
   APPLICATION = "application",

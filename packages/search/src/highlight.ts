@@ -43,7 +43,7 @@ const escapeRegExp = (string: string): string => {
 export const highlightWithDiacritics = (
   text: string,
   searchTerm: string,
-  options: HighlightOptions = {},
+  options: HighlightOptions = {}
 ): string => {
   const { HTMLTag = "mark", CSSClass = "" } = options;
 

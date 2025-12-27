@@ -6,22 +6,22 @@
  */
 
 import {
-  Card,
-  createEmptyCard,
-  fsrs,
-  Grade,
-  Rating,
-  RecordLog,
-  RecordLogItem,
-  State,
-  type FSRS,
-  type FSRSParameters,
-} from "ts-fsrs";
-import {
   type FlashcardDirection,
   FlashcardState,
   type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
+import {
+  type Card,
+  createEmptyCard,
+  type FSRS,
+  type FSRSParameters,
+  fsrs,
+  type Grade,
+  Rating,
+  type RecordLog,
+  type RecordLogItem,
+  State,
+} from "ts-fsrs";
 
 export { createEmptyCard, fsrs, Rating, State };
 
@@ -31,7 +31,7 @@ export type { Card, FSRS, FSRSParameters, Grade, RecordLog, RecordLogItem };
  * Converts a database flashcard to an FSRS Card with Date objects
  */
 export const toFsrsCard = (
-  flashcard: SelectFlashcard,
+  flashcard: SelectFlashcard
 ): Card & { id: string } => {
   return {
     id: flashcard.id,
@@ -56,7 +56,7 @@ export const toFsrsCard = (
 export const fromFsrsCard = (
   card: Card,
   dictionaryEntryId: string,
-  direction: FlashcardDirection,
+  direction: FlashcardDirection
 ): Omit<SelectFlashcard, "id" | "is_hidden"> => {
   const dueTimestampMs = card.due.getTime();
   const lastReviewTimestampMs = card.last_review?.getTime() ?? null;
@@ -84,7 +84,7 @@ export const fromFsrsCard = (
  */
 export const createNewFlashcard = (
   dictionaryEntryId: string,
-  direction: FlashcardDirection,
+  direction: FlashcardDirection
 ): Omit<SelectFlashcard, "id" | "is_hidden"> => {
   const emptyCard = createEmptyCard();
   return fromFsrsCard(emptyCard, dictionaryEntryId, direction);
@@ -106,7 +106,7 @@ export const createScheduler = (params?: Partial<FSRSParameters>): FSRS => {
 export const getSchedulingOptions = (
   scheduler: FSRS,
   flashcard: SelectFlashcard,
-  now: Date = new Date(),
+  now: Date = new Date()
 ): RecordLog => {
   const fsrsCard = toFsrsCard(flashcard);
   return scheduler.repeat(fsrsCard, now);
@@ -119,7 +119,7 @@ export const gradeFlashcard = (
   scheduler: FSRS,
   flashcard: SelectFlashcard,
   grade: Grade,
-  now: Date = new Date(),
+  now: Date = new Date()
 ): Pick<
   SelectFlashcard,
   | "due"

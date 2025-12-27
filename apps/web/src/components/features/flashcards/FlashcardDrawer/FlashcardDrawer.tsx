@@ -1,49 +1,49 @@
-import { Plural, Trans } from "@lingui/react/macro";
-import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { Tooltip, TooltipTrigger, TooltipContent } from "../../../ui/tooltip";
-import { Button } from "../../../ui/button";
+import { cn } from "@bahar/design-system";
+import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { toFsrsCard } from "@bahar/fsrs";
-import { fsrs, Grade, Rating } from "ts-fsrs";
+import { Plural, Trans } from "@lingui/react/macro";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Archive, Brain, PartyPopper, Sparkles } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import {
-  Drawer,
-  DrawerTrigger,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-  DrawerFooter,
-} from "../../../ui/drawer";
-import {
-  FC,
-  PropsWithChildren,
+  type FC,
+  type PropsWithChildren,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { queryClient } from "@/lib/query";
-import { motion, AnimatePresence } from "motion/react";
-import { QuestionSide } from "../QuestionSide";
-import { AnswerSide } from "../AnswerSide";
-import { ReverseAnswerSide } from "../ReverseAnswerSide";
-import { ReverseQuestionSide } from "../ReverseQuestionSide";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { fsrs, type Grade, Rating } from "ts-fsrs";
+import { useDir } from "@/hooks/useDir";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { decksTable } from "@/lib/db/operations/decks";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  type FlashcardQueue,
+  type FlashcardWithDictionaryEntry,
   flashcardsTable,
-  FlashcardWithDictionaryEntry,
-  FlashcardQueue,
 } from "@/lib/db/operations/flashcards";
-import { decksTable } from "@/lib/db/operations/decks";
-import { SelectDeck } from "@bahar/drizzle-user-db-schemas";
-import { cn } from "@bahar/design-system";
-import { Brain, Sparkles, PartyPopper, Archive } from "lucide-react";
-import { GradeOption } from "./GradeOption";
+import { queryClient } from "@/lib/query";
+import { Button } from "../../../ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../../../ui/drawer";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../../ui/tooltip";
+import { AnswerSide } from "../AnswerSide";
+import { QuestionSide } from "../QuestionSide";
+import { ReverseAnswerSide } from "../ReverseAnswerSide";
+import { ReverseQuestionSide } from "../ReverseQuestionSide";
 import { GradeFeedback } from "./GradeFeedback";
+import { GradeOption } from "./GradeOption";
 import { TagBadgesList } from "./TagBadgesList";
 import { formatScheduleOptions } from "./utils";
-import { useDir } from "@/hooks/useDir";
 
 interface FlashcardDrawerProps extends PropsWithChildren {
   filters?: SelectDeck["filters"];
@@ -163,7 +163,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
   const executeGrade = useCallback(
     async (grade: Grade) => {
-      if (!schedulingCards || !currentCard) return;
+      if (!(schedulingCards && currentCard)) return;
 
       const selectedCard = schedulingCards[grade].card;
       const dueTimestampMs = selectedCard.due.getTime();
@@ -193,12 +193,12 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         updates: localUpdates,
       });
     },
-    [currentCard, schedulingCards, updateFlashcard],
+    [currentCard, schedulingCards, updateFlashcard]
   );
 
   const gradeCard = useCallback(
     (grade: Grade) => {
-      if (!schedulingCards || !currentCard) return;
+      if (!(schedulingCards && currentCard)) return;
 
       // Store the callback to execute after animation
       gradeCallbackRef.current = () => executeGrade(grade);
@@ -206,7 +206,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       // Show feedback animation
       setPendingGrade(grade);
     },
-    [currentCard, schedulingCards, executeGrade],
+    [currentCard, schedulingCards, executeGrade]
   );
 
   const handleAnimationComplete = useCallback(() => {
@@ -246,31 +246,31 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
           )}
         </AnimatePresence>
 
-        <DrawerHeader className="border-b border-border/30 pb-4">
+        <DrawerHeader className="border-border/30 border-b pb-4">
           {/* Queue selector */}
           {(counts.regular > 0 || counts.backlog > 0) && (
             <>
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <div className="inline-flex rounded-lg bg-muted/50 p-1 gap-1">
+              <div className="mb-4 flex items-center justify-center gap-2">
+                <div className="inline-flex gap-1 rounded-lg bg-muted/50 p-1">
                   <button
-                    type="button"
-                    onClick={() => setSelectedQueue("regular")}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all",
+                      "flex items-center gap-2 rounded-md px-3 py-1.5 font-medium text-sm transition-all",
                       selectedQueue === "regular"
                         ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground",
+                        : "text-muted-foreground hover:text-foreground"
                     )}
+                    onClick={() => setSelectedQueue("regular")}
+                    type="button"
                   >
-                    <Brain className="w-4 h-4" />
+                    <Brain className="h-4 w-4" />
                     <Trans>Review</Trans>
                     {counts.regular > 0 && (
                       <span
                         className={cn(
-                          "inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-semibold rounded-full",
+                          "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 font-semibold text-xs",
                           selectedQueue === "regular"
                             ? "bg-primary text-primary-foreground"
-                            : "bg-muted-foreground/20 text-muted-foreground",
+                            : "bg-muted-foreground/20 text-muted-foreground"
                         )}
                       >
                         {formatNumber(counts.regular)}
@@ -278,24 +278,24 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     )}
                   </button>
                   <button
-                    type="button"
-                    onClick={() => setSelectedQueue("backlog")}
                     className={cn(
-                      "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all",
+                      "flex items-center gap-2 rounded-md px-3 py-1.5 font-medium text-sm transition-all",
                       selectedQueue === "backlog"
                         ? "bg-background text-foreground shadow-sm"
-                        : "text-muted-foreground hover:text-foreground",
+                        : "text-muted-foreground hover:text-foreground"
                     )}
+                    onClick={() => setSelectedQueue("backlog")}
+                    type="button"
                   >
-                    <Archive className="w-4 h-4" />
+                    <Archive className="h-4 w-4" />
                     <Trans>Backlog</Trans>
                     {counts.backlog > 0 && (
                       <span
                         className={cn(
-                          "inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 text-xs font-semibold rounded-full",
+                          "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 font-semibold text-xs",
                           selectedQueue === "backlog"
                             ? "bg-orange-500 text-white"
-                            : "bg-orange-500/20 text-orange-600 dark:text-orange-400",
+                            : "bg-orange-500/20 text-orange-600 dark:text-orange-400"
                         )}
                       >
                         {formatNumber(counts.backlog)}
@@ -305,7 +305,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                 </div>
               </div>
 
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-center text-muted-foreground text-xs">
                 {selectedQueue === "regular" ? (
                   <Trans>Cards due today or recently</Trans>
                 ) : (
@@ -318,27 +318,27 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
           <div className="flex items-center justify-center gap-3">
             {cards?.length ? (
               <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="flex items-center gap-2"
+                initial={{ scale: 0.8, opacity: 0 }}
               >
                 <DrawerTitle className="text-md">
                   {formatNumber(cards.length)}{" "}
                   <Plural
-                    value={cards.length}
                     one="card left"
                     other="cards left"
+                    value={cards.length}
                   />
                 </DrawerTitle>
               </motion.div>
             ) : (
               <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="flex flex-col items-center gap-3"
+                initial={{ scale: 0.8, opacity: 0 }}
               >
-                <div className="p-3 rounded-2xl bg-green-500/10">
-                  <PartyPopper className="w-8 h-8 text-green-500" />
+                <div className="rounded-2xl bg-green-500/10 p-3">
+                  <PartyPopper className="h-8 w-8 text-green-500" />
                 </div>
                 <DrawerTitle className="text-center">
                   {selectedQueue === "backlog" ? (
@@ -347,7 +347,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     <Trans>All done for today!</Trans>
                   )}
                 </DrawerTitle>
-                <p className="text-sm text-muted-foreground text-center max-w-xs">
+                <p className="max-w-xs text-center text-muted-foreground text-sm">
                   {selectedQueue === "backlog" && counts.regular > 0 ? (
                     <Trans>
                       Great work on the backlog! You still have{" "}
@@ -378,27 +378,27 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         <AnimatePresence mode="wait">
           {currentCard && (
             <motion.div
-              key={currentCard.id}
-              initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
               className="flex-1 overflow-y-auto"
+              exit={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: 20 }}
+              key={currentCard.id}
+              transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
             >
-              <div className="w-full max-w-2xl mx-auto flex flex-col gap-y-4 sm:gap-y-6 px-4 sm:px-8 py-4 sm:py-6">
+              <div className="mx-auto flex w-full max-w-2xl flex-col gap-y-4 px-4 py-4 sm:gap-y-6 sm:px-8 sm:py-6">
                 <TagBadgesList currentCard={currentCard} />
 
                 {/* Flashcard content area */}
-                <div className="relative p-4 sm:p-8 rounded-2xl bg-gradient-to-br from-muted/30 to-muted/10 border border-border/30">
+                <div className="relative rounded-2xl border border-border/30 bg-gradient-to-br from-muted/30 to-muted/10 p-4 sm:p-8">
                   {currentCard.direction === "reverse" ? (
                     <>
                       <ReverseQuestionSide currentCard={currentCard} />
                       <AnimatePresence>
                         {showAnswer && (
                           <motion.div
-                            initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
+                            initial={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
                           >
                             <div className="my-6 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -413,9 +413,9 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                       <AnimatePresence>
                         {showAnswer && (
                           <motion.div
-                            initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
+                            initial={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
                           >
                             <div className="my-6 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -435,45 +435,45 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
           <AnimatePresence mode="wait">
             {schedulingCards && intervalLabels && showAnswer ? (
               <motion.div
-                key="grading-buttons"
-                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                className="mx-auto flex w-full max-w-lg items-stretch justify-center gap-2 sm:gap-4"
                 exit={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: 20 }}
+                key="grading-buttons"
                 transition={{ duration: 0.3 }}
-                className="flex gap-2 sm:gap-4 items-stretch justify-center w-full max-w-lg mx-auto"
               >
                 {(
                   [Rating.Again, Rating.Hard, Rating.Good, Rating.Easy] as const
                 ).map((grade) => (
                   <GradeOption
-                    key={grade}
                     grade={grade}
                     intervalLabel={intervalLabels[grade]}
+                    key={grade}
                     onClick={() => gradeCard(grade)}
                   />
                 ))}
               </motion.div>
             ) : schedulingCards ? (
               <motion.div
-                key="show-answer"
-                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
+                className="flex w-full justify-center"
                 exit={{ opacity: 0, y: -10 }}
-                className="w-full flex justify-center"
+                initial={{ opacity: 0, y: 10 }}
+                key="show-answer"
               >
                 <Button
-                  onClick={() => setShowAnswer(true)}
-                  size="lg"
                   className={cn(
                     "w-full max-w-sm rtl:text-lg",
                     "bg-primary hover:bg-primary/90",
-                    "shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30",
+                    "shadow-lg shadow-primary/25 hover:shadow-primary/30 hover:shadow-xl",
                     "transition-all duration-300",
-                    "group relative overflow-hidden",
+                    "group relative overflow-hidden"
                   )}
+                  onClick={() => setShowAnswer(true)}
+                  size="lg"
                 >
-                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500" />
-                  <Sparkles className="w-4 h-4 ltr:mr-2 rtl:ml-2" />
+                  <span className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-white/0 via-white/10 to-white/0 transition-transform duration-500 group-hover:translate-x-[100%]" />
+                  <Sparkles className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
                   <Trans>Show answer</Trans>
                 </Button>
               </motion.div>

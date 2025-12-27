@@ -4,17 +4,17 @@
 
 import {
   create,
-  insertMultiple,
   insert,
-  update,
+  insertMultiple,
   remove,
   search,
+  update,
 } from "@orama/orama";
 import { pluginQPS } from "@orama/plugin-qps";
 import {
-  dictionarySchema,
   type DictionaryDocument,
   type DictionaryOrama,
+  dictionarySchema,
 } from "./schema";
 import { multiLanguageTokenizer } from "./tokenizer";
 
@@ -55,7 +55,7 @@ export const createDictionaryDatabase = (): DictionaryOrama => {
 export const insertDocuments = async (
   db: DictionaryOrama,
   documents: DictionaryDocument[],
-  batchSize: number = 500,
+  batchSize = 500
 ): Promise<void> => {
   await insertMultiple(db, documents, batchSize);
 };
@@ -65,7 +65,7 @@ export const insertDocuments = async (
  */
 export const insertDocument = async (
   db: DictionaryOrama,
-  document: DictionaryDocument,
+  document: DictionaryDocument
 ): Promise<string> => {
   return insert(db, document);
 };
@@ -77,7 +77,7 @@ export const insertDocument = async (
 export const updateDocument = async (
   db: DictionaryOrama,
   id: string,
-  document: Partial<DictionaryDocument>,
+  document: Partial<DictionaryDocument>
 ): Promise<string> => {
   return update(db, id, document);
 };
@@ -87,7 +87,7 @@ export const updateDocument = async (
  */
 export const removeDocument = async (
   db: DictionaryOrama,
-  id: string,
+  id: string
 ): Promise<boolean> => {
   return remove(db, id);
 };
@@ -104,7 +104,7 @@ export const searchDictionary = async (
     limit?: number;
     offset?: number;
     properties?: SearchableProperties[];
-  },
+  }
 ) => {
   return search(db, {
     term,

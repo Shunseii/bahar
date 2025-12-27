@@ -1,5 +1,5 @@
 ---
-import { getLocalizedPath, t, type Locale } from '../../i18n';
+import { getLocalizedPath, type Locale } from "../../i18n";
 
 interface Props {
   title: string;
@@ -11,13 +11,16 @@ interface Props {
 
 const { title, description, pubDate, slug, locale } = Astro.props;
 
-const formattedDate = pubDate.toLocaleDateString(locale === 'ar' ? 'ar-SA' : 'en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-});
+const formattedDate = pubDate.toLocaleDateString(
+  locale === "ar" ? "ar-SA" : "en-US",
+  {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }
+);
 
-const postUrl = `${getLocalizedPath('blog', locale)}/${slug}`;
+const postUrl = `${getLocalizedPath("blog", locale)}/${slug}`;
 ---
 
 <article class="group relative rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-lg">

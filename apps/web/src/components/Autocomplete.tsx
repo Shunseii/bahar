@@ -1,11 +1,10 @@
-import { Trans } from "@lingui/react/macro";
-import { useLingui } from "@lingui/react/macro";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@bahar/design-system";
-import { useClickAway, useDebounce } from "@uidotdev/usehooks";
-import { Input } from "./ui/input";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
+import { useClickAway, useDebounce } from "@uidotdev/usehooks";
+import { type FC, useCallback, useEffect, useRef, useState } from "react";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { Input } from "./ui/input";
 
 interface AutocompleteProps {
   className?: string;
@@ -55,7 +54,7 @@ export const Autocomplete: FC<AutocompleteProps> = ({
 
       onClick?.(value);
     },
-    [onClick],
+    [onClick]
   );
 
   const addedTagIsFiltered = tags.length === 0 && filter.includes(inputValue);
@@ -63,7 +62,6 @@ export const Autocomplete: FC<AutocompleteProps> = ({
   return (
     <div className={cn("relative", className)}>
       <div
-        ref={ref}
         className="relative"
         onBlur={(e) => {
           // If we click outside the dropdown or the input, close the dropdown
@@ -74,36 +72,37 @@ export const Autocomplete: FC<AutocompleteProps> = ({
             e.relatedTarget === inputRef.current ||
             inputRef.current?.contains(e.relatedTarget);
 
-          if (!clickedDropdown && !clickedInput) {
+          if (!(clickedDropdown || clickedInput)) {
             setShowDropdown(false);
           }
         }}
+        ref={ref}
       >
         <Input
-          type="search"
-          placeholder={t`Search for a tag...`}
-          className="rounded-lg bg-background"
-          onFocus={() => {
-            setShowDropdown(true);
-          }}
-          ref={inputRef}
+          autoCapitalize="off"
           autoComplete="off"
           autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck={false}
+          className="rounded-lg bg-background"
           maxLength={512}
-          value={inputValue}
           onChange={(e) => {
             setInputValue(e.currentTarget.value);
           }}
+          onFocus={() => {
+            setShowDropdown(true);
+          }}
+          placeholder={t`Search for a tag...`}
+          ref={inputRef}
+          spellCheck={false}
+          type="search"
+          value={inputValue}
         />
 
         {showDropdown &&
           !addedTagIsFiltered &&
           (tags.length > 0 || (tags.length === 0 && allowAdd)) && (
             <div
+              className="absolute top-12 right-0 left-0 max-h-[164px] overflow-y-auto rounded-lg border-2 border-border bg-background"
               ref={dropdownRef}
-              className="absolute top-12 rounded-lg right-0 left-0 bg-background border-2 border-border max-h-[164px] overflow-y-auto"
             >
               {(() => {
                 if (isSearching) {
@@ -112,32 +111,32 @@ export const Autocomplete: FC<AutocompleteProps> = ({
                       <Trans>Searching...</Trans>
                     </div>
                   );
-                } else if (tags.length > 0) {
+                }
+                if (tags.length > 0) {
                   return (
                     <ul>
                       {tags.map((item) => (
                         <li
                           className="cursor-pointer px-3 py-1 hover:bg-muted"
                           key={item}
-                          tabIndex={0}
-                          role="button"
+                          onClick={() => {
+                            selectTag(item);
+                          }}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               selectTag(item);
                             }
                           }}
-                          onClick={() => {
-                            selectTag(item);
-                          }}
+                          role="button"
+                          tabIndex={0}
                         >
                           {item}
                         </li>
                       ))}
                     </ul>
                   );
-                } else {
-                  return undefined;
                 }
+                return undefined;
               })()}
 
               {!isSearching &&
@@ -145,16 +144,16 @@ export const Autocomplete: FC<AutocompleteProps> = ({
                 !tags.includes(inputValue) &&
                 !filter.includes(inputValue) && (
                   <button
-                    className="px-3 py-1 hover:bg-muted w-full ltr:text-left rtl:text-right"
-                    type="button"
+                    className="w-full px-3 py-1 hover:bg-muted ltr:text-left rtl:text-right"
+                    onClick={() => {
+                      selectTag(inputValue);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         selectTag(inputValue);
                       }
                     }}
-                    onClick={() => {
-                      selectTag(inputValue);
-                    }}
+                    type="button"
                   >
                     <Trans>Add tag {inputValue}</Trans>
                   </button>

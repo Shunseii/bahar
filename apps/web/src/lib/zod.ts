@@ -2,16 +2,12 @@ import { plural, t } from "@lingui/core/macro";
 import { z } from "zod/v4";
 
 const errorMap: z.core.$ZodErrorMap = (issue) => {
-  if (issue.code === "invalid_type") {
-    if (issue.expected === "string") {
-      return t`This field is required.`;
-    }
+  if (issue.code === "invalid_type" && issue.expected === "string") {
+    return t`This field is required.`;
   }
 
-  if (issue.code === "invalid_format") {
-    if (issue.format === "email") {
-      return t`That email is invalid.`;
-    }
+  if (issue.code === "invalid_format" && issue.format === "email") {
+    return t`That email is invalid.`;
   }
 
   if (issue.code === "too_small") {

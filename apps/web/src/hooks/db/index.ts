@@ -1,12 +1,12 @@
+import { insert, remove, update } from "@orama/orama";
+import { useMutation } from "@tanstack/react-query";
+import { createEmptyCard } from "ts-fsrs";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { queryClient } from "@/lib/query";
 import { getOramaDb } from "@/lib/search";
 import { nullToUndefined } from "@/lib/utils";
-import { insert, update, remove } from "@orama/orama";
-import { useMutation } from "@tanstack/react-query";
 import { useSearch } from "../useSearch";
-import { queryClient } from "@/lib/query";
-import { createEmptyCard } from "ts-fsrs";
 
 /**
  *  Hook for adding a new word to the local database and the search index.
@@ -29,7 +29,7 @@ export const useAddDictionaryEntry = () => {
      */
     addDictionaryEntry: async (
       params: Parameters<typeof mutateAsync>[0],
-      opts: Parameters<typeof mutateAsync>[1] = {},
+      opts: Parameters<typeof mutateAsync>[1] = {}
     ) => {
       const emptyFlashcard = createEmptyCard();
 
@@ -78,7 +78,7 @@ export const useDeleteDictionaryEntry = () => {
      */
     deleteDictionaryEntry: async (
       params: Parameters<typeof mutateAsync>[0],
-      opts: Parameters<typeof mutateAsync>[1] = {},
+      opts: Parameters<typeof mutateAsync>[1] = {}
     ) => {
       const deletedWord = await mutateAsync(params, opts);
 
@@ -108,7 +108,7 @@ export const useEditDictionaryEntry = () => {
      */
     editDictionaryEntry: async (
       params: Parameters<typeof mutateAsync>[0],
-      opts: Parameters<typeof mutateAsync>[1] = {},
+      opts: Parameters<typeof mutateAsync>[1] = {}
     ) => {
       const updatedWord = await mutateAsync(params, opts);
 

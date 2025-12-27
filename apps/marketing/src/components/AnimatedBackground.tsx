@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 interface Particle {
   x: number;
@@ -110,7 +110,7 @@ export default function AnimatedBackground() {
     window.addEventListener("resize", resizeCanvas);
 
     const animate = () => {
-      if (!ctx || !canvas) return;
+      if (!(ctx && canvas)) return;
 
       const width = window.innerWidth;
       const height = window.innerHeight;
@@ -190,15 +190,15 @@ export default function AnimatedBackground() {
 
   return (
     <motion.div
-      className="fixed inset-0 -z-10 pointer-events-none"
-      aria-hidden="true"
-      initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 -z-10"
+      initial={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
       <canvas
-        ref={canvasRef}
         className="absolute inset-0"
+        ref={canvasRef}
         style={{ width: "100%", height: "100%" }}
       />
       {/* Subtle gradient overlay for depth */}

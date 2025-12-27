@@ -2,12 +2,11 @@
  * Settings database operations for mobile app.
  */
 
-import {
-  SelectSetting,
+import type { TableOperation } from "@bahar/db-operations";
+import type {
   RawSetting,
   ShowAntonymsMode,
 } from "@bahar/drizzle-user-db-schemas";
-import { type TableOperation } from "@bahar/db-operations";
 import { ensureDb } from "..";
 
 const SETTINGS_ID = "default";
@@ -28,7 +27,9 @@ const DEFAULT_SETTINGS: UserSettings = {
 const toUserSettings = (raw: RawSetting | undefined): UserSettings => {
   if (!raw) return DEFAULT_SETTINGS;
   return {
-    show_antonyms_mode: (raw.show_antonyms_in_flashcard as ShowAntonymsMode) ?? DEFAULT_SETTINGS.show_antonyms_mode,
+    show_antonyms_mode:
+      (raw.show_antonyms_in_flashcard as ShowAntonymsMode) ??
+      DEFAULT_SETTINGS.show_antonyms_mode,
     show_reverse_flashcards: Boolean(raw.show_reverse_flashcards),
   };
 };
@@ -39,7 +40,7 @@ export const settingsTable = {
       const db = await ensureDb();
 
       const row = await db
-        .prepare<RawSetting>(`SELECT * FROM settings WHERE id = ?;`)
+        .prepare<RawSetting>("SELECT * FROM settings WHERE id = ?;")
         .get([SETTINGS_ID]);
 
       return toUserSettings(row);
@@ -69,7 +70,7 @@ export const settingsTable = {
            VALUES (?, ?, ?)
            ON CONFLICT(id) DO UPDATE SET
              show_antonyms_in_flashcard = excluded.show_antonyms_in_flashcard,
-             show_reverse_flashcards = excluded.show_reverse_flashcards;`,
+             show_reverse_flashcards = excluded.show_reverse_flashcards;`
         )
         .run([
           SETTINGS_ID,
