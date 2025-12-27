@@ -10,9 +10,9 @@ import {
 import { err, ok } from "@bahar/result";
 import {
   createDictionaryDatabase,
-  type DictionaryOrama,
   insertDocuments,
-} from "@bahar/search";
+} from "@bahar/search/database";
+import type { DictionaryOrama } from "@bahar/search/schema";
 import * as Sentry from "@sentry/react";
 import { z } from "zod";
 import { ensureDb } from "../db";

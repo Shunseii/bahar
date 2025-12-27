@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://get-bahar.com",
+  site: "https://getbahar.com",
   output: "static",
   i18n: {
     locales: ["en", "ar"],

@@ -16,7 +16,9 @@ export default function ThemeToggle() {
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -35,6 +37,7 @@ export default function ThemeToggle() {
       <button
         aria-label="Toggle theme"
         className="relative flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+        type="button"
       >
         <span className="h-5 w-5" />
       </button>
@@ -48,11 +51,13 @@ export default function ThemeToggle() {
       }
       className="relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
       onClick={toggleTheme}
+      type="button"
     >
       <AnimatePresence initial={false} mode="wait">
         {theme === "light" ? (
           <motion.svg
             animate={{ scale: 1, rotate: 0 }}
+            aria-hidden="true"
             exit={{ scale: 0, rotate: 90 }}
             fill="none"
             height="20"
@@ -80,6 +85,7 @@ export default function ThemeToggle() {
         ) : (
           <motion.svg
             animate={{ scale: 1, rotate: 0 }}
+            aria-hidden="true"
             exit={{ scale: 0, rotate: -90 }}
             fill="none"
             height="20"

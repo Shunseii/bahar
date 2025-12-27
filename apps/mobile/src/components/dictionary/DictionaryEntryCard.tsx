@@ -50,8 +50,7 @@ const useGenderLabels = (): Record<"masculine" | "feminine", string> => {
 const ShareButton: FC<{
   word: string;
   translation: string;
-  iconColor: string;
-}> = ({ word, translation, iconColor }) => {
+}> = ({ word, translation }) => {
   const handleShare = async () => {
     try {
       await Share.share({
@@ -69,7 +68,7 @@ const ShareButton: FC<{
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       onPress={handleShare}
     >
-      <Share2 color={iconColor} size={18} />
+      <Share2 className="text-muted-foreground" size={18} />
     </Pressable>
   );
 };
@@ -313,8 +312,6 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
     const scale = useSharedValue(1);
     const pressed = useSharedValue(0);
 
-    const iconColor = colors.mutedForeground;
-
     const hasExpandableContent =
       entry.definition ||
       (entry.root && entry.root.length > 0) ||
@@ -402,11 +399,7 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
 
             {/* Actions */}
             <View className="flex-row items-center">
-              <ShareButton
-                iconColor={iconColor}
-                translation={entry.translation}
-                word={entry.word}
-              />
+              <ShareButton translation={entry.translation} word={entry.word} />
               <Pressable
                 className="rounded-md p-2 active:bg-primary/10"
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -414,11 +407,11 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
                   router.push(`/(search)/(home)/edit-word/${entry.id}`)
                 }
               >
-                <Edit color={iconColor} size={18} />
+                <Edit className="text-muted-foreground" size={18} />
               </Pressable>
               {hasExpandableContent && (
                 <Animated.View style={chevronStyle}>
-                  <ChevronDown color={iconColor} size={18} />
+                  <ChevronDown className="text-muted-foreground" size={18} />
                 </Animated.View>
               )}
             </View>

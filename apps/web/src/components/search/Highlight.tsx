@@ -1,4 +1,4 @@
-import { highlightWithDiacritics } from "@bahar/search";
+import { highlightWithDiacritics } from "@bahar/search/highlight";
 import DOMPurify from "dompurify";
 import { useAtomValue } from "jotai";
 import { type FC, memo, useMemo } from "react";

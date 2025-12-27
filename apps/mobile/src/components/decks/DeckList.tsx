@@ -18,7 +18,6 @@ import {
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import { syncDatabase } from "@/lib/db/adapter";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
-import { useThemeColors } from "@/lib/theme";
 import { decksTable } from "../../lib/db/operations/decks";
 import { DeckCard } from "./DeckCard";
 
@@ -36,7 +35,6 @@ export const DeckList: React.FC<DeckListProps> = ({
   onCreatePress,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const colors = useThemeColors();
 
   const {
     data: decks,
@@ -90,7 +88,7 @@ export const DeckList: React.FC<DeckListProps> = ({
           className="rounded-xl bg-primary p-2"
           onPress={handleCreatePress}
         >
-          <Plus color={colors.primaryForeground} size={24} />
+          <Plus className="text-primary-foreground" size={24} />
         </Pressable>
       </View>
 
@@ -101,7 +99,7 @@ export const DeckList: React.FC<DeckListProps> = ({
           entering={FadeIn.duration(300)}
         >
           <View className="mb-4 rounded-2xl bg-muted/50 p-4">
-            <Layers color={colors.mutedForeground} size={48} />
+            <Layers className="text-muted-foreground" size={48} />
           </View>
           <Text className="mb-2 font-semibold text-foreground text-lg">
             No decks yet

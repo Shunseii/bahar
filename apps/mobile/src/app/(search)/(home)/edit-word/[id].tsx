@@ -31,7 +31,6 @@ import { Input } from "@/components/ui/input";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import { removeFromSearchIndex, updateSearchIndex } from "@/lib/search";
-import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { errorMap } from "@/utils/zod";
 
@@ -59,7 +58,6 @@ const INFLECTIONS = [
 
 const Breadcrumbs = () => {
   const router = useRouter();
-  const colors = useThemeColors();
 
   return (
     <View className="mb-6">
@@ -69,7 +67,7 @@ const Breadcrumbs = () => {
             <Trans>Home</Trans>
           </Text>
         </Pressable>
-        <ChevronRight color={colors.mutedForeground} size={14} />
+        <ChevronRight className="text-muted-foreground" size={14} />
         <Text className="font-normal text-foreground text-sm">
           <Trans>Edit word</Trans>
         </Text>
@@ -81,15 +79,14 @@ const Breadcrumbs = () => {
 const BackButton = () => {
   const router = useRouter();
   const locales = useLocales();
-  const colors = useThemeColors();
   const dir = locales[0].textDirection;
 
   return (
     <Button onPress={() => router.back()} size="icon" variant="outline">
       {dir === "rtl" ? (
-        <ChevronRight color={colors.foreground} size={16} />
+        <ChevronRight className="text-foreground" size={16} />
       ) : (
-        <ChevronLeft color={colors.foreground} size={16} />
+        <ChevronLeft className="text-foreground" size={16} />
       )}
     </Button>
   );
@@ -102,7 +99,6 @@ const TagsInput = ({
   value: { name: string }[] | undefined;
   onChange: (value: { name: string }[]) => void;
 }) => {
-  const colors = useThemeColors();
   const [tagInput, setTagInput] = useState("");
 
   const handleSubmit = () => {
@@ -130,7 +126,7 @@ const TagsInput = ({
                   onChange(newTags);
                 }}
               >
-                <X color={colors.primary} size={14} />
+                <X className="text-primary" size={14} />
               </Pressable>
             </View>
           ))}
@@ -159,7 +155,6 @@ const SelectDropdown = ({
   placeholder?: string;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const colors = useThemeColors();
 
   return (
     <View>
@@ -170,7 +165,7 @@ const SelectDropdown = ({
         <Text className={value ? "text-foreground" : "text-muted-foreground"}>
           {value ? options.find((o) => o.value === value)?.label : placeholder}
         </Text>
-        <ChevronDown color={colors.mutedForeground} size={16} />
+        <ChevronDown className="text-muted-foreground" size={16} />
       </Pressable>
       {isOpen && (
         <View className="mt-1 overflow-hidden rounded-md border border-input bg-background">
@@ -206,7 +201,6 @@ export default function EditWordScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
-  const colors = useThemeColors();
 
   // Fetch the existing entry
   const {
@@ -455,7 +449,7 @@ export default function EditWordScreen() {
               size="icon"
               variant="ghost"
             >
-              <Trash2 color={colors.destructive} size={20} />
+              <Trash2 className="text-destructive" size={20} />
             </Button>
           </View>
 
@@ -618,7 +612,7 @@ export default function EditWordScreen() {
                           className="p-1"
                           onPress={() => removeExample(index)}
                         >
-                          <X color={colors.destructive} size={16} />
+                          <X className="text-destructive" size={16} />
                         </Pressable>
                       </View>
                       <View className="gap-3">
@@ -657,7 +651,7 @@ export default function EditWordScreen() {
                     size="sm"
                     variant="outline"
                   >
-                    <Plus color={colors.foreground} size={14} />
+                    <Plus className="text-foreground" size={14} />
                     <Text className="ml-1 text-foreground">
                       <Trans>Add Example</Trans>
                     </Text>
@@ -696,7 +690,7 @@ export default function EditWordScreen() {
                           className="p-2"
                           onPress={() => removeAntonym(index)}
                         >
-                          <X color={colors.destructive} size={16} />
+                          <X className="text-destructive" size={16} />
                         </Pressable>
                       </View>
                     ))}
@@ -705,7 +699,7 @@ export default function EditWordScreen() {
                       size="sm"
                       variant="outline"
                     >
-                      <Plus color={colors.foreground} size={14} />
+                      <Plus className="text-foreground" size={14} />
                       <Text className="ml-1 text-foreground">
                         <Trans>Add Antonym</Trans>
                       </Text>
@@ -794,7 +788,7 @@ export default function EditWordScreen() {
                           className="p-2"
                           onPress={() => removePlural(index)}
                         >
-                          <X color={colors.destructive} size={16} />
+                          <X className="text-destructive" size={16} />
                         </Pressable>
                       </View>
                     ))}
@@ -803,7 +797,7 @@ export default function EditWordScreen() {
                       size="sm"
                       variant="outline"
                     >
-                      <Plus color={colors.foreground} size={14} />
+                      <Plus className="text-foreground" size={14} />
                       <Text className="ml-1 text-foreground">
                         <Trans>Add Plural</Trans>
                       </Text>
@@ -1001,7 +995,7 @@ export default function EditWordScreen() {
                           className="p-2"
                           onPress={() => removeMasdar(index)}
                         >
-                          <X color={colors.destructive} size={16} />
+                          <X className="text-destructive" size={16} />
                         </Pressable>
                       </View>
                     ))}
@@ -1010,7 +1004,7 @@ export default function EditWordScreen() {
                       size="sm"
                       variant="outline"
                     >
-                      <Plus color={colors.foreground} size={14} />
+                      <Plus className="text-foreground" size={14} />
                       <Text className="ml-1 text-foreground">
                         <Trans>Add Masdar</Trans>
                       </Text>
@@ -1035,7 +1029,7 @@ export default function EditWordScreen() {
                             className="p-1"
                             onPress={() => removeHarf(index)}
                           >
-                            <X color={colors.destructive} size={16} />
+                            <X className="text-destructive" size={16} />
                           </Pressable>
                         </View>
                         <View className="gap-3">
@@ -1076,7 +1070,7 @@ export default function EditWordScreen() {
                       size="sm"
                       variant="outline"
                     >
-                      <Plus color={colors.foreground} size={14} />
+                      <Plus className="text-foreground" size={14} />
                       <Text className="ml-1 text-foreground">
                         <Trans>Add Harf</Trans>
                       </Text>

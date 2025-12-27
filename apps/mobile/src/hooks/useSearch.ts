@@ -4,8 +4,8 @@
  * Provides search functionality and infinite scroll pagination.
  */
 
-import type { DictionaryDocument } from "@bahar/search";
-import { detectLanguage, stripArabicDiacritics } from "@bahar/search";
+import { detectLanguage, stripArabicDiacritics } from "@bahar/search/arabic";
+import type { DictionaryDocument } from "@bahar/search/schema";
 import { search as oramaSearch, type Result, type Results } from "@orama/orama";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";

@@ -69,7 +69,7 @@ const HeaderCard = ({
               borderColor: `${colors.primary}33`, // 20% opacity
             }}
           >
-            <BookOpen color={colors.primary} size={20} />
+            <BookOpen className="text-primary" size={20} />
           </View>
           <View className="flex-1">
             <Text className="font-semibold text-foreground text-lg tracking-tight">
@@ -108,7 +108,9 @@ const HeaderCard = ({
             onPress={onReviewPress}
           >
             <GraduationCap
-              color={dueCount > 0 ? colors.warning : colors.mutedForeground}
+              className={
+                dueCount > 0 ? "text-warning" : "text-muted-foreground"
+              }
               size={16}
             />
             <Text
@@ -149,7 +151,7 @@ const HeaderCard = ({
               elevation: 3,
             }}
           >
-            <PlusIcon color={colors.primaryForeground} size={16} />
+            <PlusIcon className="text-primary-foreground" size={16} />
             <Text className="font-medium text-primary-foreground text-sm">
               <Trans>Add word</Trans>
             </Text>

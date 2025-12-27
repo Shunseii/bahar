@@ -9,11 +9,13 @@ export type {
   DatabaseAdapterFactory,
   PreparedStatement,
 } from "./adapter";
+
 export {
   BATCH_SIZE,
   DICTIONARY_ENTRY_COLUMNS,
   FLASHCARD_LIMIT,
 } from "./constants";
+
 export {
   type ConvertDictionaryEntryError,
   convertRawDictionaryEntryToSelect,
@@ -21,6 +23,7 @@ export {
   safeJsonParse,
 } from "./converters";
 export type { TableOperation } from "./types";
+
 // SQL utilities
 export {
   buildInClause,

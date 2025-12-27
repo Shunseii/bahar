@@ -63,10 +63,10 @@ export const insertDocuments = async (
 /**
  * Inserts a single document into the Orama database
  */
-export const insertDocument = async (
+export const insertDocument = (
   db: DictionaryOrama,
   document: DictionaryDocument
-): Promise<string> => {
+) => {
   return insert(db, document);
 };
 
@@ -74,21 +74,18 @@ export const insertDocument = async (
  * Updates a document in the Orama database
  * Returns the document ID on success
  */
-export const updateDocument = async (
+export const updateDocument = (
   db: DictionaryOrama,
   id: string,
   document: Partial<DictionaryDocument>
-): Promise<string> => {
+) => {
   return update(db, id, document);
 };
 
 /**
  * Removes a document from the Orama database
  */
-export const removeDocument = async (
-  db: DictionaryOrama,
-  id: string
-): Promise<boolean> => {
+export const removeDocument = (db: DictionaryOrama, id: string) => {
   return remove(db, id);
 };
 
@@ -97,7 +94,7 @@ type SearchableProperties = keyof typeof dictionarySchema;
 /**
  * Searches the Orama database
  */
-export const searchDictionary = async (
+export const searchDictionary = (
   db: DictionaryOrama,
   term: string,
   options?: {
@@ -113,6 +110,3 @@ export const searchDictionary = async (
     properties: options?.properties,
   });
 };
-
-// Re-export Orama functions for direct use
-export { insert, update, remove, search, insertMultiple };

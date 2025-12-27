@@ -3,10 +3,8 @@
  * These schemas are used on the client side with Turso WASM + Drizzle ORM.
  */
 
-// Export decks schema and types
 export { decks, type InsertDeck, type RawDeck, type SelectDeck } from "./decks";
 
-// Export dictionary schema and types
 export {
   dictionaryEntries,
   type InsertDictionaryEntry,
@@ -14,26 +12,24 @@ export {
   type SelectDictionaryEntry,
 } from "./dictionary";
 
-// Export flashcards schema and types
 export {
   flashcards,
   type InsertFlashcard,
   type RawFlashcard,
   type SelectFlashcard,
 } from "./flashcards";
-// Export migrations schema and types
+
 export {
   type InsertMigration,
   migrations,
   type SelectMigration,
 } from "./migrations";
 
-// Export settings schema and types
 export {
   type InsertSetting,
   type RawSetting,
   type SelectSetting,
   settings,
 } from "./settings";
-// Export all types
+
 export * from "./types";

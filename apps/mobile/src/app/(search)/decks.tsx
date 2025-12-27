@@ -52,7 +52,7 @@ const DeckCard: React.FC<DeckCardProps> = ({
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
               <View className="mb-1 flex-row items-center gap-2">
-                <Layers color={colors.mutedForeground} size={18} />
+                <Layers className="text-muted-foreground" size={18} />
                 <Text className="font-semibold text-foreground text-lg">
                   {deck.name}
                 </Text>
@@ -75,8 +75,10 @@ const DeckCard: React.FC<DeckCardProps> = ({
                 onPress={onStudy}
               >
                 <Play
-                  color={
-                    deck.due_count > 0 ? colors.primary : colors.mutedForeground
+                  className={
+                    deck.due_count > 0
+                      ? "text-primary"
+                      : "text-muted-foreground"
                   }
                   fill={deck.due_count > 0 ? colors.primary : "transparent"}
                   size={20}
@@ -86,13 +88,13 @@ const DeckCard: React.FC<DeckCardProps> = ({
                 className="rounded-md p-2 active:bg-primary/10"
                 onPress={onEdit}
               >
-                <Edit color={colors.mutedForeground} size={18} />
+                <Edit className="text-muted-foreground" size={18} />
               </Pressable>
               <Pressable
                 className="rounded-md p-2 active:bg-destructive/10"
                 onPress={onDelete}
               >
-                <Trash2 color={colors.destructive} size={18} />
+                <Trash2 className="text-destructive" size={18} />
               </Pressable>
             </View>
           </View>
@@ -115,7 +117,7 @@ const CreateEditDeckModal: React.FC<CreateEditDeckModalProps> = ({
 }) => {
   const { t: translate } = useLingui();
   const insets = useSafeAreaInsets();
-  const colors = useThemeColors();
+  const colors = useThemeColors(); // Keep for placeholderTextColor
   const [name, setName] = useState(editingDeck?.name ?? "");
 
   React.useEffect(() => {
@@ -179,7 +181,7 @@ const CreateEditDeckModal: React.FC<CreateEditDeckModalProps> = ({
         {/* Header */}
         <View className="flex-row items-center justify-between border-border border-b px-4 py-3">
           <Pressable className="-ml-2 p-2" onPress={onClose}>
-            <X color={colors.foreground} size={24} />
+            <X className="text-foreground" size={24} />
           </Pressable>
           <Text className="font-semibold text-foreground text-lg">
             {editingDeck ? (
@@ -224,7 +226,6 @@ const CreateEditDeckModal: React.FC<CreateEditDeckModalProps> = ({
 
 export default function DecksScreen() {
   const router = useRouter();
-  const colors = useThemeColors();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingDeck, setEditingDeck] = useState<SelectDeck | null>(null);
@@ -336,7 +337,7 @@ export default function DecksScreen() {
       ) : (
         <View className="flex-1 items-center justify-center px-8">
           <View className="mb-4 rounded-full bg-muted/50 p-4">
-            <Layers color={colors.mutedForeground} size={32} />
+            <Layers className="text-muted-foreground" size={32} />
           </View>
           <Text className="mb-1 text-center font-medium text-foreground text-lg">
             <Trans>No decks yet</Trans>

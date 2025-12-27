@@ -16,14 +16,13 @@ import {
 import { err, ok, type Result } from "@bahar/result";
 import {
   createDictionaryDatabase,
-  type DictionaryDocument,
-  type DictionaryOrama,
   insertDocument,
   insertDocuments,
   removeDocument,
   searchDictionary,
   updateDocument,
-} from "@bahar/search";
+} from "@bahar/search/database";
+import type { DictionaryDocument, DictionaryOrama } from "@bahar/search/schema";
 import { z } from "zod";
 import { ensureDb } from "../db";
 
@@ -310,4 +309,4 @@ export const search = async (
   return searchDictionary(orama, term, options);
 };
 
-export { highlightWithDiacritics } from "@bahar/search";
+export { highlightWithDiacritics } from "@bahar/search/highlight";

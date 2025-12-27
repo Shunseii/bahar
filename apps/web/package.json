@@ -77,7 +77,7 @@
     "@bahar/typescript-config": "workspace:*",
     "@lingui/cli": "^5.3.2",
     "@lingui/conf": "^5.3.2",
-    "@lingui/swc-plugin": "^5.5.2",
+    "@lingui/swc-plugin": "^5.10.0",
     "@lingui/vite-plugin": "^5.3.2",
     "@swc/core": "1.11.21",
     "@tanstack/router-devtools": "^1.91.3",
@@ -85,11 +85,11 @@
     "@types/node": "^20.10.6",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
-    "@vitejs/plugin-react-swc": "3.5.0",
+    "@vitejs/plugin-react-swc": "4.2.2",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.8.3",
-    "vite": "^5.4.0",
-    "vite-plugin-pwa": "^0.20.1",
+    "vite": "^6.4.1",
+    "vite-plugin-pwa": "^1.2.0",
     "wrangler": "^4.54.0"
   }
 }

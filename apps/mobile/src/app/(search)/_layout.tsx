@@ -80,9 +80,9 @@ function SearchBarHeader({
           onPress={() => navigation.openDrawer()}
         >
           {dir === "rtl" ? (
-            <PanelRight color={colors.foreground} size={24} />
+            <PanelRight className="text-foreground" size={24} />
           ) : (
-            <PanelLeft color={colors.foreground} size={24} />
+            <PanelLeft className="text-foreground" size={24} />
           )}
         </TouchableOpacity>
 

@@ -95,7 +95,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
         <View className="overflow-hidden rounded-2xl border border-border/30 bg-card">
           <View className="border-border/30 border-b p-4">
             <View className="mb-3 flex-row items-center">
-              <Eye color="#3B82F6" size={20} />
+              <Eye className="text-primary" size={20} />
               <Text className="ml-2 font-medium text-foreground">
                 Show Antonyms
               </Text>
@@ -124,7 +124,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
         </Text>
         <View className="overflow-hidden rounded-2xl border border-border/30 bg-card">
           <SettingsRow
-            icon={<Info color="#3B82F6" size={20} />}
+            icon={<Info className="text-primary" size={20} />}
             label="Version"
             value="1.0.0"
           />
@@ -140,7 +140,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
           className="flex-row items-center justify-center rounded-2xl bg-destructive/10 p-4"
           onPress={handleLogout}
         >
-          <LogOut color="#EF4444" size={20} />
+          <LogOut className="text-destructive" size={20} />
           <Text className="ml-2 font-medium text-destructive">Log Out</Text>
         </Pressable>
       </Animated.View>
@@ -197,7 +197,7 @@ const AntonymsModeOption: React.FC<AntonymsModeOptionProps> = ({
             {mode.description}
           </Text>
         </View>
-        {selected && <Check color="#3B82F6" size={20} />}
+        {selected && <Check className="text-primary" size={20} />}
       </Animated.View>
     </Pressable>
   );
@@ -221,7 +221,9 @@ const SettingsRow: React.FC<SettingsRowProps> = ({
       {icon}
       <Text className="ml-3 flex-1 font-medium text-foreground">{label}</Text>
       {value && <Text className="text-muted-foreground">{value}</Text>}
-      {onPress && <ChevronRight className="ml-2" color="#9CA3AF" size={20} />}
+      {onPress && (
+        <ChevronRight className="ml-2 text-muted-foreground" size={20} />
+      )}
     </View>
   );
 

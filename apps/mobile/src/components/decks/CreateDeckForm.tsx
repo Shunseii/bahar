@@ -136,7 +136,7 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
       {/* Header */}
       <View className="flex-row items-center justify-between border-border/30 border-b p-4">
         <Pressable className="p-2" onPress={onClose}>
-          <X color={colors.mutedForeground} size={24} />
+          <X className="text-muted-foreground" size={24} />
         </Pressable>
         <Text className="font-semibold text-foreground text-lg">
           {isEdit ? "Edit Deck" : "New Deck"}
@@ -147,8 +147,8 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
           onPress={handleSubmit}
         >
           <Check
-            color={
-              name.trim() ? colors.primaryForeground : colors.mutedForeground
+            className={
+              name.trim() ? "text-primary-foreground" : "text-muted-foreground"
             }
             size={24}
           />
@@ -171,7 +171,7 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
         {/* Word type filter */}
         <View className="mb-6">
           <View className="mb-2 flex-row items-center">
-            <Filter color={colors.mutedForeground} size={16} />
+            <Filter className="text-muted-foreground" size={16} />
             <Text className="ml-2 font-medium text-foreground">Word Types</Text>
           </View>
           <View className="flex-row flex-wrap gap-2">
@@ -189,7 +189,7 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
         {/* Tags filter */}
         <View className="mb-6">
           <View className="mb-2 flex-row items-center">
-            <Tag color={colors.mutedForeground} size={16} />
+            <Tag className="text-muted-foreground" size={16} />
             <Text className="ml-2 font-medium text-foreground">Tags</Text>
           </View>
           <View className="mb-2 flex-row items-center">
@@ -217,11 +217,7 @@ export const CreateDeckForm: React.FC<CreateDeckFormProps> = ({
                   onPress={() => removeTag(tag)}
                 >
                   <Text className="text-secondary-foreground">{tag}</Text>
-                  <X
-                    className="ml-1"
-                    color={colors.mutedForeground}
-                    size={14}
-                  />
+                  <X className="ml-1 text-muted-foreground" size={14} />
                 </Pressable>
               ))}
             </View>

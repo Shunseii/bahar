@@ -1,5 +1,5 @@
 ---
-import type { Locale, TranslationKey } from "../i18n";
+import { type Locale, type TranslationKey, t } from "../i18n";
 
 interface Props {
   locale: Locale;
@@ -47,16 +47,33 @@ const steps: Array<{
 <section class="relative py-24 sm:py-32 overflow-hidden">
   <!-- Background decoration -->
   <div class="absolute inset-0 -z-10">
-    <div class="absolute right-0 top-1/4 h-[400px] w-[400px] rounded-full bg-primary/5 blur-3xl"></div>
-    <div class="absolute left-0 bottom-1/4 h-[300px] w-[300px] rounded-full bg-violet-500/5 blur-3xl"></div>
+    <div
+      class="absolute right-0 top-1/4 h-[400px] w-[400px] rounded-full bg-primary/5 blur-3xl"
+    ></div>
+    <div
+      class="absolute left-0 bottom-1/4 h-[300px] w-[300px] rounded-full bg-violet-500/5 blur-3xl"
+    ></div>
   </div>
 
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <!-- Section header -->
     <div class="mx-auto max-w-2xl text-center">
-      <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      <div
+        class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 10V3L4 14h7v7l9-11h-7z"
+          />
         </svg>
         {t(locale, 'howItWorks.badge')}
       </div>
@@ -72,7 +89,9 @@ const steps: Array<{
     <div class="mx-auto mt-16 max-w-5xl">
       <div class="relative">
         <!-- Connection line -->
-        <div class="absolute left-8 top-0 hidden h-full w-px bg-gradient-to-b from-primary/50 via-violet-500/50 to-purple-500/50 sm:block lg:left-1/2 lg:-translate-x-1/2"></div>
+        <div
+          class="absolute left-8 top-0 hidden h-full w-px bg-gradient-to-b from-primary/50 via-violet-500/50 to-purple-500/50 sm:block lg:left-1/2 lg:-translate-x-1/2"
+        ></div>
 
         <div class="space-y-12 lg:space-y-16">
           {steps.map((step, index) => (

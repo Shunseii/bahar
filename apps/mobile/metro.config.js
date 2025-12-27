@@ -2,7 +2,7 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const { withUniwindConfig } = require("uniwind/metro");
 
-const path = require("path");
+const path = require("node:path");
 
 // First apply monorepo paths
 const baseConfig = withMonorepoPaths(getDefaultConfig(__dirname));

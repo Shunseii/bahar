@@ -62,10 +62,14 @@ export default function AnimatedBackground() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      return;
+    }
 
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) {
+      return;
+    }
 
     const initParticles = (width: number, height: number, count: number) => {
       // Clear and reinitialize all particles with proper positions
@@ -109,8 +113,11 @@ export default function AnimatedBackground() {
 
     window.addEventListener("resize", resizeCanvas);
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Particle animation requires nested loops and conditionals
     const animate = () => {
-      if (!(ctx && canvas)) return;
+      if (!(ctx && canvas)) {
+        return;
+      }
 
       const width = window.innerWidth;
       const height = window.innerHeight;

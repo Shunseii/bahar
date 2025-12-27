@@ -15,7 +15,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { useThemeColors } from "@/lib/theme";
 
 interface GradeButtonsProps {
   schedulingCards: RecordLog;
@@ -23,14 +22,12 @@ interface GradeButtonsProps {
   disabled?: boolean;
 }
 
-type ThemeColors = ReturnType<typeof useThemeColors>;
-
-const getGradeConfig = (colors: ThemeColors) => [
+const gradeConfig = [
   {
     grade: Rating.Again as Grade,
     Icon: RotateCcw,
     label: "Again",
-    color: colors.mutedForeground,
+    colorClass: "text-muted-foreground",
     borderColor: "border-muted-foreground/30",
     pressedBg: "bg-muted/50",
   },
@@ -38,7 +35,7 @@ const getGradeConfig = (colors: ThemeColors) => [
     grade: Rating.Hard as Grade,
     Icon: Brain,
     label: "Hard",
-    color: colors.warning,
+    colorClass: "text-warning",
     borderColor: "border-warning/30",
     pressedBg: "bg-warning/10",
   },
@@ -46,7 +43,7 @@ const getGradeConfig = (colors: ThemeColors) => [
     grade: Rating.Good as Grade,
     Icon: ThumbsUp,
     label: "Good",
-    color: colors.primary,
+    colorClass: "text-primary",
     borderColor: "border-primary/30",
     pressedBg: "bg-primary/10",
   },
@@ -54,7 +51,7 @@ const getGradeConfig = (colors: ThemeColors) => [
     grade: Rating.Easy as Grade,
     Icon: Zap,
     label: "Easy",
-    color: colors.success,
+    colorClass: "text-success",
     borderColor: "border-success/30",
     pressedBg: "bg-success/10",
   },
@@ -65,9 +62,6 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
   onGrade,
   disabled = false,
 }) => {
-  const colors = useThemeColors();
-  const gradeConfig = getGradeConfig(colors);
-
   return (
     <View className="flex-row gap-2 px-4">
       {gradeConfig.map((config) => (
@@ -84,7 +78,7 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
 };
 
 interface GradeButtonProps {
-  config: ReturnType<typeof getGradeConfig>[0];
+  config: (typeof gradeConfig)[0];
   interval: Date;
   onPress: () => void;
   disabled: boolean;
@@ -115,7 +109,7 @@ const GradeButton: React.FC<GradeButtonProps> = ({
     opacity: disabled ? 0.5 : opacity.value,
   }));
 
-  const { Icon, label, color, borderColor } = config;
+  const { Icon, label, colorClass, borderColor } = config;
   const intervalText = intlFormatDistance(interval, new Date(), {
     style: "narrow",
   });
@@ -132,10 +126,8 @@ const GradeButton: React.FC<GradeButtonProps> = ({
         className={`border-2 ${borderColor} items-center rounded-xl bg-card py-3`}
         style={animatedStyle}
       >
-        <Icon color={color} size={20} />
-        <Text className="mt-1 font-medium" style={{ color }}>
-          {label}
-        </Text>
+        <Icon className={colorClass} size={20} />
+        <Text className={`mt-1 font-medium ${colorClass}`}>{label}</Text>
         <Text className="mt-0.5 text-muted-foreground text-xs">
           {intervalText}
         </Text>

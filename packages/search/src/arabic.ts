@@ -41,7 +41,9 @@ export const normalizeArabicForSearch = (text: string): string => {
  */
 export const isArabicText = (text: string): boolean => {
   const cleanedText = text.replace(/[\s.,!?;:'"()[\]{}،؛]/g, "");
-  if (cleanedText.length === 0) return false;
+  if (cleanedText.length === 0) {
+    return false;
+  }
 
   const arabicRegex =
     /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g;
@@ -61,7 +63,9 @@ export const isArabicText = (text: string): boolean => {
  */
 export const detectLanguage = (text: string): "ar" | "en" | "unknown" => {
   const cleanedText = text.replace(/[\s.,!?;:'"()[\]{}،؛]/g, "");
-  if (cleanedText.length === 0) return "unknown";
+  if (cleanedText.length === 0) {
+    return "unknown";
+  }
 
   const arabicRegex =
     /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g;
@@ -72,7 +76,11 @@ export const detectLanguage = (text: string): "ar" | "en" | "unknown" => {
   const englishMatches = cleanedText.match(englishRegex);
   const englishCount = englishMatches ? englishMatches.length : 0;
 
-  if (arabicCount > englishCount) return "ar";
-  if (englishCount > arabicCount) return "en";
+  if (arabicCount > englishCount) {
+    return "ar";
+  }
+  if (englishCount > arabicCount) {
+    return "en";
+  }
   return "unknown";
 };

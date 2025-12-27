@@ -4,6 +4,9 @@
 
 import { normalizeArabicForSearch } from "./arabic";
 
+/** Regex for Arabic diacritics (harakat) and tatweel */
+const DIACRITICS_REGEX = /[\u064B-\u0652\u0640]/;
+
 interface HighlightOptions {
   HTMLTag?: string;
   CSSClass?: string;
@@ -15,10 +18,9 @@ interface HighlightOptions {
  */
 const buildPositionMap = (original: string): number[] => {
   const map: number[] = [];
-  const diacriticsRegex = /[\u064B-\u0652\u0640]/;
 
   for (let i = 0; i < original.length; i++) {
-    if (!diacriticsRegex.test(original[i])) {
+    if (!DIACRITICS_REGEX.test(original[i])) {
       map.push(i);
     }
   }
@@ -59,8 +61,11 @@ export const highlightWithDiacritics = (
   const regex = new RegExp(escapeRegExp(normalizedTerm), "gi");
   const matches: Array<{ start: number; end: number }> = [];
 
-  let match;
-  while ((match = regex.exec(normalizedText)) !== null) {
+  for (
+    let match = regex.exec(normalizedText);
+    match !== null;
+    match = regex.exec(normalizedText)
+  ) {
     matches.push({
       start: match.index,
       end: match.index + match[0].length,
@@ -79,10 +84,9 @@ export const highlightWithDiacritics = (
 
     // Find the end position including any trailing diacritics
     let originalEnd = lastCharOriginalPos + 1;
-    const diacriticsRegex = /[\u064B-\u0652\u0640]/;
     while (
       originalEnd < text.length &&
-      diacriticsRegex.test(text[originalEnd])
+      DIACRITICS_REGEX.test(text[originalEnd])
     ) {
       originalEnd++;
     }

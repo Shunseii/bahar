@@ -27,46 +27,41 @@ interface GradeFeedbackProps {
 
 const ICON_SIZE = 48;
 
-type ThemeColors = ReturnType<typeof useThemeColors>;
-
-const getFeedbackConfig = (
-  colors: ThemeColors
-): Record<
+const feedbackConfig: Record<
   Grade,
-  { Icon: typeof RotateCcw; color: string; bgColor: string }
-> => ({
+  { Icon: typeof RotateCcw; colorClass: string; bgColor: string }
+> = {
   1: {
     // Again
     Icon: RotateCcw,
-    color: colors.mutedForeground,
+    colorClass: "text-muted-foreground",
     bgColor: "bg-muted/30",
   },
   2: {
     // Hard
     Icon: Brain,
-    color: colors.warning,
+    colorClass: "text-warning",
     bgColor: "bg-warning/20",
   },
   3: {
     // Good
     Icon: ThumbsUp,
-    color: colors.primary,
+    colorClass: "text-primary",
     bgColor: "bg-primary/20",
   },
   4: {
     // Easy
     Icon: Zap,
-    color: colors.success,
+    colorClass: "text-success",
     bgColor: "bg-success/20",
   },
-});
+};
 
 export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
   grade,
   onComplete,
 }) => {
   const colors = useThemeColors();
-  const feedbackConfig = getFeedbackConfig(colors);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0);
   const rotation = useSharedValue(0);
@@ -183,16 +178,16 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
         className={`rounded-full p-6 ${config.bgColor}`}
         style={iconContainerStyle}
       >
-        <Icon color={config.color} size={ICON_SIZE} />
+        <Icon className={config.colorClass} size={ICON_SIZE} />
       </Animated.View>
 
       {/* Sparkles for Easy grade */}
-      {grade === Rating.Easy && <Sparkles color={colors.success} />}
+      {grade === Rating.Easy && <SparkleEffect color={colors.success} />}
     </Animated.View>
   );
 };
 
-const Sparkles: React.FC<{ color: string }> = ({ color }) => {
+const SparkleEffect: React.FC<{ color: string }> = ({ color }) => {
   const sparkles = Array.from({ length: 6 }, (_, i) => {
     const angle = (i * Math.PI * 2) / 6;
     return { angle, key: i };

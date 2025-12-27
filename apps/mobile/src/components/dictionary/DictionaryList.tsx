@@ -4,16 +4,15 @@
 
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { Trans } from "@lingui/react/macro";
-import { FlashList } from "@shopify/flash-list";
+import { FlashList, type FlashListProps } from "@shopify/flash-list";
 import { BookOpen, SearchX } from "lucide-react-native";
-import type { ReactNode } from "react";
+import type { ReactElement } from "react";
 import { type FC, useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, RefreshControl, Text, View } from "react-native";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useInfiniteSearch } from "@/hooks/useSearch";
 import { syncDatabase } from "@/lib/db/adapter";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
-import { useThemeColors } from "@/lib/theme";
 import { DictionaryEntryCard } from "./DictionaryEntryCard";
 
 interface DictionaryListProps {
@@ -21,19 +20,17 @@ interface DictionaryListProps {
   bottomInset?: number;
   onTotalCountChange?: (count: number) => void;
   onElapsedTimeChange?: (elapsedNs: number | null) => void;
-  ListHeaderComponent?: ReactNode;
+  ListHeaderComponent?: ReactElement;
 }
 
 const EmptyDictionary: FC = () => {
-  const colors = useThemeColors();
-
   return (
     <Animated.View
       className="flex-1 items-center justify-center py-16"
       entering={FadeIn.delay(150).duration(300)}
     >
       <View className="mb-4 rounded-full bg-muted/50 p-4">
-        <BookOpen color={colors.mutedForeground} size={32} />
+        <BookOpen className="text-muted-foreground" size={32} />
       </View>
       <Text className="mb-1 font-medium text-foreground text-lg">
         <Trans>Your dictionary is empty</Trans>
@@ -46,15 +43,13 @@ const EmptyDictionary: FC = () => {
 };
 
 const NoResults: FC = () => {
-  const colors = useThemeColors();
-
   return (
     <Animated.View
       className="flex-1 items-center justify-center py-16"
       entering={FadeIn.delay(150).duration(300)}
     >
       <View className="mb-4 rounded-full bg-muted/50 p-4">
-        <SearchX color={colors.mutedForeground} size={32} />
+        <SearchX className="text-muted-foreground" size={32} />
       </View>
       <Text className="mb-1 font-medium text-foreground text-lg">
         <Trans>No results found</Trans>
@@ -130,7 +125,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     []
   );
 
-  const keyExtractor = useCallback((item: (typeof hits)[0]) => item.id!, []);
+  const keyExtractor = useCallback((item: (typeof hits)[0]) => item.id, []);
 
   const onEndReached = useCallback(() => {
     if (!isLoading && hasMore) {
@@ -138,13 +133,11 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     }
   }, [isLoading, hasMore, loadMore]);
 
-  // Empty state component that shows below the header
-  const emptyComponent = isLoading ? null : searchQuery.trim() ? (
-    <NoResults />
-  ) : (
-    <EmptyDictionary />
-  );
-
+  const emptyComponent = (() => {
+    if (isLoading) return null;
+    if (searchQuery.trim()) return <NoResults />;
+    return <EmptyDictionary />;
+  })();
   return (
     <FlashList
       contentContainerStyle={{
@@ -157,7 +150,9 @@ export const DictionaryList: FC<DictionaryListProps> = ({
       ListEmptyComponent={emptyComponent}
       ListFooterComponent={hasMore ? <LoadingIndicator /> : null}
       ListHeaderComponent={
-        ListHeaderComponent ? <>{ListHeaderComponent}</> : null
+        ListHeaderComponent as FlashListProps<
+          (typeof hits)[0]
+        >["ListHeaderComponent"]
       }
       onEndReached={onEndReached}
       onEndReachedThreshold={0.3}

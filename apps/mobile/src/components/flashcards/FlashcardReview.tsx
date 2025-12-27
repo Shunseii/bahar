@@ -8,13 +8,12 @@
  * - Progress tracking
  */
 
+import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import {
   createScheduler,
-  type Grade,
   getSchedulingOptions,
   gradeFlashcard,
-  Rating,
 } from "@bahar/fsrs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Brain, PartyPopper, X } from "lucide-react-native";
@@ -26,6 +25,7 @@ import Animated, {
   SlideInRight,
   SlideOutLeft,
 } from "react-native-reanimated";
+import { type Grade, Rating } from "ts-fsrs";
 import { useThemeColors } from "@/lib/theme";
 import { decksTable } from "../../lib/db/operations/decks";
 import {
@@ -114,6 +114,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
         stability: currentCard.stability,
         state: currentCard.state,
         direction: currentCard.direction,
+        learning_steps: currentCard.learning_steps,
         is_hidden: currentCard.is_hidden,
       })
     : null;
@@ -123,7 +124,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   }, []);
 
   const handleGrade = useCallback(
-    async (grade: Grade) => {
+    (grade: Grade) => {
       if (!(schedulingCards && currentCard)) return;
 
       // Show feedback animation
@@ -167,6 +168,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
         stability: currentCard.stability,
         state: currentCard.state,
         direction: currentCard.direction,
+        learning_steps: currentCard.learning_steps,
         is_hidden: currentCard.is_hidden,
       },
       grade
@@ -190,16 +192,14 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
     updateFlashcardLocal,
   ]);
 
-  // Loading state
   if (status === "pending") {
     return (
       <View className="flex-1 items-center justify-center bg-background">
-        <Brain color={colors.primary} size={48} />
+        <Brain className={cn("text-primary")} size={48} />
       </View>
     );
   }
 
-  // Empty state
   if (!currentCard) {
     return (
       <View className="flex-1 bg-background">
@@ -211,7 +211,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
                 className="-ml-2 rounded-lg p-2 active:bg-muted"
                 onPress={onClose}
               >
-                <X color={colors.foreground} size={24} />
+                <X className="text-foreground" size={24} />
               </Pressable>
               <View className="flex-1" />
             </View>
@@ -224,7 +224,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
         >
           <View className="items-center">
             <View className="mb-4 rounded-3xl bg-success/10 p-6">
-              <PartyPopper color={colors.success} size={48} />
+              <PartyPopper className="text-success" size={48} />
             </View>
             <Text className="mb-2 text-center font-bold text-2xl text-foreground">
               All done for today!
@@ -249,14 +249,14 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
               className="-ml-2 rounded-lg p-2 active:bg-muted"
               onPress={onClose}
             >
-              <X color={colors.foreground} size={24} />
+              <X className="text-foreground" size={24} />
             </Pressable>
           )}
 
           {/* Center content */}
           <View className="flex-1 flex-row items-center justify-center gap-2">
             <View className="rounded-xl bg-primary/10 p-2">
-              <Brain color={colors.primary} size={20} />
+              <Brain className="text-primary" size={20} />
             </View>
             <Text className="font-semibold text-foreground">
               {hasMore
@@ -272,10 +272,8 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
 
       {/* Card area */}
       <View className="flex-1 justify-center p-4">
-        {/* Grade feedback overlay */}
         <GradeFeedback grade={pendingGrade} onComplete={handleGradeComplete} />
 
-        {/* Flashcard */}
         <Animated.View
           entering={SlideInRight.duration(300).springify()}
           exiting={SlideOutLeft.duration(200)}

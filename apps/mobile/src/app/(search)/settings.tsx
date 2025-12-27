@@ -169,7 +169,7 @@ export default function SettingsScreen() {
       <View className="border-border border-b px-4 py-4">
         <View className="flex-row items-center gap-3">
           <View className="rounded-xl bg-primary/10 p-2">
-            <Settings color={colors.primary} size={24} />
+            <Settings className="text-primary" size={24} />
           </View>
           <Text className="font-bold text-2xl text-foreground">
             <Trans>Settings</Trans>
@@ -182,7 +182,7 @@ export default function SettingsScreen() {
         <Card>
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Brain color={colors.mutedForeground} size={18} />
+              <Brain className="text-muted-foreground" size={18} />
               <CardTitle>
                 <Trans>Flashcards</Trans>
               </CardTitle>
@@ -231,7 +231,7 @@ export default function SettingsScreen() {
         <Card>
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Palette color={colors.mutedForeground} size={18} />
+              <Palette className="text-muted-foreground" size={18} />
               <CardTitle>
                 <Trans>Appearance</Trans>
               </CardTitle>
@@ -253,7 +253,7 @@ export default function SettingsScreen() {
         <Card>
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Languages color={colors.mutedForeground} size={18} />
+              <Languages className="text-muted-foreground" size={18} />
               <CardTitle>
                 <Trans>Language</Trans>
               </CardTitle>
@@ -275,7 +275,7 @@ export default function SettingsScreen() {
         <Card className="border-destructive/30">
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Trash2 color={colors.destructive} size={18} />
+              <Trash2 className="text-destructive" size={18} />
               <CardTitle>
                 <Trans>Danger Zone</Trans>
               </CardTitle>

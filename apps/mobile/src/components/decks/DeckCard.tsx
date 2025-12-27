@@ -2,6 +2,7 @@
  * Deck card component with animated interactions.
  */
 
+import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import * as Haptics from "expo-haptics";
 import { ChevronRight, Layers, Sparkles } from "lucide-react-native";
@@ -12,7 +13,6 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { useThemeColors } from "@/lib/theme";
 
 interface DeckCardProps {
   deck: SelectDeck & { due_count: number; total_count: number };
@@ -25,7 +25,6 @@ export const DeckCard: React.FC<DeckCardProps> = ({
   onPress,
   onLongPress,
 }) => {
-  const colors = useThemeColors();
   const scale = useSharedValue(1);
 
   const handlePressIn = () => {
@@ -72,7 +71,9 @@ export const DeckCard: React.FC<DeckCardProps> = ({
               className={`rounded-xl p-3 ${hasDueCards ? "bg-primary/10" : "bg-muted/50"}`}
             >
               <Layers
-                color={hasDueCards ? colors.primary : colors.mutedForeground}
+                className={cn(
+                  hasDueCards ? "text-primary" : "text-muted-foreground"
+                )}
                 size={24}
               />
             </View>
@@ -85,7 +86,7 @@ export const DeckCard: React.FC<DeckCardProps> = ({
               <View className="mt-1 flex-row items-center">
                 {hasDueCards ? (
                   <>
-                    <Sparkles color={colors.primary} size={14} />
+                    <Sparkles className={cn("text-primary")} size={14} />
                     <Text className="ml-1 font-medium text-primary">
                       {deck.due_count} due
                     </Text>
@@ -103,19 +104,19 @@ export const DeckCard: React.FC<DeckCardProps> = ({
           </View>
 
           {/* Arrow */}
-          <ChevronRight color={colors.mutedForeground} size={20} />
+          <ChevronRight className={cn("text-muted-foreground")} size={24} />
         </View>
 
         {/* Filters preview */}
         {deck.filters && Object.keys(deck.filters).length > 0 && (
           <View className="mt-3 flex-row flex-wrap gap-1">
-            {deck.filters.tags?.map((tag, i) => (
-              <View className="rounded bg-secondary px-2 py-0.5" key={i}>
+            {deck.filters.tags?.map((tag) => (
+              <View className="rounded bg-secondary px-2 py-0.5" key={tag}>
                 <Text className="text-secondary-foreground text-xs">{tag}</Text>
               </View>
             ))}
-            {deck.filters.types?.map((type, i) => (
-              <View className="rounded bg-primary/10 px-2 py-0.5" key={i}>
+            {deck.filters.types?.map((type) => (
+              <View className="rounded bg-primary/10 px-2 py-0.5" key={type}>
                 <Text className="text-primary text-xs">{type}</Text>
               </View>
             ))}

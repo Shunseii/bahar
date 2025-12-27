@@ -243,8 +243,8 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
         {/* Tags */}
         {entry.tags && entry.tags.length > 0 && (
           <View className="mt-2 flex-row flex-wrap justify-center gap-2">
-            {entry.tags.slice(0, 3).map((tag, index) => (
-              <View className="rounded-full bg-muted px-2.5 py-1" key={index}>
+            {entry.tags.slice(0, 3).map((tag) => (
+              <View className="rounded-full bg-muted px-2.5 py-1" key={tag}>
                 <Text className="text-muted-foreground text-xs">{tag}</Text>
               </View>
             ))}

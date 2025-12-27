@@ -17,12 +17,12 @@ import { z } from "zod";
 /**
  * Error type for dictionary entry conversion failures.
  */
-export type ConvertDictionaryEntryError = {
+export interface ConvertDictionaryEntryError {
   entryId: string;
   word: string;
   field: string;
   reason: string;
-};
+}
 
 /**
  * Safely parses JSON using Zod schema validation.
@@ -32,7 +32,9 @@ export const safeJsonParse = <T extends z.ZodTypeAny>(
   json: string | null | undefined,
   schema: T
 ): Result<z.infer<T> | null> => {
-  if (!json) return ok(null);
+  if (!json) {
+    return ok(null);
+  }
 
   try {
     const parsed = JSON.parse(json);

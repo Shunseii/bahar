@@ -1,6 +1,9 @@
 import ar from "./translations/ar.json";
 import en from "./translations/en.json";
 
+// Remove leading slash and any existing locale prefix
+const LOCALIZATION_PATH_REGEX = /^\/(ar\/)?/;
+
 export const translations = { en, ar } as const;
 export type Locale = keyof typeof translations;
 export type TranslationKey = keyof typeof en;
@@ -22,8 +25,7 @@ export function getDir(locale: Locale): "ltr" | "rtl" {
 }
 
 export function getLocalizedPath(path: string, locale: Locale): string {
-  // Remove leading slash and any existing locale prefix
-  const cleanPath = path.replace(/^\/?(ar\/)?/, "");
+  const cleanPath = path.replace(LOCALIZATION_PATH_REGEX, "");
 
   if (locale === "en") {
     return cleanPath ? `/${cleanPath}` : "/";

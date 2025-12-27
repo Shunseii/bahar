@@ -9,7 +9,7 @@ export const router = createRouter({
   routeTree,
   defaultPreload: "render",
   context: {
-    authState: undefined!,
+    authState: null,
   },
 });
 

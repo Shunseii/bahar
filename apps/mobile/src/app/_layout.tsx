@@ -33,7 +33,7 @@ import { store } from "@/lib/store";
 import "@/global.css";
 import { queryClient } from "@/utils/api";
 
-const setRootViewBackgroundColor = async () => {
+const setRootViewBackgroundColor = () => {
   const colorScheme = Appearance.getColorScheme();
   const backgroundColor =
     colorScheme === "dark" ? "hsl(222.2, 84%, 4.9%)" : "hsl(0, 0%, 100%)";
@@ -41,7 +41,7 @@ const setRootViewBackgroundColor = async () => {
   setBackgroundColorAsync(backgroundColor);
 };
 
-const setup = async () => {
+const setup = () => {
   // Prevent the splash screen from auto-hiding before asset loading is complete.
   SplashScreen.preventAutoHideAsync();
 
