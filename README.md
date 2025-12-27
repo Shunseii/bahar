@@ -18,7 +18,7 @@ Bahar is an Arabic language learning application built as a monorepo using pnpm 
 
 1. Get the environment variables from Infisical
 2. Run `docker compose up` to start all services in development mode
-3. Access the web app at `http://localhost:4000`
+3. Access the web app at `http://localhost:5173`
 4. Access the API at `http://localhost:3000`
 
 To build and serve the production web app locally, use `make build` followed by `make serve`.
