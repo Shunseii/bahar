@@ -2,6 +2,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { MoreHorizontal, Plus } from "lucide-react";
+import { toast } from "sonner";
 import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { Page } from "@/components/Page";
@@ -30,7 +31,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { useToast } from "@/hooks/useToast";
 import { decksTable } from "@/lib/db/operations/decks";
 import { settingsTable } from "@/lib/db/operations/settings";
 import { queryClient } from "@/lib/query";
@@ -62,7 +62,6 @@ const Decks = () => {
     },
   });
 
-  const { toast } = useToast();
   const { t } = useLingui();
   const { formatNumber } = useFormatNumber();
 
@@ -200,8 +199,7 @@ const Decks = () => {
                               onClick={async () => {
                                 await deleteDeck({ id: deck.id });
 
-                                toast({
-                                  title: t`Deck successfully deleted!`,
+                                toast.success(t`Deck successfully deleted!`, {
                                   description: t`The deck "${deck.name}" has been deleted.`,
                                 });
                               }}

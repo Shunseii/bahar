@@ -5,6 +5,7 @@ import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
   AdditionalDetailsFormSection,
   BasicDetailsFormSection,
@@ -25,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useAddDictionaryEntry } from "@/hooks/db";
 import { useDir } from "@/hooks/useDir";
-import { useToast } from "@/hooks/useToast";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 
@@ -81,7 +81,6 @@ const BackButton = () => {
 const Add = () => {
   const { addDictionaryEntry } = useAddDictionaryEntry();
 
-  const { toast } = useToast();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -155,8 +154,7 @@ const Add = () => {
         word: { ...wordData, type: data.type ?? "ism" },
       });
 
-      toast({
-        title: t`Successfully added word!`,
+      toast.success(t`Successfully added word!`, {
         description: t`The word has been added to your dictionary.`,
       });
     } catch (err) {
@@ -164,10 +162,8 @@ const Add = () => {
         console.error(err.message);
       }
 
-      toast({
-        title: t`Failed to add word!`,
+      toast.error(t`Failed to add word!`, {
         description: t`There was an error adding your word. Please try again.`,
-        variant: "destructive",
       });
     }
   };

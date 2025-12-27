@@ -3,6 +3,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { BetaBadge } from "@/components/BetaBadge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +24,6 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
-import { useToast } from "@/hooks/useToast";
 import { ensureDb } from "@/lib/db";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { settingsTable } from "@/lib/db/operations/settings";
@@ -52,7 +52,6 @@ export const FlashcardSettingsCardSection = () => {
     },
   });
 
-  const { toast } = useToast();
   const [clearingProgress, setClearingProgress] = useState<{
     total: number;
     cleared: number;
@@ -86,22 +85,20 @@ export const FlashcardSettingsCardSection = () => {
       });
 
       if (lastProgress.total === 0) {
-        toast({ title: t`No backlog cards to clear.` });
+        toast.info(t`No backlog cards to clear.`);
       } else {
-        toast({
-          title: t`Backlog cleared!`,
+        toast.success(t`Backlog cleared!`, {
           description: t`${lastProgress.cleared} cards have been rescheduled.`,
         });
       }
     } catch (err) {
-      toast({
-        title: t`Failed to clear backlog`,
+      toast.error(t`Failed to clear backlog`, {
         description: t`There was an error clearing your backlog.`,
       });
     } finally {
       setClearingProgress(null);
     }
-  }, [data?.show_reverse_flashcards, t, toast]);
+  }, [data?.show_reverse_flashcards, t]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -120,17 +117,14 @@ export const FlashcardSettingsCardSection = () => {
       try {
         await updateSettings({ updates: formData });
 
-        toast({
-          title: t`Flashcard settings updated!`,
-        });
+        toast.success(t`Flashcard settings updated!`);
       } catch (err) {
-        toast({
-          title: t`Failed to update flashcard settings.`,
+        toast.error(t`Failed to update flashcard settings.`, {
           description: t`There was an error updating your flashcard settings.`,
         });
       }
     },
-    [updateSettings, t, toast]
+    [updateSettings, t]
   );
 
   return (

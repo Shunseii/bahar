@@ -4,7 +4,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useToast } from "@/hooks/useToast";
+import { toast } from "sonner";
 import { decksTable } from "@/lib/db/operations/decks";
 import { queryClient } from "@/lib/query";
 import { z } from "@/lib/zod";
@@ -129,7 +129,6 @@ export const DeckDialogContent = ({
     },
   });
 
-  const { toast } = useToast();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof DeckFormSchema>>({
     resolver: zodResolver(DeckFormSchema),
@@ -162,15 +161,11 @@ export const DeckDialogContent = ({
           updates: { name, filters },
         });
 
-        toast({
-          title: t`Deck successfully updated!`,
-        });
+        toast.success(t`Deck successfully updated!`);
       } else {
         await createDeck({ deck: { name, filters } });
 
-        toast({
-          title: t`Deck successfully created!`,
-        });
+        toast.success(t`Deck successfully created!`);
       }
 
       if (!isEditing) {
@@ -178,16 +173,12 @@ export const DeckDialogContent = ({
       }
     } catch (err) {
       if (isEditing) {
-        toast({
-          title: t`There was an error updating the deck`,
+        toast.error(t`There was an error updating the deck`, {
           description: t`Your deck was not updated. Please try again.`,
-          variant: "destructive",
         });
       } else {
-        toast({
-          title: t`There was an error creating the deck`,
+        toast.error(t`There was an error creating the deck`, {
           description: t`Your deck was not created. Please try again.`,
-          variant: "destructive",
         });
       }
     }

@@ -6,6 +6,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { type FC, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import {
   AdditionalDetailsFormSection,
   BasicDetailsFormSection,
@@ -36,7 +37,6 @@ import {
 import { Form } from "@/components/ui/form";
 import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
 import { useDir } from "@/hooks/useDir";
-import { useToast } from "@/hooks/useToast";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";
@@ -63,7 +63,6 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
     },
   });
 
-  const { toast } = useToast();
   const { t } = useLingui();
 
   return (
@@ -99,9 +98,7 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
               onClick={async () => {
                 await resetFlashcard({ dictionary_entry_id: id });
 
-                toast({
-                  title: t`Successfully reset the flashcard.`,
-                });
+                toast.success(t`Successfully reset the flashcard.`);
               }}
               type="button"
               variant="destructive"
@@ -263,7 +260,6 @@ const Edit = () => {
     queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, wordId],
   });
 
-  const { toast } = useToast();
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -317,8 +313,7 @@ const Edit = () => {
 
       await editDictionaryEntry({ id: input.id, updates: input });
 
-      toast({
-        title: t`Successfully updated the word!`,
+      toast.success(t`Successfully updated the word!`, {
         description: t`The word has been updated.`,
       });
     } catch (err) {
@@ -326,10 +321,8 @@ const Edit = () => {
         console.error(err.message);
       }
 
-      toast({
-        title: t`Failed to update the word!`,
+      toast.error(t`Failed to update the word!`, {
         description: t`There was an error updating your word. Please try again.`,
-        variant: "destructive",
       });
     }
   };

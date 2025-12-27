@@ -3,6 +3,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,7 +21,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/useToast";
 import { api } from "@/lib/api";
 import { z } from "@/lib/zod";
 
@@ -31,7 +31,6 @@ const FormSchema = z.object({
 
 export const AdminSettingsCardSection = () => {
   const { t } = useLingui();
-  const { toast } = useToast();
   const { mutate } = useMutation({
     mutationFn: async (
       data: Parameters<typeof api.migrations.register.post>[0]
@@ -41,16 +40,14 @@ export const AdminSettingsCardSection = () => {
       switch (error?.status) {
         case 401:
         case 403:
-          toast({
-            title: t`Failed to upload migration`,
+          toast.error(t`Failed to upload migration`, {
             description: t`You do not have access to upload schema migrations.`,
           });
           break;
 
         case 400:
         case 422:
-          toast({
-            title: t`Failed to upload migration`,
+          toast.error(t`Failed to upload migration`, {
             description: t`There was an error uploading your SQL migration`,
           });
           break;
@@ -60,7 +57,7 @@ export const AdminSettingsCardSection = () => {
       return result;
     },
     onSuccess: () => {
-      toast({ title: t`Migration successfully registered.` });
+      toast.success(t`Migration successfully registered.`);
     },
   });
   const form = useForm<z.infer<typeof FormSchema>>({

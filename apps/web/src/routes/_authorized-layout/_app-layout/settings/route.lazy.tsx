@@ -5,6 +5,7 @@ import type {
 import { Trans, useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
 import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
 import { InputFile } from "@/components/InputFile";
@@ -30,7 +31,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSearch } from "@/hooks/useSearch";
-import { useToast } from "@/hooks/useToast";
 import { authClient } from "@/lib/auth-client";
 import { ensureDb } from "@/lib/db";
 import { transformForExport } from "@/lib/db/export";
@@ -53,7 +53,6 @@ const Settings = () => {
     current: number;
     total: number;
   } | null>(null);
-  const { toast } = useToast();
   const { data: userData } = authClient.useSession();
 
   const exportDictionary = useCallback(
@@ -117,29 +116,24 @@ const Settings = () => {
         URL.revokeObjectURL(url);
 
         if (skippedCount > 0) {
-          toast({
-            variant: "destructive",
-            title: t`Export completed with issues`,
+          toast.error(t`Export completed with issues`, {
             description: t`${skippedCount} entries were skipped due to data corruption.`,
           });
         } else {
-          toast({
-            title: t`Successfully exported!`,
+          toast.success(t`Successfully exported!`, {
             description: t`Your dictionary has been downloaded.`,
           });
         }
       } catch (err: unknown) {
         console.error(err);
-        toast({
-          variant: "destructive",
-          title: t`Export failed!`,
+        toast.error(t`Export failed!`, {
           description: t`There was an error exporting your dictionary. Please try again later.`,
         });
       } finally {
         setIsLoading(false);
       }
     },
-    [toast, t]
+    [t]
   );
 
   const deleteDictionary = useCallback(async () => {
@@ -166,22 +160,19 @@ const Settings = () => {
         return;
       }
 
-      toast({
-        title: t`Successfully deleted!`,
+      toast.success(t`Successfully deleted!`, {
         description: t`Your dictionary has been deleted.`,
       });
     } catch (err: unknown) {
       console.error(err);
 
-      toast({
-        variant: "destructive",
-        title: t`Failed to delete!`,
+      toast.error(t`Failed to delete!`, {
         description: t`There was an error deleting your dictionary. Please try again later.`,
       });
     } finally {
       setIsLoading(false);
     }
-  }, [reset, toast, t]);
+  }, [reset, t]);
 
   return (
     <Page className="m-auto flex w-full max-w-4xl flex-col gap-y-8">
@@ -228,9 +219,7 @@ const Settings = () => {
               setIsLoading(true);
 
               if (!file || file.type !== "application/json") {
-                toast({
-                  variant: "destructive",
-                  title: t`Incorrect file type`,
+                toast.error(t`Incorrect file type`, {
                   description: t`Please select a JSON file with your dictionary.`,
                 });
 
@@ -314,8 +303,7 @@ const Settings = () => {
                   return;
                 }
 
-                toast({
-                  title: t`Successfully imported!`,
+                toast.success(t`Successfully imported!`, {
                   description: t`Your dictionary has been updated!`,
                 });
               } catch (err: unknown) {
@@ -335,23 +323,16 @@ const Settings = () => {
                   });
 
                   importErrors.forEach((importError) => {
-                    toast({
-                      variant: "destructive",
-                      description: importError,
-                    });
+                    toast.error(importError);
                   });
 
-                  toast({
-                    variant: "destructive",
-                    title: t`Import failed!`,
+                  toast.error(t`Import failed!`, {
                     description: t`Your dictionary is not valid. Please fix the errors and upload it again.`,
                   });
                 } else {
                   console.error(err);
 
-                  toast({
-                    variant: "destructive",
-                    title: t`Import failed!`,
+                  toast.error(t`Import failed!`, {
                     description: t`There was an error importing your dictionary. Please try again later.`,
                   });
                 }

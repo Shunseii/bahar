@@ -10,6 +10,7 @@ import {
 import { useMeasure } from "@uidotdev/usehooks";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { hydrationSkippedCountAtom } from "@/atoms/hydration";
 import { isSyncingAtom, syncCompletedCountAtom } from "@/atoms/sync";
 import { AnimatedLogo } from "@/components/AnimatedLogo";
@@ -19,7 +20,6 @@ import { MobileHeader } from "@/components/MobileHeader";
 import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/useSearch";
-import { useToast } from "@/hooks/useToast";
 import { authClient } from "@/lib/auth-client";
 import { ensureDb, initDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
@@ -45,7 +45,6 @@ const PendingComponent = () => {
 
 const AuthorizedLayout = () => {
   const { preloadResults } = useSearch();
-  const { toast } = useToast();
   const [hydrationSkippedCount, setHydrationSkippedCount] = useAtom(
     hydrationSkippedCountAtom
   );
@@ -66,8 +65,7 @@ const AuthorizedLayout = () => {
     if (!hydrationSkippedCount) return;
 
     const id = requestAnimationFrame(() => {
-      toast({
-        title: t`Some dictionary entries couldn't be loaded`,
+      toast.warning(t`Some dictionary entries couldn't be loaded`, {
         description: plural(hydrationSkippedCount, {
           one: "# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.",
           other:
@@ -79,7 +77,7 @@ const AuthorizedLayout = () => {
     });
 
     return () => cancelAnimationFrame(id);
-  }, [hydrationSkippedCount, toast]);
+  }, [hydrationSkippedCount]);
 
   const dictionaryChangedRef = useRef(false);
 
