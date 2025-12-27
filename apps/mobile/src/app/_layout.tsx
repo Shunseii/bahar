@@ -32,7 +32,7 @@ import { messages as enMessages } from "@bahar/i18n/locales/en";
 import { messages as arMessages } from "@bahar/i18n/locales/ar";
 
 import "@/global.css";
-import { queryClient } from "@/utils/trpc";
+import { queryClient } from "@/utils/api";
 
 const setRootViewBackgroundColor = async () => {
   const colorScheme = Appearance.getColorScheme();

@@ -13,7 +13,7 @@ import Animated, {
 import { useMutation } from "@tanstack/react-query";
 import { X, Check, Tag, Filter } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
-import { queryClient } from "../../utils/trpc";
+import { queryClient } from "../../utils/api";
 import { decksTable } from "../../lib/db/operations/decks";
 import { useThemeColors } from "@/lib/theme";
 import type { SelectDeck, DeckFilters, WordType, FlashcardState } from "@bahar/drizzle-user-db-schemas";

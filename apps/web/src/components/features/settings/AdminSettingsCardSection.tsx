@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/useToast";
-import { trpcNew } from "@/lib/trpc";
+import { api } from "@/lib/api";
 import { z } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLingui } from "@lingui/react/macro";
@@ -34,22 +34,34 @@ export const AdminSettingsCardSection = () => {
   const { t } = useLingui();
   const { toast } = useToast();
   const { mutate } = useMutation({
-    ...trpcNew.migrations.registerSchema.mutationOptions(),
+    mutationFn: async (
+      data: Parameters<typeof api.migrations.register.post>[0],
+    ) => {
+      const { data: result, error } = await api.migrations.register.post(data);
+
+      switch (error?.status) {
+        case 401:
+        case 403:
+          toast({
+            title: t`Failed to upload migration`,
+            description: t`You do not have access to upload schema migrations.`,
+          });
+          break;
+
+        case 400:
+        case 422:
+          toast({
+            title: t`Failed to upload migration`,
+            description: t`There was an error uploading your SQL migration`,
+          });
+          break;
+      }
+
+      if (error) throw error;
+      return result;
+    },
     onSuccess: () => {
       toast({ title: t`Migration successfully registered.` });
-    },
-    onError: (error) => {
-      if (error.message === "UNAUTHORIZED") {
-        toast({
-          title: t`Failed to upload migration`,
-          description: t`You do not have access to upload schema migrations.`,
-        });
-      } else {
-        toast({
-          title: t`Failed to upload migration`,
-          description: t`There was an error uploading your SQL migration`,
-        });
-      }
     },
   });
   const form = useForm<z.infer<typeof FormSchema>>({

@@ -11,6 +11,10 @@ coverage
 # vite
 vite.config.ts.timestamp-*
 
+# bun api binaries
+server
+migrate
+
 # next.js
 .next/
 out/

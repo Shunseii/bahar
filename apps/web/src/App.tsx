@@ -1,5 +1,4 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { trpc, trpcReactClient } from "./lib/trpc";
 import { RouterProvider } from "@tanstack/react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { router } from "./router";
@@ -45,15 +44,13 @@ function App() {
   return (
     <JotaiProvider store={store}>
       <I18nProvider i18n={i18n}>
-        <trpc.Provider client={trpcReactClient} queryClient={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            <TooltipProvider>
-              <RouterProvider router={router} />
-            </TooltipProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <RouterProvider router={router} />
+          </TooltipProvider>
 
-            {/* <ReactQueryDevtools /> */}
-          </QueryClientProvider>
-        </trpc.Provider>
+          {/* <ReactQueryDevtools /> */}
+        </QueryClientProvider>
       </I18nProvider>
     </JotaiProvider>
   );

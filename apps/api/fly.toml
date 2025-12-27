@@ -5,6 +5,9 @@ primary_region = 'yyz'
 
 [build]
 
+[deploy]
+  release_command = "./migrate"
+
 [http_service]
   internal_port = 3000
   force_https = true

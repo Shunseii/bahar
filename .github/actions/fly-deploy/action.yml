@@ -12,15 +12,9 @@ inputs:
   fly_api_token:
     description: "Fly.io API token"
     required: true
-  sentry_api_auth_token:
-    description: "Sentry API auth token"
-    required: false
-  sentry_api_project:
-    description: "Sentry API project"
-    required: false
-  sentry_org:
-    description: "Sentry organization"
-    required: false
+  github_sha:
+    description: "Git commit SHA for release tracking"
+    required: true
 
 runs:
   using: "composite"
@@ -33,9 +27,6 @@ runs:
           --remote-only \
           --dockerfile ${{ inputs.dockerfile }} \
           --config ${{ inputs.fly_config }} \
-          --build-arg GITHUB_SHA=${{ github.sha }} \
-          --build-arg SENTRY_API_AUTH_TOKEN=${{ inputs.sentry_api_auth_token }} \
-          --build-arg SENTRY_API_PROJECT=${{ inputs.sentry_api_project }} \
-          --build-arg SENTRY_ORG=${{ inputs.sentry_org }}
+          --build-arg GITHUB_SHA=${{ inputs.github_sha }}
       env:
         FLY_API_TOKEN: ${{ inputs.fly_api_token }}

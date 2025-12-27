@@ -21,7 +21,7 @@ import {
   Check,
 } from "lucide-react-native";
 import * as Haptics from "expo-haptics";
-import { queryClient } from "../../utils/trpc";
+import { queryClient } from "../../utils/api";
 import { settingsTable, type UserSettings } from "../../lib/db/operations/settings";
 import type { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";
 

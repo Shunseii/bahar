@@ -13,7 +13,7 @@ The mobile application for Bahar - built with React Native and Expo.
 - Orama for client-side search
 - Expo SQLite for local database
 - Better Auth Expo for authentication
-- tRPC for type-safe API communication
+- Eden Treaty for type-safe API communication
 
 ## Getting Started
 

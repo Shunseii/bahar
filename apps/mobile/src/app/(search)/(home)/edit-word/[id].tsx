@@ -32,7 +32,7 @@ import { toast } from "sonner-native";
 import { t } from "@lingui/core/macro";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { updateSearchIndex, removeFromSearchIndex } from "@/lib/search";
-import { queryClient } from "@/utils/trpc";
+import { queryClient } from "@/utils/api";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 z.config({ customError: errorMap });

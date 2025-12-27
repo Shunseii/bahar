@@ -12,7 +12,7 @@ The web application for Bahar - an Arabic language learning platform with person
 - Lingui for internationalization
 - Orama for client-side full-text search
 - Turso SQLite (local WASM sync + remote per-user database)
-- tRPC for type-safe API communication
+- Eden Treaty for type-safe API communication
 
 ## Getting Started
 
@@ -45,7 +45,7 @@ This app uses a local-first architecture with cloud sync:
 - **Local Database**: Browser-based SQLite via Turso sync-wasm
 - **Server State**: Synced with user's remote Turso database every 60 seconds
 - **Search**: Orama (client-side WASM) indexed from local database
-- **API**: tRPC endpoints for data mutations and server operations
+- **API**: Elysia endpoints via Eden Treaty for type-safe server operations
 
 ## Data Flow
 

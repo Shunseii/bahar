@@ -1,6 +1,6 @@
 import { connect, Database } from "@tursodatabase/sync-wasm/vite";
 import { SelectMigration } from "@bahar/drizzle-user-db-schemas";
-import { trpcClient } from "../trpc";
+import { api } from "../api";
 import { err, ok, tryCatch } from "../result";
 import * as Sentry from "@sentry/react";
 
@@ -69,7 +69,11 @@ export const initDb = async () => {
 
 const _initDbInternal = async () => {
   const infoResult = await tryCatch(
-    () => trpcClient.databases.userDatabase.query(),
+    async () => {
+      const { data, error } = await api.databases.user.get();
+      if (error) throw error;
+      return data;
+    },
     (error) => ({
       type: "get_db_info_failed",
       reason: String(error),
@@ -106,7 +110,11 @@ const _initDbInternal = async () => {
 
   if (!connectionResult.ok) {
     const refreshResult = await tryCatch(
-      () => trpcClient.databases.refreshUserToken.mutate(),
+      async () => {
+        const { data, error } = await api.databases["refresh-token"].post();
+        if (error) throw error;
+        return data;
+      },
       (error) => ({
         type: "token_refresh_failed",
         reason: String(error),
@@ -175,7 +183,11 @@ const applyRequiredMigrations = async () => {
   if (!db) return ok(null);
 
   const allMigrationsResult = await tryCatch(
-    () => trpcClient.migrations.fullSchema.query(),
+    async () => {
+      const { data, error } = await api.migrations.full.get();
+      if (error) throw error;
+      return data;
+    },
     (error) => ({
       type: "api_schema_verification_failed",
       reason: String(error),

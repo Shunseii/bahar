@@ -13,11 +13,37 @@ jobs:
     concurrency: deploy-group
     steps:
       - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.5"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build with source maps
+        working-directory: apps/api
+        run: bun build --sourcemap --outdir dist src/index.ts
+
+      - name: Create Sentry release and upload source maps
+        working-directory: apps/api
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_API_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_API_PROJECT }}
+        run: |
+          npx @sentry/cli releases new ${{ github.sha }}
+          npx @sentry/cli releases set-commits ${{ github.sha }} --auto
+          npx @sentry/cli sourcemaps upload --release ${{ github.sha }} ./dist
+          npx @sentry/cli releases finalize ${{ github.sha }}
+
       - uses: ./.github/actions/fly-deploy
         with:
           dockerfile: apps/api/Dockerfile
           fly_config: apps/api/fly.toml
           fly_api_token: ${{ secrets.FLY_BAHAR_API_TOKEN }}
-          sentry_api_auth_token: ${{ secrets.SENTRY_API_AUTH_TOKEN }}
-          sentry_api_project: ${{ secrets.SENTRY_API_PROJECT }}
-          sentry_org: ${{ secrets.SENTRY_ORG }}
+          github_sha: ${{ github.sha }}

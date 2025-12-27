@@ -55,9 +55,10 @@ React Native app with Expo:
 
 #### API (`apps/api`)
 
-Node.js backend:
+Bun backend:
 
-- **Framework**: Express, tRPC
+- **Runtime**: Bun
+- **Framework**: Elysia
 - **Database**: Turso (central + per-user SQLite databases)
 - **ORM**: Drizzle
 - **Auth**: Better Auth (email OTP, OAuth)

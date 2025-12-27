@@ -25,7 +25,7 @@ import {
   Check,
 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { queryClient } from "@/utils/trpc";
+import { queryClient } from "@/utils/api";
 import { toast } from "sonner-native";
 import { useThemeColors } from "@/lib/theme";
 import { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";

@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { migrate } from "drizzle-orm/libsql/migrator";
 import { db, client } from "./";
 
@@ -10,6 +9,6 @@ import { db, client } from "./";
 
   console.log("Migrations run successfully!");
 
-  // Don't forget to close the connection, otherwise the script will hang
+  // close the connection, otherwise the script will hang
   client.close();
 })();

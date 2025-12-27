@@ -1,13 +1,8 @@
-ARG NODE_VERSION=20
-FROM node:${NODE_VERSION}-slim as base
+ARG BUN_VERSION=1.3.5
+FROM oven/bun:${BUN_VERSION}-slim AS base
 
-LABEL fly_launch_runtime="Node.js"
+LABEL fly_launch_runtime="Bun"
 
-ARG PORT
-
-ARG SENTRY_API_AUTH_TOKEN
-ARG SENTRY_API_PROJECT
-ARG SENTRY_ORG
 ARG GITHUB_SHA
 
 ENV PNPM_HOME="/pnpm"
@@ -17,68 +12,68 @@ WORKDIR /app
 
 FROM base AS prune
 
-RUN npm install -g pnpm
-RUN pnpm add -g turbo
+RUN bun add -g pnpm turbo
 
 COPY . .
 
 RUN turbo prune api --docker
 
-FROM base AS development
+FROM base AS build
 
-# Add certificates so we can call Sentry's API
-RUN apt-get update && apt-get install -y ca-certificates
-
-RUN npm install -g pnpm
-RUN pnpm add -g turbo
+RUN bun add -g pnpm turbo
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=prune /app/out/json/ .
 COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm config set store-dir /pnpm/store
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
 
-# Build the project
+# Copy full source
 COPY --from=prune /app/out/full/ .
-
-# Environment variables needed for Sentry esbuild plugin
-# which will create a new release and upload sourcemaps
-ENV SENTRY_API_AUTH_TOKEN=$SENTRY_API_AUTH_TOKEN
-ENV SENTRY_API_PROJECT=$SENTRY_API_PROJECT
-ENV SENTRY_ORG=$SENTRY_ORG
-ENV GITHUB_SHA=$GITHUB_SHA
-
-RUN pnpm turbo run build --filter=api
-
-FROM base AS production
-
-RUN npm install -g pnpm
-RUN pnpm add -g turbo
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-COPY .gitignore .gitignore
-COPY --from=prune /app/out/json/ .
-COPY --from=prune /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-
-RUN pnpm install --prod --frozen-lockfile
-
-COPY --from=development /app/apps/api/dist /app/apps/api/dist
-COPY --from=development /app/apps/api/entrypoint.sh ./
-
-COPY --from=prune /app/turbo.json /app/turbo.json
-
-# Needed for migrations
-COPY --from=prune /app/apps/api/drizzle /app/apps/api/drizzle
-COPY --from=prune /app/apps/api/instrument.mjs /app/apps/api/instrument.mjs
-COPY --from=prune /app/apps/api/src/*.json /app/apps/api/dist/
-
-RUN chmod +x /app/entrypoint.sh
 
 WORKDIR /app/apps/api
 
-EXPOSE $PORT
+ENV NODE_ENV=production
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Compile server binary
+RUN bun build \
+    --compile \
+    --minify-whitespace \
+    --minify-syntax \
+    --external @libsql/linux-x64-gnu \
+    --outfile server \
+    src/index.ts
+
+# Compile migrate binary
+RUN bun build \
+    --compile \
+    --minify-whitespace \
+    --minify-syntax \
+    --external @libsql/linux-x64-gnu \
+    --outfile migrate \
+    src/db/migrate.ts
+
+FROM debian:12-slim
+
+WORKDIR /app
+
+# Copy compiled binaries
+COPY --from=build /app/apps/api/server server
+COPY --from=build /app/apps/api/migrate migrate
+
+# Copy native libsql module (required at runtime)
+COPY --from=build /app/node_modules/@libsql/linux-x64-gnu ./node_modules/@libsql/linux-x64-gnu
+
+# Copy drizzle migrations folder (needed at runtime)
+COPY --from=build /app/apps/api/drizzle drizzle
+
+ENV NODE_ENV=production
+ARG GITHUB_SHA
+ENV GITHUB_SHA=$GITHUB_SHA
+
+EXPOSE 3000
+
+CMD ["./server"]
