@@ -42,6 +42,8 @@ import { Brain, Sparkles, PartyPopper, Archive } from "lucide-react";
 import { GradeOption } from "./GradeOption";
 import { GradeFeedback } from "./GradeFeedback";
 import { TagBadgesList } from "./TagBadgesList";
+import { formatScheduleOptions } from "./utils";
+import { useDir } from "@/hooks/useDir";
 
 interface FlashcardDrawerProps extends PropsWithChildren {
   filters?: SelectDeck["filters"];
@@ -140,6 +142,24 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
   const schedulingCards = schedulingData?.schedulingCards;
   const now = schedulingData?.now ?? new Date();
+
+  const dir = useDir();
+  const locale = dir === "rtl" ? "ar-u-nu-arab" : "en";
+
+  const intervalLabels = useMemo(() => {
+    if (!schedulingCards) return null;
+
+    return formatScheduleOptions({
+      dates: {
+        [Rating.Again]: schedulingCards[Rating.Again].card.due,
+        [Rating.Hard]: schedulingCards[Rating.Hard].card.due,
+        [Rating.Good]: schedulingCards[Rating.Good].card.due,
+        [Rating.Easy]: schedulingCards[Rating.Easy].card.due,
+      },
+      now,
+      locale,
+    });
+  }, [schedulingCards, now, locale]);
 
   const executeGrade = useCallback(
     async (grade: Grade) => {
@@ -413,7 +433,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
         <DrawerFooter>
           <AnimatePresence mode="wait">
-            {schedulingCards && showAnswer ? (
+            {schedulingCards && intervalLabels && showAnswer ? (
               <motion.div
                 key="grading-buttons"
                 initial={{ opacity: 0, y: 20 }}
@@ -428,8 +448,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                   <GradeOption
                     key={grade}
                     grade={grade}
-                    due={schedulingCards[grade].card.due}
-                    now={now}
+                    intervalLabel={intervalLabels[grade]}
                     onClick={() => gradeCard(grade)}
                   />
                 ))}
