@@ -28,7 +28,7 @@ jobs:
 
       - name: Build with source maps
         working-directory: apps/api
-        run: bun build --sourcemap --outdir dist src/index.ts
+        run: bun build --target bun --sourcemap=linked --outdir dist src/index.ts
 
       - name: Create Sentry release and upload source maps
         working-directory: apps/api
