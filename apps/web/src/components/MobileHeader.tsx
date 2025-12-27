@@ -59,7 +59,11 @@ const DraggableSheetContent: typeof SheetContent = React.forwardRef(
           transition={{ type: "just" }}
         >
           <SheetPrimitive.Content
-            className={cn(sheetVariantsNoSlideAnimations({ side }), className)}
+            className={cn(
+              sheetVariantsNoSlideAnimations({ side }),
+              className,
+              "w-[70vw] border-border ltr:border-r rtl:border-l"
+            )}
             ref={ref}
             {...props}
           >
@@ -74,6 +78,7 @@ const DraggableSheetContent: typeof SheetContent = React.forwardRef(
             <button
               className="absolute top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary ltr:right-4 rtl:left-4"
               onClick={() => setIsOpen(false)}
+              type="button"
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
@@ -129,6 +134,7 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
               <img
                 className="h-5 w-5 transition-all group-hover:scale-110"
                 src={Logo}
+                alt="Bahar logo"
               />
               <span className="sr-only">
                 <Trans>Bahar</Trans>
