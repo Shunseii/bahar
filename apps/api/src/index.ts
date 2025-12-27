@@ -14,7 +14,7 @@ import { cors } from "@elysiajs/cors";
 import { config } from "./utils/config";
 import { logger, traceContext } from "./utils/logger";
 import { getAllowedDomains } from "./utils";
-import { betterAuthGuard } from "./middleware";
+import { betterAuthGuard, httpLogger } from "./middleware";
 import { migrationsRouter } from "./routers/migrations";
 import { databasesRouter } from "./routers/databases";
 
@@ -24,6 +24,7 @@ const host = config.HOST;
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
 const app = new Elysia()
+  .use(httpLogger)
   .use(
     cors({
       origin: (request) => {

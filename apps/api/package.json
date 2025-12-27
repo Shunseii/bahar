@@ -33,7 +33,6 @@
     "jose": "^6.1.3",
     "nanoid": "^5.0.7",
     "pino": "^9.6.0",
-    "pino-http": "^10.3.0",
     "resend": "^4.6.0",
     "tsx": "^4.7.1",
     "zod": "4.0.17"
@@ -41,7 +40,6 @@
   "devDependencies": {
     "@bahar/eslint-config": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
-    "@types/pino-http": "^5.8.4",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "bun-types": "^1.3.5",

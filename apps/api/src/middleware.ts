@@ -3,6 +3,8 @@ import Elysia from "elysia";
 import { auth } from "./auth";
 import * as Sentry from "@sentry/bun";
 
+export { httpLogger } from "./middleware/http-logger";
+
 export const betterAuthGuard = new Elysia({ name: "better-auth" })
   .mount(auth.handler)
   .macro({
