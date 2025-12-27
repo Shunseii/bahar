@@ -1,9 +1,9 @@
-DROP INDEX "accounts_userId_idx";--> statement-breakpoint
-DROP INDEX "sessions_token_unique";--> statement-breakpoint
-DROP INDEX "sessions_userId_idx";--> statement-breakpoint
-DROP INDEX "users_email_unique";--> statement-breakpoint
-DROP INDEX "verifications_identifier_idx";--> statement-breakpoint
-DROP INDEX "databases_user_id_unique";--> statement-breakpoint
+DROP INDEX IF EXISTS "accounts_userId_idx";--> statement-breakpoint
+DROP INDEX IF EXISTS "sessions_token_unique";--> statement-breakpoint
+DROP INDEX IF EXISTS "sessions_userId_idx";--> statement-breakpoint
+DROP INDEX IF EXISTS "users_email_unique";--> statement-breakpoint
+DROP INDEX IF EXISTS "verifications_identifier_idx";--> statement-breakpoint
+DROP INDEX IF EXISTS "databases_user_id_unique";--> statement-breakpoint
 ALTER TABLE `accounts` ALTER COLUMN "created_at" TO "created_at" integer NOT NULL DEFAULT (cast(unixepoch('subsecond') * 1000 as integer));--> statement-breakpoint
 CREATE INDEX `accounts_userId_idx` ON `accounts` (`user_id`);--> statement-breakpoint
 CREATE UNIQUE INDEX `sessions_token_unique` ON `sessions` (`token`);--> statement-breakpoint
