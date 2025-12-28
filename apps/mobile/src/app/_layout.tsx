@@ -26,12 +26,16 @@ import { getLocales } from "expo-localization";
 import { Provider as JotaiProvider } from "jotai";
 import { Appearance, Text, useColorScheme, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  SafeAreaListener,
+  SafeAreaProvider,
+} from "react-native-safe-area-context";
 import { Toaster } from "sonner-native";
 import { store } from "@/lib/store";
 
 import "@/global.css";
 import { queryClient } from "@/utils/api";
+import { Uniwind } from "uniwind";
 
 const setRootViewBackgroundColor = () => {
   const colorScheme = Appearance.getColorScheme();
@@ -80,41 +84,49 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
-            <View className="flex-1 bg-background">
-              <ThemeProvider
-                value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-              >
-                <I18nProvider defaultComponent={DefaultComponent} i18n={i18n}>
-                  <Stack>
-                    <Stack.Protected guard={!authData}>
-                      <Stack.Screen
-                        name="(auth)"
-                        options={{ headerShown: false, animation: "fade" }}
-                      />
-                    </Stack.Protected>
+            <SafeAreaListener
+              // Enables using p-safe and m-safe class names
+              // with uniwind
+              onChange={({ insets }) => {
+                Uniwind.updateInsets(insets);
+              }}
+            >
+              <View className="flex-1 bg-background">
+                <ThemeProvider
+                  value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+                >
+                  <I18nProvider defaultComponent={DefaultComponent} i18n={i18n}>
+                    <Stack>
+                      <Stack.Protected guard={!authData}>
+                        <Stack.Screen
+                          name="(auth)"
+                          options={{ headerShown: false, animation: "fade" }}
+                        />
+                      </Stack.Protected>
 
-                    <Stack.Protected guard={!!authData}>
-                      <Stack.Screen
-                        name="(search)"
-                        options={{ headerShown: false, animation: "fade" }}
-                      />
-                      <Stack.Screen
-                        name="review"
-                        options={{
-                          headerShown: false,
-                          animation: "slide_from_bottom",
-                          gestureEnabled: true,
-                          gestureDirection: "vertical",
-                        }}
-                      />
-                    </Stack.Protected>
+                      <Stack.Protected guard={!!authData}>
+                        <Stack.Screen
+                          name="(search)"
+                          options={{ headerShown: false, animation: "fade" }}
+                        />
+                        <Stack.Screen
+                          name="review"
+                          options={{
+                            headerShown: false,
+                            animation: "slide_from_bottom",
+                            gestureEnabled: true,
+                            gestureDirection: "vertical",
+                          }}
+                        />
+                      </Stack.Protected>
 
-                    <Stack.Screen name="+not-found" />
-                  </Stack>
-                  <StatusBar style="auto" />
-                </I18nProvider>
-              </ThemeProvider>
-            </View>
+                      <Stack.Screen name="+not-found" />
+                    </Stack>
+                    <StatusBar style="auto" />
+                  </I18nProvider>
+                </ThemeProvider>
+              </View>
+            </SafeAreaListener>
 
             <Toaster />
           </SafeAreaProvider>
