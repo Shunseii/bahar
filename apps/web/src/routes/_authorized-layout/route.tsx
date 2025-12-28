@@ -292,7 +292,8 @@ export const Route = createFileRoute("/_authorized-layout")({
           });
 
         // Don't throw on turso sync errors
-        // since user can still use local db
+        // since user can still use local db.
+        // Set atom so component can show toast after mount
         case "turso_remote_sync_failed":
         case "turso_remote_sync_and_pull_failed":
         case "turso_db_pull_failed":

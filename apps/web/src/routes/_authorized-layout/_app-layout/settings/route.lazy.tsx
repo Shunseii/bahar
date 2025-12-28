@@ -22,6 +22,7 @@ import {
 } from "@bahar/web-ui/components/dialog";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
@@ -32,7 +33,7 @@ import { Page } from "@/components/Page";
 import { ThemeMenu } from "@/components/ThemeMenu";
 import { useSearch } from "@/hooks/useSearch";
 import { authClient } from "@/lib/auth-client";
-import { ensureDb } from "@/lib/db";
+import { deleteLocalDatabase, ensureDb } from "@/lib/db";
 import { transformForExport } from "@/lib/db/export";
 import {
   batchArray,
@@ -49,6 +50,7 @@ const Settings = () => {
   const { reset } = useSearch();
   const [file, setFile] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const [importProgress, setImportProgress] = useState<{
     current: number;
     total: number;
@@ -175,317 +177,410 @@ const Settings = () => {
   }, [reset, t]);
 
   return (
-    <Page className="m-auto flex w-full max-w-4xl flex-col gap-y-8">
-      <h1 className="text-center font-primary font-semibold text-3xl">
-        <Trans>Settings</Trans>
-      </h1>
+    <>
+      {isResetting && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-background/80 backdrop-blur-sm">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="font-medium text-lg">
+            <Trans>Resetting local data...</Trans>
+          </p>
+        </div>
+      )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            <Trans>Appearance</Trans>
-          </CardTitle>
+      <Page className="m-auto flex w-full max-w-4xl flex-col gap-y-8">
+        <h1 className="text-center font-primary font-semibold text-3xl">
+          <Trans>Settings</Trans>
+        </h1>
 
-          <CardDescription>
-            <Trans>Customize how the application looks for you.</Trans>
-          </CardDescription>
-        </CardHeader>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <Trans>Appearance</Trans>
+            </CardTitle>
 
-        <CardContent className="flex flex-col gap-y-4">
-          <ThemeMenu />
-          <LanguageMenu />
-        </CardContent>
-      </Card>
+            <CardDescription>
+              <Trans>Customize how the application looks for you.</Trans>
+            </CardDescription>
+          </CardHeader>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            <Trans>Dictionary</Trans>
-          </CardTitle>
+          <CardContent className="flex flex-col gap-y-4">
+            <ThemeMenu />
+            <LanguageMenu />
+          </CardContent>
+        </Card>
 
-          <CardDescription>
-            <Trans>Manage your dictionary.</Trans>
-          </CardDescription>
-        </CardHeader>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <Trans>Dictionary</Trans>
+            </CardTitle>
 
-        <CardContent className="flex flex-col gap-y-4">
-          <form
-            action="#"
-            className="flex flex-col items-start gap-x-4 gap-y-4 sm:flex-row sm:items-end"
-            encType="multipart/form-data"
-            onSubmit={async (e) => {
-              e.preventDefault();
+            <CardDescription>
+              <Trans>Manage your dictionary.</Trans>
+            </CardDescription>
+          </CardHeader>
 
-              setIsLoading(true);
+          <CardContent className="flex flex-col gap-y-4">
+            <form
+              action="#"
+              className="flex flex-col items-start gap-x-4 gap-y-4 sm:flex-row sm:items-end"
+              encType="multipart/form-data"
+              onSubmit={async (e) => {
+                e.preventDefault();
 
-              if (!file || file.type !== "application/json") {
-                toast.error(t`Incorrect file type`, {
-                  description: t`Please select a JSON file with your dictionary.`,
-                });
+                setIsLoading(true);
 
-                setIsLoading(false);
-
-                return;
-              }
-
-              try {
-                const fileContent = await readFileAsText(file);
-                let parsedData: unknown;
-
-                try {
-                  parsedData = JSON.parse(fileContent);
-                } catch {
-                  throw new ImportError({
-                    message: "Error importing dictionary",
-                    error: new Error("Invalid JSON format") as never,
-                    code: ImportErrorCode.INVALID_JSON,
+                if (!file || file.type !== "application/json") {
+                  toast.error(t`Incorrect file type`, {
+                    description: t`Please select a JSON file with your dictionary.`,
                   });
-                }
 
-                let parsedImport;
-                try {
-                  parsedImport = parseImportData(parsedData);
-                } catch (err) {
-                  throw new ImportError({
-                    message: "Error importing dictionary",
-                    error: err as never,
-                    code: ImportErrorCode.VALIDATION_ERROR,
-                  });
-                }
+                  setIsLoading(false);
 
-                const { version, entries: validatedDictionary } = parsedImport;
-
-                const BATCH_SIZE = 100;
-                const batches = [
-                  ...batchArray(validatedDictionary, BATCH_SIZE),
-                ];
-                const totalBatches = batches.length;
-
-                setImportProgress({ current: 0, total: totalBatches });
-
-                await enqueueDbOperation(async () => {
-                  const db = await ensureDb();
-
-                  const insertBatch = db.transaction(
-                    async (batch: typeof validatedDictionary) => {
-                      for (const word of batch) {
-                        const { dictEntry, flashcards } =
-                          createImportStatements(word, version);
-
-                        await db.prepare(dictEntry.sql).run(dictEntry.args);
-                        await db
-                          .prepare(flashcards[0].sql)
-                          .run(flashcards[0].args);
-                        await db
-                          .prepare(flashcards[1].sql)
-                          .run(flashcards[1].args);
-                      }
-                    }
-                  );
-
-                  for (let i = 0; i < batches.length; i++) {
-                    await insertBatch(batches[i]);
-                    setImportProgress({ current: i + 1, total: totalBatches });
-                  }
-                });
-
-                await enqueueSyncOperation(async () => {
-                  const db = await ensureDb();
-                  await db.push();
-                  await db.checkpoint();
-                });
-
-                reset();
-                resetOramaDb();
-                const hydrateResult = await hydrateOramaDb();
-                if (!hydrateResult.ok) {
-                  window.location.reload();
                   return;
                 }
 
-                toast.success(t`Successfully imported!`, {
-                  description: t`Your dictionary has been updated!`,
-                });
-              } catch (err: unknown) {
-                if (err instanceof ImportError) {
-                  const { error, code, message } = err;
+                try {
+                  const fileContent = await readFileAsText(file);
+                  let parsedData: unknown;
 
-                  console.error(
-                    "Error importing dictionary: ",
-                    message,
-                    code,
-                    error
-                  );
+                  try {
+                    parsedData = JSON.parse(fileContent);
+                  } catch {
+                    throw new ImportError({
+                      message: "Error importing dictionary",
+                      error: new Error("Invalid JSON format") as never,
+                      code: ImportErrorCode.INVALID_JSON,
+                    });
+                  }
 
-                  const importErrors = parseImportErrors({
-                    error,
-                    code,
+                  let parsedImport;
+                  try {
+                    parsedImport = parseImportData(parsedData);
+                  } catch (err) {
+                    throw new ImportError({
+                      message: "Error importing dictionary",
+                      error: err as never,
+                      code: ImportErrorCode.VALIDATION_ERROR,
+                    });
+                  }
+
+                  const { version, entries: validatedDictionary } =
+                    parsedImport;
+
+                  const BATCH_SIZE = 100;
+                  const batches = [
+                    ...batchArray(validatedDictionary, BATCH_SIZE),
+                  ];
+                  const totalBatches = batches.length;
+
+                  setImportProgress({ current: 0, total: totalBatches });
+
+                  await enqueueDbOperation(async () => {
+                    const db = await ensureDb();
+
+                    const insertBatch = db.transaction(
+                      async (batch: typeof validatedDictionary) => {
+                        for (const word of batch) {
+                          const { dictEntry, flashcards } =
+                            createImportStatements(word, version);
+
+                          await db.prepare(dictEntry.sql).run(dictEntry.args);
+                          await db
+                            .prepare(flashcards[0].sql)
+                            .run(flashcards[0].args);
+                          await db
+                            .prepare(flashcards[1].sql)
+                            .run(flashcards[1].args);
+                        }
+                      }
+                    );
+
+                    for (let i = 0; i < batches.length; i++) {
+                      await insertBatch(batches[i]);
+                      setImportProgress({
+                        current: i + 1,
+                        total: totalBatches,
+                      });
+                    }
                   });
 
-                  importErrors.forEach((importError) => {
-                    toast.error(importError);
+                  await enqueueSyncOperation(async () => {
+                    const db = await ensureDb();
+                    await db.push();
+                    await db.checkpoint();
                   });
 
-                  toast.error(t`Import failed!`, {
-                    description: t`Your dictionary is not valid. Please fix the errors and upload it again.`,
-                  });
-                } else {
-                  console.error(err);
+                  reset();
+                  resetOramaDb();
+                  const hydrateResult = await hydrateOramaDb();
+                  if (!hydrateResult.ok) {
+                    window.location.reload();
+                    return;
+                  }
 
-                  toast.error(t`Import failed!`, {
-                    description: t`There was an error importing your dictionary. Please try again later.`,
+                  toast.success(t`Successfully imported!`, {
+                    description: t`Your dictionary has been updated!`,
                   });
+                } catch (err: unknown) {
+                  if (err instanceof ImportError) {
+                    const { error, code, message } = err;
+
+                    console.error(
+                      "Error importing dictionary: ",
+                      message,
+                      code,
+                      error
+                    );
+
+                    const importErrors = parseImportErrors({
+                      error,
+                      code,
+                    });
+
+                    importErrors.forEach((importError) => {
+                      toast.error(importError);
+                    });
+
+                    toast.error(t`Import failed!`, {
+                      description: t`Your dictionary is not valid. Please fix the errors and upload it again.`,
+                    });
+                  } else {
+                    console.error(err);
+
+                    toast.error(t`Import failed!`, {
+                      description: t`There was an error importing your dictionary. Please try again later.`,
+                    });
+                  }
+                } finally {
+                  setIsLoading(false);
+                  setImportProgress(null);
                 }
-              } finally {
-                setIsLoading(false);
-                setImportProgress(null);
-              }
-            }}
-          >
-            <InputFile
-              accept="application/json"
-              onChange={(file) => {
-                setFile(file);
               }}
-            />
-
-            <Button
-              disabled={!file || isLoading}
-              id="import-dictionary-button"
-              type="submit"
             >
-              <Trans>Import</Trans>
-            </Button>
-          </form>
+              <InputFile
+                accept="application/json"
+                onChange={(file) => {
+                  setFile(file);
+                }}
+              />
 
-          {importProgress && (
-            <div className="space-y-2">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full bg-primary transition-all duration-150"
-                  style={{
-                    width: `${
-                      (importProgress.current / importProgress.total) * 100
-                    }%`,
-                  }}
-                />
-              </div>
-              <p className="text-center text-muted-foreground text-xs">
-                {Math.round(
-                  (importProgress.current / importProgress.total) * 100
-                )}
-                %
-              </p>
-            </div>
-          )}
-
-          <CardDescription className="text-destructive">
-            <Trans>Any words that have the same ID will be overwritten.</Trans>
-          </CardDescription>
-        </CardContent>
-
-        <CardContent>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button disabled={isLoading} variant="secondary">
-                <Trans>Export</Trans>
+              <Button
+                disabled={!file || isLoading}
+                id="import-dictionary-button"
+                type="submit"
+              >
+                <Trans>Import</Trans>
               </Button>
-            </DialogTrigger>
+            </form>
 
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  <Trans>Export your dictionary</Trans>
-                </DialogTitle>
-
-                <DialogDescription>
-                  <Trans>
-                    Exporting dictionary with flaschards will save your
-                    flashcard progress along with all the content in your
-                    dictionary. Use this option if you want to make a backup of
-                    your data.
-                    <br />
-                    <br />
-                    Exporting your dictionary without flashcards will not save
-                    any flashcard progress. Use this option if you want to share
-                    your dictionary.
-                    <br />
-                    <br />
-                    <strong>Warning</strong>: Importing your file without
-                    flashcards will reset all of your flashcards.
-                  </Trans>
-                </DialogDescription>
-              </DialogHeader>
-
-              <DialogFooter>
-                <div className="flex justify-end gap-4">
-                  <Button
-                    onClick={() => exportDictionary(false)}
-                    type="button"
-                    variant="secondary"
-                  >
-                    <Trans>Export</Trans>
-                  </Button>
-
-                  <Button
-                    onClick={() => exportDictionary(true)}
-                    type="button"
-                    variant="secondary"
-                  >
-                    <Trans>Export with flashcards</Trans>
-                  </Button>
+            {importProgress && (
+              <div className="space-y-2">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full bg-primary transition-all duration-150"
+                    style={{
+                      width: `${
+                        (importProgress.current / importProgress.total) * 100
+                      }%`,
+                    }}
+                  />
                 </div>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </CardContent>
+                <p className="text-center text-muted-foreground text-xs">
+                  {Math.round(
+                    (importProgress.current / importProgress.total) * 100
+                  )}
+                  %
+                </p>
+              </div>
+            )}
 
-        <CardContent>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button disabled={isLoading} variant="destructive">
-                <Trans>Delete</Trans>
-              </Button>
-            </DialogTrigger>
+            <CardDescription className="text-destructive">
+              <Trans>
+                Any words that have the same ID will be overwritten.
+              </Trans>
+            </CardDescription>
+          </CardContent>
 
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>
-                  <Trans>Delete your dictionary?</Trans>
-                </DialogTitle>
+          <CardContent>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button disabled={isLoading} variant="secondary">
+                  <Trans>Export</Trans>
+                </Button>
+              </DialogTrigger>
 
-                <DialogDescription>
-                  <Trans>
-                    Are you sure you want to delete your dictionary? All your
-                    words will be deleted permanently. This action cannot be
-                    undone. Please make sure to export your dictionary before
-                    deleting it.
-                  </Trans>
-                </DialogDescription>
-              </DialogHeader>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    <Trans>Export your dictionary</Trans>
+                  </DialogTitle>
 
-              <DialogFooter className="gap-y-4">
-                <DialogClose asChild>
-                  <Button onClick={deleteDictionary} variant="destructive">
-                    <Trans>Delete</Trans>
-                  </Button>
-                </DialogClose>
+                  <DialogDescription>
+                    <Trans>
+                      Exporting dictionary with flaschards will save your
+                      flashcard progress along with all the content in your
+                      dictionary. Use this option if you want to make a backup
+                      of your data.
+                      <br />
+                      <br />
+                      Exporting your dictionary without flashcards will not save
+                      any flashcard progress. Use this option if you want to
+                      share your dictionary.
+                      <br />
+                      <br />
+                      <strong>Warning</strong>: Importing your file without
+                      flashcards will reset all of your flashcards.
+                    </Trans>
+                  </DialogDescription>
+                </DialogHeader>
 
-                <DialogClose asChild>
-                  <Button variant="outline">
-                    <Trans>Cancel</Trans>
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </CardContent>
-      </Card>
+                <DialogFooter>
+                  <div className="flex justify-end gap-4">
+                    <Button
+                      onClick={() => exportDictionary(false)}
+                      type="button"
+                      variant="secondary"
+                    >
+                      <Trans>Export</Trans>
+                    </Button>
 
-      <FlashcardSettingsCardSection />
+                    <Button
+                      onClick={() => exportDictionary(true)}
+                      type="button"
+                      variant="secondary"
+                    >
+                      <Trans>Export with flashcards</Trans>
+                    </Button>
+                  </div>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
 
-      {userData?.user.role === "admin" && <AdminSettingsCardSection />}
-    </Page>
+          <CardContent>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button disabled={isLoading} variant="destructive">
+                  <Trans>Delete</Trans>
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>
+                    <Trans>Delete your dictionary?</Trans>
+                  </DialogTitle>
+
+                  <DialogDescription>
+                    <Trans>
+                      Are you sure you want to delete your dictionary? All your
+                      words will be deleted permanently. This action cannot be
+                      undone. Please make sure to export your dictionary before
+                      deleting it.
+                    </Trans>
+                  </DialogDescription>
+                </DialogHeader>
+
+                <DialogFooter className="gap-y-4">
+                  <DialogClose asChild>
+                    <Button onClick={deleteDictionary} variant="destructive">
+                      <Trans>Delete</Trans>
+                    </Button>
+                  </DialogClose>
+
+                  <DialogClose asChild>
+                    <Button variant="outline">
+                      <Trans>Cancel</Trans>
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+
+        <FlashcardSettingsCardSection />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <Trans>Debugging</Trans>
+            </CardTitle>
+
+            <CardDescription>
+              <Trans>
+                If you're experiencing sync issues or data not loading
+                correctly, you can reset your local data and re-sync from the
+                server.
+              </Trans>
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button disabled={isLoading} variant="secondary">
+                  <Trans>Reset local data</Trans>
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>
+                    <Trans>Reset local data and re-sync?</Trans>
+                  </DialogTitle>
+
+                  <DialogDescription>
+                    <Trans>
+                      This will delete the local copy of your data stored in
+                      this browser and download a fresh copy from the server.
+                      Your data on the server will not be affected. Use this if
+                      you're experiencing sync errors or seeing outdated data.
+                    </Trans>
+                  </DialogDescription>
+                </DialogHeader>
+
+                <DialogFooter className="gap-y-4">
+                  <DialogClose asChild>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          setIsResetting(true);
+
+                          await deleteLocalDatabase();
+
+                          // Reload page to fully terminate WASM workers
+                          // and reinitialize with fresh state
+                          window.location.reload();
+                        } catch (err) {
+                          console.error(err);
+                          setIsResetting(false);
+                          toast.error(t`Failed to reset local data`, {
+                            description: t`Please try again or reload the page.`,
+                          });
+                        }
+                      }}
+                      variant="secondary"
+                    >
+                      <Trans>Reset and re-sync</Trans>
+                    </Button>
+                  </DialogClose>
+
+                  <DialogClose asChild>
+                    <Button variant="outline">
+                      <Trans>Cancel</Trans>
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+
+        {userData?.user.role === "admin" && <AdminSettingsCardSection />}
+      </Page>
+    </>
   );
 };
 

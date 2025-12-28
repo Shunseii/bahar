@@ -121,7 +121,7 @@ export const FlashcardSettingsCardSection = () => {
         await updateSettings({ updates: formData });
 
         toast.success(t`Flashcard settings updated!`);
-      } catch (err) {
+      } catch (_err) {
         toast.error(t`Failed to update flashcard settings.`, {
           description: t`There was an error updating your flashcard settings.`,
         });

@@ -47,6 +47,55 @@ export const resetDb = async () => {
 };
 
 /**
+ * Deletes all local OPFS databases and Turso sync metadata from localStorage.
+ * Use this to recover from corrupted sync state or schema conflicts.
+ *
+ * Note: It's important to clear both opfs and localStorage otherwise
+ * the data will be in a worse state.
+ */
+export const deleteLocalDatabase = async () => {
+  if (db) {
+    await db.close();
+    db = null;
+    dbInitPromise = null;
+  }
+
+  // Delete all OPFS files starting with our prefix
+  const opfsRoot = await navigator.storage.getDirectory();
+
+  const filesToDelete: string[] = [];
+  // Cast needed because TypeScript's lib doesn't include entries() for FileSystemDirectoryHandle
+  for await (const [name] of opfsRoot as unknown as AsyncIterable<
+    [string, FileSystemHandle]
+  >) {
+    if (name.startsWith(LOCAL_DB_PATH_PREFIX)) {
+      filesToDelete.push(name);
+    }
+  }
+
+  for (const fileName of filesToDelete) {
+    try {
+      await opfsRoot.removeEntry(fileName);
+    } catch {
+      // File might be locked, ignore
+    }
+  }
+
+  // Delete Turso sync metadata from localStorage
+  const keysToDelete: string[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(LOCAL_DB_PATH_PREFIX)) {
+      keysToDelete.push(key);
+    }
+  }
+
+  for (const key of keysToDelete) {
+    localStorage.removeItem(key);
+  }
+};
+
+/**
  * Initializes connection to the user's database
  * by querying the server for the connection information
  * then either creating or connecting to a local copy
@@ -354,7 +403,7 @@ const _formatDbUrl = (hostname: string) => `libsql://${hostname}`;
 const _formatLocalDbName = (dbName: string) =>
   `${LOCAL_DB_PATH_PREFIX}-${dbName}.db`;
 
-const _connectToLocalDb = async ({
+const _connectToLocalDb = ({
   hostname,
   authToken,
   dbName,
