@@ -30,6 +30,7 @@
       },
       "complexity": {
         "noForEach": "off",
+        "useSimplifiedLogicExpression": "off",
         "noExcessiveCognitiveComplexity": "info",
         "noUselessSwitchCase": "info",
         "noUselessFragments": "info"

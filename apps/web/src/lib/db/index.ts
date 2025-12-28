@@ -148,6 +148,16 @@ const _initDbInternal = async () => {
     db = connectionAfterRefreshResult.value;
   }
 
+  const dbPullResult = await tryCatch(
+    async () => {
+      await db!.pull();
+    },
+    (error) => ({
+      type: "turso_remote_sync_failed",
+      reason: String(error),
+    })
+  );
+
   const migrationResult = await applyRequiredMigrations();
   if (!migrationResult.ok) return migrationResult;
 
@@ -162,7 +172,30 @@ const _initDbInternal = async () => {
     })
   );
 
-  return syncResult;
+  const aggregateResult = (() => {
+    if (!dbPullResult.ok && !syncResult.ok) {
+      return err({
+        type: "turso_remote_sync_and_pull_failed",
+        reason: `Pull error: ${dbPullResult.error.reason}\nSync error: ${syncResult.error.reason}`,
+      });
+    }
+
+    if (!dbPullResult.ok)
+      return err({
+        type: "turso_db_pull_failed",
+        reason: dbPullResult.error.reason,
+      });
+
+    if (!syncResult.ok)
+      return err({
+        type: "turso_remote_sync_failed",
+        reason: syncResult.error.reason,
+      });
+
+    return ok(null);
+  })();
+
+  return aggregateResult;
 };
 
 /**

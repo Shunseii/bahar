@@ -291,9 +291,11 @@ export const Route = createFileRoute("/_authorized-layout")({
             hasManualFix: true,
           });
 
-        // Don't throw on turso_remote_sync_failed error
+        // Don't throw on turso sync errors
         // since user can still use local db
         case "turso_remote_sync_failed":
+        case "turso_remote_sync_and_pull_failed":
+        case "turso_db_pull_failed":
           break;
 
         default:
