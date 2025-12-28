@@ -157,45 +157,9 @@ const _initDbInternal = async () => {
     return connectionResult;
   }
 
-  if (connectionResult.ok) {
-    db = connectionResult.value;
-  } else {
-    const refreshResult = await tryCatch(
-      async () => {
-        const { data, error } = await api.databases["refresh-token"].post();
-        if (error) throw error;
-        return data;
-      },
-      (error) => ({
-        type: "token_refresh_failed",
-        reason: String(error),
-      })
-    );
-    if (!refreshResult.ok) return refreshResult;
+  if (!connectionResult.ok) return connectionResult;
 
-    const connectionAfterRefreshResult = await tryCatch(
-      () =>
-        _connectToLocalDb({
-          hostname,
-          authToken: refreshResult.value.access_token,
-          dbName: db_name,
-        }),
-      (error) => {
-        const reason = String(error);
-        const isOpfsLock = reason.includes("createSyncAccessHandle");
-        return {
-          type: isOpfsLock
-            ? "opfs_lock_error"
-            : "db_connection_failed_after_refresh",
-          reason,
-        };
-      }
-    );
-
-    if (!connectionAfterRefreshResult.ok) return connectionAfterRefreshResult;
-
-    db = connectionAfterRefreshResult.value;
-  }
+  db = connectionResult.value;
 
   const dbPullResult = await tryCatch(
     async () => {
@@ -229,17 +193,19 @@ const _initDbInternal = async () => {
       });
     }
 
-    if (!dbPullResult.ok)
+    if (!dbPullResult.ok) {
       return err({
         type: "turso_db_pull_failed",
         reason: dbPullResult.error.reason,
       });
+    }
 
-    if (!syncResult.ok)
+    if (!syncResult.ok) {
       return err({
         type: "turso_remote_sync_failed",
         reason: syncResult.error.reason,
       });
+    }
 
     return ok(null);
   })();

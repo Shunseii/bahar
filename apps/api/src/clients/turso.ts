@@ -18,6 +18,19 @@ export const tursoPlatformClient: ReturnType<typeof createPlatformClient> =
   }) as ReturnType<typeof createPlatformClient>;
 
 /**
+ * Creates a new access token for a user database with full access and
+ * 2 week expiration.
+ */
+export const createUserAccessToken = async ({ dbName }: { dbName: string }) => {
+  const accessToken = await tursoPlatformClient.databases.createToken(dbName, {
+    authorization: "full-access",
+    expiration: "2w",
+  });
+
+  return accessToken;
+};
+
+/**
  * Creates a new database for a user in Turso.
  * The format of the database name is `user-{userId}`.
  *
@@ -60,13 +73,7 @@ export const createNewUserDb = async () => {
     "Creating user database token in Turso..."
   );
 
-  const accessToken = await tursoPlatformClient.databases.createToken(
-    newDb.name,
-    {
-      authorization: "full-access",
-      expiration: "2w",
-    }
-  );
+  const accessToken = await createUserAccessToken({ dbName: newDb.name });
 
   logger.info(
     {
@@ -107,7 +114,7 @@ export const applyAllNewMigrations = async ({
       // Versioning starts at 1 in the schema registry
       // so 0 means we apply all migrations.
       return (rows[0]?.version ?? 0) as number;
-    } catch (err) {
+    } catch (_err) {
       // If migrations table doesn't exist,
       // it means this is a fresh database
       // and it will throw an error with

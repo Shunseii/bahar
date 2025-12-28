@@ -132,9 +132,9 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
               to="/"
             >
               <img
+                alt="Bahar logo"
                 className="h-5 w-5 transition-all group-hover:scale-110"
                 src={Logo}
-                alt="Bahar logo"
               />
               <span className="sr-only">
                 <Trans>Bahar</Trans>

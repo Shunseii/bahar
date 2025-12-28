@@ -10,7 +10,7 @@ type DbOperation<T> = () => Promise<T>;
  * All local DB writes and sync operations should go through this queue.
  */
 const dbQueue = asyncQueue(
-  async <T>(operation: DbOperation<T>): Promise<T> => {
+  <T>(operation: DbOperation<T>): Promise<T> => {
     return operation();
   },
   {

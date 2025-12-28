@@ -256,9 +256,7 @@ export const Route = createFileRoute("/_authorized-layout")({
             hasManualFix: true,
           });
 
-        case "token_refresh_failed":
         case "api_schema_verification_failed":
-        case "db_connection_failed_after_refresh":
           throw new DisplayError({
             message: t`We can't reach our servers right now. Check your connection and try again.`,
             details: t`Unable to connect to remote database.`,

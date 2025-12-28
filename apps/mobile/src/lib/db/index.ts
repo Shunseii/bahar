@@ -105,41 +105,9 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     })
   );
 
-  if (connectionResult.ok) {
-    db = connectionResult.value;
-  } else {
-    // Try refreshing token and reconnecting
-    const refreshResult = await tryCatch(
-      async () => {
-        const { data, error } = await api.databases["refresh-token"].post();
-        if (error) throw error;
-        return data;
-      },
-      (error) => ({
-        type: "token_refresh_failed",
-        reason: String(error),
-      })
-    );
+  if (!connectionResult.ok) return connectionResult;
 
-    if (!refreshResult.ok) return refreshResult;
-
-    const retryResult = await tryCatch(
-      () =>
-        connect({
-          name: `${LOCAL_DB_NAME}-${db_name}.db`,
-          url: `libsql://${hostname}`,
-          authToken: refreshResult.value.access_token,
-          syncInterval: 60,
-        }),
-      (error) => ({
-        type: "db_connection_failed_after_refresh",
-        reason: String(error),
-      })
-    );
-
-    if (!retryResult.ok) return retryResult;
-    db = retryResult.value;
-  }
+  db = connectionResult.value;
 
   // Apply any required migrations
   const migrationResult = await applyRequiredMigrations();
