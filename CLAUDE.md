@@ -61,7 +61,7 @@ make local-db
 # Terminal 2: API server (port 3000)
 pnpm run dev --filter api
 
-# Terminal 3: Web app (port 4000)
+# Terminal 3: Web app (port 5173)
 pnpm run dev --filter web
 
 # Terminal 4 (optional): Database UI (port 4983)

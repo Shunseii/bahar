@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "wrangler:dev": "wrangler pages dev"
+    "wrangler:dev": "wrangler pages dev --port 5173"
   },
   "dependencies": {
     "@bahar/db-operations": "workspace:*",

@@ -22,7 +22,7 @@ Install packages with `pnpm install`.
 
 Start the dev server with `pnpm dev`.
 
-The web app runs on `http://localhost:4000`.
+The web app runs on `http://localhost:5173`.
 
 ## Building
 

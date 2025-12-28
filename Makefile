@@ -4,7 +4,7 @@ local-db:
 
 # Serve production web app
 serve:
-	pnpm run --filter web wrangler:dev --port 4000
+	pnpm run --filter web wrangler:dev
 
 # Build production web app
 build:
