@@ -1,6 +1,6 @@
 import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
-import { toFsrsCard } from "@bahar/fsrs";
+import { createScheduler, toFsrsCard } from "@bahar/fsrs";
 import { Button } from "@bahar/web-ui/components/button";
 import {
   Drawer,
@@ -29,7 +29,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { fsrs, generatorParameters, type Grade, Rating } from "ts-fsrs";
+import { type Grade, Rating } from "ts-fsrs";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { decksTable } from "@/lib/db/operations/decks";
@@ -136,12 +136,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const currentCard = cards[0] ?? null;
 
   const f = useMemo(() => {
-    const params = generatorParameters({
-      enable_fuzz: true,
-      relearning_steps: ["10m", "1h", "1d"],
-    });
-
-    return fsrs(params);
+    return createScheduler();
   }, []);
 
   const schedulingData = useMemo(() => {

@@ -18,6 +18,7 @@ import {
   type FSRSParameters,
   fsrs,
   type Grade,
+  generatorParameters,
   type RecordLog,
   type State,
 } from "ts-fsrs";
@@ -88,11 +89,10 @@ export const createNewFlashcard = (
 /**
  * Creates an FSRS scheduler instance with fuzzing enabled
  */
-export const createScheduler = (params?: Partial<FSRSParameters>): FSRS => {
-  return fsrs({
-    enable_fuzz: true,
-    ...params,
-  });
+export const createScheduler = (opts?: Partial<FSRSParameters>): FSRS => {
+  const params = generatorParameters({ enable_fuzz: true, ...opts });
+
+  return fsrs(params);
 };
 
 /**

@@ -113,7 +113,6 @@ export default function AnimatedBackground() {
 
     window.addEventListener("resize", resizeCanvas);
 
-    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Particle animation requires nested loops and conditionals
     const animate = () => {
       if (!(ctx && canvas)) {
         return;

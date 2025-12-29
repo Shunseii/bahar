@@ -1,4 +1,4 @@
-import type { IntlFormatDistanceUnit } from "date-fns";
+import { type IntlFormatDistanceUnit, isSameMinute } from "date-fns";
 import { Rating } from "ts-fsrs";
 import { intlFormatDistance } from "@/lib/date";
 
@@ -57,26 +57,30 @@ export const formatScheduleOptions = ({
     Rating.Easy,
   ];
 
-  const results: Record<
-    ReviewRating,
-    { label: string; unit: IntlFormatDistanceUnit }
-  > = {} as Record<
-    ReviewRating,
-    { label: string; unit: IntlFormatDistanceUnit }
-  >;
+  const results = grades.reduce(
+    (prev, grade) => {
+      prev[grade] = formatInterval({ due: dates[grade], now, locale });
 
-  for (const grade of grades) {
-    results[grade] = formatInterval({ due: dates[grade], now, locale });
-  }
+      return prev;
+    },
+    {} as Record<ReviewRating, ReturnType<typeof formatInterval>>
+  );
 
   for (let i = 0; i < grades.length - 1; i++) {
     const current = grades[i];
     const next = grades[i + 1];
 
-    if (
-      results[current].label === results[next].label &&
-      results[current].unit !== "second"
-    ) {
+    const currentResult = results[current];
+    const currentDate = dates[current];
+    const nextResult = results[next];
+    const nextDate = dates[next];
+
+    const shouldUseSmallerUnits =
+      currentResult.label === nextResult.label &&
+      currentResult.unit !== "second" &&
+      !isSameMinute(currentDate, nextDate);
+
+    if (shouldUseSmallerUnits) {
       const smallerUnit = getSmallerUnit(results[current].unit);
 
       results[current] = formatInterval({

@@ -12,9 +12,10 @@ import {
   type SelectFlashcard,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
+import { createScheduler } from "@bahar/fsrs";
 import * as Sentry from "@sentry/react";
 import { nanoid } from "nanoid";
-import { type Card, fsrs, Rating } from "ts-fsrs";
+import { type Card, Rating } from "ts-fsrs";
 import { ensureDb } from "..";
 import type { TableOperation } from "./types";
 
@@ -583,8 +584,7 @@ export const flashcardsTable = {
         return;
       }
 
-      // Grade each card as Hard using FSRS
-      const f = fsrs({ enable_fuzz: true });
+      const f = createScheduler();
       const nowDate = new Date();
 
       await db.exec("BEGIN TRANSACTION");
