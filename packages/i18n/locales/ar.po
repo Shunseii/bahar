@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: Poedit 3.4.4\n"
 
 #. placeholder {0}: cards.length
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:335
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:338
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {بطاقة متبقية} other {بطاقات متبقية}}"
 
@@ -187,7 +187,7 @@ msgstr "تفاصيل إضافية"
 msgid "Again"
 msgstr "مرة أخرى"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:355
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:358
 msgid "All done for today!"
 msgstr "انتهيت لليوم!"
 
@@ -305,12 +305,12 @@ msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:123
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:299
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:302
 msgid "Backlog"
 msgstr "المتراكمة"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:93
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:353
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:356
 msgid "Backlog cleared!"
 msgstr "تم مسح المتراكمات!"
 
@@ -344,11 +344,11 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 msgid "Cancel"
 msgstr "ألغ"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:318
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:321
 msgid "Cards due today or recently"
 msgstr "بطاقات مستحقة اليوم أو مؤخرًا"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:320
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:323
 msgid "Cards overdue by more than 7 days"
 msgstr "بطاقات متأخرة أكثر من ٧ أيام"
 
@@ -858,11 +858,11 @@ msgid "Good"
 msgstr "حسن"
 
 #. placeholder {0}: formatNumber(counts.regular)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:360
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:363
 msgid "Great work on the backlog! You still have {0} regular reviews."
 msgstr "أحسنت في المتراكمات! لا يزال لديك {0} مراجعات عادية."
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:370
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:373
 msgid "Great work! Come back later for more reviews."
 msgstr "عمل رائع! عد لاحقًا لمزيد من المراجعات."
 
@@ -981,7 +981,7 @@ msgstr "صيغة النص غير صالحة"
 #. placeholder {0}: err.expected
 #: ../../apps/web/src/lib/error.ts:116
 msgid "Invalid type. Expected {0}"
-msgstr ""
+msgstr "نوع غير صالح. المتوقع {0}"
 
 #: ../../apps/web/src/lib/error.ts:122
 #~ msgid "Invalid type. Expected {0}, received {1}"
@@ -1022,7 +1022,7 @@ msgstr "جارٍ التحميل..."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:570
 #~ msgid "Local data reset successfully!"
-#~ msgstr ""
+#~ msgstr "تمت إعادة تعيين البيانات المحلية بنجاح!"
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:93
 #: ../../apps/mobile/src/app/(auth)/login.tsx:63
@@ -1301,7 +1301,7 @@ msgid "Reverse flashcards"
 msgstr "بطاقات العكسية"
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:139
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:274
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:277
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:122
 msgid "Review"
 msgstr "مراجعة"
@@ -1311,15 +1311,15 @@ msgid "Review flashcards"
 msgstr "ادرس البطاقات"
 
 #. placeholder {0}: formatNumber(counts.backlog)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:238
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:241
 msgid "Review flashcards ({0} in backlog)"
 msgstr "راجع البطاقات ({0} متراكمة)"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:242
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:245
 msgid "Review flashcards with spaced repetition"
 msgstr "راجع البطاقات بالتكرار المتباعد"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:378
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:381
 msgid "Review your Arabic flashcards and grade your understanding with Again, Hard, Good, or Easy options to adjust scheduling."
 msgstr "راجع بطاقاتك العربية وقيم فهمك باستخدام خيارات مرة أخرى أو صعب أو جيد أو سهل لتعديل الجدولة."
 
@@ -1410,7 +1410,7 @@ msgstr "الإعدادات"
 msgid "Show after revealing the answer"
 msgstr "عرض بعد كشف الإجابة"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:486
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:489
 msgid "Show answer"
 msgstr "اعرض الجواب"
 
@@ -1595,7 +1595,7 @@ msgstr "حدث خطأ أثناء استيراد لمعجمك. حاول مرة أ
 
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:300
 #~ msgid "There was an error syncing your data. If this persists, try resetting local data in Settings."
-#~ msgstr ""
+#~ msgstr "حدث خطأ في مزامنة بياناتك. إذا استمرت المشكلة، حاول إعادة تعيين البيانات المحلية من الإعدادات."
 
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:98
 #~ msgid "There was an error syncing your data. Please try resetting local data in Settings."
@@ -1694,7 +1694,7 @@ msgstr "معرب"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:508
 #~ msgid "Troubleshooting"
-#~ msgstr ""
+#~ msgstr "استكشاف الأخطاء"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:489
 #: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:58
@@ -1819,7 +1819,7 @@ msgid "You do not have access to upload schema migrations."
 msgstr "ليس لديك إذن لتحميل ترحيلات المخطط."
 
 #. placeholder {0}: formatNumber(counts.backlog)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:365
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:368
 msgid "You have {0} cards in your backlog when you're ready."
 msgstr "لديك {0} بطاقات متراكمة عندما تكون جاهزًا."
 
@@ -1837,7 +1837,7 @@ msgstr "حسابك يحتاج إلى صيانة. تم إخطارنا. حاول �
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:571
 #~ msgid "Your data has been re-synced from the server."
-#~ msgstr ""
+#~ msgstr "تمت إعادة مزامنة بياناتك من الخادم."
 
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:181
 msgid "Your deck was not created. Please try again."
