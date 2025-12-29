@@ -450,6 +450,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                   [Rating.Again, Rating.Hard, Rating.Good, Rating.Easy] as const
                 ).map((grade) => (
                   <GradeOption
+                    disabled={pendingGrade !== null}
                     grade={grade}
                     intervalLabel={intervalLabels[grade]}
                     key={grade}

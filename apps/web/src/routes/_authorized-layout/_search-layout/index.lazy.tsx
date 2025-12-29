@@ -121,7 +121,7 @@ const Index = () => {
                   >
                     <Button
                       className={cn(
-                        "relative h-9 px-3 text-muted-foreground hover:bg-primary/5 hover:text-foreground",
+                        "relative h-9 px-3 text-muted-foreground",
                         regularCount > 0 && "text-foreground"
                       )}
                       disabled={isPending}

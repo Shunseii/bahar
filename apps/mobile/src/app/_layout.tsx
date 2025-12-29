@@ -34,8 +34,8 @@ import { Toaster } from "sonner-native";
 import { store } from "@/lib/store";
 
 import "@/global.css";
-import { queryClient } from "@/utils/api";
 import { Uniwind } from "uniwind";
+import { queryClient } from "@/utils/api";
 
 const setRootViewBackgroundColor = () => {
   const colorScheme = Appearance.getColorScheme();
