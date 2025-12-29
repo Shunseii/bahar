@@ -29,7 +29,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { fsrs, type Grade, Rating } from "ts-fsrs";
+import { fsrs, generatorParameters, type Grade, Rating } from "ts-fsrs";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { decksTable } from "@/lib/db/operations/decks";
@@ -135,7 +135,14 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
   const currentCard = cards[0] ?? null;
 
-  const f = useMemo(() => fsrs({ enable_fuzz: true }), []);
+  const f = useMemo(() => {
+    const params = generatorParameters({
+      enable_fuzz: true,
+      relearning_steps: ["10m", "1h", "1d"],
+    });
+
+    return fsrs(params);
+  }, []);
 
   const schedulingData = useMemo(() => {
     if (!currentCard) return null;

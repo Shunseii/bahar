@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { z } from "@/lib/zod";
 
 export enum Inflection {
@@ -7,8 +8,8 @@ export enum Inflection {
 }
 
 export const FormSchema = z.object({
-  word: z.string().min(1),
-  translation: z.string().min(1),
+  word: z.string().min(1, { error: () => t`This field is required.` }),
+  translation: z.string().min(1, { error: () => t`This field is required.` }),
   definition: z.string().optional(),
   root: z.string().optional(),
   tags: z.array(z.object({ name: z.string() })).optional(),

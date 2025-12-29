@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: Poedit 3.4.4\n"
 
 #. placeholder {0}: cards.length
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:331
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:335
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {card left} other {cards left}}"
 
@@ -43,7 +43,7 @@ msgstr "{0} cards have been rescheduled."
 msgid "{0} total"
 msgstr "{0} total"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:75
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:69
 msgid "{hydrationSkippedCount, plural, one {# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.} other {# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.}}"
 msgstr "{hydrationSkippedCount, plural, one {# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.} other {# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.}}"
 
@@ -187,7 +187,7 @@ msgstr "Additional Details"
 msgid "Again"
 msgstr "Again"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:351
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:355
 msgid "All done for today!"
 msgstr "All done for today!"
 
@@ -305,12 +305,12 @@ msgid "Back to top"
 msgstr "Back to top"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:123
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:295
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:299
 msgid "Backlog"
 msgstr "Backlog"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:93
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:349
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:353
 msgid "Backlog cleared!"
 msgstr "Backlog cleared!"
 
@@ -344,11 +344,11 @@ msgstr "By signing in, you agree to our <0>Privacy Policy</0>"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:314
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:318
 msgid "Cards due today or recently"
 msgstr "Cards due today or recently"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:316
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:320
 msgid "Cards overdue by more than 7 days"
 msgstr "Cards overdue by more than 7 days"
 
@@ -730,7 +730,7 @@ msgstr "Failed to add word"
 msgid "Failed to add word!"
 msgstr "Failed to add word!"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:320
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:280
 msgid "Failed to apply migration to local database."
 msgstr "Failed to apply migration to local database."
 
@@ -762,11 +762,11 @@ msgstr "Failed to delete!"
 msgid "Failed to reset local data"
 msgstr "Failed to reset local data"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:312
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:272
 msgid "Failed to retrieve data from local database."
 msgstr "Failed to retrieve data from local database."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:292
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:254
 msgid "Failed to retrieve database information."
 msgstr "Failed to retrieve database information."
 
@@ -858,11 +858,11 @@ msgid "Good"
 msgstr "Good"
 
 #. placeholder {0}: formatNumber(counts.regular)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:356
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:360
 msgid "Great work on the backlog! You still have {0} regular reviews."
 msgstr "Great work on the backlog! You still have {0} regular reviews."
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:366
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:370
 msgid "Great work! Come back later for more reviews."
 msgstr "Great work! Come back later for more reviews."
 
@@ -1301,7 +1301,7 @@ msgid "Reverse flashcards"
 msgstr "Reverse flashcards"
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:139
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:270
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:274
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:122
 msgid "Review"
 msgstr "Review"
@@ -1311,15 +1311,15 @@ msgid "Review flashcards"
 msgstr "Review flashcards"
 
 #. placeholder {0}: formatNumber(counts.backlog)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:234
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:238
 msgid "Review flashcards ({0} in backlog)"
 msgstr "Review flashcards ({0} in backlog)"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:238
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:242
 msgid "Review flashcards with spaced repetition"
 msgstr "Review flashcards with spaced repetition"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:374
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:378
 msgid "Review your Arabic flashcards and grade your understanding with Again, Hard, Good, or Easy options to adjust scheduling."
 msgstr "Review your Arabic flashcards and grade your understanding with Again, Hard, Good, or Easy options to adjust scheduling."
 
@@ -1398,7 +1398,6 @@ msgstr "Sentence"
 msgid "Separate letters with spaces or commas"
 msgstr "Separate letters with spaces or commas"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:101
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:192
 #: ../../apps/web/src/components/MobileHeader.tsx:178
 #: ../../apps/web/src/components/DesktopNavigation.tsx:107
@@ -1411,7 +1410,7 @@ msgstr "Settings"
 msgid "Show after revealing the answer"
 msgstr "Show after revealing the answer"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:481
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:486
 msgid "Show answer"
 msgstr "Show answer"
 
@@ -1443,7 +1442,7 @@ msgstr "Show reverse flashcards"
 msgid "Singular"
 msgstr "Singular"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:74
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:68
 msgid "Some dictionary entries couldn't be loaded"
 msgstr "Some dictionary entries couldn't be loaded"
 
@@ -1489,8 +1488,8 @@ msgstr "Successfully updated the word!"
 
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:97
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:108
-msgid "Sync error"
-msgstr "Sync error"
+#~ msgid "Sync error"
+#~ msgstr "Sync error"
 
 #: ../../apps/web/src/components/ThemeMenu.tsx:40
 #: ../../apps/mobile/src/app/(search)/settings.tsx:268
@@ -1521,7 +1520,7 @@ msgstr "That email is invalid."
 msgid "That is not valid JSON."
 msgstr "That is not valid JSON."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:326
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:286
 msgid "The app may be open in another tab. Try closing other tabs and refreshing this page."
 msgstr "The app may be open in another tab. Try closing other tabs and refreshing this page."
 
@@ -1542,7 +1541,7 @@ msgstr "The form of the verb ex. I, II, III, IV, etc..."
 msgid "The form of the verb in Arabic ex. فعل, أفعل, استفعل, etc..."
 msgstr "The form of the verb in Arabic ex. فعل, أفعل, استفعل, etc..."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:327
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:287
 msgid "The local database is locked by another session."
 msgstr "The local database is locked by another session."
 
@@ -1599,12 +1598,12 @@ msgstr "There was an error importing your dictionary. Please try again later."
 #~ msgstr "There was an error syncing your data. If this persists, try resetting local data in Settings."
 
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:98
-msgid "There was an error syncing your data. Please try resetting local data in Settings."
-msgstr "There was an error syncing your data. Please try resetting local data in Settings."
+#~ msgid "There was an error syncing your data. Please try resetting local data in Settings."
+#~ msgstr "There was an error syncing your data. Please try resetting local data in Settings."
 
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:109
-msgid "There was an error syncing your data. Your local data is still available."
-msgstr "There was an error syncing your data. Your local data is still available."
+#~ msgid "There was an error syncing your data. Your local data is still available."
+#~ msgstr "There was an error syncing your data. Your local data is still available."
 
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:176
 msgid "There was an error updating the deck"
@@ -1622,21 +1621,23 @@ msgstr "There was an error updating your word. Please try again."
 msgid "There was an error uploading your SQL migration"
 msgstr "There was an error uploading your SQL migration"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:361
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:317
 msgid "There was an error when indexing your data in the search engine."
 msgstr "There was an error when indexing your data in the search engine."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:346
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:368
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:302
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:324
 msgid "There was an unexpected error. Please try again."
 msgstr "There was an unexpected error. Please try again."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:291
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:253
 msgid "There's a temporary issue loading your account. Please try reloading the page."
 msgstr "There's a temporary issue loading your account. Please try reloading the page."
 
 #: ../../apps/web/src/lib/zod.ts:6
 #: ../../apps/web/src/lib/zod.ts:18
+#: ../../apps/web/src/lib/schemas/dictionary.ts:11
+#: ../../apps/web/src/lib/schemas/dictionary.ts:12
 #: ../../apps/mobile/src/utils/zod.ts:6
 #: ../../apps/mobile/src/utils/zod.ts:18
 #: ../../apps/mobile/src/app/(auth)/login.tsx:89
@@ -1710,16 +1711,16 @@ msgstr "Type"
 msgid "Types"
 msgstr "Types"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:241
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:203
 msgid "Uh oh! Something went wrong :/"
 msgstr "Uh oh! Something went wrong :/"
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:302
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:262
 msgid "Unable to connect to remote database."
 msgstr "Unable to connect to remote database."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:347
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:369
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:303
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:325
 msgid "Unknown error."
 msgstr "Unknown error."
 
@@ -1766,12 +1767,12 @@ msgstr "Verbal Nouns (Masadir)"
 #~ msgid "View all the words in your personal dictionary."
 #~ msgstr "View all the words in your personal dictionary."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:301
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:261
 msgid "We can't reach our servers right now. Check your connection and try again."
 msgstr "We can't reach our servers right now. Check your connection and try again."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:311
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:360
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:271
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:316
 msgid "We're having trouble with your account setup. Please try again."
 msgstr "We're having trouble with your account setup. Please try again."
 
@@ -1818,7 +1819,7 @@ msgid "You do not have access to upload schema migrations."
 msgstr "You do not have access to upload schema migrations."
 
 #. placeholder {0}: formatNumber(counts.backlog)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:361
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:365
 msgid "You have {0} cards in your backlog when you're ready."
 msgstr "You have {0} cards in your backlog when you're ready."
 
@@ -1830,7 +1831,7 @@ msgstr "You have no decks yet."
 msgid "You have no words in your dictionary yet."
 msgstr "You have no words in your dictionary yet."
 
-#: ../../apps/web/src/routes/_authorized-layout/route.tsx:319
+#: ../../apps/web/src/routes/_authorized-layout/route.tsx:279
 msgid "Your account needs maintenance. We've been notified. Please try again later."
 msgstr "Your account needs maintenance. We've been notified. Please try again later."
 

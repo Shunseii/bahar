@@ -31,8 +31,8 @@
       "complexity": {
         "noForEach": "off",
         "useSimplifiedLogicExpression": "off",
-        "noExcessiveCognitiveComplexity": "info",
-        "noUselessSwitchCase": "info",
+        "noExcessiveCognitiveComplexity": "off",
+        "noUselessSwitchCase": "off",
         "noUselessFragments": "info"
       },
       "correctness": {

@@ -110,31 +110,28 @@ export const GradeFeedback: FC<{
       </motion.div>
 
       {/* Sparkles for Easy */}
-      {grade === Rating.Easy && (
-        <>
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              animate={{
-                scale: [0, 1, 0],
-                x: Math.cos((i * Math.PI * 2) / 6) * 80,
-                y: Math.sin((i * Math.PI * 2) / 6) * 80,
-                opacity: [0, 1, 0],
-              }}
-              className="absolute h-2 w-2 rounded-full bg-green-400"
-              initial={{
-                scale: 0,
-                x: 0,
-                y: 0,
-              }}
-              key={i}
-              transition={{
-                duration: 0.5,
-                delay: 0.1,
-              }}
-            />
-          ))}
-        </>
-      )}
+      {grade === Rating.Easy &&
+        [...new Array(6)].map((_, i) => (
+          // biome-ignore lint/correctness/useJsxKeyInIterable: cant key on anything other than index
+          <motion.div
+            animate={{
+              scale: [0, 1, 0],
+              x: Math.cos((i * Math.PI * 2) / 6) * 80,
+              y: Math.sin((i * Math.PI * 2) / 6) * 80,
+              opacity: [0, 1, 0],
+            }}
+            className="absolute h-2 w-2 rounded-full bg-green-400"
+            initial={{
+              scale: 0,
+              x: 0,
+              y: 0,
+            }}
+            transition={{
+              duration: 0.5,
+              delay: 0.1,
+            }}
+          />
+        ))}
     </motion.div>
   );
 };
