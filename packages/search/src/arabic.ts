@@ -20,20 +20,25 @@ export const normalizeArabicHamza = (text: string): string => {
 
 /**
  * Normalizes weak letters (حروف العلة: ا و ي) to alif (ا)
- * Example: "عمارة" → "عاااة", "كتوب" → "كتاب"
+ *
+ * WARNING: This is extremely aggressive and destroys word distinctiveness.
+ * Example: "طاحون" → "طاحان", "كتوب" → "كتاب"
+ *
+ * @deprecated Not used in search normalization - too destructive
  */
 export const normalizeArabicWeakLetters = (text: string): string => {
   return text.replace(/[اوي]/g, "ا");
 };
 
 /**
- * Applies all Arabic normalization transformations for search matching.
- * Combines: diacritics removal + hamza normalization + weak letter normalization
+ * Applies Arabic normalization transformations for search matching.
+ * Combines: diacritics removal + hamza normalization
+ *
+ * Note: Weak letter normalization is intentionally excluded as it's too
+ * aggressive and destroys word distinctiveness (e.g., "طاحون" → "طاحان").
  */
 export const normalizeArabicForSearch = (text: string): string => {
-  return normalizeArabicWeakLetters(
-    normalizeArabicHamza(stripArabicDiacritics(text))
-  );
+  return normalizeArabicHamza(stripArabicDiacritics(text));
 };
 
 /**

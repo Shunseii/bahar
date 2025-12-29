@@ -1,4 +1,4 @@
-import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import type { DictionaryDocument } from "@bahar/search/schema";
 import {
   type InternalTypedDocument,
   search as oramaSearch,
@@ -11,15 +11,42 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
 import { detectLanguage, stripArabicDiacritics } from "@/lib/utils";
 
+/**
+ * Exact match fields - searched first with no tolerance for precise matching
+ */
+const EXACT_PROPERTIES = [
+  "word_exact",
+  "morphology.ism.singular_exact",
+  "morphology.ism.plurals_exact",
+  "morphology.verb.past_tense_exact",
+  "morphology.verb.present_tense_exact",
+  "morphology.verb.masadir_exact",
+] as const;
+
+/**
+ * Normalized fields - searched with tolerance for fuzzy matching
+ */
+const NORMALIZED_PROPERTIES = [
+  "word",
+  "translation",
+  "definition",
+  "tags",
+  "morphology.ism.plurals",
+  "morphology.ism.singular",
+  "morphology.verb.masadir",
+  "morphology.verb.past_tense",
+  "morphology.verb.present_tense",
+] as const;
+
 const SEARCH_RESULTS_PER_PAGE = 20;
 
 const searchResultsMetadataAtom = atom<Omit<
-  Results<InternalTypedDocument<SelectDictionaryEntry>>,
+  Results<InternalTypedDocument<DictionaryDocument>>,
   "hits"
 > | null>(null);
 
 const hitsAtom = atom<
-  Result<InternalTypedDocument<SelectDictionaryEntry>>[] | null
+  Result<InternalTypedDocument<DictionaryDocument>>[] | null
 >(null);
 
 const offsetAtom = atom(0);
@@ -44,38 +71,73 @@ export const useSearch = () => {
       > = {},
       language: "arabic" | "english" = "english"
     ) => {
-      const tolerance = (() => {
-        if (!params.term) return 0;
+      const db = getOramaDb();
 
-        const len = stripArabicDiacritics(params.term).length;
+      // No term = return all results
+      if (!params.term) {
+        return oramaSearch(
+          db,
+          { ...params, mode: "fulltext", limit: SEARCH_RESULTS_PER_PAGE },
+          language
+        ) as Results<InternalTypedDocument<DictionaryDocument>>;
+      }
 
-        if (len <= 2) return 0;
-        if (len <= 3) return 1;
+      const termLen = stripArabicDiacritics(params.term).length;
 
-        return 2;
-      })();
+      // Two-pass search for better relevance:
+      // 1. First: exact fields with low tolerance (precise matching)
+      // 2. Second: normalized fields with higher tolerance (fuzzy matching)
+      // Then merge results, prioritizing exact matches
 
-      // Orama's search function is sync by default,
-      // but it's typed as sync or async since some plugins
-      // can make it async. We cast type to sync return type
-      // so it's easier to work with.
-      return oramaSearch(
-        getOramaDb(),
+      // Pass 1: Exact match search (tolerance 0-1)
+      const exactTolerance = termLen <= 4 ? 0 : 1;
+      const exactResults = oramaSearch(
+        db,
         {
           ...params,
           mode: "fulltext",
           limit: SEARCH_RESULTS_PER_PAGE,
-          properties: params.term
-            ? ["word", "translation", "definition", "tags"]
-            : undefined,
+          properties: [...EXACT_PROPERTIES],
+          tolerance: exactTolerance,
+        },
+        language
+      ) as Results<InternalTypedDocument<DictionaryDocument>>;
+
+      // Pass 2: Fuzzy search on normalized fields
+      const fuzzyTolerance = termLen <= 2 ? 0 : termLen <= 4 ? 1 : 2;
+      const fuzzyResults = oramaSearch(
+        db,
+        {
+          ...params,
+          mode: "fulltext",
+          limit: SEARCH_RESULTS_PER_PAGE,
+          properties: [...NORMALIZED_PROPERTIES],
           boost: {
             word: 10,
             translation: 10,
+            "morphology.ism.plurals": 10,
+            "morphology.ism.singular": 10,
+            "morphology.verb.masadir": 10,
+            "morphology.verb.past_tense": 10,
+            "morphology.verb.present_tense": 10,
           },
-          tolerance,
+          tolerance: fuzzyTolerance,
         },
         language
-      ) as Results<InternalTypedDocument<SelectDictionaryEntry>>;
+      ) as Results<InternalTypedDocument<DictionaryDocument>>;
+
+      // Merge results: exact matches first, then fuzzy (deduplicated)
+      const exactIds = new Set(exactResults.hits.map((h) => h.id));
+      const mergedHits = [
+        ...exactResults.hits,
+        ...fuzzyResults.hits.filter((h) => !exactIds.has(h.id)),
+      ].slice(0, SEARCH_RESULTS_PER_PAGE);
+
+      return {
+        elapsed: exactResults.elapsed,
+        count: exactIds.size + fuzzyResults.count,
+        hits: mergedHits,
+      } as Results<InternalTypedDocument<DictionaryDocument>>;
     },
     []
   );
@@ -120,7 +182,7 @@ export const useSearch = () => {
         ? ({
             hits,
             ...searchResultsMetadata,
-          } as Results<InternalTypedDocument<SelectDictionaryEntry>>)
+          } as Results<InternalTypedDocument<DictionaryDocument>>)
         : undefined,
 
     /**
@@ -227,7 +289,7 @@ export const useInfiniteScroll = (
         ? ({
             ...searchResultsMetadata,
             hits,
-          } as Results<InternalTypedDocument<SelectDictionaryEntry>>)
+          } as Results<InternalTypedDocument<DictionaryDocument>>)
         : undefined,
   };
 };

@@ -121,9 +121,14 @@ export const hydrateOramaDb = async () => {
             return null;
           }
 
+          const morphology = morphologyResult.ok
+            ? morphologyResult.value
+            : undefined;
+
           return {
             id: entry.id,
             word: entry.word,
+            word_exact: entry.word,
             translation: entry.translation,
             created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
             updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
@@ -131,6 +136,32 @@ export const hydrateOramaDb = async () => {
             type: entry.type ?? undefined,
             root: rootResult.value ?? undefined,
             tags: tagsResult.value ?? undefined,
+            morphology: morphology
+              ? {
+                  ism: morphology.ism
+                    ? {
+                        singular: morphology.ism.singular,
+                        plurals: morphology.ism.plurals?.map((p) => p.word),
+                        singular_exact: morphology.ism.singular,
+                        plurals_exact: morphology.ism.plurals?.map(
+                          (p) => p.word
+                        ),
+                      }
+                    : undefined,
+                  verb: morphology.verb
+                    ? {
+                        past_tense: morphology.verb.past_tense,
+                        present_tense: morphology.verb.present_tense,
+                        masadir: morphology.verb.masadir?.map((m) => m.word),
+                        past_tense_exact: morphology.verb.past_tense,
+                        present_tense_exact: morphology.verb.present_tense,
+                        masadir_exact: morphology.verb.masadir?.map(
+                          (m) => m.word
+                        ),
+                      }
+                    : undefined,
+                }
+              : undefined,
           };
         })
         .filter((entry) => entry !== null);
@@ -195,14 +226,23 @@ export const rehydrateOramaDb = async () => {
         .map((entry) => {
           const rootResult = safeJsonParse(entry.root, RootLettersSchema);
           const tagsResult = safeJsonParse(entry.tags, TagsSchema);
+          const morphologyResult = safeJsonParse(
+            entry.morphology,
+            MorphologySchema
+          );
 
           if (!(rootResult.ok && tagsResult.ok)) {
             return null;
           }
 
+          const morphology = morphologyResult.ok
+            ? morphologyResult.value
+            : undefined;
+
           return {
             id: entry.id,
             word: entry.word,
+            word_exact: entry.word,
             translation: entry.translation,
             created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
             updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
@@ -210,6 +250,32 @@ export const rehydrateOramaDb = async () => {
             type: entry.type ?? undefined,
             root: rootResult.value ?? undefined,
             tags: tagsResult.value ?? undefined,
+            morphology: morphology
+              ? {
+                  ism: morphology.ism
+                    ? {
+                        singular: morphology.ism.singular,
+                        plurals: morphology.ism.plurals?.map((p) => p.word),
+                        singular_exact: morphology.ism.singular,
+                        plurals_exact: morphology.ism.plurals?.map(
+                          (p) => p.word
+                        ),
+                      }
+                    : undefined,
+                  verb: morphology.verb
+                    ? {
+                        past_tense: morphology.verb.past_tense,
+                        present_tense: morphology.verb.present_tense,
+                        masadir: morphology.verb.masadir?.map((m) => m.word),
+                        past_tense_exact: morphology.verb.past_tense,
+                        present_tense_exact: morphology.verb.present_tense,
+                        masadir_exact: morphology.verb.masadir?.map(
+                          (m) => m.word
+                        ),
+                      }
+                    : undefined,
+                }
+              : undefined,
           };
         })
         .filter((entry) => entry !== null);
