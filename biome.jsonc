@@ -54,13 +54,13 @@
         "useConsistentTypeDefinitions": "off",
         "useBlockStatements": "off",
         "noNonNullAssertion": "off",
+        "useAtIndex": "off",
+        "useDefaultSwitchClause": "off",
         "useConsistentBuiltinInstantiation": "info",
         "useConsistentMemberAccessibility": "info",
         "useReadonlyClassProperties": "info",
-        "useDefaultSwitchClause": "info",
         "noExportedImports": "info",
         "noNestedTernary": "info",
-        "useAtIndex": "info",
         "noParameterProperties": "info"
       },
       "suspicious": {

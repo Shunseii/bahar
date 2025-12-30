@@ -1,6 +1,8 @@
 import { insert, remove, update } from "@orama/orama";
 import { useMutation } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { createEmptyCard } from "ts-fsrs";
+import { suggestedTagsAtom } from "@/atoms/suggested-tags";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";
@@ -8,11 +10,14 @@ import { getOramaDb } from "@/lib/search";
 import { nullToUndefined } from "@/lib/utils";
 import { useSearch } from "../useSearch";
 
+const MAX_SUGGESTED_TAGS = 10;
+
 /**
  *  Hook for adding a new word to the local database and the search index.
  */
 export const useAddDictionaryEntry = () => {
   const { reset } = useSearch();
+  const setSuggestedTags = useSetAtom(suggestedTagsAtom);
   const { mutateAsync } = useMutation({
     mutationFn: dictionaryEntriesTable.addWord.mutation,
     onSuccess: async () => {
@@ -34,6 +39,10 @@ export const useAddDictionaryEntry = () => {
       const emptyFlashcard = createEmptyCard();
 
       const newWord = await mutateAsync(params, opts);
+
+      if (params.word.tags && params.word.tags.length > 0) {
+        setSuggestedTags(params.word.tags);
+      }
 
       const formattedEmptyCard = {
         ...emptyFlashcard,
