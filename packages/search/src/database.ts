@@ -211,9 +211,11 @@ export const searchDictionary = (
     ...fuzzyResults.hits.filter((h) => !exactIds.has(h.id)),
   ].slice(offset, offset + limit);
 
+  const estimatedCount = Math.max(exactResults.count, fuzzyResults.count);
+
   return {
     elapsed: exactResults.elapsed,
-    count: mergedHits.length,
+    count: estimatedCount,
     hits: mergedHits,
   } as SearchResults;
 };

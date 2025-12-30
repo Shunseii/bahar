@@ -172,7 +172,7 @@ export const useInfiniteScroll = (params: { term?: string } = {}) => {
   useEffect(() => {
     if (!(hits && searchResultsMetadata)) return;
 
-    if (hits.length === searchResultsMetadata.count) {
+    if (hits.length >= searchResultsMetadata.count) {
       setHasMore(false);
     }
   }, [hits, searchResultsMetadata]);
