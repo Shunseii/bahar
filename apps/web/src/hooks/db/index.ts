@@ -1,11 +1,12 @@
 import { insert, remove, update } from "@orama/orama";
 import { useMutation } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { createEmptyCard } from "ts-fsrs";
+import { suggestedTagsAtom } from "@/atoms/suggested-tags";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";
-import { getOramaDb } from "@/lib/search";
-import { nullToUndefined } from "@/lib/utils";
+import { getOramaDb, toOramaDocument } from "@/lib/search";
 import { useSearch } from "../useSearch";
 
 /**
@@ -13,6 +14,7 @@ import { useSearch } from "../useSearch";
  */
 export const useAddDictionaryEntry = () => {
   const { reset } = useSearch();
+  const setSuggestedTags = useSetAtom(suggestedTagsAtom);
   const { mutateAsync } = useMutation({
     mutationFn: dictionaryEntriesTable.addWord.mutation,
     onSuccess: async () => {
@@ -34,6 +36,10 @@ export const useAddDictionaryEntry = () => {
       const emptyFlashcard = createEmptyCard();
 
       const newWord = await mutateAsync(params, opts);
+
+      if (params.word.tags && params.word.tags.length > 0) {
+        setSuggestedTags(params.word.tags);
+      }
 
       const formattedEmptyCard = {
         ...emptyFlashcard,
@@ -57,7 +63,7 @@ export const useAddDictionaryEntry = () => {
         }),
       ]);
 
-      insert(getOramaDb(), nullToUndefined(newWord));
+      insert(getOramaDb(), toOramaDocument(newWord));
       reset();
     },
   };
@@ -112,7 +118,7 @@ export const useEditDictionaryEntry = () => {
     ) => {
       const updatedWord = await mutateAsync(params, opts);
 
-      update(getOramaDb(), updatedWord.id, nullToUndefined(updatedWord));
+      update(getOramaDb(), updatedWord.id, toOramaDocument(updatedWord));
       reset();
     },
   };

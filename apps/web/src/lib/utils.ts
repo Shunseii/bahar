@@ -38,11 +38,9 @@ export const nullToUndefined = <T>(obj: T): NullToUndefined<T> => {
     ) as NullToUndefined<T>;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: any = {};
   for (const key in obj) {
     if (Object.hasOwn(obj, key)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const value = (obj as any)[key];
       if (value === null) {
         result[key] = undefined;

@@ -1,42 +1,10 @@
+import { type SearchLanguage, searchDictionary } from "@bahar/search/database";
 import type { DictionaryDocument } from "@bahar/search/schema";
-import {
-  type InternalTypedDocument,
-  search as oramaSearch,
-  type Result,
-  type Results,
-  type SearchParams,
-} from "@orama/orama";
+import type { InternalTypedDocument, Result, Results } from "@orama/orama";
 import { atom, useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
-import { detectLanguage, stripArabicDiacritics } from "@/lib/utils";
-
-/**
- * Exact match fields - searched first with no tolerance for precise matching
- */
-const EXACT_PROPERTIES = [
-  "word_exact",
-  "morphology.ism.singular_exact",
-  "morphology.ism.plurals_exact",
-  "morphology.verb.past_tense_exact",
-  "morphology.verb.present_tense_exact",
-  "morphology.verb.masadir_exact",
-] as const;
-
-/**
- * Normalized fields - searched with tolerance for fuzzy matching
- */
-const NORMALIZED_PROPERTIES = [
-  "word",
-  "translation",
-  "definition",
-  "tags",
-  "morphology.ism.plurals",
-  "morphology.ism.singular",
-  "morphology.verb.masadir",
-  "morphology.verb.past_tense",
-  "morphology.verb.present_tense",
-] as const;
+import { detectLanguage } from "@/lib/utils";
 
 const SEARCH_RESULTS_PER_PAGE = 20;
 
@@ -65,79 +33,14 @@ export const useSearch = () => {
 
   const search = useCallback(
     (
-      params: Omit<
-        SearchParams<ReturnType<typeof getOramaDb>>,
-        "limit" | "mode"
-      > = {},
-      language: "arabic" | "english" = "english"
+      params: { term?: string; offset?: number } = {},
+      language: SearchLanguage = "english"
     ) => {
-      const db = getOramaDb();
-
-      // No term = return all results
-      if (!params.term) {
-        return oramaSearch(
-          db,
-          { ...params, mode: "fulltext", limit: SEARCH_RESULTS_PER_PAGE },
-          language
-        ) as Results<InternalTypedDocument<DictionaryDocument>>;
-      }
-
-      const termLen = stripArabicDiacritics(params.term).length;
-
-      // Two-pass search for better relevance:
-      // 1. First: exact fields with low tolerance (precise matching)
-      // 2. Second: normalized fields with higher tolerance (fuzzy matching)
-      // Then merge results, prioritizing exact matches
-
-      // Pass 1: Exact match search (tolerance 0-1)
-      const exactTolerance = termLen <= 4 ? 0 : 1;
-      const exactResults = oramaSearch(
-        db,
-        {
-          ...params,
-          mode: "fulltext",
-          limit: SEARCH_RESULTS_PER_PAGE,
-          properties: [...EXACT_PROPERTIES],
-          tolerance: exactTolerance,
-        },
-        language
-      ) as Results<InternalTypedDocument<DictionaryDocument>>;
-
-      // Pass 2: Fuzzy search on normalized fields
-      const fuzzyTolerance = termLen <= 2 ? 0 : termLen <= 4 ? 1 : 2;
-      const fuzzyResults = oramaSearch(
-        db,
-        {
-          ...params,
-          mode: "fulltext",
-          limit: SEARCH_RESULTS_PER_PAGE,
-          properties: [...NORMALIZED_PROPERTIES],
-          boost: {
-            word: 10,
-            translation: 10,
-            "morphology.ism.plurals": 10,
-            "morphology.ism.singular": 10,
-            "morphology.verb.masadir": 10,
-            "morphology.verb.past_tense": 10,
-            "morphology.verb.present_tense": 10,
-          },
-          tolerance: fuzzyTolerance,
-        },
-        language
-      ) as Results<InternalTypedDocument<DictionaryDocument>>;
-
-      // Merge results: exact matches first, then fuzzy (deduplicated)
-      const exactIds = new Set(exactResults.hits.map((h) => h.id));
-      const mergedHits = [
-        ...exactResults.hits,
-        ...fuzzyResults.hits.filter((h) => !exactIds.has(h.id)),
-      ].slice(0, SEARCH_RESULTS_PER_PAGE);
-
-      return {
-        elapsed: exactResults.elapsed,
-        count: exactIds.size + fuzzyResults.count,
-        hits: mergedHits,
-      } as Results<InternalTypedDocument<DictionaryDocument>>;
+      return searchDictionary(getOramaDb(), params.term ?? "", {
+        limit: SEARCH_RESULTS_PER_PAGE,
+        offset: params.offset,
+        language,
+      }) as Results<InternalTypedDocument<DictionaryDocument>>;
     },
     []
   );
@@ -201,12 +104,7 @@ export const useSearch = () => {
  * Custom hook that wraps orama's search to implement infinite scrolling
  * functionality and exposes helper methods for interacting with the results.
  */
-export const useInfiniteScroll = (
-  params: Omit<
-    SearchParams<ReturnType<typeof getOramaDb>>,
-    "limit" | "offset" | "mode"
-  > = {}
-) => {
+export const useInfiniteScroll = (params: { term?: string } = {}) => {
   const { search } = useSearch();
 
   const [hasMore, setHasMore] = useState(true);

@@ -99,7 +99,7 @@ type SearchableProperties = keyof typeof dictionarySchema;
 /**
  * Exact match fields - searched first with low tolerance
  */
-const EXACT_PROPERTIES: SearchableProperties[] = [
+export const EXACT_PROPERTIES: SearchableProperties[] = [
   "word_exact",
   "morphology.ism.singular_exact",
   "morphology.ism.plurals_exact",
@@ -111,7 +111,7 @@ const EXACT_PROPERTIES: SearchableProperties[] = [
 /**
  * Normalized fields - searched with higher tolerance for fuzzy matching
  */
-const NORMALIZED_PROPERTIES: SearchableProperties[] = [
+export const NORMALIZED_PROPERTIES: SearchableProperties[] = [
   "word",
   "translation",
   "definition",
@@ -126,7 +126,7 @@ const NORMALIZED_PROPERTIES: SearchableProperties[] = [
 /**
  * Boost configuration for normalized field search
  */
-const NORMALIZED_BOOST = {
+export const NORMALIZED_BOOST = {
   word: 10,
   translation: 10,
   "morphology.ism.plurals": 10,
@@ -135,6 +135,8 @@ const NORMALIZED_BOOST = {
   "morphology.verb.past_tense": 10,
   "morphology.verb.present_tense": 10,
 } as const;
+
+export type SearchLanguage = "arabic" | "english";
 
 /**
  * Searches the Orama database using two-pass search for better relevance:
@@ -149,40 +151,54 @@ export const searchDictionary = (
     limit?: number;
     offset?: number;
     properties?: SearchableProperties[];
+    language?: SearchLanguage;
   }
 ) => {
   const limit = options?.limit ?? 10;
+  const language = options?.language;
 
   if (!term) {
-    return search(db, {
-      term,
-      limit,
-      offset: options?.offset ?? 0,
-    });
+    return search(
+      db,
+      {
+        term,
+        limit,
+        offset: options?.offset ?? 0,
+      },
+      language
+    );
   }
 
   const termLen = stripArabicDiacritics(term).length;
 
   // Pass 1: Exact match search (tolerance 0-1)
   const exactTolerance = termLen <= 4 ? 0 : 1;
-  const exactResults = search(db, {
-    term,
-    mode: "fulltext",
-    limit,
-    properties: EXACT_PROPERTIES,
-    tolerance: exactTolerance,
-  }) as SearchResults;
+  const exactResults = search(
+    db,
+    {
+      term,
+      mode: "fulltext",
+      limit,
+      properties: EXACT_PROPERTIES,
+      tolerance: exactTolerance,
+    },
+    language
+  ) as SearchResults;
 
   // Pass 2: Fuzzy search on normalized fields
   const fuzzyTolerance = termLen <= 2 ? 0 : termLen <= 4 ? 1 : 2;
-  const fuzzyResults = search(db, {
-    term,
-    mode: "fulltext",
-    limit,
-    properties: NORMALIZED_PROPERTIES,
-    boost: NORMALIZED_BOOST,
-    tolerance: fuzzyTolerance,
-  }) as SearchResults;
+  const fuzzyResults = search(
+    db,
+    {
+      term,
+      mode: "fulltext",
+      limit,
+      properties: NORMALIZED_PROPERTIES,
+      boost: NORMALIZED_BOOST,
+      tolerance: fuzzyTolerance,
+    },
+    language
+  ) as SearchResults;
 
   // Merge results: exact matches first, then fuzzy (deduplicated)
   const exactIds = new Set(exactResults.hits.map((h) => h.id));
@@ -193,7 +209,7 @@ export const searchDictionary = (
 
   return {
     elapsed: exactResults.elapsed,
-    count: exactIds.size + fuzzyResults.count,
+    count: mergedHits.length,
     hits: mergedHits,
   } as SearchResults;
 };
