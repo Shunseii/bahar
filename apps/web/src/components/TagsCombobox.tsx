@@ -227,23 +227,36 @@ export function TagsCombobox<T>({
         }}
       >
         {value.map((tagValue) => (
-          <span
-            className="inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent py-1 pr-1.5 pl-2.5 text-sm"
+          <button
+            className="inline-flex max-w-[calc(100%-8px)] cursor-pointer items-center gap-1.5 rounded border bg-transparent py-1 pr-1.5 pl-2.5 text-sm active:bg-muted/50"
+            disabled={disabled}
             key={tagValue}
+            onClick={(e) => {
+              e.stopPropagation();
+              // On touch devices (mobile), clicking anywhere on the pill removes it
+              if (window.matchMedia("(pointer: coarse)").matches) {
+                removeTag(tagValue);
+              }
+            }}
+            type="button"
           >
             <span className="truncate">{tagValue}</span>
-            <button
+            <span
               className="size-4 shrink-0 rounded-sm opacity-70 transition-opacity hover:opacity-100"
-              disabled={disabled}
               onClick={(e) => {
                 e.stopPropagation();
                 removeTag(tagValue);
               }}
-              type="button"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.stopPropagation();
+                  removeTag(tagValue);
+                }
+              }}
             >
               <X className="size-3.5" />
-            </button>
-          </span>
+            </span>
+          </button>
         ))}
 
         <input
@@ -252,6 +265,16 @@ export function TagsCombobox<T>({
           autoCorrect="off"
           className="h-fit flex-1 bg-transparent p-0 outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed"
           disabled={disabled}
+          onBlur={(e) => {
+            // Delay closing to allow clicks on dropdown options to register
+            if (!containerRef.current?.contains(e.relatedTarget as Node)) {
+              setTimeout(() => {
+                setIsOpen(false);
+                setHighlightedIndex(-1);
+                setInputValue("");
+              }, 150);
+            }
+          }}
           onChange={(e) => {
             setInputValue(e.target.value);
             setIsOpen(true);

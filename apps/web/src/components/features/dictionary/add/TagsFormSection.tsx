@@ -8,6 +8,7 @@ import {
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useAtomValue } from "jotai";
+import { Plus } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { suggestedTagsAtom } from "@/atoms/suggested-tags";
 import { TagsCombobox } from "@/components/TagsCombobox";
@@ -62,9 +63,25 @@ export const TagsFormSection = () => {
 
         {availableSuggestions.length > 0 && (
           <div className="space-y-1.5">
-            <p className="text-muted-foreground text-sm">
-              <Trans>Recently used</Trans>
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-muted-foreground text-sm">
+                <Trans>Recently used</Trans>
+              </p>
+
+              <button
+                className="inline-flex cursor-pointer items-center gap-1 text-muted-foreground text-sm underline-offset-4 hover:text-foreground hover:underline"
+                onClick={() => {
+                  replaceTags([
+                    ...tagFields,
+                    ...availableSuggestions.map((tag) => ({ name: tag })),
+                  ]);
+                }}
+                type="button"
+              >
+                <Plus className="size-3.5" />
+                <Trans>Add all</Trans>
+              </button>
+            </div>
 
             <div className="flex flex-wrap gap-1.5">
               {availableSuggestions.map((tag) => (
