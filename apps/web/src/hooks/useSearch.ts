@@ -1,25 +1,20 @@
-import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
-import {
-  type InternalTypedDocument,
-  search as oramaSearch,
-  type Result,
-  type Results,
-  type SearchParams,
-} from "@orama/orama";
+import { type SearchLanguage, searchDictionary } from "@bahar/search/database";
+import type { DictionaryDocument } from "@bahar/search/schema";
+import type { InternalTypedDocument, Result, Results } from "@orama/orama";
 import { atom, useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
-import { detectLanguage, stripArabicDiacritics } from "@/lib/utils";
+import { detectLanguage } from "@/lib/utils";
 
 const SEARCH_RESULTS_PER_PAGE = 20;
 
 const searchResultsMetadataAtom = atom<Omit<
-  Results<InternalTypedDocument<SelectDictionaryEntry>>,
+  Results<InternalTypedDocument<DictionaryDocument>>,
   "hits"
 > | null>(null);
 
 const hitsAtom = atom<
-  Result<InternalTypedDocument<SelectDictionaryEntry>>[] | null
+  Result<InternalTypedDocument<DictionaryDocument>>[] | null
 >(null);
 
 const offsetAtom = atom(0);
@@ -38,44 +33,14 @@ export const useSearch = () => {
 
   const search = useCallback(
     (
-      params: Omit<
-        SearchParams<ReturnType<typeof getOramaDb>>,
-        "limit" | "mode"
-      > = {},
-      language: "arabic" | "english" = "english"
+      params: { term?: string; offset?: number } = {},
+      language: SearchLanguage = "english"
     ) => {
-      const tolerance = (() => {
-        if (!params.term) return 0;
-
-        const len = stripArabicDiacritics(params.term).length;
-
-        if (len <= 2) return 0;
-        if (len <= 3) return 1;
-
-        return 2;
-      })();
-
-      // Orama's search function is sync by default,
-      // but it's typed as sync or async since some plugins
-      // can make it async. We cast type to sync return type
-      // so it's easier to work with.
-      return oramaSearch(
-        getOramaDb(),
-        {
-          ...params,
-          mode: "fulltext",
-          limit: SEARCH_RESULTS_PER_PAGE,
-          properties: params.term
-            ? ["word", "translation", "definition", "tags"]
-            : undefined,
-          boost: {
-            word: 10,
-            translation: 10,
-          },
-          tolerance,
-        },
-        language
-      ) as Results<InternalTypedDocument<SelectDictionaryEntry>>;
+      return searchDictionary(getOramaDb(), params.term ?? "", {
+        limit: SEARCH_RESULTS_PER_PAGE,
+        offset: params.offset,
+        language,
+      }) as Results<InternalTypedDocument<DictionaryDocument>>;
     },
     []
   );
@@ -120,7 +85,7 @@ export const useSearch = () => {
         ? ({
             hits,
             ...searchResultsMetadata,
-          } as Results<InternalTypedDocument<SelectDictionaryEntry>>)
+          } as Results<InternalTypedDocument<DictionaryDocument>>)
         : undefined,
 
     /**
@@ -139,12 +104,7 @@ export const useSearch = () => {
  * Custom hook that wraps orama's search to implement infinite scrolling
  * functionality and exposes helper methods for interacting with the results.
  */
-export const useInfiniteScroll = (
-  params: Omit<
-    SearchParams<ReturnType<typeof getOramaDb>>,
-    "limit" | "offset" | "mode"
-  > = {}
-) => {
+export const useInfiniteScroll = (params: { term?: string } = {}) => {
   const { search } = useSearch();
 
   const [hasMore, setHasMore] = useState(true);
@@ -212,7 +172,7 @@ export const useInfiniteScroll = (
   useEffect(() => {
     if (!(hits && searchResultsMetadata)) return;
 
-    if (hits.length === searchResultsMetadata.count) {
+    if (hits.length >= searchResultsMetadata.count) {
       setHasMore(false);
     }
   }, [hits, searchResultsMetadata]);
@@ -227,7 +187,7 @@ export const useInfiniteScroll = (
         ? ({
             ...searchResultsMetadata,
             hits,
-          } as Results<InternalTypedDocument<SelectDictionaryEntry>>)
+          } as Results<InternalTypedDocument<DictionaryDocument>>)
         : undefined,
   };
 };
