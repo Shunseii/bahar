@@ -6,11 +6,8 @@ import { suggestedTagsAtom } from "@/atoms/suggested-tags";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";
-import { getOramaDb } from "@/lib/search";
-import { nullToUndefined } from "@/lib/utils";
+import { getOramaDb, toOramaDocument } from "@/lib/search";
 import { useSearch } from "../useSearch";
-
-const MAX_SUGGESTED_TAGS = 10;
 
 /**
  *  Hook for adding a new word to the local database and the search index.
@@ -66,7 +63,7 @@ export const useAddDictionaryEntry = () => {
         }),
       ]);
 
-      insert(getOramaDb(), nullToUndefined(newWord));
+      insert(getOramaDb(), toOramaDocument(newWord));
       reset();
     },
   };
@@ -121,7 +118,7 @@ export const useEditDictionaryEntry = () => {
     ) => {
       const updatedWord = await mutateAsync(params, opts);
 
-      update(getOramaDb(), updatedWord.id, nullToUndefined(updatedWord));
+      update(getOramaDb(), updatedWord.id, toOramaDocument(updatedWord));
       reset();
     },
   };

@@ -5,6 +5,7 @@ import {
   MorphologySchema,
   type RawDictionaryEntry,
   RootLettersSchema,
+  type SelectDictionaryEntry,
   TagsSchema,
 } from "@bahar/drizzle-user-db-schemas";
 import { err, ok } from "@bahar/result";
@@ -12,7 +13,7 @@ import {
   createDictionaryDatabase,
   insertDocuments,
 } from "@bahar/search/database";
-import type { DictionaryOrama } from "@bahar/search/schema";
+import type { DictionaryDocument, DictionaryOrama } from "@bahar/search/schema";
 import * as Sentry from "@sentry/react";
 import { z } from "zod";
 import { ensureDb } from "../db";
@@ -20,6 +21,55 @@ import { ensureDb } from "../db";
 let oramaDb = createDictionaryDatabase();
 
 export const getOramaDb = () => oramaDb;
+
+/**
+ * Transforms a SelectDictionaryEntry into a DictionaryDocument for Orama.
+ * Handles the morphology transformation (plurals/masadir are {word: string}[] in DB but string[] in Orama).
+ */
+export const toOramaDocument = (
+  entry: SelectDictionaryEntry
+): DictionaryDocument => {
+  const morphology = entry.morphology;
+
+  return {
+    id: entry.id,
+    word: entry.word,
+    word_exact: entry.word,
+    translation: entry.translation,
+    created_at: entry.created_at ?? undefined,
+    created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
+    updated_at: entry.updated_at ?? undefined,
+    updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
+    definition: entry.definition ?? undefined,
+    type: entry.type ?? undefined,
+    root: entry.root ?? undefined,
+    tags: entry.tags ?? undefined,
+    antonyms: entry.antonyms ?? undefined,
+    examples: entry.examples ?? undefined,
+    morphology: morphology
+      ? {
+          ism: morphology.ism
+            ? {
+                singular: morphology.ism.singular,
+                plurals: morphology.ism.plurals?.map((p) => p.word),
+                singular_exact: morphology.ism.singular,
+                plurals_exact: morphology.ism.plurals?.map((p) => p.word),
+              }
+            : undefined,
+          verb: morphology.verb
+            ? {
+                past_tense: morphology.verb.past_tense,
+                present_tense: morphology.verb.present_tense,
+                masadir: morphology.verb.masadir?.map((m) => m.word),
+                past_tense_exact: morphology.verb.past_tense,
+                present_tense_exact: morphology.verb.present_tense,
+                masadir_exact: morphology.verb.masadir?.map((m) => m.word),
+              }
+            : undefined,
+        }
+      : undefined,
+  };
+};
 
 let isOramaHydrated = false;
 
