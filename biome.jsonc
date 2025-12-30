@@ -26,7 +26,8 @@
         "useButtonType": "info",
         "useAltText": "info",
         "useSemanticElements": "info",
-        "useFocusableInteractive": "info"
+        "useFocusableInteractive": "info",
+        "useKeyWithClickEvents": "info"
       },
       "complexity": {
         "noForEach": "off",

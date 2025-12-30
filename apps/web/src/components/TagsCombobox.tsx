@@ -211,13 +211,11 @@ export function TagsCombobox<T>({
   return (
     <div className={cn("relative", className)} ref={containerRef}>
       {/* Anchor - Tags + Input */}
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: keyboard events handled by input */}
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: click delegates to input */}
-      {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: click delegates to input */}
       <div
         className={cn(
-          "relative flex min-h-10 w-full flex-row flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-2 text-sm shadow-xs",
+          "relative flex min-h-10 w-full flex-row flex-wrap items-center gap-1.5 rounded-md border border-input bg-background py-2 text-sm shadow-xs",
           "focus-within:ring-1 focus-within:ring-ring",
+          "ltr:pr-5 ltr:pl-2.5 rtl:pr-2.5 rtl:pl-5",
           disabled && "cursor-not-allowed opacity-50"
         )}
         onClick={() => {
@@ -289,7 +287,7 @@ export function TagsCombobox<T>({
         />
 
         <button
-          className="absolute top-[19px] right-2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground/80"
+          className="absolute top-[19px] -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground/80 ltr:right-2 rtl:left-2"
           disabled={disabled}
           onClick={(e) => {
             e.stopPropagation();

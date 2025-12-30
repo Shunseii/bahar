@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: Poedit 3.4.4\n"
 
 #. placeholder {0}: cards.length
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:338
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:333
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {بطاقة متبقية} other {بطاقات متبقية}}"
 
@@ -112,6 +112,10 @@ msgstr "أضف كلمة جديدة إلى معجمك"
 msgid "Add a tag and press enter"
 msgstr "أضف وسمًا واضغط Enter"
 
+#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:82
+msgid "Add all"
+msgstr "إضافة الكل"
+
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:355
 msgid "Add antonym"
 msgstr "أضف ضدا"
@@ -166,7 +170,11 @@ msgstr "أضف بعض الكلمات للبدء!"
 msgid "Add tag {inputValue}"
 msgstr "أضف علامة {inputValue}"
 
-#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:36
+#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:60
+msgid "Add tag {value}"
+msgstr "إضافة الوسم {value}"
+
+#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:48
 msgid "Add tags to your word."
 msgstr "أضف علامات إلى كلمتك."
 
@@ -187,7 +195,7 @@ msgstr "تفاصيل إضافية"
 msgid "Again"
 msgstr "مرة أخرى"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:358
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:353
 msgid "All done for today!"
 msgstr "انتهيت لليوم!"
 
@@ -305,12 +313,12 @@ msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:123
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:302
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:297
 msgid "Backlog"
 msgstr "المتراكمة"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:93
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:356
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:351
 msgid "Backlog cleared!"
 msgstr "تم مسح المتراكمات!"
 
@@ -344,11 +352,11 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 msgid "Cancel"
 msgstr "ألغ"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:321
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:316
 msgid "Cards due today or recently"
 msgstr "بطاقات مستحقة اليوم أو مؤخرًا"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:323
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:318
 msgid "Cards overdue by more than 7 days"
 msgstr "بطاقات متأخرة أكثر من ٧ أيام"
 
@@ -858,11 +866,11 @@ msgid "Good"
 msgstr "حسن"
 
 #. placeholder {0}: formatNumber(counts.regular)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:363
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:358
 msgid "Great work on the backlog! You still have {0} regular reviews."
 msgstr "أحسنت في المتراكمات! لا يزال لديك {0} مراجعات عادية."
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:373
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:368
 msgid "Great work! Come back later for more reviews."
 msgstr "عمل رائع! عد لاحقًا لمزيد من المراجعات."
 
@@ -1251,6 +1259,10 @@ msgstr "المضارع"
 msgid "Present Tense"
 msgstr "المضارع"
 
+#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:68
+msgid "Recently used"
+msgstr "المستخدمة مؤخرًا"
+
 #: ../../apps/web/src/components/errors/ErrorMessage.tsx:142
 msgid "Reload"
 msgstr "أعد التحميل"
@@ -1301,7 +1313,7 @@ msgid "Reverse flashcards"
 msgstr "بطاقات العكسية"
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:139
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:277
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:272
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:122
 msgid "Review"
 msgstr "مراجعة"
@@ -1311,15 +1323,15 @@ msgid "Review flashcards"
 msgstr "ادرس البطاقات"
 
 #. placeholder {0}: formatNumber(counts.backlog)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:241
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:236
 msgid "Review flashcards ({0} in backlog)"
 msgstr "راجع البطاقات ({0} متراكمة)"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:245
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:240
 msgid "Review flashcards with spaced repetition"
 msgstr "راجع البطاقات بالتكرار المتباعد"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:381
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:376
 msgid "Review your Arabic flashcards and grade your understanding with Again, Hard, Good, or Easy options to adjust scheduling."
 msgstr "راجع بطاقاتك العربية وقيم فهمك باستخدام خيارات مرة أخرى أو صعب أو جيد أو سهل لتعديل الجدولة."
 
@@ -1356,6 +1368,7 @@ msgid "Schema Migrations"
 msgstr "ترحيلات المخطط"
 
 #: ../../apps/web/src/components/Autocomplete.tsx:93
+#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:58
 msgid "Search for a tag..."
 msgstr "ابحث عن علامة..."
 
@@ -1410,7 +1423,7 @@ msgstr "الإعدادات"
 msgid "Show after revealing the answer"
 msgstr "عرض بعد كشف الإجابة"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:489
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:484
 msgid "Show answer"
 msgstr "اعرض الجواب"
 
@@ -1497,7 +1510,7 @@ msgid "System"
 msgstr "نظام"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:302
-#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:32
+#: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:291
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:978
@@ -1819,7 +1832,7 @@ msgid "You do not have access to upload schema migrations."
 msgstr "ليس لديك إذن لتحميل ترحيلات المخطط."
 
 #. placeholder {0}: formatNumber(counts.backlog)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:368
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:363
 msgid "You have {0} cards in your backlog when you're ready."
 msgstr "لديك {0} بطاقات متراكمة عندما تكون جاهزًا."
 
