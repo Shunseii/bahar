@@ -6,7 +6,8 @@
     "target": "ES2022",
     "baseUrl": ".",
     "paths": {
-      "@bahar/web-ui/*": ["./src/*"]
+      "@bahar/web-ui/*": ["./src/*"],
+      "@bahar/design-system/*": ["../design-system/src/*"]
     }
   },
   "include": ["src"],

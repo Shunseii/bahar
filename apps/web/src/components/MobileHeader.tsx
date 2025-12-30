@@ -62,7 +62,7 @@ const DraggableSheetContent: typeof SheetContent = React.forwardRef(
             className={cn(
               sheetVariantsNoSlideAnimations({ side }),
               className,
-              "w-[70vw] border-border ltr:border-r rtl:border-l"
+              "w-[70vw] border-sidebar-border bg-sidebar ltr:border-r rtl:border-l"
             )}
             ref={ref}
             {...props}
@@ -100,7 +100,7 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
   const dir = useDir();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-sidebar-border border-b bg-sidebar px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet open={isOpen}>
         <SheetTrigger asChild>
           <Button

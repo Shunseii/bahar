@@ -3,16 +3,17 @@ import { Button } from "@bahar/web-ui/components/button";
 import { Trans } from "@lingui/react/macro";
 import { Brain, RotateCcw, ThumbsUp, Zap } from "lucide-react";
 import { motion } from "motion/react";
-import { type FC, type ReactNode, useMemo } from "react";
+import { type FC, useMemo } from "react";
 import { Rating } from "ts-fsrs";
 
 type ReviewRating = Rating.Again | Rating.Hard | Rating.Good | Rating.Easy;
 
-type GradeOptionConfig = {
-  label: ReactNode;
+type GradeOptionsConfig = {
+  label: React.ReactNode;
   borderStyles: string;
+  textStyles?: string;
   glowColor: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
 };
 
 type GradeOptionProps = {
@@ -28,8 +29,8 @@ export const GradeOption: FC<GradeOptionProps> = ({
   intervalLabel,
   disabled = false,
 }) => {
-  const options = useMemo(() => {
-    const config: Record<ReviewRating, GradeOptionConfig> = {
+  const options: Record<ReviewRating, GradeOptionsConfig> = useMemo(() => {
+    const config = {
       [Rating.Again]: {
         label: <Trans>Again</Trans>,
         borderStyles:
@@ -71,7 +72,7 @@ export const GradeOption: FC<GradeOptionProps> = ({
     return config;
   }, []);
 
-  const { label, icon, borderStyles, glowColor } = options[grade];
+  const { label, icon, borderStyles, glowColor, textStyles } = options[grade];
 
   return (
     <motion.div
@@ -85,9 +86,10 @@ export const GradeOption: FC<GradeOptionProps> = ({
       <Button
         className={cn(
           "group h-auto w-full flex-col gap-1 border-2 px-2 py-3 shadow-md transition-all duration-300 sm:px-4",
-          "hover:shadow-lg",
+          "hover:text-foreground hover:shadow-lg",
           borderStyles,
-          glowColor
+          glowColor,
+          textStyles
         )}
         disabled={disabled}
         onClick={onClick}

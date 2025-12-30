@@ -77,6 +77,50 @@ import { cn } from "@bahar/web-ui/lib/utils";
 
 See `packages/web-ui/README.md` for the full list of available components.
 
+## Adding Color Themes
+
+To add a new color theme:
+
+1. **Add CSS variables** in `packages/design-system/colors.css`:
+
+```css
+[data-theme="mytheme"] {
+  --background: oklch(98% 0.01 180);
+  --primary: oklch(55% 0.18 180);
+  /* ... other light mode colors */
+}
+
+[data-theme="mytheme"].dark {
+  --background: oklch(15% 0.025 180);
+  --primary: oklch(65% 0.16 180);
+  /* ... other dark mode colors */
+}
+```
+
+2. **Register the theme** in `src/atoms/theme.ts`:
+
+```typescript
+export enum ColorTheme {
+  DEFAULT = "default",
+  NORD = "nord",
+  MYTHEME = "mytheme",
+}
+```
+
+3. **Add translation** in `src/components/ThemeMenu.tsx`:
+
+```typescript
+const ColorThemeLabel: FC<{ theme: ColorTheme }> = ({ theme }) => {
+  switch (theme) {
+    case ColorTheme.MYTHEME:
+      return <Trans>My Theme</Trans>;
+    // ... other cases
+  }
+};
+```
+
+4. **Extract translations**: `pnpm run i18n:extract`
+
 ## Environment Variables
 
 Required environment variables:

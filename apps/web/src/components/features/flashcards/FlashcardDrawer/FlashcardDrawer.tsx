@@ -395,7 +395,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                 <TagBadgesList currentCard={currentCard} />
 
                 {/* Flashcard content area */}
-                <div className="relative rounded-2xl border border-border/30 bg-gradient-to-br from-muted/30 to-muted/10 p-4 sm:p-8">
+                <div className="relative rounded-2xl border border-border/50 bg-linear-to-br from-card to-card/50 p-4 shadow-lg sm:p-8">
                   {currentCard.direction === "reverse" ? (
                     <>
                       <ReverseQuestionSide currentCard={currentCard} />
@@ -407,7 +407,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                             initial={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
                           >
-                            <div className="my-6 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                            <div className="my-6 h-px bg-linear-to-r from-transparent via-border to-transparent" />
                             <ReverseAnswerSide currentCard={currentCard} />
                           </motion.div>
                         )}
@@ -424,7 +424,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                             initial={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
                           >
-                            <div className="my-6 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+                            <div className="my-6 h-px bg-linear-to-r from-transparent via-border to-transparent" />
                             <AnswerSide currentCard={currentCard} />
                           </motion.div>
                         )}

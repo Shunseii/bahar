@@ -24,7 +24,7 @@ export const DesktopNavigation = () => {
   const { logout } = useLogout();
 
   return (
-    <aside className="fixed inset-y-0 z-10 hidden w-14 flex-col bg-gradient-to-b from-background to-background/95 backdrop-blur-sm sm:flex ltr:left-0 ltr:border-r rtl:right-0 rtl:border-l">
+    <aside className="fixed inset-y-0 z-10 hidden w-14 flex-col border-sidebar-border bg-sidebar sm:flex ltr:left-0 ltr:border-r rtl:right-0 rtl:border-l">
       {/* Main nav buttons */}
       <nav className="flex flex-col items-center gap-4 px-2 py-4">
         <Link

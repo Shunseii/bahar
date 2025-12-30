@@ -85,11 +85,11 @@ const Login = () => {
   return (
     <Page className="mx-auto flex max-w-96 flex-col items-center justify-center gap-y-6">
       <div className="mt-8 flex flex-col gap-y-2 md:mt-0">
-        <h1 className="text-center font-bold text-2xl text-gray-900 tracking-tight dark:text-white">
+        <h1 className="text-center font-bold text-2xl text-foreground tracking-tight">
           <Trans>Welcome to Bahar!</Trans>
         </h1>
 
-        <p className="mt-2 text-gray-600 text-sm dark:text-gray-400">
+        <p className="mt-2 text-muted-foreground text-sm">
           <Trans>
             Log in to your existing account or sign up for a new one
           </Trans>

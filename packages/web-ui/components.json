@@ -12,9 +12,9 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "@bahar/web-ui/components",
-    "utils": "@bahar/web-ui/lib/utils",
+    "ui": "@bahar/web-ui/components",
     "hooks": "@bahar/web-ui/hooks",
-    "lib": "@bahar/web-ui/lib",
-    "ui": "@bahar/web-ui/components"
+    "lib": "@bahar/design-system",
+    "utils": "@bahar/design-system"
   }
 }
