@@ -155,6 +155,7 @@ export const searchDictionary = (
   }
 ) => {
   const limit = options?.limit ?? 10;
+  const offset = options?.offset ?? 0;
   const language = options?.language;
 
   if (!term) {
@@ -163,13 +164,16 @@ export const searchDictionary = (
       {
         term,
         limit,
-        offset: options?.offset ?? 0,
+        offset,
       },
       language
     );
   }
 
   const termLen = stripArabicDiacritics(term).length;
+
+  // Fetch enough results to cover offset + limit for proper pagination
+  const fetchLimit = offset + limit;
 
   // Pass 1: Exact match search (tolerance 0-1)
   const exactTolerance = termLen <= 4 ? 0 : 1;
@@ -178,7 +182,7 @@ export const searchDictionary = (
     {
       term,
       mode: "fulltext",
-      limit,
+      limit: fetchLimit,
       properties: EXACT_PROPERTIES,
       tolerance: exactTolerance,
     },
@@ -192,7 +196,7 @@ export const searchDictionary = (
     {
       term,
       mode: "fulltext",
-      limit,
+      limit: fetchLimit,
       properties: NORMALIZED_PROPERTIES,
       boost: NORMALIZED_BOOST,
       tolerance: fuzzyTolerance,
@@ -205,7 +209,7 @@ export const searchDictionary = (
   const mergedHits = [
     ...exactResults.hits,
     ...fuzzyResults.hits.filter((h) => !exactIds.has(h.id)),
-  ].slice(0, limit);
+  ].slice(offset, offset + limit);
 
   return {
     elapsed: exactResults.elapsed,

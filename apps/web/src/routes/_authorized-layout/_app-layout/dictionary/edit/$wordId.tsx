@@ -311,8 +311,6 @@ const Edit = () => {
         };
       })();
 
-      console.log(input);
-
       await editDictionaryEntry({ id: input.id, updates: input });
 
       toast.success(t`Successfully updated the word!`, {
