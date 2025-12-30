@@ -184,7 +184,7 @@ const Add = () => {
             <div className="flex items-center gap-4">
               <BackButton />
 
-              <h1 className="flex-1 shrink-0 whitespace-nowrap font-semibold text-xl tracking-tight sm:grow-0">
+              <h1 className="flex-1 shrink-0 whitespace-normal font-semibold text-xl tracking-tight sm:grow-0 sm:whitespace-nowrap">
                 <Trans>Add a new word to your dictionary</Trans>
               </h1>
 
