@@ -57,7 +57,7 @@ function Slot(props: SlotProps) {
 function FakeCaret() {
   return (
     <div className="pointer-events-none absolute inset-0 flex animate-caret-blink items-center justify-center">
-      <div className="h-8 w-px bg-white" />
+      <div className="h-8 w-px bg-foreground" />
     </div>
   );
 }
@@ -130,7 +130,7 @@ export const OTPForm: FC<{
       </Button>
 
       <div className="flex flex-col items-center gap-y-4">
-        <h1 className="text-center font-bold text-gray-900 text-xl tracking-tight dark:text-white">
+        <h1 className="text-center font-bold text-foreground text-xl tracking-tight">
           <Trans>Enter your 6-digit code from your email</Trans>
         </h1>
 

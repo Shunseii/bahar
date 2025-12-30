@@ -43,10 +43,7 @@ export const TagBadgesList: FC<{
           key={tag}
           transition={{ delay: 0.15 + index * 0.05 }}
         >
-          <Badge
-            className="w-max border-border/50 transition-colors hover:border-border"
-            variant="outline"
-          >
+          <Badge className="w-max border-border" variant="outline">
             {tag}
           </Badge>
         </motion.div>

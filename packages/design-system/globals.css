@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./colors.css";
+@import "./themes.css";
 @plugin "tailwindcss-animate";
 
 /* Use .dark class instead of prefers-color-scheme for dark mode */

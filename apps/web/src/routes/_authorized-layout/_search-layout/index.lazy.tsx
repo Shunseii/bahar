@@ -56,7 +56,7 @@ const Index = () => {
       <div className="m-auto flex max-w-3xl flex-col gap-y-5">
         {/* Dictionary Card */}
         <motion.div variants={itemVariants}>
-          <Card className="relative overflow-hidden border-0 shadow-2xl shadow-black/10 dark:shadow-black/30">
+          <Card className="relative overflow-hidden shadow-2xl shadow-black/10 dark:shadow-black/30">
             {/* Decorative gradient background */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02]" />
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />

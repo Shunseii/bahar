@@ -31,6 +31,11 @@
     <div id="root"></div>
     <script>
       "use strict";
+      const colorTheme = localStorage.getItem("color-theme");
+      if (colorTheme && colorTheme !== "default") {
+        document.documentElement.setAttribute("data-theme", colorTheme);
+      }
+
       const theme = localStorage.getItem("theme");
       const isSystemDark = window.matchMedia(
         "(prefers-color-scheme: dark)"

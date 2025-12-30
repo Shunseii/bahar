@@ -339,12 +339,13 @@ const WordCardContent: FC<WordCardContentProps> = memo(
       <article
         className={cn(
           "group relative rounded-xl p-4",
-          "bg-gradient-to-br from-muted/30 to-muted/10",
-          "hover:from-muted/50 hover:to-muted/30",
-          "border border-transparent hover:border-border/50",
+          "bg-linear-to-br from-muted/40 to-muted/20 dark:from-muted/50 dark:to-muted/30",
+          "hover:from-muted/50 hover:to-muted/30 dark:hover:from-muted/60 dark:hover:to-muted/40",
+          "border border-border hover:border-border",
           "transition-colors duration-200 ease-out",
           "hover:shadow-black/5 hover:shadow-md",
-          isExpanded && "border-border/50 from-muted/50 to-muted/30"
+          isExpanded &&
+            "border-border/50 from-muted/50 to-muted/30 dark:from-muted/60 dark:to-muted/40"
         )}
       >
         <div className="flex flex-col gap-y-2">
@@ -407,7 +408,7 @@ const WordCardContent: FC<WordCardContentProps> = memo(
         </AnimatePresence>
 
         {/* Subtle accent line */}
-        <div className="absolute top-1/2 h-0 w-1 -translate-y-1/2 rounded-full bg-gradient-to-b from-primary/60 to-primary/20 transition-all duration-300 ease-out group-hover:h-8 ltr:left-0 rtl:right-0" />
+        <div className="absolute top-1/2 h-0 w-1 -translate-y-1/2 rounded-full bg-linear-to-b from-primary/60 to-primary/20 transition-all duration-300 ease-out group-hover:h-8 ltr:left-0 rtl:right-0" />
       </article>
     );
   }

@@ -30,7 +30,7 @@ import { FlashcardSettingsCardSection } from "@/components/features/settings/Fla
 import { InputFile } from "@/components/InputFile";
 import { LanguageMenu } from "@/components/LanguageMenu";
 import { Page } from "@/components/Page";
-import { ThemeMenu } from "@/components/ThemeMenu";
+import { ColorThemeMenu, ThemeMenu } from "@/components/ThemeMenu";
 import { useSearch } from "@/hooks/useSearch";
 import { authClient } from "@/lib/auth-client";
 import { deleteLocalDatabase, ensureDb } from "@/lib/db";
@@ -205,6 +205,7 @@ const Settings = () => {
 
           <CardContent className="flex flex-col gap-y-4">
             <ThemeMenu />
+            <ColorThemeMenu />
             <LanguageMenu />
           </CardContent>
         </Card>

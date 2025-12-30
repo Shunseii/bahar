@@ -13,8 +13,8 @@
   "aliases": {
     "components": "@/components",
     "hooks": "@/hooks",
-    "lib": "@/lib",
-    "utils": "@bahar/web-ui/lib/utils",
+    "lib": "@bahar/design-system",
+    "utils": "@bahar/design-system",
     "ui": "@bahar/web-ui/components"
   }
 }

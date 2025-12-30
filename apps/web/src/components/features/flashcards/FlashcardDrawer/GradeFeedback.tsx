@@ -26,7 +26,7 @@ export const GradeFeedback: FC<{
     [Rating.Again]: {
       icon: RotateCcw,
       color: "text-muted-foreground",
-      bgColor: "bg-muted/20",
+      bgColor: "bg-muted",
       animation: {
         initial: { scale: 0, rotate: 0 },
         animate: {
