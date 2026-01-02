@@ -83,7 +83,7 @@ export const AdditionalDetailsFormSection = () => {
 
                 <FormControl>
                   <Input
-                    className="w-full text-xl"
+                    className="w-full text-xl!"
                     dir="rtl"
                     lang="ar"
                     type="text"
@@ -122,7 +122,7 @@ export const AdditionalDetailsFormSection = () => {
 
                       <FormControl>
                         <Input
-                          className="w-full text-xl"
+                          className="w-full text-xl!"
                           dir="rtl"
                           lang="ar"
                           placeholder="ف ع ل"
@@ -178,9 +178,9 @@ export const AdditionalDetailsFormSection = () => {
 
                             <FormControl>
                               <Input
-                                className="w-[98%] text-xl ltr:ml-1 rtl:mr-1"
                                 // Need to do this otherwise the focus border will get cut off
                                 // in the dropdown
+                                className="w-[98%] text-xl ltr:ml-1 rtl:mr-1"
                                 dir="rtl"
                                 lang="ar"
                                 type="text"
@@ -204,9 +204,9 @@ export const AdditionalDetailsFormSection = () => {
 
                             <FormControl>
                               <Input
-                                className="ml-1 w-[98%]"
                                 // Need to do this otherwise the focus border will get cut off
                                 // in the dropdown
+                                className="w-[98%] ltr:ml-1 rtl:mr-1"
                                 type="text"
                                 {...renderField}
                               />
@@ -233,9 +233,9 @@ export const AdditionalDetailsFormSection = () => {
 
                             <FormControl>
                               <Input
-                                className="ml-1 w-[98%]"
                                 // Need to do this otherwise the focus border will get cut off
                                 // in the dropdown
+                                className="w-[98%] ltr:ml-1 rtl:mr-1"
                                 type="text"
                                 {...renderField}
                               />

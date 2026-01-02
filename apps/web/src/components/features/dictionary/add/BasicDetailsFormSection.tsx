@@ -42,7 +42,7 @@ export const BasicDetailsFormSection = () => {
 
                 <FormControl>
                   <Input
-                    className="w-full text-xl"
+                    className="w-full text-xl!"
                     dir="rtl"
                     lang="ar"
                     type="text"
@@ -65,7 +65,12 @@ export const BasicDetailsFormSection = () => {
                 </FormLabel>
 
                 <FormControl>
-                  <Input className="w-full" type="text" {...field} />
+                  <Input
+                    className="w-full text-sm!"
+                    dir="ltr"
+                    type="text"
+                    {...field}
+                  />
                 </FormControl>
 
                 <FormDescription>
