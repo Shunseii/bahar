@@ -1,6 +1,6 @@
 import { cn } from "@bahar/design-system";
 import { Button } from "@bahar/web-ui/components/button";
-import { Card, CardContent } from "@bahar/web-ui/components/card";
+import { Card } from "@bahar/web-ui/components/card";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";

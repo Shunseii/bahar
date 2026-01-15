@@ -1,6 +1,7 @@
 import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
+import { Card, CardContent } from "@bahar/web-ui/components/card";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -16,7 +17,14 @@ import {
   SearchX,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { type FC, memo, useCallback, useEffect, useState } from "react";
+import {
+  type FC,
+  memo,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useInfiniteScroll } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { Highlight } from "./Highlight";
@@ -40,6 +48,25 @@ const useGenderLabels = (): Record<"masculine" | "feminine", string> => {
   };
 };
 
+const SecondaryIconButton = ({
+  onClick,
+  children,
+}: {
+  onClick?: () => void;
+  children: ReactNode;
+}) => {
+  return (
+    <Button
+      className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-foreground"
+      onClick={onClick}
+      size="icon"
+      variant="ghost"
+    >
+      {children}
+    </Button>
+  );
+};
+
 const CopyButton: FC<{ text: string }> = memo(({ text }) => {
   const [copied, setCopied] = useState(false);
 
@@ -50,18 +77,13 @@ const CopyButton: FC<{ text: string }> = memo(({ text }) => {
   };
 
   return (
-    <Button
-      className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-foreground"
-      onClick={handleCopy}
-      size="icon"
-      variant="ghost"
-    >
+    <SecondaryIconButton onClick={handleCopy}>
       {copied ? (
         <Check className="h-4 w-4 text-green-500" />
       ) : (
         <Copy className="h-4 w-4" />
       )}
-    </Button>
+    </SecondaryIconButton>
   );
 });
 
@@ -336,22 +358,20 @@ const WordCardContent: FC<WordCardContentProps> = memo(
     const document = hit.document;
 
     return (
-      <article
+      <Card
         className={cn(
-          "group relative rounded-xl p-4",
-          "bg-linear-to-br from-muted/40 to-muted/20 dark:from-muted/50 dark:to-muted/30",
-          "hover:from-muted/50 hover:to-muted/30 dark:hover:from-muted/60 dark:hover:to-muted/40",
-          "border border-border hover:border-border",
+          "group relative rounded-xl pt-4",
+          "border border-border",
           "transition-colors duration-200 ease-out",
           "hover:shadow-black/5 hover:shadow-md",
           isExpanded &&
-            "border-border/50 from-muted/50 to-muted/30 dark:from-muted/60 dark:to-muted/40"
+            "from-muted/50 to-muted/30 dark:from-muted/60 dark:to-muted/40"
         )}
       >
-        <div className="flex flex-col gap-y-2">
+        <CardContent className="flex flex-col gap-y-2">
           <div className="flex items-start justify-between">
             <h2
-              className="font-semibold text-3xl text-foreground/90 transition-colors duration-200 group-hover:text-foreground sm:text-3xl rtl:text-right"
+              className="font-semibold text-3xl transition-colors duration-200 sm:text-3xl rtl:text-right"
               dir="rtl"
             >
               <Highlight text={document.word} />
@@ -359,57 +379,45 @@ const WordCardContent: FC<WordCardContentProps> = memo(
 
             <div className="flex items-center gap-1">
               <CopyButton text={document.word} />
-              <Button
-                className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-foreground"
-                onClick={handleEdit}
-                size="icon"
-                variant="ghost"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
 
-              <Button
-                className="h-8 w-8 text-muted-foreground hover:bg-primary/10 hover:text-foreground"
-                onClick={handleToggle}
-                size="icon"
-                variant="ghost"
-              >
+              <SecondaryIconButton onClick={handleEdit}>
+                <Edit className="h-4 w-4" />
+              </SecondaryIconButton>
+
+              <SecondaryIconButton onClick={handleToggle}>
                 <motion.div
                   animate={{ rotate: isExpanded ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </motion.div>
-              </Button>
+              </SecondaryIconButton>
             </div>
           </div>
 
-          <p
-            className="text-base text-muted-foreground transition-colors duration-200 group-hover:text-muted-foreground/80 sm:text-base ltr:text-left rtl:text-right"
-            dir="ltr"
-          >
+          <p className="text-muted-foreground" dir="ltr">
             <Highlight text={document.translation} />
           </p>
-        </div>
 
-        {/* Expanded details */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              animate={{ opacity: 1, height: "auto" }}
-              className="overflow-hidden"
-              exit={{ opacity: 0, height: 0 }}
-              initial={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <ExpandedDetails document={document} id={hit.id!} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+          {/* Expanded details */}
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                animate={{ opacity: 1, height: "auto" }}
+                className="overflow-hidden"
+                exit={{ opacity: 0, height: 0 }}
+                initial={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ExpandedDetails document={document} id={hit.id!} />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        {/* Subtle accent line */}
-        <div className="absolute top-1/2 h-0 w-1 -translate-y-1/2 rounded-full bg-linear-to-b from-primary/60 to-primary/20 transition-all duration-300 ease-out group-hover:h-8 ltr:left-0 rtl:right-0" />
-      </article>
+          {/* Subtle accent line */}
+          <div className="absolute top-1/2 h-0 w-1 -translate-y-1/2 rounded-full bg-linear-to-b from-primary/60 to-primary/20 transition-all duration-300 ease-out group-hover:h-8 ltr:left-0 rtl:right-0" />
+        </CardContent>
+      </Card>
     );
   }
 );
@@ -520,7 +528,7 @@ export const InfiniteScroll: FC = () => {
     <div>
       <ul className="flex flex-col gap-y-3" ref={ref}>
         {hits.map((hit) => (
-          <li key={hit.id}>
+          <li className="m-auto w-full max-w-3xl" key={hit.id}>
             <WordCardContent
               hit={
                 hit as { id: string | null; document: SelectDictionaryEntry }
@@ -533,28 +541,31 @@ export const InfiniteScroll: FC = () => {
         ))}
       </ul>
 
-      {/* Loading indicator for infinite scroll */}
-      {hasMore && (
-        <div className="flex justify-center py-6">
-          <div className="flex gap-1">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.4, 1, 0.4],
-                }}
-                className="h-2 w-2 rounded-full bg-primary/40"
-                key={i}
-                transition={{
-                  duration: 1,
-                  repeat: Number.POSITIVE_INFINITY,
-                  delay: i * 0.15,
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      {hasMore && <LoadingIndicator />}
+    </div>
+  );
+};
+
+const LoadingIndicator = () => {
+  return (
+    <div className="flex justify-center py-6">
+      <div className="flex gap-1">
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.4, 1, 0.4],
+            }}
+            className="h-2 w-2 rounded-full bg-primary/40"
+            key={i}
+            transition={{
+              duration: 1,
+              repeat: Number.POSITIVE_INFINITY,
+              delay: i * 0.15,
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };
