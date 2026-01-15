@@ -1,6 +1,6 @@
 import { plural, t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
 import * as Sentry from "@sentry/react";
+import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import {
   createFileRoute,

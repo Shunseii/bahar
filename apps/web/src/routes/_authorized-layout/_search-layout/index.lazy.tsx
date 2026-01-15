@@ -53,15 +53,9 @@ const Index = () => {
 
   return (
     <Page>
-      <div className="m-auto flex max-w-3xl flex-col gap-y-5">
-        {/* Dictionary Card */}
+      <div className="m-auto mb-4 max-w-3xl">
         <motion.div variants={itemVariants}>
-          <Card className="relative overflow-hidden shadow-2xl shadow-black/10 dark:shadow-black/30">
-            {/* Decorative gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02]" />
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-
-            {/* Header */}
+          <Card className="relative overflow-hidden">
             <div className="relative px-4 pt-5 pb-4 sm:px-6 sm:pt-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3">
@@ -139,7 +133,7 @@ const Index = () => {
                         <Trans>Review</Trans>
                       </span>
                       {!isPending && regularCount > 0 && (
-                        <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 font-semibold text-primary-foreground text-xs shadow-sm ltr:ml-1.5 rtl:mr-1.5">
+                        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 font-semibold text-primary-foreground text-xs shadow-sm ltr:ml-1.5 rtl:mr-1.5">
                           {formatNumber(regularCount)}
                         </span>
                       )}
@@ -153,15 +147,15 @@ const Index = () => {
             </div>
 
             {/* Divider */}
-            <div className="mx-4 h-px bg-gradient-to-r from-border/50 via-border to-border/50 sm:mx-6" />
+            <div className="mx-4 h-px bg-linear-to-r from-border/50 via-border to-border/50 sm:mx-6" />
 
-            {/* Content */}
-            <CardContent className="relative px-4 pt-4 pb-6 sm:px-6">
-              <InfiniteScroll />
-            </CardContent>
+            {/* TODO: Empty space */}
+            <div className="px-4 pt-4 pb-6 sm:px-6" />
           </Card>
         </motion.div>
       </div>
+
+      <InfiniteScroll />
 
       {/* Scroll to top button */}
       <motion.div
