@@ -22,7 +22,7 @@ export const dictionarySchema = {
   definition: "string",
   type: "enum",
   root: "string[]",
-  tags: "string[]",
+  tags: "enum[]",
   "morphology.ism.singular": "string",
   "morphology.ism.plurals": "string[]",
   "morphology.verb.past_tense": "string",

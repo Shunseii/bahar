@@ -4,9 +4,13 @@ import { Button } from "@bahar/web-ui/components/button";
 import { Card, CardContent } from "@bahar/web-ui/components/card";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { useDebounce, useMeasure, useWindowScroll } from "@uidotdev/usehooks";
-import { useAtomValue } from "jotai";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import {
+  useDebounce,
+  useMeasure,
+  useSet,
+  useWindowScroll,
+} from "@uidotdev/usehooks";
 import {
   BookOpenText,
   Check,
@@ -28,7 +32,6 @@ import {
 import { useInfiniteScroll } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { Highlight } from "./Highlight";
-import { searchQueryAtom } from "./state";
 
 const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {
   const { t } = useLingui();
@@ -115,7 +118,6 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
 
   return (
     <div className="mt-3 flex flex-col gap-3 border-border/50 border-t pt-3">
-      {/* Type and Root row */}
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <span className="rounded-md bg-primary/10 px-2 py-0.5 font-medium text-primary">
           {wordTypeLabels[document.type]}
@@ -130,7 +132,6 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
         )}
       </div>
 
-      {/* Definition */}
       {hasDefinition && (
         <div>
           <p className="mb-1 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -140,7 +141,6 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
         </div>
       )}
 
-      {/* Loading state for heavy fields */}
       {isLoading && (
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -150,7 +150,6 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
         </div>
       )}
 
-      {/* Ism Morphology */}
       {ismMorphology && (
         <div>
           <p className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -210,7 +209,6 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
         </div>
       )}
 
-      {/* Verb Morphology */}
       {verbMorphology && (
         <div>
           <p className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -288,7 +286,6 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
         </div>
       )}
 
-      {/* Examples */}
       {hasExamples && (
         <div>
           <p className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -317,7 +314,6 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
         </div>
       )}
 
-      {/* Tags */}
       {hasTags && (
         <div>
           <p className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -431,28 +427,29 @@ const WordCardContent: FC<WordCardContentProps> = memo(
  */
 const PIXEL_HEIGHT_OFFSET = 800;
 
-export const InfiniteScroll: FC = () => {
+export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
+  searchQuery,
+}) => {
+  const { tags } = useSearch({ from: "/_authorized-layout/_search-layout" });
   const navigate = useNavigate();
-  const searchQuery = useAtomValue(searchQueryAtom);
   const {
     results: { hits } = {},
     showMore,
     hasMore,
-  } = useInfiniteScroll({ term: searchQuery });
+  } = useInfiniteScroll({
+    term: searchQuery,
+    filters: { tags },
+  });
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const expandedIds = useSet<string>();
 
   const toggleExpanded = useCallback((id: string) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-      }
-      return next;
-    });
+    if (expandedIds.has(id)) {
+      expandedIds.delete(id);
+    } else {
+      expandedIds.add(id);
+    }
   }, []);
 
   const handleNavigateEdit = useCallback(

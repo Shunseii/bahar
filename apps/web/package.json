@@ -34,6 +34,7 @@
     "@tanstack/react-query": "^5.82.2",
     "@tanstack/react-query-devtools": "^5.82.2",
     "@tanstack/react-router": "^1.119.0",
+    "@tanstack/zod-adapter": "^1.150.0",
     "@tursodatabase/sync-wasm": "^0.3.2",
     "@uidotdev/usehooks": "^2.4.1",
     "better-auth": "1.4.9",

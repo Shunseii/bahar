@@ -5,11 +5,15 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
+import { useAtomValue } from "jotai";
 import { ArrowUp, BookOpen, GraduationCap, PlusIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { useDeferredValue } from "react";
+import { DictionaryFilters } from "@/components/features/dictionary/filters/DictionaryFilters";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { itemVariants, Page } from "@/components/Page";
 import { InfiniteScroll } from "@/components/search/InfiniteScroll";
+import { searchQueryAtom } from "@/components/search/state";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useSearch } from "@/hooks/useSearch";
 import {
@@ -21,6 +25,8 @@ import { settingsTable } from "@/lib/db/operations/settings";
 const Index = () => {
   const { formatNumber, formatElapsedTime } = useFormatNumber();
   const [{ y }, scrollTo] = useWindowScroll();
+  const searchQuery = useAtomValue(searchQueryAtom);
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const { results } = useSearch();
   const { height } = useWindowSize();
   const { data: flashcardSettings } = useQuery({
@@ -149,13 +155,14 @@ const Index = () => {
             {/* Divider */}
             <div className="mx-4 h-px bg-linear-to-r from-border/50 via-border to-border/50 sm:mx-6" />
 
-            {/* TODO: Empty space */}
-            <div className="px-4 pt-4 pb-6 sm:px-6" />
+            <div className="px-4 pt-4 pb-4 sm:px-6">
+              <DictionaryFilters />
+            </div>
           </Card>
         </motion.div>
       </div>
 
-      <InfiniteScroll />
+      <InfiniteScroll searchQuery={deferredSearchQuery} />
 
       {/* Scroll to top button */}
       <motion.div

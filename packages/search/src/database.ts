@@ -9,6 +9,7 @@ import {
   insertMultiple,
   type Results,
   remove,
+  type SearchParamsFullText,
   search,
   update,
 } from "@orama/orama";
@@ -97,7 +98,7 @@ export const removeDocument = (db: DictionaryOrama, id: string) => {
 type SearchableProperties = keyof typeof dictionarySchema;
 
 /**
- * Exact match fields - searched first with low tolerance
+ * Exact match fields
  */
 export const EXACT_PROPERTIES: SearchableProperties[] = [
   "word_exact",
@@ -109,13 +110,12 @@ export const EXACT_PROPERTIES: SearchableProperties[] = [
 ];
 
 /**
- * Normalized fields - searched with higher tolerance for fuzzy matching
+ * Normalized fields
  */
 export const NORMALIZED_PROPERTIES: SearchableProperties[] = [
   "word",
   "translation",
   "definition",
-  "tags",
   "morphology.ism.plurals",
   "morphology.ism.singular",
   "morphology.verb.masadir",
@@ -138,6 +138,15 @@ export const NORMALIZED_BOOST = {
 
 export type SearchLanguage = "arabic" | "english";
 
+export type SearchDictionaryOptions = {
+  limit?: number;
+  offset?: number;
+  properties?: SearchableProperties[];
+  language?: SearchLanguage;
+  where?: SearchParamsFullText<DictionaryOrama>["where"];
+  sortBy?: SearchParamsFullText<DictionaryOrama>["sortBy"];
+};
+
 /**
  * Searches the Orama database using two-pass search for better relevance:
  * 1. First pass: exact fields with low tolerance (precise matching)
@@ -147,12 +156,7 @@ export type SearchLanguage = "arabic" | "english";
 export const searchDictionary = (
   db: DictionaryOrama,
   term: string,
-  options?: {
-    limit?: number;
-    offset?: number;
-    properties?: SearchableProperties[];
-    language?: SearchLanguage;
-  }
+  options?: SearchDictionaryOptions
 ) => {
   const limit = options?.limit ?? 10;
   const offset = options?.offset ?? 0;
@@ -165,6 +169,8 @@ export const searchDictionary = (
         term,
         limit,
         offset,
+        where: options?.where,
+        sortBy: options?.sortBy,
       },
       language
     );
@@ -185,6 +191,8 @@ export const searchDictionary = (
       limit: fetchLimit,
       properties: EXACT_PROPERTIES,
       tolerance: exactTolerance,
+      where: options?.where,
+      sortBy: options?.sortBy,
     },
     language
   ) as SearchResults;
@@ -200,6 +208,8 @@ export const searchDictionary = (
       properties: NORMALIZED_PROPERTIES,
       boost: NORMALIZED_BOOST,
       tolerance: fuzzyTolerance,
+      where: options?.where,
+      sortBy: options?.sortBy,
     },
     language
   ) as SearchResults;
