@@ -10,6 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
 import { detectLanguage } from "@/lib/utils";
 
+export const SORT_OPTIONS = ["relevance", "updatedAt", "createdAt"] as const;
 const SEARCH_RESULTS_PER_PAGE = 20;
 
 const searchResultsMetadataAtom = atom<
@@ -124,7 +125,7 @@ export const useInfiniteScroll = (
     filters?: {
       tags?: string[];
     };
-    sortBy?: SearchDictionaryOptions["sortBy"];
+    sort?: (typeof SORT_OPTIONS)[number];
   } = {}
 ) => {
   const { search } = useSearch();
@@ -145,6 +146,18 @@ export const useInfiniteScroll = (
 
     return {
       tags: { containsAll: params.filters.tags },
+    };
+  }, [paramsKey]);
+
+  const sortBy = useMemo<SearchDictionaryOptions["sortBy"]>(() => {
+    if (!params.sort || params.sort === "relevance") return undefined;
+
+    return {
+      property:
+        params.sort === "createdAt"
+          ? "created_at_timestamp_ms"
+          : "updated_at_timestamp_ms",
+      order: "DESC",
     };
   }, [paramsKey]);
 
@@ -172,7 +185,7 @@ export const useInfiniteScroll = (
     const { hits } = search(
       {
         offset,
-        sortBy: params.sortBy,
+        sortBy,
         term: params.term,
         where: whereFilter,
       },
@@ -189,7 +202,7 @@ export const useInfiniteScroll = (
   useEffect(() => {
     const { hits, ...metadata } = search(
       {
-        sortBy: params.sortBy,
+        sortBy,
         term: params.term,
         where: whereFilter,
         offset: 0,

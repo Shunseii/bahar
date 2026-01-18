@@ -7,7 +7,7 @@ import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";
 import { getOramaDb, toOramaDocument } from "@/lib/search";
-import { useSearch } from "../useSearch";
+import { useSearch } from "../search/useSearch";
 
 /**
  *  Hook for adding a new word to the local database and the search index.

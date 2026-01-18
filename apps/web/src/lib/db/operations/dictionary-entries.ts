@@ -50,7 +50,7 @@ export const dictionaryEntriesTable = {
   },
   tags: {
     query: async (
-      searchTerm: string
+      searchTerm?: string
     ): Promise<{ tag: string; count: number }[]> => {
       try {
         const db = await ensureDb();

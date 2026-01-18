@@ -2,6 +2,7 @@ import { cn } from "@bahar/design-system";
 import { useDebounce } from "@uidotdev/usehooks";
 import { Check, ChevronDown, X } from "lucide-react";
 import {
+  type FC,
   type KeyboardEvent,
   type ReactNode,
   startTransition,
@@ -10,6 +11,46 @@ import {
   useRef,
   useState,
 } from "react";
+
+export const TagPill: FC<{
+  disabled?: boolean;
+  onClick?: () => void;
+  tagValue: string;
+}> = ({ tagValue, disabled, onClick }) => {
+  return (
+    <button
+      className="inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent py-1 pr-1.5 pl-2.5 text-sm active:bg-muted/50"
+      disabled={disabled}
+      key={tagValue}
+      onClick={(e) => {
+        e.stopPropagation();
+        // On touch devices (mobile), clicking anywhere on the pill removes it
+        if (window.matchMedia("(pointer: coarse)").matches) {
+          onClick?.();
+        }
+      }}
+      type="button"
+    >
+      <span className="truncate">{tagValue}</span>
+      <button
+        className="size-4 shrink-0 cursor-pointer rounded-sm opacity-70 transition-opacity hover:opacity-100"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick?.();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.stopPropagation();
+            onClick?.();
+          }
+        }}
+        type="button"
+      >
+        <X className="size-3.5" />
+      </button>
+    </button>
+  );
+};
 
 export interface TagsComboboxProps<T> {
   /** Selected tag values */
@@ -210,7 +251,6 @@ export function TagsCombobox<T>({
 
   return (
     <div className={cn("relative", className)} ref={containerRef}>
-      {/* Anchor - Tags + Input */}
       <div
         className={cn(
           "relative flex min-h-10 w-full flex-row flex-wrap items-center gap-1.5 rounded-md border border-input bg-background py-2 text-sm shadow-xs",
@@ -225,36 +265,14 @@ export function TagsCombobox<T>({
         }}
       >
         {value.map((tagValue) => (
-          <button
-            className="inline-flex max-w-[calc(100%-8px)] cursor-pointer items-center gap-1.5 rounded border bg-transparent py-1 pr-1.5 pl-2.5 text-sm active:bg-muted/50"
+          <TagPill
             disabled={disabled}
             key={tagValue}
-            onClick={(e) => {
-              e.stopPropagation();
-              // On touch devices (mobile), clicking anywhere on the pill removes it
-              if (window.matchMedia("(pointer: coarse)").matches) {
-                removeTag(tagValue);
-              }
+            onClick={() => {
+              removeTag(tagValue);
             }}
-            type="button"
-          >
-            <span className="truncate">{tagValue}</span>
-            <span
-              className="size-4 shrink-0 rounded-sm opacity-70 transition-opacity hover:opacity-100"
-              onClick={(e) => {
-                e.stopPropagation();
-                removeTag(tagValue);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.stopPropagation();
-                  removeTag(tagValue);
-                }
-              }}
-            >
-              <X className="size-3.5" />
-            </span>
-          </button>
+            tagValue={tagValue}
+          />
         ))}
 
         <input

@@ -29,7 +29,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useInfiniteScroll } from "@/hooks/useSearch";
+import { useInfiniteScroll } from "@/hooks/search/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { Highlight } from "./Highlight";
 
@@ -430,7 +430,9 @@ const PIXEL_HEIGHT_OFFSET = 800;
 export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   searchQuery,
 }) => {
-  const { tags } = useSearch({ from: "/_authorized-layout/_search-layout" });
+  const { tags, sort } = useSearch({
+    from: "/_authorized-layout/_search-layout",
+  });
   const navigate = useNavigate();
   const {
     results: { hits } = {},
@@ -439,6 +441,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   } = useInfiniteScroll({
     term: searchQuery,
     filters: { tags },
+    sort,
   });
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();

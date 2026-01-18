@@ -4,7 +4,7 @@
 
 import { tokenizer as defaultTokenizer } from "@orama/orama/components";
 import { stemmer as arabicStemmer } from "@orama/stemmers/arabic";
-import { normalizeArabicForSearch, stripArabicDiacritics } from "./arabic";
+import { normalizeArabicForSearch } from "./arabic";
 
 export type OramaLanguage = "arabic" | "english";
 
@@ -46,18 +46,6 @@ export const englishTokenizer = defaultTokenizer.createTokenizer({
 const ENGLISH_PROPS = ["translation"];
 
 /**
- * Properties that should use exact Arabic tokenization (no normalization beyond diacritics)
- */
-const EXACT_PROPS = [
-  "word_exact",
-  "morphology.ism.singular_exact",
-  "morphology.ism.plurals_exact",
-  "morphology.verb.past_tense_exact",
-  "morphology.verb.present_tense_exact",
-  "morphology.verb.masadir_exact",
-];
-
-/**
  * Multi-language tokenizer that delegates to Arabic or English tokenizers
  * based on the property name and language parameter.
  *
@@ -69,11 +57,6 @@ export const multiLanguageTokenizer = {
   normalizationCache: new Map<string, string>(),
 
   tokenize(raw: string, language: string, prop?: string): string[] {
-    if (prop && EXACT_PROPS.includes(prop)) {
-      const diacriticsStripped = stripArabicDiacritics(raw);
-      return arabicExactTokenizer.tokenize(diacriticsStripped, "arabic", prop);
-    }
-
     if (prop && ENGLISH_PROPS.includes(prop)) {
       return englishTokenizer.tokenize(raw, "english", prop);
     }

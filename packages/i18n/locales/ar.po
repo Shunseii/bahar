@@ -13,6 +13,11 @@ msgstr ""
 "Plural-Forms: \n"
 "X-Generator: Poedit 3.4.4\n"
 
+#. placeholder {0}: filteredTags.length
+#: ../../apps/web/src/components/features/dictionary/filters/TagsFilter.tsx:45
+msgid "{0, plural, one {# tag selected} other {# tags selected}}"
+msgstr "{0, plural, one {علامة واحدة محددة} two {علامتان محددتان} few {# علامات محددة} many {# علامة محددة} other {# علامة محددة}}"
+
 #. placeholder {0}: cards.length
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:333
 msgid "{0, plural, one {card left} other {cards left}}"
@@ -110,7 +115,7 @@ msgstr "أضف كلمة جديدة إلى معجمك"
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:137
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:138
 msgid "Add a tag and press enter"
-msgstr "أضف وسمًا واضغط Enter"
+msgstr "أضف علامة واضغط Enter"
 
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:82
 msgid "Add all"
@@ -158,7 +163,7 @@ msgstr "أضف صيغة جمع"
 msgid "Add Plural"
 msgstr "أضف جمع"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:509
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:518
 msgid "Add some to get started!"
 msgstr "أضف شيئًا لتبدأ!"
 
@@ -172,7 +177,7 @@ msgstr "أضف علامة {inputValue}"
 
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:60
 msgid "Add tag {value}"
-msgstr "إضافة الوسم {value}"
+msgstr "إضافة العلامة {value}"
 
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:48
 msgid "Add tags to your word."
@@ -207,7 +212,7 @@ msgstr "تعريف عربية للكلمة."
 msgid "An English translation of the sentence."
 msgstr "ترجمة إنجليزية للجملة."
 
-#: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:72
+#: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:77
 msgid "An English translation of the word."
 msgstr "ترجمة إنجليزية للكلمة."
 
@@ -287,7 +292,7 @@ msgstr "الكلمة بالعربية"
 msgid "Are you sure you want to delete \"{0}\"?"
 msgstr "هل أنت متأكد من حذف \"{0}\"؟"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:135
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:140
 msgid "Are you sure you want to delete this word? It will be removed from your dictionary and its flashcards will be deleted.<0/><1/><2>This action cannot be undone.</2>"
 msgstr "هل أنت متأكد أنك تريد حذف هذه الكلمة؟ سيتم إزالتها من معجمك وسيتم حذف البطاقات بها.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
 
@@ -299,16 +304,16 @@ msgstr "هل أنت متأكد من حذف هذه الكلمة؟ لا يمكن �
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذف جميع كلماتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. صدر معجمك قبل حذفه من فضلك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:83
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:88
 msgid "Are you sure you want to reset this flashcard's progress? The word entry in the dictionary will not be modified, but its corresponding flashcards will be treated as new ones.<0/><1/><2>This action cannot be undone.</2>"
 msgstr "هل أنت متأكد أنك تريد إعادة تعيين تقدم بطاقة هذه؟ لن يتم تعديل إدخال الكلمة في المعجم، ولكن سيتم التعامل مع بطاقات بها على أنها بطاقات جديدة.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:209
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:216
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:74
 msgid "Back"
 msgstr "رجوع"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:187
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:188
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
@@ -381,6 +386,10 @@ msgstr "اختر ملف"
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:255
 msgid "Clear"
 msgstr "امسح"
+
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:153
+msgid "Clear all filters"
+msgstr "مسح كل المرشّحات"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:242
 msgid "Clear backlog"
@@ -515,7 +524,7 @@ msgstr "تتيح لك المجموعات إنشاء مجموعات فرعية م
 msgid "Default"
 msgstr "افتراضي"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:115
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:138
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:81
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:117
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:444
@@ -525,8 +534,8 @@ msgstr "التعريف"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:466
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:489
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:124
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:156
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:129
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:161
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:207
 #: ../../apps/mobile/src/app/(search)/decks.tsx:285
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:393
@@ -549,7 +558,7 @@ msgstr "حذف المعجم"
 msgid "Delete Everything"
 msgstr "حذف كل شيء"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:131
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:136
 msgid "Delete this word?"
 msgstr "حذف هذه الكلمة؟"
 
@@ -599,7 +608,7 @@ msgstr "اغلق"
 msgid "Don't show"
 msgstr "لا تعرض"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:154
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:175
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:84
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:146
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:633
@@ -612,7 +621,7 @@ msgstr "المثنى"
 msgid "e.g. ك ت ب"
 msgstr "مثال: ك ت ب"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:64
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:62
 msgid "Easy"
 msgstr "سهل"
 
@@ -620,7 +629,7 @@ msgstr "سهل"
 msgid "Edit"
 msgstr "عدَل"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:183
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:188
 msgid "Edit {word}"
 msgstr "حرّر {word}"
 
@@ -693,7 +702,7 @@ msgstr "المثال {0}"
 msgid "Example usages of the word in different contexts."
 msgstr "استخدامات مثالية للكلمة في سياقات مختلفة."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:273
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:292
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:154
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:262
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:490
@@ -726,7 +735,7 @@ msgstr "تصدير معجمك"
 msgid "Exporting dictionary with flaschards will save your flashcard progress along with all the content in your dictionary. Use this option if you want to make a backup of your data.<0/><1/>Exporting your dictionary without flashcards will not save any flashcard progress. Use this option if you want to share your dictionary.<2/><3/><4>Warning</4>: Importing your file without flashcards will reset all of your flashcards."
 msgstr "تصدير المعجم مع البطاقات سيحفظ تقدم البطاقات بالإضافة إلى كل المحتوى في معجمك. استخدم هذا الخيار إذا كنت ترغب في إنشاء نسخة احتياطية من بياناتك.<0/><1/>تصدير المعجم بدون البطاقات لن يحفظ أي تقدم للبطاقات. استخدم هذا الخيار إذا كنت ترغب في مشاركة معجمك.<2/><3/><4>تحذير</4>: استيراد ملفك بدون البطاقات سيؤدي إلى إعادة تعيين جميع البطاقات."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:31
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:42
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:17
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:136
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:69
@@ -794,7 +803,7 @@ msgstr "فشل في تحديث إعدادات البطاقة."
 msgid "Failed to update settings"
 msgstr "فشل تحديث الإعدادات"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:324
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:330
 msgid "Failed to update the word!"
 msgstr "فشل في تحديث الكلمة!"
 
@@ -807,7 +816,7 @@ msgstr "فشل تحديث الكلمة"
 msgid "Failed to upload migration"
 msgstr "فشل تحميل الترحيل"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:39
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:50
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:230
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:46
 msgid "Feminine"
@@ -818,6 +827,14 @@ msgstr "مؤنّث"
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:65
 msgid "Fi'l"
 msgstr "فعل"
+
+#: ../../apps/web/src/components/features/dictionary/filters/TagsFilter.tsx:51
+msgid "Filter by tags..."
+msgstr "رشّح حسب العلامات..."
+
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:51
+msgid "Filters"
+msgstr "الترشيح"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:123
 msgid "Flashcard settings updated!"
@@ -840,14 +857,14 @@ msgstr "يتبع إعدادات النظام"
 msgid "For example, the word"
 msgstr "مثلا الكلمة"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:240
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:260
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:232
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:803
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:913
 msgid "Form"
 msgstr "الوزن"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:180
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:201
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:211
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:172
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:700
@@ -865,7 +882,7 @@ msgstr "GitHub"
 msgid "Go back"
 msgstr "ارجع"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:55
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:53
 msgid "Good"
 msgstr "حسن"
 
@@ -878,7 +895,7 @@ msgstr "أحسنت في المتراكمات! لا يزال لديك {0} مرا�
 msgid "Great work! Come back later for more reviews."
 msgstr "عمل رائع! عد لاحقًا لمزيد من المراجعات."
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:45
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:44
 msgid "Hard"
 msgstr "صعب"
 
@@ -908,7 +925,7 @@ msgstr "إخفاء التفاصيل"
 msgid "Hint"
 msgstr "تلميح"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:174
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:179
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:39
 #: ../../apps/web/src/components/MobileHeader.tsx:154
 #: ../../apps/web/src/components/DesktopNavigation.tsx:53
@@ -943,7 +960,7 @@ msgstr "إذا لزم الأمر."
 msgid "If you're experiencing sync issues or data not loading correctly, you can reset your local data and re-sync from the server."
 msgstr "إذا كنت تواجه مشاكل في المزامنة أو عدم تحميل البيانات بشكل صحيح، يمكنك إعادة تعيين بياناتك المحلية وإعادة المزامنة من الخادم."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:227
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:247
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:103
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:219
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:786
@@ -1019,7 +1036,7 @@ msgstr "اللغة"
 msgid "Light"
 msgstr "فاتح"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:126
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:148
 msgid "Loading details..."
 msgstr "جارٍ تحميل التفاصيل..."
 
@@ -1059,7 +1076,7 @@ msgstr "إدارة معجمك."
 msgid "Masadir"
 msgstr "مصادر"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:38
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:49
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:227
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:45
 msgid "Masculine"
@@ -1096,8 +1113,8 @@ msgstr "تم تسجيل الترحيل بنجاح."
 #~ msgid "More than {0} cards to review"
 #~ msgstr "أكثر من {0} بطاقة للمراجعة"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:135
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:195
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:156
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:215
 #: ../../apps/web/src/components/features/dictionary/add/MorphologyFormSection.tsx:52
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:127
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:187
@@ -1137,16 +1154,20 @@ msgstr "لا توجد مجموعات بعد"
 msgid "No file chosen"
 msgstr "لم يتم اختيار ملف"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:486
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:495
 #: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:55
 msgid "No results found"
 msgstr "لم يتم العثور على نتائج"
+
+#: ../../apps/web/src/components/features/dictionary/filters/TagsFilter.tsx:63
+msgid "No tags found."
+msgstr "لم يتم العثور على علامات."
 
 #: ../../apps/web/src/components/ThemeMenu.tsx:87
 msgid "Nord"
 msgstr "نورد"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:28
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:39
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:11
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:35
 msgid "Noun"
@@ -1162,7 +1183,7 @@ msgstr "صرف الاسم"
 msgid "Or continue with"
 msgstr "أو استمر مع"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:30
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:41
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:37
 msgid "Particle"
 msgstr "حرف"
@@ -1176,7 +1197,7 @@ msgstr "اسم مفعول"
 msgid "Passive Participle"
 msgstr "اسم مفعول"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:201
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:221
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:193
 msgid "Past"
 msgstr "الماضي"
@@ -1217,7 +1238,7 @@ msgstr "حاول مرة أخرى أو أعد تحميل الصفحة."
 msgid "Please try again."
 msgstr "حاول مرّة أخرى."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:167
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:188
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:159
 msgid "Plural"
 msgstr "الجمع"
@@ -1253,7 +1274,7 @@ msgstr "حروف الجر"
 msgid "Prepositions (huroof) that can be used with the verb to change its meaning."
 msgstr "الحروف التي يمكن استخدامها مع الفعل لتغيير معناه."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:214
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:234
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:206
 msgid "Present"
 msgstr "المضارع"
@@ -1267,9 +1288,21 @@ msgstr "المضارع"
 msgid "Present Tense"
 msgstr "المضارع"
 
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:26
+msgid "Recently added"
+msgstr "المضافة حديثًا"
+
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:24
+msgid "Recently updated"
+msgstr "المحدّثة حديثًا"
+
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:68
 msgid "Recently used"
 msgstr "المستخدمة مؤخرًا"
+
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:22
+msgid "Relevance"
+msgstr "الصلة"
 
 #: ../../apps/web/src/components/errors/ErrorMessage.tsx:142
 msgid "Reload"
@@ -1295,12 +1328,12 @@ msgstr "أعد جدولة جميع البطاقات المتراكمة بتقي�
 msgid "Reset and re-sync"
 msgstr "إعادة التعيين والمزامنة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:72
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:106
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:77
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:111
 msgid "Reset flashcard"
 msgstr "أعد البطاقة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:79
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:84
 msgid "Reset flashcard progress?"
 msgstr "إعادة تعيين تقدم البطاقة؟"
 
@@ -1352,8 +1385,8 @@ msgstr "الجذر"
 msgid "Root Letters"
 msgstr "الحروف الأصلية"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:350
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:379
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:356
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:385
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:199
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:226
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:232
@@ -1378,6 +1411,10 @@ msgstr "ترحيلات المخطط"
 #: ../../apps/web/src/components/Autocomplete.tsx:93
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:58
 msgid "Search for a tag..."
+msgstr "ابحث عن علامة..."
+
+#: ../../apps/web/src/components/features/dictionary/filters/TagsFilter.tsx:59
+msgid "Search tag..."
 msgstr "ابحث عن علامة..."
 
 #: ../../apps/web/src/components/search/SearchInput.tsx:63
@@ -1455,7 +1492,7 @@ msgstr "اعرض بطاقات من الإنجليزية إلى العربية."
 msgid "Show reverse flashcards"
 msgstr "إظهار البطاقات العكسية"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:141
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:162
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:60
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:133
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:616
@@ -1470,6 +1507,10 @@ msgstr "تعذر تحميل بعض إدخالات المعجم"
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:232
 msgid "Something went wrong"
 msgstr "حدث خطأ ما"
+
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:104
+msgid "Sort by"
+msgstr "ترتيب حسب"
 
 #: ../../apps/web/src/components/features/settings/AdminSettingsCardSection.tsx:100
 msgid "SQL Script"
@@ -1499,11 +1540,11 @@ msgstr "تم التصدير بنجاح!"
 msgid "Successfully imported!"
 msgstr "تم الاستيراد بنجاح!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:101
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:106
 msgid "Successfully reset the flashcard."
 msgstr "تمت إعادة تعيين البطاقة بنجاح."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:316
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:322
 msgid "Successfully updated the word!"
 msgstr "حدثت الكلمة بنجاح!"
 
@@ -1517,7 +1558,8 @@ msgstr "حدثت الكلمة بنجاح!"
 msgid "System"
 msgstr "نظام"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:302
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:320
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:60
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:291
@@ -1582,7 +1624,7 @@ msgstr "الحروف الجذرية للكلمة. يمكن فصل المدخلا
 msgid "The word has been added to your dictionary."
 msgstr "تمت إضافة الكلمة إلى معجمك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:317
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:323
 msgid "The word has been updated."
 msgstr "حدثت الكلمة."
 
@@ -1634,7 +1676,7 @@ msgstr "حدث خطأ أثناء تحديث المجموعة"
 msgid "There was an error updating your flashcard settings."
 msgstr "حدث خطأ أثناء تحديث إعدادات بطاقاتك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:325
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:331
 msgid "There was an error updating your word. Please try again."
 msgstr "حدث خطأ أثناء تحديث كلمتك. حاول مرة أخرى."
 
@@ -1721,7 +1763,7 @@ msgstr "معرب"
 #~ msgid "Troubleshooting"
 #~ msgstr "استكشاف الأخطاء"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:489
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:498
 #: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:58
 msgid "Try a different search term"
 msgstr "جرب مصطلح بحث مختلف"
@@ -1759,7 +1801,7 @@ msgstr "يجب أن تكون القيمة {0} أو أكبر"
 msgid "Value must be {0} or less"
 msgstr "يجب أن تكون القيمة {0} أو أقل"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:29
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:40
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:13
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:36
 msgid "Verb"
@@ -1778,7 +1820,7 @@ msgstr "صرف الفعل"
 msgid "Verbal noun forms (masadir) of the verb."
 msgstr "مصادر للفعل."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:255
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:275
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:244
 msgid "Verbal nouns"
 msgstr "المصادر"
@@ -1852,7 +1894,7 @@ msgstr "لديك {0} بطاقات متراكمة عندما تكون جاهزً�
 msgid "You have no decks yet."
 msgstr "ليس لديك أي مجموعات بعد."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:506
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:515
 msgid "You have no words in your dictionary yet."
 msgstr "ليس لديك أي كلمات في قاموسك بعد."
 

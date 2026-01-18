@@ -14,8 +14,8 @@ import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawe
 import { itemVariants, Page } from "@/components/Page";
 import { InfiniteScroll } from "@/components/search/InfiniteScroll";
 import { searchQueryAtom } from "@/components/search/state";
+import { useSearch } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { useSearch } from "@/hooks/useSearch";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
@@ -153,7 +153,7 @@ const Index = () => {
             </div>
 
             {/* Divider */}
-            <div className="mx-4 h-px bg-linear-to-r from-border/50 via-border to-border/50 sm:mx-6" />
+            {/*<div className="mx-4 h-px bg-linear-to-r from-border/50 via-border to-border/50 sm:mx-6" />*/}
 
             <div className="px-4 pt-4 pb-4 sm:px-6">
               <DictionaryFilters />

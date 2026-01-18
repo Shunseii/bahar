@@ -31,7 +31,7 @@ import { InputFile } from "@/components/InputFile";
 import { LanguageMenu } from "@/components/LanguageMenu";
 import { Page } from "@/components/Page";
 import { ColorThemeMenu, ThemeMenu } from "@/components/ThemeMenu";
-import { useSearch } from "@/hooks/useSearch";
+import { useSearch } from "@/hooks/search/useSearch";
 import { authClient } from "@/lib/auth-client";
 import { deleteLocalDatabase, ensureDb } from "@/lib/db";
 import { transformForExport } from "@/lib/db/export";

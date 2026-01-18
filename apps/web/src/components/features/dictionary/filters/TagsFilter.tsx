@@ -28,7 +28,7 @@ export const TagsFilter = () => {
   });
   const navigate = useNavigate();
   const { data: tags } = useQuery({
-    queryFn: () => dictionaryEntriesTable.tags.query(""),
+    queryFn: () => dictionaryEntriesTable.tags.query(),
     queryKey: [...dictionaryEntriesTable.tags.cacheOptions.queryKey],
   });
 
@@ -37,7 +37,7 @@ export const TagsFilter = () => {
       <PopoverTrigger asChild>
         <Button
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-max min-w-[200px] justify-between"
           role="combobox"
           variant="outline"
         >
@@ -54,7 +54,7 @@ export const TagsFilter = () => {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-max min-w-[200px] p-0">
         <Command>
           <CommandInput placeholder={t`Search tag...`} />
 
@@ -71,10 +71,12 @@ export const TagsFilter = () => {
                     const shouldRemove = filteredTags?.some((t) => t === tag);
 
                     if (shouldRemove) {
+                      const newTags = filteredTags?.filter((t) => t !== tag);
+
                       navigate({
                         to: "/",
                         search: {
-                          tags: filteredTags?.filter((t) => t !== tag),
+                          tags: newTags?.length ? newTags : undefined,
                         },
                       });
                     } else {
