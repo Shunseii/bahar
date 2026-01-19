@@ -163,7 +163,7 @@ msgstr "أضف صيغة جمع"
 msgid "Add Plural"
 msgstr "أضف جمع"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:518
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:515
 msgid "Add some to get started!"
 msgstr "أضف شيئًا لتبدأ!"
 
@@ -387,7 +387,7 @@ msgstr "اختر ملف"
 msgid "Clear"
 msgstr "امسح"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:153
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:191
 msgid "Clear all filters"
 msgstr "مسح كل المرشّحات"
 
@@ -832,7 +832,7 @@ msgstr "فعل"
 msgid "Filter by tags..."
 msgstr "رشّح حسب العلامات..."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:51
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:88
 msgid "Filters"
 msgstr "الترشيح"
 
@@ -920,6 +920,10 @@ msgstr "مخفي"
 #: ../../apps/web/src/components/errors/ErrorMessage.tsx:83
 msgid "Hide details"
 msgstr "إخفاء التفاصيل"
+
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:202
+msgid "Hide filters"
+msgstr "إخفاء المرشحات"
 
 #: ../../apps/mobile/src/app/(search)/settings.tsx:151
 msgid "Hint"
@@ -1154,7 +1158,7 @@ msgstr "لا توجد مجموعات بعد"
 msgid "No file chosen"
 msgstr "لم يتم اختيار ملف"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:495
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:492
 #: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:55
 msgid "No results found"
 msgstr "لم يتم العثور على نتائج"
@@ -1288,11 +1292,11 @@ msgstr "المضارع"
 msgid "Present Tense"
 msgstr "المضارع"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:26
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:33
 msgid "Recently added"
 msgstr "المضافة حديثًا"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:24
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:31
 msgid "Recently updated"
 msgstr "المحدّثة حديثًا"
 
@@ -1300,7 +1304,7 @@ msgstr "المحدّثة حديثًا"
 msgid "Recently used"
 msgstr "المستخدمة مؤخرًا"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:22
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:29
 msgid "Relevance"
 msgstr "الصلة"
 
@@ -1488,6 +1492,10 @@ msgstr "عرض التفاصيل"
 msgid "Show English to Arabic flashcards."
 msgstr "اعرض بطاقات من الإنجليزية إلى العربية."
 
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:71
+msgid "Show filters"
+msgstr "عرض المرشحات"
+
 #: ../../apps/mobile/src/app/(search)/settings.tsx:195
 msgid "Show reverse flashcards"
 msgstr "إظهار البطاقات العكسية"
@@ -1508,7 +1516,7 @@ msgstr "تعذر تحميل بعض إدخالات المعجم"
 msgid "Something went wrong"
 msgstr "حدث خطأ ما"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:104
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:141
 msgid "Sort by"
 msgstr "ترتيب حسب"
 
@@ -1559,7 +1567,7 @@ msgid "System"
 msgstr "نظام"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:320
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:60
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:97
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:291
@@ -1763,7 +1771,7 @@ msgstr "معرب"
 #~ msgid "Troubleshooting"
 #~ msgstr "استكشاف الأخطاء"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:498
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:495
 #: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:58
 msgid "Try a different search term"
 msgstr "جرب مصطلح بحث مختلف"
@@ -1894,7 +1902,7 @@ msgstr "لديك {0} بطاقات متراكمة عندما تكون جاهزً�
 msgid "You have no decks yet."
 msgstr "ليس لديك أي مجموعات بعد."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:515
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:512
 msgid "You have no words in your dictionary yet."
 msgstr "ليس لديك أي كلمات في قاموسك بعد."
 

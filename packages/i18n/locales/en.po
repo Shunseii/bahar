@@ -163,7 +163,7 @@ msgstr "Add plural"
 msgid "Add Plural"
 msgstr "Add Plural"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:518
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:515
 msgid "Add some to get started!"
 msgstr "Add some to get started!"
 
@@ -387,7 +387,7 @@ msgstr "Choose file"
 msgid "Clear"
 msgstr "Clear"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:153
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:191
 msgid "Clear all filters"
 msgstr "Clear all filters"
 
@@ -832,7 +832,7 @@ msgstr "Fi'l"
 msgid "Filter by tags..."
 msgstr "Filter by tags..."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:51
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:88
 msgid "Filters"
 msgstr "Filters"
 
@@ -920,6 +920,10 @@ msgstr "Hidden"
 #: ../../apps/web/src/components/errors/ErrorMessage.tsx:83
 msgid "Hide details"
 msgstr "Hide details"
+
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:202
+msgid "Hide filters"
+msgstr "Hide filters"
 
 #: ../../apps/mobile/src/app/(search)/settings.tsx:151
 msgid "Hint"
@@ -1154,7 +1158,7 @@ msgstr "No decks yet"
 msgid "No file chosen"
 msgstr "No file chosen"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:495
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:492
 #: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:55
 msgid "No results found"
 msgstr "No results found"
@@ -1288,11 +1292,11 @@ msgstr "Present tense"
 msgid "Present Tense"
 msgstr "Present Tense"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:26
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:33
 msgid "Recently added"
 msgstr "Recently added"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:24
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:31
 msgid "Recently updated"
 msgstr "Recently updated"
 
@@ -1300,7 +1304,7 @@ msgstr "Recently updated"
 msgid "Recently used"
 msgstr "Recently used"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:22
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:29
 msgid "Relevance"
 msgstr "Relevance"
 
@@ -1488,6 +1492,10 @@ msgstr "Show details"
 msgid "Show English to Arabic flashcards."
 msgstr "Show English to Arabic flashcards."
 
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:71
+msgid "Show filters"
+msgstr "Show filters"
+
 #: ../../apps/mobile/src/app/(search)/settings.tsx:195
 msgid "Show reverse flashcards"
 msgstr "Show reverse flashcards"
@@ -1508,7 +1516,7 @@ msgstr "Some dictionary entries couldn't be loaded"
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:104
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:141
 msgid "Sort by"
 msgstr "Sort by"
 
@@ -1559,7 +1567,7 @@ msgid "System"
 msgstr "System"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:320
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:60
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:97
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:291
@@ -1763,7 +1771,7 @@ msgstr "Triptote"
 #~ msgid "Troubleshooting"
 #~ msgstr "Troubleshooting"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:498
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:495
 #: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:58
 msgid "Try a different search term"
 msgstr "Try a different search term"
@@ -1894,7 +1902,7 @@ msgstr "You have {0} cards in your backlog when you're ready."
 msgid "You have no decks yet."
 msgstr "You have no decks yet."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:515
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:512
 msgid "You have no words in your dictionary yet."
 msgstr "You have no words in your dictionary yet."
 
