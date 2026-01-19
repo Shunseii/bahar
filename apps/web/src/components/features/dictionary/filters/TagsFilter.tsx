@@ -75,16 +75,18 @@ export const TagsFilter = () => {
 
                       navigate({
                         to: "/",
-                        search: {
+                        search: (prev) => ({
+                          ...prev,
                           tags: newTags?.length ? newTags : undefined,
-                        },
+                        }),
                       });
                     } else {
                       navigate({
                         to: "/",
-                        search: {
+                        search: (prev) => ({
+                          ...prev,
                           tags: [...(filteredTags ?? []), tag],
-                        },
+                        }),
                       });
                     }
                   }}

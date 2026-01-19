@@ -11,6 +11,7 @@ import { Separator } from "@bahar/web-ui/components/separator";
 import { Trans } from "@lingui/react/macro";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { ArrowDownUp, FunnelXIcon, SlidersHorizontal } from "lucide-react";
+import { useMemo } from "react";
 import { TagsFilter } from "@/components/features/dictionary/filters/TagsFilter";
 import { TagPill } from "@/components/TagsCombobox";
 
@@ -35,7 +36,12 @@ export const DictionaryFilters = () => {
     from: "/_authorized-layout/_search-layout",
   });
 
-  const hasActiveFilters = !!filteredTags?.length && filteredTags.length > 0;
+  const hasActiveFilters = useMemo(() => {
+    const hasTagsFilter = !!filteredTags?.length && filteredTags.length > 0;
+    const hasSortFilter = sort !== undefined && sort !== "relevance";
+
+    return hasTagsFilter || hasSortFilter;
+  }, [filteredTags, sort]);
 
   const clearAllFilters = () => {
     navigate({ to: "/" });
@@ -75,18 +81,18 @@ export const DictionaryFilters = () => {
 
                       navigate({
                         to: "/",
-                        search: {
+                        search: (prev) => ({
+                          ...prev,
                           tags: newTags?.length ? newTags : undefined,
-                          sort,
-                        },
+                        }),
                       });
                     } else {
                       navigate({
                         to: "/",
-                        search: {
+                        search: (prev) => ({
+                          ...prev,
                           tags: [...(filteredTags ?? []), tag],
-                          sort,
-                        },
+                        }),
                       });
                     }
                   }}
@@ -113,10 +119,10 @@ export const DictionaryFilters = () => {
             onValueChange={(value: SortOption) => {
               navigate({
                 to: "/",
-                search: {
-                  tags: filteredTags?.length ? filteredTags : undefined,
+                search: (prev) => ({
+                  ...prev,
                   sort: value === "relevance" ? undefined : value,
-                },
+                }),
               });
             }}
             value={sort ?? "relevance"}
