@@ -152,9 +152,6 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Divider */}
-            {/*<div className="mx-4 h-px bg-linear-to-r from-border/50 via-border to-border/50 sm:mx-6" />*/}
-
             <div className="px-4 pt-4 pb-4 sm:px-6">
               <DictionaryFilters />
             </div>
