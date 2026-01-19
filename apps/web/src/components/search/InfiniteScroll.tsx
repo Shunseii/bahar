@@ -366,10 +366,7 @@ const WordCardContent: FC<WordCardContentProps> = memo(
       >
         <CardContent className="flex flex-col gap-y-2">
           <div className="flex items-start justify-between">
-            <h2
-              className="font-semibold text-3xl transition-colors duration-200 sm:text-3xl rtl:text-right"
-              dir="rtl"
-            >
+            <h2 className="font-semibold text-3xl transition-colors duration-200 sm:text-3xl">
               <Highlight text={document.word} />
             </h2>
 
@@ -391,7 +388,7 @@ const WordCardContent: FC<WordCardContentProps> = memo(
             </div>
           </div>
 
-          <p className="text-muted-foreground" dir="ltr">
+          <p className="text-muted-foreground">
             <Highlight text={document.translation} />
           </p>
 
