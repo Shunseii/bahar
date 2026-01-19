@@ -10,8 +10,13 @@ import {
 import { Separator } from "@bahar/web-ui/components/separator";
 import { Trans } from "@lingui/react/macro";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { ArrowDownUp, FunnelXIcon, SlidersHorizontal } from "lucide-react";
-import { useMemo } from "react";
+import {
+  ArrowDownUp,
+  ChevronUp,
+  FunnelXIcon,
+  SlidersHorizontal,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 import { TagsFilter } from "@/components/features/dictionary/filters/TagsFilter";
 import { TagPill } from "@/components/TagsCombobox";
 import { useDir } from "@/hooks/useDir";
@@ -37,17 +42,41 @@ export const DictionaryFilters = () => {
   const { tags: filteredTags, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
+  const [isExpanded, setIsExpanded] = useState(
+    () => !!(filteredTags?.length || (sort && sort !== "relevance"))
+  );
 
-  const hasActiveFilters = useMemo(() => {
-    const hasTagsFilter = !!filteredTags?.length && filteredTags.length > 0;
-    const hasSortFilter = sort !== undefined && sort !== "relevance";
-
-    return hasTagsFilter || hasSortFilter;
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (filteredTags?.length) count += filteredTags.length;
+    if (sort && sort !== "relevance") count += 1;
+    return count;
   }, [filteredTags, sort]);
+
+  const hasActiveFilters = activeFilterCount > 0;
 
   const clearAllFilters = () => {
     navigate({ to: "/" });
   };
+
+  if (!isExpanded) {
+    return (
+      <Button
+        className="h-9 w-max gap-2 text-muted-foreground hover:text-foreground"
+        onClick={() => setIsExpanded(true)}
+        size="sm"
+        variant="outline"
+      >
+        <SlidersHorizontal className="h-4 w-4" />
+        <Trans>Show filters</Trans>
+        {hasActiveFilters && (
+          <span className="rounded-full bg-primary px-1.5 py-0.5 text-primary-foreground text-xs">
+            {activeFilterCount}
+          </span>
+        )}
+      </Button>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -162,6 +191,16 @@ export const DictionaryFilters = () => {
             <Trans>Clear all filters</Trans>
           </Button>
         )}
+
+        <Button
+          className="h-8 w-max px-2 text-muted-foreground hover:text-foreground"
+          onClick={() => setIsExpanded(false)}
+          size="sm"
+          variant="ghost"
+        >
+          <ChevronUp className="h-4 w-4" />
+          <Trans>Hide filters</Trans>
+        </Button>
       </div>
     </div>
   );
