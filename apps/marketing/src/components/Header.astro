@@ -13,6 +13,11 @@ const alternateLocale = getAlternateLocale(locale);
 const navItems = [
   { label: t(locale, "nav.home"), href: getLocalizedPath("", locale) },
   { label: t(locale, "nav.blog"), href: getLocalizedPath("blog", locale) },
+  {
+    label: t(locale, "footer.roadmap"),
+    href: "https://bahar.featurebase.app/roadmap",
+    external: true,
+  },
 ];
 
 // Get current path for language switcher
@@ -41,6 +46,8 @@ const alternatePath =
       {navItems.map((item) => (
         <a
           href={item.href}
+          target={item.external ? "_blank" : undefined}
+          rel={item.external ? "noopener noreferrer" : undefined}
           class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
           {item.label}
@@ -104,6 +111,8 @@ const alternatePath =
         {navItems.map((item) => (
         <a
           href={item.href}
+          target={item.external ? "_blank" : undefined}
+          rel={item.external ? "noopener noreferrer" : undefined}
           class="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-secondary hover:text-foreground"
         >
           {item.label}

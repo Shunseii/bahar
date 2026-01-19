@@ -1,0 +1,83 @@
+---
+import { type Locale, t } from "../i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<section class="py-16 sm:py-24">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div
+      class="relative overflow-hidden rounded-2xl border border-border bg-card p-8 sm:p-12"
+    >
+      <!-- Subtle background decoration -->
+      <div
+        class="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary/5 blur-3xl"
+      ></div>
+      <div
+        class="absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-primary/5 blur-3xl"
+      ></div>
+
+      <div
+        class="relative flex flex-col items-center gap-6 text-center sm:flex-row sm:text-start"
+      >
+        <!-- Icon -->
+        <div
+          class="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/10"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-7 w-7 text-primary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+            />
+          </svg>
+        </div>
+
+        <!-- Content -->
+        <div class="flex-1">
+          <h3 class="text-xl font-semibold text-foreground sm:text-2xl">
+            {t(locale, "featureSuggestions.title")}
+          </h3>
+          <p class="mt-2 text-muted-foreground">
+            {t(locale, "featureSuggestions.subtitle")}
+          </p>
+        </div>
+
+        <!-- Button -->
+        <a
+          href="https://bahar.featurebase.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          {t(locale, "featureSuggestions.button")}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -77,5 +77,9 @@
   "stats.reviews.value": "+1 مليون",
   "stats.reviews.label": "مراجعة مكتملة",
   "stats.rating.value": "4.9",
-  "stats.rating.label": "تقييم المستخدمين"
+  "stats.rating.label": "تقييم المستخدمين",
+  "footer.roadmap": "خارطة الطريق",
+  "featureSuggestions.title": "ساهم في تشكيل مستقبل بحر",
+  "featureSuggestions.subtitle": "هل لديك فكرة لميزة جديدة؟ نحب أن نسمع منك. ملاحظاتك تساعدنا في بناء تجربة تعلم أفضل للجميع.",
+  "featureSuggestions.button": "اقترح ميزة"
 }
