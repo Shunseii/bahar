@@ -16,26 +16,17 @@ export const dictionarySchema = {
   created_at_timestamp_ms: "number",
   updated_at_timestamp_ms: "number",
 
-  // Normalized fields (stemmed, diacritics stripped, hamza/weak letters normalized)
   word: "string",
   translation: "string",
   definition: "string",
   type: "enum",
   root: "string[]",
-  tags: "string[]",
+  tags: "enum[]",
   "morphology.ism.singular": "string",
   "morphology.ism.plurals": "string[]",
   "morphology.verb.past_tense": "string",
   "morphology.verb.present_tense": "string",
   "morphology.verb.masadir": "string[]",
-
-  // Exact fields (only diacritics stripped, no other normalization)
-  word_exact: "string",
-  "morphology.ism.singular_exact": "string",
-  "morphology.ism.plurals_exact": "string[]",
-  "morphology.verb.past_tense_exact": "string",
-  "morphology.verb.present_tense_exact": "string",
-  "morphology.verb.masadir_exact": "string[]",
 } as const;
 
 /**

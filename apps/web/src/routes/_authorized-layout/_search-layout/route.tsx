@@ -1,10 +1,18 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod";
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/search/SearchInput";
+import { SORT_OPTIONS } from "@/hooks/search/useSearch";
 import { authClient } from "@/lib/auth-client";
 import { settingsTable } from "@/lib/db/operations/settings";
 import { queryClient } from "@/lib/query";
+
+const filtersSchema = z.object({
+  tags: z.array(z.string()).optional(),
+  sort: z.enum(SORT_OPTIONS).optional(),
+});
 
 const AppLayout = () => {
   const { data } = authClient.useSession();
@@ -34,6 +42,7 @@ const AppLayout = () => {
 
 export const Route = createFileRoute("/_authorized-layout/_search-layout")({
   component: AppLayout,
+  validateSearch: zodValidator(filtersSchema),
   beforeLoad: async ({ location }) => {
     const { data } = await authClient.getSession();
 

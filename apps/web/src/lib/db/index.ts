@@ -1,7 +1,9 @@
 import type { SelectMigration } from "@bahar/drizzle-user-db-schemas";
+import * as schema from "@bahar/drizzle-user-db-schemas";
 import { err, ok, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react";
 import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
+import { drizzle } from "drizzle-orm/sqlite-proxy";
 import { api } from "../api";
 
 /**
@@ -15,7 +17,17 @@ import { api } from "../api";
 let db: Database | null = null;
 let dbInitPromise: ReturnType<typeof _initDbInternal> | null = null;
 
+let drizzleDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
+
 const LOCAL_DB_PATH_PREFIX = "bahar-local";
+
+export const getDrizzleDb = () => {
+  if (!drizzleDb) {
+    throw new Error("Database not initialized.");
+  }
+
+  return drizzleDb;
+};
 
 export const getDb = () => {
   if (!db) {
@@ -39,11 +51,15 @@ export const ensureDb = async () => {
 };
 
 export const resetDb = async () => {
-  if (!db) return;
+  if (db) {
+    await db.close();
+    db = null;
+    dbInitPromise = null;
+  }
 
-  await db.close();
-  db = null;
-  dbInitPromise = null;
+  if (drizzleDb) {
+    drizzleDb = null;
+  }
 };
 
 /**
@@ -54,11 +70,7 @@ export const resetDb = async () => {
  * the data will be in a worse state.
  */
 export const deleteLocalDatabase = async () => {
-  if (db) {
-    await db.close();
-    db = null;
-    dbInitPromise = null;
-  }
+  await resetDb();
 
   // Delete all OPFS files starting with our prefix
   const opfsRoot = await navigator.storage.getDirectory();
@@ -160,6 +172,39 @@ const _initDbInternal = async () => {
   if (!connectionResult.ok) return connectionResult;
 
   db = connectionResult.value;
+  drizzleDb = drizzle(
+    async (sql, params, method) => {
+      if (!db) return { rows: [] };
+
+      try {
+        const stmt = db.prepare(sql);
+
+        if (method === "run") {
+          await stmt.run(params);
+          return { rows: [] };
+        }
+
+        if (method === "all" || method === "values") {
+          const rows = (await stmt.all(params)) as Record<string, unknown>[];
+          return { rows: rows.map((row) => Object.values(row)) };
+        }
+
+        if (method === "get") {
+          const row = (await stmt.get(params)) as Record<
+            string,
+            unknown
+          > | null;
+          return { rows: row ? Object.values(row) : [] };
+        }
+
+        return { rows: [] };
+      } catch (e) {
+        console.error("SQL Error: ", e);
+        throw e;
+      }
+    },
+    { schema }
+  );
 
   const dbPullResult = await tryCatch(
     async () => {

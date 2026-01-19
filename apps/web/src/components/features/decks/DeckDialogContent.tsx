@@ -171,7 +171,7 @@ export const DeckDialogContent = ({
       if (!isEditing) {
         form.reset();
       }
-    } catch (err) {
+    } catch (_err) {
       if (isEditing) {
         toast.error(t`There was an error updating the deck`, {
           description: t`Your deck was not updated. Please try again.`,
@@ -309,7 +309,7 @@ export const DeckDialogContent = ({
                               />
                             </FormControl>
 
-                            <FormLabel className="!mt-0 cursor-pointer font-normal text-sm">
+                            <FormLabel className="mt-0! cursor-pointer font-normal text-sm">
                               {getTypeLabel(type)}
                             </FormLabel>
                           </FormItem>

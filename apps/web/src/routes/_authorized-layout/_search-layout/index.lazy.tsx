@@ -1,17 +1,21 @@
 import { cn } from "@bahar/design-system";
 import { Button } from "@bahar/web-ui/components/button";
-import { Card, CardContent } from "@bahar/web-ui/components/card";
+import { Card } from "@bahar/web-ui/components/card";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
+import { useAtomValue } from "jotai";
 import { ArrowUp, BookOpen, GraduationCap, PlusIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { useDeferredValue } from "react";
+import { DictionaryFilters } from "@/components/features/dictionary/filters/DictionaryFilters";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { itemVariants, Page } from "@/components/Page";
 import { InfiniteScroll } from "@/components/search/InfiniteScroll";
+import { searchQueryAtom } from "@/components/search/state";
+import { useSearch } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { useSearch } from "@/hooks/useSearch";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
@@ -21,6 +25,8 @@ import { settingsTable } from "@/lib/db/operations/settings";
 const Index = () => {
   const { formatNumber, formatElapsedTime } = useFormatNumber();
   const [{ y }, scrollTo] = useWindowScroll();
+  const searchQuery = useAtomValue(searchQueryAtom);
+  const deferredSearchQuery = useDeferredValue(searchQuery);
   const { results } = useSearch();
   const { height } = useWindowSize();
   const { data: flashcardSettings } = useQuery({
@@ -53,15 +59,9 @@ const Index = () => {
 
   return (
     <Page>
-      <div className="m-auto flex max-w-3xl flex-col gap-y-5">
-        {/* Dictionary Card */}
+      <div className="m-auto mb-4 max-w-3xl">
         <motion.div variants={itemVariants}>
-          <Card className="relative overflow-hidden shadow-2xl shadow-black/10 dark:shadow-black/30">
-            {/* Decorative gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02]" />
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-
-            {/* Header */}
+          <Card className="relative overflow-hidden">
             <div className="relative px-4 pt-5 pb-4 sm:px-6 sm:pt-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3">
@@ -139,7 +139,7 @@ const Index = () => {
                         <Trans>Review</Trans>
                       </span>
                       {!isPending && regularCount > 0 && (
-                        <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 font-semibold text-primary-foreground text-xs shadow-sm ltr:ml-1.5 rtl:mr-1.5">
+                        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 font-semibold text-primary-foreground text-xs shadow-sm ltr:ml-1.5 rtl:mr-1.5">
                           {formatNumber(regularCount)}
                         </span>
                       )}
@@ -153,15 +153,16 @@ const Index = () => {
             </div>
 
             {/* Divider */}
-            <div className="mx-4 h-px bg-gradient-to-r from-border/50 via-border to-border/50 sm:mx-6" />
+            {/*<div className="mx-4 h-px bg-linear-to-r from-border/50 via-border to-border/50 sm:mx-6" />*/}
 
-            {/* Content */}
-            <CardContent className="relative px-4 pt-4 pb-6 sm:px-6">
-              <InfiniteScroll />
-            </CardContent>
+            <div className="px-4 pt-4 pb-4 sm:px-6">
+              <DictionaryFilters />
+            </div>
           </Card>
         </motion.div>
       </div>
+
+      <InfiniteScroll searchQuery={deferredSearchQuery} />
 
       {/* Scroll to top button */}
       <motion.div

@@ -1,4 +1,8 @@
-import { type SearchLanguage, searchDictionary } from "@bahar/search/database";
+import {
+  type SearchDictionaryOptions,
+  type SearchLanguage,
+  searchDictionary,
+} from "@bahar/search/database";
 import type { DictionaryDocument } from "@bahar/search/schema";
 import type { InternalTypedDocument, Result, Results } from "@orama/orama";
 import { atom, useAtom, useSetAtom } from "jotai";
@@ -6,12 +10,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
 import { detectLanguage } from "@/lib/utils";
 
+export const SORT_OPTIONS = ["relevance", "updatedAt", "createdAt"] as const;
 const SEARCH_RESULTS_PER_PAGE = 20;
 
-const searchResultsMetadataAtom = atom<Omit<
-  Results<InternalTypedDocument<DictionaryDocument>>,
-  "hits"
-> | null>(null);
+const searchResultsMetadataAtom = atom<
+  | (Omit<Results<InternalTypedDocument<DictionaryDocument>>, "hits"> & {
+      searchTerm?: string;
+    })
+  | null
+>(null);
 
 const hitsAtom = atom<
   Result<InternalTypedDocument<DictionaryDocument>>[] | null
@@ -33,13 +40,20 @@ export const useSearch = () => {
 
   const search = useCallback(
     (
-      params: { term?: string; offset?: number } = {},
+      params: {
+        term?: string;
+        offset?: number;
+        where?: SearchDictionaryOptions["where"];
+        sortBy?: SearchDictionaryOptions["sortBy"];
+      } = {},
       language: SearchLanguage = "english"
     ) => {
       return searchDictionary(getOramaDb(), params.term ?? "", {
         limit: SEARCH_RESULTS_PER_PAGE,
         offset: params.offset,
         language,
+        where: params.where,
+        sortBy: params.sortBy,
       }) as Results<InternalTypedDocument<DictionaryDocument>>;
     },
     []
@@ -85,7 +99,8 @@ export const useSearch = () => {
         ? ({
             hits,
             ...searchResultsMetadata,
-          } as Results<InternalTypedDocument<DictionaryDocument>>)
+          } as Results<InternalTypedDocument<DictionaryDocument>> &
+            typeof searchResultsMetadata)
         : undefined,
 
     /**
@@ -104,7 +119,15 @@ export const useSearch = () => {
  * Custom hook that wraps orama's search to implement infinite scrolling
  * functionality and exposes helper methods for interacting with the results.
  */
-export const useInfiniteScroll = (params: { term?: string } = {}) => {
+export const useInfiniteScroll = (
+  params: {
+    term?: string;
+    filters?: {
+      tags?: string[];
+    };
+    sort?: (typeof SORT_OPTIONS)[number];
+  } = {}
+) => {
   const { search } = useSearch();
 
   const [hasMore, setHasMore] = useState(true);
@@ -117,6 +140,26 @@ export const useInfiniteScroll = (params: { term?: string } = {}) => {
 
   // For checking if the search params have changed
   const paramsKey = JSON.stringify(params);
+
+  const whereFilter = useMemo<SearchDictionaryOptions["where"]>(() => {
+    if (!params.filters?.tags?.length) return undefined;
+
+    return {
+      tags: { containsAll: params.filters.tags },
+    };
+  }, [paramsKey]);
+
+  const sortBy = useMemo<SearchDictionaryOptions["sortBy"]>(() => {
+    if (!params.sort || params.sort === "relevance") return undefined;
+
+    return {
+      property:
+        params.sort === "createdAt"
+          ? "created_at_timestamp_ms"
+          : "updated_at_timestamp_ms",
+      order: "DESC",
+    };
+  }, [paramsKey]);
 
   const searchQueryLanguage = useMemo<Parameters<typeof search>[1]>(() => {
     const detectedLanuage = detectLanguage(params.term ?? "");
@@ -141,8 +184,10 @@ export const useInfiniteScroll = (params: { term?: string } = {}) => {
 
     const { hits } = search(
       {
-        ...params,
         offset,
+        sortBy,
+        term: params.term,
+        where: whereFilter,
       },
       searchQueryLanguage
     );
@@ -157,7 +202,9 @@ export const useInfiniteScroll = (params: { term?: string } = {}) => {
   useEffect(() => {
     const { hits, ...metadata } = search(
       {
-        ...params,
+        sortBy,
+        term: params.term,
+        where: whereFilter,
         offset: 0,
       },
       searchQueryLanguage
@@ -165,7 +212,7 @@ export const useInfiniteScroll = (params: { term?: string } = {}) => {
 
     setOffset(0);
     setHits(hits);
-    setSearchResultsMetadata(metadata);
+    setSearchResultsMetadata({ ...metadata, searchTerm: params.term });
     setHasMore(hits.length < metadata.count);
   }, [paramsKey, setOffset, setHits, setSearchResultsMetadata, search]);
 

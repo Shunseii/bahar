@@ -22,7 +22,12 @@ import { Form } from "@bahar/web-ui/components/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { type FC, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -190,25 +195,26 @@ const Breadcrumbs: FC<{ className?: string; word: string }> = ({
 
 const BackButton = () => {
   const dir = useDir();
+  const router = useRouter();
 
   return (
     <Button
-      asChild
       className="h-7 w-7"
+      onClick={() => {
+        router.history.back();
+      }}
       size="icon"
       type="button"
       variant="outline"
     >
-      <Link to="/">
-        {dir === "rtl" ? (
-          <ChevronRight className="h-4 w-4" />
-        ) : (
-          <ChevronLeft className="h-4 w-4" />
-        )}
-        <span className="sr-only">
-          <Trans>Back</Trans>
-        </span>
-      </Link>
+      {dir === "rtl" ? (
+        <ChevronRight className="h-4 w-4" />
+      ) : (
+        <ChevronLeft className="h-4 w-4" />
+      )}
+      <span className="sr-only">
+        <Trans>Back</Trans>
+      </span>
     </Button>
   );
 };

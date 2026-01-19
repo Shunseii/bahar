@@ -50,7 +50,7 @@ export const dictionaryEntriesTable = {
   },
   tags: {
     query: async (
-      searchTerm: string
+      searchTerm?: string
     ): Promise<{ tag: string; count: number }[]> => {
       try {
         const db = await ensureDb();
@@ -59,7 +59,7 @@ export const dictionaryEntriesTable = {
           .prepare(
             `SELECT value as tag, COUNT(*) as count
              FROM dictionary_entries, json_each(tags)
-             WHERE value IS NOT NULL AND value LIKE '%' || ? || '%'
+             WHERE value IS NOT NULL ${searchTerm ? "AND value LIKE '%' || ? || '%'" : ""}
              GROUP BY value
              ORDER BY count DESC;`
           )

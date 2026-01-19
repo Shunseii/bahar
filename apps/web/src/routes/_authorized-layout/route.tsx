@@ -19,7 +19,7 @@ import { ErrorMessage } from "@/components/errors/ErrorMessage";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
 import { SyncIndicator } from "@/components/SyncIndicator";
-import { useSearch } from "@/hooks/useSearch";
+import { useSearch } from "@/hooks/search/useSearch";
 import { authClient } from "@/lib/auth-client";
 import { ensureDb, initDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
