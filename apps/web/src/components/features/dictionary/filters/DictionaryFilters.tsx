@@ -14,6 +14,7 @@ import { ArrowDownUp, FunnelXIcon, SlidersHorizontal } from "lucide-react";
 import { useMemo } from "react";
 import { TagsFilter } from "@/components/features/dictionary/filters/TagsFilter";
 import { TagPill } from "@/components/TagsCombobox";
+import { useDir } from "@/hooks/useDir";
 
 type SortOption = "relevance" | "updatedAt" | "createdAt";
 
@@ -32,6 +33,7 @@ const sortOptions: SortOption[] = ["relevance", "updatedAt", "createdAt"];
 
 export const DictionaryFilters = () => {
   const navigate = useNavigate();
+  const dir = useDir();
   const { tags: filteredTags, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
@@ -116,6 +118,7 @@ export const DictionaryFilters = () => {
 
         <section className="flex flex-col gap-y-2">
           <Select
+            dir={dir}
             onValueChange={(value: SortOption) => {
               navigate({
                 to: "/",
