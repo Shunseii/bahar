@@ -34,7 +34,7 @@ export const BillingSettingsCard = () => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader id="billing">
         <CardTitle>
           <Trans>Billing</Trans>
         </CardTitle>
@@ -95,7 +95,7 @@ export const BillingSettingsCard = () => {
                 }}
               >
                 <div className="flex flex-col">
-                  <p className="font-semibold text-sm">
+                  <span className="font-semibold text-sm">
                     <Trans>Annual — $7/mo</Trans>
                     <span className="ml-2">
                       <Badge
@@ -105,7 +105,7 @@ export const BillingSettingsCard = () => {
                         <Trans>Save 30%</Trans>
                       </Badge>
                     </span>
-                  </p>
+                  </span>
 
                   <p className="font-light text-muted text-xs">
                     <Trans>Billed $84/year</Trans>

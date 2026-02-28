@@ -23,7 +23,7 @@ import {
 import { Trans, useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
 import { BillingSettingsCard } from "@/components/features/settings/BillingSettingsCard";
@@ -57,6 +57,13 @@ const Settings = () => {
     total: number;
   } | null>(null);
   const { data: userData } = authClient.useSession();
+
+  useEffect(() => {
+    if (window.location.hash) {
+      const el = document.querySelector(window.location.hash);
+      el?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
 
   const exportDictionary = useCallback(
     async (includeFlashcards = false) => {
@@ -194,7 +201,7 @@ const Settings = () => {
         </h1>
 
         <Card>
-          <CardHeader>
+          <CardHeader id="appearance">
             <CardTitle>
               <Trans>Appearance</Trans>
             </CardTitle>
@@ -229,7 +236,7 @@ const Settings = () => {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader id="dictionary">
             <CardTitle>
               <Trans>Dictionary</Trans>
             </CardTitle>
@@ -525,7 +532,7 @@ const Settings = () => {
         <FlashcardSettingsCardSection />
 
         <Card>
-          <CardHeader>
+          <CardHeader id="debugging">
             <CardTitle>
               <Trans>Debugging</Trans>
             </CardTitle>
