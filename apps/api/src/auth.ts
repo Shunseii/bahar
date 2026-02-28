@@ -1,4 +1,12 @@
 import { expo } from "@better-auth/expo";
+import {
+  checkout,
+  polar,
+  portal,
+  usage,
+  webhooks,
+} from "@polar-sh/better-auth";
+import type { WebhookSubscriptionActivePayload } from "@polar-sh/sdk/dist/commonjs/models/components/webhooksubscriptionactivepayload";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
@@ -9,6 +17,7 @@ import {
 } from "better-auth/plugins";
 import { nanoid } from "nanoid";
 import { sendMail } from "./clients/mail";
+import { polarClient } from "./clients/polar";
 import { redisClient } from "./clients/redis";
 import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
 import { db } from "./db";
@@ -233,6 +242,20 @@ export const auth = betterAuth({
     },
     storeSessionInDatabase: true,
   },
+  user: {
+    additionalFields: {
+      plan: {
+        type: ["pro"],
+        required: false,
+        input: false,
+      },
+      subscriptionStatus: {
+        type: ["active", "canceled"],
+        required: false,
+        input: false,
+      },
+    },
+  },
   plugins: [
     openAPI(),
     expo(),
@@ -281,6 +304,49 @@ export const auth = betterAuth({
           );
         }
       },
+    }),
+    polar({
+      client: polarClient,
+      createCustomerOnSignUp: true,
+      use: [
+        checkout({
+          products: [
+            {
+              productId: config.POLAR_PRO_PRODUCT_ID,
+              slug: "pro",
+            },
+            {
+              productId: config.POLAR_PRO_ANNUAL_PRODUCT_ID,
+              slug: "pro_annual",
+            },
+          ],
+          successUrl: `${allowedDomains[0]}/checkout-success`,
+          authenticatedUsersOnly: true,
+        }),
+        portal(),
+        webhooks({
+          secret: config.POLAR_WEBHOOK_SECRET,
+          onSubscriptionActive: async (
+            // need to specify the type for payload here
+            // otherwise it seems fine, but the type is any
+            payload: WebhookSubscriptionActivePayload
+          ) => {
+            const { checkoutId, customerId } = payload.data;
+
+            logger.info({
+              event: "webhook_subscription_active",
+              category: LogCategory.APPLICATION,
+              customerId,
+              checkoutId,
+              timestamp: payload.timestamp,
+            });
+          },
+          onPayload: async (payload) => {
+            logger.info(payload, "Received webhook");
+          },
+        }),
+        usage(),
+      ],
     }),
   ],
   database: drizzleAdapter(db, {

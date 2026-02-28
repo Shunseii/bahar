@@ -24,11 +24,11 @@ export const httpLogger = new Elysia({ name: "http-logger" })
   })
   .onAfterResponse(
     { as: "global" },
-    ({ request, requestPath, set, requestStartTime }) => {
+    ({ request, requestPath, requestStartTime, response }) => {
       if (request.method === "OPTIONS" || requestPath === "/health") return;
 
       const duration = Date.now() - requestStartTime;
-      const status = typeof set.status === "number" ? set.status : 200;
+      const status = response?.status ?? 200;
       const level = status >= 500 ? "error" : "info";
 
       logger[level](
@@ -43,18 +43,35 @@ export const httpLogger = new Elysia({ name: "http-logger" })
       );
     }
   )
-  .onError(({ request, requestPath, error, requestStartTime }) => {
+  .onError(({ request, requestPath, error, code, requestStartTime, set }) => {
     if (request.method === "OPTIONS" || requestPath === "/health") return;
 
     const duration = Date.now() - (requestStartTime ?? Date.now());
 
-    logger.error(
+    // Map Elysia error codes to HTTP status codes
+    const statusCode =
+      code === "NOT_FOUND"
+        ? 404
+        : code === "VALIDATION"
+          ? 400
+          : code === "PARSE"
+            ? 400
+            : code === "INVALID_COOKIE_SIGNATURE"
+              ? 400
+              : typeof set.status === "number"
+                ? set.status
+                : 500;
+
+    const level = statusCode >= 500 ? "error" : "warn";
+
+    logger[level](
       {
         category: LogCategory.APPLICATION,
         event: "request_failed",
         responseTime: duration,
         req: serializeRequest(request),
-        err: error,
+        res: { statusCode },
+        err: code !== "NOT_FOUND" ? error : undefined,
       },
       "request failed"
     );

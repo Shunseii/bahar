@@ -50,6 +50,7 @@
         "noDangerouslySetInnerHtml": "info"
       },
       "style": {
+        "noNegationElse": "off",
         "noEnum": "off",
         "useFilenamingConvention": "off",
         "useConsistentTypeDefinitions": "off",
@@ -65,8 +66,8 @@
         "noParameterProperties": "info"
       },
       "suspicious": {
+        "useAwait": "off",
         "noExplicitAny": "info",
-        "useAwait": "info",
         "noImplicitAnyLet": "info",
         "noEvolvingTypes": "info",
         "noArrayIndexKey": "info",

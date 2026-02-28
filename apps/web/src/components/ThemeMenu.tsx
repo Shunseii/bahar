@@ -60,11 +60,11 @@ export const ThemeMenu = () => {
         setTheme(theme);
       }}
     >
-      <SelectTrigger className="w-max gap-x-2">
+      <SelectTrigger className="w-max min-w-[150px] gap-x-2">
         <SelectValue />
       </SelectTrigger>
 
-      <SelectContent>
+      <SelectContent id="settings-theme-menu">
         <SelectGroup>
           {getAllThemes().map((theme) => (
             <SelectItem className="cursor-pointer" key={theme} value={theme}>
@@ -107,11 +107,11 @@ export const ColorThemeMenu = () => {
         setColorTheme(theme);
       }}
     >
-      <SelectTrigger className="w-max gap-x-2">
+      <SelectTrigger className="w-max min-w-[150px] gap-x-2">
         <SelectValue />
       </SelectTrigger>
 
-      <SelectContent>
+      <SelectContent id="settings-color-theme">
         <SelectGroup>
           {getAllColorThemes().map((theme) => (
             <SelectItem className="cursor-pointer" key={theme} value={theme}>

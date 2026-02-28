@@ -34,11 +34,11 @@ export const LanguageMenu = () => {
         dynamicActivate(lng);
       }}
     >
-      <SelectTrigger className="w-max gap-x-2">
+      <SelectTrigger className="w-max min-w-[150px] gap-x-2">
         <SelectValue />
       </SelectTrigger>
 
-      <SelectContent>
+      <SelectContent id="settings-language-menu">
         <SelectGroup>
           {getLocaleKeys().map((lng) => (
             <SelectItem className="cursor-pointer" key={lng} value={lng}>

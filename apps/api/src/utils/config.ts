@@ -39,6 +39,11 @@ const EnvironmentVariablesSchema = z.object({
 
   SENTRY_DSN: z.string().min(1),
   SENTRY_ENV: z.enum(["production", "local"]),
+
+  POLAR_ACCESS_TOKEN: z.string().min(1),
+  POLAR_WEBHOOK_SECRET: z.string().min(1),
+  POLAR_PRO_PRODUCT_ID: z.string().min(1),
+  POLAR_PRO_ANNUAL_PRODUCT_ID: z.string().min(1),
 });
 
 export type EnvironmentVariables = z.infer<typeof EnvironmentVariablesSchema>;
