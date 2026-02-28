@@ -8158,6 +8158,20 @@
           ]
         }
       ]
+    },
+    {
+      "type": "rectangle",
+      "id": "VrJME",
+      "x": -363,
+      "y": 1000,
+      "fill": {
+        "type": "image",
+        "enabled": true,
+        "url": "android-chrome-512x512.png",
+        "mode": "fill"
+      },
+      "width": 302,
+      "height": 280
     }
   ]
 }

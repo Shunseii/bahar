@@ -67,6 +67,7 @@
       },
       "suspicious": {
         "useAwait": "off",
+        "useIterableCallbackReturn": "off",
         "noExplicitAny": "info",
         "noImplicitAnyLet": "info",
         "noEvolvingTypes": "info",
