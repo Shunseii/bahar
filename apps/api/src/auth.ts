@@ -6,7 +6,7 @@ import {
   usage,
   webhooks,
 } from "@polar-sh/better-auth";
-import type { WebhookSubscriptionActivePayload } from "@polar-sh/sdk/dist/commonjs/models/components/webhooksubscriptionactivepayload";
+import type { WebhookSubscriptionUpdatedPayload } from "@polar-sh/sdk/dist/commonjs/models/components/webhooksubscriptionupdatedpayload";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
@@ -15,6 +15,7 @@ import {
   emailOTP,
   openAPI,
 } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { sendMail } from "./clients/mail";
 import { polarClient } from "./clients/polar";
@@ -326,23 +327,62 @@ export const auth = betterAuth({
         portal(),
         webhooks({
           secret: config.POLAR_WEBHOOK_SECRET,
-          onSubscriptionActive: async (
+          onSubscriptionUpdated: async (
             // need to specify the type for payload here
             // otherwise it seems fine, but the type is any
-            payload: WebhookSubscriptionActivePayload
+            payload: WebhookSubscriptionUpdatedPayload
           ) => {
-            const { checkoutId, customerId } = payload.data;
+            const { checkoutId, customerId, product, status, customer } =
+              payload.data;
 
-            logger.info({
-              event: "webhook_subscription_active",
+            const plan = (() => {
+              if (
+                product.id === config.POLAR_PRO_PRODUCT_ID ||
+                product.id === config.POLAR_PRO_ANNUAL_PRODUCT_ID
+              ) {
+                return "pro";
+              }
+
+              return null;
+            })();
+
+            const childLogger = logger.child({
               category: LogCategory.APPLICATION,
               customerId,
               checkoutId,
               timestamp: payload.timestamp,
+              email: customer.email,
+              plan,
+              productId: product.id,
+              status,
             });
-          },
-          onPayload: async (payload) => {
-            logger.info(payload, "Received webhook");
+
+            if (!customer.externalId) {
+              childLogger.error(
+                {
+                  event: "webhook_subscription_updated",
+                },
+                "User's external ID is missing"
+              );
+
+              throw new Error("User's external ID is missing.");
+            }
+
+            childLogger.info({
+              event: "webhook_subscription_active.start",
+            });
+
+            await db
+              .update(users)
+              .set({
+                plan,
+                subscriptionStatus: status === "active" ? "active" : "canceled",
+              })
+              .where(eq(users.id, customer.externalId));
+
+            childLogger.info({
+              event: "webhook_subscription_active.end",
+            });
           },
         }),
         usage(),
