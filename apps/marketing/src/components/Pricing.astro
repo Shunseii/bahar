@@ -1,0 +1,99 @@
+---
+import { type Locale, type TranslationKey, t } from "../i18n";
+import PricingCards from "./PricingCards";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const freeFeatures = [
+  t(locale, "pricing.free.feature1"),
+  t(locale, "pricing.free.feature2"),
+  t(locale, "pricing.free.feature3"),
+  t(locale, "pricing.free.feature4"),
+  t(locale, "pricing.free.feature5"),
+  t(locale, "pricing.free.feature6"),
+  t(locale, "pricing.free.feature7"),
+];
+
+const proFeatures = [
+  t(locale, "pricing.pro.feature1"),
+  t(locale, "pricing.pro.feature2"),
+  t(locale, "pricing.pro.feature3"),
+  t(locale, "pricing.pro.feature5"),
+  t(locale, "pricing.pro.feature6"),
+];
+---
+
+<section class="relative py-24 sm:py-32" id="pricing">
+  <div class="absolute inset-0 -z-10">
+    <div
+      class="absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl"
+    ></div>
+  </div>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <!-- Section header -->
+    <div class="mx-auto max-w-2xl text-center">
+      <div
+        class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        {t(locale, "pricing.badge")}
+      </div>
+      <h2 class="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+        {t(locale, "pricing.title")}
+      </h2>
+      <p class="mt-4 text-lg text-muted-foreground">
+        {t(locale, "pricing.subtitle")}
+      </p>
+    </div>
+
+    <PricingCards
+      client:load
+      labels={{
+        monthly: t(locale, "pricing.monthly"),
+        annual: t(locale, "pricing.annual"),
+        save: t(locale, "pricing.save"),
+      }}
+      free={{
+        name: t(locale, "pricing.free.name"),
+        description: t(locale, "pricing.free.description"),
+        price: t(locale, "pricing.free.price"),
+        period: t(locale, "pricing.free.period"),
+        cta: t(locale, "pricing.free.cta"),
+        features: freeFeatures,
+      }}
+      pro={{
+        name: t(locale, "pricing.pro.name"),
+        description: t(locale, "pricing.pro.description"),
+        priceMonthly: t(locale, "pricing.pro.priceMonthly"),
+        priceAnnual: t(locale, "pricing.pro.priceAnnual"),
+        periodMonthly: t(locale, "pricing.pro.periodMonthly"),
+        periodAnnual: t(locale, "pricing.pro.periodAnnual"),
+        cta: t(locale, "pricing.pro.cta"),
+        features: proFeatures,
+      }}
+      trust={{
+        noCard: t(locale, "pricing.trust.noCard"),
+        cancel: t(locale, "pricing.trust.cancel"),
+        secure: t(locale, "pricing.trust.secure"),
+      }}
+    />
+  </div>
+</section>
