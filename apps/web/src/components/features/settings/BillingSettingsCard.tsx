@@ -15,22 +15,24 @@ export const BillingSettingsCard = () => {
   const { t } = useLingui();
   const { data: userData } = authClient.useSession();
 
+  const isFreeTier =
+    !userData?.user.plan ||
+    !userData.user.subscriptionStatus ||
+    userData.user.subscriptionStatus === "canceled";
+
   const getLocalizedPlanName = (
     plan: NonNullable<typeof userData>["user"]["plan"]
   ) => {
-    switch (plan) {
-      case "pro":
-        return t`Pro`;
-      default:
-        return t`Free`;
+    if (plan === "pro" && !isFreeTier) {
+      return t`Pro`;
     }
+
+    return t`Free`;
   };
 
   const handleManageSubscription = useCallback(async () => {
     await authClient.customer.portal();
   }, []);
-
-  const isFreeTier = !userData?.user.plan;
 
   return (
     <Card>

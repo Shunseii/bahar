@@ -380,6 +380,15 @@ export const auth = betterAuth({
               })
               .where(eq(users.id, customer.externalId));
 
+            const userSessions = await db
+              .select({ token: sessions.token })
+              .from(sessions)
+              .where(eq(sessions.userId, customer.externalId));
+
+            await Promise.all(
+              userSessions.map((s) => redisClient.del(s.token))
+            );
+
             childLogger.info({
               event: "webhook_subscription_active.end",
             });

@@ -9,9 +9,17 @@ import {
 import { Trans } from "@lingui/react/macro";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { CircleCheck } from "lucide-react";
+import { useEffect } from "react";
 import { Page } from "@/components/Page";
+import { authClient } from "@/lib/auth-client";
 
 const CheckoutSuccess = () => {
+  const { refetch } = authClient.useSession();
+
+  useEffect(() => {
+    refetch({ query: { disableCookieCache: true } });
+  }, [refetch]);
+
   return (
     <Page className="m-auto flex w-full max-w-lg flex-col items-center gap-y-8">
       <Card className="w-full text-center">
