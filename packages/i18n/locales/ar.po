@@ -52,7 +52,7 @@ msgstr "{0} إجمالي"
 msgid "{hydrationSkippedCount, plural, one {# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.} other {# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.}}"
 msgstr "{hydrationSkippedCount, plural, one {تم تخطي إدخال واحد بسبب مشاكل في البيانات. بياناتك محفوظة، لكن لن تتمكن من البحث عن الإدخال الذي لم يتم تحميله.} two {تم تخطي إدخالين بسبب مشاكل في البيانات. بياناتك محفوظة، لكن لن تتمكن من البحث عن الإدخالات التي لم يتم تحميلها.} few {تم تخطي # إدخالات بسبب مشاكل في البيانات. بياناتك محفوظة، لكن لن تتمكن من البحث عن الإدخالات التي لم يتم تحميلها.} many {تم تخطي # إدخالًا بسبب مشاكل في البيانات. بياناتك محفوظة، لكن لن تتمكن من البحث عن الإدخالات التي لم يتم تحميلها.} other {تم تخطي # إدخال بسبب مشاكل في البيانات. بياناتك محفوظة، لكن لن تتمكن من البحث عن الإدخالات التي لم يتم تحميلها.}}"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:122
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:123
 msgid "{skippedCount} entries were skipped due to data corruption."
 msgstr "تم تخطي {skippedCount} إدخالات بسبب تلف البيانات."
 
@@ -220,6 +220,10 @@ msgstr "ترجمة إنجليزية للكلمة."
 msgid "An unexpected error occurred. You can try reloading the page to fix it."
 msgstr "حدث خطأ غير متوقع. يمكنك محاولة إعادة تحميل الصفحة لإصلاحه."
 
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:99
+msgid "Annual — $7/mo"
+msgstr "سنوي — $٧/شهر"
+
 #: ../../apps/web/src/components/features/flashcards/ReverseAnswerSide.tsx:73
 #: ../../apps/web/src/components/features/flashcards/AnswerSide.tsx:45
 #: ../../apps/mobile/src/app/(search)/settings.tsx:152
@@ -251,7 +255,7 @@ msgstr "أية تفاصيل إضافية عن هذه الصيغة مثلا تك�
 msgid "Any plural forms of the word."
 msgstr "أية صيغ جمع للكلمة."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:400
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:419
 msgid "Any words that have the same ID will be overwritten."
 msgstr "سيستبدل كل كلمات التي لديها نفس المعرف."
 
@@ -259,7 +263,7 @@ msgstr "سيستبدل كل كلمات التي لديها نفس المعرف."
 msgid "App language"
 msgstr "لغة التطبيق"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:198
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:199
 #: ../../apps/mobile/src/app/(search)/settings.tsx:236
 msgid "Appearance"
 msgstr "المظهر"
@@ -300,7 +304,7 @@ msgstr "هل أنت متأكد أنك تريد حذف هذه الكلمة؟ سي
 msgid "Are you sure you want to delete this word? This action cannot be undone."
 msgstr "هل أنت متأكد من حذف هذه الكلمة؟ لا يمكن التراجع عن هذا الإجراء."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:477
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:496
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذف جميع كلماتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. صدر معجمك قبل حذفه من فضلك."
 
@@ -313,7 +317,7 @@ msgstr "هل أنت متأكد أنك تريد إعادة تعيين تقدم ب
 msgid "Back"
 msgstr "رجوع"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:188
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:185
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
@@ -343,12 +347,24 @@ msgstr "تفاصيل أساسية"
 msgid "BETA"
 msgstr "بيتا"
 
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:111
+msgid "Billed $84/year"
+msgstr "يُدفع $٨٤/سنة"
+
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:86
+msgid "Billed monthly"
+msgstr "يُدفع شهريًا"
+
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:39
+msgid "Billing"
+msgstr "الفوترة"
+
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:159
 msgid "By signing in, you agree to our <0>Privacy Policy</0>"
 msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة الخصوصية</0>"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:495
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:573
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:514
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:594
 #: ../../apps/mobile/src/app/(search)/settings.tsx:128
 #: ../../apps/mobile/src/app/(search)/decks.tsx:283
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:995
@@ -387,7 +403,7 @@ msgstr "اختر ملف"
 msgid "Clear"
 msgstr "امسح"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:191
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:211
 msgid "Clear all filters"
 msgstr "مسح كل المرشّحات"
 
@@ -398,6 +414,10 @@ msgstr "امسح المتراكمات"
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:255
 #~ msgid "Clearing..."
 #~ msgstr "جارٍ المسح..."
+
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:217
+msgid "Color theme"
+msgstr "سمة الألوان"
 
 #: ../../apps/web/src/components/SchemaOutdatedBanner.tsx:35
 msgid "Contact support"
@@ -458,11 +478,15 @@ msgstr "إنشاء مجموعة"
 msgid "Create your first deck"
 msgstr "أنشئ مجموعتك الأولى"
 
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:51
+msgid "Current plan"
+msgstr "الخطة الحالية"
+
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:141
 msgid "Customize how flashcards appear."
 msgstr "خصص كيفيّة ظهور البطاقات."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:202
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:203
 msgid "Customize how the application looks for you."
 msgstr "قم بتخصيص كيف يظهر التطبيق بالنسبة لك."
 
@@ -475,7 +499,7 @@ msgstr "منطقة الخطر"
 msgid "Dark"
 msgstr "غامق"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:509
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:530
 msgid "Debugging"
 msgstr "استكشاف الأخطاء"
 
@@ -532,8 +556,8 @@ msgstr "افتراضي"
 msgid "Definition"
 msgstr "التعريف"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:466
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:489
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:485
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:508
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:129
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:161
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:207
@@ -566,7 +590,7 @@ msgstr "حذف هذه الكلمة؟"
 msgid "Delete word"
 msgstr "حذف الكلمة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:473
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:492
 msgid "Delete your dictionary?"
 msgstr "هل تريد أن تحذف معجمك؟"
 
@@ -583,7 +607,7 @@ msgstr "تفاصيل"
 msgid "Details:"
 msgstr "التفاصيل:"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:216
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:234
 msgid "Dictionary"
 msgstr "معجم"
 
@@ -710,28 +734,28 @@ msgstr "استخدامات مثالية للكلمة في سياقات مختل�
 msgid "Examples"
 msgstr "أمثلة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:410
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:446
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:429
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:465
 msgid "Export"
 msgstr "صدر"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:121
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:122
 msgid "Export completed with issues"
 msgstr "اكتمل التصدير مع وجود مشاكل"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:131
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:132
 msgid "Export failed!"
 msgstr "فشل التصدير!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:454
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:473
 msgid "Export with flashcards"
 msgstr "تصدير مع البطاقات"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:417
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:436
 msgid "Export your dictionary"
 msgstr "تصدير معجمك"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:421
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:440
 msgid "Exporting dictionary with flaschards will save your flashcard progress along with all the content in your dictionary. Use this option if you want to make a backup of your data.<0/><1/>Exporting your dictionary without flashcards will not save any flashcard progress. Use this option if you want to share your dictionary.<2/><3/><4>Warning</4>: Importing your file without flashcards will reset all of your flashcards."
 msgstr "تصدير المعجم مع البطاقات سيحفظ تقدم البطاقات بالإضافة إلى كل المحتوى في معجمك. استخدم هذا الخيار إذا كنت ترغب في إنشاء نسخة احتياطية من بياناتك.<0/><1/>تصدير المعجم بدون البطاقات لن يحفظ أي تقدم للبطاقات. استخدم هذا الخيار إذا كنت ترغب في مشاركة معجمك.<2/><3/><4>تحذير</4>: استيراد ملفك بدون البطاقات سيؤدي إلى إعادة تعيين جميع البطاقات."
 
@@ -775,11 +799,11 @@ msgstr "فشل حذف المعجم"
 msgid "Failed to delete word"
 msgstr "فشل حذف الكلمة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:171
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:172
 msgid "Failed to delete!"
 msgstr "فشل الحذف!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:560
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:581
 msgid "Failed to reset local data"
 msgstr "فشل في إعادة تعيين البيانات المحلية"
 
@@ -832,7 +856,7 @@ msgstr "فعل"
 msgid "Filter by tags..."
 msgstr "رشّح حسب العلامات..."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:88
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:104
 msgid "Filters"
 msgstr "الترشيح"
 
@@ -864,6 +888,10 @@ msgstr "مثلا الكلمة"
 msgid "Form"
 msgstr "الوزن"
 
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:25
+msgid "Free"
+msgstr "مجاني"
+
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:201
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:211
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:172
@@ -881,6 +909,10 @@ msgstr "GitHub"
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:425
 msgid "Go back"
 msgstr "ارجع"
+
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/checkout-success/route.lazy.tsx:36
+msgid "Go to dictionary"
+msgstr "الذهاب إلى القاموس"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:53
 msgid "Good"
@@ -921,7 +953,7 @@ msgstr "مخفي"
 msgid "Hide details"
 msgstr "إخفاء التفاصيل"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:202
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:75
 msgid "Hide filters"
 msgstr "إخفاء المرشحات"
 
@@ -960,7 +992,7 @@ msgstr "المعرف:"
 msgid "if needed."
 msgstr "إذا لزم الأمر."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:513
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:534
 msgid "If you're experiencing sync issues or data not loading correctly, you can reset your local data and re-sync from the server."
 msgstr "إذا كنت تواجه مشاكل في المزامنة أو عدم تحميل البيانات بشكل صحيح، يمكنك إعادة تعيين بياناتك المحلية وإعادة المزامنة من الخادم."
 
@@ -972,12 +1004,12 @@ msgstr "إذا كنت تواجه مشاكل في المزامنة أو عدم ت
 msgid "Imperative"
 msgstr "الأمر"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:374
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:393
 msgid "Import"
 msgstr "استورد"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:346
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:352
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:365
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:371
 msgid "Import failed!"
 msgstr "فشل الاستيراد!"
 
@@ -985,7 +1017,7 @@ msgstr "فشل الاستيراد!"
 msgid "Include English to Arabic flashcards"
 msgstr "تضمين بطاقات الإنجليزية إلى العربية"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:235
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:253
 msgid "Incorrect file type"
 msgstr "نوع الملف غير صحيح"
 
@@ -1031,6 +1063,7 @@ msgstr "قيمة غير صالحة. يجب أن تكون إحدى القيم ا�
 msgid "Ism"
 msgstr "اسم"
 
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:224
 #: ../../apps/mobile/src/app/(search)/settings.tsx:258
 msgid "Language"
 msgstr "اللغة"
@@ -1068,13 +1101,21 @@ msgstr "قم بتسجيل الدخول إلى حسابك الحالي أو قم 
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:61
+msgid "Manage Subscription"
+msgstr "إدارة الاشتراك"
+
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:91
 msgid "Manage your decks and study them."
 msgstr "إدارة مجموعاتك ودراستها."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:220
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:238
 msgid "Manage your dictionary."
 msgstr "إدارة معجمك."
+
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:43
+msgid "Manage your subscription."
+msgstr "إدارة اشتراكك."
 
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:170
 msgid "Masadir"
@@ -1112,6 +1153,10 @@ msgstr "القائمة"
 #: ../../apps/web/src/components/features/settings/AdminSettingsCardSection.tsx:60
 msgid "Migration successfully registered."
 msgstr "تم تسجيل الترحيل بنجاح."
+
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:82
+msgid "Monthly — $10/mo"
+msgstr "شهري — $١٠/شهر"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer.tsx:483
 #~ msgid "More than {0} cards to review"
@@ -1227,11 +1272,11 @@ msgstr "يرجى الاتصال <0>بالدعم</0> مع التفاصيل الت
 msgid "Please enter a deck name"
 msgstr "الرجاء إدخال اسم المجموعة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:236
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:254
 msgid "Please select a JSON file with your dictionary."
 msgstr "اختر ملف JSON لمعجمك من فضلك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:561
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:582
 msgid "Please try again or reload the page."
 msgstr "حاول مرة أخرى أو أعد تحميل الصفحة."
 
@@ -1292,11 +1337,15 @@ msgstr "المضارع"
 msgid "Present Tense"
 msgstr "المضارع"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:33
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:23
+msgid "Pro"
+msgstr "برو"
+
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:36
 msgid "Recently added"
 msgstr "المضافة حديثًا"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:31
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:34
 msgid "Recently updated"
 msgstr "المحدّثة حديثًا"
 
@@ -1304,7 +1353,7 @@ msgstr "المحدّثة حديثًا"
 msgid "Recently used"
 msgstr "المستخدمة مؤخرًا"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:29
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:32
 msgid "Relevance"
 msgstr "الصلة"
 
@@ -1328,7 +1377,7 @@ msgstr "حقل مطلوب"
 msgid "Reschedule all backlog cards by grading them as \"Hard\"."
 msgstr "أعد جدولة جميع البطاقات المتراكمة بتقييمها كـ \"صعب\"."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:567
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:588
 msgid "Reset and re-sync"
 msgstr "إعادة التعيين والمزامنة"
 
@@ -1341,15 +1390,15 @@ msgstr "أعد البطاقة"
 msgid "Reset flashcard progress?"
 msgstr "إعادة تعيين تقدم البطاقة؟"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:525
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:546
 msgid "Reset local data"
 msgstr "إعادة تعيين البيانات المحلية"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:532
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:553
 msgid "Reset local data and re-sync?"
 msgstr "إعادة تعيين البيانات المحلية والمزامنة؟"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:185
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:186
 msgid "Resetting local data..."
 msgstr "جارٍ إعادة تعيين البيانات المحلية..."
 
@@ -1398,6 +1447,10 @@ msgstr "الحروف الأصلية"
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:1005
 msgid "Save"
 msgstr "احفظ"
+
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:105
+msgid "Save 30%"
+msgstr "وفّر ٣٠٪"
 
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:334
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:1115
@@ -1460,7 +1513,7 @@ msgstr "جملة"
 msgid "Separate letters with spaces or commas"
 msgstr "افصل الحروف بمسافات أو فواصل"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:192
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:193
 #: ../../apps/web/src/components/MobileHeader.tsx:178
 #: ../../apps/web/src/components/DesktopNavigation.tsx:107
 #: ../../apps/mobile/src/app/(search)/settings.tsx:175
@@ -1492,7 +1545,7 @@ msgstr "عرض التفاصيل"
 msgid "Show English to Arabic flashcards."
 msgstr "اعرض بطاقات من الإنجليزية إلى العربية."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:71
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:75
 msgid "Show filters"
 msgstr "عرض المرشحات"
 
@@ -1516,7 +1569,7 @@ msgstr "تعذر تحميل بعض إدخالات المعجم"
 msgid "Something went wrong"
 msgstr "حدث خطأ ما"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:141
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:161
 msgid "Sort by"
 msgstr "ترتيب حسب"
 
@@ -1536,15 +1589,15 @@ msgstr "أدرس"
 msgid "Successfully added word!"
 msgstr "تم إضافة الكلمة بنجاح!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:165
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:166
 msgid "Successfully deleted!"
 msgstr "نجح الحذف!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:125
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:126
 msgid "Successfully exported!"
 msgstr "تم التصدير بنجاح!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:323
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:342
 msgid "Successfully imported!"
 msgstr "تم الاستيراد بنجاح!"
 
@@ -1567,7 +1620,7 @@ msgid "System"
 msgstr "نظام"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:320
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:97
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:113
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:291
@@ -1575,6 +1628,10 @@ msgstr "نظام"
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:1088
 msgid "Tags"
 msgstr "علامات"
+
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/checkout-success/route.lazy.tsx:26
+msgid "Thank you for subscribing to Bahar Pro. You now have access to all Pro features."
+msgstr "شكرًا لاشتراكك في بهار برو. يمكنك الآن الوصول إلى جميع ميزات برو."
 
 #: ../../apps/web/src/components/OTPForm.tsx:108
 #: ../../apps/mobile/src/app/(auth)/code/[email].tsx:33
@@ -1636,6 +1693,7 @@ msgstr "تمت إضافة الكلمة إلى معجمك."
 msgid "The word has been updated."
 msgstr "حدثت الكلمة."
 
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:210
 #: ../../apps/mobile/src/app/(search)/settings.tsx:243
 msgid "Theme"
 msgstr "المظهر"
@@ -1652,15 +1710,15 @@ msgstr "حدث خطأ أثناء مسح المتراكمات."
 msgid "There was an error creating the deck"
 msgstr "حدث خطأ أثناء إنشاء المجموعة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:172
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:173
 msgid "There was an error deleting your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء حذف معجمك. حاول مرة أخرى لاحقا من فضلك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:132
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:133
 msgid "There was an error exporting your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء تصدير معجمك. حاول مرة أخرى لاحقا من فضلك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:353
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:372
 msgid "There was an error importing your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء استيراد لمعجمك. حاول مرة أخرى لاحقا."
 
@@ -1728,7 +1786,7 @@ msgstr "هذا هو اسم مجموعتك."
 msgid "This refers to how many case endings the word can take."
 msgstr "هذا هو إعراب الكلمة."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:536
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:557
 msgid "This will delete the local copy of your data stored in this browser and download a fresh copy from the server. Your data on the server will not be affected. Use this if you're experiencing sync errors or seeing outdated data."
 msgstr "سيؤدي هذا إلى حذف النسخة المحلية من بياناتك المخزنة في هذا المتصفح وتنزيل نسخة جديدة من الخادم. لن تتأثر بياناتك على الخادم. استخدم هذا إذا كنت تواجه أخطاء في المزامنة أو ترى بيانات قديمة."
 
@@ -1798,6 +1856,10 @@ msgstr "غير قادر على الاتصال بقاعدة البيانات ال
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:325
 msgid "Unknown error."
 msgstr "خطأ غير معروف."
+
+#: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:69
+msgid "Upgrade to Pro"
+msgstr "الترقية إلى برو"
 
 #. placeholder {0}: String(err.minimum)
 #: ../../apps/web/src/lib/error.ts:128
@@ -1906,6 +1968,10 @@ msgstr "ليس لديك أي مجموعات بعد."
 msgid "You have no words in your dictionary yet."
 msgstr "ليس لديك أي كلمات في قاموسك بعد."
 
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/checkout-success/route.lazy.tsx:22
+msgid "You're all set!"
+msgstr "أنت جاهز!"
+
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:279
 msgid "Your account needs maintenance. We've been notified. Please try again later."
 msgstr "حسابك يحتاج إلى صيانة. تم إخطارنا. حاول مرة أخرى لاحقا من فضلك."
@@ -1927,15 +1993,15 @@ msgstr "لم يتم تحديث مجموعتك. يرجى المحاولة مرة 
 msgid "Your Dictionary"
 msgstr "معجمك"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:166
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:167
 msgid "Your dictionary has been deleted."
 msgstr "حذف معجمك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:126
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:127
 msgid "Your dictionary has been downloaded."
 msgstr "تم تحميل معجمك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:324
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:343
 msgid "Your dictionary has been updated!"
 msgstr "تم تحديث معجمك!"
 
@@ -1943,7 +2009,7 @@ msgstr "تم تحديث معجمك!"
 msgid "Your dictionary is empty"
 msgstr "معجمك فارغ"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:347
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:366
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة أخرى من فضلك."
 

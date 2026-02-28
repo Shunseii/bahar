@@ -84,3 +84,4 @@ expo-env.d.ts
 # Astro
 .astro/
 .memelord/
+.mcp.json
