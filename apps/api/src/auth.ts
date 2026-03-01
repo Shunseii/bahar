@@ -308,7 +308,7 @@ export const auth = betterAuth({
     }),
     polar({
       client: polarClient,
-      createCustomerOnSignUp: true,
+      createCustomerOnSignUp: config.NODE_ENV === "production",
       use: [
         checkout({
           products: [
