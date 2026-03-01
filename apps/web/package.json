@@ -31,6 +31,7 @@
     "@sentry/vite-plugin": "^4.6.0",
     "@tailwindcss/postcss": "^4.1.7",
     "@tailwindcss/vite": "4.1.7",
+    "@tanstack/ai-react": "^0.6.1",
     "@tanstack/pacer": "^0.16.3",
     "@tanstack/react-query": "^5.82.2",
     "@tanstack/react-query-devtools": "^5.82.2",
