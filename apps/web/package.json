@@ -52,7 +52,7 @@
     "react-dom": "19.0.0",
     "react-hook-form": "^7.56.4",
     "ts-fsrs": "^5.2.3",
-    "zod": "4.0.17"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@bahar/design-system": "workspace:*",

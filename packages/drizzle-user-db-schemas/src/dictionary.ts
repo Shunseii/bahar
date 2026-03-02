@@ -1,4 +1,5 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
   type Antonym,
   type Example,
@@ -46,3 +47,9 @@ export type RawDictionaryEntry = Omit<
   examples: string | null;
   morphology: string | null;
 };
+
+export const InsertDictionaryEntrySchema =
+  createInsertSchema(dictionaryEntries);
+
+export const SelectDictionaryEntrySchema =
+  createSelectSchema(dictionaryEntries);

@@ -37,7 +37,7 @@ importers:
         version: 0.10.0
       '@polar-sh/better-auth':
         specifier: ^1.8.1
-        version: 1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)(zod@4.0.17)
+        version: 1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)(zod@4.3.6)
       '@polar-sh/sdk':
         specifier: ^0.42.1
         version: 0.42.5
@@ -49,7 +49,7 @@ importers:
         version: 0.6.1
       '@tanstack/ai-openai':
         specifier: ^0.6.0
-        version: 0.6.0(@tanstack/ai@0.6.1)(zod@4.0.17)
+        version: 0.6.0(@tanstack/ai@0.6.1)(zod@4.3.6)
       '@tursodatabase/api':
         specifier: ^1.9.0
         version: 1.9.0
@@ -67,7 +67,7 @@ importers:
         version: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       drizzle-zod:
         specifier: ^0.8.3
-        version: 0.8.3(drizzle-orm@0.45.1)(zod@4.0.17)
+        version: 0.8.3(drizzle-orm@0.45.1)(zod@4.3.6)
       elysia:
         specifier: ^1.4.19
         version: 1.4.19(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3)
@@ -87,9 +87,12 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
       zod:
-        specifier: 4.0.17
-        version: 4.0.17
+        specifier: 4.3.6
+        version: 4.3.6
     devDependencies:
+      '@bahar/drizzle-user-db-schemas':
+        specifier: workspace:*
+        version: link:../../packages/drizzle-user-db-schemas
       '@bahar/typescript-config':
         specifier: workspace:*
         version: link:../../packages/config-typescript
@@ -177,7 +180,7 @@ importers:
         version: 3.0.0(expo@54.0.25)
       '@elysiajs/eden':
         specifier: ^1.4.6
-        version: 1.4.6(elysia@1.4.26)
+        version: 1.4.6(elysia@1.4.27)
       '@expo/vector-icons':
         specifier: ^15.0.3
         version: 15.0.3(expo-font@14.0.9)(react-native@0.81.5)(react@19.1.0)
@@ -329,8 +332,8 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2(react-native@0.81.5)(react@19.1.0)(tailwindcss@4.1.17)
       zod:
-        specifier: 4.0.17
-        version: 4.0.17
+        specifier: 4.3.6
+        version: 4.3.6
     devDependencies:
       '@babel/core':
         specifier: ^7.25.2
@@ -367,7 +370,7 @@ importers:
         version: 5.3.2(@lingui/babel-plugin-lingui-macro@5.3.2)(react@19.1.0)
       '@lingui/metro-transformer':
         specifier: ^5.3.2
-        version: 5.3.2(expo@54.0.25)(metro@0.84.0)(react-native@0.81.5)(typescript@5.9.2)
+        version: 5.3.2(expo@54.0.25)(metro@0.84.2)(react-native@0.81.5)(typescript@5.9.2)
       '@tailwindcss/postcss':
         specifier: ^4.1.7
         version: 4.1.17
@@ -388,7 +391,7 @@ importers:
         version: 29.7.0
       jest-expo:
         specifier: ~54.0.13
-        version: 54.0.13(@babel/core@7.26.0)(expo@54.0.25)(jest@29.7.0)(react-dom@19.1.0)(react-native@0.81.5)(react@19.1.0)(webpack@5.105.2)
+        version: 54.0.13(@babel/core@7.26.0)(expo@54.0.25)(jest@29.7.0)(react-dom@19.1.0)(react-native@0.81.5)(react@19.1.0)(webpack@5.105.3)
       postcss:
         specifier: ^8.5.0
         version: 8.5.3
@@ -421,7 +424,7 @@ importers:
         version: link:../../packages/web-ui
       '@elysiajs/eden':
         specifier: ^1.4.6
-        version: 1.4.6(elysia@1.4.26)
+        version: 1.4.6(elysia@1.4.27)
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.56.4)
@@ -454,7 +457,7 @@ importers:
         version: 3.1.16
       '@polar-sh/better-auth':
         specifier: ^1.8.1
-        version: 1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(@types/react-dom@19.0.0)(@types/react@19.1.17)(better-auth@1.4.19)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1)(zod@4.0.17)
+        version: 1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(@types/react-dom@19.0.0)(@types/react@19.1.17)(better-auth@1.4.19)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1)(zod@4.3.6)
       '@sentry/react':
         specifier: ^10.25.0
         version: 10.25.0(react@19.0.0)
@@ -484,7 +487,7 @@ importers:
         version: 1.120.13(react-dom@19.0.0)(react@19.0.0)
       '@tanstack/zod-adapter':
         specifier: ^1.150.0
-        version: 1.150.0(@tanstack/react-router@1.120.13)(zod@4.0.17)
+        version: 1.150.0(@tanstack/react-router@1.120.13)(zod@4.3.6)
       '@tursodatabase/sync-wasm':
         specifier: ^0.3.2
         version: 0.3.2
@@ -531,8 +534,8 @@ importers:
         specifier: ^5.2.3
         version: 5.2.3
       zod:
-        specifier: 4.0.17
-        version: 4.0.17
+        specifier: 4.3.6
+        version: 4.3.6
     devDependencies:
       '@bahar/design-system':
         specifier: workspace:*
@@ -613,8 +616,8 @@ importers:
         specifier: workspace:*
         version: link:../config-typescript
       zod:
-        specifier: 4.0.17
-        version: 4.0.17
+        specifier: 4.3.6
+        version: 4.3.6
 
   packages/design-system:
     dependencies:
@@ -3487,7 +3490,7 @@ packages:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@standard-schema/spec': 1.1.0
-      better-call: 1.1.8(zod@4.0.17)
+      better-call: 1.1.8(zod@4.3.6)
       jose: 6.1.3
       kysely: 0.28.5
       nanostores: 1.1.0
@@ -3507,11 +3510,11 @@ packages:
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.21
       '@standard-schema/spec': 1.1.0
-      better-call: 1.1.7(zod@4.0.17)
+      better-call: 1.1.7(zod@4.3.6)
       jose: 6.1.3
       kysely: 0.28.5
       nanostores: 1.1.0
-      zod: 4.2.1
+      zod: 4.3.6
     dev: false
 
   /@better-auth/expo@1.4.19(@better-auth/core@1.4.19)(better-auth@1.4.19):
@@ -3562,11 +3565,11 @@ packages:
       '@better-auth/core': 1.4.9(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.7)(jose@6.1.3)(kysely@0.28.5)(nanostores@1.1.0)
       '@better-fetch/fetch': 1.1.21
       better-auth: 1.4.9(react-dom@19.1.0)(react@19.1.0)
-      better-call: 1.1.7(zod@4.2.1)
+      better-call: 1.1.7(zod@4.3.6)
       expo-constants: 18.0.10(expo@54.0.25)(react-native@0.81.5)
       expo-linking: 8.0.9(expo@54.0.25)(react-native@0.81.5)(react@19.1.0)
       expo-web-browser: 15.0.9(expo@54.0.25)(react-native@0.81.5)
-      zod: 4.2.1
+      zod: 4.3.6
     dev: false
 
   /@better-auth/telemetry@1.4.19(@better-auth/core@1.4.19):
@@ -3879,12 +3882,12 @@ packages:
       elysia: 1.4.19(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3)
     dev: false
 
-  /@elysiajs/eden@1.4.6(elysia@1.4.26):
+  /@elysiajs/eden@1.4.6(elysia@1.4.27):
     resolution: {integrity: sha512-Tsa4NwXEWg/u73vWiYZQ3L5/ecgZSxqiEjYwpS+4qBKXeTZqZKl2hcgHJSVBL+InEDMi35Xugct7qyAXE5oM4Q==}
     peerDependencies:
       elysia: '>=1.4.19'
     dependencies:
-      elysia: 1.4.26(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3)
+      elysia: 1.4.27(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.9.2)
     dev: false
 
   /@emmetio/abbreviation@2.3.3:
@@ -5902,7 +5905,7 @@ packages:
       react-hook-form: ^7.55.0
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.56.4(react@19.0.0)
+      react-hook-form: 7.56.4(react@19.1.0)
     dev: false
 
   /@img/colour@1.0.0:
@@ -6833,6 +6836,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
+    dev: true
 
   /@lingui/babel-plugin-lingui-macro@5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.2):
     resolution: {integrity: sha512-NdXrq8aZlPjN4jeA/LkSLNyx5vPGmrW+r2ywMNQDPQPVP28Hq8c3hF9SQc1t7hwBorGQ3qzIQ7i2Vm6Y8PnjQw==}
@@ -6853,7 +6857,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    dev: true
 
   /@lingui/babel-plugin-lingui-macro@5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.3):
     resolution: {integrity: sha512-NdXrq8aZlPjN4jeA/LkSLNyx5vPGmrW+r2ywMNQDPQPVP28Hq8c3hF9SQc1t7hwBorGQ3qzIQ7i2Vm6Y8PnjQw==}
@@ -7023,6 +7026,7 @@ packages:
       jiti: 1.21.7
     transitivePeerDependencies:
       - typescript
+    dev: true
 
   /@lingui/conf@5.3.2(typescript@5.9.2):
     resolution: {integrity: sha512-c0Dfovr9BLuwAnY5GADxKcwBUQdVl0Jo/JUa3cumIXFhHzZGb78kfhCHjWWQdX8+WQD8qzSl/YkVDbxhcQJGmg==}
@@ -7079,7 +7083,7 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.26.7
-      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.2)
       '@lingui/message-utils': 5.3.2
       babel-plugin-macros: 3.1.0
       unraw: 3.0.0
@@ -7171,7 +7175,7 @@ packages:
     bundledDependencies:
       - '@messageformat/date-skeleton'
 
-  /@lingui/metro-transformer@5.3.2(expo@54.0.25)(metro@0.84.0)(react-native@0.81.5)(typescript@5.9.2):
+  /@lingui/metro-transformer@5.3.2(expo@54.0.25)(metro@0.84.2)(react-native@0.81.5)(typescript@5.9.2):
     resolution: {integrity: sha512-wUnTwPauS1+9Vcy86GbUvxwS0nxfLlDVnN/UIZQhXbW5xsfTikXwifUvFd8RoaaUad9OGSo9NWZcX+QVCfsebg==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
@@ -7193,7 +7197,7 @@ packages:
       '@lingui/conf': 5.3.2(typescript@5.9.2)
       expo: 54.0.25(@babel/core@7.26.0)(@expo/metro-runtime@6.1.2)(expo-router@6.0.15)(react-native-webview@13.15.0)(react-native@0.81.5)(react@19.1.0)
       memoize-one: 6.0.0
-      metro: 0.84.0
+      metro: 0.84.2
       react-native: 0.81.5(@babel/core@7.26.0)(@types/react@19.1.17)(react@19.1.0)
     transitivePeerDependencies:
       - supports-color
@@ -7761,7 +7765,7 @@ packages:
     requiresBuild: true
     optional: true
 
-  /@polar-sh/better-auth@1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(@types/react-dom@19.0.0)(@types/react@19.1.17)(better-auth@1.4.19)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1)(zod@4.0.17):
+  /@polar-sh/better-auth@1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(@types/react-dom@19.0.0)(@types/react@19.1.17)(better-auth@1.4.19)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1)(zod@4.3.6):
     resolution: {integrity: sha512-wZjF1xcxw1+blnR8JspPwZ0WhwoHkG4C2oFhVzb1RJKQfwTBjSmnrBftjaV6D3WFHDnrs0wFPnW/YHXzg8paOA==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -7772,7 +7776,7 @@ packages:
       '@polar-sh/checkout': 0.2.0(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(@types/react-dom@19.0.0)(@types/react@19.1.17)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1)
       '@polar-sh/sdk': 0.42.5
       better-auth: 1.4.19(drizzle-orm@0.45.1)(react-dom@19.0.0)(react@19.0.0)
-      zod: 4.0.17
+      zod: 4.3.6
     transitivePeerDependencies:
       - '@stripe/react-stripe-js'
       - '@stripe/stripe-js'
@@ -7784,7 +7788,7 @@ packages:
       - redux
     dev: false
 
-  /@polar-sh/better-auth@1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)(zod@4.0.17):
+  /@polar-sh/better-auth@1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)(zod@4.3.6):
     resolution: {integrity: sha512-wZjF1xcxw1+blnR8JspPwZ0WhwoHkG4C2oFhVzb1RJKQfwTBjSmnrBftjaV6D3WFHDnrs0wFPnW/YHXzg8paOA==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -7795,7 +7799,7 @@ packages:
       '@polar-sh/checkout': 0.2.0(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)
       '@polar-sh/sdk': 0.42.5
       better-auth: 1.4.19(drizzle-kit@0.31.9)(drizzle-orm@0.45.1)(react-dom@19.1.0)(react@19.1.0)
-      zod: 4.0.17
+      zod: 4.3.6
     transitivePeerDependencies:
       - '@stripe/react-stripe-js'
       - '@stripe/stripe-js'
@@ -12635,15 +12639,15 @@ packages:
       '@tanstack/ai': 0.6.1
     dev: false
 
-  /@tanstack/ai-openai@0.6.0(@tanstack/ai@0.6.1)(zod@4.0.17):
+  /@tanstack/ai-openai@0.6.0(@tanstack/ai@0.6.1)(zod@4.3.6):
     resolution: {integrity: sha512-CSDgYr63ftw+nGb1IpB+3qIOngLE1pZjasiaeOdDQ6CbSEJDNcR7VNmyTx3RsoTh9fChKbLhJzYpem1Mpag2og==}
     peerDependencies:
       '@tanstack/ai': ^0.6.1
       zod: ^4.0.0
     dependencies:
       '@tanstack/ai': 0.6.1
-      openai: 6.25.0(zod@4.0.17)
-      zod: 4.0.17
+      openai: 6.25.0(zod@4.3.6)
+      zod: 4.3.6
     transitivePeerDependencies:
       - ws
     dev: false
@@ -12811,7 +12815,7 @@ packages:
       '@tanstack/virtual-file-routes': 1.87.6
       prettier: 3.4.2
       tsx: 4.19.2
-      zod: 3.24.1
+      zod: 3.25.76
     dev: true
 
   /@tanstack/router-plugin@1.91.1(vite@6.4.1):
@@ -12847,7 +12851,7 @@ packages:
       chokidar: 3.6.0
       unplugin: 1.16.0
       vite: 6.4.1(@types/node@20.10.6)
-      zod: 3.24.1
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -12869,7 +12873,7 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /@tanstack/zod-adapter@1.150.0(@tanstack/react-router@1.120.13)(zod@4.0.17):
+  /@tanstack/zod-adapter@1.150.0(@tanstack/react-router@1.120.13)(zod@4.3.6):
     resolution: {integrity: sha512-MdkmF6tqxxskG3K3LHVN+PAj8m7kHMhlArDcI4Mi+Fx5CG3BCJcpYGv4aZJhvL0CxHw3N6qyn6SIzG9FraXhWA==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -12877,7 +12881,7 @@ packages:
       zod: ^3.23.8
     dependencies:
       '@tanstack/react-router': 1.120.13(react-dom@19.0.0)(react@19.0.0)
-      zod: 4.0.17
+      zod: 4.3.6
     dev: false
 
   /@tokenizer/inflate@0.4.1:
@@ -13135,12 +13139,6 @@ packages:
     resolution: {integrity: sha512-Vac8H+NlRNNlAmDfGUP7b5h/KA+AtWIzuXy0E6OyP8f1tCLYAtPvKRRDJjAPqhpCb0t6U2j7/xqAuLEebW2kiw==}
     dependencies:
       undici-types: 5.26.5
-
-  /@types/node@20.19.33:
-    resolution: {integrity: sha512-Rs1bVAIdBs5gbTIKza/tgpMuG1k3U/UMJLWecIMxNdJFDMzcM5LOiLVRYh3PilWEYDIeUDv7bpiHPLPsbydGcw==}
-    dependencies:
-      undici-types: 6.21.0
-    dev: true
 
   /@types/parse-json@4.0.2:
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
@@ -14293,7 +14291,7 @@ packages:
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
-      better-call: 1.1.8(zod@4.0.17)
+      better-call: 1.1.8(zod@4.3.6)
       defu: 6.1.4
       drizzle-kit: 0.31.9
       drizzle-orm: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
@@ -14373,7 +14371,7 @@ packages:
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
-      better-call: 1.1.8(zod@4.0.17)
+      better-call: 1.1.8(zod@4.3.6)
       defu: 6.1.4
       drizzle-orm: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       jose: 6.1.3
@@ -14449,17 +14447,17 @@ packages:
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
       '@noble/hashes': 2.0.1
-      better-call: 1.1.7(zod@4.0.17)
+      better-call: 1.1.7(zod@4.3.6)
       defu: 6.1.4
       jose: 6.1.3
       kysely: 0.28.5
       nanostores: 1.1.0
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      zod: 4.2.1
+      zod: 4.3.6
     dev: false
 
-  /better-call@1.1.7(zod@4.0.17):
+  /better-call@1.1.7(zod@4.3.6):
     resolution: {integrity: sha512-6gaJe1bBIEgVebQu/7q9saahVzvBsGaByEnE8aDVncZEDiJO7sdNB28ot9I6iXSbR25egGmmZ6aIURXyQHRraQ==}
     peerDependencies:
       zod: ^4.0.0
@@ -14471,37 +14469,7 @@ packages:
       '@better-fetch/fetch': 1.1.21
       rou3: 0.7.12
       set-cookie-parser: 2.7.1
-      zod: 4.0.17
-    dev: false
-
-  /better-call@1.1.7(zod@4.2.1):
-    resolution: {integrity: sha512-6gaJe1bBIEgVebQu/7q9saahVzvBsGaByEnE8aDVncZEDiJO7sdNB28ot9I6iXSbR25egGmmZ6aIURXyQHRraQ==}
-    peerDependencies:
-      zod: ^4.0.0
-    peerDependenciesMeta:
-      zod:
-        optional: true
-    dependencies:
-      '@better-auth/utils': 0.3.0
-      '@better-fetch/fetch': 1.1.21
-      rou3: 0.7.12
-      set-cookie-parser: 2.7.1
-      zod: 4.2.1
-    dev: false
-
-  /better-call@1.1.8(zod@4.0.17):
-    resolution: {integrity: sha512-XMQ2rs6FNXasGNfMjzbyroSwKwYbZ/T3IxruSS6U2MJRsSYh3wYtG3o6H00ZlKZ/C/UPOAD97tqgQJNsxyeTXw==}
-    peerDependencies:
-      zod: ^4.0.0
-    peerDependenciesMeta:
-      zod:
-        optional: true
-    dependencies:
-      '@better-auth/utils': 0.3.0
-      '@better-fetch/fetch': 1.1.21
-      rou3: 0.7.12
-      set-cookie-parser: 2.7.1
-      zod: 4.0.17
+      zod: 4.3.6
     dev: false
 
   /better-call@1.1.8(zod@4.3.6):
@@ -14594,10 +14562,9 @@ packages:
     resolution: {integrity: sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==}
     dependencies:
       balanced-match: 1.0.2
-    dev: false
 
-  /brace-expansion@5.0.3:
-    resolution: {integrity: sha512-fy6KJm2RawA5RcHkLa1z/ScpBeA762UF9KmZQxwIbDtRJrgLzM10depAiEQ+CXYcoiqW1/m96OAAoke2nE9EeA==}
+  /brace-expansion@5.0.4:
+    resolution: {integrity: sha512-h+DEnpVvxmfVefa4jFbCf5HdH5YMDXRsmKflpf1pILZWRFlTbJpxeU55nJl4Smt5HQaGzg1o6RHFPJaOqnmBDg==}
     engines: {node: 18 || 20 || >=22}
     dependencies:
       balanced-match: 4.0.4
@@ -14647,7 +14614,7 @@ packages:
     hasBin: true
     dependencies:
       baseline-browser-mapping: 2.10.0
-      caniuse-lite: 1.0.30001774
+      caniuse-lite: 1.0.30001775
       electron-to-chromium: 1.5.302
       node-releases: 2.0.27
       update-browserslist-db: 1.2.3(browserslist@4.28.1)
@@ -14724,8 +14691,8 @@ packages:
   /caniuse-lite@1.0.30001737:
     resolution: {integrity: sha512-BiloLiXtQNrY5UyF0+1nSJLXUENuhka2pzy2Fx5pGxqavdrxSCW4U6Pn/PoG3Efspi2frRbHpBV2XsrPE6EDlw==}
 
-  /caniuse-lite@1.0.30001774:
-    resolution: {integrity: sha512-DDdwPGz99nmIEv216hKSgLD+D4ikHQHjBC/seF98N9CPqRX4M5mSxT9eTV6oyisnJcuzxtZy4n17yKKQYmYQOA==}
+  /caniuse-lite@1.0.30001775:
+    resolution: {integrity: sha512-s3Qv7Lht9zbVKE9XoTyRG6wVDCKdtOFIjBGg3+Yhn6JaytuNKPIjBMTMIY1AnOH3seL5mvF+x33oGAyK3hVt3A==}
 
   /ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -15187,6 +15154,7 @@ packages:
       parse-json: 5.2.0
       path-type: 4.0.0
       typescript: 5.8.3
+    dev: true
 
   /cosmiconfig@8.3.6(typescript@5.9.2):
     resolution: {integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==}
@@ -15852,6 +15820,16 @@ packages:
       zod: 4.0.17
     dev: false
 
+  /drizzle-zod@0.8.3(drizzle-orm@0.45.1)(zod@4.3.6):
+    resolution: {integrity: sha512-66yVOuvGhKJnTdiqj1/Xaaz9/qzOdRJADpDa68enqS6g3t0kpNkwNYjUuaeXgZfO/UWuIM9HIhSlJ6C5ZraMww==}
+    peerDependencies:
+      drizzle-orm: '>=0.36.0'
+      zod: ^3.25.0 || ^4.0.0
+    dependencies:
+      drizzle-orm: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+      zod: 4.3.6
+    dev: false
+
   /dset@3.1.4:
     resolution: {integrity: sha512-2QF/g9/zTaPDc3BjNcVTGoBbXBgYfMTTceLaYcFJ/W9kggFUkhxD/hMEeuLKbugyef9SqAx8cpgwlIP/jinUTA==}
     engines: {node: '>=4'}
@@ -15914,8 +15892,8 @@ packages:
       typescript: 5.8.3
     dev: false
 
-  /elysia@1.4.26(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3):
-    resolution: {integrity: sha512-oGhEFYwt+4M/U9w34XTdBen2KOQIa/PXne40zUkTWRgJlVJNBhepxOdjWeY1U0CbYoEOyZaj1tc79wOsuCxMYw==}
+  /elysia@1.4.27(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.9.2):
+    resolution: {integrity: sha512-2UlmNEjPJVA/WZVPYKy+KdsrfFwwNlqSBW1lHz6i2AHc75k7gV4Rhm01kFeotH7PDiHIX2G8X3KnRPc33SGVIg==}
     peerDependencies:
       '@sinclair/typebox': '>= 0.34.0 < 1'
       '@types/bun': '>= 1.2.0'
@@ -15936,7 +15914,7 @@ packages:
       file-type: 21.3.0
       memoirist: 0.4.0
       openapi-types: 12.1.3
-      typescript: 5.8.3
+      typescript: 5.9.2
     dev: false
 
   /emittery@0.13.1:
@@ -15982,8 +15960,8 @@ packages:
       graceful-fs: 4.2.11
       tapable: 2.2.3
 
-  /enhanced-resolve@5.19.0:
-    resolution: {integrity: sha512-phv3E1Xl4tQOShqSte26C7Fl84EwUdZsyOuSSk9qtAGyyQs2s3jJzComh+Abf4g187lUUAvH+H26omrqia2aGg==}
+  /enhanced-resolve@5.20.0:
+    resolution: {integrity: sha512-/ce7+jQ1PQ6rVXwe+jKEg5hW5ciicHwIQUagZkp6IufBoY3YDgdTTY1azVs0qoRgVmvsNB+rbjLJxDAeHHtwsQ==}
     engines: {node: '>=10.13.0'}
     dependencies:
       graceful-fs: 4.2.11
@@ -17115,11 +17093,10 @@ packages:
       - supports-color
     dev: false
 
-  /filelist@1.0.5:
-    resolution: {integrity: sha512-ct/ckWBV/9Dg3MlvCXsLcSUyoWwv9mCKqlhLNB2DAuXR/NZolSXlQqP5dyy6guWlPXBhodZyZ5lGPQcbQDxrEQ==}
-    engines: {node: 20 || >=22}
+  /filelist@1.0.6:
+    resolution: {integrity: sha512-5giy2PkLYY1cP39p17Ech+2xlpTRL9HLspOfEgm0L6CwBXBTgsK5ou0JtzYuepxkaQ/tvhCFIJ5uXo0OrM2DxA==}
     dependencies:
-      minimatch: 10.2.3
+      minimatch: 5.1.9
     dev: true
 
   /fill-range@7.0.1:
@@ -17459,7 +17436,7 @@ packages:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 4.2.3
-      minimatch: 10.2.3
+      minimatch: 10.2.4
       minipass: 7.1.3
       package-json-from-dist: 1.0.1
       path-scurry: 2.0.2
@@ -18417,7 +18394,7 @@ packages:
     hasBin: true
     dependencies:
       async: 3.2.6
-      filelist: 1.0.5
+      filelist: 1.0.6
       picocolors: 1.1.1
     dev: true
 
@@ -18589,7 +18566,7 @@ packages:
       jest-mock: 29.7.0
       jest-util: 29.7.0
 
-  /jest-expo@54.0.13(@babel/core@7.26.0)(expo@54.0.25)(jest@29.7.0)(react-dom@19.1.0)(react-native@0.81.5)(react@19.1.0)(webpack@5.105.2):
+  /jest-expo@54.0.13(@babel/core@7.26.0)(expo@54.0.25)(jest@29.7.0)(react-dom@19.1.0)(react-native@0.81.5)(react@19.1.0)(webpack@5.105.3):
     resolution: {integrity: sha512-V0xefV7VJ9RD6v6Jo64I8RzQCchgEWVn6ip5r+u4TlgsGau0DA8CAqzitn4ShoSKlmjmpuaMqcGxeCz1p9Cfvg==}
     hasBin: true
     peerDependencies:
@@ -18609,7 +18586,7 @@ packages:
       json5: 2.2.3
       lodash: 4.17.21
       react-native: 0.81.5(@babel/core@7.26.0)(@types/react@19.1.17)(react@19.1.0)
-      react-server-dom-webpack: 19.0.0(react-dom@19.1.0)(react@19.1.0)(webpack@5.105.2)
+      react-server-dom-webpack: 19.0.0(react-dom@19.1.0)(react@19.1.0)(webpack@5.105.3)
       react-test-renderer: 19.1.0(react@19.1.0)
       server-only: 0.0.1
       stacktrace-js: 2.0.2
@@ -18879,7 +18856,7 @@ packages:
     resolution: {integrity: sha512-7vuh85V5cdDofPyxn58nrPjBktZo0u9x1g8WtjQol+jZDaE+fhN+cIvTj11GndBnMnyfrUOG1sZQxCdjKh+DKg==}
     engines: {node: '>= 10.13.0'}
     dependencies:
-      '@types/node': 20.19.33
+      '@types/node': 20.10.6
       merge-stream: 2.0.0
       supports-color: 8.1.1
     dev: true
@@ -19818,8 +19795,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /metro-babel-transformer@0.84.0:
-    resolution: {integrity: sha512-91uPQECjnYBNwyCJwsriG18N9HaQ0VcxGb7A0iWBsrNF49wbRblokm7YBz31O5r9cix0DxH2BiwreNWPP5q65w==}
+  /metro-babel-transformer@0.84.2:
+    resolution: {integrity: sha512-UZqjh1VMRDm0WasifM0aN+JreCn3CW0BaPoZgDXb0xOMFSF9dKZJsKhcrpzkjL1+qwmHFYjlhGiQ+tvXdSx+OQ==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       '@babel/core': 7.29.0
@@ -19836,8 +19813,8 @@ packages:
     dependencies:
       flow-enums-runtime: 0.0.6
 
-  /metro-cache-key@0.84.0:
-    resolution: {integrity: sha512-hREMJDJQ3MZW8dXco06HcmhoET6eJjvaPAml3eScTZsp5XBWhknocEiR5zlqx3zKhs3x3K7DK2C8f0uf9X3h0A==}
+  /metro-cache-key@0.84.2:
+    resolution: {integrity: sha512-+yJxLYu5nhKp7jZD6wtx4dMoSqLzK6MeYVkjMaUgjuh2Lu8DwGrxRnbmIVnn5Z9AQOs/K4eOWmuD7N2p64UCMw==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       flow-enums-runtime: 0.0.6
@@ -19854,14 +19831,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /metro-cache@0.84.0:
-    resolution: {integrity: sha512-qIjsTdzWDZMJrztup4u0AnokxIee73fbti2MkV7MgSQ85zSIUSgjV3++oCaQ2m+qzhy+XCasG3n51B+avVDMhw==}
+  /metro-cache@0.84.2:
+    resolution: {integrity: sha512-jPX2fwOc/MmP2KRScSg2jFtVN9BTd+QN6j/3qZ+HIbEAsePLONozbKR2kCIBGvVeBTe7js48WXziI4+AdfwfFQ==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       exponential-backoff: 3.1.3
       flow-enums-runtime: 0.0.6
       https-proxy-agent: 7.0.6
-      metro-core: 0.84.0
+      metro-core: 0.84.2
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -19883,17 +19860,17 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /metro-config@0.84.0:
-    resolution: {integrity: sha512-wXhIQebmW8jyNr2xht1tKFRio9hSThpYzkiDBBMggk/LYw/6KbaUyl1EKJmpm5M/KJ4XwrhL3yTTMi2MqfWaDw==}
+  /metro-config@0.84.2:
+    resolution: {integrity: sha512-ze7IgJwLJoXoTxeXW86xqqKoxXjE0gZg5w8kW2mawaWLSfuvI0KgVaaERXgoVuWl+DQU2q22tIeAEdsCyUZvBQ==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       connect: 3.7.0
       flow-enums-runtime: 0.0.6
       jest-validate: 29.7.0
-      metro: 0.84.0
-      metro-cache: 0.84.0
-      metro-core: 0.84.0
-      metro-runtime: 0.84.0
+      metro: 0.84.2
+      metro-cache: 0.84.2
+      metro-core: 0.84.2
+      metro-runtime: 0.84.2
       yaml: 2.8.2
     transitivePeerDependencies:
       - bufferutil
@@ -19909,13 +19886,13 @@ packages:
       lodash.throttle: 4.1.1
       metro-resolver: 0.83.2
 
-  /metro-core@0.84.0:
-    resolution: {integrity: sha512-HWDvRDFTNcNZqgSs2DQX379BAJHYdE6bsX4SNQztz9KUqDx5egrQPzIahtYP5irP/RbksTqKbGeXtJxVz2557A==}
+  /metro-core@0.84.2:
+    resolution: {integrity: sha512-s9Ko372nzfbu5Y2uhWDlB/g3E6mba3Es95QzF/8IwNM4ynZgqM9rfnU0PR54onGvDGDfj44jbooSxaA1D09rDA==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       flow-enums-runtime: 0.0.6
       lodash.throttle: 4.1.1
-      metro-resolver: 0.84.0
+      metro-resolver: 0.84.2
     dev: true
 
   /metro-file-map@0.83.2:
@@ -19934,8 +19911,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /metro-file-map@0.84.0:
-    resolution: {integrity: sha512-euSnhAgRaaZdK1bdcPiez0MPErg+a0h6rrop+xcQI0mNQEm1GT6R5h+yycfMMQvPkZnfzpPkhjH+pr/x7BK4WQ==}
+  /metro-file-map@0.84.2:
+    resolution: {integrity: sha512-ZgX1lXO9YJCgTY6OSuwvRcHdhXjAFd1DdYC4g2B+d7yAtLUW1/OqwTLpW6ixl1zqZDDQSDSYZXDsN7DL2IumBw==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       debug: 4.4.3
@@ -19958,8 +19935,8 @@ packages:
       flow-enums-runtime: 0.0.6
       terser: 5.43.1
 
-  /metro-minify-terser@0.84.0:
-    resolution: {integrity: sha512-STWICiHB3Lywl+K5eOl7Xm8/5+S9ch1YLXinXN0hDijq3SOh2UTGspxUZhWmqOvkDt/nd8dG/zSJO7JfcisV5A==}
+  /metro-minify-terser@0.84.2:
+    resolution: {integrity: sha512-1TNGPN4oUose+XSHsdDUvcvPHQxKP5lZNbiS6UteTXX+6zFNu+IzxqSokyrDoj9BSjVbdClrB3okuI+Fpls3LA==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       flow-enums-runtime: 0.0.6
@@ -19972,8 +19949,8 @@ packages:
     dependencies:
       flow-enums-runtime: 0.0.6
 
-  /metro-resolver@0.84.0:
-    resolution: {integrity: sha512-RTzim9q3rTz5AsRB/RBsTvy+GqHt6LzlIHx8YERv7eGDLjjr291tX2+2g//wbn/uNR/nLtdzJ08FfW1s6qZo/Q==}
+  /metro-resolver@0.84.2:
+    resolution: {integrity: sha512-2i6OQJIv18+olvLnmcM20uhi1T729+25izZozqOugSaV0YGzMV/EXkYFqxkXC9iNsantGcI/w9PgaI89wLK6JQ==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       flow-enums-runtime: 0.0.6
@@ -19986,8 +19963,8 @@ packages:
       '@babel/runtime': 7.28.3
       flow-enums-runtime: 0.0.6
 
-  /metro-runtime@0.84.0:
-    resolution: {integrity: sha512-PJfD4arkFJrdnmJwrela+my+IgJIXSshA2gI3QiOWCzujBZX6XvsT0tKSwzw3FNMfU10OllO0X5tPcdTGTesjg==}
+  /metro-runtime@0.84.2:
+    resolution: {integrity: sha512-NzzORY2+mmN3tLhsZ7N4GDOBERusalyM1o1k36euulUIEe8UkDhwzcsRexvxKaSkrGLiRQ9PYDLp9uxPkQ+A0Q==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       '@babel/runtime': 7.28.6
@@ -20011,17 +19988,17 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /metro-source-map@0.84.0:
-    resolution: {integrity: sha512-09CAPDBWO7gveW4GdLbWQJObxNrkElL5LQATG2xsU8wE7/TZgHc/MhEs8hm73ZC8lnIvCn5V7VS5lNlE6Od+Ww==}
+  /metro-source-map@0.84.2:
+    resolution: {integrity: sha512-m6rRVBefzaAyn6dBk5GOabVchCQ3VIS1/MhCj61dJB5cqLOOx34BV3DRFwnDBkuPw2RR/LUoul0U1sixlS9VQg==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       '@babel/traverse': 7.29.0
       '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
-      metro-symbolicate: 0.84.0
+      metro-symbolicate: 0.84.2
       nullthrows: 1.1.1
-      ob1: 0.84.0
+      ob1: 0.84.2
       source-map: 0.5.7
       vlq: 1.0.1
     transitivePeerDependencies:
@@ -20042,14 +20019,14 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /metro-symbolicate@0.84.0:
-    resolution: {integrity: sha512-JehuiPnqtS5I2luZdk7UHUY7bjNY/4xX1cJ8ezXWutTitiLp489Fsx+aErDTVoWcAx15lrjWa8IpTwoR0JLtZg==}
+  /metro-symbolicate@0.84.2:
+    resolution: {integrity: sha512-o0RY49012YcGE1E4GsZtgzFCBPeoxlASzIsD5CNOTmAoKDIroHfTFFiYCGPLCGwRwQjMaCChhoH0TZCjAyyCKA==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     hasBin: true
     dependencies:
       flow-enums-runtime: 0.0.6
       invariant: 2.2.4
-      metro-source-map: 0.84.0
+      metro-source-map: 0.84.2
       nullthrows: 1.1.1
       source-map: 0.5.7
       vlq: 1.0.1
@@ -20070,8 +20047,8 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /metro-transform-plugins@0.84.0:
-    resolution: {integrity: sha512-B/5eGY4w9YA7wZ5DkWYsW4ZQ/6KkPH97A/F9s6Jj2s9f586p3tGa2sbsm8WXFXNk26tprHda8EOaO6dNSw/TmA==}
+  /metro-transform-plugins@0.84.2:
+    resolution: {integrity: sha512-/821YLQv4PgD1NOruzPkr0r3HDALXqwCEECewyEQZ5hmSb8jzf1VdEpf3F8fx8zI4/5dHY/rARDVVuHCEb/Xrg==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       '@babel/core': 7.29.0
@@ -20106,8 +20083,8 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /metro-transform-worker@0.84.0:
-    resolution: {integrity: sha512-5fwkH5SrrM4RvASbZMQmA0SCiSWeseNbOE99etYjGrns/yFLxO7+oyGPQcoMNo3hMQlQ2Vyd2UcKNc+D81xSew==}
+  /metro-transform-worker@0.84.2:
+    resolution: {integrity: sha512-aR09svo3WC7OTYk5YB0VY0iSXOGrPdfmQWIxG8ADD2cKf/B95VR+y4GgVUbqB31buNvgtU+iCx9186i/YaNGlw==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       '@babel/core': 7.29.0
@@ -20115,13 +20092,13 @@ packages:
       '@babel/parser': 7.29.0
       '@babel/types': 7.29.0
       flow-enums-runtime: 0.0.6
-      metro: 0.84.0
-      metro-babel-transformer: 0.84.0
-      metro-cache: 0.84.0
-      metro-cache-key: 0.84.0
-      metro-minify-terser: 0.84.0
-      metro-source-map: 0.84.0
-      metro-transform-plugins: 0.84.0
+      metro: 0.84.2
+      metro-babel-transformer: 0.84.2
+      metro-cache: 0.84.2
+      metro-cache-key: 0.84.2
+      metro-minify-terser: 0.84.2
+      metro-source-map: 0.84.2
+      metro-transform-plugins: 0.84.2
       nullthrows: 1.1.1
     transitivePeerDependencies:
       - bufferutil
@@ -20179,8 +20156,8 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /metro@0.84.0:
-    resolution: {integrity: sha512-Dy3KZphEH0xUO3rxRSwrCdge2vVjBAbSlPAKcL8qRnNEBlHz/3jPbmbb2fs9BVOrqBTi8EVDu/jdpCdWvg1ygA==}
+  /metro@0.84.2:
+    resolution: {integrity: sha512-Qw7sl+e34cf/0LYEvDfVPiWvXmkvpuVgFqjzhPCc9Mw30NsvRFYZEH6I9zEHlpjugIveV+Jzdqt3YSPMU+Hx/w==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     hasBin: true
     dependencies:
@@ -20205,18 +20182,18 @@ packages:
       jest-worker: 29.7.0
       jsc-safe-url: 0.2.4
       lodash.throttle: 4.1.1
-      metro-babel-transformer: 0.84.0
-      metro-cache: 0.84.0
-      metro-cache-key: 0.84.0
-      metro-config: 0.84.0
-      metro-core: 0.84.0
-      metro-file-map: 0.84.0
-      metro-resolver: 0.84.0
-      metro-runtime: 0.84.0
-      metro-source-map: 0.84.0
-      metro-symbolicate: 0.84.0
-      metro-transform-plugins: 0.84.0
-      metro-transform-worker: 0.84.0
+      metro-babel-transformer: 0.84.2
+      metro-cache: 0.84.2
+      metro-cache-key: 0.84.2
+      metro-config: 0.84.2
+      metro-core: 0.84.2
+      metro-file-map: 0.84.2
+      metro-resolver: 0.84.2
+      metro-runtime: 0.84.2
+      metro-source-map: 0.84.2
+      metro-symbolicate: 0.84.2
+      metro-transform-plugins: 0.84.2
+      metro-transform-worker: 0.84.2
       mime-types: 3.0.2
       nullthrows: 1.1.1
       serialize-error: 2.1.0
@@ -20675,17 +20652,24 @@ packages:
       '@isaacs/brace-expansion': 5.0.0
     dev: true
 
-  /minimatch@10.2.3:
-    resolution: {integrity: sha512-Rwi3pnapEqirPSbWbrZaa6N3nmqq4Xer/2XooiOKyV3q12ML06f7MOuc5DVH8ONZIFhwIYQ3yzPH4nt7iWHaTg==}
+  /minimatch@10.2.4:
+    resolution: {integrity: sha512-oRjTw/97aTBN0RHbYCdtF1MQfvusSIBQM0IZEgzl6426+8jSC0nF1a/GmnVLpfB9yyr6g6FTqWqiZVbxrtaCIg==}
     engines: {node: 18 || 20 || >=22}
     dependencies:
-      brace-expansion: 5.0.3
+      brace-expansion: 5.0.4
     dev: true
 
   /minimatch@3.1.2:
     resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==}
     dependencies:
       brace-expansion: 1.1.11
+
+  /minimatch@5.1.9:
+    resolution: {integrity: sha512-7o1wEA2RyMP7Iu7GNba9vc0RWWGACJOCZBJX2GJWip0ikV+wcOsgVuY9uE8CPiyQhkGFSlhuSkZPavN7u1c2Fw==}
+    engines: {node: '>=10'}
+    dependencies:
+      brace-expansion: 2.0.2
+    dev: true
 
   /minimatch@8.0.4:
     resolution: {integrity: sha512-W0Wvr9HyFXZRGIDgCicunpQ299OKXs9RgZfaukz4qAW/pJhcpUfupc9c+OObPOFueNy8VSrZgEmDtk6Kh4WzDA==}
@@ -20968,8 +20952,8 @@ packages:
     dependencies:
       flow-enums-runtime: 0.0.6
 
-  /ob1@0.84.0:
-    resolution: {integrity: sha512-NBpmKuboMBiWd1V6U6ISIqLg8Az5BHARnKdS/k8IS7spNt931++4BflqI/TMt4otQ387Q5PFB1fzSLRNPC3HZA==}
+  /ob1@0.84.2:
+    resolution: {integrity: sha512-JID0ti8tDRQZJdQ3l+UeVAsKP+dW5Ucmktes/J9FwqP5KarafoTMqWvw4LRKrMtA7yWT3r/+E2w5wapd89GToA==}
     engines: {node: ^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0}
     dependencies:
       flow-enums-runtime: 0.0.6
@@ -21076,7 +21060,7 @@ packages:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  /openai@6.25.0(zod@4.0.17):
+  /openai@6.25.0(zod@4.3.6):
     resolution: {integrity: sha512-mEh6VZ2ds2AGGokWARo18aPISI1OhlgdEIC1ewhkZr8pSIT31dec0ecr9Nhxx0JlybyOgoAT1sWeKtwPZzJyww==}
     hasBin: true
     peerDependencies:
@@ -21088,7 +21072,7 @@ packages:
       zod:
         optional: true
     dependencies:
-      zod: 4.0.17
+      zod: 4.3.6
     dev: false
 
   /openapi-types@12.1.3:
@@ -22156,7 +22140,7 @@ packages:
       use-sidecar: 1.1.3(@types/react@19.1.17)(react@19.1.0)
     dev: false
 
-  /react-server-dom-webpack@19.0.0(react-dom@19.1.0)(react@19.1.0)(webpack@5.105.2):
+  /react-server-dom-webpack@19.0.0(react-dom@19.1.0)(react@19.1.0)(webpack@5.105.3):
     resolution: {integrity: sha512-hLug9KEXLc8vnU9lDNe2b2rKKDaqrp5gNiES4uyu2Up3FZfZJZmdwLFXlWzdA9gTB/6/cWduSB2K1Lfag2pSvw==}
     engines: {node: '>=0.10.0'}
     peerDependencies:
@@ -22168,7 +22152,7 @@ packages:
       neo-async: 2.6.2
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      webpack: 5.105.2
+      webpack: 5.105.3
       webpack-sources: 3.3.3
     dev: true
 
@@ -23757,7 +23741,7 @@ packages:
       ansi-escapes: 4.3.2
       supports-hyperlinks: 2.3.0
 
-  /terser-webpack-plugin@5.3.16(webpack@5.105.2):
+  /terser-webpack-plugin@5.3.16(webpack@5.105.3):
     resolution: {integrity: sha512-h9oBFCWrq78NyWWVcSwZarJkZ01c2AyGrzs1crmHZO3QUg9D61Wu4NPjBy69n7JqylFF5y+CsUZYmYEIZ3mR+Q==}
     engines: {node: '>= 10.13.0'}
     peerDependencies:
@@ -23778,7 +23762,7 @@ packages:
       schema-utils: 4.3.3
       serialize-javascript: 6.0.2
       terser: 5.46.0
-      webpack: 5.105.2
+      webpack: 5.105.3
     dev: true
 
   /terser@5.43.1:
@@ -23915,7 +23899,7 @@ packages:
     resolution: {integrity: sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==}
     dev: false
 
-  /trpc-cli@0.12.1(@trpc/server@11.8.1)(zod@4.2.1):
+  /trpc-cli@0.12.1(@trpc/server@11.8.1)(zod@4.3.6):
     resolution: {integrity: sha512-/D/mIQf3tUrS7ZKJZ1gmSPJn2psAABJfkC5Eevm55SZ4s6KwANOUNlwhAGXN9HT4VSJVfoF2jettevE9vHPQlg==}
     engines: {node: '>=18'}
     hasBin: true
@@ -23942,7 +23926,7 @@ packages:
     dependencies:
       '@trpc/server': 11.8.1(typescript@5.9.3)
       commander: 14.0.2
-      zod: 4.2.1
+      zod: 4.3.6
     dev: true
 
   /ts-fsrs@5.2.3:
@@ -24168,8 +24152,8 @@ packages:
       jsonc-parser: 3.3.1
       nypm: 0.6.2
       picocolors: 1.1.1
-      trpc-cli: 0.12.1(@trpc/server@11.8.1)(zod@4.2.1)
-      zod: 4.2.1
+      trpc-cli: 0.12.1(@trpc/server@11.8.1)(zod@4.3.6)
+      zod: 4.3.6
     transitivePeerDependencies:
       - '@orpc/server'
       - '@valibot/to-json-schema'
@@ -24198,10 +24182,6 @@ packages:
 
   /undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
-
-  /undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-    dev: true
 
   /undici@5.29.0:
     resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
@@ -25037,8 +25017,8 @@ packages:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
     dev: true
 
-  /webpack@5.105.2:
-    resolution: {integrity: sha512-dRXm0a2qcHPUBEzVk8uph0xWSjV/xZxenQQbLwnwP7caQCYpqG1qddwlyEkIDkYn0K8tvmcrZ+bOrzoQ3HxCDw==}
+  /webpack@5.105.3:
+    resolution: {integrity: sha512-LLBBA4oLmT7sZdHiYE/PeVuifOxYyE2uL/V+9VQP7YSYdJU7bSf7H8bZRRxW8kEPMkmVjnrXmoR3oejIdX0xbg==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     peerDependencies:
@@ -25057,7 +25037,7 @@ packages:
       acorn-import-phases: 1.0.4(acorn@8.16.0)
       browserslist: 4.28.1
       chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.19.0
+      enhanced-resolve: 5.20.0
       es-module-lexer: 2.0.0
       eslint-scope: 5.1.1
       events: 3.3.0
@@ -25069,7 +25049,7 @@ packages:
       neo-async: 2.6.2
       schema-utils: 4.3.3
       tapable: 2.3.0
-      terser-webpack-plugin: 5.3.16(webpack@5.105.2)
+      terser-webpack-plugin: 5.3.16(webpack@5.105.3)
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     transitivePeerDependencies:
@@ -25692,22 +25672,15 @@ packages:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
     dev: true
 
-  /zod@3.24.1:
-    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
-    dev: true
-
   /zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   /zod@4.0.17:
     resolution: {integrity: sha512-1PHjlYRevNxxdy2JZ8JcNAw7rX8V9P1AKkP+x/xZfxB0K5FYfuV+Ug6P/6NVSR2jHQ+FzDDoDHS04nYUsOIyLQ==}
-
-  /zod@4.2.1:
-    resolution: {integrity: sha512-0wZ1IRqGGhMP76gLqz8EyfBXKk0J2qo2+H3fi4mcUP/KtTocoX08nmIAHl1Z2kJIZbZee8KOpBCSNPRgauucjw==}
+    dev: false
 
   /zod@4.3.6:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
-    dev: false
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}

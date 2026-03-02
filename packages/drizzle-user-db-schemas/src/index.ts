@@ -8,8 +8,10 @@ export { decks, type InsertDeck, type RawDeck, type SelectDeck } from "./decks";
 export {
   dictionaryEntries,
   type InsertDictionaryEntry,
+  InsertDictionaryEntrySchema,
   type RawDictionaryEntry,
   type SelectDictionaryEntry,
+  SelectDictionaryEntrySchema,
 } from "./dictionary";
 
 export {
