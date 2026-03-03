@@ -12,6 +12,7 @@ Sentry.init({
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import { betterAuthGuard, httpLogger } from "./middleware";
+import { aiRouter } from "./routers/ai";
 import { databasesRouter } from "./routers/databases";
 import { migrationsRouter } from "./routers/migrations";
 import { getAllowedDomains } from "./utils";
@@ -53,6 +54,7 @@ const app = new Elysia()
   .get("/health", () => "OK")
   .use(migrationsRouter)
   .use(databasesRouter)
+  .use(aiRouter)
   .onError(({ error, code }) => {
     Sentry.captureException(error);
 

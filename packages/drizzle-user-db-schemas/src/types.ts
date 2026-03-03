@@ -22,57 +22,81 @@ export const AntonymSchema = z.object({
 export type Antonym = z.infer<typeof AntonymSchema>;
 
 export const ExampleSchema = z.object({
-  sentence: z.string(),
-  context: z.string().optional(),
-  translation: z.string().optional(),
+  sentence: z.string().describe("Example sentence in Arabic with full tashkeel."),
+  context: z
+    .string()
+    .optional()
+    .describe("Register or setting, e.g. formal, colloquial, literary, Quranic, modern."),
+  translation: z.string().optional().describe("English translation of the sentence."),
 });
 export type Example = z.infer<typeof ExampleSchema>;
 
+export const IsmMorphologySchema = z.object({
+  singular: z.string().optional().describe("Singular form with full tashkeel."),
+  dual: z.string().optional().describe("Dual form (المثنى) with full tashkeel."),
+  plurals: z
+    .array(
+      z.object({
+        word: z.string(),
+        details: z
+          .string()
+          .optional()
+          .describe(
+            "Optional context about the plural such as usage notes. Omit if straightforward."
+          ),
+      })
+    )
+    .optional(),
+  gender: z.enum(["masculine", "feminine"]).optional(),
+  inflection: z.enum(["indeclinable", "diptote", "triptote"]).optional(),
+});
+
+export const VerbMorphologySchema = z.object({
+  huroof: z
+    .array(
+      z.object({
+        harf: z.string(),
+        meaning: z.string().optional(),
+      })
+    )
+    .optional()
+    .describe(
+      "Prepositions (huroof al-jarr) that pair with this verb to alter its meaning, e.g. رَغِبَ في (to desire) vs رَغِبَ عن (to shun). Omit if no notable particle pairings."
+    ),
+  past_tense: z.string().optional().describe("Third-person masculine singular past (الماضي) with full tashkeel."),
+  present_tense: z.string().optional().describe("Third-person masculine singular present (المضارع) with full tashkeel."),
+  active_participle: z.string().optional().describe("Active participle (اسم الفاعل) with full tashkeel."),
+  passive_participle: z.string().optional().describe("Passive participle (اسم المفعول) with full tashkeel."),
+  imperative: z.string().optional().describe("Imperative (الأمر) with full tashkeel."),
+  masadir: z
+    .array(
+      z.object({
+        word: z.string(),
+        details: z
+          .string()
+          .optional()
+          .describe(
+            "Optional usage notes, e.g. 'formal register' or 'more common than X'. Omit if straightforward."
+          ),
+      })
+    )
+    .optional(),
+  form: z
+    .string()
+    .optional()
+    .describe("Verb form in Roman numerals (I–XII)."),
+  form_arabic: z
+    .string()
+    .optional()
+    .describe(
+      "The Arabic wazn (model pattern) for this verb form, e.g. فَعَلَ for Form I, أَفْعَلَ for Form IV, تَفَاعَلَ for Form VI."
+    ),
+});
+
 export const MorphologySchema = z
   .object({
-    ism: z
-      .object({
-        singular: z.string().optional(),
-        dual: z.string().optional(),
-        plurals: z
-          .array(
-            z.object({
-              word: z.string(),
-              details: z.string().optional(),
-            })
-          )
-          .optional(),
-        gender: z.enum(["masculine", "feminine"]).optional(),
-        inflection: z.enum(["indeclinable", "diptote", "triptote"]).optional(),
-      })
-      .optional(),
-    verb: z
-      .object({
-        huroof: z
-          .array(
-            z.object({
-              harf: z.string(),
-              meaning: z.string().optional(),
-            })
-          )
-          .optional(),
-        past_tense: z.string().optional(),
-        present_tense: z.string().optional(),
-        active_participle: z.string().optional(),
-        passive_participle: z.string().optional(),
-        imperative: z.string().optional(),
-        masadir: z
-          .array(
-            z.object({
-              word: z.string(),
-              details: z.string().optional(),
-            })
-          )
-          .optional(),
-        form: z.string().optional(),
-        form_arabic: z.string().optional(),
-      })
-      .optional(),
+    ism: IsmMorphologySchema.optional(),
+    verb: VerbMorphologySchema.optional(),
   })
   .optional();
 
