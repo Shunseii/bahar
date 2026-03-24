@@ -516,9 +516,7 @@ const Edit = () => {
                 <span className="inline-flex md:hidden">
                   <Button
                     className="relative overflow-hidden"
-                    disabled={
-                      !isProUser || !canAutofill || autofill.isPending
-                    }
+                    disabled={!isProUser || !canAutofill || autofill.isPending}
                     onClick={() => autofill.mutate()}
                     size="sm"
                     type="button"

@@ -76,9 +76,7 @@ export const betterAuthGuard = new Elysia({ name: "better-auth" })
         });
       },
     }),
-    userRateLimit: (
-      limits: RateLimiterOpts | RateLimiterOpts[]
-    ) => ({
+    userRateLimit: (limits: RateLimiterOpts | RateLimiterOpts[]) => ({
       async resolve(opts) {
         const { status, user } = opts as typeof opts & { user: User };
         const limitsArray = Array.isArray(limits) ? limits : [limits];

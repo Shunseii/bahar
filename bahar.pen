@@ -12911,6 +12911,20 @@
           ]
         }
       ]
+    },
+    {
+      "type": "rectangle",
+      "id": "kTSLg",
+      "x": -1273,
+      "y": 4091,
+      "fill": {
+        "type": "image",
+        "enabled": true,
+        "url": "android-chrome-512x512.png",
+        "mode": "fill"
+      },
+      "width": 512,
+      "height": 512
     }
   ]
 }
