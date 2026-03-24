@@ -76,24 +76,28 @@ export const betterAuthGuard = new Elysia({ name: "better-auth" })
         });
       },
     }),
-    userRateLimit: ({ prefix, maxReqs, windowSecs }: RateLimiterOpts) => ({
+    userRateLimit: (
+      limits: RateLimiterOpts | RateLimiterOpts[]
+    ) => ({
       async resolve(opts) {
-        // `user` becomes available in context from the auth macro
         const { status, user } = opts as typeof opts & { user: User };
+        const limitsArray = Array.isArray(limits) ? limits : [limits];
 
-        const key = `${prefix}:${user.id}`;
-        const count = (await redisClient.get(key)) as number;
+        for (const { prefix, maxReqs, windowSecs } of limitsArray) {
+          const key = `${prefix}:${user.id}`;
+          const count = (await redisClient.get(key)) as number;
 
-        if (!count) {
-          await redisClient.set(key, 1, { ex: windowSecs });
-          return;
+          if (!count) {
+            await redisClient.set(key, 1, { ex: windowSecs });
+            continue;
+          }
+
+          if (count >= maxReqs) {
+            return status(429, { message: "Rate limit exceeded" });
+          }
+
+          await redisClient.incr(key);
         }
-
-        if (count >= maxReqs) {
-          return status(429, { message: "Rate limit exceeded" });
-        }
-
-        await redisClient.incr(key);
       },
     }),
   });

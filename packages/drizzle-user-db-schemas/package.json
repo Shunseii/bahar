@@ -9,7 +9,7 @@
     "drizzle:gen": "drizzle-kit generate"
   },
   "peerDependencies": {
-    "zod": "4.0.17",
+    "zod": ">=4.0.0",
     "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.8.3"
   },

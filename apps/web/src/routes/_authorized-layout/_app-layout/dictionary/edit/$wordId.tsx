@@ -19,6 +19,11 @@ import {
   DialogTrigger,
 } from "@bahar/web-ui/components/dialog";
 import { Form } from "@bahar/web-ui/components/form";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@bahar/web-ui/components/tooltip";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -28,7 +33,7 @@ import {
   useNavigate,
   useRouter,
 } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { type FC, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -41,6 +46,8 @@ import {
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { Page } from "@/components/Page";
 import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
+import { api } from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
 import { useDir } from "@/hooks/useDir";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
@@ -260,6 +267,10 @@ const getDefaultFormValues = (
 const Edit = () => {
   const { editDictionaryEntry } = useEditDictionaryEntry();
   const { wordId } = Route.useParams();
+  const { data: userData } = authClient.useSession();
+  const isProUser =
+    userData?.user.plan === "pro" &&
+    userData.user.subscriptionStatus !== "canceled";
 
   const { data } = useQuery({
     queryFn: () => dictionaryEntriesTable.entry.query(wordId),
@@ -333,6 +344,103 @@ const Edit = () => {
     }
   };
 
+  const canAutofill =
+    form.watch("word") && form.watch("translation") && form.watch("type");
+
+  const autofill = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.ai.autocomplete.post({
+        word: form.getValues("word"),
+        translation: form.getValues("translation"),
+        type: form.getValues("type"),
+      });
+      if (error) throw error;
+      return data;
+    },
+    onError: (error) => {
+      const status = (error as { status?: number }).status;
+      if (status === 429) {
+        toast.error(t`Rate limit reached`, {
+          description: t`Please wait before trying again.`,
+        });
+      } else {
+        toast.error(t`Autofill failed`, {
+          description: t`Something went wrong. Please try again.`,
+        });
+      }
+    },
+    onSuccess: (data) => {
+      if (!data) return;
+
+      if (data.definition) {
+        form.setValue("definition", data.definition);
+      }
+      if (data.root && data.root.length > 0) {
+        form.setValue("root", data.root.join(" "));
+      }
+
+      if ("morphology" in data && data.morphology) {
+        const type = form.getValues("type");
+        const m = data.morphology as Record<string, unknown>;
+
+        if (type === "ism") {
+          const ism = m as {
+            singular?: string;
+            dual?: string;
+            plurals?: { word: string; details?: string }[];
+            gender?: "masculine" | "feminine";
+            inflection?: "indeclinable" | "diptote" | "triptote";
+          };
+          if (ism.singular)
+            form.setValue("morphology.ism.singular", ism.singular);
+          if (ism.dual) form.setValue("morphology.ism.dual", ism.dual);
+          if (ism.plurals?.length)
+            form.setValue("morphology.ism.plurals", ism.plurals);
+          if (ism.gender) form.setValue("morphology.ism.gender", ism.gender);
+          if (ism.inflection)
+            form.setValue("morphology.ism.inflection", ism.inflection);
+        }
+
+        if (type === "fi'l") {
+          const verb = m as {
+            past_tense?: string;
+            present_tense?: string;
+            active_participle?: string;
+            passive_participle?: string;
+            imperative?: string;
+            masadir?: { word: string; details?: string }[];
+            form?: string;
+            form_arabic?: string;
+            huroof?: { harf: string; meaning?: string }[];
+          };
+          if (verb.past_tense)
+            form.setValue("morphology.verb.past_tense", verb.past_tense);
+          if (verb.present_tense)
+            form.setValue("morphology.verb.present_tense", verb.present_tense);
+          if (verb.active_participle)
+            form.setValue(
+              "morphology.verb.active_participle",
+              verb.active_participle
+            );
+          if (verb.passive_participle)
+            form.setValue(
+              "morphology.verb.passive_participle",
+              verb.passive_participle
+            );
+          if (verb.imperative)
+            form.setValue("morphology.verb.imperative", verb.imperative);
+          if (verb.masadir?.length)
+            form.setValue("morphology.verb.masadir", verb.masadir);
+          if (verb.form) form.setValue("morphology.verb.form", verb.form);
+          if (verb.form_arabic)
+            form.setValue("morphology.verb.form_arabic", verb.form_arabic);
+          if (verb.huroof?.length)
+            form.setValue("morphology.verb.huroof", verb.huroof);
+        }
+      }
+    },
+  });
+
   const content = data!.word;
 
   return (
@@ -350,6 +458,51 @@ const Edit = () => {
               </h1>
 
               <div className="hidden items-center gap-2 md:ml-auto md:flex">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex">
+                      <Button
+                        className="relative overflow-hidden"
+                        disabled={
+                          !isProUser || !canAutofill || autofill.isPending
+                        }
+                        onClick={() => autofill.mutate()}
+                        size="sm"
+                        type="button"
+                      >
+                        {autofill.isPending && (
+                          <span className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                        )}
+                        <Sparkles
+                          className={cn(
+                            "h-4 w-4",
+                            autofill.isPending && "animate-pulse"
+                          )}
+                        />
+                        {autofill.isPending ? (
+                          <Trans>Generating...</Trans>
+                        ) : (
+                          <Trans>Autofill</Trans>
+                        )}
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+
+                  {!isProUser ? (
+                    <TooltipContent>
+                      <Trans>Upgrade to Pro to use AI autofill.</Trans>
+                    </TooltipContent>
+                  ) : (
+                    !canAutofill && (
+                      <TooltipContent>
+                        <Trans>
+                          Fill in the word, translation, and type first.
+                        </Trans>
+                      </TooltipContent>
+                    )
+                  )}
+                </Tooltip>
+
                 <DeleteWordButton id={data!.id} />
 
                 <Button size="sm" type="submit">
@@ -357,6 +510,51 @@ const Edit = () => {
                 </Button>
               </div>
             </div>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="inline-flex md:hidden">
+                  <Button
+                    className="relative overflow-hidden"
+                    disabled={
+                      !isProUser || !canAutofill || autofill.isPending
+                    }
+                    onClick={() => autofill.mutate()}
+                    size="sm"
+                    type="button"
+                  >
+                    {autofill.isPending && (
+                      <span className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    )}
+                    <Sparkles
+                      className={cn(
+                        "h-4 w-4",
+                        autofill.isPending && "animate-pulse"
+                      )}
+                    />
+                    {autofill.isPending ? (
+                      <Trans>Generating...</Trans>
+                    ) : (
+                      <Trans>Autofill</Trans>
+                    )}
+                  </Button>
+                </span>
+              </TooltipTrigger>
+
+              {!isProUser ? (
+                <TooltipContent>
+                  <Trans>Upgrade to Pro to use AI autofill.</Trans>
+                </TooltipContent>
+              ) : (
+                !canAutofill && (
+                  <TooltipContent>
+                    <Trans>
+                      Fill in the word, translation, and type first.
+                    </Trans>
+                  </TooltipContent>
+                )
+              )}
+            </Tooltip>
 
             <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
               <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">

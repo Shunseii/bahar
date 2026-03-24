@@ -22,18 +22,28 @@ export const AntonymSchema = z.object({
 export type Antonym = z.infer<typeof AntonymSchema>;
 
 export const ExampleSchema = z.object({
-  sentence: z.string().describe("Example sentence in Arabic with full tashkeel."),
+  sentence: z
+    .string()
+    .describe("Example sentence in Arabic with full tashkeel."),
   context: z
     .string()
     .optional()
-    .describe("Register or setting, e.g. formal, colloquial, literary, Quranic, modern."),
-  translation: z.string().optional().describe("English translation of the sentence."),
+    .describe(
+      "Leave empty unless the register is non-obvious (e.g. colloquial, Quranic, archaic). Omit for standard modern Arabic. This is NOT a translation."
+    ),
+  translation: z
+    .string()
+    .optional()
+    .describe("English translation of the sentence."),
 });
 export type Example = z.infer<typeof ExampleSchema>;
 
 export const IsmMorphologySchema = z.object({
   singular: z.string().optional().describe("Singular form with full tashkeel."),
-  dual: z.string().optional().describe("Dual form (المثنى) with full tashkeel."),
+  dual: z
+    .string()
+    .optional()
+    .describe("Dual form (المثنى) with full tashkeel."),
   plurals: z
     .array(
       z.object({
@@ -42,11 +52,14 @@ export const IsmMorphologySchema = z.object({
           .string()
           .optional()
           .describe(
-            "Optional context about the plural such as usage notes. Omit if straightforward."
+            "Leave empty for standard plurals. Only fill for genuinely non-obvious info (e.g. archaic, dialect-specific). Do NOT mention other plural forms here."
           ),
       })
     )
-    .optional(),
+    .optional()
+    .describe(
+      "Only well-known, attested plural forms. Do NOT invent or guess broken plurals. Omit entirely if unsure."
+    ),
   gender: z.enum(["masculine", "feminine"]).optional(),
   inflection: z.enum(["indeclinable", "diptote", "triptote"]).optional(),
 });
@@ -63,11 +76,30 @@ export const VerbMorphologySchema = z.object({
     .describe(
       "Prepositions (huroof al-jarr) that pair with this verb to alter its meaning, e.g. رَغِبَ في (to desire) vs رَغِبَ عن (to shun). Omit if no notable particle pairings."
     ),
-  past_tense: z.string().optional().describe("Third-person masculine singular past (الماضي) with full tashkeel."),
-  present_tense: z.string().optional().describe("Third-person masculine singular present (المضارع) with full tashkeel."),
-  active_participle: z.string().optional().describe("Active participle (اسم الفاعل) with full tashkeel."),
-  passive_participle: z.string().optional().describe("Passive participle (اسم المفعول) with full tashkeel."),
-  imperative: z.string().optional().describe("Imperative (الأمر) with full tashkeel."),
+  past_tense: z
+    .string()
+    .optional()
+    .describe(
+      "Third-person masculine singular past (الماضي) with full tashkeel."
+    ),
+  present_tense: z
+    .string()
+    .optional()
+    .describe(
+      "Third-person masculine singular present (المضارع) with full tashkeel."
+    ),
+  active_participle: z
+    .string()
+    .optional()
+    .describe("Active participle (اسم الفاعل) with full tashkeel."),
+  passive_participle: z
+    .string()
+    .optional()
+    .describe("Passive participle (اسم المفعول) with full tashkeel."),
+  imperative: z
+    .string()
+    .optional()
+    .describe("Imperative (الأمر) with full tashkeel."),
   masadir: z
     .array(
       z.object({
@@ -76,15 +108,12 @@ export const VerbMorphologySchema = z.object({
           .string()
           .optional()
           .describe(
-            "Optional usage notes, e.g. 'formal register' or 'more common than X'. Omit if straightforward."
+            "Leave empty for standard masadir. Only fill for genuinely non-obvious info (e.g. archaic, dialect-specific). Do NOT compare to other masadir forms."
           ),
       })
     )
     .optional(),
-  form: z
-    .string()
-    .optional()
-    .describe("Verb form in Roman numerals (I–XII)."),
+  form: z.string().optional().describe("Verb form in Roman numerals (I–XII)."),
   form_arabic: z
     .string()
     .optional()
