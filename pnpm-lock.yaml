@@ -34,7 +34,7 @@ importers:
         version: 0.1.5(@tanstack/ai@0.6.1)(zod@4.3.6)
       '@elysiajs/cors':
         specifier: ^1.4.0
-        version: 1.4.0(elysia@1.4.19)
+        version: 1.4.0(elysia@1.4.27)
       '@libsql/client':
         specifier: ^0.10.0
         version: 0.10.0
@@ -69,8 +69,8 @@ importers:
         specifier: ^0.8.3
         version: 0.8.3(drizzle-orm@0.45.1)(zod@4.3.6)
       elysia:
-        specifier: ^1.4.19
-        version: 1.4.19(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3)
+        specifier: 1.4.27
+        version: 1.4.27(@sinclair/typebox@0.34.48)(@types/bun@1.3.11)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3)
       jose:
         specifier: ^6.1.3
         version: 6.1.3
@@ -570,6 +570,9 @@ importers:
       '@tanstack/router-plugin':
         specifier: ^1.91.1
         version: 1.91.1(vite@6.4.1)
+      '@types/bun':
+        specifier: ^1.3.11
+        version: 1.3.11
       '@types/node':
         specifier: ^20.10.6
         version: 20.10.6
@@ -3929,12 +3932,12 @@ packages:
     dependencies:
       '@types/hammerjs': 2.0.46
 
-  /@elysiajs/cors@1.4.0(elysia@1.4.19):
+  /@elysiajs/cors@1.4.0(elysia@1.4.27):
     resolution: {integrity: sha512-pb0SCzBfFbFSYA/U40HHO7R+YrcXBJXOWgL20eSViK33ol1e20ru2/KUaZYo5IMUn63yaTJI/bQERuQ+77ND8g==}
     peerDependencies:
       elysia: '>= 1.4.0'
     dependencies:
-      elysia: 1.4.19(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3)
+      elysia: 1.4.27(@sinclair/typebox@0.34.48)(@types/bun@1.3.11)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3)
     dev: false
 
   /@elysiajs/eden@1.4.6(elysia@1.4.27):
@@ -13184,6 +13187,11 @@ packages:
     dependencies:
       '@babel/types': 7.26.3
 
+  /@types/bun@1.3.11:
+    resolution: {integrity: sha512-5vPne5QvtpjGpsGYXiFyycfpDF2ECyPcTSsFBMa0fraoxiQyMJ3SmuQIGhzPg2WJuWxVBoxWJ2kClYTcw/4fAg==}
+    dependencies:
+      bun-types: 1.3.11
+
   /@types/connect@3.4.38:
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
     dependencies:
@@ -14863,6 +14871,11 @@ packages:
       base64-js: 1.5.1
       ieee754: 1.2.1
 
+  /bun-types@1.3.11:
+    resolution: {integrity: sha512-1KGPpoxQWl9f6wcZh57LvrPIInQMn2TQ7jsgxqpRzg+l0QPOFvJVH7HmvHo/AiPgwXy+/Thf6Ov3EdVn1vOabg==}
+    dependencies:
+      '@types/node': 20.10.6
+
   /bun-types@1.3.5:
     resolution: {integrity: sha512-inmAYe2PFLs0SUbFOWSVD24sg1jFlMPxOjOSSCYqUgn4Hsc3rDc7dFvfVYjFPNHtov6kgUeulV4SxbuIV/stPw==}
     dependencies:
@@ -16095,8 +16108,8 @@ packages:
   /electron-to-chromium@1.5.75:
     resolution: {integrity: sha512-Lf3++DumRE/QmweGjU+ZcKqQ+3bKkU/qjaKYhIJKEOhgIO9Xs6IiAQFkfFoj+RhgDk4LUeNsLo6plExHqSyu6Q==}
 
-  /elysia@1.4.19(@sinclair/typebox@0.34.48)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3):
-    resolution: {integrity: sha512-DZb9y8FnWyX5IuqY44SvqAV0DjJ15NeCWHrLdgXrKgTPDPsl3VNwWHqrEr9bmnOCpg1vh6QUvAX/tcxNj88jLA==}
+  /elysia@1.4.27(@sinclair/typebox@0.34.48)(@types/bun@1.3.11)(exact-mirror@0.2.7)(file-type@21.3.0)(openapi-types@12.1.3)(typescript@5.8.3):
+    resolution: {integrity: sha512-2UlmNEjPJVA/WZVPYKy+KdsrfFwwNlqSBW1lHz6i2AHc75k7gV4Rhm01kFeotH7PDiHIX2G8X3KnRPc33SGVIg==}
     peerDependencies:
       '@sinclair/typebox': '>= 0.34.0 < 1'
       '@types/bun': '>= 1.2.0'
@@ -16111,6 +16124,7 @@ packages:
         optional: true
     dependencies:
       '@sinclair/typebox': 0.34.48
+      '@types/bun': 1.3.11
       cookie: 1.1.1
       exact-mirror: 0.2.7(@sinclair/typebox@0.34.48)
       fast-decode-uri-component: 1.0.1

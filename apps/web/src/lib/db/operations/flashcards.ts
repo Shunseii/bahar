@@ -15,8 +15,9 @@ import {
 import { createScheduler } from "@bahar/fsrs";
 import * as Sentry from "@sentry/react";
 import { nanoid } from "nanoid";
-import { type Card, Rating } from "ts-fsrs";
+import { type Card, type ReviewLog, Rating } from "ts-fsrs";
 import { ensureDb } from "..";
+import { api } from "../../api";
 import type { TableOperation } from "./types";
 
 /**
@@ -586,6 +587,10 @@ export const flashcardsTable = {
 
       const f = createScheduler();
       const nowDate = new Date();
+      const revlogEntries: {
+        log: ReviewLog;
+        direction: SelectFlashcard["direction"];
+      }[] = [];
 
       await db.exec("BEGIN TRANSACTION");
       try {
@@ -607,7 +612,13 @@ export const flashcardsTable = {
           };
 
           const scheduling = f.repeat(card, nowDate);
-          const newCard = scheduling[Rating.Hard].card;
+          const { card: newCard, log } = scheduling[Rating.Hard];
+
+          revlogEntries.push({
+            log,
+            direction: (rawCard.direction ??
+              "forward") as SelectFlashcard["direction"],
+          });
 
           await db
             .prepare(
@@ -646,6 +657,24 @@ export const flashcardsTable = {
       } catch (err) {
         await db.exec("ROLLBACK");
         throw err;
+      }
+
+      if (revlogEntries.length > 0) {
+        api.stats.revlogs.batch
+          .post({
+            entries: revlogEntries.map(({ log, direction }) => ({
+              ...log,
+              due: log.due.toISOString(),
+              review: log.review.toISOString(),
+              direction,
+              source: "clear_backlog" as const,
+            })),
+          })
+          .catch((err) => {
+            Sentry.captureException(err, {
+              tags: { operation: "clearBacklog.revlogs" },
+            });
+          });
       }
     },
     cacheOptions: {

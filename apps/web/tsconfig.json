@@ -10,6 +10,6 @@
       "@bahar/web-ui/*": ["../../packages/web-ui/src/*"],
       "@bahar/design-system/*": ["../../packages/design-system/src/*"]
     },
-    "types": ["vite-plugin-pwa/client"]
+    "types": ["vite-plugin-pwa/client", "bun-types"]
   }
 }
