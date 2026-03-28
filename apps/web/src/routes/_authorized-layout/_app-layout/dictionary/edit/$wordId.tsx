@@ -46,9 +46,9 @@ import {
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { Page } from "@/components/Page";
 import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
+import { useDir } from "@/hooks/useDir";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
-import { useDir } from "@/hooks/useDir";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";

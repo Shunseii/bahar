@@ -16,8 +16,8 @@ import {
 } from "@bahar/web-ui/components/tooltip";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
@@ -31,11 +31,11 @@ import {
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { Page } from "@/components/Page";
 import { useAddDictionaryEntry } from "@/hooks/db";
-import { authClient } from "@/lib/auth-client";
 import { useDir } from "@/hooks/useDir";
+import { api } from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
-import { api } from "@/lib/api";
 
 const Breadcrumbs = ({ className }: { className?: string }) => {
   return (
