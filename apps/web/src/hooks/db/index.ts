@@ -76,6 +76,14 @@ export const useDeleteDictionaryEntry = () => {
   const { reset } = useSearch();
   const { mutateAsync } = useMutation({
     mutationFn: dictionaryEntriesTable.delete.mutation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: flashcardsTable.today.cacheOptions.queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+      });
+    },
   });
 
   return {
