@@ -4,6 +4,8 @@ import {
   DICTIONARY_ENTRY_COLUMNS,
 } from "@bahar/db-operations";
 import {
+  dictionaryEntries,
+  flashcards,
   FlashcardState,
   type InsertFlashcard,
   type RawFlashcard,
@@ -14,9 +16,10 @@ import {
 } from "@bahar/drizzle-user-db-schemas";
 import { createScheduler } from "@bahar/fsrs";
 import * as Sentry from "@sentry/react";
+import { and, eq, inArray, lte, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { type Card, type ReviewLog, Rating } from "ts-fsrs";
-import { ensureDb } from "..";
+import { ensureDb, getDrizzleDb } from "..";
 import { api } from "../../api";
 import type { TableOperation } from "./types";
 
@@ -526,7 +529,8 @@ export const flashcardsTable = {
       filters?: SelectDeck["filters"];
       backlogThresholdDays?: number;
     } = {}): AsyncGenerator<{ cleared: number; total: number }> {
-      const db = await ensureDb();
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
       const now = Date.now();
       const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
 
@@ -542,42 +546,51 @@ export const flashcardsTable = {
             FlashcardState.RE_LEARNING,
           ];
 
-      const directions = showReverse ? ["forward", "reverse"] : ["forward"];
+      const directions: SelectFlashcard["direction"][] = showReverse
+        ? ["forward", "reverse"]
+        : ["forward"];
 
-      // Build query to get backlog cards
-      const whereConditions: string[] = ["f.due_timestamp_ms <= ?"];
-      const params: unknown[] = [backlogThresholdMs];
+      const conditions = [
+        lte(flashcards.due_timestamp_ms, backlogThresholdMs),
+        inArray(flashcards.direction, directions),
+        inArray(flashcards.state, state),
+        inArray(dictionaryEntries.type, types),
+        eq(flashcards.is_hidden, false),
+        ...(tags.length > 0
+          ? [
+              sql`EXISTS (SELECT 1 FROM json_each(${dictionaryEntries.tags}) WHERE value IN (${sql.join(
+                tags.map((t) => sql`${t}`),
+                sql`, `
+              )}))`,
+            ]
+          : []),
+      ];
 
-      whereConditions.push(
-        `f.direction IN (${directions.map(() => "?").join(", ")})`
-      );
-      params.push(...directions);
-
-      whereConditions.push(`f.state IN (${state.map(() => "?").join(", ")})`);
-      params.push(...state);
-
-      whereConditions.push(`d.type IN (${types.map(() => "?").join(", ")})`);
-      params.push(...types);
-
-      whereConditions.push("f.is_hidden = 0");
-
-      const whereClause = whereConditions.join(" AND ");
-
-      const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
-      const tagCondition =
-        tags.length > 0
-          ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
-          : "";
-      const tagParams = tags.length > 0 ? tags : [];
-
-      const sql = `SELECT DISTINCT f.*
-        FROM flashcards f
-        LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin}
-        WHERE ${whereClause}${tagCondition}`;
-
-      const backlogCards: RawFlashcard[] = await db
-        .prepare(sql)
-        .all([...params, ...tagParams]);
+      const backlogCards = await drizzleDb
+        .selectDistinct({
+          id: flashcards.id,
+          dictionary_entry_id: flashcards.dictionary_entry_id,
+          difficulty: flashcards.difficulty,
+          due: flashcards.due,
+          due_timestamp_ms: flashcards.due_timestamp_ms,
+          elapsed_days: flashcards.elapsed_days,
+          lapses: flashcards.lapses,
+          last_review: flashcards.last_review,
+          last_review_timestamp_ms: flashcards.last_review_timestamp_ms,
+          learning_steps: flashcards.learning_steps,
+          reps: flashcards.reps,
+          scheduled_days: flashcards.scheduled_days,
+          stability: flashcards.stability,
+          state: flashcards.state,
+          direction: flashcards.direction,
+          is_hidden: flashcards.is_hidden,
+        })
+        .from(flashcards)
+        .leftJoin(
+          dictionaryEntries,
+          eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
+        )
+        .where(and(...conditions));
 
       const total = backlogCards.length;
 
@@ -592,70 +605,52 @@ export const flashcardsTable = {
         direction: SelectFlashcard["direction"];
       }[] = [];
 
-      await db.exec("BEGIN TRANSACTION");
+      await drizzleDb.run(sql`BEGIN TRANSACTION`);
       try {
         for (let i = 0; i < backlogCards.length; i++) {
-          const rawCard = backlogCards[i];
+          const row = backlogCards[i];
           const card: Card = {
-            due: new Date(rawCard.due),
-            stability: rawCard.stability ?? 0,
-            difficulty: rawCard.difficulty ?? 0,
-            elapsed_days: rawCard.elapsed_days ?? 0,
-            scheduled_days: rawCard.scheduled_days ?? 0,
-            reps: rawCard.reps ?? 0,
-            lapses: rawCard.lapses ?? 0,
-            state: rawCard.state ?? FlashcardState.NEW,
-            learning_steps: rawCard.learning_steps ?? 0,
-            last_review: rawCard.last_review
-              ? new Date(rawCard.last_review)
+            due: new Date(row.due),
+            stability: row.stability ?? 0,
+            difficulty: row.difficulty ?? 0,
+            elapsed_days: row.elapsed_days ?? 0,
+            scheduled_days: row.scheduled_days ?? 0,
+            reps: row.reps ?? 0,
+            lapses: row.lapses ?? 0,
+            state: row.state ?? FlashcardState.NEW,
+            learning_steps: row.learning_steps ?? 0,
+            last_review: row.last_review
+              ? new Date(row.last_review)
               : undefined,
           };
 
           const scheduling = f.repeat(card, nowDate);
           const { card: newCard, log } = scheduling[Rating.Hard];
 
-          revlogEntries.push({
-            log,
-            direction: (rawCard.direction ??
-              "forward") as SelectFlashcard["direction"],
-          });
+          revlogEntries.push({ log, direction: row.direction });
 
-          await db
-            .prepare(
-              `UPDATE flashcards SET
-                due = ?,
-                due_timestamp_ms = ?,
-                last_review = ?,
-                last_review_timestamp_ms = ?,
-                state = ?,
-                stability = ?,
-                difficulty = ?,
-                reps = ?,
-                lapses = ?,
-                elapsed_days = ?,
-                scheduled_days = ?
-              WHERE id = ?`
-            )
-            .run([
-              newCard.due.toISOString(),
-              newCard.due.getTime(),
-              newCard.last_review?.toISOString() ?? null,
-              newCard.last_review?.getTime() ?? null,
-              newCard.state,
-              newCard.stability,
-              newCard.difficulty,
-              newCard.reps,
-              newCard.lapses,
-              newCard.elapsed_days,
-              newCard.scheduled_days,
-              rawCard.id,
-            ]);
+          await drizzleDb
+            .update(flashcards)
+            .set({
+              due: newCard.due.toISOString(),
+              due_timestamp_ms: newCard.due.getTime(),
+              last_review: newCard.last_review?.toISOString() ?? null,
+              last_review_timestamp_ms: newCard.last_review?.getTime() ?? null,
+              state: newCard.state,
+              stability: newCard.stability,
+              difficulty: newCard.difficulty,
+              reps: newCard.reps,
+              lapses: newCard.lapses,
+              elapsed_days: newCard.elapsed_days,
+              scheduled_days: newCard.scheduled_days,
+            })
+            .where(eq(flashcards.id, row.id));
 
           yield { cleared: i + 1, total };
         }
-        await db.exec("COMMIT");
+        await drizzleDb.run(sql`COMMIT`);
       } catch (err) {
-        await db.exec("ROLLBACK");
+        await drizzleDb.run(sql`ROLLBACK`);
         throw err;
       }
 
