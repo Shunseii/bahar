@@ -32,6 +32,7 @@ import {
 import { type Grade, Rating } from "ts-fsrs";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { api } from "@/lib/api";
 import { decksTable } from "@/lib/db/operations/decks";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -48,7 +49,6 @@ import { GradeFeedback } from "./GradeFeedback";
 import { GradeOption } from "./GradeOption";
 import { TagBadgesList } from "./TagBadgesList";
 import { formatScheduleOptions } from "./utils";
-import { api } from "@/lib/api";
 
 interface FlashcardDrawerProps extends PropsWithChildren {
   filters?: SelectDeck["filters"];
