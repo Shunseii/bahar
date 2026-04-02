@@ -11,6 +11,9 @@ const RevlogBodySchema = InsertRevlogsSchema.omit({
   created_at: true,
   due_timestamp_ms: true,
   review_timestamp_ms: true,
+}).extend({
+  due: z.iso.datetime(),
+  review: z.iso.datetime(),
 });
 
 export const statsRouter = new Elysia({ prefix: "/stats" })

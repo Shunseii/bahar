@@ -605,6 +605,7 @@ export const flashcardsTable = {
         direction: SelectFlashcard["direction"];
       }[] = [];
 
+      let committed = false;
       await drizzleDb.run(sql`BEGIN TRANSACTION`);
       try {
         for (let i = 0; i < backlogCards.length; i++) {
@@ -649,9 +650,11 @@ export const flashcardsTable = {
           yield { cleared: i + 1, total };
         }
         await drizzleDb.run(sql`COMMIT`);
-      } catch (err) {
-        await drizzleDb.run(sql`ROLLBACK`);
-        throw err;
+        committed = true;
+      } finally {
+        if (!committed) {
+          await drizzleDb.run(sql`ROLLBACK`);
+        }
       }
 
       if (revlogEntries.length > 0) {
@@ -664,6 +667,13 @@ export const flashcardsTable = {
               direction,
               source: "clear_backlog" as const,
             })),
+          })
+          .then(({ error }) => {
+            if (error) {
+              Sentry.captureException(error, {
+                tags: { operation: "clearBacklog.revlogs" },
+              });
+            }
           })
           .catch((err) => {
             Sentry.captureException(err, {
