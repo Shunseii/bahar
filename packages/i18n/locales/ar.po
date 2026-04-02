@@ -947,7 +947,7 @@ msgstr "ارجع"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/checkout-success/route.lazy.tsx:44
 msgid "Go to dictionary"
-msgstr "الذهاب إلى القاموس"
+msgstr "اذهب إلى المعجم"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:53
 msgid "Good"

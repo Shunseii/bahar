@@ -6,7 +6,7 @@ import {
   usage,
   webhooks,
 } from "@polar-sh/better-auth";
-// @ts-ignore - resolves under Node moduleResolution but not Bundler (web app imports App type from this file)
+// @ts-expect-error - resolves under Node moduleResolution but not Bundler (web app imports App type from this file)
 import type { WebhookSubscriptionUpdatedPayload } from "@polar-sh/sdk/dist/commonjs/models/components/webhooksubscriptionupdatedpayload";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -381,6 +381,24 @@ export const auth = betterAuth({
               throw new Error("User's external ID is missing.");
             }
 
+            const [existingUser] = await db
+              .select({ id: users.id })
+              .from(users)
+              .where(eq(users.id, customer.externalId));
+
+            if (!existingUser) {
+              childLogger.error(
+                {
+                  event: "webhook_subscription_updated.user_not_found",
+                },
+                "No local user matches the Polar external ID."
+              );
+
+              throw new Error(
+                `No local user found for external ID: ${customer.externalId}`
+              );
+            }
+
             childLogger.info({
               event: "webhook_subscription_active.start",
             });
@@ -391,7 +409,7 @@ export const auth = betterAuth({
                 plan,
                 subscriptionStatus: status === "active" ? "active" : "canceled",
               })
-              .where(eq(users.id, customer.externalId));
+              .where(eq(users.id, existingUser.id));
 
             const userSessions = await db
               .select({ token: sessions.token })
