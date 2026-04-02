@@ -212,9 +212,9 @@ export const IsmMorphologyCardSection = () => {
                 </FormLabel>
 
                 <Select
-                  defaultValue={field.value}
                   dir={dir}
                   onValueChange={field.onChange}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger aria-label={t`Select gender`} id="gender">
@@ -280,9 +280,9 @@ export const IsmMorphologyCardSection = () => {
                 </div>
 
                 <Select
-                  defaultValue={field.value}
                   dir={dir}
                   onValueChange={field.onChange}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger

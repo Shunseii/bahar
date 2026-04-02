@@ -12,6 +12,14 @@ const alternateLocale = getAlternateLocale(locale);
 
 const navItems = [
   { label: t(locale, "nav.home"), href: getLocalizedPath("", locale) },
+  {
+    label: t(locale, "nav.features"),
+    href: `${getLocalizedPath("", locale)}#features`,
+  },
+  {
+    label: t(locale, "nav.pricing"),
+    href: `${getLocalizedPath("", locale)}#pricing`,
+  },
   { label: t(locale, "nav.blog"), href: getLocalizedPath("blog", locale) },
   {
     label: t(locale, "footer.roadmap"),

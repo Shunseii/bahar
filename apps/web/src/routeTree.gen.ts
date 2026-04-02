@@ -31,6 +31,9 @@ const AuthorizedLayoutAppLayoutSettingsRouteLazyImport = createFileRoute(
 const AuthorizedLayoutAppLayoutDecksRouteLazyImport = createFileRoute(
   '/_authorized-layout/_app-layout/decks',
 )()
+const AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyImport = createFileRoute(
+  '/_authorized-layout/_app-layout/checkout-success',
+)()
 const AuthorizedLayoutAppLayoutDictionaryAddRouteLazyImport = createFileRoute(
   '/_authorized-layout/_app-layout/dictionary/add',
 )()
@@ -103,6 +106,17 @@ const AuthorizedLayoutAppLayoutDecksRouteLazyRoute =
     ),
   )
 
+const AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute =
+  AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyImport.update({
+    id: '/checkout-success',
+    path: '/checkout-success',
+    getParentRoute: () => AuthorizedLayoutAppLayoutRouteRoute,
+  } as any).lazy(() =>
+    import(
+      './routes/_authorized-layout/_app-layout/checkout-success/route.lazy'
+    ).then((d) => d.Route),
+  )
+
 const AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute =
   AuthorizedLayoutAppLayoutDictionaryAddRouteLazyImport.update({
     id: '/dictionary/add',
@@ -160,6 +174,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnauthorizedLayoutLoginRouteImport
       parentRoute: typeof UnauthorizedLayoutRouteImport
     }
+    '/_authorized-layout/_app-layout/checkout-success': {
+      id: '/_authorized-layout/_app-layout/checkout-success'
+      path: '/checkout-success'
+      fullPath: '/checkout-success'
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyImport
+      parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
+    }
     '/_authorized-layout/_app-layout/decks': {
       id: '/_authorized-layout/_app-layout/decks'
       path: '/decks'
@@ -201,6 +222,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthorizedLayoutAppLayoutRouteRouteChildren {
+  AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute: typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   AuthorizedLayoutAppLayoutDecksRouteLazyRoute: typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
   AuthorizedLayoutAppLayoutSettingsRouteLazyRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
   AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute: typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
@@ -209,6 +231,8 @@ interface AuthorizedLayoutAppLayoutRouteRouteChildren {
 
 const AuthorizedLayoutAppLayoutRouteRouteChildren: AuthorizedLayoutAppLayoutRouteRouteChildren =
   {
+    AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute:
+      AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute,
     AuthorizedLayoutAppLayoutDecksRouteLazyRoute:
       AuthorizedLayoutAppLayoutDecksRouteLazyRoute,
     AuthorizedLayoutAppLayoutSettingsRouteLazyRoute:
@@ -273,6 +297,7 @@ const UnauthorizedLayoutRouteRouteWithChildren =
 export interface FileRoutesByFullPath {
   '': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
   '/login': typeof UnauthorizedLayoutLoginRouteRoute
+  '/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
   '/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
   '/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
@@ -283,6 +308,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '': typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
   '/login': typeof UnauthorizedLayoutLoginRouteRoute
+  '/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
   '/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
   '/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
@@ -297,6 +323,7 @@ export interface FileRoutesById {
   '/_authorized-layout/_app-layout': typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
   '/_authorized-layout/_search-layout': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
   '/_unauthorized-layout/login': typeof UnauthorizedLayoutLoginRouteRoute
+  '/_authorized-layout/_app-layout/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/_authorized-layout/_app-layout/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
   '/_authorized-layout/_app-layout/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
   '/_authorized-layout/_search-layout/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
@@ -309,6 +336,7 @@ export interface FileRouteTypes {
   fullPaths:
     | ''
     | '/login'
+    | '/checkout-success'
     | '/decks'
     | '/settings'
     | '/'
@@ -318,6 +346,7 @@ export interface FileRouteTypes {
   to:
     | ''
     | '/login'
+    | '/checkout-success'
     | '/decks'
     | '/settings'
     | '/'
@@ -330,6 +359,7 @@ export interface FileRouteTypes {
     | '/_authorized-layout/_app-layout'
     | '/_authorized-layout/_search-layout'
     | '/_unauthorized-layout/login'
+    | '/_authorized-layout/_app-layout/checkout-success'
     | '/_authorized-layout/_app-layout/decks'
     | '/_authorized-layout/_app-layout/settings'
     | '/_authorized-layout/_search-layout/'
@@ -379,6 +409,7 @@ export const routeTree = rootRoute
       "filePath": "_authorized-layout/_app-layout/route.tsx",
       "parent": "/_authorized-layout",
       "children": [
+        "/_authorized-layout/_app-layout/checkout-success",
         "/_authorized-layout/_app-layout/decks",
         "/_authorized-layout/_app-layout/settings",
         "/_authorized-layout/_app-layout/dictionary/add",
@@ -395,6 +426,10 @@ export const routeTree = rootRoute
     "/_unauthorized-layout/login": {
       "filePath": "_unauthorized-layout/login/route.tsx",
       "parent": "/_unauthorized-layout"
+    },
+    "/_authorized-layout/_app-layout/checkout-success": {
+      "filePath": "_authorized-layout/_app-layout/checkout-success/route.lazy.tsx",
+      "parent": "/_authorized-layout/_app-layout"
     },
     "/_authorized-layout/_app-layout/decks": {
       "filePath": "_authorized-layout/_app-layout/decks/route.lazy.tsx",

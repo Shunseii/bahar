@@ -67,7 +67,7 @@
     "sonner-native": "^0.21.0",
     "ts-fsrs": "^5.2.3",
     "uniwind": "^1.2.2",
-    "zod": "4.0.17"
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

@@ -20,6 +20,8 @@ export const users = sqliteTable("users", {
   banned: integer("banned", { mode: "boolean" }).default(false),
   banReason: text("ban_reason"),
   banExpires: integer("ban_expires", { mode: "timestamp_ms" }),
+  plan: text({ enum: ["pro"] }),
+  subscriptionStatus: text({ enum: ["active", "canceled"] }),
 });
 
 export const sessions = sqliteTable(

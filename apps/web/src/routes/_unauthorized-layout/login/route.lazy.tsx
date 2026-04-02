@@ -67,12 +67,17 @@ const Login = () => {
   }, []);
 
   if (showOTPForm) {
+    const definedRedirect = redirect ?? "/";
+
+    const [to, hash] = definedRedirect.split("#");
+
     return (
       <Form {...form}>
         <OTPForm
           onVerifyOTP={() => {
             navigate({
-              to: redirect ?? "/",
+              to,
+              hash,
               replace: true,
               resetScroll: true,
             });

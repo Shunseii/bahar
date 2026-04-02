@@ -34,7 +34,10 @@ export const LanguageMenu = () => {
         dynamicActivate(lng);
       }}
     >
-      <SelectTrigger className="w-max gap-x-2">
+      <SelectTrigger
+        className="w-max min-w-[150px] gap-x-2"
+        id="settings-language-menu"
+      >
         <SelectValue />
       </SelectTrigger>
 

@@ -23,9 +23,10 @@ import {
 import { Trans, useLingui } from "@lingui/react/macro";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
+import { BillingSettingsCard } from "@/components/features/settings/BillingSettingsCard";
 import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
 import { InputFile } from "@/components/InputFile";
 import { LanguageMenu } from "@/components/LanguageMenu";
@@ -56,6 +57,14 @@ const Settings = () => {
     total: number;
   } | null>(null);
   const { data: userData } = authClient.useSession();
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    const id = decodeURIComponent(hash.slice(1));
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  }, []);
 
   const exportDictionary = useCallback(
     async (includeFlashcards = false) => {
@@ -193,7 +202,7 @@ const Settings = () => {
         </h1>
 
         <Card>
-          <CardHeader>
+          <CardHeader id="appearance">
             <CardTitle>
               <Trans>Appearance</Trans>
             </CardTitle>
@@ -203,15 +212,32 @@ const Settings = () => {
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="flex flex-col gap-y-4">
-            <ThemeMenu />
-            <ColorThemeMenu />
-            <LanguageMenu />
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-col gap-y-2 sm:flex-row sm:items-center sm:justify-between">
+              <label htmlFor="settings-theme-menu">
+                <Trans>Theme</Trans>
+              </label>
+              <ThemeMenu />
+            </div>
+
+            <div className="flex flex-col gap-y-2 sm:flex-row sm:items-center sm:justify-between">
+              <label htmlFor="settings-color-theme">
+                <Trans>Color theme</Trans>
+              </label>
+              <ColorThemeMenu />
+            </div>
+
+            <div className="flex flex-col gap-y-2 sm:flex-row sm:items-center sm:justify-between">
+              <label htmlFor="settings-language-menu">
+                <Trans>Language</Trans>
+              </label>
+              <LanguageMenu />
+            </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader id="dictionary">
             <CardTitle>
               <Trans>Dictionary</Trans>
             </CardTitle>
@@ -255,16 +281,17 @@ const Settings = () => {
                     });
                   }
 
-                  let parsedImport;
-                  try {
-                    parsedImport = parseImportData(parsedData);
-                  } catch (err) {
-                    throw new ImportError({
-                      message: "Error importing dictionary",
-                      error: err as never,
-                      code: ImportErrorCode.VALIDATION_ERROR,
-                    });
-                  }
+                  const parsedImport = (() => {
+                    try {
+                      return parseImportData(parsedData);
+                    } catch (err) {
+                      throw new ImportError({
+                        message: "Error importing dictionary",
+                        error: err as never,
+                        code: ImportErrorCode.VALIDATION_ERROR,
+                      });
+                    }
+                  })();
 
                   const { version, entries: validatedDictionary } =
                     parsedImport;
@@ -419,7 +446,7 @@ const Settings = () => {
 
                   <DialogDescription>
                     <Trans>
-                      Exporting dictionary with flaschards will save your
+                      Exporting dictionary with flashcards will save your
                       flashcard progress along with all the content in your
                       dictionary. Use this option if you want to make a backup
                       of your data.
@@ -501,10 +528,12 @@ const Settings = () => {
           </CardContent>
         </Card>
 
+        <BillingSettingsCard />
+
         <FlashcardSettingsCardSection />
 
         <Card>
-          <CardHeader>
+          <CardHeader id="debugging">
             <CardTitle>
               <Trans>Debugging</Trans>
             </CardTitle>

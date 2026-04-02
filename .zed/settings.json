@@ -1,0 +1,22 @@
+{
+  "languages": {
+    "TSX": {
+      "formatter": [{ "language_server": { "name": "biome" } }]
+    },
+    "TypeScript": {
+      "formatter": [{ "language_server": { "name": "biome" } }]
+    },
+    "Astro": {
+      "formatter": [{ "language_server": { "name": "biome" } }]
+    },
+    "HTML": {
+      "formatter": [{ "language_server": { "name": "biome" } }]
+    },
+    "JSON": {
+      "formatter": [{ "language_server": { "name": "biome" } }]
+    }
+  },
+  "code_actions_on_format": {
+    "source.organizeImports.biome": true
+  }
+}

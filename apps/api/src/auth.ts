@@ -1,4 +1,13 @@
 import { expo } from "@better-auth/expo";
+import {
+  checkout,
+  polar,
+  portal,
+  usage,
+  webhooks,
+} from "@polar-sh/better-auth";
+// @ts-expect-error - resolves under Node moduleResolution but not Bundler (web app imports App type from this file)
+import type { WebhookSubscriptionUpdatedPayload } from "@polar-sh/sdk/dist/commonjs/models/components/webhooksubscriptionupdatedpayload";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
@@ -7,8 +16,10 @@ import {
   emailOTP,
   openAPI,
 } from "better-auth/plugins";
+import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { sendMail } from "./clients/mail";
+import { polarClient } from "./clients/polar";
 import { redisClient } from "./clients/redis";
 import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
 import { db } from "./db";
@@ -233,6 +244,20 @@ export const auth = betterAuth({
     },
     storeSessionInDatabase: true,
   },
+  user: {
+    additionalFields: {
+      plan: {
+        type: ["pro"],
+        required: false,
+        input: false,
+      },
+      subscriptionStatus: {
+        type: ["active", "canceled"],
+        required: false,
+        input: false,
+      },
+    },
+  },
   plugins: [
     openAPI(),
     expo(),
@@ -281,6 +306,127 @@ export const auth = betterAuth({
           );
         }
       },
+    }),
+    polar({
+      client: polarClient,
+      createCustomerOnSignUp: config.NODE_ENV === "production",
+      use: [
+        checkout({
+          products: [
+            {
+              productId: config.POLAR_PRO_PRODUCT_ID,
+              slug: "pro",
+            },
+            {
+              productId: config.POLAR_PRO_ANNUAL_PRODUCT_ID,
+              slug: "pro_annual",
+            },
+          ],
+          successUrl: `${config.WEB_CLIENT_DOMAIN}/checkout-success`,
+          authenticatedUsersOnly: true,
+        }),
+        portal(),
+        webhooks({
+          secret: config.POLAR_WEBHOOK_SECRET,
+          onSubscriptionUpdated: async (
+            // need to specify the type for payload here
+            // otherwise it seems fine, but the type is any
+            payload: WebhookSubscriptionUpdatedPayload
+          ) => {
+            const { checkoutId, customerId, product, status, customer } =
+              payload.data;
+
+            const plan = (() => {
+              if (
+                product.id === config.POLAR_PRO_PRODUCT_ID ||
+                product.id === config.POLAR_PRO_ANNUAL_PRODUCT_ID
+              ) {
+                return "pro";
+              }
+
+              return null;
+            })();
+
+            const childLogger = logger.child({
+              category: LogCategory.APPLICATION,
+              customerId,
+              checkoutId,
+              timestamp: payload.timestamp,
+              plan,
+              productId: product.id,
+              status,
+            });
+
+            if (plan === null) {
+              childLogger.error(
+                {
+                  event: "webhook_subscription_updated",
+                },
+                "Unknown Polar product ID, cannot determine plan"
+              );
+
+              throw new Error(
+                `Unknown Polar product ID: ${product.id}. Cannot determine plan.`
+              );
+            }
+
+            if (!customer.externalId) {
+              childLogger.error(
+                {
+                  event: "webhook_subscription_updated",
+                },
+                "User's external ID is missing"
+              );
+
+              throw new Error("User's external ID is missing.");
+            }
+
+            const [existingUser] = await db
+              .select({ id: users.id })
+              .from(users)
+              .where(eq(users.id, customer.externalId));
+
+            if (!existingUser) {
+              childLogger.error(
+                {
+                  event: "webhook_subscription_updated.user_not_found",
+                },
+                "No local user matches the Polar external ID."
+              );
+
+              throw new Error(
+                `No local user found for external ID: ${customer.externalId}`
+              );
+            }
+
+            childLogger.info({
+              event: "webhook_subscription_active.start",
+            });
+
+            await db
+              .update(users)
+              .set({
+                plan,
+                subscriptionStatus: status === "active" ? "active" : "canceled",
+              })
+              .where(eq(users.id, existingUser.id));
+
+            const userSessions = await db
+              .select({ token: sessions.token })
+              .from(sessions)
+              .where(eq(sessions.userId, customer.externalId));
+
+            await Promise.all(
+              userSessions.map((s) => redisClient.del(s.token))
+            );
+
+            childLogger.info({
+              event: "webhook_subscription_active.end",
+            });
+          },
+        }),
+        usage(),
+      ],
     }),
   ],
   database: drizzleAdapter(db, {

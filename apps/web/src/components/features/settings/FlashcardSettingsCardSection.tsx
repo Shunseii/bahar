@@ -94,7 +94,7 @@ export const FlashcardSettingsCardSection = () => {
           description: t`${lastProgress.cleared} cards have been rescheduled.`,
         });
       }
-    } catch (err) {
+    } catch (_err) {
       toast.error(t`Failed to clear backlog`, {
         description: t`There was an error clearing your backlog.`,
       });
@@ -132,7 +132,7 @@ export const FlashcardSettingsCardSection = () => {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader id="flashcards">
         <CardTitle>
           <Trans>Flashcards</Trans>
         </CardTitle>

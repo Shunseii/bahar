@@ -79,6 +79,9 @@ expo-env.d.ts
 .metro-health-check*
 
 **/.claude/settings.local.json
+.claude/skills/socratic-tutor/
 
 # Astro
 .astro/
+.memelord/
+.mcp.json

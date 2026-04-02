@@ -76,6 +76,12 @@ pnpm install
 
 The API runs on `http://localhost:3000`.
 
+4. For testing Polar payments integration locally, use a Cloudflare Tunnel to expose the API.
+
+See [the docs](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/create-local-tunnel/) to set up Cloudflare Tunnel. Contact an admin to get the tunnel name and config file. You'll need access to Cloudflare.
+
+Once set up, run the tunnel with `cloudflared tunnel run <tunnel-name>`.
+
 ### Setting Up a New User (Fresh Local DB)
 
 When working with a fresh local database, you need to manually seed the user database migrations:
@@ -101,12 +107,10 @@ When working with a fresh local database, you need to manually seed the user dat
 4. Create a new user through the web app (sign-up flow)
 
 5. Manually convert the user to an admin in the local database:
-
    - Open Drizzle Studio: `pnpm run --filter api drizzle:studio`
    - Find the user in the `users` table and set the role to `admin`
 
 6. Seed the user database migrations:
-
    - Copy the migration SQL from `packages/drizzle-user-db-schemas/drizzle/*.sql`
    - Remove the `--> statement-breakpoint` markers and replace with newlines
    - Manually insert records into the `migrations` table in the user's database
@@ -193,16 +197,3 @@ docker run --network host -p 3000:3000 --env-file apps/api/.env bahar-api
 ## Running in Production
 
 The Docker container runs the compiled `server` binary. Migrations run automatically via Fly.io's `release_command` before deployment.
-
-## Environment Variables
-
-Required environment variables:
-
-- `DATABASE_URL` - Turso central database URL
-- `DATABASE_AUTH_TOKEN` - Turso auth token
-- `TURSO_API_TOKEN` - Turso API token for per-user database management
-- `TURSO_ORGANIZATION` - Turso organization slug
-- `BETTER_AUTH_SECRET` - Secret for Better Auth
-- `REDIS_URL` - Upstash Redis URL
-- `REDIS_TOKEN` - Upstash Redis token
-- `SENTRY_DSN` - Sentry DSN for error tracking

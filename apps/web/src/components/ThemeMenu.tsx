@@ -60,7 +60,10 @@ export const ThemeMenu = () => {
         setTheme(theme);
       }}
     >
-      <SelectTrigger className="w-max gap-x-2">
+      <SelectTrigger
+        className="w-max min-w-[150px] gap-x-2"
+        id="settings-theme-menu"
+      >
         <SelectValue />
       </SelectTrigger>
 
@@ -107,7 +110,10 @@ export const ColorThemeMenu = () => {
         setColorTheme(theme);
       }}
     >
-      <SelectTrigger className="w-max gap-x-2">
+      <SelectTrigger
+        className="w-max min-w-[150px] gap-x-2"
+        id="settings-color-theme"
+      >
         <SelectValue />
       </SelectTrigger>
 

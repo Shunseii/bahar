@@ -97,7 +97,7 @@ To add a new color theme:
 }
 ```
 
-2. **Register the theme** in `src/atoms/theme.ts`:
+1. **Register the theme** in `src/atoms/theme.ts`:
 
 ```typescript
 export enum ColorTheme {
@@ -107,7 +107,7 @@ export enum ColorTheme {
 }
 ```
 
-3. **Add translation** in `src/components/ThemeMenu.tsx`:
+1. **Add translation** in `src/components/ThemeMenu.tsx`:
 
 ```typescript
 const ColorThemeLabel: FC<{ theme: ColorTheme }> = ({ theme }) => {
@@ -119,7 +119,7 @@ const ColorThemeLabel: FC<{ theme: ColorTheme }> = ({ theme }) => {
 };
 ```
 
-4. **Extract translations**: `pnpm run i18n:extract`
+1. **Extract translations**: `pnpm run i18n:extract`
 
 ## Environment Variables
 

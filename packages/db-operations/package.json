@@ -14,7 +14,7 @@
     "@bahar/drizzle-user-db-schemas": "workspace:*",
     "@bahar/result": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
-    "zod": "4.0.17"
+    "zod": "4.3.6"
   },
   "dependencies": {
     "nanoid": "^5.0.7"
