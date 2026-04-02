@@ -28,7 +28,7 @@ export const httpLogger = new Elysia({ name: "http-logger" })
       if (request.method === "OPTIONS" || requestPath === "/health") return;
 
       const duration = Date.now() - requestStartTime;
-      const status = response?.status ?? 200;
+      const status = (response as { status?: number })?.status ?? 200;
       const level = status >= 500 ? "error" : "info";
 
       logger[level](

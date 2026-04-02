@@ -172,6 +172,7 @@ const _initDbInternal = async () => {
   if (!connectionResult.ok) return connectionResult;
 
   db = connectionResult.value;
+
   drizzleDb = drizzle(
     async (sql, params, method) => {
       if (!db) return { rows: [] };

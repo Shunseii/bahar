@@ -14,13 +14,13 @@ import {
   update,
 } from "@orama/orama";
 import { pluginQPS } from "@orama/plugin-qps";
-import { stripArabicDiacritics } from "./arabic";
+import { normalizeArabicForSearch, stripArabicDiacritics } from "./arabic";
 import {
   type DictionaryDocument,
   type DictionaryOrama,
   dictionarySchema,
 } from "./schema";
-import { multiLanguageTokenizer } from "./tokenizer";
+import { arabicTokenizer, multiLanguageTokenizer } from "./tokenizer";
 
 type SearchResults = Results<InternalTypedDocument<DictionaryDocument>>;
 
@@ -159,12 +159,26 @@ export const searchDictionary = (
     );
   }
 
-  const termLen = stripArabicDiacritics(term).length;
+  // Use the stemmed token length for tolerance calculation, since Orama
+  // applies tolerance against stemmed tokens in the index. Using the raw
+  // input length causes over-broad matching for words that stem shorter
+  // (e.g. مهرجان stems to مهرج, so tolerance should be based on 4 chars, not 6).
+  const stemmedTokens =
+    language === "arabic"
+      ? arabicTokenizer.tokenize(
+          normalizeArabicForSearch(term),
+          "arabic",
+          "word"
+        )
+      : [stripArabicDiacritics(term)];
+  const stemmedLen = Math.max(...stemmedTokens.map((t) => t.length), 1);
 
   // Fetch enough results to cover offset + limit for proper pagination
   const fetchLimit = offset + limit;
 
-  // Pass 1: Exact match search
+  // Pass 1: Stemmed exact match (tolerance=0 instead of exact:true,
+  // because exact:true bypasses stemming on the query and never matches
+  // stemmed index tokens)
   const exactResults = search(
     db,
     {
@@ -174,13 +188,13 @@ export const searchDictionary = (
       properties: PROPERTIES,
       where: options?.where,
       sortBy: options?.sortBy,
-      exact: true,
+      tolerance: 0,
     },
     language
   ) as SearchResults;
 
   // Pass 2: Fuzzy search on normalized fields
-  const fuzzyTolerance = termLen <= 2 ? 0 : termLen <= 4 ? 1 : 2;
+  const fuzzyTolerance = stemmedLen <= 2 ? 0 : stemmedLen <= 4 ? 1 : 2;
   const fuzzyResults = search(
     db,
     {

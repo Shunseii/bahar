@@ -46,9 +46,9 @@ import {
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { Page } from "@/components/Page";
 import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
+import { useDir } from "@/hooks/useDir";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
-import { useDir } from "@/hooks/useDir";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";
@@ -349,10 +349,13 @@ const Edit = () => {
 
   const autofill = useMutation({
     mutationFn: async () => {
+      const type = form.getValues("type");
+      if (!type) throw new Error("Type is required");
+
       const { data, error } = await api.ai.autocomplete.post({
         word: form.getValues("word"),
         translation: form.getValues("translation"),
-        type: form.getValues("type"),
+        type,
       });
       if (error) throw error;
       return data;

@@ -32,6 +32,7 @@ import {
 import { type Grade, Rating } from "ts-fsrs";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { api } from "@/lib/api";
 import { decksTable } from "@/lib/db/operations/decks";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -171,7 +172,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     async (grade: Grade) => {
       if (!(schedulingCards && currentCard)) return;
 
-      const selectedCard = schedulingCards[grade].card;
+      const { card: selectedCard, log } = schedulingCards[grade];
       const dueTimestampMs = selectedCard.due.getTime();
       const lastReviewTimestampMs = selectedCard?.last_review
         ? selectedCard.last_review.getTime()
@@ -193,6 +194,13 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
       setShowAnswer(false);
       setCards((prev) => prev.filter((c) => c.id !== currentCard.id));
+
+      await api.stats.revlogs.post({
+        ...log,
+        due: log.due.toISOString(),
+        review: log.review.toISOString(),
+        direction: currentCard.direction,
+      });
 
       await updateFlashcard({
         id: currentCard.id,
