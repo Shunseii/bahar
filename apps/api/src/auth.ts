@@ -322,7 +322,7 @@ export const auth = betterAuth({
               slug: "pro_annual",
             },
           ],
-          successUrl: `${config.WEB_CLIENT_DOMAIN}/checkout-success`,
+          successUrl: `https://${config.WEB_CLIENT_DOMAIN}/checkout-success`,
           authenticatedUsersOnly: true,
         }),
         portal(),
