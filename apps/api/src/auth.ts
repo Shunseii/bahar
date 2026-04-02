@@ -322,7 +322,7 @@ export const auth = betterAuth({
               slug: "pro_annual",
             },
           ],
-          successUrl: `${allowedDomains[0]}/checkout-success`,
+          successUrl: `${config.WEB_CLIENT_DOMAIN}/checkout-success`,
           authenticatedUsersOnly: true,
         }),
         portal(),
@@ -352,11 +352,23 @@ export const auth = betterAuth({
               customerId,
               checkoutId,
               timestamp: payload.timestamp,
-              email: customer.email,
               plan,
               productId: product.id,
               status,
             });
+
+            if (plan === null) {
+              childLogger.error(
+                {
+                  event: "webhook_subscription_updated",
+                },
+                "Unknown Polar product ID, cannot determine plan"
+              );
+
+              throw new Error(
+                `Unknown Polar product ID: ${product.id}. Cannot determine plan.`
+              );
+            }
 
             if (!customer.externalId) {
               childLogger.error(
