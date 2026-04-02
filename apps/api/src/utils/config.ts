@@ -44,6 +44,10 @@ const EnvironmentVariablesSchema = z.object({
   POLAR_WEBHOOK_SECRET: z.string().min(1),
   POLAR_PRO_PRODUCT_ID: z.string().min(1),
   POLAR_PRO_ANNUAL_PRODUCT_ID: z.string().min(1),
+
+  CF_AI_GATEWAY_TOKEN: z.string().min(1),
+  CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
+  CLOUDFLARE_AI_GATEWAY_ID: z.string().min(1),
 });
 
 export type EnvironmentVariables = z.infer<typeof EnvironmentVariablesSchema>;

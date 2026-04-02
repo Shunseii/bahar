@@ -1,3 +1,4 @@
+import { cn } from "@bahar/design-system";
 import {
   Accordion,
   AccordionContent,
@@ -22,15 +23,29 @@ import {
 } from "@bahar/web-ui/components/form";
 import { Input } from "@bahar/web-ui/components/input";
 import { Separator } from "@bahar/web-ui/components/separator";
-import { Trans } from "@lingui/react/macro";
-import { Plus } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@bahar/web-ui/components/tooltip";
+import { Trans, useLingui } from "@lingui/react/macro";
+import { useMutation } from "@tanstack/react-query";
+import { Plus, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { toast } from "sonner";
+import { api } from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
 import type { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 
 export const AdditionalDetailsFormSection = () => {
+  const { t } = useLingui();
   const form = useFormContext<z.infer<typeof FormSchema>>();
+  const { data: userData } = authClient.useSession();
+  const isProUser =
+    userData?.user.plan === "pro" &&
+    userData.user.subscriptionStatus !== "canceled";
 
   const {
     fields: examplesFields,
@@ -55,6 +70,33 @@ export const AdditionalDetailsFormSection = () => {
 
   const hasMorphology = type === "fi'l" || type === "ism";
   const hasAntonyms = type === "ism" || type === "fi'l" || type === "harf";
+
+  const word = form.watch("word");
+  const translation = form.watch("translation");
+
+  const generateExample = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await api.ai.examples.post({ word, translation });
+      if (error) throw error;
+      return data;
+    },
+    onError: (error) => {
+      const status = (error as { status?: number }).status;
+      if (status === 429) {
+        toast.error(t`Rate limit reached`, {
+          description: t`Please wait before trying again.`,
+        });
+      } else {
+        toast.error(t`Failed to generate example`, {
+          description: t`Something went wrong. Please try again.`,
+        });
+      }
+    },
+    onSuccess: (data) => {
+      if (!data?.sentence) return;
+      appendExample(data);
+    },
+  });
 
   return (
     <Card>
@@ -268,18 +310,61 @@ export const AdditionalDetailsFormSection = () => {
               })}
             </Accordion>
 
-            <Button
-              className="w-max"
-              onClick={() => {
-                appendExample({ sentence: "" });
-              }}
-              size="sm"
-              type="button"
-              variant="outline"
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              <Trans>Add example</Trans>
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                className="w-max"
+                onClick={() => {
+                  appendExample({ sentence: "" });
+                }}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                <Trans>Add example</Trans>
+              </Button>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-flex">
+                    <Button
+                      className="relative w-max overflow-hidden"
+                      disabled={
+                        !isProUser ||
+                        !word ||
+                        !translation ||
+                        generateExample.isPending
+                      }
+                      onClick={() => generateExample.mutate()}
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      {generateExample.isPending && (
+                        <span className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+                      )}
+                      <Sparkles
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          generateExample.isPending && "animate-pulse"
+                        )}
+                      />
+                      {generateExample.isPending ? (
+                        <Trans>Generating...</Trans>
+                      ) : (
+                        <Trans>Generate example</Trans>
+                      )}
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+
+                {!isProUser && (
+                  <TooltipContent>
+                    <Trans>Upgrade to Pro to generate examples.</Trans>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </div>
           </div>
 
           {hasAntonyms && (

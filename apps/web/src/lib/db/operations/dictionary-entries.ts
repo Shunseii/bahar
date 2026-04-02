@@ -274,6 +274,12 @@ export const dictionaryEntriesTable = {
           throw new Error(`Dictionary entry not found: ${id}`);
         }
 
+        // Explicitly delete flashcards since sync-wasm doesn't support
+        // ON DELETE CASCADE (foreign key actions other than NO ACTION)
+        await db
+          .prepare("DELETE FROM flashcards WHERE dictionary_entry_id = ?;")
+          .run([id]);
+
         await db
           .prepare("DELETE FROM dictionary_entries WHERE id = ?;")
           .run([id]);
