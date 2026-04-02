@@ -6,6 +6,7 @@ import {
   usage,
   webhooks,
 } from "@polar-sh/better-auth";
+// @ts-ignore - resolves under Node moduleResolution but not Bundler (web app imports App type from this file)
 import type { WebhookSubscriptionUpdatedPayload } from "@polar-sh/sdk/dist/commonjs/models/components/webhooksubscriptionupdatedpayload";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";

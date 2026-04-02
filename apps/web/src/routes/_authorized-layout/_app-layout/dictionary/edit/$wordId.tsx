@@ -349,10 +349,13 @@ const Edit = () => {
 
   const autofill = useMutation({
     mutationFn: async () => {
+      const type = form.getValues("type");
+      if (!type) throw new Error("Type is required");
+
       const { data, error } = await api.ai.autocomplete.post({
         word: form.getValues("word"),
         translation: form.getValues("translation"),
-        type: form.getValues("type"),
+        type,
       });
       if (error) throw error;
       return data;

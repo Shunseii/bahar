@@ -191,10 +191,13 @@ const Add = () => {
 
   const autofill = useMutation({
     mutationFn: async () => {
+      const type = form.getValues("type");
+      if (!type) throw new Error("Type is required");
+
       const { data, error } = await api.ai.autocomplete.post({
         word: form.getValues("word"),
         translation: form.getValues("translation"),
-        type: form.getValues("type"),
+        type,
       });
       if (error) throw error;
       return data;
@@ -289,7 +292,7 @@ const Add = () => {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Breadcrumbs />
 
-          <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
+          <div className="mx-auto grid max-w-236 flex-1 auto-rows-max gap-4">
             <div className="flex items-center gap-4">
               <BackButton />
 
@@ -311,7 +314,7 @@ const Add = () => {
                         type="button"
                       >
                         {autofill.isPending && (
-                          <span className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                          <span className="absolute inset-0 animate-shimmer bg-linear-to-r from-transparent via-white/20 to-transparent" />
                         )}
                         <Sparkles
                           className={cn(
@@ -366,7 +369,7 @@ const Add = () => {
                     type="button"
                   >
                     {autofill.isPending && (
-                      <span className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                      <span className="absolute inset-0 animate-shimmer bg-linear-to-r from-transparent via-white/20 to-transparent" />
                     )}
                     <Sparkles
                       className={cn(

@@ -96,6 +96,8 @@ export const betterAuthGuard = new Elysia({ name: "better-auth" })
 
           await redisClient.incr(key);
         }
+
+        return;
       },
     }),
   });
