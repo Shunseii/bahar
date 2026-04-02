@@ -59,10 +59,11 @@ const Settings = () => {
   const { data: userData } = authClient.useSession();
 
   useEffect(() => {
-    if (window.location.hash) {
-      const el = document.querySelector(window.location.hash);
-      el?.scrollIntoView({ behavior: "smooth" });
-    }
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    const id = decodeURIComponent(hash.slice(1));
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   const exportDictionary = useCallback(
@@ -445,7 +446,7 @@ const Settings = () => {
 
                   <DialogDescription>
                     <Trans>
-                      Exporting dictionary with flaschards will save your
+                      Exporting dictionary with flashcards will save your
                       flashcard progress along with all the content in your
                       dictionary. Use this option if you want to make a backup
                       of your data.
