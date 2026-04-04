@@ -14,7 +14,7 @@ import {
 } from "@bahar/web-ui/components/tooltip";
 import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
-import { Home, Layers, Settings } from "lucide-react";
+import { Activity, Home, Layers, Settings } from "lucide-react";
 import { motion } from "motion/react";
 import Logo from "@/assets/logo.svg";
 import { NavLink } from "@/components/NavLink";
@@ -73,6 +73,22 @@ export const DesktopNavigation = () => {
 
           <TooltipContent side="right" sideOffset={8}>
             <Trans>Decks</Trans>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <NavLink params={{}} to="/progress">
+              <Activity className="h-5 w-5" />
+
+              <span className="sr-only">
+                <Trans>Progress</Trans>
+              </span>
+            </NavLink>
+          </TooltipTrigger>
+
+          <TooltipContent side="right" sideOffset={8}>
+            <Trans>Progress</Trans>
           </TooltipContent>
         </Tooltip>
       </nav>

@@ -33,5 +33,9 @@ export {
   type SelectSetting,
   settings,
 } from "./settings";
-
 export * from "./types";
+export {
+  type InsertUserStats,
+  type SelectUserStats,
+  userStats,
+} from "./user-stats";

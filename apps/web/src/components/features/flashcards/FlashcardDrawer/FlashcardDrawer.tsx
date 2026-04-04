@@ -40,6 +40,7 @@ import {
   type FlashcardWithDictionaryEntry,
   flashcardsTable,
 } from "@/lib/db/operations/flashcards";
+import { progressTable } from "@/lib/db/operations/progress";
 import { queryClient } from "@/lib/query";
 import { AnswerSide } from "../AnswerSide";
 import { QuestionSide } from "../QuestionSide";
@@ -200,6 +201,11 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         due: log.due.toISOString(),
         review: log.review.toISOString(),
         direction: currentCard.direction,
+      });
+
+      await progressTable.recordReview.mutation();
+      await queryClient.invalidateQueries({
+        queryKey: progressTable.streak.cacheOptions.queryKey,
       });
 
       await updateFlashcard({
@@ -487,7 +493,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                   onClick={() => setShowAnswer(true)}
                   size="lg"
                 >
-                  <span className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-white/0 via-white/10 to-white/0 transition-transform duration-500 group-hover:translate-x-[100%]" />
+                  <span className="absolute inset-0 -translate-x-full bg-linear-to-r from-white/0 via-white/10 to-white/0 transition-transform duration-500 group-hover:translate-x-full" />
                   <Sparkles className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
                   <Trans>Show answer</Trans>
                 </Button>

@@ -12,7 +12,7 @@ import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { Link } from "@tanstack/react-router";
 import { useClickAway } from "@uidotdev/usehooks";
 import { atom, useAtom } from "jotai";
-import { Home, Layers, PanelLeft, Settings, X } from "lucide-react";
+import { Activity, Home, Layers, PanelLeft, Settings, X } from "lucide-react";
 import { motion } from "motion/react";
 import React, { type FC, type PropsWithChildren } from "react";
 import Logo from "@/assets/logo.svg";
@@ -164,6 +164,18 @@ export const MobileHeader: FC<PropsWithChildren> = ({ children }) => {
               >
                 <Layers className="h-5 w-5" />
                 <Trans>Decks</Trans>
+              </NavLink>
+
+              <NavLink
+                className="h-auto w-auto justify-start gap-x-2"
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+                params={{}}
+                to="/progress"
+              >
+                <Activity className="h-5 w-5" />
+                <Trans>Progress</Trans>
               </NavLink>
 
               <NavLink
