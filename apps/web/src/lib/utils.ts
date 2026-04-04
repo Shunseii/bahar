@@ -139,3 +139,8 @@ export const normalizeArabicWeakLetters = (text: string): string => {
 export const toMs = (timestamp: number) => {
   return timestamp * 1000;
 };
+
+export const hasKey = <K extends string>(
+  obj: object,
+  key: K
+): obj is Record<K, unknown> => key in obj;

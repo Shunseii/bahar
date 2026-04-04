@@ -4,6 +4,7 @@ import { Copy } from "lucide-react";
 import { type FC, type ReactNode, useMemo, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { DisplayError } from "@/lib/db/errors";
+import { hasKey } from "@/lib/utils";
 
 const ContactSupportSection = () => (
   <p className="text-muted-foreground text-sm">
@@ -45,6 +46,10 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
   const [copied, setCopied] = useState(false);
   const { data: session } = authClient.useSession();
 
+  const errorDetails = isDisplayError
+    ? error.details
+    : `${error.name}: ${error.message}`;
+
   const timestamp = useMemo(() => {
     return new Date().toLocaleString(undefined, { timeZoneName: "short" });
   }, []);
@@ -53,11 +58,10 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
     const details = {
       userId: session?.user?.id ?? "Unknown",
       time: timestamp,
-      ...(isDisplayError && {
-        cause: error.cause,
-        details: error.details,
-      }),
+      details: errorDetails,
+      ...(hasKey(error, "cause") && { cause: error.cause }),
     };
+
     navigator.clipboard.writeText(JSON.stringify(details, null, 2));
     setCopied(true);
     setTimeout(() => setCopied(false), 2 * 1000);
@@ -78,6 +82,7 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
         <button
           className="w-fit cursor-pointer text-left text-primary hover:underline"
           onClick={() => setShowDetails(!showDetails)}
+          type="button"
         >
           {showDetails ? (
             <Trans>Hide details</Trans>
@@ -98,6 +103,7 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
                   className="flex flex-row items-center gap-1 text-muted-foreground text-xs transition-colors hover:text-foreground rtl:flex-row-reverse"
                   onClick={handleCopyDetails}
                   title={copied ? "Copied!" : "Copy error details"}
+                  type="button"
                 >
                   <Copy size={14} />
                   {copied ? <Trans>Copied!</Trans> : <Trans>Copy</Trans>}
@@ -115,20 +121,14 @@ export const ErrorMessage: FC<{ error: Error }> = ({ error }) => {
               />
 
               {isDisplayError && error.cause && (
-                <>
-                  <ErrorDetailField
-                    detail={error.cause}
-                    fieldName={<Trans>Cause:</Trans>}
-                  />
-                </>
+                <ErrorDetailField
+                  detail={error.cause}
+                  fieldName={<Trans>Cause:</Trans>}
+                />
               )}
 
               <ErrorDetailField
-                detail={
-                  isDisplayError
-                    ? error.details
-                    : `${error.name}: ${error.message}`
-                }
+                detail={errorDetails}
                 fieldName={<Trans>Details:</Trans>}
               />
             </div>
