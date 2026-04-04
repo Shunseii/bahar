@@ -1,5 +1,5 @@
 {
-  "version": "2.9",
+  "version": "2.10",
   "children": [
     {
       "type": "frame",
@@ -18961,11 +18961,11 @@
             },
             "colors": [
               {
-                "color": "#5B4AE415",
+                "color": "#306AE715",
                 "position": 0
               },
               {
-                "color": "#5B4AE400",
+                "color": "#306AE700",
                 "position": 1
               }
             ]
@@ -18990,11 +18990,11 @@
             },
             "colors": [
               {
-                "color": "#5B4AE410",
+                "color": "#306AE710",
                 "position": 0
               },
               {
-                "color": "#5B4AE400",
+                "color": "#306AE700",
                 "position": 1
               }
             ]
@@ -19019,11 +19019,11 @@
             },
             "colors": [
               {
-                "color": "#5B4AE408",
+                "color": "#306AE708",
                 "position": 0
               },
               {
-                "color": "#5B4AE400",
+                "color": "#306AE700",
                 "position": 1
               }
             ]
@@ -19038,7 +19038,7 @@
           "y": 80,
           "name": "leftArabic",
           "rotation": -10,
-          "fill": "#5B4AE418",
+          "fill": "#306AE718",
           "content": "عَرَبِيّ",
           "fontFamily": "Noto Naskh Arabic",
           "fontSize": 180,
@@ -19051,7 +19051,7 @@
           "y": 320,
           "name": "rightArabic",
           "rotation": 8,
-          "fill": "#5B4AE418",
+          "fill": "#306AE718",
           "content": "لُغَة",
           "fontFamily": "Noto Naskh Arabic",
           "fontSize": 160,
@@ -19078,7 +19078,7 @@
               "type": "text",
               "id": "5Oq54",
               "name": "arabicDecor",
-              "fill": "#1A1625",
+              "fill": "$foreground",
               "content": "بَحْر",
               "fontFamily": "Noto Naskh Arabic",
               "fontSize": 72,
@@ -19088,7 +19088,7 @@
               "type": "text",
               "id": "itzCH",
               "name": "logo",
-              "fill": "#71688A",
+              "fill": "$muted-foreground",
               "content": "Bahar",
               "fontFamily": "Inter",
               "fontSize": 28,
@@ -19099,7 +19099,7 @@
               "type": "text",
               "id": "WxeoL",
               "name": "tagline",
-              "fill": "#71688A",
+              "fill": "$muted-foreground",
               "content": "Master Arabic, Your Way",
               "fontFamily": "Inter",
               "fontSize": 26,
@@ -19110,7 +19110,7 @@
               "cornerRadius": 2,
               "id": "PRJzC",
               "name": "divider",
-              "fill": "#5B4AE4",
+              "fill": "$primary",
               "width": 48,
               "height": 3
             },
@@ -19118,7 +19118,7 @@
               "type": "text",
               "id": "KwvsO",
               "name": "subtitle",
-              "fill": "#9994AD",
+              "fill": "$muted-foreground",
               "content": "Personal dictionary  ·  Flashcards  ·  Spaced repetition",
               "fontFamily": "Inter",
               "fontSize": 16,
@@ -19128,7 +19128,7 @@
               "type": "text",
               "id": "2lVdX",
               "name": "domain",
-              "fill": "#5B4AE4",
+              "fill": "$primary",
               "content": "getbahar.com",
               "fontFamily": "Inter",
               "fontSize": 14,
@@ -19148,7 +19148,7 @@
           "stroke": {
             "align": "inside",
             "thickness": 1,
-            "fill": "#E4E0EE"
+            "fill": "$border"
           }
         }
       ]
@@ -36054,5 +36054,43 @@
         }
       ]
     }
-  ]
+  ],
+  "variables": {
+    "background": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "border": {
+      "type": "color",
+      "value": "#DCE6F2"
+    },
+    "foreground": {
+      "type": "color",
+      "value": "#040915"
+    },
+    "muted": {
+      "type": "color",
+      "value": "#EEF6FE"
+    },
+    "muted-foreground": {
+      "type": "color",
+      "value": "#5A6A80"
+    },
+    "primary": {
+      "type": "color",
+      "value": "#306AE7"
+    },
+    "primary-foreground": {
+      "type": "color",
+      "value": "#F5FBFF"
+    },
+    "secondary": {
+      "type": "color",
+      "value": "#EEF6FE"
+    },
+    "secondary-foreground": {
+      "type": "color",
+      "value": "#111826"
+    }
+  }
 }
