@@ -19050,6 +19050,7 @@
           "x": 850,
           "y": 320,
           "name": "rightArabic",
+          "enabled": false,
           "rotation": 8,
           "fill": "#306AE718",
           "content": "لُغَة",
@@ -19063,17 +19064,32 @@
           "x": 0,
           "y": 0,
           "name": "Content",
-          "width": 1200,
+          "width": 640,
           "height": 630,
           "layout": "vertical",
           "gap": 20,
           "padding": [
+            0,
+            60,
             0,
             80
           ],
           "justifyContent": "center",
           "alignItems": "center",
           "children": [
+            {
+              "type": "frame",
+              "id": "zDAYy",
+              "name": "Logo Mark",
+              "width": 56,
+              "height": 56,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./logo.png",
+                "mode": "fit"
+              }
+            },
             {
               "type": "text",
               "id": "5Oq54",
@@ -19150,6 +19166,45 @@
             "thickness": 1,
             "fill": "$border"
           }
+        },
+        {
+          "type": "frame",
+          "id": "UY9yq",
+          "x": 680,
+          "y": 40,
+          "name": "App Preview",
+          "rotation": 3.0000000000000004,
+          "width": 460,
+          "height": 550,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./flashcard-preview.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 16,
+          "effect": [
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#306AE720",
+              "offset": {
+                "x": 0,
+                "y": 8
+              },
+              "blur": 32
+            },
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#00000015",
+              "offset": {
+                "x": 0,
+                "y": 1
+              },
+              "blur": 3
+            }
+          ]
         }
       ]
     },
