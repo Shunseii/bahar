@@ -15,6 +15,7 @@ import type { Orama } from "@orama/orama";
 export const dictionarySchema = {
   created_at_timestamp_ms: "number",
   updated_at_timestamp_ms: "number",
+  max_difficulty: "number",
 
   word: "string",
   translation: "string",
@@ -63,6 +64,7 @@ export interface DictionaryDocument {
   created_at_timestamp_ms?: number;
   updated_at?: string;
   updated_at_timestamp_ms?: number;
+  max_difficulty?: number;
   definition?: string;
   type?: string;
   root?: string[];

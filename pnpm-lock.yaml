@@ -40,7 +40,7 @@ importers:
         version: 0.10.0
       '@polar-sh/better-auth':
         specifier: ^1.8.1
-        version: 1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)(zod@4.3.6)
+        version: 1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(zod@4.3.6)
       '@polar-sh/sdk':
         specifier: ^0.42.1
         version: 0.42.5
@@ -530,6 +530,9 @@ importers:
       react-hook-form:
         specifier: ^7.56.4
         version: 7.56.4(react@19.0.0)
+      recharts:
+        specifier: ^3.8.1
+        version: 3.8.1(@types/react@19.1.17)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1)
       ts-fsrs:
         specifier: ^5.2.3
         version: 5.2.3
@@ -778,6 +781,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.1.0(react@19.1.0)
+      recharts:
+        specifier: 2.15.4
+        version: 2.15.4(react-dom@19.1.0)(react@19.1.0)
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.1.0)(react@19.1.0)
@@ -7883,7 +7889,7 @@ packages:
       - redux
     dev: false
 
-  /@polar-sh/better-auth@1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)(zod@4.3.6):
+  /@polar-sh/better-auth@1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(zod@4.3.6):
     resolution: {integrity: sha512-wZjF1xcxw1+blnR8JspPwZ0WhwoHkG4C2oFhVzb1RJKQfwTBjSmnrBftjaV6D3WFHDnrs0wFPnW/YHXzg8paOA==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -7891,7 +7897,7 @@ packages:
       better-auth: ^1.4.12
       zod: ^3.24.2 || ^4
     dependencies:
-      '@polar-sh/checkout': 0.2.0(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)
+      '@polar-sh/checkout': 0.2.0(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)
       '@polar-sh/sdk': 0.42.5
       better-auth: 1.4.19(drizzle-kit@0.31.9)(drizzle-orm@0.45.1)(react-dom@19.1.0)(react@19.1.0)
       zod: 4.3.6
@@ -7930,7 +7936,7 @@ packages:
       - redux
     dev: false
 
-  /@polar-sh/checkout@0.2.0(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1):
+  /@polar-sh/checkout@0.2.0(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0):
     resolution: {integrity: sha512-lkHa7JJtQpbHblsfpEX91bJRV6s7gyBIlehVCy2KRL89vP4t6t2vYKNwIxIHI+EG7RxXKu/4fCMchQYrVSMYuQ==}
     peerDependencies:
       '@stripe/react-stripe-js': ^3.6.0 || ^4.0.2
@@ -7938,7 +7944,7 @@ packages:
       react: ^18 || ^19
     dependencies:
       '@polar-sh/sdk': 0.42.5
-      '@polar-sh/ui': 0.1.2(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)
+      '@polar-sh/ui': 0.1.2(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)
       '@stripe/react-stripe-js': 4.0.2(@stripe/stripe-js@7.9.0)(react-dom@19.1.0)(react@19.1.0)
       '@stripe/stripe-js': 7.9.0
       event-source-plus: 0.1.15
@@ -7997,7 +8003,7 @@ packages:
       react-dom: 19.0.0(react@19.0.0)
       react-hook-form: 7.70.0(react@19.0.0)
       react-timeago: 8.3.0(react@19.0.0)
-      recharts: 3.7.0(@types/react@19.1.17)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1)
+      recharts: 3.8.1(@types/react@19.1.17)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1)
       tailwind-merge: 3.5.0
     transitivePeerDependencies:
       - '@types/react'
@@ -8006,7 +8012,7 @@ packages:
       - redux
     dev: false
 
-  /@polar-sh/ui@0.1.2(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1):
+  /@polar-sh/ui@0.1.2(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0):
     resolution: {integrity: sha512-YTmMB2lr+PplMTDZnTs0Crgu0KNBKyQcSX4N0FYXSlo1Q6e9IKs4hwzEcqNUv3eHS4BxGO1SvxxNjuSK+il49Q==}
     peerDependencies:
       react: ^18 || ^19
@@ -8042,7 +8048,7 @@ packages:
       react-dom: 19.1.0(react@19.1.0)
       react-hook-form: 7.70.0(react@19.1.0)
       react-timeago: 8.3.0(react@19.1.0)
-      recharts: 3.7.0(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1)
+      recharts: 3.8.1(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)
       tailwind-merge: 3.5.0
     transitivePeerDependencies:
       - '@types/react'
@@ -11387,7 +11393,7 @@ packages:
       '@standard-schema/utils': 0.3.0
       immer: 11.1.4
       react: 19.1.0
-      react-redux: 9.2.0(react@19.1.0)(redux@5.0.1)
+      react-redux: 9.2.0(react@19.1.0)
       redux: 5.0.1
       redux-thunk: 3.1.0(redux@5.0.1)
       reselect: 5.1.1
@@ -15562,7 +15568,6 @@ packages:
 
   /csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
-    dev: true
 
   /culori@4.0.2:
     resolution: {integrity: sha512-1+BhOB8ahCn4O0cep0Sh2l9KCOfOdY+BXJnKMHFFzDEouSr/el18QwXEMRlOj9UY5nCeA8UN3a/82rUWRBeyBw==}
@@ -15878,6 +15883,13 @@ packages:
 
   /dlv@1.1.3:
     resolution: {integrity: sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==}
+    dev: false
+
+  /dom-helpers@5.2.1:
+    resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
+    dependencies:
+      '@babel/runtime': 7.28.6
+      csstype: 3.2.3
     dev: false
 
   /dom-serializer@2.0.0:
@@ -16735,6 +16747,10 @@ packages:
     resolution: {integrity: sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==}
     engines: {node: '>=6'}
 
+  /eventemitter3@4.0.7:
+    resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
+    dev: false
+
   /eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
     dev: false
@@ -17235,6 +17251,11 @@ packages:
 
   /fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
+
+  /fast-equals@5.4.0:
+    resolution: {integrity: sha512-jt2DW/aNFNwke7AUd+Z+e6pz39KO5rzdbbFCg2sGafS4mk13MI7Z8O5z9cADNn5lhGODIgLwug6TZO2ctf7kcw==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /fast-glob@3.3.2:
     resolution: {integrity: sha512-oX2ruAFQwf/Orj8m737Y5adxDQO0LAB7/S5MnxCdTNDd4p6BsyIVsv9JQsATbTSq8KHRpLwIHbVlUNatxd+1Ow==}
@@ -19715,7 +19736,6 @@ packages:
 
   /lodash@4.17.23:
     resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
-    dev: true
 
   /log-symbols@2.2.0:
     resolution: {integrity: sha512-VeIAFslyIerEJLXHziedo2basKbMKtTw3vfn5IzG0XTjhAVEJyNHnL2p7vc+wBDSdQuUpNw3M2u6xb9QsAY5Eg==}
@@ -22132,6 +22152,10 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
+  /react-is@18.3.1:
+    resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
+    dev: false
+
   /react-is@19.1.0:
     resolution: {integrity: sha512-Oe56aUPnkHyyDxxkvqtd7KkdQP5uIUfHxd5XTb3wE9d/kRnZLmKbDB0GWk919tdQ+mxxPtG6EAs6RMT6i1qtHg==}
 
@@ -22377,7 +22401,7 @@ packages:
       use-sync-external-store: 1.5.0(react@19.0.0)
     dev: false
 
-  /react-redux@9.2.0(react@19.1.0)(redux@5.0.1):
+  /react-redux@9.2.0(react@19.1.0):
     resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
     peerDependencies:
       '@types/react': ^18.2.25 || ^19
@@ -22391,7 +22415,6 @@ packages:
     dependencies:
       '@types/use-sync-external-store': 0.0.6
       react: 19.1.0
-      redux: 5.0.1
       use-sync-external-store: 1.5.0(react@19.1.0)
     dev: false
 
@@ -22521,6 +22544,19 @@ packages:
       webpack-sources: 3.3.3
     dev: true
 
+  /react-smooth@4.0.4(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-gnGKTpYwqL0Iii09gHobNolvX4Kiq4PKx6eWBCYYix+8cdw+cGo3do906l1NBPKkSWx1DghC1dlWG9L2uGd61Q==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    dependencies:
+      fast-equals: 5.4.0
+      prop-types: 15.8.1
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-transition-group: 4.4.5(react-dom@19.1.0)(react@19.1.0)
+    dev: false
+
   /react-style-singleton@2.2.3(@types/react@19.1.17)(react@19.0.0):
     resolution: {integrity: sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ==}
     engines: {node: '>=10'}
@@ -22588,6 +22624,20 @@ packages:
       react: 19.1.0
     dev: false
 
+  /react-transition-group@4.4.5(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
+    peerDependencies:
+      react: '>=16.6.0'
+      react-dom: '>=16.6.0'
+    dependencies:
+      '@babel/runtime': 7.28.6
+      dom-helpers: 5.2.1
+      loose-envify: 1.4.0
+      prop-types: 15.8.1
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    dev: false
+
   /react@19.0.0:
     resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
     engines: {node: '>=0.10.0'}
@@ -22625,8 +22675,33 @@ packages:
     engines: {node: '>= 12.13.0'}
     dev: false
 
-  /recharts@3.7.0(@types/react@19.1.17)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1):
-    resolution: {integrity: sha512-l2VCsy3XXeraxIID9fx23eCb6iCBsxUQDnE8tWm6DFdszVAO7WVY/ChAD9wVit01y6B2PMupYiMmQwhgPHc9Ew==}
+  /recharts-scale@0.4.5:
+    resolution: {integrity: sha512-kivNFO+0OcUNu7jQquLXAxz1FIwZj8nrj+YkOKc5694NbjCvcT6aSZiIzNzd2Kul4o4rTto8QVR9lMNtxD4G1w==}
+    dependencies:
+      decimal.js-light: 2.5.1
+    dev: false
+
+  /recharts@2.15.4(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-UT/q6fwS3c1dHbXv2uFgYJ9BMFHu3fwnd7AYZaEQhXuYQ4hgsxLvsUXzGdKeZrW5xopzDCvuA2N41WJ88I7zIw==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    dependencies:
+      clsx: 2.1.1
+      eventemitter3: 4.0.7
+      lodash: 4.17.23
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-is: 18.3.1
+      react-smooth: 4.0.4(react-dom@19.1.0)(react@19.1.0)
+      recharts-scale: 0.4.5
+      tiny-invariant: 1.3.3
+      victory-vendor: 36.9.2
+    dev: false
+
+  /recharts@3.8.1(@types/react@19.1.17)(react-dom@19.0.0)(react-is@19.2.4)(react@19.0.0)(redux@5.0.1):
+    resolution: {integrity: sha512-mwzmO1s9sFL0TduUpwndxCUNoXsBw3u3E/0+A+cLcrSfQitSG62L32N69GhqUrrT5qKcAE3pCGVINC6pqkBBQg==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -22652,8 +22727,8 @@ packages:
       - redux
     dev: false
 
-  /recharts@3.7.0(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0)(redux@5.0.1):
-    resolution: {integrity: sha512-l2VCsy3XXeraxIID9fx23eCb6iCBsxUQDnE8tWm6DFdszVAO7WVY/ChAD9wVit01y6B2PMupYiMmQwhgPHc9Ew==}
+  /recharts@3.8.1(react-dom@19.1.0)(react-is@19.2.4)(react@19.1.0):
+    resolution: {integrity: sha512-mwzmO1s9sFL0TduUpwndxCUNoXsBw3u3E/0+A+cLcrSfQitSG62L32N69GhqUrrT5qKcAE3pCGVINC6pqkBBQg==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
@@ -22669,7 +22744,7 @@ packages:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       react-is: 19.2.4
-      react-redux: 9.2.0(react@19.1.0)(redux@5.0.1)
+      react-redux: 9.2.0(react@19.1.0)
       reselect: 5.1.1
       tiny-invariant: 1.3.3
       use-sync-external-store: 1.5.0(react@19.1.0)
@@ -25058,6 +25133,25 @@ packages:
     dependencies:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
+    dev: false
+
+  /victory-vendor@36.9.2:
+    resolution: {integrity: sha512-PnpQQMuxlwYdocC8fIJqVXvkeViHYzotI+NJrCuav0ZYFoq912ZHBk3mCeuj+5/VpodOjPe1z0Fk2ihgzlXqjQ==}
+    dependencies:
+      '@types/d3-array': 3.2.2
+      '@types/d3-ease': 3.0.2
+      '@types/d3-interpolate': 3.0.4
+      '@types/d3-scale': 4.0.9
+      '@types/d3-shape': 3.1.8
+      '@types/d3-time': 3.0.4
+      '@types/d3-timer': 3.0.2
+      d3-array: 3.2.4
+      d3-ease: 3.0.1
+      d3-interpolate: 3.0.1
+      d3-scale: 4.0.2
+      d3-shape: 3.2.0
+      d3-time: 3.1.0
+      d3-timer: 3.0.1
     dev: false
 
   /victory-vendor@37.3.6:

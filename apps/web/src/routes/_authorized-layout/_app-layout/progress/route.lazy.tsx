@@ -2,6 +2,7 @@ import { cn } from "@bahar/design-system";
 import { Badge } from "@bahar/web-ui/components/badge";
 import { Button } from "@bahar/web-ui/components/button";
 import { Card, CardContent } from "@bahar/web-ui/components/card";
+import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
@@ -10,17 +11,28 @@ import { Page } from "@/components/Page";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { progressTable } from "@/lib/db/operations/progress";
+import { settingsTable } from "@/lib/db/operations/settings";
+import { DifficultWordsCard } from "./-components/DifficultWordsCard";
 import { RetentionRateCard } from "./-components/RetentionRateCard";
 import { StreakCard } from "./-components/StreakCard";
 import { WordsAddedCard } from "./-components/WordsAddedCard";
 import { WordsLearnedCard } from "./-components/WordsLearnedCard";
+import { WorkloadForecastCard } from "./-components/WorkloadForecastCard";
 
 const Progress = () => {
+  const { i18n } = useLingui();
   const { data: userData } = authClient.useSession();
   const isFreeTier =
     !userData?.user.plan ||
     !userData.user.subscriptionStatus ||
     userData.user.subscriptionStatus === "canceled";
+
+  const { data: settingsData } = useQuery({
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
+  });
+
+  const showReverse = settingsData?.show_reverse_flashcards ?? false;
 
   const { data: streakData, isLoading: isStreakLoading } = useQuery({
     queryFn: progressTable.streak.query,
@@ -43,6 +55,13 @@ const Progress = () => {
     }
   );
 
+  const { data: difficultData, isLoading: isDifficultLoading } = useQuery({
+    queryFn: progressTable.difficultWords.query,
+    ...progressTable.difficultWords.cacheOptions,
+    staleTime: 5 * 60 * 1000,
+    enabled: !isFreeTier,
+  });
+
   const { data: retentionData, isLoading: isRetentionLoading } = useQuery({
     queryFn: async () => {
       const { data, error } = await api.stats.retention.get();
@@ -50,6 +69,21 @@ const Progress = () => {
       return data;
     },
     queryKey: ["stats.retention"],
+    staleTime: 5 * 60 * 1000,
+    enabled: !isFreeTier,
+  });
+
+  const { data: forecastData, isLoading: isForecastLoading } = useQuery({
+    queryFn: () =>
+      progressTable.workloadForecast.query({
+        showReverse,
+        locale: i18n.locale,
+      }),
+    queryKey: [
+      ...progressTable.workloadForecast.cacheOptions.queryKey,
+      showReverse,
+      i18n.locale,
+    ],
     staleTime: 5 * 60 * 1000,
     enabled: !isFreeTier,
   });
@@ -84,6 +118,17 @@ const Progress = () => {
             <RetentionRateCard
               data={retentionData}
               isLoading={isRetentionLoading}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
+            <DifficultWordsCard
+              data={difficultData}
+              isLoading={isDifficultLoading}
+            />
+            <WorkloadForecastCard
+              data={forecastData}
+              isLoading={isForecastLoading}
             />
           </div>
         </div>

@@ -10,7 +10,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
 import { detectLanguage } from "@/lib/utils";
 
-export const SORT_OPTIONS = ["relevance", "updatedAt", "createdAt"] as const;
+export const SORT_OPTIONS = [
+  "relevance",
+  "updatedAt",
+  "createdAt",
+  "difficulty",
+] as const;
 const SEARCH_RESULTS_PER_PAGE = 20;
 
 const searchResultsMetadataAtom = atom<
@@ -152,13 +157,14 @@ export const useInfiniteScroll = (
   const sortBy = useMemo<SearchDictionaryOptions["sortBy"]>(() => {
     if (!params.sort || params.sort === "relevance") return undefined;
 
-    return {
-      property:
-        params.sort === "createdAt"
-          ? "created_at_timestamp_ms"
-          : "updated_at_timestamp_ms",
-      order: "DESC",
-    };
+    const sortMap: Record<string, { property: string; order: "ASC" | "DESC" }> =
+      {
+        createdAt: { property: "created_at_timestamp_ms", order: "DESC" },
+        updatedAt: { property: "updated_at_timestamp_ms", order: "DESC" },
+        difficulty: { property: "max_difficulty", order: "DESC" },
+      };
+
+    return sortMap[params.sort];
   }, [paramsKey]);
 
   const searchQueryLanguage = useMemo<Parameters<typeof search>[1]>(() => {

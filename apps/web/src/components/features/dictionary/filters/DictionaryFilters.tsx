@@ -16,6 +16,7 @@ import {
   ArrowDownUp,
   ChevronDown,
   FunnelXIcon,
+  Lock,
   SlidersHorizontal,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -23,8 +24,9 @@ import { TagsFilter } from "@/components/features/dictionary/filters/TagsFilter"
 import { TagPill } from "@/components/TagsCombobox";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { authClient } from "@/lib/auth-client";
 
-type SortOption = "relevance" | "updatedAt" | "createdAt";
+type SortOption = "relevance" | "updatedAt" | "createdAt" | "difficulty";
 
 const SortOptionLabel = ({ option }: { option: SortOption }) => {
   switch (option) {
@@ -34,15 +36,27 @@ const SortOptionLabel = ({ option }: { option: SortOption }) => {
       return <Trans>Recently updated</Trans>;
     case "createdAt":
       return <Trans>Recently added</Trans>;
+    case "difficulty":
+      return <Trans>Most difficult</Trans>;
   }
 };
 
-const sortOptions: SortOption[] = ["relevance", "updatedAt", "createdAt"];
+const sortOptions: SortOption[] = [
+  "relevance",
+  "updatedAt",
+  "createdAt",
+  "difficulty",
+];
 
 export const DictionaryFilters = () => {
   const navigate = useNavigate();
   const dir = useDir();
   const { formatNumber } = useFormatNumber();
+  const { data: userData } = authClient.useSession();
+  const isFreeTier =
+    !userData?.user.plan ||
+    !userData.user.subscriptionStatus ||
+    userData.user.subscriptionStatus === "canceled";
   const { tags: filteredTags, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
@@ -185,15 +199,29 @@ export const DictionaryFilters = () => {
 
                 <SelectContent>
                   <SelectGroup>
-                    {sortOptions.map((option) => (
-                      <SelectItem
-                        className="cursor-pointer"
-                        key={option}
-                        value={option}
-                      >
-                        <SortOptionLabel option={option} />
-                      </SelectItem>
-                    ))}
+                    {sortOptions.map((option) => {
+                      const isProOnly = option === "difficulty";
+                      const isDisabled = isProOnly && isFreeTier;
+
+                      return (
+                        <SelectItem
+                          className={cn(
+                            "cursor-pointer",
+                            isDisabled && "opacity-50"
+                          )}
+                          disabled={isDisabled}
+                          key={option}
+                          value={option}
+                        >
+                          <span className="flex items-center gap-1.5">
+                            <SortOptionLabel option={option} />
+                            {isProOnly && isFreeTier && (
+                              <Lock className="h-3 w-3" />
+                            )}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectGroup>
                 </SelectContent>
               </Select>

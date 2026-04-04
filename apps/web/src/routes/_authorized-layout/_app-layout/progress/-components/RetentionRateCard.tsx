@@ -1,3 +1,4 @@
+import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
 import {
   Tooltip,
@@ -21,11 +22,11 @@ export const RetentionRateCard: FC<RetentionRateCardProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-3 rounded-xl border bg-background p-5 shadow-sm">
+      <Card className="flex flex-col gap-3 p-5">
         <Skeleton className="h-4 w-28" />
         <Skeleton className="h-10 w-20" />
         <Skeleton className="h-3 w-20" />
-      </div>
+      </Card>
     );
   }
 
@@ -43,7 +44,7 @@ export const RetentionRateCard: FC<RetentionRateCardProps> = ({
   })();
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border bg-background p-5 shadow-sm">
+    <Card className="flex flex-col gap-3 p-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <span className="font-medium text-muted-foreground text-sm">
@@ -87,6 +88,6 @@ export const RetentionRateCard: FC<RetentionRateCardProps> = ({
       <p className="text-muted-foreground/60 text-xs">
         <Trans>7-day average</Trans>
       </p>
-    </div>
+    </Card>
   );
 };

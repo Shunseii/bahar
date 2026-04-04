@@ -1,3 +1,4 @@
+import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
 import {
   Tooltip,
@@ -9,7 +10,7 @@ import { Info, TrendingUp } from "lucide-react";
 import type { FC } from "react";
 
 interface WordsLearnedCardProps {
-  data: { learned: number; thisWeek: number } | undefined;
+  data: { learned: number; totalAdded: number; thisWeek: number } | undefined;
   isLoading: boolean;
 }
 
@@ -19,19 +20,22 @@ export const WordsLearnedCard: FC<WordsLearnedCardProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-3 rounded-xl border bg-background p-5 shadow-sm">
+      <Card className="flex flex-col gap-3 p-5">
         <Skeleton className="h-4 w-28" />
         <Skeleton className="h-10 w-20" />
         <Skeleton className="h-3 w-16" />
-      </div>
+      </Card>
     );
   }
 
   const learned = data?.learned ?? 0;
+  const totalAdded = data?.totalAdded ?? 0;
   const thisWeek = data?.thisWeek ?? 0;
+  const percentage =
+    totalAdded > 0 ? Math.round((learned / totalAdded) * 100) : 0;
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border bg-background p-5 shadow-sm">
+    <Card className="flex flex-col gap-3 p-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <span className="font-medium text-muted-foreground text-sm">
@@ -59,11 +63,16 @@ export const WordsLearnedCard: FC<WordsLearnedCardProps> = ({
         )}
       </div>
 
-      <span className="font-bold text-4xl tracking-tight">{learned}</span>
+      <div className="flex flex-col gap-0.5">
+        <span className="font-bold text-4xl tracking-tight">{percentage}%</span>
+        <span className="text-muted-foreground text-sm">
+          <Trans>{learned} words</Trans>
+        </span>
+      </div>
 
       <p className="text-muted-foreground/60 text-xs">
         <Trans>All time</Trans>
       </p>
-    </div>
+    </Card>
   );
 };

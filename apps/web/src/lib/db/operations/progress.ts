@@ -5,7 +5,19 @@ import {
   type SelectUserStats,
   userStats,
 } from "@bahar/drizzle-user-db-schemas";
-import { and, count, countDistinct, eq, gte } from "drizzle-orm";
+import { addDays, endOfDay, startOfDay } from "date-fns";
+import {
+  and,
+  count,
+  countDistinct,
+  desc,
+  eq,
+  gt,
+  gte,
+  inArray,
+  lte,
+  max,
+} from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { ensureDb, getDrizzleDb } from "..";
 import type { TableOperation } from "./types";
@@ -90,6 +102,115 @@ export const progressTable = {
     },
     cacheOptions: {
       queryKey: ["turso.progress.wordsLearned"] as const,
+    },
+  },
+  difficultWords: {
+    query: async (): Promise<{
+      total: number;
+      words: {
+        word: string;
+        translation: string;
+        entryId: string;
+        bothDirections: boolean;
+      }[];
+    }> => {
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
+
+      const words = await drizzleDb
+        .select({
+          entryId: flashcards.dictionary_entry_id,
+          word: dictionaryEntries.word,
+          translation: dictionaryEntries.translation,
+          maxDifficulty: max(flashcards.difficulty).mapWith(Number),
+          directionCount: countDistinct(flashcards.direction),
+        })
+        .from(flashcards)
+        .innerJoin(
+          dictionaryEntries,
+          eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
+        )
+        .where(
+          and(gt(flashcards.difficulty, 7), eq(flashcards.is_hidden, false))
+        )
+        .groupBy(flashcards.dictionary_entry_id)
+        .orderBy(desc(max(flashcards.difficulty)))
+        .limit(3);
+
+      const [totalResult] = await drizzleDb
+        .select({ total: countDistinct(flashcards.dictionary_entry_id) })
+        .from(flashcards)
+        .where(
+          and(gt(flashcards.difficulty, 7), eq(flashcards.is_hidden, false))
+        );
+
+      return {
+        total: totalResult?.total ?? 0,
+        words: words.map((r) => ({
+          word: r.word,
+          translation: r.translation,
+          entryId: r.entryId,
+          bothDirections: r.directionCount > 1,
+        })),
+      };
+    },
+    cacheOptions: {
+      queryKey: ["turso.progress.difficultWords"] as const,
+    },
+  },
+  workloadForecast: {
+    query: async ({
+      showReverse,
+      locale,
+    }: {
+      showReverse: boolean;
+      locale: string;
+    }): Promise<{
+      days: { label: string; count: number }[];
+      tomorrowCount: number;
+    }> => {
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
+
+      const tomorrow = startOfDay(addDays(new Date(), 1));
+      const directions: ("forward" | "reverse")[] = showReverse
+        ? ["forward", "reverse"]
+        : ["forward"];
+      const dayFormatter = new Intl.DateTimeFormat(locale, {
+        weekday: "short",
+      });
+
+      const days: { label: string; count: number }[] = [];
+
+      for (let i = 0; i < 7; i++) {
+        const dayStart = startOfDay(addDays(tomorrow, i));
+        const dayEnd = endOfDay(addDays(tomorrow, i));
+
+        const [result] = await drizzleDb
+          .select({ count: count() })
+          .from(flashcards)
+          .where(
+            and(
+              gte(flashcards.due_timestamp_ms, dayStart.getTime()),
+              lte(flashcards.due_timestamp_ms, dayEnd.getTime()),
+              eq(flashcards.is_hidden, false),
+              inArray(flashcards.direction, directions)
+            )
+          );
+
+        days.push({
+          label: dayFormatter.format(dayStart),
+          count: Number(result?.count ?? 0),
+        });
+      }
+
+      return {
+        days,
+        tomorrowCount: days[0]?.count ?? 0,
+      };
+    },
+    cacheOptions: {
+      queryKey: ["turso.progress.workloadForecast"] as const,
     },
   },
   streak: {

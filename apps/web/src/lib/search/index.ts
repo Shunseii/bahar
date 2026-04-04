@@ -2,6 +2,7 @@ import { safeJsonParse } from "@bahar/db-operations";
 import {
   AntonymSchema,
   ExampleSchema,
+  flashcards,
   MorphologySchema,
   type RawDictionaryEntry,
   RootLettersSchema,
@@ -15,8 +16,9 @@ import {
 } from "@bahar/search/database";
 import type { DictionaryDocument, DictionaryOrama } from "@bahar/search/schema";
 import * as Sentry from "@sentry/react";
+import { eq, max } from "drizzle-orm";
 import { z } from "zod";
-import { ensureDb } from "../db";
+import { ensureDb, getDrizzleDb } from "../db";
 
 let oramaDb = createDictionaryDatabase();
 
@@ -82,6 +84,21 @@ export const hydrateOramaDb = async () => {
 
   const BATCH_SIZE = 100;
   const db = await ensureDb();
+
+  const drizzleDb = getDrizzleDb();
+
+  const difficultyRows = await drizzleDb
+    .select({
+      entryId: flashcards.dictionary_entry_id,
+      maxDifficulty: max(flashcards.difficulty).mapWith(Number),
+    })
+    .from(flashcards)
+    .where(eq(flashcards.is_hidden, false))
+    .groupBy(flashcards.dictionary_entry_id);
+
+  const difficultyMap = new Map(
+    difficultyRows.map((r) => [r.entryId, r.maxDifficulty ?? 0])
+  );
 
   let offset = 0;
   let skippedCount = 0;
@@ -182,6 +199,7 @@ export const hydrateOramaDb = async () => {
             translation: entry.translation,
             created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
             updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
+            max_difficulty: difficultyMap.get(entry.id) ?? 0,
             definition: entry.definition ?? undefined,
             type: entry.type ?? undefined,
             root: rootResult.value ?? undefined,
@@ -261,6 +279,21 @@ export const rehydrateOramaDb = async () => {
   const db = await ensureDb();
   const newOramaDb = createDictionaryDatabase();
 
+  const drizzleDb = getDrizzleDb();
+
+  const difficultyRows = await drizzleDb
+    .select({
+      entryId: flashcards.dictionary_entry_id,
+      maxDifficulty: max(flashcards.difficulty).mapWith(Number),
+    })
+    .from(flashcards)
+    .where(eq(flashcards.is_hidden, false))
+    .groupBy(flashcards.dictionary_entry_id);
+
+  const difficultyMap = new Map(
+    difficultyRows.map((r) => [r.entryId, r.maxDifficulty ?? 0])
+  );
+
   let offset = 0;
 
   try {
@@ -296,6 +329,7 @@ export const rehydrateOramaDb = async () => {
             translation: entry.translation,
             created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
             updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
+            max_difficulty: difficultyMap.get(entry.id) ?? 0,
             definition: entry.definition ?? undefined,
             type: entry.type ?? undefined,
             root: rootResult.value ?? undefined,

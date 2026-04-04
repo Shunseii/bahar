@@ -1,3 +1,4 @@
+import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
 import { Trans } from "@lingui/react/macro";
 import { TrendingUp } from "lucide-react";
@@ -14,11 +15,11 @@ export const WordsAddedCard: FC<WordsAddedCardProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-center rounded-xl border p-5">
+      <Card className="flex flex-col justify-center p-5">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="mt-2 h-9 w-16" />
         <Skeleton className="mt-1 h-4 w-28" />
-      </div>
+      </Card>
     );
   }
 
@@ -26,7 +27,7 @@ export const WordsAddedCard: FC<WordsAddedCardProps> = ({
   const thisWeek = data?.thisWeek ?? 0;
 
   return (
-    <div className="flex justify-between rounded-xl border border-border bg-background p-5">
+    <Card className="flex justify-between p-5">
       <div className="flex flex-col justify-center">
         <p className="text-muted-foreground text-sm">
           <Trans>Words Added</Trans>
@@ -41,6 +42,6 @@ export const WordsAddedCard: FC<WordsAddedCardProps> = ({
           </span>
         </div>
       )}
-    </div>
+    </Card>
   );
 };

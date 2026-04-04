@@ -1,4 +1,5 @@
 import { cn } from "@bahar/design-system";
+import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
 import { Trans } from "@lingui/react/macro";
 import { Check, Flame } from "lucide-react";
@@ -18,7 +19,7 @@ interface StreakCardProps {
 export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="rounded-xl border p-5">
+      <Card className="p-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Skeleton className="h-10 w-10 rounded-lg" />
@@ -30,7 +31,7 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
           <Skeleton className="h-6 w-20" />
         </div>
         <Skeleton className="mt-3 h-1.5 w-full rounded-full" />
-      </div>
+      </Card>
     );
   }
 
@@ -40,12 +41,12 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
   const isBroken = !reviewedToday && streakCount === 0;
 
   return (
-    <div
+    <Card
       className={cn(
-        "flex flex-col gap-3 rounded-xl border p-5",
+        "flex flex-col gap-3 p-5",
         reviewedToday
           ? "border-amber-400/30 bg-linear-to-b from-amber-50 to-amber-100/50 dark:border-amber-500/20 dark:from-amber-950/40 dark:to-amber-900/20"
-          : "border-border bg-muted/50"
+          : "bg-muted/50"
       )}
     >
       <div className="flex items-center justify-between">
@@ -91,6 +92,6 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
           </div>
         ) : null}
       </div>
-    </div>
+    </Card>
   );
 };
