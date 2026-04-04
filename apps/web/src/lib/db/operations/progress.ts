@@ -1,9 +1,11 @@
 import {
   dictionaryEntries,
+  FlashcardState,
+  flashcards,
   type SelectUserStats,
   userStats,
 } from "@bahar/drizzle-user-db-schemas";
-import { count, eq, gte } from "drizzle-orm";
+import { and, count, countDistinct, eq, gte } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { ensureDb, getDrizzleDb } from "..";
 import type { TableOperation } from "./types";
@@ -42,6 +44,52 @@ export const progressTable = {
     },
     cacheOptions: {
       queryKey: ["turso.progress.wordsAdded"] as const,
+    },
+  },
+  wordsLearned: {
+    query: async (): Promise<{
+      learned: number;
+      totalAdded: number;
+      thisWeek: number;
+    }> => {
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
+
+      const [learnedResult] = await drizzleDb
+        .select({ learned: countDistinct(flashcards.dictionary_entry_id) })
+        .from(flashcards)
+        .where(
+          and(
+            eq(flashcards.state, FlashcardState.REVIEW),
+            eq(flashcards.is_hidden, false)
+          )
+        );
+
+      const [totalResult] = await drizzleDb
+        .select({ total: count() })
+        .from(dictionaryEntries);
+
+      const weekAgoMs = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+      const [weeklyResult] = await drizzleDb
+        .select({ weekly: countDistinct(flashcards.dictionary_entry_id) })
+        .from(flashcards)
+        .where(
+          and(
+            eq(flashcards.state, FlashcardState.REVIEW),
+            eq(flashcards.is_hidden, false),
+            gte(flashcards.last_review_timestamp_ms, weekAgoMs)
+          )
+        );
+
+      return {
+        learned: learnedResult?.learned ?? 0,
+        totalAdded: totalResult?.total ?? 0,
+        thisWeek: weeklyResult?.weekly ?? 0,
+      };
+    },
+    cacheOptions: {
+      queryKey: ["turso.progress.wordsLearned"] as const,
     },
   },
   streak: {

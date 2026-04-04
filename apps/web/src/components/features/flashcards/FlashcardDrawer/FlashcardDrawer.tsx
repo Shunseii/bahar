@@ -30,6 +30,7 @@ import {
   useState,
 } from "react";
 import { type Grade, Rating } from "ts-fsrs";
+
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { api } from "@/lib/api";
@@ -58,6 +59,14 @@ interface FlashcardDrawerProps extends PropsWithChildren {
   /** If provided, shows queue counts and allows switching between queues */
   queueCounts?: { regular: number; backlog: number };
 }
+
+const RATING_TO_LABEL = {
+  [Rating.Again]: "again",
+  [Rating.Hard]: "hard",
+  [Rating.Good]: "good",
+  [Rating.Easy]: "easy",
+  [Rating.Manual]: "manual",
+} as const;
 
 export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   children,
@@ -200,6 +209,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         ...log,
         due: log.due.toISOString(),
         review: log.review.toISOString(),
+        rating: RATING_TO_LABEL[log.rating],
         direction: currentCard.direction,
       });
 
@@ -287,7 +297,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     {counts.regular > 0 && (
                       <span
                         className={cn(
-                          "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 font-semibold text-xs",
+                          "inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 font-semibold text-xs",
                           selectedQueue === "regular"
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted-foreground/20 text-muted-foreground"
@@ -312,7 +322,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     {counts.backlog > 0 && (
                       <span
                         className={cn(
-                          "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 font-semibold text-xs",
+                          "inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 font-semibold text-xs",
                           selectedQueue === "backlog"
                             ? "bg-orange-500 text-white"
                             : "bg-orange-500/20 text-orange-600 dark:text-orange-400"

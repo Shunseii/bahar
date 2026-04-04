@@ -7,10 +7,13 @@ import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 import { Page } from "@/components/Page";
+import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { progressTable } from "@/lib/db/operations/progress";
+import { RetentionRateCard } from "./-components/RetentionRateCard";
 import { StreakCard } from "./-components/StreakCard";
 import { WordsAddedCard } from "./-components/WordsAddedCard";
+import { WordsLearnedCard } from "./-components/WordsLearnedCard";
 
 const Progress = () => {
   const { data: userData } = authClient.useSession();
@@ -29,6 +32,26 @@ const Progress = () => {
     queryFn: progressTable.wordsAdded.query,
     ...progressTable.wordsAdded.cacheOptions,
     staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: wordsLearnedData, isLoading: isWordsLearnedLoading } = useQuery(
+    {
+      queryFn: progressTable.wordsLearned.query,
+      ...progressTable.wordsLearned.cacheOptions,
+      staleTime: 5 * 60 * 1000,
+      enabled: !isFreeTier,
+    }
+  );
+
+  const { data: retentionData, isLoading: isRetentionLoading } = useQuery({
+    queryFn: async () => {
+      const { data, error } = await api.stats.retention.get();
+      if (error) throw error;
+      return data;
+    },
+    queryKey: ["stats.retention"],
+    staleTime: 5 * 60 * 1000,
+    enabled: !isFreeTier,
   });
 
   return (
@@ -50,11 +73,19 @@ const Progress = () => {
             <h2 className="font-semibold text-lg">
               <Trans>Insights</Trans>
             </h2>
-            <Badge className="bg-indigo-500 text-white uppercase">Pro</Badge>
+            <Badge className="text-white uppercase">Pro</Badge>
           </div>
-          <p className="text-muted-foreground text-sm">
-            <Trans>Detailed insights coming soon.</Trans>
-          </p>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <WordsLearnedCard
+              data={wordsLearnedData}
+              isLoading={isWordsLearnedLoading}
+            />
+            <RetentionRateCard
+              data={retentionData}
+              isLoading={isRetentionLoading}
+            />
+          </div>
         </div>
       )}
     </Page>
@@ -69,9 +100,7 @@ function ProPlaceholder() {
           <h2 className="font-semibold text-lg">
             <Trans>Insights</Trans>
           </h2>
-          <Badge className="bg-indigo-500 text-white uppercase hover:bg-indigo-500">
-            Pro
-          </Badge>
+          <Badge className="text-white uppercase">Pro</Badge>
         </div>
 
         {/* Blurred placeholder content */}

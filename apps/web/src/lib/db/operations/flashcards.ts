@@ -85,11 +85,9 @@ export const flashcardsTable = {
         const params: unknown[] = [now];
 
         if (queue === "regular") {
-          // Regular queue: due but not past the backlog threshold
           whereConditions.push("f.due_timestamp_ms > ?");
           params.push(backlogThresholdMs);
         } else if (queue === "backlog") {
-          // Backlog queue: due and past the backlog threshold
           whereConditions.push("f.due_timestamp_ms <= ?");
           params.push(backlogThresholdMs);
         }
@@ -664,8 +662,9 @@ export const flashcardsTable = {
               ...log,
               due: log.due.toISOString(),
               review: log.review.toISOString(),
+              rating: "hard",
               direction,
-              source: "clear_backlog" as const,
+              source: "clear_backlog",
             })),
           })
           .then(({ error }) => {

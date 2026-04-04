@@ -14,6 +14,14 @@ import { users } from "./auth";
  */
 export const REVLOG_SOURCES = ["review", "clear_backlog"] as const;
 
+export const REVLOG_RATINGS = [
+  "again",
+  "hard",
+  "good",
+  "easy",
+  "manual",
+] as const;
+
 export const revlogs = sqliteTable("revlogs", {
   id: text("id").primaryKey().notNull(),
   user_id: text("user_id")
@@ -29,6 +37,8 @@ export const revlogs = sqliteTable("revlogs", {
   scheduled_days: integer("scheduled_days").default(0),
   stability: real("stability").default(0),
   state: integer("state").default(0),
+
+  rating: text("rating", { enum: REVLOG_RATINGS }),
 
   direction: text("direction", { enum: FLASHCARD_DIRECTIONS })
     .notNull()
