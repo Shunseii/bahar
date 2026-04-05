@@ -218,6 +218,9 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       await queryClient.invalidateQueries({
         queryKey: progressTable.streak.cacheOptions.queryKey,
       });
+      await queryClient.invalidateQueries({
+        queryKey: ["stats.revlogs.entry", currentCard.dictionary_entry_id],
+      });
 
       await updateFlashcard({
         id: currentCard.id,
