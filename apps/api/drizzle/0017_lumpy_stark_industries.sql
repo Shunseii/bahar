@@ -1,0 +1,1 @@
+CREATE INDEX `revlogs_entry_history_idx` ON `revlogs` (`user_id`,`dictionary_entry_id`,`source`,`review_timestamp_ms`);

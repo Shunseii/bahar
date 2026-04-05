@@ -1,0 +1,1 @@
+ALTER TABLE `revlogs` ADD `dictionary_entry_id` text NOT NULL DEFAULT '';

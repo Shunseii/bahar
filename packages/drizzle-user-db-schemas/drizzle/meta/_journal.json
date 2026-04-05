@@ -15,6 +15,13 @@
       "when": 1766694906322,
       "tag": "0001_even_kitty_pryde",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1775269591458,
+      "tag": "0002_watery_blink",
+      "breakpoints": true
     }
   ]
 }

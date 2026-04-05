@@ -1,5 +1,5 @@
 import { cn } from "@bahar/design-system";
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import { Separator as SeparatorPrimitive } from "radix-ui";
 import * as React from "react";
 
 const Separator = React.forwardRef<

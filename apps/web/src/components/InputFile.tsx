@@ -1,6 +1,5 @@
 import { cn } from "@bahar/design-system";
 import { Input, type InputProps } from "@bahar/web-ui/components/input";
-import { Label } from "@bahar/web-ui/components/label";
 import { Separator } from "@bahar/web-ui/components/separator";
 import { Trans } from "@lingui/react/macro";
 import { XIcon } from "lucide-react";
@@ -32,12 +31,16 @@ export const InputFile: FC<InputFileProps> = ({
 
   return (
     <div className="w-full sm:w-auto">
-      <Label
+      <label
         className={cn(
-          "flex h-10 w-max cursor-pointer items-center gap-x-3 rounded-md border border-input px-4 py-2",
+          "flex h-10 w-max cursor-pointer items-center gap-x-3 rounded-md border border-input px-4 py-2 font-medium text-sm leading-none",
           className
         )}
         htmlFor="dictionary"
+        onClick={(e) => {
+          e.preventDefault();
+          inputRef.current?.click();
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             inputRef.current?.click();
@@ -77,7 +80,7 @@ export const InputFile: FC<InputFileProps> = ({
             </button>
           )}
         </p>
-      </Label>
+      </label>
 
       <Input
         aria-labelledby="import-dictionary-button"

@@ -106,6 +106,27 @@
       "when": 1774665611927,
       "tag": "0014_omniscient_rumiko_fujikawa",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1775314844536,
+      "tag": "0015_bumpy_squirrel_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1775347031586,
+      "tag": "0016_puzzling_maginty",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1775394504116,
+      "tag": "0017_lumpy_stark_industries",
+      "breakpoints": true
     }
   ]
 }

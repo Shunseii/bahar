@@ -1,8 +1,10 @@
+import { DirectionProvider } from "@bahar/web-ui/components/direction";
 import { Toaster } from "@bahar/web-ui/components/sonner";
 import { useLingui } from "@lingui/react/macro";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { useDocumentTitle } from "@uidotdev/usehooks";
 import { useEffect } from "react";
+import { useDir } from "@/hooks/useDir";
 import type { authClient } from "@/lib/auth-client";
 
 // const TanStackRouterDevtools = import.meta.env.PROD
@@ -16,6 +18,7 @@ import type { authClient } from "@/lib/auth-client";
 
 const Root = () => {
   const { t } = useLingui();
+  const dir = useDir();
   useDocumentTitle(t`Bahar`);
 
   useEffect(() => {
@@ -29,12 +32,14 @@ const Root = () => {
   }, []);
 
   return (
-    <div className="font-primary">
-      <Outlet />
-      <Toaster />
+    <DirectionProvider direction={dir}>
+      <div className="font-primary">
+        <Outlet />
+        <Toaster />
 
-      {/* <React.Suspense><TanStackRouterDevtools /></React.Suspense> */}
-    </div>
+        {/* <React.Suspense><TanStackRouterDevtools /></React.Suspense> */}
+      </div>
+    </DirectionProvider>
   );
 };
 

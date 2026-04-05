@@ -26,7 +26,6 @@ import Animated, {
   SlideOutLeft,
 } from "react-native-reanimated";
 import { type Grade, Rating } from "ts-fsrs";
-import { useThemeColors } from "@/lib/theme";
 import { decksTable } from "../../lib/db/operations/decks";
 import {
   FLASHCARD_LIMIT,
@@ -49,7 +48,6 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   showReverse = false,
   onClose,
 }) => {
-  const colors = useThemeColors();
   const [showAnswer, setShowAnswer] = useState(false);
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
   const [cards, setCards] = useState<FlashcardWithDictionaryEntry[]>([]);

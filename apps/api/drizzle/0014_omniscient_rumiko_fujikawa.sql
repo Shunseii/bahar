@@ -1,4 +1,4 @@
-CREATE TABLE `revlogs` (
+CREATE TABLE IF NOT EXISTS `revlogs` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
 	`difficulty` real DEFAULT 0,

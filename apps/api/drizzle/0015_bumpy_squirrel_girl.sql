@@ -1,0 +1,1 @@
+ALTER TABLE `revlogs` ADD `rating` text;

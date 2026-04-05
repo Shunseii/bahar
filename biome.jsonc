@@ -58,20 +58,20 @@
         "noNonNullAssertion": "off",
         "useAtIndex": "off",
         "useDefaultSwitchClause": "off",
+        "noNestedTernary": "off",
         "useConsistentBuiltinInstantiation": "info",
         "useConsistentMemberAccessibility": "info",
         "useReadonlyClassProperties": "info",
         "noExportedImports": "info",
-        "noNestedTernary": "info",
         "noParameterProperties": "info"
       },
       "suspicious": {
         "useAwait": "off",
         "useIterableCallbackReturn": "off",
+        "noArrayIndexKey": "off",
         "noExplicitAny": "info",
         "noImplicitAnyLet": "info",
         "noEvolvingTypes": "info",
-        "noArrayIndexKey": "info",
         "noAssignInExpressions": "info"
       }
     }

@@ -30,6 +30,7 @@ import {
   useState,
 } from "react";
 import { type Grade, Rating } from "ts-fsrs";
+
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { api } from "@/lib/api";
@@ -40,6 +41,7 @@ import {
   type FlashcardWithDictionaryEntry,
   flashcardsTable,
 } from "@/lib/db/operations/flashcards";
+import { progressTable } from "@/lib/db/operations/progress";
 import { queryClient } from "@/lib/query";
 import { AnswerSide } from "../AnswerSide";
 import { QuestionSide } from "../QuestionSide";
@@ -57,6 +59,14 @@ interface FlashcardDrawerProps extends PropsWithChildren {
   /** If provided, shows queue counts and allows switching between queues */
   queueCounts?: { regular: number; backlog: number };
 }
+
+const RATING_TO_LABEL = {
+  [Rating.Again]: "again",
+  [Rating.Hard]: "hard",
+  [Rating.Good]: "good",
+  [Rating.Easy]: "easy",
+  [Rating.Manual]: "manual",
+} as const;
 
 export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   children,
@@ -199,7 +209,17 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         ...log,
         due: log.due.toISOString(),
         review: log.review.toISOString(),
+        rating: RATING_TO_LABEL[log.rating],
         direction: currentCard.direction,
+        dictionary_entry_id: currentCard.dictionary_entry_id,
+      });
+
+      await progressTable.recordReview.mutation();
+      await queryClient.invalidateQueries({
+        queryKey: progressTable.streak.cacheOptions.queryKey,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["stats.revlogs.entry", currentCard.dictionary_entry_id],
       });
 
       await updateFlashcard({
@@ -281,7 +301,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     {counts.regular > 0 && (
                       <span
                         className={cn(
-                          "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 font-semibold text-xs",
+                          "inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 font-semibold text-xs",
                           selectedQueue === "regular"
                             ? "bg-primary text-primary-foreground"
                             : "bg-muted-foreground/20 text-muted-foreground"
@@ -306,7 +326,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                     {counts.backlog > 0 && (
                       <span
                         className={cn(
-                          "inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full px-1.5 font-semibold text-xs",
+                          "inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 font-semibold text-xs",
                           selectedQueue === "backlog"
                             ? "bg-orange-500 text-white"
                             : "bg-orange-500/20 text-orange-600 dark:text-orange-400"
@@ -487,7 +507,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                   onClick={() => setShowAnswer(true)}
                   size="lg"
                 >
-                  <span className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-white/0 via-white/10 to-white/0 transition-transform duration-500 group-hover:translate-x-[100%]" />
+                  <span className="absolute inset-0 -translate-x-full bg-linear-to-r from-white/0 via-white/10 to-white/0 transition-transform duration-500 group-hover:translate-x-full" />
                   <Sparkles className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
                   <Trans>Show answer</Trans>
                 </Button>

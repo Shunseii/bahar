@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@bahar/design-system";
-import * as SwitchPrimitives from "@radix-ui/react-switch";
+import { Switch as SwitchPrimitives } from "radix-ui";
 import * as React from "react";
 
 const Switch = React.forwardRef<
