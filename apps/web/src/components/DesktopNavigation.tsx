@@ -107,7 +107,7 @@ export const DesktopNavigation = () => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-48" sideOffset={8}>
-            <DropdownMenuLabel className="font-medium text-muted-foreground text-xs rtl:text-right">
+            <DropdownMenuLabel className="font-medium text-muted-foreground text-xs">
               <Trans>My Account</Trans>
             </DropdownMenuLabel>
 
@@ -115,7 +115,7 @@ export const DesktopNavigation = () => {
 
             <DropdownMenuItem asChild>
               <Link
-                className="flex w-full cursor-pointer items-center gap-2 rtl:flex-row-reverse"
+                className="flex w-full cursor-pointer items-center gap-2"
                 from="/"
                 to="/settings"
               >
@@ -128,7 +128,7 @@ export const DesktopNavigation = () => {
 
             <DropdownMenuItem asChild>
               <Button
-                className="w-full cursor-pointer text-destructive hover:bg-destructive/10 hover:text-destructive ltr:justify-start rtl:justify-end"
+                className="w-full cursor-pointer justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
                 onClick={logout}
                 variant="ghost"
               >

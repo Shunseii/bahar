@@ -1,6 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "default",
+  "style": "radix-nova",
   "rsc": false,
   "tsx": true,
   "tailwind": {
@@ -16,5 +16,8 @@
     "hooks": "@bahar/web-ui/hooks",
     "lib": "@bahar/design-system",
     "utils": "@bahar/design-system"
-  }
+  },
+  "rtl": true,
+  "menuColor": "inverted-translucent",
+  "menuAccent": "subtle"
 }

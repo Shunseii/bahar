@@ -8,12 +8,12 @@ import {
 } from "@bahar/web-ui/components/sheet";
 import { sheetVariantsNoSlideAnimations } from "@bahar/web-ui/components/sheet/variants";
 import { Trans } from "@lingui/react/macro";
-import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { Link } from "@tanstack/react-router";
 import { useClickAway } from "@uidotdev/usehooks";
 import { atom, useAtom } from "jotai";
 import { Activity, Home, Layers, PanelLeft, Settings, X } from "lucide-react";
 import { motion } from "motion/react";
+import { Dialog as SheetPrimitive } from "radix-ui";
 import React, { type FC, type PropsWithChildren } from "react";
 import Logo from "@/assets/logo.svg";
 import { NavLink } from "@/components/NavLink";
