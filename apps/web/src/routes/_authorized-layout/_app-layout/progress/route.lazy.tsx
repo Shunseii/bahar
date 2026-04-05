@@ -247,7 +247,9 @@ const Progress = () => {
             <h2 className="font-semibold text-lg">
               <Trans>Insights</Trans>
             </h2>
-            <Badge className="text-white uppercase"><Trans>Pro</Trans></Badge>
+            <Badge className="text-white uppercase">
+              <Trans>Pro</Trans>
+            </Badge>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

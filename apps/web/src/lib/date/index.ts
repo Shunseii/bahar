@@ -178,8 +178,7 @@ export function intlFormatDistance(
     }
   }
 
-  const locale =
-    options?.locale === "ar" ? "ar-u-nu-arab" : options?.locale;
+  const locale = options?.locale === "ar" ? "ar-u-nu-arab" : options?.locale;
 
   const rtf = new Intl.RelativeTimeFormat(locale, {
     numeric: "auto",

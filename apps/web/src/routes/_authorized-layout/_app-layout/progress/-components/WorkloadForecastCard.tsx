@@ -107,7 +107,8 @@ export const WorkloadForecastCard: FC<WorkloadForecastCardProps> = ({
                   formatter={(value, name) => (
                     <div className="flex flex-1 items-center justify-between">
                       <span className="text-muted-foreground">
-                        {chartConfig[name as keyof typeof chartConfig]?.label ?? name}
+                        {chartConfig[name as keyof typeof chartConfig]?.label ??
+                          name}
                       </span>
                       <span className="font-medium font-mono text-foreground tabular-nums">
                         {formatNumber(Number(value))}

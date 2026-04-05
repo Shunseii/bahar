@@ -55,7 +55,9 @@ export function ProPlaceholder() {
           <h2 className="font-semibold text-lg">
             <Trans>Insights</Trans>
           </h2>
-          <Badge className="text-white uppercase"><Trans>Pro</Trans></Badge>
+          <Badge className="text-white uppercase">
+            <Trans>Pro</Trans>
+          </Badge>
         </div>
 
         <div className="pointer-events-none select-none">
