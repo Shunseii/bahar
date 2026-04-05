@@ -179,6 +179,17 @@ export const statsRouter = new Elysia({ prefix: "/stats" })
       auth: "user",
     }
   )
+  .delete(
+    "/revlogs",
+    async ({ user }) => {
+      await db.delete(revlogs).where(eq(revlogs.user_id, user.id));
+
+      return { success: true } as const;
+    },
+    {
+      auth: "user",
+    }
+  )
   .get(
     "/revlogs/entry/:entryId",
     async ({ user, params }) => {

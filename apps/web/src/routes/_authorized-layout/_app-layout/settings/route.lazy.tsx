@@ -1,6 +1,8 @@
-import type {
-  RawDictionaryEntry,
-  SelectFlashcard,
+import {
+  type RawDictionaryEntry,
+  type SelectFlashcard,
+  flashcards,
+  dictionaryEntries,
 } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import {
@@ -34,7 +36,7 @@ import { Page } from "@/components/Page";
 import { ColorThemeMenu, ThemeMenu } from "@/components/ThemeMenu";
 import { useSearch } from "@/hooks/search/useSearch";
 import { authClient } from "@/lib/auth-client";
-import { deleteLocalDatabase, ensureDb } from "@/lib/db";
+import { deleteLocalDatabase, ensureDb, getDrizzleDb } from "@/lib/db";
 import { transformForExport } from "@/lib/db/export";
 import {
   batchArray,
@@ -43,6 +45,7 @@ import {
   readFileAsText,
 } from "@/lib/db/import";
 import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
+import { api } from "@/lib/api";
 import { ImportError, ImportErrorCode, parseImportErrors } from "@/lib/error";
 import { hydrateOramaDb, resetOramaDb } from "@/lib/search";
 
@@ -151,11 +154,17 @@ const Settings = () => {
     try {
       setIsLoading(true);
 
-      // Delete from local DB (cascades to flashcards)
       await enqueueDbOperation(async () => {
-        const db = await ensureDb();
-        await db.prepare("DELETE FROM dictionary_entries").run();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
+
+        await drizzleDb.transaction(async (tx) => {
+          await tx.delete(flashcards);
+          await tx.delete(dictionaryEntries);
+        });
       });
+
+      await api.stats.revlogs.delete();
 
       await enqueueSyncOperation(async () => {
         const db = await ensureDb();
