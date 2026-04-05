@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "3a017719-25ba-40fc-8fe1-84ee2a9ec387",
-  "prevId": "3e99e603-6c2d-49a0-9218-9ddebd5c81ac",
+  "id": "f71243f8-50dd-4bc0-a29d-36eae7a86fcd",
+  "prevId": "3a017719-25ba-40fc-8fe1-84ee2a9ec387",
   "tables": {
     "accounts": {
       "name": "accounts",
@@ -644,7 +644,18 @@
           "default": "(unixepoch())"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "revlogs_entry_history_idx": {
+          "name": "revlogs_entry_history_idx",
+          "columns": [
+            "user_id",
+            "dictionary_entry_id",
+            "source",
+            "review_timestamp_ms"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "revlogs_user_id_users_id_fk": {
           "name": "revlogs_user_id_users_id_fk",

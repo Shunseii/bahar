@@ -617,7 +617,7 @@ msgstr "المجموعات"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:103
 msgid "Decks allow you to create subsets of your existing flashcards by using filters on your dictionary which you can then study individually."
-msgstr "تتيح لك المجموعات إنشاء مجموعات فرعية من بطاقاتك التعليمية الموجودة باستخدام الفلاتر على قاموسك، والتي يمكنك دراستها بشكل فردي."
+msgstr "تتيح لك المجموعات إنشاء مجموعات فرعية من بطاقاتك التعليمية الموجودة باستخدام الفلاتر على معجمك، والتي يمكنك دراستها بشكل فردي."
 
 #: ../../apps/web/src/components/ThemeMenu.tsx:97
 msgid "Default"
@@ -2166,7 +2166,7 @@ msgstr "المصادر"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/DifficultWordsCard.tsx:123
 msgid "View all in dictionary"
-msgstr "عرض الكل في القاموس"
+msgstr "عرض الكل في المعجم"
 
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:37
 #~ msgid "View all the words in your personal dictionary."
@@ -2258,7 +2258,7 @@ msgstr "ليس لديك أي مجموعات بعد."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:845
 msgid "You have no words in your dictionary yet."
-msgstr "ليس لديك أي كلمات في قاموسك بعد."
+msgstr "ليس لديك أي كلمات في معجمك بعد."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/checkout-success/route.lazy.tsx:30
 msgid "You're all set!"

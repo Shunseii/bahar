@@ -18,6 +18,8 @@ interface StreakCardProps {
 }
 
 export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
+  const { formatNumber } = useFormatNumber();
+
   if (isLoading) {
     return (
       <Card className="p-5">
@@ -36,7 +38,6 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
     );
   }
 
-  const { formatNumber } = useFormatNumber();
   const reviewedToday = data?.reviewedToday ?? false;
   const streakCount = data?.streakCount ?? 0;
   const longestStreak = data?.longestStreak ?? 0;

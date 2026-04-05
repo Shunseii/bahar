@@ -1,1 +1,1 @@
-ALTER TABLE `revlogs` ADD `dictionary_entry_id` text NOT NULL;
+ALTER TABLE `revlogs` ADD `dictionary_entry_id` text NOT NULL DEFAULT '';

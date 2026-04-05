@@ -1,6 +1,12 @@
 import { FLASHCARD_DIRECTIONS } from "@bahar/drizzle-user-db-schemas";
 import { sql } from "drizzle-orm";
-import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  integer,
+  real,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { users } from "./auth";
 
@@ -22,35 +28,48 @@ export const REVLOG_RATINGS = [
   "manual",
 ] as const;
 
-export const revlogs = sqliteTable("revlogs", {
-  id: text("id").primaryKey().notNull(),
-  user_id: text("user_id")
-    .notNull()
-    .references(() => users.id),
-  dictionary_entry_id: text("dictionary_entry_id").notNull(),
+export const revlogs = sqliteTable(
+  "revlogs",
+  {
+    id: text("id").primaryKey().notNull(),
+    user_id: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    dictionary_entry_id: text("dictionary_entry_id").notNull().default(""),
 
-  difficulty: real("difficulty").default(0),
-  due: text("due").notNull(),
-  due_timestamp_ms: integer("due_timestamp_ms").notNull(),
-  review: text("review").notNull(),
-  review_timestamp_ms: integer("review_timestamp_ms").notNull(),
-  learning_steps: integer("learning_steps").default(0),
-  scheduled_days: integer("scheduled_days").default(0),
-  stability: real("stability").default(0),
-  state: integer("state").default(0),
+    difficulty: real("difficulty").default(0),
+    due: text("due").notNull(),
+    due_timestamp_ms: integer("due_timestamp_ms").notNull(),
+    review: text("review").notNull(),
+    review_timestamp_ms: integer("review_timestamp_ms").notNull(),
+    learning_steps: integer("learning_steps").default(0),
+    scheduled_days: integer("scheduled_days").default(0),
+    stability: real("stability").default(0),
+    state: integer("state").default(0),
 
-  rating: text("rating", { enum: REVLOG_RATINGS }),
+    rating: text("rating", { enum: REVLOG_RATINGS }),
 
-  direction: text("direction", { enum: FLASHCARD_DIRECTIONS })
-    .notNull()
-    .default("forward"),
+    direction: text("direction", { enum: FLASHCARD_DIRECTIONS })
+      .notNull()
+      .default("forward"),
 
-  source: text("source", { enum: REVLOG_SOURCES }).notNull().default("review"),
+    source: text("source", { enum: REVLOG_SOURCES })
+      .notNull()
+      .default("review"),
 
-  created_at: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .default(sql`(unixepoch())`),
-});
+    created_at: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => [
+    index("revlogs_entry_history_idx").on(
+      table.user_id,
+      table.dictionary_entry_id,
+      table.source,
+      table.review_timestamp_ms
+    ),
+  ]
+);
 
 export type Revlogs = typeof revlogs.$inferSelect;
 export type InsertRevlogs = typeof revlogs.$inferInsert;

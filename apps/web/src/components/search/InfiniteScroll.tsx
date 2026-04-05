@@ -32,8 +32,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useInfiniteScroll } from "@/hooks/search/useSearch";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { intlFormatDistance } from "@/lib/date";

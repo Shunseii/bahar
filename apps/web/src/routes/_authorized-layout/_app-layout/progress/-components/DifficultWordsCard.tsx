@@ -30,6 +30,8 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
   data,
   isLoading,
 }) => {
+  const { formatNumber } = useFormatNumber();
+
   if (isLoading) {
     return (
       <Card className="flex flex-col gap-4 p-5">
@@ -43,7 +45,6 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
     );
   }
 
-  const { formatNumber } = useFormatNumber();
   const total = data?.total ?? 0;
   const words = data?.words ?? [];
 
@@ -121,7 +122,7 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
             to="/"
           >
             <Trans>View all in dictionary</Trans>{" "}
-            <ArrowRight className="inline h-3.5 w-3.5 rtl:scale-x-[-1]" />
+            <ArrowRight className="inline h-3.5 w-3.5 rtl:scale-x-flip" />
           </Link>
         </>
       )}
