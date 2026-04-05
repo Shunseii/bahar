@@ -1,18 +1,23 @@
-import { cn } from "@bahar/design-system";
+import { createScheduler, toFsrsCard } from "@bahar/fsrs";
 import { Badge } from "@bahar/web-ui/components/badge";
-import { Button } from "@bahar/web-ui/components/button";
-import { Card, CardContent } from "@bahar/web-ui/components/card";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { Lock } from "lucide-react";
+import { Rating, type ReviewLog } from "ts-fsrs";
 import { Page } from "@/components/Page";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { progressTable } from "@/lib/db/operations/progress";
 import { settingsTable } from "@/lib/db/operations/settings";
+import { queryClient } from "@/lib/query";
 import { DifficultWordsCard } from "./-components/DifficultWordsCard";
+import { ProPlaceholder } from "./-components/ProPlaceholder";
+import {
+  type RecentReview,
+  RecentReviewsCard,
+} from "./-components/RecentReviewsCard";
 import { RetentionRateCard } from "./-components/RetentionRateCard";
 import { StreakCard } from "./-components/StreakCard";
 import { WordsAddedCard } from "./-components/WordsAddedCard";
@@ -88,6 +93,141 @@ const Progress = () => {
     enabled: !isFreeTier,
   });
 
+  const { data: recentRevlogs, isLoading: isRecentLoading } = useQuery({
+    queryFn: async () => {
+      const { data, error } = await api.stats.revlogs.recent.get();
+      if (error) throw error;
+      return data;
+    },
+    queryKey: ["stats.revlogs.recent"],
+    staleTime: 60 * 1000,
+    enabled: !isFreeTier,
+  });
+
+  const entryIds = [
+    ...new Set(recentRevlogs?.revlogs.map((r) => r.dictionary_entry_id) ?? []),
+  ];
+
+  const { data: wordMap } = useQuery({
+    queryFn: () => progressTable.recentReviewWords.query(entryIds),
+    queryKey: [
+      ...progressTable.recentReviewWords.cacheOptions.queryKey,
+      entryIds,
+    ],
+    enabled: entryIds.length > 0,
+    placeholderData: (prev) => prev,
+  });
+
+  const recentReviews =
+    recentRevlogs?.revlogs.reduce<RecentReview[]>((acc, r) => {
+      if (!r.rating || r.rating === "manual") return acc;
+      const entry = wordMap?.get(r.dictionary_entry_id);
+      if (!entry) return acc;
+      acc.push({
+        id: r.id,
+        dictionaryEntryId: r.dictionary_entry_id,
+        direction: r.direction,
+        word: entry.word,
+        translation: entry.translation,
+        rating: r.rating,
+        reviewTimestampMs: r.review_timestamp_ms,
+      });
+      return acc;
+    }, []) ?? [];
+
+  const { mutate: undoReview, isPending: isUndoing } = useMutation({
+    onMutate: async (review: RecentReview) => {
+      await queryClient.cancelQueries({ queryKey: ["stats.revlogs.recent"] });
+      const previous = queryClient.getQueryData<typeof recentRevlogs>([
+        "stats.revlogs.recent",
+      ]);
+      queryClient.setQueryData<typeof recentRevlogs>(
+        ["stats.revlogs.recent"],
+        (old) =>
+          old
+            ? { ...old, revlogs: old.revlogs.filter((r) => r.id !== review.id) }
+            : old
+      );
+      return { previous };
+    },
+    onError: (_err, _review, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["stats.revlogs.recent"], context.previous);
+      }
+    },
+    mutationFn: async (review: RecentReview) => {
+      const { data, error } = await api.stats
+        .revlogs({ id: review.id })
+        .delete();
+      if (error) throw error;
+
+      const { data: flashcard } =
+        await flashcardsTable.findByEntryAndDirection.query({
+          dictionaryEntryId: review.dictionaryEntryId,
+          direction: review.direction,
+        });
+
+      if (flashcard) {
+        const f = createScheduler();
+        const currentCard = toFsrsCard(flashcard);
+        const revlog = data.revlog;
+
+        const LABEL_TO_RATING: Record<string, Rating> = {
+          again: Rating.Again,
+          hard: Rating.Hard,
+          good: Rating.Good,
+          easy: Rating.Easy,
+        };
+
+        const reviewLog = {
+          rating: LABEL_TO_RATING[revlog.rating ?? ""] ?? Rating.Good,
+          state: revlog.state ?? 0,
+          due: new Date(revlog.due),
+          stability: revlog.stability ?? 0,
+          difficulty: revlog.difficulty ?? 0,
+          scheduled_days: revlog.scheduled_days ?? 0,
+          learning_steps: revlog.learning_steps ?? 0,
+          review: new Date(revlog.review),
+          elapsed_days: 0,
+          last_elapsed_days: 0,
+        } satisfies ReviewLog;
+
+        const prevCard = f.rollback(currentCard, reviewLog);
+
+        await flashcardsTable.update.mutation({
+          id: flashcard.id,
+          updates: {
+            due: prevCard.due.toISOString(),
+            due_timestamp_ms: prevCard.due.getTime(),
+            last_review: prevCard.last_review?.toISOString() ?? null,
+            last_review_timestamp_ms: prevCard.last_review?.getTime() ?? null,
+            state: prevCard.state,
+            stability: prevCard.stability,
+            difficulty: prevCard.difficulty,
+            reps: prevCard.reps,
+            lapses: prevCard.lapses,
+            elapsed_days: prevCard.elapsed_days,
+            scheduled_days: prevCard.scheduled_days,
+            learning_steps: prevCard.learning_steps,
+          },
+        });
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["stats.revlogs.recent"] });
+      queryClient.invalidateQueries({ queryKey: ["stats.retention"] });
+      queryClient.invalidateQueries({
+        queryKey: flashcardsTable.today.cacheOptions.queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: progressTable.streak.cacheOptions.queryKey,
+      });
+    },
+  });
+
   return (
     <Page className="m-auto flex w-full max-w-3xl flex-col gap-y-6 px-4 pb-8">
       <h1 className="text-center font-primary font-semibold text-3xl">
@@ -107,7 +247,7 @@ const Progress = () => {
             <h2 className="font-semibold text-lg">
               <Trans>Insights</Trans>
             </h2>
-            <Badge className="text-white uppercase">Pro</Badge>
+            <Badge className="text-white uppercase"><Trans>Pro</Trans></Badge>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -131,109 +271,18 @@ const Progress = () => {
               isLoading={isForecastLoading}
             />
           </div>
+
+          <RecentReviewsCard
+            isLoading={isRecentLoading}
+            isUndoing={isUndoing}
+            onUndo={undoReview}
+            reviews={recentReviews}
+          />
         </div>
       )}
     </Page>
   );
 };
-
-function ProPlaceholder() {
-  return (
-    <div className="relative">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <h2 className="font-semibold text-lg">
-            <Trans>Insights</Trans>
-          </h2>
-          <Badge className="text-white uppercase">Pro</Badge>
-        </div>
-
-        {/* Blurred placeholder content */}
-        <div className="pointer-events-none select-none blur-sm">
-          {/* Fake heatmap */}
-          <div className="rounded-xl border bg-background p-5">
-            <p className="mb-3 font-medium text-sm">
-              <Trans>Review Activity</Trans>
-            </p>
-            <div className="flex gap-0.5">
-              {Array.from({ length: 52 }).map((_, i) => (
-                <div className="flex flex-col gap-0.5" key={i}>
-                  {Array.from({ length: 7 }).map((_, j) => (
-                    <div
-                      className={cn(
-                        "h-2.5 w-2.5 rounded-sm",
-                        Math.random() > 0.6
-                          ? "bg-indigo-400"
-                          : Math.random() > 0.5
-                            ? "bg-indigo-200"
-                            : "bg-muted"
-                      )}
-                      key={j}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Fake insight cards */}
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-muted-foreground text-sm">
-                <Trans>Words Learned</Trans>
-              </p>
-              <span className="font-bold text-3xl">62</span>
-            </div>
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-muted-foreground text-sm">
-                <Trans>Retention Rate</Trans>
-              </p>
-              <span className="font-bold text-3xl">87%</span>
-            </div>
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-muted-foreground text-sm">
-                <Trans>Difficult Words</Trans>
-              </p>
-              <span className="font-bold text-3xl">12</span>
-            </div>
-            <div className="rounded-xl border bg-background p-5">
-              <p className="text-muted-foreground text-sm">
-                <Trans>Workload Forecast</Trans>
-              </p>
-              <span className="font-bold text-3xl">~28</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Overlay card */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <Card className="max-w-sm shadow-lg">
-          <CardContent className="flex flex-col items-center py-6">
-            <Lock className="mb-3 h-8 w-8 text-muted-foreground" />
-            <h3 className="font-semibold text-lg">
-              <Trans>Unlock Insights</Trans>
-            </h3>
-            <p className="mt-1 text-center text-muted-foreground text-sm">
-              <Trans>
-                See your retention rate, workload forecast, difficult words, and
-                more.
-              </Trans>
-            </p>
-            <Button
-              className="mt-4"
-              onClick={async () => {
-                await authClient.checkout({ slug: "pro" });
-              }}
-            >
-              <Trans>Upgrade to Pro</Trans>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-}
 
 export const Route = createLazyFileRoute(
   "/_authorized-layout/_app-layout/progress"

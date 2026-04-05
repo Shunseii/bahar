@@ -308,4 +308,30 @@ export const progressTable = {
       queryKey: ["turso.progress.recordReview"] as const,
     },
   },
+  recentReviewWords: {
+    query: async (
+      entryIds: string[]
+    ): Promise<Map<string, { word: string; translation: string }>> => {
+      if (entryIds.length === 0) return new Map();
+
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
+
+      const rows = await drizzleDb
+        .select({
+          id: dictionaryEntries.id,
+          word: dictionaryEntries.word,
+          translation: dictionaryEntries.translation,
+        })
+        .from(dictionaryEntries)
+        .where(inArray(dictionaryEntries.id, entryIds));
+
+      return new Map(
+        rows.map((r) => [r.id, { word: r.word, translation: r.translation }])
+      );
+    },
+    cacheOptions: {
+      queryKey: ["turso.progress.recentReviewWords"] as const,
+    },
+  },
 } satisfies Record<string, TableOperation>;

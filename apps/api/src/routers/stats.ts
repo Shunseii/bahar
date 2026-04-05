@@ -1,5 +1,5 @@
 import { FlashcardState } from "@bahar/drizzle-user-db-schemas";
-import { and, eq, gte, isNotNull } from "drizzle-orm";
+import { and, desc, eq, gte, isNotNull } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { nanoid } from "nanoid";
 import { z } from "zod";
@@ -123,6 +123,82 @@ export const statsRouter = new Elysia({ prefix: "/stats" })
         trend,
         reviewCount: thisWeek.length,
       };
+    },
+    {
+      auth: "user",
+    }
+  )
+  .get(
+    "/revlogs/recent",
+    async ({ user }) => {
+      const now = new Date();
+      const startOfDay = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate()
+      ).getTime();
+
+      const rows = await db
+        .select()
+        .from(revlogs)
+        .where(
+          and(
+            eq(revlogs.user_id, user.id),
+            eq(revlogs.source, "review"),
+            gte(revlogs.review_timestamp_ms, startOfDay)
+          )
+        )
+        .orderBy(desc(revlogs.review_timestamp_ms))
+        .limit(10);
+
+      return { revlogs: rows };
+    },
+    {
+      auth: "user",
+    }
+  )
+  .delete(
+    "/revlogs/:id",
+    async ({ user, params }) => {
+      const [row] = await db
+        .select()
+        .from(revlogs)
+        .where(and(eq(revlogs.id, params.id), eq(revlogs.user_id, user.id)));
+
+      if (!row) {
+        throw new Error("Revlog not found");
+      }
+
+      await db
+        .delete(revlogs)
+        .where(and(eq(revlogs.id, params.id), eq(revlogs.user_id, user.id)));
+
+      return { revlog: row };
+    },
+    {
+      auth: "user",
+    }
+  )
+  .get(
+    "/revlogs/entry/:entryId",
+    async ({ user, params }) => {
+      const rows = await db
+        .select({
+          rating: revlogs.rating,
+          direction: revlogs.direction,
+          reviewTimestampMs: revlogs.review_timestamp_ms,
+        })
+        .from(revlogs)
+        .where(
+          and(
+            eq(revlogs.user_id, user.id),
+            eq(revlogs.dictionary_entry_id, params.entryId),
+            eq(revlogs.source, "review")
+          )
+        )
+        .orderBy(revlogs.review_timestamp_ms);
+
+      return { revlogs: rows };
     },
     {
       auth: "user",

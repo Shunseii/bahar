@@ -9,6 +9,7 @@ import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeftRight, ArrowRight, Info, PencilLine } from "lucide-react";
 import type { FC } from "react";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 
 interface DifficultWordsCardProps {
   data:
@@ -42,6 +43,7 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
     );
   }
 
+  const { formatNumber } = useFormatNumber();
   const total = data?.total ?? 0;
   const words = data?.words ?? [];
 
@@ -67,7 +69,7 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
 
         {total > 0 && (
           <span className="rounded-full bg-muted px-2.5 py-0.5 text-muted-foreground text-xs">
-            {total} <Trans>total</Trans>
+            {formatNumber(total)} <Trans>total</Trans>
           </span>
         )}
       </div>
@@ -119,7 +121,7 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
             to="/"
           >
             <Trans>View all in dictionary</Trans>{" "}
-            <ArrowRight className="inline h-3.5 w-3.5" />
+            <ArrowRight className="inline h-3.5 w-3.5 rtl:scale-x-[-1]" />
           </Link>
         </>
       )}

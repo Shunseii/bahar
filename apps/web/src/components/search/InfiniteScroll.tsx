@@ -2,6 +2,7 @@ import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import { Card, CardContent } from "@bahar/web-ui/components/card";
+import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
@@ -18,7 +19,9 @@ import {
   Copy,
   Edit,
   Loader2,
+  Lock,
   SearchX,
+  Timer,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -29,8 +32,14 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useInfiniteScroll } from "@/hooks/search/useSearch";
+import { api } from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
+import { intlFormatDistance } from "@/lib/date";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { settingsTable } from "@/lib/db/operations/settings";
 import { Highlight } from "./Highlight";
 
 const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {
@@ -331,9 +340,333 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = memo(({ id, document }) => {
           </div>
         </div>
       )}
+
+      <ReviewHistory entryId={id} />
     </div>
   );
 });
+
+const RATING_DOT_STYLES: Record<string, string> = {
+  again: "bg-muted-foreground",
+  hard: "bg-orange-500",
+  good: "bg-primary",
+  easy: "bg-green-500",
+};
+
+const ReviewHistory: FC<{ entryId: string }> = memo(({ entryId }) => {
+  const { i18n } = useLingui();
+  const { data: userData } = authClient.useSession();
+  const isProUser =
+    userData?.user.plan === "pro" &&
+    userData.user.subscriptionStatus !== "canceled";
+
+  const { data: settingsData } = useQuery({
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
+  });
+  const showReverse = settingsData?.show_reverse_flashcards ?? false;
+
+  const { data: revlogData } = useQuery({
+    queryFn: async () => {
+      const { data, error } = await api.stats.revlogs.entry({ entryId }).get();
+      if (error) throw error;
+      return data;
+    },
+    queryKey: ["stats.revlogs.entry", entryId],
+    enabled: isProUser,
+  });
+
+  const { data: flashcardData } = useQuery({
+    queryFn: () => flashcardsTable.findByEntryId.query(entryId),
+    queryKey: [...flashcardsTable.findByEntryId.cacheOptions.queryKey, entryId],
+    enabled: isProUser,
+  });
+
+  if (!isProUser) {
+    return (
+      <div className="flex flex-col gap-1.5 border-border/50 border-t pt-3">
+        <div className="flex items-center gap-1.5">
+          <p className="font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
+            <Trans>Review History</Trans>
+          </p>
+          <Lock className="h-3 w-3 text-muted-foreground/50" />
+        </div>
+        <p className="text-muted-foreground text-xs">
+          <Trans>
+            Upgrade to Pro to see your review history for this word.
+          </Trans>
+        </p>
+      </div>
+    );
+  }
+
+  const revlogs = revlogData?.revlogs ?? [];
+  const forwardRevlogs = revlogs.filter((r) => r.direction === "forward");
+  const reverseRevlogs = revlogs.filter((r) => r.direction === "reverse");
+  const forwardFlashcard = flashcardData?.find(
+    (f) => f.direction === "forward"
+  );
+  const reverseFlashcard = flashcardData?.find(
+    (f) => f.direction === "reverse"
+  );
+
+  const hasRevlogs = revlogs.length > 0;
+
+  return (
+    <div className="flex flex-col gap-3 border-border/50 border-t pt-3">
+      <p className="font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
+        <Trans>Review History</Trans>
+      </p>
+
+      {hasRevlogs ? (
+        showReverse ? (
+          <>
+            <DirectionTimeline
+              flashcard={forwardFlashcard}
+              label={t`Arabic → English`}
+              locale={i18n.locale}
+              revlogs={forwardRevlogs}
+            />
+            <DirectionTimeline
+              flashcard={reverseFlashcard}
+              label={t`English → Arabic`}
+              locale={i18n.locale}
+              revlogs={reverseRevlogs}
+            />
+            <RatingLegend />
+          </>
+        ) : (
+          <>
+            <DirectionTimeline
+              flashcard={forwardFlashcard}
+              locale={i18n.locale}
+              revlogs={forwardRevlogs}
+            />
+            <RatingLegend />
+          </>
+        )
+      ) : undefined}
+
+      <NextReviewSection
+        forwardFlashcard={forwardFlashcard}
+        locale={i18n.locale}
+        reverseFlashcard={reverseFlashcard}
+        showReverse={showReverse}
+      />
+    </div>
+  );
+});
+
+const RatingLegend = () => (
+  <div className="flex items-center gap-3">
+    {Object.entries(RATING_DOT_STYLES).map(([rating, style]) => (
+      <div className="flex items-center gap-1" key={rating}>
+        <div className={cn("h-2.5 w-2.5 rounded-full", style)} />
+        <span className="text-muted-foreground text-xs capitalize">
+          {rating === "again"
+            ? t`Again`
+            : rating === "hard"
+              ? t`Hard`
+              : rating === "good"
+                ? t`Good`
+                : t`Easy`}
+        </span>
+      </div>
+    ))}
+  </div>
+);
+
+const formatNextReview = ({
+  due,
+  locale,
+}: {
+  due: string;
+  locale: string;
+}): { label: string; isOverdue: boolean } => {
+  const dueDate = new Date(due);
+  const now = new Date();
+  const isOverdue = dueDate.getTime() <= now.getTime();
+
+  if (isOverdue) {
+    return { label: t`overdue`, isOverdue: true };
+  }
+
+  return {
+    label: intlFormatDistance(dueDate, now, { locale }).label,
+    isOverdue: false,
+  };
+};
+
+const NextReviewSection: FC<{
+  forwardFlashcard?: { due: string } | undefined;
+  reverseFlashcard?: { due: string } | undefined;
+  showReverse: boolean;
+  locale: string;
+}> = ({ forwardFlashcard, reverseFlashcard, showReverse, locale }) => {
+  if (showReverse) {
+    const forwardNext = forwardFlashcard
+      ? formatNextReview({ due: forwardFlashcard.due, locale })
+      : null;
+    const reverseNext = reverseFlashcard
+      ? formatNextReview({ due: reverseFlashcard.due, locale })
+      : null;
+
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1.5">
+          <Timer className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="font-semibold text-muted-foreground text-xs uppercase tracking-wider">
+            <Trans>Next Review</Trans>
+          </span>
+        </div>
+        {forwardNext && (
+          <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-1.5">
+            <span className="text-muted-foreground text-xs">
+              <Trans>Arabic → English</Trans>
+            </span>
+            <span
+              className={cn(
+                "font-semibold text-xs",
+                forwardNext.isOverdue ? "text-red-600" : "text-foreground"
+              )}
+            >
+              {forwardNext.label}
+            </span>
+          </div>
+        )}
+        {reverseNext && (
+          <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-1.5">
+            <span className="text-muted-foreground text-xs">
+              <Trans>English → Arabic</Trans>
+            </span>
+            <span
+              className={cn(
+                "font-semibold text-xs",
+                reverseNext.isOverdue ? "text-red-600" : "text-foreground"
+              )}
+            >
+              {reverseNext.label}
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const flashcard = forwardFlashcard ?? reverseFlashcard;
+  if (!flashcard) return null;
+
+  const next = formatNextReview({ due: flashcard.due, locale });
+
+  return (
+    <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2">
+      <div className="flex items-center gap-1.5">
+        <Timer className="h-3.5 w-3.5 text-muted-foreground" />
+        <span className="text-muted-foreground text-xs">
+          <Trans>Next review</Trans>
+        </span>
+      </div>
+      <span
+        className={cn(
+          "font-semibold text-xs",
+          next.isOverdue ? "text-red-600" : "text-foreground"
+        )}
+      >
+        {next.label}
+      </span>
+    </div>
+  );
+};
+
+const MAX_VISIBLE_DOTS = 10;
+
+const DirectionTimeline: FC<{
+  revlogs: { rating: string | null; reviewTimestampMs: number }[];
+  flashcard?: { due: string; lapses: number | null } | undefined;
+  label?: string;
+  locale: string;
+}> = ({ revlogs, flashcard, label, locale }) => {
+  const { formatNumber } = useFormatNumber();
+  const reviewCount = revlogs.length;
+  const lapseCount = flashcard?.lapses ?? 0;
+  const lastReviewMs =
+    revlogs.length > 0 ? revlogs[revlogs.length - 1].reviewTimestampMs : null;
+
+  const metaParts: string[] = [];
+
+  metaParts.push(
+    plural(reviewCount, {
+      one: `${formatNumber(reviewCount)} review`,
+      other: `${formatNumber(reviewCount)} reviews`,
+    })
+  );
+  metaParts.push(
+    plural(lapseCount, {
+      one: `${formatNumber(lapseCount)} lapse`,
+      other: `${formatNumber(lapseCount)} lapses`,
+    })
+  );
+
+  if (lastReviewMs) {
+    metaParts.push(
+      intlFormatDistance(new Date(lastReviewMs), new Date(), {
+        style: "narrow",
+        locale,
+      }).label
+    );
+  }
+
+  const showOldestLatest = reviewCount > 1;
+
+  return (
+    <div className="flex justify-between gap-1.5">
+      {reviewCount > 0 && (
+        <div className="flex flex-wrap items-center gap-1">
+          {showOldestLatest && (
+            <span className="text-muted-foreground/60 text-xs">
+              <Trans>Oldest</Trans>
+            </span>
+          )}
+          {revlogs.length > MAX_VISIBLE_DOTS && (
+            <span className="text-muted-foreground text-xs">…</span>
+          )}
+          {(revlogs.length > MAX_VISIBLE_DOTS
+            ? revlogs.slice(revlogs.length - MAX_VISIBLE_DOTS)
+            : revlogs
+          ).map((r, i) => (
+            <div
+              className={cn(
+                "h-2.5 w-2.5 rounded-full",
+                RATING_DOT_STYLES[r.rating ?? "good"] ?? "bg-primary"
+              )}
+              key={i}
+            />
+          ))}
+          {showOldestLatest && (
+            <span className="text-muted-foreground/60 text-xs">
+              <Trans>Latest</Trans>
+            </span>
+          )}
+        </div>
+      )}
+
+      {(label || reviewCount > 0) && (
+        <div className="flex items-center justify-between">
+          {label && (
+            <span className="font-semibold text-foreground text-xs">
+              {label}
+            </span>
+          )}
+          {reviewCount > 0 && (
+            <span className="text-muted-foreground text-xs">
+              {metaParts.join(" · ")}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface WordCardContentProps {
   hit: { id: string | null; document: SelectDictionaryEntry };

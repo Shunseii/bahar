@@ -8,6 +8,7 @@ import {
 import { Trans } from "@lingui/react/macro";
 import { Info, TrendingDown, TrendingUp } from "lucide-react";
 import type { FC } from "react";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 
 interface RetentionRateCardProps {
   data:
@@ -20,6 +21,8 @@ export const RetentionRateCard: FC<RetentionRateCardProps> = ({
   data,
   isLoading,
 }) => {
+  const { formatNumber } = useFormatNumber();
+
   if (isLoading) {
     return (
       <Card className="flex flex-col gap-3 p-5">
@@ -34,11 +37,13 @@ export const RetentionRateCard: FC<RetentionRateCardProps> = ({
   const trend = data?.trend;
   const hasData = rate !== null && rate !== undefined;
 
-  const formattedRate = hasData ? `${Math.round(rate * 100)}%` : "—";
+  const formattedRate = hasData
+    ? `${formatNumber(Math.round(rate * 100))}%`
+    : "—";
 
   const trendText = (() => {
     if (trend === null || trend === undefined) return null;
-    const pct = (trend * 100).toFixed(1);
+    const pct = formatNumber(Number((trend * 100).toFixed(1)));
     const isPositive = trend >= 0;
     return { pct: isPositive ? `+${pct}%` : `${pct}%`, isPositive };
   })();

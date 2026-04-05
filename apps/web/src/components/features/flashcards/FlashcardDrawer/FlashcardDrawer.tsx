@@ -211,6 +211,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         review: log.review.toISOString(),
         rating: RATING_TO_LABEL[log.rating],
         direction: currentCard.direction,
+        dictionary_entry_id: currentCard.dictionary_entry_id,
       });
 
       await progressTable.recordReview.mutation();

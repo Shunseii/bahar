@@ -27,6 +27,7 @@ export const revlogs = sqliteTable("revlogs", {
   user_id: text("user_id")
     .notNull()
     .references(() => users.id),
+  dictionary_entry_id: text("dictionary_entry_id").notNull(),
 
   difficulty: real("difficulty").default(0),
   due: text("due").notNull(),

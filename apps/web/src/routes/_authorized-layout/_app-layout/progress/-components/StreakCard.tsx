@@ -4,6 +4,7 @@ import { Skeleton } from "@bahar/web-ui/components/skeleton";
 import { Trans } from "@lingui/react/macro";
 import { Check, Flame } from "lucide-react";
 import type { FC } from "react";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 
 interface StreakCardProps {
   data:
@@ -35,6 +36,7 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
     );
   }
 
+  const { formatNumber } = useFormatNumber();
   const reviewedToday = data?.reviewedToday ?? false;
   const streakCount = data?.streakCount ?? 0;
   const longestStreak = data?.longestStreak ?? 0;
@@ -67,7 +69,7 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
                   !reviewedToday && "text-muted-foreground"
                 )}
               >
-                {streakCount}
+                {formatNumber(streakCount)}
               </span>
               <span className="font-medium text-muted-foreground text-sm">
                 <Trans>day streak</Trans>
@@ -75,9 +77,9 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
             </div>
             <p className="text-muted-foreground text-xs">
               {isBroken && longestStreak > 0 ? (
-                <Trans>Previous: {longestStreak} days</Trans>
+                <Trans>Previous: {formatNumber(longestStreak)} days</Trans>
               ) : (
-                <Trans>Longest: {longestStreak} days</Trans>
+                <Trans>Longest: {formatNumber(longestStreak)} days</Trans>
               )}
             </p>
           </div>

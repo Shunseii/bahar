@@ -8,6 +8,7 @@ import {
 import { Trans } from "@lingui/react/macro";
 import { Info, TrendingUp } from "lucide-react";
 import type { FC } from "react";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 
 interface WordsLearnedCardProps {
   data: { learned: number; totalAdded: number; thisWeek: number } | undefined;
@@ -18,6 +19,8 @@ export const WordsLearnedCard: FC<WordsLearnedCardProps> = ({
   data,
   isLoading,
 }) => {
+  const { formatNumber } = useFormatNumber();
+
   if (isLoading) {
     return (
       <Card className="flex flex-col gap-3 p-5">
@@ -57,16 +60,18 @@ export const WordsLearnedCard: FC<WordsLearnedCardProps> = ({
           <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
             <TrendingUp className="h-3.5 w-3.5" />
             <span className="font-medium text-xs">
-              <Trans>+{thisWeek} this week</Trans>
+              <Trans>+{formatNumber(thisWeek)} this week</Trans>
             </span>
           </div>
         )}
       </div>
 
       <div className="flex flex-col gap-0.5">
-        <span className="font-bold text-4xl tracking-tight">{percentage}%</span>
+        <span className="font-bold text-4xl tracking-tight">
+          {formatNumber(percentage)}%
+        </span>
         <span className="text-muted-foreground text-sm">
-          <Trans>{learned} words</Trans>
+          <Trans>{formatNumber(learned)} words</Trans>
         </span>
       </div>
 

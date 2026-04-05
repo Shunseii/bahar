@@ -413,6 +413,57 @@ export const flashcardsTable = {
     },
   },
 
+  findByEntryId: {
+    query: async (entryId: string): Promise<SelectFlashcard[]> => {
+      const db = await ensureDb();
+
+      const rows: RawFlashcard[] = await db
+        .prepare("SELECT * FROM flashcards WHERE dictionary_entry_id = ?;")
+        .all([entryId]);
+
+      return rows.map((res) => ({
+        ...res,
+        direction: (res.direction ?? "forward") as SelectFlashcard["direction"],
+        is_hidden: Boolean(res.is_hidden),
+      }));
+    },
+    cacheOptions: {
+      queryKey: ["turso.flashcards.findByEntryId"] as const,
+    },
+  },
+
+  findByEntryAndDirection: {
+    query: async ({
+      dictionaryEntryId,
+      direction,
+    }: {
+      dictionaryEntryId: string;
+      direction: string;
+    }): Promise<{ data: SelectFlashcard | null }> => {
+      const db = await ensureDb();
+
+      const res: RawFlashcard | undefined = await db
+        .prepare(
+          "SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;"
+        )
+        .get([dictionaryEntryId, direction]);
+
+      if (!res) return { data: null };
+
+      return {
+        data: {
+          ...res,
+          direction: (res.direction ??
+            "forward") as SelectFlashcard["direction"],
+          is_hidden: Boolean(res.is_hidden),
+        },
+      };
+    },
+    cacheOptions: {
+      queryKey: ["turso.flashcards.findByEntryAndDirection"] as const,
+    },
+  },
+
   /**
    * Get counts for both regular and backlog queues.
    * Useful for displaying queue sizes in the UI.
@@ -601,6 +652,7 @@ export const flashcardsTable = {
       const revlogEntries: {
         log: ReviewLog;
         direction: SelectFlashcard["direction"];
+        dictionary_entry_id: string;
       }[] = [];
 
       let committed = false;
@@ -626,7 +678,11 @@ export const flashcardsTable = {
           const scheduling = f.repeat(card, nowDate);
           const { card: newCard, log } = scheduling[Rating.Hard];
 
-          revlogEntries.push({ log, direction: row.direction });
+          revlogEntries.push({
+            log,
+            direction: row.direction,
+            dictionary_entry_id: row.dictionary_entry_id,
+          });
 
           await drizzleDb
             .update(flashcards)
@@ -658,14 +714,17 @@ export const flashcardsTable = {
       if (revlogEntries.length > 0) {
         api.stats.revlogs.batch
           .post({
-            entries: revlogEntries.map(({ log, direction }) => ({
-              ...log,
-              due: log.due.toISOString(),
-              review: log.review.toISOString(),
-              rating: "hard",
-              direction,
-              source: "clear_backlog",
-            })),
+            entries: revlogEntries.map(
+              ({ log, direction, dictionary_entry_id }) => ({
+                ...log,
+                due: log.due.toISOString(),
+                review: log.review.toISOString(),
+                rating: "hard",
+                direction,
+                dictionary_entry_id,
+                source: "clear_backlog",
+              })
+            ),
           })
           .then(({ error }) => {
             if (error) {
