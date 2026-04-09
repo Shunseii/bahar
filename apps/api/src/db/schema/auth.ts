@@ -94,9 +94,29 @@ export const verifications = sqliteTable(
   (table) => [index("verifications_identifier_idx").on(table.identifier)]
 );
 
+export const consentEvents = sqliteTable(
+  "consent_events",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    action: text("action", { enum: ["granted", "withdrawn"] }).notNull(),
+    source: text("source", {
+      enum: ["app_modal", "app_settings", "resend_webhook"],
+    }).notNull(),
+    ipAddress: text("ip_address"),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+      .notNull(),
+  },
+  (table) => [index("consent_events_userId_idx").on(table.userId)]
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
+  consentEvents: many(consentEvents),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -109,6 +129,13 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 export const accountsRelations = relations(accounts, ({ one }) => ({
   users: one(users, {
     fields: [accounts.userId],
+    references: [users.id],
+  }),
+}));
+
+export const consentEventsRelations = relations(consentEvents, ({ one }) => ({
+  user: one(users, {
+    fields: [consentEvents.userId],
     references: [users.id],
   }),
 }));

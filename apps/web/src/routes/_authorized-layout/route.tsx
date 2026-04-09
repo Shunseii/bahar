@@ -1,3 +1,12 @@
+import { Button } from "@bahar/web-ui/components/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@bahar/web-ui/components/dialog";
 import { plural, t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import * as Sentry from "@sentry/react";
@@ -9,7 +18,7 @@ import {
 } from "@tanstack/react-router";
 import { useMeasure } from "@uidotdev/usehooks";
 import { useAtom, useAtomValue } from "jotai";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { hydrationSkippedCountAtom } from "@/atoms/hydration";
 import { isSyncingAtom, syncCompletedCountAtom } from "@/atoms/sync";
@@ -20,6 +29,7 @@ import { MobileHeader } from "@/components/MobileHeader";
 import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/search/useSearch";
+import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { ensureDb, initDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
@@ -40,6 +50,84 @@ const PendingComponent = () => {
     <div className="fixed inset-0 flex items-center justify-center bg-background">
       <AnimatedLogo className="h-20 w-20" />
     </div>
+  );
+};
+
+const CONSENT_MODAL_DISMISSED_KEY = "marketing-consent-modal-dismissed";
+
+export const marketingConsentQueryOptions = {
+  queryKey: ["marketing", "consent"] as const,
+  queryFn: async () => {
+    const { data } = await api.marketing.consent.get();
+    return data?.consent ?? null;
+  },
+};
+
+const MarketingConsentModal = () => {
+  const { data: consent, isLoading } = useQuery(marketingConsentQueryOptions);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const dismissed =
+    localStorage.getItem(CONSENT_MODAL_DISMISSED_KEY) === "true";
+  const isOpen = !isLoading && consent === null && !dismissed;
+
+  const handleClose = () => {
+    localStorage.setItem(CONSENT_MODAL_DISMISSED_KEY, "true");
+    queryClient.setQueryData(marketingConsentQueryOptions.queryKey, undefined);
+  };
+
+  const handleConsent = async (consented: boolean) => {
+    setIsSubmitting(true);
+
+    try {
+      await api.marketing.consent.post({
+        consent: consented,
+        source: "app_modal",
+      });
+
+      localStorage.setItem(CONSENT_MODAL_DISMISSED_KEY, "true");
+      queryClient.invalidateQueries({
+        queryKey: marketingConsentQueryOptions.queryKey,
+      });
+    } catch {
+      toast.error(t`Something went wrong. Please try again.`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog onOpenChange={(open) => !open && handleClose()} open={isOpen}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>
+            <Trans>Stay updated?</Trans>
+          </DialogTitle>
+
+          <DialogDescription>
+            <Trans>
+              Would you like to receive product updates, tips, and new feature
+              announcements? You can unsubscribe at any time. You can always
+              change this in Settings &gt; Preferences.
+            </Trans>
+          </DialogDescription>
+        </DialogHeader>
+
+        <DialogFooter className="gap-y-2">
+          <Button disabled={isSubmitting} onClick={() => handleConsent(true)}>
+            <Trans>Subscribe</Trans>
+          </Button>
+
+          <Button
+            disabled={isSubmitting}
+            onClick={() => handleConsent(false)}
+            variant="outline"
+          >
+            <Trans>No thanks</Trans>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
@@ -183,6 +271,7 @@ const AuthorizedLayout = () => {
       {schemaIsOutdated && <SchemaOutdatedBanner ref={bannerRef} />}
       <Outlet />
       <SyncIndicator />
+      <MarketingConsentModal />
     </div>
   );
 };

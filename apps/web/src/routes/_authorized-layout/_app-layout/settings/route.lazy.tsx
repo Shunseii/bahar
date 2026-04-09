@@ -22,7 +22,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@bahar/web-ui/components/dialog";
+import { Switch } from "@bahar/web-ui/components/switch";
 import { Trans, useLingui } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -47,7 +49,79 @@ import {
 } from "@/lib/db/import";
 import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
 import { ImportError, ImportErrorCode, parseImportErrors } from "@/lib/error";
+import { queryClient } from "@/lib/query";
 import { hydrateOramaDb, resetOramaDb } from "@/lib/search";
+import { marketingConsentQueryOptions } from "@/routes/_authorized-layout/route";
+
+const PreferencesSettingsCard = () => {
+  const { t } = useLingui();
+  const { data: consent } = useQuery(marketingConsentQueryOptions);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const hasConsented = consent?.action === "granted";
+
+  const handleToggle = async (checked: boolean) => {
+    setIsUpdating(true);
+
+    try {
+      await api.marketing.consent.post({
+        consent: checked,
+        source: "app_settings",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: marketingConsentQueryOptions.queryKey,
+      });
+
+      toast.success(
+        checked
+          ? t`Subscribed to marketing emails`
+          : t`Unsubscribed from marketing emails`
+      );
+    } catch {
+      toast.error(t`Failed to update preference. Please try again.`);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader id="preferences">
+        <CardTitle>
+          <Trans>Preferences</Trans>
+        </CardTitle>
+
+        <CardDescription>
+          <Trans>Manage your communication preferences.</Trans>
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-y-1">
+            <label htmlFor="marketing-emails-toggle">
+              <Trans>Marketing emails</Trans>
+            </label>
+
+            <p className="text-muted-foreground text-sm">
+              <Trans>
+                Receive product updates, tips, and new feature announcements.
+              </Trans>
+            </p>
+          </div>
+
+          <Switch
+            checked={hasConsented}
+            disabled={isUpdating}
+            id="marketing-emails-toggle"
+            onCheckedChange={handleToggle}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const Settings = () => {
   const { t } = useLingui();
@@ -538,6 +612,8 @@ const Settings = () => {
         </Card>
 
         <BillingSettingsCard />
+
+        <PreferencesSettingsCard />
 
         <FlashcardSettingsCardSection />
 

@@ -14,6 +14,7 @@ import { Elysia } from "elysia";
 import { betterAuthGuard, httpLogger } from "./middleware";
 import { aiRouter } from "./routers/ai";
 import { databasesRouter } from "./routers/databases";
+import { marketingRouter } from "./routers/marketing";
 import { migrationsRouter } from "./routers/migrations";
 import { statsRouter } from "./routers/stats";
 import { getAllowedDomains } from "./utils";
@@ -57,6 +58,7 @@ const app = new Elysia()
   .use(databasesRouter)
   .use(aiRouter)
   .use(statsRouter)
+  .use(marketingRouter)
   .onError(({ error, code }) => {
     Sentry.captureException(error);
 
