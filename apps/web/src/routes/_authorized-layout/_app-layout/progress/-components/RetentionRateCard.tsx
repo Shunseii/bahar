@@ -1,14 +1,10 @@
 import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@bahar/web-ui/components/tooltip";
 import { Trans } from "@lingui/react/macro";
-import { Info, TrendingDown, TrendingUp } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import type { FC } from "react";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { InfoTooltip } from "./InfoTooltip";
 
 interface RetentionRateCardProps {
   data:
@@ -55,17 +51,12 @@ export const RetentionRateCard: FC<RetentionRateCardProps> = ({
           <span className="font-medium text-muted-foreground text-sm">
             <Trans>Retention Rate</Trans>
           </span>
-          <Tooltip>
-            <TooltipTrigger>
-              <Info className="h-3.5 w-3.5 text-muted-foreground/60" />
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <Trans>
-                Percentage of mature card reviews not rated "Again" over the
-                last 7 days.
-              </Trans>
-            </TooltipContent>
-          </Tooltip>
+          <InfoTooltip>
+            <Trans>
+              Percentage of mature card reviews not rated "Again" over the last
+              7 days.
+            </Trans>
+          </InfoTooltip>
         </div>
 
         {trendText && (

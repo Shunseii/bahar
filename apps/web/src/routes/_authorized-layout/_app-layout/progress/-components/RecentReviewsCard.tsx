@@ -2,17 +2,13 @@ import { cn } from "@bahar/design-system";
 import type { FlashcardDirection } from "@bahar/drizzle-user-db-schemas";
 import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@bahar/web-ui/components/tooltip";
 import { t } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
-import { Clock, Info, Undo2 } from "lucide-react";
+import { Clock, Undo2 } from "lucide-react";
 import type { FC } from "react";
 import { intlFormatDistance } from "@/lib/date";
+import { InfoTooltip } from "./InfoTooltip";
 
 const RATING_DOT_STYLES: Record<string, string> = {
   again: "bg-muted-foreground",
@@ -82,17 +78,12 @@ export const RecentReviewsCard: FC<RecentReviewsCardProps> = ({
           <span className="font-medium text-muted-foreground text-sm">
             <Trans>Recent Reviews</Trans>
           </span>
-          <Tooltip>
-            <TooltipTrigger>
-              <Info className="h-3.5 w-3.5 text-muted-foreground/60" />
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <Trans>
-                Your most recent flashcard reviews. You can undo a review to
-                restore the card to its previous state.
-              </Trans>
-            </TooltipContent>
-          </Tooltip>
+          <InfoTooltip>
+            <Trans>
+              Your most recent flashcard reviews. You can undo a review to
+              restore the card to its previous state.
+            </Trans>
+          </InfoTooltip>
         </div>
       </div>
 

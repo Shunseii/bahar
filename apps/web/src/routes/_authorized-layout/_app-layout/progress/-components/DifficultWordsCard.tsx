@@ -1,15 +1,11 @@
 import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@bahar/web-ui/components/tooltip";
 import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeftRight, ArrowRight, Info, PencilLine } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, PencilLine } from "lucide-react";
 import type { FC } from "react";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { InfoTooltip } from "./InfoTooltip";
 
 interface DifficultWordsCardProps {
   data:
@@ -55,17 +51,12 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
           <span className="font-medium text-muted-foreground text-sm">
             <Trans>Difficult Words</Trans>
           </span>
-          <Tooltip>
-            <TooltipTrigger>
-              <Info className="h-3.5 w-3.5 text-muted-foreground/60" />
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <Trans>
-                Words you find hardest based on your review history. As you
-                improve, words will naturally drop off this list.
-              </Trans>
-            </TooltipContent>
-          </Tooltip>
+          <InfoTooltip>
+            <Trans>
+              Words you find hardest based on your review history. As you
+              improve, words will naturally drop off this list.
+            </Trans>
+          </InfoTooltip>
         </div>
 
         {total > 0 && (

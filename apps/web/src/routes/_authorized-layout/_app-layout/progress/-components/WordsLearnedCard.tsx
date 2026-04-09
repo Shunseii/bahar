@@ -1,14 +1,10 @@
 import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@bahar/web-ui/components/tooltip";
 import { Plural, Trans } from "@lingui/react/macro";
-import { Info, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import type { FC } from "react";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { InfoTooltip } from "./InfoTooltip";
 
 interface WordsLearnedCardProps {
   data: { learned: number; totalAdded: number; thisWeek: number } | undefined;
@@ -44,16 +40,11 @@ export const WordsLearnedCard: FC<WordsLearnedCardProps> = ({
           <span className="font-medium text-muted-foreground text-sm">
             <Trans>Words Learned</Trans>
           </span>
-          <Tooltip>
-            <TooltipTrigger>
-              <Info className="h-3.5 w-3.5 text-muted-foreground/60" />
-            </TooltipTrigger>
-            <TooltipContent className="max-w-xs">
-              <Trans>
-                Words that have graduated from the learning phase into review.
-              </Trans>
-            </TooltipContent>
-          </Tooltip>
+          <InfoTooltip>
+            <Trans>
+              Words that have graduated from the learning phase into review.
+            </Trans>
+          </InfoTooltip>
         </div>
 
         {thisWeek > 0 && (

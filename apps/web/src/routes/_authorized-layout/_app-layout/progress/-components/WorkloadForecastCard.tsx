@@ -6,17 +6,12 @@ import {
   ChartTooltipContent,
 } from "@bahar/web-ui/components/chart";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@bahar/web-ui/components/tooltip";
 import { Plural, Trans, useLingui } from "@lingui/react/macro";
-import { Info } from "lucide-react";
 import type { FC } from "react";
 import { Bar, BarChart, XAxis } from "recharts";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { InfoTooltip } from "./InfoTooltip";
 
 interface WorkloadForecastCardProps {
   data:
@@ -61,17 +56,12 @@ export const WorkloadForecastCard: FC<WorkloadForecastCardProps> = ({
         <span className="font-medium text-muted-foreground text-sm">
           <Trans>Workload Forecast</Trans>
         </span>
-        <Tooltip>
-          <TooltipTrigger>
-            <Info className="h-3.5 w-3.5 text-muted-foreground/60" />
-          </TooltipTrigger>
-          <TooltipContent className="max-w-xs">
-            <Trans>
-              Predicted number of cards due for review each day over the next
-              week.
-            </Trans>
-          </TooltipContent>
-        </Tooltip>
+        <InfoTooltip>
+          <Trans>
+            Predicted number of cards due for review each day over the next
+            week.
+          </Trans>
+        </InfoTooltip>
       </div>
 
       <div className="flex items-baseline gap-2">
