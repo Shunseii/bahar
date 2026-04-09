@@ -95,37 +95,28 @@ export const RecentReviewsCard: FC<RecentReviewsCardProps> = ({
         <div className="flex flex-col gap-1">
           {reviews.map((review) => (
             <div
-              className="flex items-center justify-between gap-3 rounded-lg bg-muted/50 px-3 py-2"
+              className="flex flex-col gap-2 rounded-lg bg-muted/50 px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
               key={review.id}
             >
-              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-between gap-2.5">
+                <div className="flex flex-row items-center gap-x-2">
                   <div
                     className={cn(
                       "h-2 w-2 shrink-0 rounded-full",
                       RATING_DOT_STYLES[review.rating] ?? "bg-muted-foreground"
                     )}
                   />
-                  <span className="truncate font-medium text-sm" dir="rtl">
-                    {review.word}
+                  <span className="text-muted-foreground text-xs">
+                    {ratingLabel(review.rating)} ·{" "}
+                    {
+                      intlFormatDistance(
+                        new Date(review.reviewTimestampMs),
+                        new Date(),
+                        { style: "narrow", locale: i18n.locale }
+                      ).label
+                    }
                   </span>
                 </div>
-                <span className="truncate text-muted-foreground text-xs ltr:ps-4.5 rtl:pe-4.5">
-                  {review.translation}
-                </span>
-              </div>
-
-              <div className="flex shrink-0 items-center gap-2.5">
-                <span className="text-muted-foreground text-xs">
-                  {ratingLabel(review.rating)} ·{" "}
-                  {
-                    intlFormatDistance(
-                      new Date(review.reviewTimestampMs),
-                      new Date(),
-                      { style: "narrow", locale: i18n.locale }
-                    ).label
-                  }
-                </span>
                 <button
                   className="flex items-center gap-1 rounded-md border border-border px-2 py-1 text-muted-foreground text-xs transition-colors hover:text-foreground disabled:opacity-50"
                   disabled={isUndoing}
@@ -135,6 +126,18 @@ export const RecentReviewsCard: FC<RecentReviewsCardProps> = ({
                   <Undo2 className="h-3 w-3" />
                   <Trans>Undo</Trans>
                 </button>
+              </div>
+
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:order-first">
+                <span className="truncate font-medium text-sm" dir="rtl">
+                  {review.word}
+                </span>
+                <span
+                  className="truncate text-muted-foreground text-xs"
+                  dir="ltr"
+                >
+                  {review.translation}
+                </span>
               </div>
             </div>
           ))}

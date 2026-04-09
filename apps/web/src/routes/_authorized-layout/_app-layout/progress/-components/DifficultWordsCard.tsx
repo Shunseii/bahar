@@ -82,8 +82,8 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
                 className="flex items-center justify-between gap-2 rounded-md bg-red-50 px-3 py-2.5 dark:bg-red-950/30"
                 key={w.entryId}
               >
-                <div className="flex min-w-0 flex-1 flex-col items-end gap-0.5">
-                  <div className="flex items-center gap-1.5">
+                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <div className="flex items-center gap-1.5" dir="rtl">
                     {w.bothDirections && (
                       <ArrowLeftRight className="h-3 w-3 shrink-0 text-muted-foreground/60" />
                     )}
@@ -91,7 +91,10 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
                       {w.word}
                     </span>
                   </div>
-                  <span className="truncate text-muted-foreground text-xs">
+                  <span
+                    className="truncate text-muted-foreground text-xs"
+                    dir="ltr"
+                  >
                     {w.translation}
                   </span>
                 </div>

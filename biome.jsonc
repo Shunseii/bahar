@@ -66,6 +66,7 @@
         "noParameterProperties": "info"
       },
       "suspicious": {
+        "noTsIgnore": "off",
         "useAwait": "off",
         "useIterableCallbackReturn": "off",
         "noArrayIndexKey": "off",
