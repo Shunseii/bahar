@@ -140,24 +140,28 @@ export const marketingRouter = new Elysia({ prefix: "/marketing" })
       return new Response("Invalid signature", { status: 401 });
     }
 
-    const shouldWithdrawConsent = (() => {
+    const consentAction = (() => {
       if (event.type === "contact.deleted") {
-        return (event as ContactDeletedEvent).data.email;
+        const { email } = (event as ContactDeletedEvent).data;
+        return { email, action: "withdrawn" as const };
       }
 
       if (event.type === "contact.updated") {
         const { email, unsubscribed } = (event as ContactUpdatedEvent).data;
-        return unsubscribed ? email : null;
+        return {
+          email,
+          action: unsubscribed ? ("withdrawn" as const) : ("granted" as const),
+        };
       }
 
       return null;
     })();
 
-    if (!shouldWithdrawConsent) {
+    if (!consentAction) {
       return { received: true };
     }
 
-    const email = shouldWithdrawConsent;
+    const { email, action } = consentAction;
 
     const [existingUser] = await db
       .select({ id: users.id })
@@ -171,19 +175,19 @@ export const marketingRouter = new Elysia({ prefix: "/marketing" })
 
     const latest = await getLatestConsentEvent(existingUser.id);
 
-    if (latest?.action === "withdrawn") {
+    if (latest?.action === action) {
       return { received: true };
     }
 
     await db.insert(consentEvents).values({
       id: nanoid(),
       userId: existingUser.id,
-      action: "withdrawn",
+      action,
       source: "resend_webhook",
     });
 
     webhookLogger.info(
-      { userId: existingUser.id, email, eventType: event.type },
+      { userId: existingUser.id, email, action, eventType: event.type },
       "Processed Resend webhook"
     );
 
