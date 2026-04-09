@@ -38,7 +38,7 @@ export const WordsAddedCard: FC<WordsAddedCardProps> = ({
         <span className="font-bold text-3xl">{formatNumber(total)}</span>
       </div>
       {thisWeek > 0 && (
-        <div className="flex h-max items-center gap-1 text-emerald-600">
+        <div className="flex h-max items-center gap-1 text-emerald-600 dark:text-emerald-400">
           <TrendingUp className="h-3.5 w-3.5" />
           <span className="font-medium text-xs">
             <Trans>+{formatNumber(thisWeek)} this week</Trans>

@@ -4,7 +4,6 @@
  * Shows animated feedback based on the grade selected.
  */
 
-import { type Grade, Rating } from "@bahar/fsrs";
 import * as Haptics from "expo-haptics";
 import { Brain, RotateCcw, ThumbsUp, Zap } from "lucide-react-native";
 import type React from "react";
@@ -18,6 +17,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { type Grade, Rating } from "ts-fsrs";
 import { useThemeColors } from "@/lib/theme";
 
 interface GradeFeedbackProps {
@@ -173,7 +173,6 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
         ]}
       />
 
-      {/* Icon */}
       <Animated.View
         className={`rounded-full p-6 ${config.bgColor}`}
         style={iconContainerStyle}
@@ -181,8 +180,9 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
         <Icon className={config.colorClass} size={ICON_SIZE} />
       </Animated.View>
 
-      {/* Sparkles for Easy grade */}
-      {grade === Rating.Easy && <SparkleEffect color={colors.success} />}
+      {grade === Rating.Easy && (
+        <SparkleEffect color={colors.success as string} />
+      )}
     </Animated.View>
   );
 };

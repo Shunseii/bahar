@@ -112,7 +112,6 @@ export const GradeFeedback: FC<{
       {/* Sparkles for Easy */}
       {grade === Rating.Easy &&
         [...new Array(6)].map((_, i) => (
-          // biome-ignore lint/correctness/useJsxKeyInIterable: cant key on anything other than index
           <motion.div
             animate={{
               scale: [0, 1, 0],
@@ -126,6 +125,7 @@ export const GradeFeedback: FC<{
               x: 0,
               y: 0,
             }}
+            key={i}
             transition={{
               duration: 0.5,
               delay: 0.1,
