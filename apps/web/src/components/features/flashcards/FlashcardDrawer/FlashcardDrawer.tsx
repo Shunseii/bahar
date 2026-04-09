@@ -18,7 +18,7 @@ import {
 } from "@bahar/web-ui/components/tooltip";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Archive, Brain, PartyPopper, Sparkles } from "lucide-react";
+import { Archive, Brain, Eye, PartyPopper } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import {
   type FC,
@@ -508,7 +508,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                   size="lg"
                 >
                   <span className="absolute inset-0 -translate-x-full bg-linear-to-r from-white/0 via-white/10 to-white/0 transition-transform duration-500 group-hover:translate-x-full" />
-                  <Sparkles className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
+                  <Eye className="h-4 w-4 ltr:mr-2 rtl:ml-2" />
                   <Trans>Show answer</Trans>
                 </Button>
               </motion.div>

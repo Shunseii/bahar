@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@bahar/web-ui/components/tooltip";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { Info, TrendingUp } from "lucide-react";
 import type { FC } from "react";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
@@ -71,7 +71,11 @@ export const WordsLearnedCard: FC<WordsLearnedCardProps> = ({
           {formatNumber(percentage)}%
         </span>
         <span className="text-muted-foreground text-sm">
-          <Trans>{formatNumber(learned)} words</Trans>
+          <Plural
+            one={`${formatNumber(learned)} word`}
+            other={`${formatNumber(learned)} words`}
+            value={learned}
+          />
         </span>
       </div>
 

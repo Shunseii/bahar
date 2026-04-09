@@ -1,7 +1,7 @@
 import { cn } from "@bahar/design-system";
 import { Card } from "@bahar/web-ui/components/card";
 import { Skeleton } from "@bahar/web-ui/components/skeleton";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { Check, Flame } from "lucide-react";
 import type { FC } from "react";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
@@ -73,14 +73,26 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
                 {formatNumber(streakCount)}
               </span>
               <span className="font-medium text-muted-foreground text-sm">
-                <Trans>day streak</Trans>
+                <Plural
+                  one="day streak"
+                  other="day streak"
+                  value={streakCount}
+                />
               </span>
             </div>
             <p className="text-muted-foreground text-xs">
               {isBroken && longestStreak > 0 ? (
-                <Trans>Previous: {formatNumber(longestStreak)} days</Trans>
+                <Plural
+                  one={`Previous: ${formatNumber(longestStreak)} day`}
+                  other={`Previous: ${formatNumber(longestStreak)} days`}
+                  value={longestStreak}
+                />
               ) : (
-                <Trans>Longest: {formatNumber(longestStreak)} days</Trans>
+                <Plural
+                  one={`Longest: ${formatNumber(longestStreak)} day`}
+                  other={`Longest: ${formatNumber(longestStreak)} days`}
+                  value={longestStreak}
+                />
               )}
             </p>
           </div>
