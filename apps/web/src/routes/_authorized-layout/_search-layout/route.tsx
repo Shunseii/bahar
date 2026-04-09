@@ -43,22 +43,34 @@ const AppLayout = () => {
 export const Route = createFileRoute("/_authorized-layout/_search-layout")({
   component: AppLayout,
   validateSearch: zodValidator(filtersSchema),
-  beforeLoad: async ({ location }) => {
+  beforeLoad: async ({ location, search }) => {
     const { data } = await authClient.getSession();
 
     const isAuthenticated = !!data?.user;
 
-    if (isAuthenticated) {
-      await queryClient.ensureQueryData({
-        queryKey: settingsTable.getSettings.cacheOptions.queryKey,
-        queryFn: settingsTable.getSettings.query,
-      });
-    } else {
+    if (!isAuthenticated) {
       throw redirect({
         to: "/login",
         search: {
           redirect: location.href,
         },
+      });
+    }
+
+    await queryClient.ensureQueryData({
+      queryKey: settingsTable.getSettings.cacheOptions.queryKey,
+      queryFn: settingsTable.getSettings.query,
+    });
+
+    const isFreeUser =
+      !data.user.plan ||
+      !data.user.subscriptionStatus ||
+      data.user.subscriptionStatus === "canceled";
+
+    if (isFreeUser && search.sort === "difficulty") {
+      throw redirect({
+        to: location.pathname,
+        search: { ...search, sort: undefined },
       });
     }
   },

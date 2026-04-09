@@ -6,8 +6,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Rating, type ReviewLog } from "ts-fsrs";
 import { Page } from "@/components/Page";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
-import { authClient } from "@/lib/auth-client";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { progressTable } from "@/lib/db/operations/progress";
 import { settingsTable } from "@/lib/db/operations/settings";
@@ -26,11 +26,7 @@ import { WorkloadForecastCard } from "./-components/WorkloadForecastCard";
 
 const Progress = () => {
   const { i18n } = useLingui();
-  const { data: userData } = authClient.useSession();
-  const isFreeTier =
-    !userData?.user.plan ||
-    !userData.user.subscriptionStatus ||
-    userData.user.subscriptionStatus === "canceled";
+  const { isFreeUser } = useUserPlan();
 
   const { data: settingsData } = useQuery({
     queryFn: settingsTable.getSettings.query,
@@ -56,7 +52,7 @@ const Progress = () => {
       queryFn: progressTable.wordsLearned.query,
       ...progressTable.wordsLearned.cacheOptions,
       staleTime: 5 * 60 * 1000,
-      enabled: !isFreeTier,
+      enabled: !isFreeUser,
     }
   );
 
@@ -64,7 +60,7 @@ const Progress = () => {
     queryFn: progressTable.difficultWords.query,
     ...progressTable.difficultWords.cacheOptions,
     staleTime: 5 * 60 * 1000,
-    enabled: !isFreeTier,
+    enabled: !isFreeUser,
   });
 
   const { data: retentionData, isLoading: isRetentionLoading } = useQuery({
@@ -75,7 +71,7 @@ const Progress = () => {
     },
     queryKey: ["stats.retention"],
     staleTime: 5 * 60 * 1000,
-    enabled: !isFreeTier,
+    enabled: !isFreeUser,
   });
 
   const { data: forecastData, isLoading: isForecastLoading } = useQuery({
@@ -90,7 +86,7 @@ const Progress = () => {
       i18n.locale,
     ],
     staleTime: 5 * 60 * 1000,
-    enabled: !isFreeTier,
+    enabled: !isFreeUser,
   });
 
   const { data: recentRevlogs, isLoading: isRecentLoading } = useQuery({
@@ -101,7 +97,7 @@ const Progress = () => {
     },
     queryKey: ["stats.revlogs.recent"],
     staleTime: 60 * 1000,
-    enabled: !isFreeTier,
+    enabled: !isFreeUser,
   });
 
   const entryIds = [
@@ -239,7 +235,7 @@ const Progress = () => {
         <WordsAddedCard data={wordsData} isLoading={isWordsLoading} />
       </div>
 
-      {isFreeTier ? (
+      {isFreeUser ? (
         <ProPlaceholder />
       ) : (
         <div className="flex flex-col gap-4">

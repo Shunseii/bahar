@@ -34,8 +34,8 @@ import {
 } from "react";
 import { useInfiniteScroll } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
-import { authClient } from "@/lib/auth-client";
 import { intlFormatDistance } from "@/lib/date";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
@@ -355,10 +355,7 @@ const RATING_DOT_STYLES: Record<string, string> = {
 
 const ReviewHistory: FC<{ entryId: string }> = memo(({ entryId }) => {
   const { i18n } = useLingui();
-  const { data: userData } = authClient.useSession();
-  const isProUser =
-    userData?.user.plan === "pro" &&
-    userData.user.subscriptionStatus !== "canceled";
+  const { isProUser } = useUserPlan();
 
   const { data: settingsData } = useQuery({
     queryFn: settingsTable.getSettings.query,
@@ -763,6 +760,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   const { tags, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
+  const { isFreeUser } = useUserPlan();
   const navigate = useNavigate();
   const {
     results: { hits } = {},
@@ -771,7 +769,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   } = useInfiniteScroll({
     term: searchQuery,
     filters: { tags },
-    sort,
+    sort: sort === "difficulty" && isFreeUser ? undefined : sort,
   });
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();

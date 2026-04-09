@@ -9,21 +9,18 @@ import {
 } from "@bahar/web-ui/components/card";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useCallback } from "react";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { authClient } from "@/lib/auth-client";
 
 export const BillingSettingsCard = () => {
   const { t } = useLingui();
   const { data: userData } = authClient.useSession();
-
-  const isFreeTier =
-    !userData?.user.plan ||
-    !userData.user.subscriptionStatus ||
-    userData.user.subscriptionStatus === "canceled";
+  const { isFreeUser } = useUserPlan();
 
   const getLocalizedPlanName = (
     plan: NonNullable<typeof userData>["user"]["plan"]
   ) => {
-    if (plan === "pro" && !isFreeTier) {
+    if (plan === "pro" && !isFreeUser) {
       return t`Pro`;
     }
 
@@ -58,14 +55,14 @@ export const BillingSettingsCard = () => {
             </p>
           </div>
 
-          {!isFreeTier && (
+          {!isFreeUser && (
             <Button onClick={handleManageSubscription} variant="outline">
               <Trans>Manage Subscription</Trans>
             </Button>
           )}
         </div>
 
-        {isFreeTier && (
+        {isFreeUser && (
           <div className="flex flex-col gap-y-2">
             <h2 className="font-semibold">
               <Trans>Upgrade to Pro</Trans>

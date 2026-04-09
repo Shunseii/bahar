@@ -3,7 +3,7 @@ import { Command as CommandPrimitive } from "cmdk";
 import { Search } from "lucide-react";
 import type { Dialog } from "radix-ui";
 import * as React from "react";
-import { Dialog as DialogRoot, DialogContent } from "./dialog";
+import { DialogContent, Dialog as DialogRoot } from "./dialog";
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,

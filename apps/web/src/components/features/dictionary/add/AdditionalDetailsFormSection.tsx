@@ -34,18 +34,15 @@ import { Plus, Sparkles } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { toast } from "sonner";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
-import { authClient } from "@/lib/auth-client";
 import type { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 
 export const AdditionalDetailsFormSection = () => {
   const { t } = useLingui();
   const form = useFormContext<z.infer<typeof FormSchema>>();
-  const { data: userData } = authClient.useSession();
-  const isProUser =
-    userData?.user.plan === "pro" &&
-    userData.user.subscriptionStatus !== "canceled";
+  const { isProUser } = useUserPlan();
 
   const {
     fields: examplesFields,

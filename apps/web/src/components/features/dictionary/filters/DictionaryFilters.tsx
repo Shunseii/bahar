@@ -24,7 +24,7 @@ import { TagsFilter } from "@/components/features/dictionary/filters/TagsFilter"
 import { TagPill } from "@/components/TagsCombobox";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { authClient } from "@/lib/auth-client";
+import { useUserPlan } from "@/hooks/useUserPlan";
 
 type SortOption = "relevance" | "updatedAt" | "createdAt" | "difficulty";
 
@@ -52,11 +52,7 @@ export const DictionaryFilters = () => {
   const navigate = useNavigate();
   const dir = useDir();
   const { formatNumber } = useFormatNumber();
-  const { data: userData } = authClient.useSession();
-  const isFreeTier =
-    !userData?.user.plan ||
-    !userData.user.subscriptionStatus ||
-    userData.user.subscriptionStatus === "canceled";
+  const { isFreeUser } = useUserPlan();
   const { tags: filteredTags, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
@@ -201,7 +197,7 @@ export const DictionaryFilters = () => {
                   <SelectGroup>
                     {sortOptions.map((option) => {
                       const isProOnly = option === "difficulty";
-                      const isDisabled = isProOnly && isFreeTier;
+                      const isDisabled = isProOnly && isFreeUser;
 
                       return (
                         <SelectItem
@@ -215,7 +211,7 @@ export const DictionaryFilters = () => {
                         >
                           <span className="flex items-center gap-1.5">
                             <SortOptionLabel option={option} />
-                            {isProOnly && isFreeTier && (
+                            {isProOnly && isFreeUser && (
                               <Lock className="h-3 w-3" />
                             )}
                           </span>

@@ -32,8 +32,8 @@ import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSe
 import { Page } from "@/components/Page";
 import { useAddDictionaryEntry } from "@/hooks/db";
 import { useDir } from "@/hooks/useDir";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
-import { authClient } from "@/lib/auth-client";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 
@@ -88,10 +88,7 @@ const BackButton = () => {
 
 const Add = () => {
   const { addDictionaryEntry } = useAddDictionaryEntry();
-  const { data: userData } = authClient.useSession();
-  const isProUser =
-    userData?.user.plan === "pro" &&
-    userData.user.subscriptionStatus !== "canceled";
+  const { isProUser } = useUserPlan();
 
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({

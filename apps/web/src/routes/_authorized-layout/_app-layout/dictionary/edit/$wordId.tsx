@@ -47,8 +47,8 @@ import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSe
 import { Page } from "@/components/Page";
 import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
 import { useDir } from "@/hooks/useDir";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
-import { authClient } from "@/lib/auth-client";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { queryClient } from "@/lib/query";
@@ -267,10 +267,7 @@ const getDefaultFormValues = (
 const Edit = () => {
   const { editDictionaryEntry } = useEditDictionaryEntry();
   const { wordId } = Route.useParams();
-  const { data: userData } = authClient.useSession();
-  const isProUser =
-    userData?.user.plan === "pro" &&
-    userData.user.subscriptionStatus !== "canceled";
+  const { isProUser } = useUserPlan();
 
   const { data } = useQuery({
     queryFn: () => dictionaryEntriesTable.entry.query(wordId),
