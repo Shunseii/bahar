@@ -140,8 +140,6 @@ export const marketingRouter = new Elysia({ prefix: "/marketing" })
       return new Response("Invalid signature", { status: 401 });
     }
 
-    console.log(event);
-
     const shouldWithdrawConsent = (() => {
       if (event.type === "contact.deleted") {
         return (event as ContactDeletedEvent).data.email;
