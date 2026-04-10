@@ -76,26 +76,26 @@ export const marketingRouter = new Elysia({ prefix: "/marketing" })
         action,
       });
 
-      try {
-        if (contactExists) {
-          await resend.contacts.update({
-            email: user.email,
-            unsubscribed: !body.consent,
-          });
-        } else {
-          await resend.contacts.create({
-            email: user.email,
-            unsubscribed: !body.consent,
-            ...(config.RESEND_SEGMENT_ID && {
+      if (config.RESEND_SEGMENT_ID) {
+        try {
+          if (contactExists) {
+            await resend.contacts.update({
+              email: user.email,
+              unsubscribed: !body.consent,
+            });
+          } else {
+            await resend.contacts.create({
+              email: user.email,
+              unsubscribed: !body.consent,
               segments: [{ id: config.RESEND_SEGMENT_ID }],
-            }),
-          });
+            });
+          }
+        } catch (error) {
+          marketingLogger.error(
+            { event: "resend_contact_sync.error", error },
+            "Failed to sync contact with Resend"
+          );
         }
-      } catch (error) {
-        marketingLogger.error(
-          { event: "resend_contact_sync.error", error },
-          "Failed to sync contact with Resend"
-        );
       }
 
       return { success: true } as const;
