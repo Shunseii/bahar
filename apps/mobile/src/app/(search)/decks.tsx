@@ -8,18 +8,22 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
   Modal,
   Pressable,
   Text,
   TextInput,
   View,
 } from "react-native";
-import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  Layout as ReanimatedLayout,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { syncDatabase } from "@/lib/db/adapter";
 import { decksTable } from "@/lib/db/operations/decks";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
@@ -45,7 +49,7 @@ const DeckCard: React.FC<DeckCardProps> = ({
     <Animated.View
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(150)}
-      layout={Layout.springify()}
+      layout={ReanimatedLayout.springify()}
     >
       <Card className="mb-3">
         <CardContent className="pt-4">
@@ -225,6 +229,8 @@ const CreateEditDeckModal: React.FC<CreateEditDeckModalProps> = ({
 export default function DecksScreen() {
   const router = useRouter();
   const colors = useThemeColors();
+  const { t } = useLingui();
+  const { scrollHandler } = useCollapsibleHeader(t`Decks`);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingDeck, setEditingDeck] = useState<SelectDeck | null>(null);
@@ -297,29 +303,36 @@ export default function DecksScreen() {
     );
   }
 
-  return (
-    <View className="flex-1 bg-background">
-      {/* Header */}
-      <View className="flex-row items-center justify-between border-border border-b px-4 py-3">
-        <Text className="font-bold text-foreground text-xl">
+  const decksListHeader = (
+    <View className="flex-row items-center justify-between pb-3">
+      <View className="flex-row items-center gap-3">
+        <View className="rounded-xl bg-primary/10 p-2">
+          <Layers color={colors.primary} size={24} />
+        </View>
+        <Text className="font-bold text-foreground text-2xl">
           <Trans>Decks</Trans>
         </Text>
-        <Button
-          Icon={Plus}
-          onPress={() => setShowCreateModal(true)}
-          variant="outline"
-        >
-          <Trans>Create</Trans>
-        </Button>
       </View>
+      <Button
+        Icon={Plus}
+        onPress={() => setShowCreateModal(true)}
+        variant="outline"
+      >
+        <Trans>Create</Trans>
+      </Button>
+    </View>
+  );
 
-      {/* Deck list */}
+  return (
+    <View className="flex-1 bg-background">
       {decks?.length ? (
-        <FlatList
+        <Animated.FlatList
+          ListHeaderComponent={decksListHeader}
           contentContainerStyle={{ padding: 16 }}
           data={decks}
           keyExtractor={(item) => item.id}
           onRefresh={handleRefresh}
+          onScroll={scrollHandler}
           refreshing={refreshing}
           renderItem={({ item }) => (
             <DeckCard
@@ -332,21 +345,25 @@ export default function DecksScreen() {
               onStudy={() => handleStudy(item)}
             />
           )}
+          scrollEventThrottle={16}
         />
       ) : (
-        <View className="flex-1 items-center justify-center px-8">
-          <View className="mb-4 rounded-full bg-muted/50 p-4">
-            <Layers color={colors.mutedForeground} size={32} />
+        <View className="flex-1">
+          <View className="px-4 pt-4">{decksListHeader}</View>
+          <View className="flex-1 items-center justify-center px-8">
+            <View className="mb-4 rounded-full bg-muted/50 p-4">
+              <Layers color={colors.mutedForeground} size={32} />
+            </View>
+            <Text className="mb-1 text-center font-medium text-foreground text-lg">
+              <Trans>No decks yet</Trans>
+            </Text>
+            <Text className="mb-4 text-center text-muted-foreground">
+              <Trans>Create a deck to organize your flashcard reviews</Trans>
+            </Text>
+            <Button Icon={Plus} onPress={() => setShowCreateModal(true)}>
+              <Trans>Create your first deck</Trans>
+            </Button>
           </View>
-          <Text className="mb-1 text-center font-medium text-foreground text-lg">
-            <Trans>No decks yet</Trans>
-          </Text>
-          <Text className="mb-4 text-center text-muted-foreground">
-            <Trans>Create a deck to organize your flashcard reviews</Trans>
-          </Text>
-          <Button Icon={Plus} onPress={() => setShowCreateModal(true)}>
-            <Trans>Create your first deck</Trans>
-          </Button>
         </View>
       )}
 

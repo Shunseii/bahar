@@ -18,10 +18,18 @@ import {
   Settings,
 } from "lucide-react-native";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { TextInput, TouchableOpacity, View } from "react-native";
+import { Text as RNText, TextInput, TouchableOpacity, View } from "react-native";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
+import type { SharedValue } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SyncIndicator } from "@/components/SyncIndicator";
+import { HeaderScrollContext } from "@/contexts/header-scroll";
 import { Button } from "@/components/ui/button";
 import { SYNC_INTERVAL_MS } from "@/lib/db";
 import { syncDatabase } from "@/lib/db/adapter";
@@ -52,10 +60,14 @@ function SearchBarHeader({
   navigation,
   searchQuery,
   onSearchChange,
+  scrollY,
+  headerTitle,
 }: {
   navigation: DrawerNavigationProp<ParamListBase, string, undefined>;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  scrollY: SharedValue<number>;
+  headerTitle: string;
 }) {
   const pathname = usePathname();
   const { t } = useLingui();
@@ -67,6 +79,15 @@ function SearchBarHeader({
   const dir = locales[0].textDirection;
   const isAddWordPage = pathname.includes("add-word");
   const showSearchBar = pathname === "/" && !isAddWordPage;
+
+  const titleAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      scrollY.value,
+      [30, 70],
+      [0, 1],
+      Extrapolation.CLAMP,
+    ),
+  }));
 
   return (
     <View
@@ -86,7 +107,7 @@ function SearchBarHeader({
           )}
         </TouchableOpacity>
 
-        {showSearchBar && (
+        {showSearchBar ? (
           <TextInput
             autoCapitalize="none"
             autoComplete="off"
@@ -100,7 +121,13 @@ function SearchBarHeader({
             spellCheck={false}
             value={searchQuery}
           />
-        )}
+        ) : headerTitle ? (
+          <Animated.View className="ml-3" style={titleAnimatedStyle}>
+            <RNText className="font-semibold text-foreground text-lg">
+              {headerTitle}
+            </RNText>
+          </Animated.View>
+        ) : null}
       </View>
     </View>
   );
@@ -147,6 +174,8 @@ export default function Layout() {
   const locales = useLocales();
   const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState("");
+  const [headerTitle, setHeaderTitle] = useState("");
+  const scrollY = useSharedValue(0);
   const syncCompletedCount = useAtomValue(syncCompletedCountAtom);
   const dictionaryChangedRef = useRef(false);
 
@@ -195,54 +224,62 @@ export default function Layout() {
   const dir = locales[0].textDirection;
 
   return (
-    <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
-      <Drawer
-        backBehavior="history"
-        drawerContent={(props) => <DrawerContent {...props} />}
-        screenOptions={{
-          headerShown: true,
-          drawerPosition: dir === "rtl" ? "right" : "left",
-          header: ({ navigation }) => (
-            <SearchBarHeader
-              navigation={navigation}
-              onSearchChange={setSearchQuery}
-              searchQuery={searchQuery}
-            />
-          ),
-        }}
-      >
-        <Drawer.Screen
-          name="(home)"
-          options={{
-            swipeEdgeWidth: 300,
-            drawerIcon: ({ color, size }) => <Home color={color} size={size} />,
-            title: t`Home`,
-          }}
-        />
-
-        <Drawer.Screen
-          name="decks"
-          options={{
-            swipeEdgeWidth: 300,
-            drawerIcon: ({ color, size }) => (
-              <Layers color={color} size={size} />
+    <HeaderScrollContext.Provider
+      value={{ scrollY, headerTitle, setHeaderTitle }}
+    >
+      <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
+        <Drawer
+          backBehavior="history"
+          drawerContent={(props) => <DrawerContent {...props} />}
+          screenOptions={{
+            headerShown: true,
+            drawerPosition: dir === "rtl" ? "right" : "left",
+            header: ({ navigation }) => (
+              <SearchBarHeader
+                headerTitle={headerTitle}
+                navigation={navigation}
+                onSearchChange={setSearchQuery}
+                scrollY={scrollY}
+                searchQuery={searchQuery}
+              />
             ),
-            title: t`Decks`,
           }}
-        />
+        >
+          <Drawer.Screen
+            name="(home)"
+            options={{
+              swipeEdgeWidth: 300,
+              drawerIcon: ({ color, size }) => (
+                <Home color={color} size={size} />
+              ),
+              title: t`Home`,
+            }}
+          />
 
-        <Drawer.Screen
-          name="settings"
-          options={{
-            swipeEdgeWidth: 300,
-            drawerIcon: ({ color, size }) => (
-              <Settings color={color} size={size} />
-            ),
-            title: t`Settings`,
-          }}
-        />
-      </Drawer>
-      <SyncIndicator />
-    </SearchContext.Provider>
+          <Drawer.Screen
+            name="decks"
+            options={{
+              swipeEdgeWidth: 300,
+              drawerIcon: ({ color, size }) => (
+                <Layers color={color} size={size} />
+              ),
+              title: t`Decks`,
+            }}
+          />
+
+          <Drawer.Screen
+            name="settings"
+            options={{
+              swipeEdgeWidth: 300,
+              drawerIcon: ({ color, size }) => (
+                <Settings color={color} size={size} />
+              ),
+              title: t`Settings`,
+            }}
+          />
+        </Drawer>
+        <SyncIndicator />
+      </SearchContext.Provider>
+    </HeaderScrollContext.Provider>
   );
 }

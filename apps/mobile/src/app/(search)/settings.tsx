@@ -15,18 +15,19 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
-  ScrollView,
   Switch,
   Text,
   useColorScheme,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { resetDb } from "@/lib/db";
 import { settingsTable, type UserSettings } from "@/lib/db/operations/settings";
+import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { resetOramaDb } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
@@ -99,6 +100,7 @@ export default function SettingsScreen() {
   const colors = useThemeColors();
   const colorScheme = useColorScheme();
   const { t } = useLingui();
+  const { scrollHandler } = useCollapsibleHeader(t`Settings`);
 
   const { data: settings, isLoading } = useQuery({
     queryFn: settingsTable.get.query,
@@ -167,9 +169,11 @@ export default function SettingsScreen() {
   }
 
   return (
-    <ScrollView
+    <Animated.ScrollView
       className="flex-1 bg-background"
       contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+      onScroll={scrollHandler}
+      scrollEventThrottle={16}
     >
       {/* Header */}
       <View className="border-border border-b px-4 py-4">
@@ -318,6 +322,6 @@ export default function SettingsScreen() {
           </CardContent>
         </Card>
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
   );
 }

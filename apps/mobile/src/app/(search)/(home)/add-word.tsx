@@ -16,10 +16,10 @@ import { Controller, useFieldArray, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Pressable,
-  ScrollView,
   Text,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { z } from "zod";
@@ -29,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { FormSchema } from "@/lib/schemas/dictionary";
+import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { addToSearchIndex } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
@@ -205,6 +206,7 @@ export default function AddWordScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
+  const { scrollHandler } = useCollapsibleHeader(t`Add a new word`);
 
   const addWordMutation = useMutation({
     mutationFn: dictionaryEntriesTable.addWord.mutation,
@@ -333,10 +335,12 @@ export default function AddWordScreen() {
   const showMorphology = wordType === "ism" || wordType === "fi'l";
 
   return (
-    <ScrollView
+    <Animated.ScrollView
       className="flex-1 bg-background"
       contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
       keyboardShouldPersistTaps="handled"
+      onScroll={scrollHandler}
+      scrollEventThrottle={16}
     >
       <View className="flex-1 px-4 pt-4">
         <Breadcrumbs />
@@ -398,6 +402,9 @@ export default function AddWordScreen() {
                       />
                     )}
                   />
+                  <Text className="text-muted-foreground text-xs">
+                    <Trans>How you'd translate this word in English</Trans>
+                  </Text>
                   {errors.translation && (
                     <Text className="text-destructive text-sm">
                       {errors.translation.message}
@@ -464,6 +471,9 @@ export default function AddWordScreen() {
                       />
                     )}
                   />
+                  <Text className="text-muted-foreground text-xs">
+                    <Trans>An Arabic-language definition of the word</Trans>
+                  </Text>
                 </View>
 
                 {showRootField && (
@@ -537,12 +547,28 @@ export default function AddWordScreen() {
                             />
                           )}
                         />
+                        <Controller
+                          control={control}
+                          name={`examples.${index}.context`}
+                          render={({ field: { onChange, onBlur, value } }) => (
+                            <Input
+                              onBlur={onBlur}
+                              onChangeText={onChange}
+                              placeholder={t`Context (e.g. formal, colloquial)`}
+                              value={value ?? ""}
+                            />
+                          )}
+                        />
                       </View>
                     </View>
                   ))}
                   <Button
                     onPress={() =>
-                      appendExample({ sentence: "", translation: "" })
+                      appendExample({
+                        sentence: "",
+                        translation: "",
+                        context: "",
+                      })
                     }
                     size="sm"
                     variant="outline"
@@ -660,10 +686,21 @@ export default function AddWordScreen() {
                     </Text>
                     {pluralFields.map((field, index) => (
                       <View
-                        className="flex-row items-center gap-2"
+                        className="rounded-lg border border-border bg-muted/20 p-3"
                         key={field.id}
                       >
-                        <View className="flex-1">
+                        <View className="mb-2 flex-row items-center justify-between">
+                          <Text className="text-muted-foreground text-sm">
+                            <Trans>Plural {index + 1}</Trans>
+                          </Text>
+                          <Pressable
+                            className="p-1"
+                            onPress={() => removePlural(index)}
+                          >
+                            <X color={colors.destructive} size={16} />
+                          </Pressable>
+                        </View>
+                        <View className="gap-3">
                           <Controller
                             control={control}
                             name={`morphology.ism.plurals.${index}.word`}
@@ -679,17 +716,25 @@ export default function AddWordScreen() {
                               />
                             )}
                           />
+                          <Controller
+                            control={control}
+                            name={`morphology.ism.plurals.${index}.details`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                placeholder={t`Details (e.g. frequency, usage context)`}
+                                value={value ?? ""}
+                              />
+                            )}
+                          />
                         </View>
-                        <Pressable
-                          className="p-2"
-                          onPress={() => removePlural(index)}
-                        >
-                          <X color={colors.destructive} size={16} />
-                        </Pressable>
                       </View>
                     ))}
                     <Button
-                      onPress={() => appendPlural({ word: "" })}
+                      onPress={() => appendPlural({ word: "", details: "" })}
                       size="sm"
                       variant="outline"
                     >
@@ -820,7 +865,32 @@ export default function AddWordScreen() {
                           />
                         )}
                       />
+                      <Text className="text-muted-foreground text-xs">
+                        <Trans>Roman numeral form (I, II, III...)</Trans>
+                      </Text>
                     </View>
+                  </View>
+
+                  <View className="gap-2">
+                    <Text className="font-medium text-foreground text-sm">
+                      <Trans>Arabic Form</Trans>
+                    </Text>
+                    <Controller
+                      control={control}
+                      name="morphology.verb.form_arabic"
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <Input
+                          onBlur={onBlur}
+                          onChangeText={onChange}
+                          placeholder={t`e.g. فعل, أفعل`}
+                          style={{ textAlign: "right" }}
+                          value={value ?? ""}
+                        />
+                      )}
+                    />
+                    <Text className="text-muted-foreground text-xs">
+                      <Trans>The Arabic pattern of the verb form</Trans>
+                    </Text>
                   </View>
 
                   <View className="flex-row gap-3">
@@ -867,10 +937,21 @@ export default function AddWordScreen() {
                     </Text>
                     {masadirFields.map((field, index) => (
                       <View
-                        className="flex-row items-center gap-2"
+                        className="rounded-lg border border-border bg-muted/20 p-3"
                         key={field.id}
                       >
-                        <View className="flex-1">
+                        <View className="mb-2 flex-row items-center justify-between">
+                          <Text className="text-muted-foreground text-sm">
+                            <Trans>Masdar {index + 1}</Trans>
+                          </Text>
+                          <Pressable
+                            className="p-1"
+                            onPress={() => removeMasdar(index)}
+                          >
+                            <X color={colors.destructive} size={16} />
+                          </Pressable>
+                        </View>
+                        <View className="gap-3">
                           <Controller
                             control={control}
                             name={`morphology.verb.masadir.${index}.word`}
@@ -886,17 +967,25 @@ export default function AddWordScreen() {
                               />
                             )}
                           />
+                          <Controller
+                            control={control}
+                            name={`morphology.verb.masadir.${index}.details`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                placeholder={t`Details (e.g. usage context)`}
+                                value={value ?? ""}
+                              />
+                            )}
+                          />
                         </View>
-                        <Pressable
-                          className="p-2"
-                          onPress={() => removeMasdar(index)}
-                        >
-                          <X color={colors.destructive} size={16} />
-                        </Pressable>
                       </View>
                     ))}
                     <Button
-                      onPress={() => appendMasdar({ word: "" })}
+                      onPress={() => appendMasdar({ word: "", details: "" })}
                       size="sm"
                       variant="outline"
                     >
@@ -1014,6 +1103,6 @@ export default function AddWordScreen() {
           </View>
         </View>
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
   );
 }

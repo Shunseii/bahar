@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
+  RotateCcw,
   Trash2,
   X,
 } from "lucide-react-native";
@@ -18,10 +19,10 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
-  ScrollView,
   Text,
   View,
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { z } from "zod";
@@ -29,7 +30,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { FormSchema } from "@/lib/schemas/dictionary";
+import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { removeFromSearchIndex, updateSearchIndex } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
@@ -207,6 +210,7 @@ export default function EditWordScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { scrollHandler } = useCollapsibleHeader(t`Edit word`);
 
   // Fetch the existing entry
   const {
@@ -259,6 +263,32 @@ export default function EditWordScreen() {
     onError: (error) => {
       toast.error(t`Failed to delete word`);
       console.error("Delete error:", error);
+    },
+  });
+
+  // Reset flashcard mutation
+  const resetFlashcardMutation = useMutation({
+    mutationFn: async ({ dictionary_entry_id }: { dictionary_entry_id: string }) => {
+      await Promise.all([
+        flashcardsTable.reset.mutation({
+          dictionary_entry_id,
+          direction: "forward",
+        }),
+        flashcardsTable.reset.mutation({
+          dictionary_entry_id,
+          direction: "reverse",
+        }),
+      ]);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: flashcardsTable.today.cacheOptions.queryKey,
+      });
+      toast.success(t`Flashcard reset successfully`);
+    },
+    onError: (error) => {
+      toast.error(t`Failed to reset flashcard`);
+      console.error("Reset flashcard error:", error);
     },
   });
 
@@ -408,6 +438,26 @@ export default function EditWordScreen() {
     );
   };
 
+  const handleResetFlashcard = () => {
+    if (!entry) return;
+    Alert.alert(
+      t`Reset flashcard`,
+      t`Are you sure you want to reset the flashcard for this word? This will reset all spaced repetition progress.`,
+      [
+        { text: t`Cancel`, style: "cancel" },
+        {
+          text: t`Reset`,
+          style: "destructive",
+          onPress: () => {
+            resetFlashcardMutation.mutate({
+              dictionary_entry_id: entry.id,
+            });
+          },
+        },
+      ]
+    );
+  };
+
   const showRootField = wordType === "ism" || wordType === "fi'l";
   const showAntonyms =
     wordType === "ism" || wordType === "fi'l" || wordType === "harf";
@@ -435,10 +485,12 @@ export default function EditWordScreen() {
   }
 
   return (
-    <ScrollView
+    <Animated.ScrollView
       className="flex-1 bg-background"
       contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
       keyboardShouldPersistTaps="handled"
+      onScroll={scrollHandler}
+      scrollEventThrottle={16}
     >
       <View className="flex-1 px-4 pt-4">
         <Breadcrumbs />
@@ -449,14 +501,24 @@ export default function EditWordScreen() {
             <Text className="flex-1 font-semibold text-foreground text-xl tracking-tight">
               <Trans>Edit word</Trans>
             </Text>
-            <Button
-              disabled={deleteMutation.isPending}
-              onPress={handleDelete}
-              size="icon"
-              variant="ghost"
-            >
-              <Trash2 color={colors.destructive} size={20} />
-            </Button>
+            <View className="flex-row items-center gap-1">
+              <Button
+                disabled={resetFlashcardMutation.isPending}
+                onPress={handleResetFlashcard}
+                size="icon"
+                variant="ghost"
+              >
+                <RotateCcw color={colors.mutedForeground} size={20} />
+              </Button>
+              <Button
+                disabled={deleteMutation.isPending}
+                onPress={handleDelete}
+                size="icon"
+                variant="ghost"
+              >
+                <Trash2 color={colors.destructive} size={20} />
+              </Button>
+            </View>
           </View>
 
           {/* Basic Details */}
@@ -508,6 +570,9 @@ export default function EditWordScreen() {
                       />
                     )}
                   />
+                  <Text className="text-muted-foreground text-xs">
+                    <Trans>How you'd translate this word in English</Trans>
+                  </Text>
                   {errors.translation && (
                     <Text className="text-destructive text-sm">
                       {errors.translation.message}
@@ -574,6 +639,9 @@ export default function EditWordScreen() {
                       />
                     )}
                   />
+                  <Text className="text-muted-foreground text-xs">
+                    <Trans>An Arabic-language definition of the word</Trans>
+                  </Text>
                 </View>
 
                 {showRootField && (
@@ -647,12 +715,28 @@ export default function EditWordScreen() {
                             />
                           )}
                         />
+                        <Controller
+                          control={control}
+                          name={`examples.${index}.context`}
+                          render={({ field: { onChange, onBlur, value } }) => (
+                            <Input
+                              onBlur={onBlur}
+                              onChangeText={onChange}
+                              placeholder={t`Context (e.g. formal, colloquial)`}
+                              value={value ?? ""}
+                            />
+                          )}
+                        />
                       </View>
                     </View>
                   ))}
                   <Button
                     onPress={() =>
-                      appendExample({ sentence: "", translation: "" })
+                      appendExample({
+                        sentence: "",
+                        translation: "",
+                        context: "",
+                      })
                     }
                     size="sm"
                     variant="outline"
@@ -770,10 +854,21 @@ export default function EditWordScreen() {
                     </Text>
                     {pluralFields.map((field, index) => (
                       <View
-                        className="flex-row items-center gap-2"
+                        className="rounded-lg border border-border bg-muted/20 p-3"
                         key={field.id}
                       >
-                        <View className="flex-1">
+                        <View className="mb-2 flex-row items-center justify-between">
+                          <Text className="text-muted-foreground text-sm">
+                            <Trans>Plural {index + 1}</Trans>
+                          </Text>
+                          <Pressable
+                            className="p-1"
+                            onPress={() => removePlural(index)}
+                          >
+                            <X color={colors.destructive} size={16} />
+                          </Pressable>
+                        </View>
+                        <View className="gap-3">
                           <Controller
                             control={control}
                             name={`morphology.ism.plurals.${index}.word`}
@@ -789,17 +884,25 @@ export default function EditWordScreen() {
                               />
                             )}
                           />
+                          <Controller
+                            control={control}
+                            name={`morphology.ism.plurals.${index}.details`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                placeholder={t`Details (e.g. frequency, usage context)`}
+                                value={value ?? ""}
+                              />
+                            )}
+                          />
                         </View>
-                        <Pressable
-                          className="p-2"
-                          onPress={() => removePlural(index)}
-                        >
-                          <X color={colors.destructive} size={16} />
-                        </Pressable>
                       </View>
                     ))}
                     <Button
-                      onPress={() => appendPlural({ word: "" })}
+                      onPress={() => appendPlural({ word: "", details: "" })}
                       size="sm"
                       variant="outline"
                     >
@@ -930,7 +1033,32 @@ export default function EditWordScreen() {
                           />
                         )}
                       />
+                      <Text className="text-muted-foreground text-xs">
+                        <Trans>Roman numeral form (I, II, III...)</Trans>
+                      </Text>
                     </View>
+                  </View>
+
+                  <View className="gap-2">
+                    <Text className="font-medium text-foreground text-sm">
+                      <Trans>Arabic Form</Trans>
+                    </Text>
+                    <Controller
+                      control={control}
+                      name="morphology.verb.form_arabic"
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <Input
+                          onBlur={onBlur}
+                          onChangeText={onChange}
+                          placeholder={t`e.g. فعل, أفعل`}
+                          style={{ textAlign: "right" }}
+                          value={value ?? ""}
+                        />
+                      )}
+                    />
+                    <Text className="text-muted-foreground text-xs">
+                      <Trans>The Arabic pattern of the verb form</Trans>
+                    </Text>
                   </View>
 
                   <View className="flex-row gap-3">
@@ -977,10 +1105,21 @@ export default function EditWordScreen() {
                     </Text>
                     {masadirFields.map((field, index) => (
                       <View
-                        className="flex-row items-center gap-2"
+                        className="rounded-lg border border-border bg-muted/20 p-3"
                         key={field.id}
                       >
-                        <View className="flex-1">
+                        <View className="mb-2 flex-row items-center justify-between">
+                          <Text className="text-muted-foreground text-sm">
+                            <Trans>Masdar {index + 1}</Trans>
+                          </Text>
+                          <Pressable
+                            className="p-1"
+                            onPress={() => removeMasdar(index)}
+                          >
+                            <X color={colors.destructive} size={16} />
+                          </Pressable>
+                        </View>
+                        <View className="gap-3">
                           <Controller
                             control={control}
                             name={`morphology.verb.masadir.${index}.word`}
@@ -996,17 +1135,25 @@ export default function EditWordScreen() {
                               />
                             )}
                           />
+                          <Controller
+                            control={control}
+                            name={`morphology.verb.masadir.${index}.details`}
+                            render={({
+                              field: { onChange, onBlur, value },
+                            }) => (
+                              <Input
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                placeholder={t`Details (e.g. usage context)`}
+                                value={value ?? ""}
+                              />
+                            )}
+                          />
                         </View>
-                        <Pressable
-                          className="p-2"
-                          onPress={() => removeMasdar(index)}
-                        >
-                          <X color={colors.destructive} size={16} />
-                        </Pressable>
                       </View>
                     ))}
                     <Button
-                      onPress={() => appendMasdar({ word: "" })}
+                      onPress={() => appendMasdar({ word: "", details: "" })}
                       size="sm"
                       variant="outline"
                     >
@@ -1124,6 +1271,6 @@ export default function EditWordScreen() {
           </View>
         </View>
       </View>
-    </ScrollView>
+    </Animated.ScrollView>
   );
 }
