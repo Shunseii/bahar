@@ -10,7 +10,8 @@
     "includes": [
       "!**/drizzle/meta",
       "!**/routeTree.gen.ts",
-      "!packages/i18n/locales"
+      "!packages/i18n/locales",
+      "!**/uniwind-types.d.ts"
     ]
   },
   "formatter": {
