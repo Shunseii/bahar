@@ -87,9 +87,7 @@ const QueueTabs = ({
               <View
                 className={cn(
                   "h-5 min-w-5 items-center justify-center rounded-full px-1.5",
-                  isRegular
-                    ? "bg-primary"
-                    : "bg-muted-foreground/20"
+                  isRegular ? "bg-primary" : "bg-muted-foreground/20"
                 )}
               >
                 <Text
@@ -137,9 +135,7 @@ const QueueTabs = ({
                 <Text
                   className={cn(
                     "font-semibold text-xs",
-                    isBacklog
-                      ? "text-warning-foreground"
-                      : "text-warning"
+                    isBacklog ? "text-warning-foreground" : "text-warning"
                   )}
                 >
                   {backlogCount}

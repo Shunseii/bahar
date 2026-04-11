@@ -42,9 +42,7 @@ export const useSearch = (): UseSearchResult => {
         term,
         mode: "fulltext",
         limit: SEARCH_RESULTS_PER_PAGE,
-        properties: term
-          ? ["word", "translation", "definition"]
-          : undefined,
+        properties: term ? ["word", "translation", "definition"] : undefined,
         boost: {
           word: 10,
           translation: 10,

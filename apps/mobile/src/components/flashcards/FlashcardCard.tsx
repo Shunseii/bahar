@@ -91,17 +91,17 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       const againSwipe = isRTL ? swipedRight : swipedLeft;
 
       if (goodSwipe && canSwipe && onSwipeRight) {
-        translateX.value = withSpring(
-          (isRTL ? -1 : 1) * SCREEN_WIDTH * 1.5,
-          { damping: 20, stiffness: 200 }
-        );
+        translateX.value = withSpring((isRTL ? -1 : 1) * SCREEN_WIDTH * 1.5, {
+          damping: 20,
+          stiffness: 200,
+        });
         runOnJS(triggerSuccessHaptic)();
         runOnJS(onSwipeRight)();
       } else if (againSwipe && canSwipe && onSwipeLeft) {
-        translateX.value = withSpring(
-          (isRTL ? 1 : -1) * SCREEN_WIDTH * 1.5,
-          { damping: 20, stiffness: 200 }
-        );
+        translateX.value = withSpring((isRTL ? 1 : -1) * SCREEN_WIDTH * 1.5, {
+          damping: 20,
+          stiffness: 200,
+        });
         runOnJS(triggerHaptic)();
         runOnJS(onSwipeLeft)();
       } else {
