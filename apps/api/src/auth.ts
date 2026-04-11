@@ -23,7 +23,13 @@ import { polarClient } from "./clients/polar";
 import { redisClient } from "./clients/redis";
 import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
 import { db } from "./db";
-import { accounts, sessions, users, verifications } from "./db/schema/auth";
+import {
+  accounts,
+  SUBSCRIPTION_STATUSES,
+  sessions,
+  users,
+  verifications,
+} from "./db/schema/auth";
 import { databases } from "./db/schema/databases";
 import { getAllowedDomains } from "./utils";
 import { config } from "./utils/config";
@@ -252,7 +258,7 @@ export const auth = betterAuth({
         input: false,
       },
       subscriptionStatus: {
-        type: ["active", "canceled"],
+        type: SUBSCRIPTION_STATUSES as unknown as string[],
         required: false,
         input: false,
       },
@@ -407,7 +413,7 @@ export const auth = betterAuth({
               .update(users)
               .set({
                 plan,
-                subscriptionStatus: status === "active" ? "active" : "canceled",
+                subscriptionStatus: status,
               })
               .where(eq(users.id, existingUser.id));
 

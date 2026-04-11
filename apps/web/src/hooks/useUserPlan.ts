@@ -3,10 +3,10 @@ import { authClient } from "@/lib/auth-client";
 export const useUserPlan = () => {
   const { data: userData } = authClient.useSession();
 
+  const activeStatuses = ["active", "trialing", "past_due"];
   const isProUser =
     userData?.user.plan === "pro" &&
-    !!userData.user.subscriptionStatus &&
-    userData.user.subscriptionStatus !== "canceled";
+    activeStatuses.includes(userData.user.subscriptionStatus ?? "");
 
   return {
     isProUser,

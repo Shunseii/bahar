@@ -62,10 +62,10 @@ export const Route = createFileRoute("/_authorized-layout/_search-layout")({
       queryFn: settingsTable.getSettings.query,
     });
 
+    const activeStatuses = ["active", "trialing", "past_due"];
     const isFreeUser =
-      !data.user.plan ||
-      !data.user.subscriptionStatus ||
-      data.user.subscriptionStatus === "canceled";
+      data.user.plan !== "pro" ||
+      !activeStatuses.includes(data.user.subscriptionStatus ?? "");
 
     if (isFreeUser && search.sort === "difficulty") {
       throw redirect({

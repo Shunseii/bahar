@@ -2,7 +2,14 @@ import * as Sentry from "@sentry/bun";
 import Elysia from "elysia";
 import { auth, type User } from "./auth";
 import { redisClient } from "./clients/redis";
+import type { SubscriptionStatus } from "./db/schema/auth";
 import { getTraceContext } from "./utils/logger";
+
+const ACTIVE_SUBSCRIPTION_STATUSES: SubscriptionStatus[] = [
+  "active",
+  "trialing",
+  "past_due",
+];
 
 export { httpLogger } from "./middleware/http-logger";
 
@@ -66,7 +73,9 @@ export const betterAuthGuard = new Elysia({ name: "better-auth" })
 
         if (
           userPlanLevel >= requiredPlanLevel &&
-          user.subscriptionStatus === "active"
+          ACTIVE_SUBSCRIPTION_STATUSES.includes(
+            user.subscriptionStatus as SubscriptionStatus
+          )
         ) {
           return;
         }
