@@ -9,7 +9,6 @@
  */
 
 import * as Haptics from "expo-haptics";
-import { useLocales } from "expo-localization";
 import type React from "react";
 import { useCallback, useEffect } from "react";
 import { Dimensions, I18nManager, StyleSheet, Text, View } from "react-native";

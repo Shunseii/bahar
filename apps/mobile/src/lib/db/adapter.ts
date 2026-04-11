@@ -129,4 +129,4 @@ export const syncDatabase = async (): Promise<void> => {
   }
 };
 
-export type { DatabaseAdapter, PreparedStatement };
+export type { DatabaseAdapter, PreparedStatement } from "@bahar/db-operations";

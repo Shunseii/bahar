@@ -18,19 +18,24 @@ import {
   Settings,
 } from "lucide-react-native";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Text as RNText, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Text as RNText,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import type { SharedValue } from "react-native-reanimated";
 import Animated, {
   Extrapolation,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import type { SharedValue } from "react-native-reanimated";
-import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SyncIndicator } from "@/components/SyncIndicator";
-import { HeaderScrollContext } from "@/contexts/header-scroll";
 import { Button } from "@/components/ui/button";
+import { HeaderScrollContext } from "@/contexts/header-scroll";
 import { SYNC_INTERVAL_MS } from "@/lib/db";
 import { syncDatabase } from "@/lib/db/adapter";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
@@ -81,12 +86,7 @@ function SearchBarHeader({
   const showSearchBar = pathname === "/" && !isAddWordPage;
 
   const titleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(
-      scrollY.value,
-      [30, 70],
-      [0, 1],
-      Extrapolation.CLAMP,
-    ),
+    opacity: interpolate(scrollY.value, [30, 70], [0, 1], Extrapolation.CLAMP),
   }));
 
   return (

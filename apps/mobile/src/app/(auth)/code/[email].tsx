@@ -4,9 +4,9 @@ import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Text } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
-import { useCSSVariable } from "uniwind";
 import { Page } from "@/components/Page";
 import { Button } from "@/components/ui/button";
+import { useThemeColors } from "@/lib/theme";
 import { authClient } from "@/utils/auth-client";
 
 export default function EnterCodeScreen() {
@@ -15,8 +15,7 @@ export default function EnterCodeScreen() {
   const [inputtedCode, setInputtedCode] = useState("");
   const local = useLocalSearchParams<{ email: string }>();
 
-  const primaryColor = useCSSVariable("--color-primary");
-  const foregroundColor = useCSSVariable("--color-foreground");
+  const colors = useThemeColors();
 
   const onSubmit = async (code: string) => {
     setIsSubmitting(true);
@@ -32,7 +31,7 @@ export default function EnterCodeScreen() {
 
         setError(t`That code is invalid.`);
       }
-    } catch (err) {
+    } catch {
       setError(t`Please try again.`);
     } finally {
       setIsSubmitting(false);
@@ -40,14 +39,14 @@ export default function EnterCodeScreen() {
   };
 
   return (
-    <Page className="!bg-background">
+    <Page className="bg-background!">
       <Text className="text-center font-bold text-foreground text-xl tracking-tight">
         <Trans>Enter your 6-digit code from your email</Trans>
       </Text>
 
       <OtpInput
         disabled={isSubmitting}
-        focusColor={primaryColor}
+        focusColor={colors.primary}
         numberOfDigits={6}
         onFilled={onSubmit}
         onTextChange={(text) => {
@@ -55,7 +54,7 @@ export default function EnterCodeScreen() {
         }}
         theme={{
           pinCodeTextStyle: {
-            color: foregroundColor,
+            color: colors.foreground,
           },
         }}
       />

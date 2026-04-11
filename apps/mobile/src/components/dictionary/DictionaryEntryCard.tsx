@@ -20,6 +20,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useThemeColors } from "@/lib/theme";
+import { HighlightText } from "./HighlightText";
 
 interface DictionaryEntryCardProps {
   entry: SelectDictionaryEntry;
@@ -57,7 +58,7 @@ const ShareButton: FC<{
         message: `${word} - ${translation}`,
       });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
+    } catch {
       // User cancelled or error
     }
   };
@@ -298,7 +299,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
 };
 
 export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
-  ({ entry, isExpanded, onToggleExpand }) => {
+  ({ entry, isExpanded, onToggleExpand, searchQuery = "" }) => {
     const router = useRouter();
     const colors = useThemeColors();
     const rotation = useSharedValue(isExpanded ? 180 : 0);
@@ -315,7 +316,6 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
       entry.morphology;
 
     const toggleExpanded = () => {
-      Haptics.selectionAsync();
       onToggleExpand(entry.id);
     };
 
@@ -333,15 +333,17 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
         >
           <View className="flex-row items-start justify-between">
             <View className="mr-2 flex-1">
-              <Text
+              <HighlightText
                 className="font-semibold text-2xl text-foreground"
+                searchTerm={searchQuery}
                 style={{ writingDirection: "rtl", textAlign: "left" }}
-              >
-                {entry.word}
-              </Text>
-              <Text className="mt-1 text-base text-muted-foreground">
-                {entry.translation}
-              </Text>
+                text={entry.word}
+              />
+              <HighlightText
+                className="mt-1 text-base text-muted-foreground"
+                searchTerm={searchQuery}
+                text={entry.translation}
+              />
             </View>
 
             {/* Actions */}

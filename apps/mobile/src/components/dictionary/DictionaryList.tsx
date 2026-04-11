@@ -27,7 +27,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useInfiniteSearch } from "@/hooks/useSearch";
+import { type SortOption, useInfiniteSearch } from "@/hooks/useSearch";
 import { syncDatabase } from "@/lib/db/adapter";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
@@ -35,6 +35,8 @@ import { DictionaryEntryCard } from "./DictionaryEntryCard";
 
 interface DictionaryListProps {
   searchQuery: string;
+  tags?: string[];
+  sort?: SortOption;
   bottomInset?: number;
   onTotalCountChange?: (count: number) => void;
   onElapsedTimeChange?: (elapsedNs: number | null) => void;
@@ -89,6 +91,8 @@ const LoadingIndicator: FC = () => (
 
 export const DictionaryList: FC<DictionaryListProps> = ({
   searchQuery,
+  tags,
+  sort,
   bottomInset = 0,
   onTotalCountChange,
   onElapsedTimeChange,
@@ -102,7 +106,11 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     refresh,
     totalCount,
     elapsedTimeNs,
-  } = useInfiniteSearch(searchQuery);
+  } = useInfiniteSearch({
+    term: searchQuery,
+    filters: tags?.length ? { tags } : undefined,
+    sort,
+  });
   const [refreshing, setRefreshing] = useState(false);
   const expandedIdsRef = useRef(new Set<string>());
   const [expandedVersion, setExpandedVersion] = useState(0);
@@ -178,6 +186,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
           entry={item.document as SelectDictionaryEntry}
           isExpanded={expandedIdsRef.current.has(item.id)}
           onToggleExpand={toggleExpanded}
+          searchQuery={searchQuery}
         />
       </Animated.View>
     ),
@@ -193,7 +202,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   }, [isLoading, hasMore, loadMore]);
 
   const emptyComponent = (() => {
-    if (isLoading) return null;
+    if (isLoading) return <LoadingIndicator />;
     if (searchQuery.trim()) return <NoResults />;
     return <EmptyDictionary />;
   })();

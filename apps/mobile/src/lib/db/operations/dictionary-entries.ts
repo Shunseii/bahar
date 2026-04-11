@@ -284,4 +284,24 @@ export const dictionaryEntriesTable = {
       queryKey: ["turso.dictionary-entries.max-updated-at"] as const,
     },
   },
+  tags: {
+    query: async (): Promise<{ tag: string; count: number }[]> => {
+      const db = await ensureDb();
+
+      const res = await db
+        .prepare<{ tag: string; count: number }>(
+          `SELECT value as tag, COUNT(*) as count
+           FROM dictionary_entries, json_each(tags)
+           WHERE value IS NOT NULL
+           GROUP BY value
+           ORDER BY count DESC;`
+        )
+        .all([]);
+
+      return res;
+    },
+    cacheOptions: {
+      queryKey: ["turso.dictionary-entries.tags.query"] as const,
+    },
+  },
 } as const satisfies Record<string, TableOperation>;

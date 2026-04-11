@@ -63,7 +63,6 @@ const QueueTabs = ({
   return (
     <View className="items-center px-4 pt-3 pb-1">
       <View className="flex-row gap-1 rounded-lg bg-muted/50 p-1">
-        {/* Regular Tab */}
         <Pressable onPress={() => onSelectQueue("regular")}>
           <View
             className={cn(
@@ -105,7 +104,6 @@ const QueueTabs = ({
           </View>
         </Pressable>
 
-        {/* Backlog Tab */}
         <Pressable onPress={() => onSelectQueue("backlog")}>
           <View
             className={cn(
@@ -146,7 +144,6 @@ const QueueTabs = ({
         </Pressable>
       </View>
 
-      {/* Queue description */}
       <Text className="mt-2 text-center text-muted-foreground text-xs">
         {isBacklog ? (
           <Trans>Cards overdue by more than 7 days</Trans>

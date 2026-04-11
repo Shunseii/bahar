@@ -5,7 +5,7 @@ import { Pressable, type PressableProps, Text, View } from "react-native";
 import { useThemeColors } from "@/lib/theme";
 
 const buttonVariants = cva(
-  "flex flex-row items-center justify-center gap-x-2 rounded-md transition-colors disabled:opacity-50",
+  "flex flex-row items-center justify-center gap-x-2 rounded-md transition-colors",
   {
     variants: {
       variant: {
@@ -91,7 +91,11 @@ export const Button: FC<ButtonProps> = ({
     <Pressable
       onPress={onPress}
       style={({ pressed }) => ({
-        opacity: pressed && variantsWithFeedback.includes(variant!) ? 0.7 : 1,
+        opacity: rest.disabled
+          ? 0.5
+          : pressed && variantsWithFeedback.includes(variant!)
+            ? 0.7
+            : 1,
       })}
       {...rest}
     >

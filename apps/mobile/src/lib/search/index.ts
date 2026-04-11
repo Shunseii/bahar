@@ -371,4 +371,7 @@ export const search = async (
   return searchDictionary(orama, term, options);
 };
 
-export { highlightWithDiacritics } from "@bahar/search/highlight";
+export {
+  findHighlightPositions,
+  highlightWithDiacritics,
+} from "@bahar/search/highlight";

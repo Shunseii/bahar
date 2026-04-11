@@ -1,17 +1,27 @@
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
+import { useAtomValue } from "jotai";
 import { BookOpen, GraduationCap, PlusIcon } from "lucide-react-native";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ActivityIndicator, Animated, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DictionaryList } from "@/components/dictionary";
+import { DictionaryFilters } from "@/components/dictionary/DictionaryFilters";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
 } from "@/lib/db/operations/flashcards";
+import { selectedTagsAtom, sortOptionAtom } from "@/lib/store/filters";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
 
@@ -121,13 +131,8 @@ const HeaderCard = ({
         </View>
 
         <View className="flex-row items-center gap-2">
-          <Button onPress={onAddPress} variant="outline">
-            <View className="flex-row items-center gap-1.5">
-              <PlusIcon color={colors.mutedForeground} size={16} />
-              <Text className="text-foreground text-sm">
-                <Trans>Add word</Trans>
-              </Text>
-            </View>
+          <Button Icon={PlusIcon} onPress={onAddPress} variant="outline">
+            <Trans>Add word</Trans>
           </Button>
 
           <View className="flex-1" />
@@ -165,6 +170,11 @@ const HeaderCard = ({
           </View>
         </View>
       </View>
+
+      {/* Filters section inside card */}
+      <View className="border-border/30 border-t px-4 pt-3 pb-3">
+        <DictionaryFilters />
+      </View>
     </View>
   );
 };
@@ -174,6 +184,9 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const colors = useThemeColors();
   const { searchQuery } = useSearchQuery();
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+  const selectedTags = useAtomValue(selectedTagsAtom);
+  const sortOption = useAtomValue(sortOptionAtom);
   const { state, error } = useAppInit();
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
@@ -257,7 +270,9 @@ export default function HomeScreen() {
         ListHeaderComponent={listHeader}
         onElapsedTimeChange={handleElapsedTimeChange}
         onTotalCountChange={handleTotalCountChange}
-        searchQuery={searchQuery}
+        searchQuery={deferredSearchQuery}
+        sort={sortOption}
+        tags={selectedTags}
       />
     </View>
   );

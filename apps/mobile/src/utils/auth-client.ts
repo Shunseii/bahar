@@ -1,4 +1,5 @@
 import { expoClient } from "@better-auth/expo/client";
+import { polarClient } from "@polar-sh/better-auth/client";
 import {
   emailOTPClient,
   inferAdditionalFields,
@@ -17,7 +18,6 @@ export const authClient = createAuthClient({
     }),
     inferAdditionalFields<typeof auth>(),
     emailOTPClient(),
+    polarClient(),
   ],
-
-  // TODO: trace id?
 });

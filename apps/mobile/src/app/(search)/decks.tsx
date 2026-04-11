@@ -1,5 +1,4 @@
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
-import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
@@ -309,7 +308,7 @@ export default function DecksScreen() {
         <View className="rounded-xl bg-primary/10 p-2">
           <Layers color={colors.primary} size={24} />
         </View>
-        <Text className="font-bold text-foreground text-2xl">
+        <Text className="font-bold text-2xl text-foreground">
           <Trans>Decks</Trans>
         </Text>
       </View>
@@ -327,10 +326,10 @@ export default function DecksScreen() {
     <View className="flex-1 bg-background">
       {decks?.length ? (
         <Animated.FlatList
-          ListHeaderComponent={decksListHeader}
           contentContainerStyle={{ padding: 16 }}
           data={decks}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={decksListHeader}
           onRefresh={handleRefresh}
           onScroll={scrollHandler}
           refreshing={refreshing}

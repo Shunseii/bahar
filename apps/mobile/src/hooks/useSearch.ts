@@ -1,64 +1,40 @@
 /**
- * Search hooks for Orama.
+ * Search hooks using shared searchDictionary from @bahar/search.
  *
- * Provides search functionality and infinite scroll pagination.
+ * Provides two-pass exact-then-fuzzy search with filter and sort support.
  */
 
-import { detectLanguage, stripArabicDiacritics } from "@bahar/search/arabic";
+import { detectLanguage } from "@bahar/search/arabic";
+import {
+  type SearchDictionaryOptions,
+  searchDictionary,
+} from "@bahar/search/database";
 import type { DictionaryDocument } from "@bahar/search/schema";
-import { search as oramaSearch, type Result, type Results } from "@orama/orama";
+import type { InternalTypedDocument, Result, Results } from "@orama/orama";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
 
 const SEARCH_RESULTS_PER_PAGE = 20;
 
-type SearchResults = Results<DictionaryDocument>;
-type SearchHit = Result<DictionaryDocument>;
+export const SORT_OPTIONS = [
+  "relevance",
+  "updatedAt",
+  "createdAt",
+  "difficulty",
+] as const;
 
-interface UseSearchResult {
-  search: (term: string) => SearchResults;
-  reset: () => void;
+export type SortOption = (typeof SORT_OPTIONS)[number];
+
+type SearchResults = Results<InternalTypedDocument<DictionaryDocument>>;
+type SearchHit = Result<InternalTypedDocument<DictionaryDocument>>;
+
+interface UseInfiniteSearchParams {
+  term?: string;
+  filters?: {
+    tags?: string[];
+  };
+  sort?: SortOption;
 }
-
-/**
- * Hook for basic search functionality.
- */
-export const useSearch = (): UseSearchResult => {
-  const search = useCallback((term: string): SearchResults => {
-    const tolerance = (() => {
-      if (!term) return 0;
-      const len = stripArabicDiacritics(term).length;
-      if (len <= 2) return 0;
-      if (len <= 3) return 1;
-      return 2;
-    })();
-
-    const language = detectLanguage(term);
-    const oramaLanguage = language === "ar" ? "arabic" : "english";
-
-    return oramaSearch(
-      getOramaDb(),
-      {
-        term,
-        mode: "fulltext",
-        limit: SEARCH_RESULTS_PER_PAGE,
-        properties: term ? ["word", "translation", "definition"] : undefined,
-        boost: {
-          word: 10,
-          translation: 10,
-        },
-        tolerance,
-      },
-      oramaLanguage
-    ) as SearchResults;
-  }, []);
-
-  const reset = useCallback(() => {
-    // Reset any cached state if needed
-  }, []);
-
-  return { search, reset };
-};
 
 interface UseInfiniteSearchResult {
   hits: SearchHit[];
@@ -70,11 +46,14 @@ interface UseInfiniteSearchResult {
   refresh: () => void;
 }
 
-/**
- * Hook for infinite scroll search.
- */
+const SORT_MAP: Record<string, { property: string; order: "ASC" | "DESC" }> = {
+  createdAt: { property: "created_at_timestamp_ms", order: "DESC" },
+  updatedAt: { property: "updated_at_timestamp_ms", order: "DESC" },
+  difficulty: { property: "max_difficulty", order: "DESC" },
+};
+
 export const useInfiniteSearch = (
-  searchTerm: string
+  params: UseInfiniteSearchParams = {}
 ): UseInfiniteSearchResult => {
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [offset, setOffset] = useState(0);
@@ -83,42 +62,35 @@ export const useInfiniteSearch = (
   const [totalCount, setTotalCount] = useState(0);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
 
-  const oramaLanguage = useMemo(() => {
-    const lang = detectLanguage(searchTerm);
-    return lang === "ar" ? "arabic" : "english";
-  }, [searchTerm]);
+  const paramsKey = JSON.stringify(params);
 
-  const tolerance = useMemo(() => {
-    if (!searchTerm) return 0;
-    const len = stripArabicDiacritics(searchTerm).length;
-    if (len <= 2) return 0;
-    if (len <= 3) return 1;
-    return 2;
-  }, [searchTerm]);
+  const language = useMemo<SearchDictionaryOptions["language"]>(() => {
+    const detected = detectLanguage(params.term ?? "");
+    return detected === "ar" ? "arabic" : "english";
+  }, [params.term]);
+
+  const whereFilter = useMemo<SearchDictionaryOptions["where"]>(() => {
+    if (!params.filters?.tags?.length) return undefined;
+    return { tags: { containsAll: params.filters.tags } };
+  }, [paramsKey]);
+
+  const sortBy = useMemo<SearchDictionaryOptions["sortBy"]>(() => {
+    if (!params.sort || params.sort === "relevance") return undefined;
+    return SORT_MAP[params.sort];
+  }, [paramsKey]);
 
   const performSearch = useCallback(
     (currentOffset: number, append = false) => {
       setIsLoading(true);
 
       try {
-        const results = oramaSearch(
-          getOramaDb(),
-          {
-            term: searchTerm,
-            mode: "fulltext",
-            limit: SEARCH_RESULTS_PER_PAGE,
-            offset: currentOffset,
-            properties: searchTerm
-              ? ["word", "translation", "definition"]
-              : undefined,
-            boost: {
-              word: 10,
-              translation: 10,
-            },
-            tolerance,
-          },
-          oramaLanguage
-        ) as SearchResults;
+        const results = searchDictionary(getOramaDb(), params.term ?? "", {
+          limit: SEARCH_RESULTS_PER_PAGE,
+          offset: currentOffset,
+          language,
+          where: whereFilter,
+          sortBy,
+        }) as SearchResults;
 
         if (append) {
           setHits((prev) => [...prev, ...results.hits]);
@@ -128,7 +100,6 @@ export const useInfiniteSearch = (
 
         setTotalCount(results.count);
         setHasMore(currentOffset + results.hits.length < results.count);
-        // Capture elapsed time (Orama returns it as bigint in elapsed.raw)
         if (results.elapsed?.raw !== undefined) {
           setElapsedTimeNs(Number(results.elapsed.raw));
         }
@@ -138,18 +109,22 @@ export const useInfiniteSearch = (
         setIsLoading(false);
       }
     },
-    [searchTerm, tolerance, oramaLanguage]
+    [params.term, language, whereFilter, sortBy]
   );
 
-  // Reset and search when term changes
   useEffect(() => {
     setOffset(0);
-    performSearch(0, false);
-  }, [searchTerm, performSearch]);
+    setHits([]);
+    setHasMore(false);
+    setIsLoading(true);
+    const id = requestAnimationFrame(() => {
+      performSearch(0, false);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [paramsKey, performSearch]);
 
   const loadMore = useCallback(() => {
     if (isLoading || !hasMore) return;
-
     const newOffset = offset + SEARCH_RESULTS_PER_PAGE;
     setOffset(newOffset);
     performSearch(newOffset, true);

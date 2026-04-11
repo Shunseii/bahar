@@ -29,6 +29,63 @@ const buildPositionMap = (original: string): number[] => {
 };
 
 /**
+ * Maps normalized-text match positions back to original-text positions,
+ * including any trailing diacritics.
+ */
+const mapToOriginalPositions = (
+  matches: Array<{ start: number; end: number }>,
+  positionMap: number[],
+  originalText: string
+): Array<{ start: number; end: number }> => {
+  return matches.map(({ start, end }) => {
+    const originalStart = positionMap[start];
+    const lastCharOriginalPos = positionMap[end - 1];
+
+    let originalEnd = lastCharOriginalPos + 1;
+    while (
+      originalEnd < originalText.length &&
+      DIACRITICS_REGEX.test(originalText[originalEnd])
+    ) {
+      originalEnd++;
+    }
+
+    return { start: originalStart, end: originalEnd };
+  });
+};
+
+/**
+ * Finds highlight match positions in text using Arabic-aware normalization.
+ * Returns an array of { start, end } positions in the original text.
+ * This is the platform-agnostic core — use it to build highlighting
+ * for any rendering target (HTML, React Native Text, etc.).
+ */
+export const findHighlightPositions = (
+  text: string,
+  searchTerm: string
+): Array<{ start: number; end: number }> => {
+  if (!searchTerm.trim()) return [];
+
+  const normalizedText = normalizeArabicForSearch(text);
+  const normalizedTerm = normalizeArabicForSearch(searchTerm);
+  const positionMap = buildPositionMap(text);
+
+  const regex = new RegExp(escapeRegExp(normalizedTerm), "gi");
+  const matches: Array<{ start: number; end: number }> = [];
+
+  for (
+    let match = regex.exec(normalizedText);
+    match !== null;
+    match = regex.exec(normalizedText)
+  ) {
+    matches.push({ start: match.index, end: match.index + match[0].length });
+  }
+
+  if (matches.length === 0) return [];
+
+  return mapToOriginalPositions(matches, positionMap, text);
+};
+
+/**
  * Escapes special regex characters in a string.
  */
 const escapeRegExp = (string: string): string => {
@@ -77,22 +134,7 @@ export const highlightWithDiacritics = (
   }
 
   // Map normalized positions back to original positions
-  const originalMatches = matches.map(({ start, end }) => {
-    const originalStart = positionMap[start];
-    // end - 1 because end is exclusive
-    const lastCharOriginalPos = positionMap[end - 1];
-
-    // Find the end position including any trailing diacritics
-    let originalEnd = lastCharOriginalPos + 1;
-    while (
-      originalEnd < text.length &&
-      DIACRITICS_REGEX.test(text[originalEnd])
-    ) {
-      originalEnd++;
-    }
-
-    return { start: originalStart, end: originalEnd };
-  });
+  const originalMatches = mapToOriginalPositions(matches, positionMap, text);
 
   // Build the highlighted string
   const classAttr = CSSClass ? ` class="${CSSClass}"` : "";
