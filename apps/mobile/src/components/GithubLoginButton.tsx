@@ -1,13 +1,13 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { Trans } from "@lingui/react/macro";
 import { Pressable, Text, View } from "react-native";
+import { authClient } from "@/utils/auth-client";
 
 export const GithubLoginButton = () => {
   return (
     <Pressable
       onPress={() => {
-        // TODO: Implement this
-        console.log("GitHub login pressed");
+        authClient.signIn.social({ provider: "github" });
       }}
       style={({ pressed }) => ({
         opacity: pressed ? 0.7 : 1,

@@ -29,30 +29,34 @@ const ICON_SIZE = 48;
 
 const feedbackConfig: Record<
   Grade,
-  { Icon: typeof RotateCcw; colorClass: string; bgColor: string }
+  {
+    Icon: typeof RotateCcw;
+    colorKey: "mutedForeground" | "warning" | "primary" | "success";
+    bgColor: string;
+  }
 > = {
   1: {
     // Again
     Icon: RotateCcw,
-    colorClass: "text-muted-foreground",
+    colorKey: "mutedForeground",
     bgColor: "bg-muted/30",
   },
   2: {
     // Hard
     Icon: Brain,
-    colorClass: "text-warning",
+    colorKey: "warning",
     bgColor: "bg-warning/20",
   },
   3: {
     // Good
     Icon: ThumbsUp,
-    colorClass: "text-primary",
+    colorKey: "primary",
     bgColor: "bg-primary/20",
   },
   4: {
     // Easy
     Icon: Zap,
-    colorClass: "text-success",
+    colorKey: "success",
     bgColor: "bg-success/20",
   },
 };
@@ -177,12 +181,10 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
         className={`rounded-full p-6 ${config.bgColor}`}
         style={iconContainerStyle}
       >
-        <Icon className={config.colorClass} size={ICON_SIZE} />
+        <Icon color={colors[config.colorKey]} size={ICON_SIZE} />
       </Animated.View>
 
-      {grade === Rating.Easy && (
-        <SparkleEffect color={colors.success as string} />
-      )}
+      {grade === Rating.Easy && <SparkleEffect color={colors.success} />}
     </Animated.View>
   );
 };

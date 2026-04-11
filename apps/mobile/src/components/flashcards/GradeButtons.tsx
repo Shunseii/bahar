@@ -4,10 +4,15 @@
  * Shows Again, Hard, Good, Easy buttons with interval previews.
  */
 
-import { type Grade, Rating, type RecordLog } from "@bahar/fsrs";
 import { intlFormatDistance } from "date-fns";
 import * as Haptics from "expo-haptics";
-import { Brain, RotateCcw, ThumbsUp, Zap } from "lucide-react-native";
+import {
+  Brain,
+  type LucideIcon,
+  RotateCcw,
+  ThumbsUp,
+  Zap,
+} from "lucide-react-native";
 import type React from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
@@ -15,6 +20,8 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { type Grade, Rating, type RecordLog } from "ts-fsrs";
+import { useThemeColors } from "@/lib/theme";
 
 interface GradeButtonsProps {
   schedulingCards: RecordLog;
@@ -22,12 +29,21 @@ interface GradeButtonsProps {
   disabled?: boolean;
 }
 
-const gradeConfig = [
+type GradeConfig = {
+  grade: Grade;
+  Icon: LucideIcon;
+  label: string;
+  colorKey: keyof ReturnType<typeof useThemeColors>;
+  borderColor: string;
+  pressedBg: string;
+};
+
+const gradeConfig: GradeConfig[] = [
   {
     grade: Rating.Again as Grade,
     Icon: RotateCcw,
     label: "Again",
-    colorClass: "text-muted-foreground",
+    colorKey: "mutedForeground",
     borderColor: "border-muted-foreground/30",
     pressedBg: "bg-muted/50",
   },
@@ -35,7 +51,7 @@ const gradeConfig = [
     grade: Rating.Hard as Grade,
     Icon: Brain,
     label: "Hard",
-    colorClass: "text-warning",
+    colorKey: "warning" as const,
     borderColor: "border-warning/30",
     pressedBg: "bg-warning/10",
   },
@@ -43,7 +59,7 @@ const gradeConfig = [
     grade: Rating.Good as Grade,
     Icon: ThumbsUp,
     label: "Good",
-    colorClass: "text-primary",
+    colorKey: "primary" as const,
     borderColor: "border-primary/30",
     pressedBg: "bg-primary/10",
   },
@@ -51,7 +67,7 @@ const gradeConfig = [
     grade: Rating.Easy as Grade,
     Icon: Zap,
     label: "Easy",
-    colorClass: "text-success",
+    colorKey: "success" as const,
     borderColor: "border-success/30",
     pressedBg: "bg-success/10",
   },
@@ -90,6 +106,7 @@ const GradeButton: React.FC<GradeButtonProps> = ({
   onPress,
   disabled,
 }) => {
+  const colors = useThemeColors();
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -109,7 +126,8 @@ const GradeButton: React.FC<GradeButtonProps> = ({
     opacity: disabled ? 0.5 : opacity.value,
   }));
 
-  const { Icon, label, colorClass, borderColor } = config;
+  const { Icon, label, colorKey, borderColor } = config;
+  const resolvedColor = colors[colorKey];
   const intervalText = intlFormatDistance(interval, new Date(), {
     style: "narrow",
   });
@@ -126,8 +144,10 @@ const GradeButton: React.FC<GradeButtonProps> = ({
         className={`border-2 ${borderColor} items-center rounded-xl bg-card py-3`}
         style={animatedStyle}
       >
-        <Icon className={colorClass} size={20} />
-        <Text className={`mt-1 font-medium ${colorClass}`}>{label}</Text>
+        <Icon color={resolvedColor} size={20} />
+        <Text className="mt-1 font-medium" style={{ color: resolvedColor }}>
+          {label}
+        </Text>
         <Text className="mt-0.5 text-muted-foreground text-xs">
           {intervalText}
         </Text>
@@ -160,16 +180,16 @@ export const ShowAnswerButton: React.FC<ShowAnswerButtonProps> = ({
 
   return (
     <Pressable
-      className="px-4"
+      className="items-center px-4"
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
     >
       <Animated.View
-        className="items-center rounded-xl bg-primary py-4 shadow-lg"
+        className="w-full max-w-xs items-center rounded-xl bg-primary py-3 shadow-lg"
         style={animatedStyle}
       >
-        <Text className="font-semibold text-lg text-primary-foreground">
+        <Text className="font-semibold text-base text-primary-foreground">
           Show Answer
         </Text>
       </Animated.View>

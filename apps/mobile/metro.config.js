@@ -37,7 +37,8 @@ module.exports = config;
  * @returns {import('expo/metro-config').MetroConfig}
  */
 function withMonorepoPaths(config) {
-  const projectRoot = import.meta.dirname;
+  // biome-ignore lint: metro.config.js is CJS, import.meta.dirname is not available
+  const projectRoot = __dirname;
   const workspaceRoot = path.resolve(projectRoot, "../..");
 
   // #1 - Watch all files in the monorepo

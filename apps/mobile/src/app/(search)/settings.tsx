@@ -1,5 +1,4 @@
 import type { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";
-import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
@@ -10,6 +9,8 @@ import {
   Trash2,
 } from "lucide-react-native";
 import type React from "react";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Alert,
@@ -66,8 +67,6 @@ const SelectOptions: React.FC<SelectOptionProps> = ({
   value,
   onChange,
 }) => {
-  const colorScheme = useColorScheme();
-
   return (
     <View className="flex-row gap-2">
       {options.map((option) => (
@@ -99,26 +98,35 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const colors = useThemeColors();
   const colorScheme = useColorScheme();
-  const { t: translate } = useLingui();
+  const { t } = useLingui();
 
   const { data: settings, isLoading } = useQuery({
     queryFn: settingsTable.get.query,
     ...settingsTable.get.cacheOptions,
   });
 
+  const { control, reset } = useForm<UserSettings>({
+    defaultValues: {
+      show_antonyms_mode: "answer",
+      show_reverse_flashcards: false,
+    },
+  });
+
+  useEffect(() => {
+    if (settings) {
+      reset(settings);
+    }
+  }, [settings, reset]);
+
   const updateMutation = useMutation({
     mutationFn: settingsTable.update.mutation,
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: settingsTable.get.cacheOptions.queryKey,
       });
     },
     onError: () => toast.error(t`Failed to update settings`),
   });
-
-  const handleUpdateSetting = (updates: Partial<UserSettings>) => {
-    updateMutation.mutate({ updates });
-  };
 
   const handleDeleteDictionary = () => {
     Alert.alert(
@@ -131,13 +139,11 @@ export default function SettingsScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              // Reset local database and search index
               await resetDb();
               resetOramaDb();
               toast.success(t`Dictionary deleted`);
-              // Sign out to force fresh start
               await authClient.signOut();
-            } catch (error) {
+            } catch (_error) {
               toast.error(t`Failed to delete dictionary`);
             }
           },
@@ -147,9 +153,9 @@ export default function SettingsScreen() {
   };
 
   const antonymOptions = [
-    { value: "hidden", label: translate`Hidden` },
-    { value: "hint", label: translate`Hint` },
-    { value: "answer", label: translate`Answer` },
+    { value: "hidden", label: t`Hidden` },
+    { value: "hint", label: t`Hint` },
+    { value: "answer", label: t`Answer` },
   ];
 
   if (isLoading) {
@@ -169,7 +175,7 @@ export default function SettingsScreen() {
       <View className="border-border border-b px-4 py-4">
         <View className="flex-row items-center gap-3">
           <View className="rounded-xl bg-primary/10 p-2">
-            <Settings className="text-primary" size={24} />
+            <Settings color={colors.primary} size={24} />
           </View>
           <Text className="font-bold text-2xl text-foreground">
             <Trans>Settings</Trans>
@@ -182,7 +188,7 @@ export default function SettingsScreen() {
         <Card>
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Brain className="text-muted-foreground" size={18} />
+              <Brain color={colors.mutedForeground} size={18} />
               <CardTitle>
                 <Trans>Flashcards</Trans>
               </CardTitle>
@@ -191,16 +197,25 @@ export default function SettingsScreen() {
           <CardContent>
             <View className="gap-1">
               <SettingRow
-                description={translate`Include English to Arabic flashcards`}
-                title={translate`Show reverse flashcards`}
+                description={t`Include English to Arabic flashcards`}
+                title={t`Show reverse flashcards`}
               >
-                <Switch
-                  onValueChange={(value) =>
-                    handleUpdateSetting({ show_reverse_flashcards: value })
-                  }
-                  thumbColor="white"
-                  trackColor={{ false: colors.muted, true: colors.primary }}
-                  value={settings?.show_reverse_flashcards ?? false}
+                <Controller
+                  control={control}
+                  name="show_reverse_flashcards"
+                  render={({ field: { value, onChange } }) => (
+                    <Switch
+                      onValueChange={(newValue) => {
+                        onChange(newValue);
+                        updateMutation.mutate({
+                          updates: { show_reverse_flashcards: newValue },
+                        });
+                      }}
+                      thumbColor="white"
+                      trackColor={{ false: colors.muted, true: colors.primary }}
+                      value={value}
+                    />
+                  )}
                 />
               </SettingRow>
 
@@ -213,14 +228,23 @@ export default function SettingsScreen() {
                 <Text className="mb-3 text-muted-foreground text-sm">
                   <Trans>Control where antonyms appear during review</Trans>
                 </Text>
-                <SelectOptions
-                  onChange={(value) =>
-                    handleUpdateSetting({
-                      show_antonyms_mode: value as ShowAntonymsMode,
-                    })
-                  }
-                  options={antonymOptions}
-                  value={settings?.show_antonyms_mode ?? "answer"}
+                <Controller
+                  control={control}
+                  name="show_antonyms_mode"
+                  render={({ field: { value, onChange } }) => (
+                    <SelectOptions
+                      onChange={(newValue) => {
+                        onChange(newValue);
+                        updateMutation.mutate({
+                          updates: {
+                            show_antonyms_mode: newValue as ShowAntonymsMode,
+                          },
+                        });
+                      }}
+                      options={antonymOptions}
+                      value={value}
+                    />
+                  )}
                 />
               </View>
             </View>
@@ -231,7 +255,7 @@ export default function SettingsScreen() {
         <Card>
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Palette className="text-muted-foreground" size={18} />
+              <Palette color={colors.mutedForeground} size={18} />
               <CardTitle>
                 <Trans>Appearance</Trans>
               </CardTitle>
@@ -239,11 +263,11 @@ export default function SettingsScreen() {
           </CardHeader>
           <CardContent>
             <SettingRow
-              description={translate`Follows your system settings`}
-              title={translate`Theme`}
+              description={t`Follows your system settings`}
+              title={t`Theme`}
             >
               <Text className="text-muted-foreground text-sm capitalize">
-                {colorScheme === "dark" ? translate`Dark` : translate`Light`}
+                {colorScheme === "dark" ? t`Dark` : t`Light`}
               </Text>
             </SettingRow>
           </CardContent>
@@ -253,7 +277,7 @@ export default function SettingsScreen() {
         <Card>
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Languages className="text-muted-foreground" size={18} />
+              <Languages color={colors.mutedForeground} size={18} />
               <CardTitle>
                 <Trans>Language</Trans>
               </CardTitle>
@@ -261,8 +285,8 @@ export default function SettingsScreen() {
           </CardHeader>
           <CardContent>
             <SettingRow
-              description={translate`Follows your device language`}
-              title={translate`App language`}
+              description={t`Follows your device language`}
+              title={t`App language`}
             >
               <Text className="text-muted-foreground text-sm">
                 <Trans>System</Trans>
@@ -275,7 +299,7 @@ export default function SettingsScreen() {
         <Card className="border-destructive/30">
           <CardHeader>
             <View className="flex-row items-center gap-2">
-              <Trash2 className="text-destructive" size={18} />
+              <Trash2 color={colors.destructive} size={18} />
               <CardTitle>
                 <Trans>Danger Zone</Trans>
               </CardTitle>

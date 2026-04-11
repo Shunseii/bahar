@@ -6,10 +6,22 @@
  */
 
 import type { DatabaseAdapter, PreparedStatement } from "@bahar/db-operations";
+import * as schema from "@bahar/drizzle-user-db-schemas";
+import { drizzle } from "drizzle-orm/expo-sqlite";
 import * as SQLite from "expo-sqlite";
 
 // Store the database instance for sync operations
 let dbInstance: SQLite.SQLiteDatabase | null = null;
+
+type DrizzleDb = ReturnType<typeof drizzle<typeof schema>>;
+let drizzleDb: DrizzleDb | null = null;
+
+export const getDrizzleDb = (): DrizzleDb => {
+  if (!drizzleDb) {
+    throw new Error("Database not initialized. Call connect() first.");
+  }
+  return drizzleDb;
+};
 
 /**
  * Wraps an expo-sqlite database to implement the DatabaseAdapter interface.
@@ -72,6 +84,7 @@ const createAdapter = (db: SQLite.SQLiteDatabase): DatabaseAdapter => {
     async close(): Promise<void> {
       await db.closeAsync();
       dbInstance = null;
+      drizzleDb = null;
     },
   };
 };
@@ -100,6 +113,8 @@ export const connect = async (
       remoteOnly: false,
     },
   });
+
+  drizzleDb = drizzle(db, { schema });
 
   return createAdapter(db);
 };

@@ -43,7 +43,7 @@ export const useSearch = (): UseSearchResult => {
         mode: "fulltext",
         limit: SEARCH_RESULTS_PER_PAGE,
         properties: term
-          ? ["word", "translation", "definition", "tags"]
+          ? ["word", "translation", "definition"]
           : undefined,
         boost: {
           word: 10,
@@ -111,7 +111,7 @@ export const useInfiniteSearch = (
             limit: SEARCH_RESULTS_PER_PAGE,
             offset: currentOffset,
             properties: searchTerm
-              ? ["word", "translation", "definition", "tags"]
+              ? ["word", "translation", "definition"]
               : undefined,
             boost: {
               word: 10,

@@ -4,13 +4,16 @@
 
 import { generateId, type TableOperation } from "@bahar/db-operations";
 import {
+  decks as decksSchema,
   FlashcardState,
   type InsertDeck,
   type RawDeck,
   type SelectDeck,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
+import { eq } from "drizzle-orm";
 import { ensureDb } from "..";
+import { getDrizzleDb } from "../adapter";
 
 /**
  * Parse deck filters from JSON string.
@@ -119,15 +122,15 @@ export const decksTable = {
 
   get: {
     query: async ({ id }: { id: string }): Promise<SelectDeck | null> => {
-      const db = await ensureDb();
+      const db = getDrizzleDb();
 
-      const raw = await db
-        .prepare<RawDeck>("SELECT * FROM decks WHERE id = ?;")
-        .get([id]);
+      const result = await db
+        .select()
+        .from(decksSchema)
+        .where(eq(decksSchema.id, id))
+        .get();
 
-      if (!raw) return null;
-
-      return toSelectDeck(raw);
+      return result ?? null;
     },
     cacheOptions: {
       queryKey: ["turso.decks.get"] as const,

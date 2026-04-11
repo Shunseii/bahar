@@ -2,6 +2,7 @@ import { cn } from "@bahar/design-system";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ElementType, FC } from "react";
 import { Pressable, type PressableProps, Text, View } from "react-native";
+import { useThemeColors } from "@/lib/theme";
 
 const buttonVariants = cva(
   "flex flex-row items-center justify-center gap-x-2 rounded-md transition-colors disabled:opacity-50",
@@ -57,6 +58,15 @@ interface ButtonProps
   Icon?: ElementType<IconElementProps>;
 }
 
+const iconColorMap: Record<string, string> = {
+  default: "primaryForeground",
+  destructive: "destructiveForeground",
+  outline: "foreground",
+  secondary: "secondaryForeground",
+  ghost: "foreground",
+  link: "primary",
+};
+
 export const Button: FC<ButtonProps> = ({
   onPress,
   size,
@@ -66,12 +76,16 @@ export const Button: FC<ButtonProps> = ({
   Icon,
   ...rest
 }) => {
+  const colors = useThemeColors();
   const variantsWithFeedback = [
     "default",
     "destructive",
     "secondary",
     "outline",
   ];
+
+  const iconColor =
+    colors[iconColorMap[variant!] as keyof typeof colors] ?? colors.foreground;
 
   return (
     <Pressable
@@ -82,7 +96,7 @@ export const Button: FC<ButtonProps> = ({
       {...rest}
     >
       <View className={cn(buttonVariants({ variant, size, className }))}>
-        {Icon && <Icon className="text-black dark:text-white" size={16} />}
+        {Icon && <Icon color={iconColor} size={16} />}
 
         <Text
           className={cn(textVariants({ variant, className }), "text-center")}

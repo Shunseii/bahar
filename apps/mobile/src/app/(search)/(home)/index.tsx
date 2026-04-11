@@ -2,12 +2,16 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { BookOpen, GraduationCap, PlusIcon } from "lucide-react-native";
-import { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ActivityIndicator, Animated, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DictionaryList } from "@/components/dictionary";
+import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import {
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  flashcardsTable,
+} from "@/lib/db/operations/flashcards";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
 
@@ -27,18 +31,50 @@ const formatElapsedTime = (nanoseconds: number): string => {
   return `${(nanoseconds / 1_000_000_000).toFixed(2)}s`;
 };
 
+const PulsingDot = () => {
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 0.5,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [opacity]);
+
+  return (
+    <Animated.View
+      className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-warning"
+      style={{ opacity }}
+    />
+  );
+};
+
 // Header component that scrolls with the list
 const HeaderCard = ({
   totalResults,
   elapsedTimeNs,
-  dueCount,
+  regularCount,
+  backlogCount,
   isPending,
   onReviewPress,
   onAddPress,
 }: {
   totalResults: number | null;
   elapsedTimeNs: number | null;
-  dueCount: number;
+  regularCount: number;
+  backlogCount: number;
   isPending: boolean;
   onReviewPress: () => void;
   onAddPress: () => void;
@@ -46,30 +82,17 @@ const HeaderCard = ({
   const colors = useThemeColors();
 
   return (
-    <View
-      className="mt-1 mb-4 overflow-hidden rounded-xl bg-card"
-      style={{
-        shadowColor: colors.foreground,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 8,
-      }}
-    >
-      {/* Decorative top gradient line */}
-      <View className="h-px bg-primary/20" />
-
+    <View className="mt-1 mb-4 overflow-hidden rounded-xl border border-border/50 bg-card">
       <View className="px-4 pt-4 pb-3">
-        {/* Top row: Icon + Title + Count */}
         <View className="mb-3 flex-row items-center gap-3">
           <View
             className="h-10 w-10 items-center justify-center rounded-xl bg-primary/10"
             style={{
               borderWidth: 1,
-              borderColor: `${colors.primary}33`, // 20% opacity
+              borderColor: `${colors.primary}33`,
             }}
           >
-            <BookOpen className="text-primary" size={20} />
+            <BookOpen color={colors.primary} size={20} />
           </View>
           <View className="flex-1">
             <Text className="font-semibold text-foreground text-lg tracking-tight">
@@ -97,65 +120,49 @@ const HeaderCard = ({
           </View>
         </View>
 
-        {/* Bottom row: Action Buttons */}
         <View className="flex-row items-center gap-2">
-          {/* Review Button */}
-          <Pressable
-            className={`h-9 flex-row items-center gap-1.5 rounded-lg px-3 ${
-              dueCount > 0 ? "bg-warning/10" : "active:bg-primary/5"
-            }`}
-            disabled={isPending}
-            onPress={onReviewPress}
-          >
-            <GraduationCap
-              className={
-                dueCount > 0 ? "text-warning" : "text-muted-foreground"
-              }
-              size={16}
-            />
-            <Text
-              className={`text-sm ${
-                dueCount > 0 ? "" : "text-muted-foreground"
-              } ${isPending ? "opacity-50" : ""}`}
-              style={dueCount > 0 ? { color: colors.warning } : undefined}
-            >
-              <Trans>Review</Trans>
-            </Text>
-            {!isPending && dueCount > 0 && (
-              <View
-                className="ml-0.5 h-5 min-w-5 items-center justify-center rounded-full px-1.5"
-                style={{ backgroundColor: colors.warning }}
-              >
-                <Text
-                  className="font-semibold text-xs"
-                  style={{ color: colors.warningForeground }}
-                >
-                  {dueCount}
-                </Text>
-              </View>
-            )}
-          </Pressable>
+          <Button onPress={onAddPress} variant="outline">
+            <View className="flex-row items-center gap-1.5">
+              <PlusIcon color={colors.mutedForeground} size={16} />
+              <Text className="text-foreground text-sm">
+                <Trans>Add word</Trans>
+              </Text>
+            </View>
+          </Button>
 
-          {/* Spacer */}
           <View className="flex-1" />
 
-          {/* Add Word Button */}
-          <Pressable
-            className="h-9 flex-row items-center gap-1.5 rounded-md bg-primary px-3 active:opacity-80"
-            onPress={onAddPress}
-            style={{
-              shadowColor: colors.primary,
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 3,
-            }}
-          >
-            <PlusIcon className="text-primary-foreground" size={16} />
-            <Text className="font-medium text-primary-foreground text-sm">
-              <Trans>Add word</Trans>
-            </Text>
-          </Pressable>
+          <View className="relative">
+            <Button
+              disabled={isPending}
+              onPress={onReviewPress}
+              variant="outline"
+            >
+              <View className="flex-row items-center gap-1.5">
+                <GraduationCap color={colors.mutedForeground} size={16} />
+                <Text
+                  className={`text-foreground text-sm ${isPending ? "opacity-50" : ""}`}
+                >
+                  <Trans>Review</Trans>
+                </Text>
+
+                {!isPending && regularCount > 0 && (
+                  <View
+                    className="ml-0.5 h-5 min-w-5 items-center justify-center rounded-full px-1.5"
+                    style={{ backgroundColor: colors.primary }}
+                  >
+                    <Text
+                      className="font-semibold text-xs"
+                      style={{ color: colors.primaryForeground }}
+                    >
+                      {regularCount}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </Button>
+            {backlogCount > 0 && <PulsingDot />}
+          </View>
         </View>
       </View>
     </View>
@@ -171,15 +178,18 @@ export default function HomeScreen() {
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
 
-  const { data: dueCards, isPending } = useQuery({
-    queryFn: () => flashcardsTable.today.query({}),
-    queryKey: flashcardsTable.today.cacheOptions.queryKey,
+  const { data: counts, isPending } = useQuery({
+    queryFn: () =>
+      flashcardsTable.counts.query({
+        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
+      }),
+    queryKey: flashcardsTable.counts.cacheOptions.queryKey,
     enabled: state === "ready",
-    refetchOnWindowFocus: true,
     refetchOnMount: true,
   });
 
-  const dueCount = dueCards?.length ?? 0;
+  const regularCount = counts?.regular ?? 0;
+  const backlogCount = counts?.backlog ?? 0;
 
   const handleTotalCountChange = useCallback((count: number) => {
     setTotalResults(count);
@@ -190,29 +200,34 @@ export default function HomeScreen() {
   }, []);
 
   const handleReviewPress = useCallback(() => {
-    router.push("/review");
-  }, [router]);
+    router.push({
+      pathname: "/review",
+      params: {
+        regularCount: String(regularCount),
+        backlogCount: String(backlogCount),
+      },
+    });
+  }, [router, regularCount, backlogCount]);
 
   const handleAddPress = useCallback(() => {
     router.push("/(search)/(home)/add-word");
   }, [router]);
 
-  // Memoize header to prevent re-renders
   const listHeader = useMemo(
     () => (
       <HeaderCard
-        dueCount={dueCount}
+        backlogCount={backlogCount}
         elapsedTimeNs={elapsedTimeNs}
         isPending={isPending}
         onAddPress={handleAddPress}
         onReviewPress={handleReviewPress}
+        regularCount={regularCount}
         totalResults={totalResults}
       />
     ),
-    [totalResults, elapsedTimeNs, dueCount, isPending]
+    [totalResults, elapsedTimeNs, regularCount, backlogCount, isPending]
   );
 
-  // Show loading state while initializing
   if (state === "loading" || state === "idle") {
     return (
       <View className="flex-1 items-center justify-center bg-background">
@@ -224,7 +239,6 @@ export default function HomeScreen() {
     );
   }
 
-  // Show error state
   if (state === "error") {
     return (
       <View className="flex-1 items-center justify-center bg-background px-8">
@@ -238,7 +252,6 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {/* Dictionary list with header */}
       <DictionaryList
         bottomInset={insets.bottom}
         ListHeaderComponent={listHeader}

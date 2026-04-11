@@ -80,9 +80,9 @@ function SearchBarHeader({
           onPress={() => navigation.openDrawer()}
         >
           {dir === "rtl" ? (
-            <PanelRight className="text-foreground" size={24} />
+            <PanelRight color={colors.foreground} size={24} />
           ) : (
-            <PanelLeft className="text-foreground" size={24} />
+            <PanelLeft color={colors.foreground} size={24} />
           )}
         </TouchableOpacity>
 
@@ -215,7 +215,7 @@ export default function Layout() {
           name="(home)"
           options={{
             swipeEdgeWidth: 300,
-            drawerIcon: (props) => <Home {...props} />,
+            drawerIcon: ({ color, size }) => <Home color={color} size={size} />,
             title: t`Home`,
           }}
         />
@@ -224,7 +224,9 @@ export default function Layout() {
           name="decks"
           options={{
             swipeEdgeWidth: 300,
-            drawerIcon: (props) => <Layers {...props} />,
+            drawerIcon: ({ color, size }) => (
+              <Layers color={color} size={size} />
+            ),
             title: t`Decks`,
           }}
         />
@@ -233,7 +235,9 @@ export default function Layout() {
           name="settings"
           options={{
             swipeEdgeWidth: 300,
-            drawerIcon: (props) => <Settings {...props} />,
+            drawerIcon: ({ color, size }) => (
+              <Settings color={color} size={size} />
+            ),
             title: t`Settings`,
           }}
         />

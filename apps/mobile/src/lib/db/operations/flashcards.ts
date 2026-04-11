@@ -3,6 +3,11 @@
  */
 
 export const FLASHCARD_LIMIT = 100;
+export const DEFAULT_BACKLOG_THRESHOLD_DAYS = 7;
+
+const daysToMs = (days: number) => days * 24 * 60 * 60 * 1000;
+
+export type FlashcardQueue = "regular" | "backlog" | "all";
 
 import {
   buildSelectWithNestedJson,
@@ -32,13 +37,18 @@ export const flashcardsTable = {
       {
         showReverse,
         filters,
+        queue = "all",
+        backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }: {
         showReverse?: boolean;
         filters?: SelectDeck["filters"];
+        queue?: FlashcardQueue;
+        backlogThresholdDays?: number;
       } = { showReverse: false }
     ): Promise<FlashcardWithDictionaryEntry[]> => {
       const db = await ensureDb();
       const now = Date.now();
+      const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
 
       const { tags = [], types: rawTypes, state: rawState } = filters ?? {};
 
@@ -56,6 +66,14 @@ export const flashcardsTable = {
 
       const whereConditions: string[] = ["f.due_timestamp_ms <= ?"];
       const params: unknown[] = [now];
+
+      if (queue === "regular") {
+        whereConditions.push("f.due_timestamp_ms > ?");
+        params.push(backlogThresholdMs);
+      } else if (queue === "backlog") {
+        whereConditions.push("f.due_timestamp_ms <= ?");
+        params.push(backlogThresholdMs);
+      }
 
       whereConditions.push(
         `f.direction IN (${directions.map(() => "?").join(", ")})`
@@ -125,6 +143,87 @@ export const flashcardsTable = {
     },
     cacheOptions: {
       queryKey: ["turso.flashcards.today.query"] as const,
+    },
+  },
+
+  counts: {
+    query: async ({
+      showReverse,
+      filters,
+      backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
+    }: {
+      showReverse?: boolean;
+      filters?: SelectDeck["filters"];
+      backlogThresholdDays?: number;
+    } = {}): Promise<{ regular: number; backlog: number; total: number }> => {
+      const db = await ensureDb();
+      const now = Date.now();
+      const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
+
+      const { tags = [], types: rawTypes, state: rawState } = filters ?? {};
+      const types = rawTypes?.length ? rawTypes : [...WORD_TYPES];
+      const state = rawState?.length
+        ? rawState
+        : [
+            FlashcardState.NEW,
+            FlashcardState.LEARNING,
+            FlashcardState.REVIEW,
+            FlashcardState.RE_LEARNING,
+          ];
+      const directions = showReverse ? ["forward", "reverse"] : ["forward"];
+
+      const baseConditions: string[] = [];
+      const baseParams: unknown[] = [];
+
+      baseConditions.push(
+        `f.direction IN (${directions.map(() => "?").join(", ")})`
+      );
+      baseParams.push(...directions);
+
+      baseConditions.push(`f.state IN (${state.map(() => "?").join(", ")})`);
+      baseParams.push(...state);
+
+      baseConditions.push(`d.type IN (${types.map(() => "?").join(", ")})`);
+      baseParams.push(...types);
+
+      baseConditions.push("f.is_hidden = 0");
+
+      const baseWhereClause = baseConditions.join(" AND ");
+
+      const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
+      const tagCondition =
+        tags.length > 0
+          ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
+          : "";
+      const tagParams = tags.length > 0 ? tags : [];
+
+      const regularSql = `
+        SELECT COUNT(DISTINCT f.id) as count
+        FROM flashcards f
+        LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin}
+        WHERE f.due_timestamp_ms <= ? AND f.due_timestamp_ms > ? AND ${baseWhereClause}${tagCondition}
+      `;
+      const regularResult = await db
+        .prepare<{ count: number }>(regularSql)
+        .get([now, backlogThresholdMs, ...baseParams, ...tagParams]);
+
+      const backlogSql = `
+        SELECT COUNT(DISTINCT f.id) as count
+        FROM flashcards f
+        LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin}
+        WHERE f.due_timestamp_ms <= ? AND ${baseWhereClause}${tagCondition}
+      `;
+      const backlogResult = await db
+        .prepare<{ count: number }>(backlogSql)
+        .get([backlogThresholdMs, ...baseParams, ...tagParams]);
+
+      const regular = regularResult?.count ?? 0;
+      const backlog = backlogResult?.count ?? 0;
+
+      return { regular, backlog, total: regular + backlog };
+    },
+    cacheOptions: {
+      queryKey: ["turso.flashcards.counts"] as const,
     },
   },
 

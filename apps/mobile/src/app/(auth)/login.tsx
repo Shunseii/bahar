@@ -4,7 +4,7 @@ import { Trans } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
-import z from "zod";
+import { z } from "zod";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
 import { Page } from "@/components/Page";
 import { Button } from "@/components/ui/button";

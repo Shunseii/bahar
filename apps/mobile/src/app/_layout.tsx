@@ -4,6 +4,10 @@ import "@formatjs/intl-pluralrules/polyfill-force";
 import "@formatjs/intl-pluralrules/locale-data/en"; // locale-data for en
 import "@formatjs/intl-pluralrules/locale-data/ar"; // locale-data for ar
 
+import "@formatjs/intl-relativetimeformat/polyfill-force.js";
+import "@formatjs/intl-relativetimeformat/locale-data/en.js";
+import "@formatjs/intl-relativetimeformat/locale-data/ar.js";
+
 import {
   DarkTheme,
   DefaultTheme,
@@ -32,6 +36,7 @@ import {
 } from "react-native-safe-area-context";
 import { Toaster } from "sonner-native";
 import { store } from "@/lib/store";
+import { ThemeColorsProvider, useResolvedThemeColors } from "@/lib/theme";
 
 import "@/global.css";
 import { Uniwind } from "uniwind";
@@ -92,39 +97,10 @@ export default function RootLayout() {
               }}
             >
               <View className="flex-1 bg-background">
-                <ThemeProvider
-                  value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-                >
-                  <I18nProvider defaultComponent={DefaultComponent} i18n={i18n}>
-                    <Stack>
-                      <Stack.Protected guard={!authData}>
-                        <Stack.Screen
-                          name="(auth)"
-                          options={{ headerShown: false, animation: "fade" }}
-                        />
-                      </Stack.Protected>
-
-                      <Stack.Protected guard={!!authData}>
-                        <Stack.Screen
-                          name="(search)"
-                          options={{ headerShown: false, animation: "fade" }}
-                        />
-                        <Stack.Screen
-                          name="review"
-                          options={{
-                            headerShown: false,
-                            animation: "slide_from_bottom",
-                            gestureEnabled: true,
-                            gestureDirection: "vertical",
-                          }}
-                        />
-                      </Stack.Protected>
-
-                      <Stack.Screen name="+not-found" />
-                    </Stack>
-                    <StatusBar style="auto" />
-                  </I18nProvider>
-                </ThemeProvider>
+                <ThemeColorsInner
+                  authData={authData}
+                  colorScheme={colorScheme}
+                />
               </View>
             </SafeAreaListener>
 
@@ -133,6 +109,56 @@ export default function RootLayout() {
         </GestureHandlerRootView>
       </QueryClientProvider>
     </JotaiProvider>
+  );
+}
+
+/**
+ * Inner component that resolves theme colors once and provides
+ * them to the entire app via context.
+ */
+function ThemeColorsInner({
+  colorScheme,
+  authData,
+}: {
+  colorScheme: ReturnType<typeof useColorScheme>;
+  authData: unknown;
+}) {
+  const themeColors = useResolvedThemeColors();
+
+  return (
+    <ThemeColorsProvider value={themeColors}>
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <I18nProvider defaultComponent={DefaultComponent} i18n={i18n}>
+          <Stack>
+            <Stack.Protected guard={!authData}>
+              <Stack.Screen
+                name="(auth)"
+                options={{ headerShown: false, animation: "fade" }}
+              />
+            </Stack.Protected>
+
+            <Stack.Protected guard={!!authData}>
+              <Stack.Screen
+                name="(search)"
+                options={{ headerShown: false, animation: "fade" }}
+              />
+              <Stack.Screen
+                name="review"
+                options={{
+                  headerShown: false,
+                  animation: "slide_from_bottom",
+                  gestureEnabled: true,
+                  gestureDirection: "vertical",
+                }}
+              />
+            </Stack.Protected>
+
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </I18nProvider>
+      </ThemeProvider>
+    </ThemeColorsProvider>
   );
 }
 

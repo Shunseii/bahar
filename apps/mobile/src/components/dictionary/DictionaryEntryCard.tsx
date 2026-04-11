@@ -10,22 +10,21 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { ChevronDown, Edit, Share2 } from "lucide-react-native";
-import { type FC, memo, useState } from "react";
+import { type FC, memo, useEffect } from "react";
 import { Pressable, Share, Text, View } from "react-native";
 import Animated, {
-  Extrapolation,
   FadeIn,
   FadeOut,
-  interpolate,
-  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { useThemeColors } from "@/lib/theme";
 
 interface DictionaryEntryCardProps {
   entry: SelectDictionaryEntry;
+  isExpanded: boolean;
+  onToggleExpand: (id: string) => void;
   searchQuery?: string;
 }
 
@@ -51,6 +50,7 @@ const ShareButton: FC<{
   word: string;
   translation: string;
 }> = ({ word, translation }) => {
+  const colors = useThemeColors();
   const handleShare = async () => {
     try {
       await Share.share({
@@ -68,7 +68,7 @@ const ShareButton: FC<{
       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       onPress={handleShare}
     >
-      <Share2 className="text-muted-foreground" size={18} />
+      <Share2 color={colors.mutedForeground} size={18} />
     </Pressable>
   );
 };
@@ -91,7 +91,6 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
       entering={FadeIn.duration(200)}
       exiting={FadeOut.duration(100)}
     >
-      {/* Type and Root row */}
       <View className="mb-3 flex-row flex-wrap items-center gap-2">
         <View className="rounded-md bg-primary/10 px-2 py-1">
           <Text className="font-medium text-primary text-sm">
@@ -104,13 +103,12 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
               className="text-muted-foreground text-sm"
               style={{ writingDirection: "rtl" }}
             >
-              {entry.root!.join(" - ")}
+              {entry.root!.join("\u00A0\u2011\u00A0")}
             </Text>
           </View>
         )}
       </View>
 
-      {/* Definition */}
       {hasDefinition && (
         <View className="mb-3">
           <Text className="mb-1 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -120,7 +118,6 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
         </View>
       )}
 
-      {/* Ism Morphology */}
       {ismMorphology && (
         <View className="mb-3">
           <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -180,7 +177,6 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
         </View>
       )}
 
-      {/* Verb Morphology */}
       {verbMorphology && (
         <View className="mb-3">
           <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -255,7 +251,6 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
         </View>
       )}
 
-      {/* Examples */}
       {hasExamples && (
         <View className="mb-3">
           <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -284,7 +279,6 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
         </View>
       )}
 
-      {/* Tags */}
       {hasTags && (
         <View>
           <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
@@ -304,13 +298,14 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
 };
 
 export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
-  ({ entry }) => {
+  ({ entry, isExpanded, onToggleExpand }) => {
     const router = useRouter();
     const colors = useThemeColors();
-    const [isExpanded, setIsExpanded] = useState(false);
-    const rotation = useSharedValue(0);
-    const scale = useSharedValue(1);
-    const pressed = useSharedValue(0);
+    const rotation = useSharedValue(isExpanded ? 180 : 0);
+
+    useEffect(() => {
+      rotation.value = withTiming(isExpanded ? 180 : 0, { duration: 200 });
+    }, [isExpanded]);
 
     const hasExpandableContent =
       entry.definition ||
@@ -319,72 +314,24 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
       (entry.examples && entry.examples.length > 0) ||
       entry.morphology;
 
-    const handlePressIn = () => {
-      scale.value = withSpring(0.98, { damping: 15, stiffness: 400 });
-      pressed.value = withSpring(1, { damping: 15, stiffness: 400 });
-    };
-
-    const handlePressOut = () => {
-      scale.value = withSpring(1, { damping: 15, stiffness: 400 });
-      pressed.value = withSpring(0, { damping: 15, stiffness: 400 });
-    };
-
     const toggleExpanded = () => {
       Haptics.selectionAsync();
-      setIsExpanded(!isExpanded);
-      rotation.value = withSpring(isExpanded ? 0 : 180, {
-        damping: 15,
-        stiffness: 200,
-      });
+      onToggleExpand(entry.id);
     };
 
     const chevronStyle = useAnimatedStyle(() => ({
       transform: [{ rotate: `${rotation.value}deg` }],
     }));
 
-    const cardAnimatedStyle = useAnimatedStyle(() => {
-      const shadowOpacity = interpolate(
-        pressed.value,
-        [0, 1],
-        [0.08, 0.15],
-        Extrapolation.CLAMP
-      );
-      const translateY = interpolate(
-        pressed.value,
-        [0, 1],
-        [0, 1],
-        Extrapolation.CLAMP
-      );
-      return {
-        transform: [{ scale: scale.value }, { translateY }],
-        shadowOpacity,
-      };
-    });
-
     return (
-      <Pressable
-        onPress={toggleExpanded}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-      >
-        <Animated.View
+      <Pressable onPress={toggleExpanded}>
+        <View
           className={cn(
             "rounded-xl border border-border/50 bg-card p-4",
             isExpanded && "border-primary/30"
           )}
-          layout={LinearTransition.springify().damping(18).stiffness(180)}
-          style={[
-            cardAnimatedStyle,
-            {
-              shadowColor: colors.foreground,
-              shadowOffset: { width: 0, height: 4 },
-              shadowRadius: 12,
-              elevation: 4,
-            },
-          ]}
         >
           <View className="flex-row items-start justify-between">
-            {/* Word and Translation */}
             <View className="mr-2 flex-1">
               <Text
                 className="font-semibold text-2xl text-foreground"
@@ -407,21 +354,20 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
                   router.push(`/(search)/(home)/edit-word/${entry.id}`)
                 }
               >
-                <Edit className="text-muted-foreground" size={18} />
+                <Edit color={colors.mutedForeground} size={18} />
               </Pressable>
               {hasExpandableContent && (
                 <Animated.View style={chevronStyle}>
-                  <ChevronDown className="text-muted-foreground" size={18} />
+                  <ChevronDown color={colors.mutedForeground} size={18} />
                 </Animated.View>
               )}
             </View>
           </View>
 
-          {/* Expanded Details */}
           {isExpanded && hasExpandableContent && (
             <ExpandedDetails entry={entry} />
           )}
-        </Animated.View>
+        </View>
       </Pressable>
     );
   }

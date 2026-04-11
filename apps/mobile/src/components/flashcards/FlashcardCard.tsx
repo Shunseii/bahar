@@ -9,9 +9,10 @@
  */
 
 import * as Haptics from "expo-haptics";
+import { useLocales } from "expo-localization";
 import type React from "react";
 import { useCallback, useEffect } from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, I18nManager, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Extrapolation,
@@ -45,6 +46,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
   const translateX = useSharedValue(0);
   const rotation = useSharedValue(0);
   const scale = useSharedValue(1);
+  const isRTL = I18nManager.isRTL;
   // Use shared value for showAnswer so gesture handler can read it from UI thread
   const isAnswerShown = useSharedValue(showAnswer);
 
@@ -80,22 +82,26 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       // Only allow swipe to complete if answer is shown (read from shared value)
       const canSwipe = isAnswerShown.value;
 
-      if (event.translationX > SWIPE_THRESHOLD && canSwipe && onSwipeRight) {
-        translateX.value = withSpring(SCREEN_WIDTH * 1.5, {
-          damping: 20,
-          stiffness: 200,
-        });
+      // In RTL, swipe directions are mirrored:
+      // LTR: right = Good, left = Again
+      // RTL: right = Again, left = Good
+      const swipedRight = event.translationX > SWIPE_THRESHOLD;
+      const swipedLeft = event.translationX < -SWIPE_THRESHOLD;
+      const goodSwipe = isRTL ? swipedLeft : swipedRight;
+      const againSwipe = isRTL ? swipedRight : swipedLeft;
+
+      if (goodSwipe && canSwipe && onSwipeRight) {
+        translateX.value = withSpring(
+          (isRTL ? -1 : 1) * SCREEN_WIDTH * 1.5,
+          { damping: 20, stiffness: 200 }
+        );
         runOnJS(triggerSuccessHaptic)();
         runOnJS(onSwipeRight)();
-      } else if (
-        event.translationX < -SWIPE_THRESHOLD &&
-        canSwipe &&
-        onSwipeLeft
-      ) {
-        translateX.value = withSpring(-SCREEN_WIDTH * 1.5, {
-          damping: 20,
-          stiffness: 200,
-        });
+      } else if (againSwipe && canSwipe && onSwipeLeft) {
+        translateX.value = withSpring(
+          (isRTL ? 1 : -1) * SCREEN_WIDTH * 1.5,
+          { damping: 20, stiffness: 200 }
+        );
         runOnJS(triggerHaptic)();
         runOnJS(onSwipeLeft)();
       } else {
@@ -120,21 +126,22 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
     ],
   }));
 
-  // Gradient overlay based on swipe direction
-  const leftOverlayStyle = useAnimatedStyle(() => ({
+  // Overlay colors: green = Good side, red = Again side
+  // In RTL these are mirrored
+  const againOverlayStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
       translateX.value,
-      [-SWIPE_THRESHOLD, 0],
-      [0.8, 0],
+      isRTL ? [0, SWIPE_THRESHOLD] : [-SWIPE_THRESHOLD, 0],
+      isRTL ? [0, 0.8] : [0.8, 0],
       Extrapolation.CLAMP
     ),
   }));
 
-  const rightOverlayStyle = useAnimatedStyle(() => ({
+  const goodOverlayStyle = useAnimatedStyle(() => ({
     opacity: interpolate(
       translateX.value,
-      [0, SWIPE_THRESHOLD],
-      [0, 0.8],
+      isRTL ? [-SWIPE_THRESHOLD, 0] : [0, SWIPE_THRESHOLD],
+      isRTL ? [0.8, 0] : [0, 0.8],
       Extrapolation.CLAMP
     ),
   }));
@@ -159,12 +166,12 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
         <Animated.View
           className="rounded-3xl bg-destructive/20"
           pointerEvents="none"
-          style={[leftOverlayStyle, StyleSheet.absoluteFill]}
+          style={[againOverlayStyle, StyleSheet.absoluteFill]}
         />
         <Animated.View
           className="rounded-3xl bg-green-500/20"
           pointerEvents="none"
-          style={[rightOverlayStyle, StyleSheet.absoluteFill]}
+          style={[goodOverlayStyle, StyleSheet.absoluteFill]}
         />
 
         {/* Card content */}
@@ -184,7 +191,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
           ) : (
             <View className="items-center px-4">
               <Text
-                className="text-center font-bold text-4xl text-foreground"
+                className="text-center font-bold text-4xl text-foreground leading-relaxed"
                 style={{ writingDirection: "rtl" }}
               >
                 {entry.word}
@@ -207,7 +214,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
             >
               {isReverse ? (
                 <Text
-                  className="text-center font-bold text-4xl text-foreground"
+                  className="text-center font-bold text-4xl text-foreground leading-relaxed"
                   style={{ writingDirection: "rtl" }}
                 >
                   {entry.word}

@@ -18,6 +18,7 @@ import {
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import { syncDatabase } from "@/lib/db/adapter";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
+import { useThemeColors } from "@/lib/theme";
 import { decksTable } from "../../lib/db/operations/decks";
 import { DeckCard } from "./DeckCard";
 
@@ -34,6 +35,7 @@ export const DeckList: React.FC<DeckListProps> = ({
   onDeckLongPress,
   onCreatePress,
 }) => {
+  const colors = useThemeColors();
   const [refreshing, setRefreshing] = useState(false);
 
   const {
@@ -68,7 +70,11 @@ export const DeckList: React.FC<DeckListProps> = ({
   if (status === "pending") {
     return (
       <View className="flex-1 items-center justify-center">
-        <Layers className="animate-pulse text-muted-foreground" size={48} />
+        <Layers
+          className="animate-pulse"
+          color={colors.mutedForeground}
+          size={48}
+        />
       </View>
     );
   }
@@ -88,7 +94,7 @@ export const DeckList: React.FC<DeckListProps> = ({
           className="rounded-xl bg-primary p-2"
           onPress={handleCreatePress}
         >
-          <Plus className="text-primary-foreground" size={24} />
+          <Plus color={colors.primaryForeground} size={24} />
         </Pressable>
       </View>
 
@@ -99,7 +105,7 @@ export const DeckList: React.FC<DeckListProps> = ({
           entering={FadeIn.duration(300)}
         >
           <View className="mb-4 rounded-2xl bg-muted/50 p-4">
-            <Layers className="text-muted-foreground" size={48} />
+            <Layers color={colors.mutedForeground} size={48} />
           </View>
           <Text className="mb-2 font-semibold text-foreground text-lg">
             No decks yet

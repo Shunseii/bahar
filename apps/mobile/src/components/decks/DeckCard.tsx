@@ -2,7 +2,6 @@
  * Deck card component with animated interactions.
  */
 
-import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import * as Haptics from "expo-haptics";
 import { ChevronRight, Layers, Sparkles } from "lucide-react-native";
@@ -13,6 +12,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useThemeColors } from "@/lib/theme";
 
 interface DeckCardProps {
   deck: SelectDeck & { due_count: number; total_count: number };
@@ -25,6 +25,7 @@ export const DeckCard: React.FC<DeckCardProps> = ({
   onPress,
   onLongPress,
 }) => {
+  const colors = useThemeColors();
   const scale = useSharedValue(1);
 
   const handlePressIn = () => {
@@ -71,9 +72,7 @@ export const DeckCard: React.FC<DeckCardProps> = ({
               className={`rounded-xl p-3 ${hasDueCards ? "bg-primary/10" : "bg-muted/50"}`}
             >
               <Layers
-                className={cn(
-                  hasDueCards ? "text-primary" : "text-muted-foreground"
-                )}
+                color={hasDueCards ? colors.primary : colors.mutedForeground}
                 size={24}
               />
             </View>
@@ -86,7 +85,7 @@ export const DeckCard: React.FC<DeckCardProps> = ({
               <View className="mt-1 flex-row items-center">
                 {hasDueCards ? (
                   <>
-                    <Sparkles className={cn("text-primary")} size={14} />
+                    <Sparkles color={colors.primary} size={14} />
                     <Text className="ml-1 font-medium text-primary">
                       {deck.due_count} due
                     </Text>
@@ -104,7 +103,7 @@ export const DeckCard: React.FC<DeckCardProps> = ({
           </View>
 
           {/* Arrow */}
-          <ChevronRight className={cn("text-muted-foreground")} size={24} />
+          <ChevronRight color={colors.mutedForeground} size={24} />
         </View>
 
         {/* Filters preview */}
