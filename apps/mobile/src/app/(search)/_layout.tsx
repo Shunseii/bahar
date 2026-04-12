@@ -37,10 +37,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { Button } from "@/components/ui/button";
 import { HeaderScrollContext } from "@/contexts/header-scroll";
-import { SYNC_INTERVAL_MS } from "@/lib/db";
+import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
 import { syncDatabase } from "@/lib/db/adapter";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { rehydrateOramaDb } from "@/lib/search";
+import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
@@ -160,6 +160,9 @@ function DrawerContent(props: DrawerContentComponentProps) {
           <Button
             onPress={async () => {
               await authClient.signOut();
+              queryClient.clear();
+              resetOramaDb();
+              await resetDb();
             }}
             variant="secondary"
           >
