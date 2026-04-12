@@ -7,6 +7,7 @@
 import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { ChevronDown, Edit, Share2 } from "lucide-react-native";
@@ -19,8 +20,10 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { useThemeColors } from "@/lib/theme";
 import { HighlightText } from "./HighlightText";
+import { ReviewHistory } from "./ReviewHistory";
 
 interface DictionaryEntryCardProps {
   entry: SelectDictionaryEntry;
@@ -74,17 +77,31 @@ const ShareButton: FC<{
   );
 };
 
-const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
+interface ExpandedDetailsProps {
+  id: string;
+  document: Pick<
+    SelectDictionaryEntry,
+    "type" | "root" | "tags" | "definition"
+  >;
+}
+
+const ExpandedDetails: FC<ExpandedDetailsProps> = ({ id, document }) => {
   const wordTypeLabels = useWordTypeLabels();
   const genderLabels = useGenderLabels();
-  const hasDefinition = entry.definition;
-  const hasRoot = entry.root && entry.root.length > 0;
-  const hasTags = entry.tags && entry.tags.length > 0;
-  const hasExamples = entry.examples && entry.examples.length > 0;
-  const hasMorphology = entry.morphology;
 
-  const ismMorphology = hasMorphology ? entry.morphology?.ism : null;
-  const verbMorphology = hasMorphology ? entry.morphology?.verb : null;
+  const { data: fullEntry } = useQuery({
+    queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, id],
+    queryFn: () => dictionaryEntriesTable.entry.query({ id }),
+  });
+
+  const hasDefinition = document.definition;
+  const hasRoot = document.root && document.root.length > 0;
+  const hasTags = document.tags && document.tags.length > 0;
+  const hasExamples = fullEntry?.examples && fullEntry.examples.length > 0;
+  const hasMorphology = fullEntry?.morphology;
+
+  const ismMorphology = hasMorphology ? fullEntry?.morphology?.ism : null;
+  const verbMorphology = hasMorphology ? fullEntry?.morphology?.verb : null;
 
   return (
     <Animated.View
@@ -95,7 +112,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
       <View className="mb-3 flex-row flex-wrap items-center gap-2">
         <View className="rounded-md bg-primary/10 px-2 py-1">
           <Text className="font-medium text-primary text-sm">
-            {wordTypeLabels[entry.type]}
+            {wordTypeLabels[document.type]}
           </Text>
         </View>
         {hasRoot && (
@@ -104,7 +121,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
               className="text-muted-foreground text-sm"
               style={{ writingDirection: "rtl" }}
             >
-              {entry.root!.join("\u00A0\u2011\u00A0")}
+              {document.root!.join("\u00A0\u2011\u00A0")}
             </Text>
           </View>
         )}
@@ -115,7 +132,9 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
           <Text className="mb-1 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Definition</Trans>
           </Text>
-          <Text className="text-foreground/80 text-sm">{entry.definition}</Text>
+          <Text className="text-foreground/80 text-sm">
+            {document.definition}
+          </Text>
         </View>
       )}
 
@@ -258,7 +277,7 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
             <Trans>Examples</Trans>
           </Text>
           <View className="gap-2">
-            {entry.examples!.slice(0, 2).map((example, i) => (
+            {fullEntry!.examples!.slice(0, 2).map((example, i) => (
               <View
                 className="rounded-lg border border-border/30 bg-muted/30 p-3"
                 key={i}
@@ -281,12 +300,12 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
       )}
 
       {hasTags && (
-        <View>
+        <View className="mb-3">
           <Text className="mb-2 font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Tags</Trans>
           </Text>
           <View className="flex-row flex-wrap gap-2">
-            {entry.tags!.map((tag) => (
+            {document.tags!.map((tag) => (
               <View className="rounded-full bg-muted px-2 py-1" key={tag}>
                 <Text className="text-muted-foreground text-xs">{tag}</Text>
               </View>
@@ -294,6 +313,8 @@ const ExpandedDetails: FC<{ entry: SelectDictionaryEntry }> = ({ entry }) => {
           </View>
         </View>
       )}
+
+      <ReviewHistory entryId={id} />
     </Animated.View>
   );
 };
@@ -367,7 +388,7 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
           </View>
 
           {isExpanded && hasExpandableContent && (
-            <ExpandedDetails entry={entry} />
+            <ExpandedDetails document={entry} id={entry.id} />
           )}
         </View>
       </Pressable>

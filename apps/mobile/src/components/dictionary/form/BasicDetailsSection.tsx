@@ -71,9 +71,6 @@ export const BasicDetailsSection = () => {
                 />
               )}
             />
-            <Text className="text-muted-foreground text-xs">
-              <Trans>How you'd translate this word in English</Trans>
-            </Text>
             {errors.translation && (
               <Text className="text-destructive text-sm">
                 {errors.translation.message}
@@ -114,7 +111,6 @@ export const BasicDetailsSection = () => {
                   numberOfLines={3}
                   onBlur={onBlur}
                   onChangeText={onChange}
-                  placeholder={t`Arabic definition`}
                   style={{ textAlign: "right" }}
                   value={value ?? ""}
                 />
@@ -137,7 +133,7 @@ export const BasicDetailsSection = () => {
                   <Input
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    placeholder={t`e.g. ك ت ب`}
+                    placeholder="ف ع ل"
                     style={{ textAlign: "right" }}
                     value={value ?? ""}
                   />

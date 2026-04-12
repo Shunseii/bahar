@@ -18,6 +18,7 @@ import {
 } from "@bahar/db-operations";
 import {
   FlashcardState,
+  flashcards,
   type InsertFlashcard,
   type RawFlashcard,
   type SelectDeck,
@@ -25,7 +26,9 @@ import {
   type SelectFlashcard,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
+import { eq } from "drizzle-orm";
 import { ensureDb } from "..";
+import { getDrizzleDb } from "../adapter";
 
 export type FlashcardWithDictionaryEntry = SelectFlashcard & {
   dictionary_entry: SelectDictionaryEntry;
@@ -415,6 +418,23 @@ export const flashcardsTable = {
     },
     cacheOptions: {
       queryKey: ["turso.flashcards.createForEntry"] as const,
+    },
+  },
+
+  findByEntryId: {
+    query: async ({
+      entryId,
+    }: {
+      entryId: string;
+    }): Promise<SelectFlashcard[]> => {
+      const db = getDrizzleDb();
+      return db
+        .select()
+        .from(flashcards)
+        .where(eq(flashcards.dictionary_entry_id, entryId));
+    },
+    cacheOptions: {
+      queryKey: ["turso.flashcards.findByEntryId"] as const,
     },
   },
 

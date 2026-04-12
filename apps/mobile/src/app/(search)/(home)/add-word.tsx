@@ -5,17 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
-import { useRef } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
-import Animated from "react-native-reanimated";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { z } from "zod";
@@ -30,7 +22,6 @@ import {
   VerbMorphologySection,
 } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
-import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { FormSchema } from "@/lib/schemas/dictionary";
@@ -83,8 +74,6 @@ const BackButton = () => {
 export default function AddWordScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { scrollHandler } = useCollapsibleHeader(t`Add a new word`);
-  const scrollRef = useRef<Animated.ScrollView>(null);
 
   const addWordMutation = useMutation({
     mutationFn: dictionaryEntriesTable.addWord.mutation,
@@ -174,7 +163,9 @@ export default function AddWordScreen() {
         definition: data.definition || undefined,
         type: data.type ?? "ism",
         tags: data.tags?.length ? data.tags.map((t) => t.name) : undefined,
-        root: data.root ? data.root.split("") : undefined,
+        root: data.root
+          ? data.root.trim().replace(/[\s,]+/g, "").split("")
+          : undefined,
         antonyms: data.antonyms?.length ? data.antonyms : undefined,
         examples: data.examples?.length ? data.examples : undefined,
         morphology: data.morphology,
@@ -184,84 +175,64 @@ export default function AddWordScreen() {
 
   return (
     <FormProvider {...methods}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      <KeyboardAwareScrollView
+        bottomOffset={20}
+        className="flex-1 bg-background"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        keyboardShouldPersistTaps="handled"
       >
-        <Animated.ScrollView
-          className="flex-1 bg-background"
-          contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
-          keyboardShouldPersistTaps="handled"
-          onScroll={scrollHandler}
-          ref={scrollRef}
-          scrollEventThrottle={16}
-        >
-          <View className="flex-1 px-4 pt-4">
-            <Breadcrumbs />
+        <View className="flex-1 px-4 pt-4">
+          <Breadcrumbs />
 
-            <View className="gap-y-4">
-              <View className="flex-row items-center gap-4">
-                <BackButton />
-                <Text className="flex-1 font-semibold text-foreground text-xl tracking-tight">
-                  <Trans>Add a new word</Trans>
-                </Text>
-              </View>
+          <View className="gap-y-4">
+            <View className="flex-row items-center gap-4">
+              <BackButton />
+              <Text className="flex-1 font-semibold text-foreground text-xl tracking-tight">
+                <Trans>Add a new word</Trans>
+              </Text>
+            </View>
 
-              <AutofillButton />
+            <AutofillButton />
 
-              <BasicDetailsSection />
+            <BasicDetailsSection />
 
-              {showMorphology && wordType === "ism" && <IsmMorphologySection />}
+            {showMorphology && wordType === "ism" && <IsmMorphologySection />}
 
-              {showMorphology && wordType === "fi'l" && (
-                <VerbMorphologySection />
-              )}
+            {showMorphology && wordType === "fi'l" && <VerbMorphologySection />}
 
-              <ExamplesSection />
+            <ExamplesSection />
 
-              {showAntonyms && <AntonymsSection />}
+            {showAntonyms && <AntonymsSection />}
 
-              <CollapsibleCard title={t`Tags`}>
-                <Controller
-                  control={control}
-                  name="tags"
-                  render={({ field: { onChange, value } }) => (
-                    <TagsInput
-                      onChange={onChange}
-                      onInputFocus={() => {
-                        setTimeout(
-                          () =>
-                            scrollRef.current?.scrollToEnd({ animated: true }),
-                          300
-                        );
-                      }}
-                      value={value}
-                    />
-                  )}
-                />
-              </CollapsibleCard>
+            <CollapsibleCard title={t`Tags`}>
+              <Controller
+                control={control}
+                name="tags"
+                render={({ field: { onChange, value } }) => (
+                  <TagsInput onChange={onChange} value={value} />
+                )}
+              />
+            </CollapsibleCard>
 
-              <View className="flex-row items-center justify-center gap-3 pt-2">
-                <Button onPress={() => router.back()} variant="outline">
-                  <Trans>Cancel</Trans>
-                </Button>
-                <Button
-                  disabled={isSubmitting || addWordMutation.isPending}
-                  onPress={() => handleSubmit(onSubmit)()}
-                  variant="default"
-                >
-                  {addWordMutation.isPending ? (
-                    <ActivityIndicator color="white" size="small" />
-                  ) : (
-                    <Trans>Save</Trans>
-                  )}
-                </Button>
-              </View>
+            <View className="flex-row items-center justify-center gap-3 pt-2">
+              <Button onPress={() => router.back()} variant="outline">
+                <Trans>Cancel</Trans>
+              </Button>
+              <Button
+                disabled={isSubmitting || addWordMutation.isPending}
+                onPress={() => handleSubmit(onSubmit)()}
+                variant="default"
+              >
+                {addWordMutation.isPending ? (
+                  <ActivityIndicator color="white" size="small" />
+                ) : (
+                  <Trans>Save</Trans>
+                )}
+              </Button>
             </View>
           </View>
-        </Animated.ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+      </KeyboardAwareScrollView>
     </FormProvider>
   );
 }

@@ -30,6 +30,7 @@ import { getLocales } from "expo-localization";
 import { Provider as JotaiProvider } from "jotai";
 import { Appearance, Text, useColorScheme, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import {
   SafeAreaListener,
   SafeAreaProvider,
@@ -88,24 +89,26 @@ export default function RootLayout() {
     <JotaiProvider store={store}>
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <SafeAreaListener
-              // Enables using p-safe and m-safe class names
-              // with uniwind
-              onChange={({ insets }) => {
-                Uniwind.updateInsets(insets);
-              }}
-            >
-              <View className="flex-1 bg-background">
-                <ThemeColorsInner
-                  authData={authData}
-                  colorScheme={colorScheme}
-                />
-              </View>
-            </SafeAreaListener>
+          <KeyboardProvider>
+            <SafeAreaProvider>
+              <SafeAreaListener
+                // Enables using p-safe and m-safe class names
+                // with uniwind
+                onChange={({ insets }) => {
+                  Uniwind.updateInsets(insets);
+                }}
+              >
+                <View className="flex-1 bg-background">
+                  <ThemeColorsInner
+                    authData={authData}
+                    colorScheme={colorScheme}
+                  />
+                </View>
+              </SafeAreaListener>
 
-            <Toaster />
-          </SafeAreaProvider>
+              <Toaster />
+            </SafeAreaProvider>
+          </KeyboardProvider>
         </GestureHandlerRootView>
       </QueryClientProvider>
     </JotaiProvider>

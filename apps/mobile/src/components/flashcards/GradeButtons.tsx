@@ -4,7 +4,6 @@
  * Shows Again, Hard, Good, Easy buttons with interval previews.
  */
 
-import { intlFormatDistance } from "date-fns";
 import * as Haptics from "expo-haptics";
 import {
   Brain,
@@ -21,6 +20,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { type Grade, Rating, type RecordLog } from "ts-fsrs";
+import { intlFormatDistance } from "@/lib/date";
 import { useThemeColors } from "@/lib/theme";
 
 interface GradeButtonsProps {
@@ -130,7 +130,7 @@ const GradeButton: React.FC<GradeButtonProps> = ({
   const resolvedColor = colors[colorKey];
   const intervalText = intlFormatDistance(interval, new Date(), {
     style: "narrow",
-  });
+  }).label;
 
   return (
     <Pressable

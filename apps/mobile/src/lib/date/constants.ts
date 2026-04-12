@@ -1,0 +1,9 @@
+export const DAYS_IN_YEAR = 365.2425;
+
+export const SECONDS_IN_HOUR = 3600;
+export const SECONDS_IN_MINUTE = 60;
+export const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
+export const SECONDS_IN_WEEK = SECONDS_IN_DAY * 7;
+export const SECONDS_IN_YEAR = SECONDS_IN_DAY * DAYS_IN_YEAR;
+export const SECONDS_IN_MONTH = SECONDS_IN_YEAR / 12;
+export const SECONDS_IN_QUARTER = SECONDS_IN_MONTH * 3;

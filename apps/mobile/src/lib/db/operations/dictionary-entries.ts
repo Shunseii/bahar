@@ -12,7 +12,10 @@ import type {
   RawDictionaryEntry,
   SelectDictionaryEntry,
 } from "@bahar/drizzle-user-db-schemas";
+import { dictionaryEntries } from "@bahar/drizzle-user-db-schemas";
+import { inArray } from "drizzle-orm";
 import { ensureDb } from "..";
+import { getDrizzleDb } from "../adapter";
 
 export const dictionaryEntriesTable = {
   entry: {
@@ -41,6 +44,30 @@ export const dictionaryEntriesTable = {
     },
     cacheOptions: {
       queryKey: ["turso.dictionary-entries.entry"] as const,
+    },
+  },
+
+  entriesByIds: {
+    query: async ({
+      ids,
+    }: {
+      ids: string[];
+    }): Promise<Map<string, SelectDictionaryEntry>> => {
+      if (ids.length === 0) return new Map();
+      const db = getDrizzleDb();
+      const rows = await db
+        .select()
+        .from(dictionaryEntries)
+        .where(inArray(dictionaryEntries.id, ids));
+
+      const result = new Map<string, SelectDictionaryEntry>();
+      for (const row of rows) {
+        result.set(row.id, row);
+      }
+      return result;
+    },
+    cacheOptions: {
+      queryKey: ["turso.dictionary-entries.entriesByIds"] as const,
     },
   },
 

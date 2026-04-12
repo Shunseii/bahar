@@ -29,8 +29,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { type SortOption, useInfiniteSearch } from "@/hooks/useSearch";
 import { syncDatabase } from "@/lib/db/adapter";
+import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
+import { queryClient } from "@/utils/api";
 import { DictionaryEntryCard } from "./DictionaryEntryCard";
 
 interface DictionaryListProps {
@@ -115,6 +117,11 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   const expandedIdsRef = useRef(new Set<string>());
   const [expandedVersion, setExpandedVersion] = useState(0);
 
+  useEffect(() => {
+    expandedIdsRef.current.clear();
+    setExpandedVersion((n) => n + 1);
+  }, [searchQuery, tags, sort]);
+
   const toggleExpanded = useCallback((id: string) => {
     const set = expandedIdsRef.current;
     if (set.has(id)) {
@@ -172,6 +179,29 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   useEffect(() => {
     onElapsedTimeChange?.(elapsedTimeNs);
   }, [elapsedTimeNs, onElapsedTimeChange]);
+
+  // Prefetch full entries from SQLite for the current batch of hits
+  // so ExpandedDetails can read from a warm cache on expand
+  const prefetchedIdsRef = useRef(new Set<string>());
+  useEffect(() => {
+    const newIds = hits
+      .map((h) => h.id)
+      .filter((id) => !prefetchedIdsRef.current.has(id));
+    if (newIds.length === 0) return;
+
+    for (const id of newIds) {
+      prefetchedIdsRef.current.add(id);
+    }
+
+    dictionaryEntriesTable.entriesByIds.query({ ids: newIds }).then((map) => {
+      for (const [id, entry] of map) {
+        queryClient.setQueryData(
+          [...dictionaryEntriesTable.entry.cacheOptions.queryKey, id],
+          entry
+        );
+      }
+    });
+  }, [hits]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof hits)[0]; index: number }) => (
