@@ -11,6 +11,7 @@ import { usePathname } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { useAtomValue } from "jotai";
 import {
+  Activity,
   Home,
   Layers,
   PanelLeft,
@@ -264,6 +265,17 @@ export default function Layout() {
                 <Layers color={color} size={size} />
               ),
               title: t`Decks`,
+            }}
+          />
+
+          <Drawer.Screen
+            name="stats"
+            options={{
+              swipeEdgeWidth: 300,
+              drawerIcon: ({ color, size }) => (
+                <Activity color={color} size={size} />
+              ),
+              title: t`Progress`,
             }}
           />
 

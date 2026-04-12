@@ -2,6 +2,7 @@ import { cn } from "@bahar/design-system";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
 import { Check, Plus, Search, X } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import {
@@ -14,6 +15,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { recentTagsAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 
 interface TagsInputProps {
@@ -30,17 +32,16 @@ export const TagsInput = ({ value, onChange }: TagsInputProps) => {
     ...dictionaryEntriesTable.tags.cacheOptions,
   });
 
+  const storedRecentTags = useAtomValue(recentTagsAtom);
+
   const selectedNames = useMemo(
     () => new Set(value?.map((t) => t.name) ?? []),
     [value]
   );
 
   const recentTags = useMemo(
-    () =>
-      (allTags ?? [])
-        .filter((t) => !selectedNames.has(t.tag))
-        .slice(0, 5),
-    [allTags, selectedNames]
+    () => (storedRecentTags ?? []).filter((tag) => !selectedNames.has(tag)),
+    [storedRecentTags, selectedNames]
   );
 
   const addTag = (name: string) => {
@@ -55,18 +56,17 @@ export const TagsInput = ({ value, onChange }: TagsInputProps) => {
 
   return (
     <View className="gap-3">
-      {/* Selected tags */}
       {value && value.length > 0 && (
         <View>
-          <Text className="mb-2 text-muted-foreground text-xs font-medium">
+          <Text className="mb-2 font-medium text-muted-foreground text-xs">
             <Trans>Selected</Trans>
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {value.map((tag, index) => (
               <Pressable key={tag.name} onPress={() => removeTag(index)}>
-                <View className="flex-row items-center rounded-full bg-primary/10 gap-1.5 px-3 py-1.5">
-                  <Text className="text-primary text-sm">{tag.name}</Text>
-                  <X color={colors.primary} size={14} />
+                <View className="flex-row items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5">
+                  <Text className="text-foreground text-sm">{tag.name}</Text>
+                  <X color={colors.foreground} size={14} />
                 </View>
               </Pressable>
             ))}
@@ -74,19 +74,16 @@ export const TagsInput = ({ value, onChange }: TagsInputProps) => {
         </View>
       )}
 
-      {/* Recently used */}
       {recentTags.length > 0 && (
         <View>
-          <Text className="mb-2 text-muted-foreground text-xs font-medium">
+          <Text className="mb-2 font-medium text-muted-foreground text-xs">
             <Trans>Recently used</Trans>
           </Text>
           <View className="flex-row flex-wrap gap-2">
             {recentTags.map((tag) => (
-              <Pressable key={tag.tag} onPress={() => addTag(tag.tag)}>
+              <Pressable key={tag} onPress={() => addTag(tag)}>
                 <View className="rounded-full border border-border bg-muted/30 px-3 py-1.5">
-                  <Text className="text-muted-foreground text-sm">
-                    {tag.tag}
-                  </Text>
+                  <Text className="text-muted-foreground text-sm">{tag}</Text>
                 </View>
               </Pressable>
             ))}
@@ -148,9 +145,7 @@ const TagsModal = ({
   const exactMatch = useMemo(
     () =>
       search.trim() &&
-      allTags.some(
-        (t) => t.tag.toLowerCase() === search.trim().toLowerCase()
-      ),
+      allTags.some((t) => t.tag.toLowerCase() === search.trim().toLowerCase()),
     [allTags, search]
   );
 
@@ -171,11 +166,7 @@ const TagsModal = ({
   };
 
   return (
-    <Modal
-      animationType="slide"
-      onRequestClose={onClose}
-      visible={visible}
-    >
+    <Modal animationType="slide" onRequestClose={onClose} visible={visible}>
       <View
         className="flex-1 bg-background"
         style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
@@ -185,7 +176,7 @@ const TagsModal = ({
           <Pressable hitSlop={8} onPress={onClose}>
             <X color={colors.foreground} size={24} />
           </Pressable>
-          <Text className="font-semibold text-foreground text-base">
+          <Text className="font-semibold text-base text-foreground">
             <Trans>Select Tags</Trans>
           </Text>
           <Pressable hitSlop={8} onPress={onClose}>
@@ -200,7 +191,7 @@ const TagsModal = ({
           <View className="flex-row flex-wrap gap-2 border-border border-b px-4 py-3">
             {Array.from(selectedNames).map((name) => (
               <Pressable key={name} onPress={() => onRemove(name)}>
-                <View className="flex-row items-center rounded-full bg-primary/10 gap-1.5 px-3 py-1.5">
+                <View className="flex-row items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5">
                   <Text className="text-primary text-sm">{name}</Text>
                   <X color={colors.primary} size={14} />
                 </View>
@@ -211,13 +202,11 @@ const TagsModal = ({
 
         {/* Search */}
         <View className="px-4 py-3">
-          <View
-            className="h-11 flex-row items-center gap-2 rounded-lg border border-border bg-muted/20 px-3"
-          >
+          <View className="h-11 flex-row items-center gap-2 rounded-lg border border-border bg-muted/20 px-3">
             <Search color={colors.mutedForeground} size={16} />
             <TextInput
               autoFocus
-              className="flex-1 text-foreground text-sm color-foreground"
+              className="color-foreground flex-1 text-foreground text-sm"
               onChangeText={setSearch}
               placeholder={t`Search tags...`}
               placeholderTextColor={colors.mutedForeground}
@@ -235,19 +224,8 @@ const TagsModal = ({
         {/* Tag list */}
         <FlatList
           data={filtered}
-          keyExtractor={(item) => item.tag}
           keyboardShouldPersistTaps="handled"
-          ListHeaderComponent={
-            <View className="px-4 pb-2">
-              <Text className="text-muted-foreground text-xs font-medium">
-                {search.trim() ? (
-                  <Trans>Matching tags</Trans>
-                ) : (
-                  <Trans>All tags</Trans>
-                )}
-              </Text>
-            </View>
-          }
+          keyExtractor={(item) => item.tag}
           ListFooterComponent={
             search.trim() && !exactMatch ? (
               <Pressable onPress={handleCreate}>
@@ -259,6 +237,17 @@ const TagsModal = ({
                 </View>
               </Pressable>
             ) : null
+          }
+          ListHeaderComponent={
+            <View className="px-4 pb-2">
+              <Text className="font-medium text-muted-foreground text-xs">
+                {search.trim() ? (
+                  <Trans>Matching tags</Trans>
+                ) : (
+                  <Trans>All tags</Trans>
+                )}
+              </Text>
+            </View>
           }
           renderItem={({ item }) => {
             const isSelected = selectedNames.has(item.tag);
@@ -278,7 +267,9 @@ const TagsModal = ({
                   <Text
                     className={cn(
                       "flex-1 text-sm",
-                      isSelected ? "font-medium text-primary" : "text-foreground"
+                      isSelected
+                        ? "font-medium text-primary"
+                        : "text-foreground"
                     )}
                   >
                     {item.tag}

@@ -1,12 +1,13 @@
 import { cn } from "@bahar/design-system";
+import {
+  BottomSheetBackdrop,
+  type BottomSheetBackdropProps,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import { Check, ChevronDown } from "lucide-react-native";
-import { useEffect, useState } from "react";
-import { Modal, Pressable, Text, View } from "react-native";
-import Animated, {
-  SlideInDown,
-  SlideOutDown,
-} from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useCallback, useRef } from "react";
+import { Pressable, Text, View } from "react-native";
 import { useThemeColors } from "@/lib/theme";
 
 interface FormSelectProps {
@@ -23,36 +24,39 @@ export const FormSelect = ({
   placeholder,
 }: FormSelectProps) => {
   const colors = useThemeColors();
-  const insets = useSafeAreaInsets();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
 
   const selectedLabel = options.find((o) => o.value === value)?.label;
 
-  const handleClose = () => {
-    setIsClosing(true);
-  };
+  const handleOpen = useCallback(() => {
+    bottomSheetRef.current?.present();
+  }, []);
 
-  useEffect(() => {
-    if (isClosing) {
-      const timeout = setTimeout(() => {
-        setIsOpen(false);
-        setIsClosing(false);
-      }, 200);
-      return () => clearTimeout(timeout);
-    }
-  }, [isClosing]);
+  const handleSelect = useCallback(
+    (optionValue: string) => {
+      onChange(optionValue);
+      bottomSheetRef.current?.dismiss();
+    },
+    [onChange]
+  );
 
-  const handleSelect = (optionValue: string) => {
-    onChange(optionValue);
-    handleClose();
-  };
+  const renderBackdrop = useCallback(
+    (props: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props}
+        appearsOnIndex={0}
+        disappearsOnIndex={-1}
+        pressBehavior="close"
+      />
+    ),
+    []
+  );
 
   return (
     <View>
       <Pressable
         className="flex-row items-center justify-between rounded-lg border border-input bg-background px-3 py-2.5"
-        onPress={() => setIsOpen(true)}
+        onPress={handleOpen}
       >
         <Text
           className={
@@ -64,70 +68,51 @@ export const FormSelect = ({
         <ChevronDown color={colors.mutedForeground} size={16} />
       </Pressable>
 
-      <Modal
-        animationType="fade"
-        onRequestClose={handleClose}
-        transparent
-        visible={isOpen}
+      <BottomSheetModal
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{ backgroundColor: colors.card }}
+        enableDynamicSizing
+        handleIndicatorStyle={{ backgroundColor: colors.border }}
+        ref={bottomSheetRef}
       >
-        <View className="flex-1 justify-end">
-          <Pressable
-            className="flex-1"
-            onPress={handleClose}
-            style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
-          />
-          <Animated.View
-            entering={SlideInDown.duration(250)}
-            exiting={SlideOutDown.duration(200)}
-            style={{
-              backgroundColor: colors.card,
-              paddingBottom: insets.bottom,
-              borderTopLeftRadius: 16,
-              borderTopRightRadius: 16,
-            }}
-          >
-            <View className="items-center py-3">
-              <View className="h-1 w-9 rounded-full bg-border" />
+        <BottomSheetView>
+          {placeholder && (
+            <View className="border-border border-b px-5 pb-3">
+              <Text className="font-semibold text-[15px] text-foreground">
+                {placeholder}
+              </Text>
             </View>
+          )}
 
-            {placeholder && (
-              <View className="border-border border-b px-5 pb-3">
-                <Text className="font-semibold text-[15px] text-foreground">
-                  {placeholder}
-                </Text>
-              </View>
-            )}
-
-            <View>
-              {options.map((option) => {
-                const isSelected = option.value === value;
-                return (
-                  <Pressable
+          <View className="p-safe">
+            {options.map((option) => {
+              const isSelected = option.value === value;
+              return (
+                <Pressable
+                  className={cn(
+                    "flex-row items-center justify-between px-5 py-3.5",
+                    isSelected && "bg-primary/8"
+                  )}
+                  key={option.value}
+                  onPress={() => handleSelect(option.value)}
+                >
+                  <Text
                     className={cn(
-                      "flex-row items-center justify-between px-5 py-3.5",
-                      isSelected && "bg-primary/8"
+                      "text-[15px]",
+                      isSelected
+                        ? "font-medium text-primary"
+                        : "text-foreground"
                     )}
-                    key={option.value}
-                    onPress={() => handleSelect(option.value)}
                   >
-                    <Text
-                      className={cn(
-                        "text-[15px]",
-                        isSelected
-                          ? "font-medium text-primary"
-                          : "text-foreground"
-                      )}
-                    >
-                      {option.label}
-                    </Text>
-                    {isSelected && <Check color={colors.primary} size={20} />}
-                  </Pressable>
-                );
-              })}
-            </View>
-          </Animated.View>
-        </View>
-      </Modal>
+                    {option.label}
+                  </Text>
+                  {isSelected && <Check color={colors.primary} size={20} />}
+                </Pressable>
+              );
+            })}
+          </View>
+        </BottomSheetView>
+      </BottomSheetModal>
     </View>
   );
 };

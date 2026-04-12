@@ -17,15 +17,13 @@ import {
 } from "react-native";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import { syncDatabase } from "@/lib/db/adapter";
+import { type DeckWithCounts, decksTable } from "@/lib/db/operations/decks";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
-import { decksTable } from "../../lib/db/operations/decks";
 import { DeckCard } from "./DeckCard";
 
 interface DeckListProps {
-  onDeckPress: (
-    deck: SelectDeck & { due_count: number; total_count: number }
-  ) => void;
+  onDeckPress: (deck: DeckWithCounts) => void;
   onDeckLongPress?: (deck: SelectDeck) => void;
   onCreatePress: () => void;
 }
@@ -150,16 +148,19 @@ export const DeckList: React.FC<DeckListProps> = ({
             id: "all",
             name: "All Cards",
             filters: {},
-            due_count: decks?.reduce((acc, d) => acc + d.due_count, 0) ?? 0,
-            total_count: decks?.reduce((acc, d) => acc + d.total_count, 0) ?? 0,
+            to_review: decks?.reduce((acc, d) => acc + d.to_review, 0) ?? 0,
+            to_review_backlog:
+              decks?.reduce((acc, d) => acc + d.to_review_backlog, 0) ?? 0,
+            total_hits: decks?.reduce((acc, d) => acc + d.total_hits, 0) ?? 0,
           }}
           onPress={() =>
             onDeckPress({
               id: "all",
               name: "All Cards",
               filters: {},
-              due_count: 0,
-              total_count: 0,
+              to_review: 0,
+              to_review_backlog: 0,
+              total_hits: 0,
             })
           }
         />

@@ -14,6 +14,9 @@ import {
 import { eq } from "drizzle-orm";
 import { ensureDb } from "..";
 import { getDrizzleDb } from "../adapter";
+import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "./flashcards";
+
+const daysToMs = (days: number) => days * 24 * 60 * 60 * 1000;
 
 /**
  * Parse deck filters from JSON string.
@@ -37,25 +40,32 @@ const toSelectDeck = (raw: RawDeck): SelectDeck => {
   };
 };
 
+export type DeckWithCounts = SelectDeck & {
+  to_review: number;
+  to_review_backlog: number;
+  total_hits: number;
+};
+
 export const decksTable = {
   list: {
-    query: async (): Promise<
-      (SelectDeck & { due_count: number; total_count: number })[]
-    > => {
+    query: async ({
+      show_reverse,
+      backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
+    }: {
+      show_reverse?: boolean;
+      backlogThresholdDays?: number;
+    } = {}): Promise<DeckWithCounts[]> => {
       const db = await ensureDb();
       const now = Date.now();
+      const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
 
-      // Get all decks with their flashcard counts
       const decks = await db
         .prepare<RawDeck>("SELECT * FROM decks ORDER BY name ASC;")
         .all();
 
       console.log(`[decks] Found ${decks.length} decks in database`);
 
-      const result: (SelectDeck & {
-        due_count: number;
-        total_count: number;
-      })[] = [];
+      const result: DeckWithCounts[] = [];
 
       for (const rawDeck of decks) {
         const deck = toSelectDeck(rawDeck);
@@ -75,9 +85,8 @@ export const decksTable = {
               FlashcardState.RE_LEARNING,
             ];
 
-        const directions = ["forward"];
+        const directions = show_reverse ? ["forward", "reverse"] : ["forward"];
 
-        // Build count query
         const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
         const tagCondition =
           tags.length > 0
@@ -86,8 +95,9 @@ export const decksTable = {
 
         const countSql = `
           SELECT
-            COUNT(DISTINCT CASE WHEN f.due_timestamp_ms <= ? THEN f.id END) as due_count,
-            COUNT(DISTINCT f.id) as total_count
+            COUNT(DISTINCT CASE WHEN f.due_timestamp_ms <= ? AND f.due_timestamp_ms > ? THEN f.id END) as to_review,
+            COUNT(DISTINCT CASE WHEN f.due_timestamp_ms <= ? THEN f.id END) as to_review_backlog,
+            COUNT(DISTINCT f.id) as total_hits
           FROM flashcards f
           LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin}
           WHERE f.direction IN (${directions.map(() => "?").join(", ")})
@@ -98,17 +108,30 @@ export const decksTable = {
         `;
 
         const countResult = await db
-          .prepare<{ due_count: number; total_count: number }>(countSql)
-          .get([now, ...directions, ...state, ...types, ...tags]);
+          .prepare<{
+            to_review: number;
+            to_review_backlog: number;
+            total_hits: number;
+          }>(countSql)
+          .get([
+            now,
+            backlogThresholdMs,
+            backlogThresholdMs,
+            ...directions,
+            ...state,
+            ...types,
+            ...tags,
+          ]);
 
         console.log(
-          `[decks] Deck "${deck.name}": due=${countResult?.due_count ?? 0}, total=${countResult?.total_count ?? 0}`
+          `[decks] Deck "${deck.name}": to_review=${countResult?.to_review ?? 0}, backlog=${countResult?.to_review_backlog ?? 0}, total=${countResult?.total_hits ?? 0}`
         );
 
         result.push({
           ...deck,
-          due_count: countResult?.due_count ?? 0,
-          total_count: countResult?.total_count ?? 0,
+          to_review: countResult?.to_review ?? 0,
+          to_review_backlog: countResult?.to_review_backlog ?? 0,
+          total_hits: countResult?.total_hits ?? 0,
         });
       }
 

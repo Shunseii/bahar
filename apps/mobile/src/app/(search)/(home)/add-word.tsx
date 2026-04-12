@@ -26,6 +26,7 @@ import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import { addToSearchIndex } from "@/lib/search";
+import { recentTagsAtom, store } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { errorMap } from "@/utils/zod";
@@ -100,6 +101,10 @@ export default function AddWordScreen() {
         queryKey: flashcardsTable.today.cacheOptions.queryKey,
       });
 
+      if (newEntry.tags && newEntry.tags.length > 0) {
+        store.set(recentTagsAtom, newEntry.tags);
+      }
+
       toast.success(t`Word added successfully`);
       router.back();
     },
@@ -164,7 +169,10 @@ export default function AddWordScreen() {
         type: data.type ?? "ism",
         tags: data.tags?.length ? data.tags.map((t) => t.name) : undefined,
         root: data.root
-          ? data.root.trim().replace(/[\s,]+/g, "").split("")
+          ? data.root
+              .trim()
+              .replace(/[\s,]+/g, "")
+              .split("")
           : undefined,
         antonyms: data.antonyms?.length ? data.antonyms : undefined,
         examples: data.examples?.length ? data.examples : undefined,

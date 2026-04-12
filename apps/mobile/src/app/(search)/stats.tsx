@@ -1,28 +1,11 @@
 import { Trans } from "@lingui/react/macro";
-import { Globe, Layers } from "lucide-react-native";
+import { Activity, Globe } from "lucide-react-native";
 import { Linking, Text, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useThemeColors } from "@/lib/theme";
 
-/* TODO: Re-enable full decks functionality when deck creation/editing with
- * filters is implemented on mobile. The previous implementation is preserved
- * in git history (commit before this change). It includes:
- * - DeckCard component with study/edit/delete actions
- * - CreateEditDeckModal with name field
- * - Deck list with pull-to-refresh and study navigation
- * - handleStudy passing filters/showReverse/queueCounts to review screen
- *
- * What still needs to be built:
- * - Tag filter (inline searchable, not modal-based)
- * - Word type filter (toggleable chips)
- * - Backlog counts on deck cards (DB query already supports it in decks.ts)
- * - show_reverse integration from user settings
- *
- * See designs in design/mobile.pen for the planned filter UI.
- */
-
-export default function DecksScreen() {
+export default function StatsScreen() {
   const colors = useThemeColors();
 
   return (
@@ -30,10 +13,10 @@ export default function DecksScreen() {
       <View className="border-border border-b px-4 py-4">
         <View className="flex-row items-center gap-3">
           <View className="rounded-xl bg-primary/10 p-2">
-            <Layers color={colors.primary} size={24} />
+            <Activity color={colors.primary} size={24} />
           </View>
           <Text className="font-bold text-2xl text-foreground">
-            <Trans>Decks</Trans>
+            <Trans>Progress</Trans>
           </Text>
         </View>
       </View>
@@ -42,14 +25,15 @@ export default function DecksScreen() {
         <Card className="w-full">
           <CardContent className="items-center py-8">
             <View className="mb-4 rounded-full bg-primary/10 p-4">
-              <Layers color={colors.primary} size={32} />
+              <Activity color={colors.primary} size={32} />
             </View>
             <Text className="mb-2 text-center font-semibold text-foreground text-lg">
               <Trans>Coming soon on mobile</Trans>
             </Text>
             <Text className="mb-6 text-center text-muted-foreground text-sm">
               <Trans>
-                Create and manage your study decks on the web app for now.
+                View your learning stats, streaks, and review history on the web
+                app for now.
               </Trans>
             </Text>
             <Button

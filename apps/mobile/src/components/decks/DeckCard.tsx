@@ -2,7 +2,6 @@
  * Deck card component with animated interactions.
  */
 
-import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import * as Haptics from "expo-haptics";
 import { ChevronRight, Layers, Sparkles } from "lucide-react-native";
 import type React from "react";
@@ -12,10 +11,11 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import type { DeckWithCounts } from "@/lib/db/operations/decks";
 import { useThemeColors } from "@/lib/theme";
 
 interface DeckCardProps {
-  deck: SelectDeck & { due_count: number; total_count: number };
+  deck: DeckWithCounts;
   onPress: () => void;
   onLongPress?: () => void;
 }
@@ -52,7 +52,7 @@ export const DeckCard: React.FC<DeckCardProps> = ({
     transform: [{ scale: scale.value }],
   }));
 
-  const hasDueCards = deck.due_count > 0;
+  const hasDueCards = deck.to_review > 0;
 
   return (
     <Pressable
@@ -87,15 +87,15 @@ export const DeckCard: React.FC<DeckCardProps> = ({
                   <>
                     <Sparkles color={colors.primary} size={14} />
                     <Text className="ml-1 font-medium text-primary">
-                      {deck.due_count} due
+                      {deck.to_review} due
                     </Text>
                     <Text className="ml-2 text-muted-foreground">
-                      / {deck.total_count} total
+                      / {deck.total_hits} total
                     </Text>
                   </>
                 ) : (
                   <Text className="text-muted-foreground">
-                    {deck.total_count} cards
+                    {deck.total_hits} cards
                   </Text>
                 )}
               </View>

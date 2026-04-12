@@ -254,7 +254,10 @@ export default function EditWordScreen() {
         type: data.type ?? "ism",
         tags: data.tags?.length ? data.tags.map((t) => t.name) : undefined,
         root: data.root
-          ? data.root.trim().replace(/[\s,]+/g, "").split("")
+          ? data.root
+              .trim()
+              .replace(/[\s,]+/g, "")
+              .split("")
           : undefined,
         antonyms: data.antonyms?.length ? data.antonyms : undefined,
         examples: data.examples?.length ? data.examples : undefined,
