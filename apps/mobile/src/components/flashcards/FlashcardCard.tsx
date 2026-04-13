@@ -8,19 +8,22 @@
  * - Haptic feedback
  */
 
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import * as Haptics from "expo-haptics";
 import type React from "react";
 import { useCallback, useEffect } from "react";
 import { Dimensions, I18nManager, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
+  Easing,
   Extrapolation,
   FadeIn,
   interpolate,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import type { FlashcardWithDictionaryEntry } from "../../lib/db/operations/flashcards";
 
@@ -64,9 +67,11 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
   const panGesture = Gesture.Pan()
     .onStart(() => {
-      scale.value = withSpring(0.98, { damping: 15, stiffness: 400 });
+      if (!isAnswerShown.value) return;
+      scale.value = withTiming(0.98, { duration: 150 });
     })
     .onUpdate((event) => {
+      if (!isAnswerShown.value) return;
       translateX.value = event.translationX;
       rotation.value = interpolate(
         event.translationX,
@@ -76,10 +81,10 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       );
     })
     .onEnd((event) => {
-      scale.value = withSpring(1, { damping: 15, stiffness: 400 });
-
-      // Only allow swipe to complete if answer is shown (read from shared value)
-      const canSwipe = isAnswerShown.value;
+      if (!isAnswerShown.value) {
+        return;
+      }
+      scale.value = withTiming(1, { duration: 150 });
 
       // In RTL, swipe directions are mirrored:
       // LTR: right = Good, left = Again
@@ -89,24 +94,30 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       const goodSwipe = isRTL ? swipedLeft : swipedRight;
       const againSwipe = isRTL ? swipedRight : swipedLeft;
 
-      if (goodSwipe && canSwipe && onSwipeRight) {
-        translateX.value = withSpring((isRTL ? -1 : 1) * SCREEN_WIDTH * 1.5, {
-          damping: 20,
-          stiffness: 200,
+      if (goodSwipe && onSwipeRight) {
+        translateX.value = withTiming((isRTL ? -1 : 1) * SCREEN_WIDTH * 1.5, {
+          duration: 250,
+          easing: Easing.out(Easing.ease),
         });
         runOnJS(triggerSuccessHaptic)();
         runOnJS(onSwipeRight)();
-      } else if (againSwipe && canSwipe && onSwipeLeft) {
-        translateX.value = withSpring((isRTL ? 1 : -1) * SCREEN_WIDTH * 1.5, {
-          damping: 20,
-          stiffness: 200,
+      } else if (againSwipe && onSwipeLeft) {
+        translateX.value = withTiming((isRTL ? 1 : -1) * SCREEN_WIDTH * 1.5, {
+          duration: 250,
+          easing: Easing.out(Easing.ease),
         });
         runOnJS(triggerHaptic)();
         runOnJS(onSwipeLeft)();
       } else {
         // Snap back to center
-        translateX.value = withSpring(0, { damping: 20, stiffness: 400 });
-        rotation.value = withSpring(0, { damping: 20, stiffness: 400 });
+        translateX.value = withTiming(0, {
+          duration: 200,
+          easing: Easing.out(Easing.ease),
+        });
+        rotation.value = withTiming(0, {
+          duration: 200,
+          easing: Easing.out(Easing.ease),
+        });
       }
     });
 
@@ -149,10 +160,10 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
   const entry = flashcard.dictionary_entry;
 
   const typeLabels: Record<string, string> = {
-    ism: "Noun",
-    "fi'l": "Verb",
-    harf: "Particle",
-    expression: "Expression",
+    ism: t`Noun`,
+    "fi'l": t`Verb`,
+    harf: t`Particle`,
+    expression: t`Expression`,
   };
 
   return (
@@ -163,12 +174,12 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
       >
         {/* Swipe indicators */}
         <Animated.View
-          className="rounded-3xl bg-destructive/20"
+          className="rounded-3xl bg-muted-foreground/20"
           pointerEvents="none"
           style={[againOverlayStyle, StyleSheet.absoluteFill]}
         />
         <Animated.View
-          className="rounded-3xl bg-green-500/20"
+          className="rounded-3xl bg-primary/20"
           pointerEvents="none"
           style={[goodOverlayStyle, StyleSheet.absoluteFill]}
         />
@@ -248,7 +259,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
         {/* Tags */}
         {entry.tags && entry.tags.length > 0 && (
-          <View className="mt-2 flex-row flex-wrap justify-center gap-2">
+          <View className="mt-6 flex-row flex-wrap justify-center gap-2">
             {entry.tags.slice(0, 3).map((tag) => (
               <View className="rounded-full bg-muted px-2.5 py-1" key={tag}>
                 <Text className="text-muted-foreground text-xs">{tag}</Text>
@@ -267,7 +278,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
         {/* Tap hint */}
         {!showAnswer && (
           <Text className="mt-4 text-center text-muted-foreground/60 text-xs">
-            Tap to reveal answer
+            <Trans>Tap to reveal answer</Trans>
           </Text>
         )}
       </Animated.View>

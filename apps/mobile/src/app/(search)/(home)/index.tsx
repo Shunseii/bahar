@@ -15,12 +15,15 @@ import { ActivityIndicator, Animated, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DictionaryList } from "@/components/dictionary";
 import { DictionaryFilters } from "@/components/dictionary/DictionaryFilters";
+import { GuestBanner } from "@/components/GuestBanner";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
 } from "@/lib/db/operations/flashcards";
+import { settingsTable } from "@/lib/db/operations/settings";
 import { selectedTagsAtom, sortOptionAtom } from "@/lib/store/filters";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
@@ -187,16 +190,25 @@ export default function HomeScreen() {
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const selectedTags = useAtomValue(selectedTagsAtom);
   const sortOption = useAtomValue(sortOptionAtom);
+  const { isAnonymous } = useUserPlan();
   const { state, error } = useAppInit();
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
+
+  const { data: settings } = useQuery({
+    queryFn: settingsTable.get.query,
+    ...settingsTable.get.cacheOptions,
+    enabled: state === "ready",
+  });
+  const showReverse = settings?.show_reverse_flashcards ?? false;
 
   const { data: counts, isPending } = useQuery({
     queryFn: () =>
       flashcardsTable.counts.query({
         backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
+        showReverse,
       }),
-    queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+    queryKey: [...flashcardsTable.counts.cacheOptions.queryKey, showReverse],
     enabled: state === "ready",
     refetchOnMount: true,
   });
@@ -218,9 +230,10 @@ export default function HomeScreen() {
       params: {
         regularCount: String(regularCount),
         backlogCount: String(backlogCount),
+        showReverse: String(showReverse),
       },
     });
-  }, [router, regularCount, backlogCount]);
+  }, [router, regularCount, backlogCount, showReverse]);
 
   const handleAddPress = useCallback(() => {
     router.push("/(search)/(home)/add-word");
@@ -228,17 +241,27 @@ export default function HomeScreen() {
 
   const listHeader = useMemo(
     () => (
-      <HeaderCard
-        backlogCount={backlogCount}
-        elapsedTimeNs={elapsedTimeNs}
-        isPending={isPending}
-        onAddPress={handleAddPress}
-        onReviewPress={handleReviewPress}
-        regularCount={regularCount}
-        totalResults={totalResults}
-      />
+      <>
+        {isAnonymous && <GuestBanner />}
+        <HeaderCard
+          backlogCount={backlogCount}
+          elapsedTimeNs={elapsedTimeNs}
+          isPending={isPending}
+          onAddPress={handleAddPress}
+          onReviewPress={handleReviewPress}
+          regularCount={regularCount}
+          totalResults={totalResults}
+        />
+      </>
     ),
-    [totalResults, elapsedTimeNs, regularCount, backlogCount, isPending]
+    [
+      isAnonymous,
+      totalResults,
+      elapsedTimeNs,
+      regularCount,
+      backlogCount,
+      isPending,
+    ]
   );
 
   if (state === "loading" || state === "idle") {

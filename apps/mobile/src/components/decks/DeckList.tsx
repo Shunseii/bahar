@@ -16,7 +16,8 @@ import {
   View,
 } from "react-native";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
-import { syncDatabase } from "@/lib/db/adapter";
+import { recoverFromSyncConflict } from "@/lib/db";
+import { isSyncError, syncDatabase } from "@/lib/db/adapter";
 import { type DeckWithCounts, decksTable } from "@/lib/db/operations/decks";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
@@ -53,6 +54,10 @@ export const DeckList: React.FC<DeckListProps> = ({
       store.set(syncCompletedCountAtom, (c) => c + 1);
     } catch (error) {
       console.warn("[DeckList] Pull-to-refresh sync failed:", error);
+      if (isSyncError(error)) {
+        await recoverFromSyncConflict();
+        return;
+      }
       await refetch();
     } finally {
       store.set(isSyncingAtom, false);

@@ -10,6 +10,9 @@ import * as schema from "@bahar/drizzle-user-db-schemas";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import * as SQLite from "expo-sqlite";
 
+export const isSyncError = (error: unknown): boolean =>
+  String(error).includes("sync error");
+
 // Store the database instance for sync operations
 let dbInstance: SQLite.SQLiteDatabase | null = null;
 
@@ -58,33 +61,17 @@ const createAdapter = (db: SQLite.SQLiteDatabase): DatabaseAdapter => {
     },
 
     async push(): Promise<void> {
-      // libsql sync is bidirectional - syncLibSQL handles both push and pull
-      try {
-        console.log("[adapter] Starting push/sync...");
-        await db.syncLibSQL();
-        console.log("[adapter] Push/sync completed");
-      } catch (error) {
-        console.error("[adapter] Push/sync failed:", error);
-        throw error;
-      }
+      await db.syncLibSQL();
     },
 
     async pull(): Promise<void> {
-      // libsql sync is bidirectional - syncLibSQL handles both push and pull
-      try {
-        console.log("[adapter] Starting pull/sync...");
-        await db.syncLibSQL();
-        console.log("[adapter] Pull/sync completed");
-      } catch (error) {
-        console.error("[adapter] Pull/sync failed:", error);
-        throw error;
-      }
+      await db.syncLibSQL();
     },
 
     async close(): Promise<void> {
-      await db.closeAsync();
-      dbInstance = null;
       drizzleDb = null;
+      dbInstance = null;
+      await db.closeAsync();
     },
   };
 };
@@ -96,8 +83,6 @@ export interface ConnectOptions {
   url: string;
   /** Authentication token for Turso */
   authToken: string;
-  /** Sync interval in seconds (default: 60) - not used directly, sync is manual */
-  syncInterval?: number;
 }
 
 /**
@@ -107,6 +92,7 @@ export const connect = async (
   options: ConnectOptions
 ): Promise<DatabaseAdapter> => {
   const db = await SQLite.openDatabaseAsync(options.name, {
+    finalizeUnusedStatementsBeforeClosing: false,
     libSQLOptions: {
       url: options.url,
       authToken: options.authToken,

@@ -1,7 +1,7 @@
 import { cn } from "@bahar/design-system";
 import type { SelectFlashcard } from "@bahar/drizzle-user-db-schemas";
 import { plural, t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Lock, Timer } from "lucide-react-native";
 import type { FC } from "react";
@@ -24,8 +24,10 @@ const MAX_VISIBLE_DOTS = 10;
 
 const formatNextReview = ({
   due,
+  locale,
 }: {
   due: string;
+  locale: string;
 }): { label: string; isOverdue: boolean } => {
   const dueDate = new Date(due);
   const now = new Date();
@@ -36,7 +38,7 @@ const formatNextReview = ({
   }
 
   return {
-    label: intlFormatDistance(dueDate, now).label,
+    label: intlFormatDistance(dueDate, now, { locale }).label,
     isOverdue: false,
   };
 };
@@ -66,7 +68,8 @@ const DirectionTimeline: FC<{
   revlogs: { rating: string | null; reviewTimestampMs: number }[];
   flashcard?: Pick<SelectFlashcard, "due" | "lapses"> | undefined;
   label?: string;
-}> = ({ revlogs, flashcard, label }) => {
+  locale: string;
+}> = ({ revlogs, flashcard, label, locale }) => {
   const reviewCount = revlogs.length;
   const lapseCount = flashcard?.lapses ?? 0;
   const lastReviewMs =
@@ -88,7 +91,7 @@ const DirectionTimeline: FC<{
 
   if (lastReviewMs) {
     metaParts.push(
-      intlFormatDistance(new Date(lastReviewMs), new Date()).label
+      intlFormatDistance(new Date(lastReviewMs), new Date(), { locale }).label
     );
   }
 
@@ -151,13 +154,14 @@ const NextReviewSection: FC<{
   showReverse: boolean;
 }> = ({ forwardFlashcard, reverseFlashcard, showReverse }) => {
   const colors = useThemeColors();
+  const { i18n } = useLingui();
 
   if (showReverse) {
     const forwardNext = forwardFlashcard
-      ? formatNextReview({ due: forwardFlashcard.due })
+      ? formatNextReview({ due: forwardFlashcard.due, locale: i18n.locale })
       : null;
     const reverseNext = reverseFlashcard
-      ? formatNextReview({ due: reverseFlashcard.due })
+      ? formatNextReview({ due: reverseFlashcard.due, locale: i18n.locale })
       : null;
 
     return (
@@ -203,7 +207,7 @@ const NextReviewSection: FC<{
   }
 
   const next = forwardFlashcard
-    ? formatNextReview({ due: forwardFlashcard.due })
+    ? formatNextReview({ due: forwardFlashcard.due, locale: i18n.locale })
     : null;
 
   if (!next) return null;
@@ -231,6 +235,7 @@ const NextReviewSection: FC<{
 export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
   const { isProUser } = useUserPlan();
   const colors = useThemeColors();
+  const { i18n } = useLingui();
 
   const { data: settingsData } = useQuery({
     queryFn: settingsTable.get.query,
@@ -251,12 +256,18 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
   const { data: flashcardData } = useQuery({
     queryFn: () => flashcardsTable.findByEntryId.query({ entryId }),
     queryKey: [...flashcardsTable.findByEntryId.cacheOptions.queryKey, entryId],
-    enabled: isProUser,
   });
+
+  const forwardFlashcard = flashcardData?.find(
+    (f) => f.direction === "forward"
+  );
+  const reverseFlashcard = flashcardData?.find(
+    (f) => f.direction === "reverse"
+  );
 
   if (!isProUser) {
     return (
-      <View className="gap-1.5 border-border/50 border-t pt-3">
+      <View className="gap-3 border-border/50 border-t pt-3">
         <View className="flex-row items-center gap-1.5">
           <Text className="font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Review History</Trans>
@@ -268,6 +279,11 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
             Upgrade to Pro to see your review history for this word.
           </Trans>
         </Text>
+        <NextReviewSection
+          forwardFlashcard={forwardFlashcard}
+          reverseFlashcard={reverseFlashcard}
+          showReverse={showReverse}
+        />
       </View>
     );
   }
@@ -275,12 +291,6 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
   const revlogs = revlogData?.revlogs ?? [];
   const forwardRevlogs = revlogs.filter((r) => r.direction === "forward");
   const reverseRevlogs = revlogs.filter((r) => r.direction === "reverse");
-  const forwardFlashcard = flashcardData?.find(
-    (f) => f.direction === "forward"
-  );
-  const reverseFlashcard = flashcardData?.find(
-    (f) => f.direction === "reverse"
-  );
 
   const hasRevlogs = revlogs.length > 0;
 
@@ -296,11 +306,13 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
             <DirectionTimeline
               flashcard={forwardFlashcard}
               label={t`Arabic → English`}
+              locale={i18n.locale}
               revlogs={forwardRevlogs}
             />
             <DirectionTimeline
               flashcard={reverseFlashcard}
               label={t`English → Arabic`}
+              locale={i18n.locale}
               revlogs={reverseRevlogs}
             />
             <RatingLegend />
@@ -309,6 +321,7 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
           <>
             <DirectionTimeline
               flashcard={forwardFlashcard}
+              locale={i18n.locale}
               revlogs={forwardRevlogs}
             />
             <RatingLegend />

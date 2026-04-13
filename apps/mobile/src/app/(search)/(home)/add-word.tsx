@@ -22,6 +22,8 @@ import {
   VerbMorphologySection,
 } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
+import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
+import { useSearch } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { FormSchema } from "@/lib/schemas/dictionary";
@@ -75,6 +77,8 @@ const BackButton = () => {
 export default function AddWordScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { scrollHandler } = useCollapsibleHeader(t`Add a new word`);
+  const { reset } = useSearch();
 
   const addWordMutation = useMutation({
     mutationFn: dictionaryEntriesTable.addWord.mutation,
@@ -88,6 +92,7 @@ export default function AddWordScreen() {
         root: newEntry.root ?? undefined,
         tags: newEntry.tags ?? undefined,
       });
+      reset();
 
       try {
         await flashcardsTable.createForEntry.mutation({
@@ -97,9 +102,14 @@ export default function AddWordScreen() {
         console.warn("Failed to create flashcards:", error);
       }
 
-      await queryClient.invalidateQueries({
-        queryKey: flashcardsTable.today.cacheOptions.queryKey,
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: flashcardsTable.today.cacheOptions.queryKey,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+        }),
+      ]);
 
       if (newEntry.tags && newEntry.tags.length > 0) {
         store.set(recentTagsAtom, newEntry.tags);
@@ -188,6 +198,8 @@ export default function AddWordScreen() {
         className="flex-1 bg-background"
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         keyboardShouldPersistTaps="handled"
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
         <View className="flex-1 px-4 pt-4">
           <Breadcrumbs />

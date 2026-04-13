@@ -18,7 +18,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { authClient } from "@/utils/auth-client";
 import "react-native-reanimated";
 import { messages as arMessages } from "@bahar/i18n/locales/ar";
@@ -72,17 +72,19 @@ setup();
 export default function RootLayout() {
   const { isPending, data: authData } = authClient.useSession();
   const colorScheme = useColorScheme();
+  const hasResolved = useRef(false);
   const [loaded] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   useEffect(() => {
     if (loaded && !isPending) {
+      hasResolved.current = true;
       SplashScreen.hideAsync();
     }
   }, [loaded, isPending]);
 
-  if (!loaded || isPending) {
+  if (!loaded || (!hasResolved.current && isPending)) {
     return null;
   }
 
@@ -108,7 +110,6 @@ export default function RootLayout() {
                   </View>
                 </SafeAreaListener>
 
-                <Toaster />
               </SafeAreaProvider>
             </KeyboardProvider>
           </BottomSheetModalProvider>
@@ -157,11 +158,38 @@ function ThemeColorsInner({
                   gestureDirection: "vertical",
                 }}
               />
+              <Stack.Screen
+                name="link-account"
+                options={{
+                  headerShown: false,
+                  animation: "slide_from_bottom",
+                  gestureEnabled: true,
+                  gestureDirection: "vertical",
+                }}
+              />
+              <Stack.Screen
+                name="link-code/[email]"
+                options={{
+                  headerShown: false,
+                  animation: "slide_from_right",
+                }}
+              />
             </Stack.Protected>
 
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="auto" />
+          <Toaster
+            toastOptions={{
+              style: {
+                backgroundColor: themeColors.card,
+                borderColor: themeColors.border,
+                borderWidth: 1,
+              },
+              titleStyle: { color: themeColors.foreground },
+              descriptionStyle: { color: themeColors.mutedForeground },
+            }}
+          />
         </I18nProvider>
       </ThemeProvider>
     </ThemeColorsProvider>

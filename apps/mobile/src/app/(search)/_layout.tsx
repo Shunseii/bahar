@@ -37,8 +37,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { Button } from "@/components/ui/button";
 import { HeaderScrollContext } from "@/contexts/header-scroll";
-import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
-import { syncDatabase } from "@/lib/db/adapter";
+import { recoverFromSyncConflict, resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
+import { isSyncError, syncDatabase } from "@/lib/db/adapter";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
 import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
@@ -159,10 +159,10 @@ function DrawerContent(props: DrawerContentComponentProps) {
         <View className="mt-4">
           <Button
             onPress={async () => {
-              await authClient.signOut();
               queryClient.clear();
               resetOramaDb();
               await resetDb();
+              await authClient.signOut();
             }}
             variant="secondary"
           >
@@ -201,6 +201,9 @@ export default function Layout() {
         });
       } catch (error) {
         console.warn("[sync] Background sync failed:", error);
+        if (isSyncError(error)) {
+          await recoverFromSyncConflict();
+        }
       } finally {
         store.set(isSyncingAtom, false);
       }

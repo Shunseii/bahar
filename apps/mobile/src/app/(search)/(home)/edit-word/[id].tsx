@@ -28,9 +28,11 @@ import {
   VerbMorphologySection,
 } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
+import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { FormSchema } from "@/lib/schemas/dictionary";
+import { useSearch } from "@/hooks/useSearch";
 import { removeFromSearchIndex, updateSearchIndex } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
@@ -82,6 +84,8 @@ export default function EditWordScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
+  const { scrollHandler } = useCollapsibleHeader(t`Edit word`);
+  const { reset: resetSearch } = useSearch();
 
   const {
     data: entry,
@@ -104,6 +108,7 @@ export default function EditWordScreen() {
         root: updatedEntry.root ?? undefined,
         tags: updatedEntry.tags ?? undefined,
       });
+      resetSearch();
 
       await queryClient.invalidateQueries({
         queryKey: dictionaryEntriesTable.entry.cacheOptions.queryKey,
@@ -122,6 +127,7 @@ export default function EditWordScreen() {
     mutationFn: dictionaryEntriesTable.delete.mutation,
     onSuccess: async (deletedEntry) => {
       await removeFromSearchIndex(deletedEntry.id);
+      resetSearch();
       await queryClient.invalidateQueries({
         queryKey: dictionaryEntriesTable.entry.cacheOptions.queryKey,
       });
@@ -337,6 +343,8 @@ export default function EditWordScreen() {
         className="flex-1 bg-background"
         contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
         keyboardShouldPersistTaps="handled"
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
         <View className="flex-1 px-4 pt-4">
           <Breadcrumbs />

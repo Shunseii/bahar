@@ -6,8 +6,14 @@
  */
 
 import { err, ok, type Result, tryCatch } from "@bahar/result";
+import { File, Paths } from "expo-file-system/next";
 import { api } from "../../utils/api";
-import { connect, type DatabaseAdapter } from "./adapter";
+import {
+  connect,
+  type DatabaseAdapter,
+  isSyncError,
+  syncDatabase,
+} from "./adapter";
 
 const LOCAL_DB_NAME = "bahar-user.db";
 export const SYNC_INTERVAL_MS = 60_000;
@@ -17,6 +23,7 @@ export const SYNC_INTERVAL_MS = 60_000;
  */
 let db: DatabaseAdapter | null = null;
 let dbInitPromise: Promise<Result<null, DbError>> | null = null;
+let currentDbName: string | null = null;
 
 type DbError = {
   type: string;
@@ -46,14 +53,51 @@ export const ensureDb = async (): Promise<DatabaseAdapter> => {
 };
 
 /**
- * Closes and resets the database connection.
+ * Closes the database connection and clears references.
+ * Used on normal logout — the local file is kept for fast re-login.
  */
 export const resetDb = async (): Promise<void> => {
   if (db) {
-    await db.close();
+    try {
+      await db.close();
+    } catch (error) {
+      console.warn("[db] closeAsync failed:", error);
+    }
     db = null;
     dbInitPromise = null;
   }
+};
+
+/**
+ * Deletes the local replica files. The remote Turso database is not affected.
+ * Requires an app restart afterwards because libsql's native state
+ * can only be fully reset by restarting the process.
+ */
+export const deleteLocalDb = (): void => {
+  if (!currentDbName) return;
+  for (const suffix of ["", "-wal", "-shm", "-info"]) {
+    const file = new File(
+      Paths.document,
+      "SQLite",
+      `${currentDbName}${suffix}`
+    );
+    if (file.exists) {
+      file.delete();
+    }
+  }
+  currentDbName = null;
+};
+
+/**
+ * Recovers from an unresolvable sync conflict by deleting the local
+ * replica and restarting the app. On restart, openDatabaseAsync
+ * will pull a fresh copy from the remote.
+ */
+export const recoverFromSyncConflict = async (): Promise<void> => {
+  console.warn("[db] Sync conflict — deleting local DB and restarting...");
+  deleteLocalDb();
+  const { reloadAppAsync } = await import("expo");
+  await reloadAppAsync("Resolving sync conflict");
 };
 
 /**
@@ -90,15 +134,16 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
 
   const { access_token, hostname, db_name } = infoResult.value;
 
+  const dbFileName = `${LOCAL_DB_NAME}-${db_name}.db`;
+  const connectOptions = {
+    name: dbFileName,
+    url: `libsql://${hostname}`,
+    authToken: access_token,
+  };
+
   // Connect to local database with remote sync
   const connectionResult = await tryCatch(
-    () =>
-      connect({
-        name: `${LOCAL_DB_NAME}-${db_name}.db`,
-        url: `libsql://${hostname}`,
-        authToken: access_token,
-        syncInterval: 60, // Sync every 60 seconds
-      }),
+    () => connect(connectOptions),
     (error) => ({
       type: "db_connection_failed",
       reason: String(error),
@@ -108,45 +153,43 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   if (!connectionResult.ok) return connectionResult;
 
   db = connectionResult.value;
+  currentDbName = dbFileName;
 
-  // Apply any required migrations
-  const migrationResult = await applyRequiredMigrations();
-  if (!migrationResult.ok) return migrationResult;
-
-  // Initial sync to pull remote data
-  console.log("[db] Starting initial sync...");
-  const syncStartTime = Date.now();
-  const syncResult = await tryCatch(
-    async () => {
-      await db!.pull?.();
-      const syncDuration = Date.now() - syncStartTime;
-      console.log(`[db] Initial sync completed in ${syncDuration}ms`);
-
-      // Check how many rows we have after sync
-      const countResult = await db!
-        .prepare<{ count: number }>(
-          "SELECT COUNT(*) as count FROM dictionary_entries"
-        )
-        .get();
-      console.log(`[db] Dictionary entries count: ${countResult?.count ?? 0}`);
-
-      const decksCount = await db!
-        .prepare<{ count: number }>("SELECT COUNT(*) as count FROM decks")
-        .get();
-      console.log(`[db] Decks count: ${decksCount?.count ?? 0}`);
-
-      const flashcardsCount = await db!
-        .prepare<{ count: number }>("SELECT COUNT(*) as count FROM flashcards")
-        .get();
-      console.log(`[db] Flashcards count: ${flashcardsCount?.count ?? 0}`);
-
-      return null;
-    },
+  // Pull from remote before migrations — local migration writes
+  // create frames that conflict with the remote's existing frames.
+  const pullResult = await tryCatch(
+    () => syncDatabase(),
     (error) => ({
-      type: "initial_sync_failed",
+      type: "initial_pull_failed" as const,
       reason: String(error),
     })
   );
+
+  if (!pullResult.ok && isSyncError(pullResult.error.reason)) {
+    await recoverFromSyncConflict();
+    return pullResult;
+  }
+
+  // Apply any required migrations (split by statement since libSQL's
+  // execAsync only executes the first statement in multi-statement SQL)
+  const migrationResult = await applyRequiredMigrations();
+  if (!migrationResult.ok) return migrationResult;
+
+  // Sync after migrations to push any new migration records
+  const syncResult = await tryCatch(
+    async () => {
+      await syncDatabase();
+      return null;
+    },
+    (error) => ({
+      type: "post_migration_sync_failed",
+      reason: String(error),
+    })
+  );
+
+  if (!syncResult.ok && isSyncError(syncResult.error.reason)) {
+    await recoverFromSyncConflict();
+  }
 
   return syncResult;
 };
@@ -157,7 +200,6 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
 const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
   if (!db) return ok(null);
 
-  // Get migrations from API
   const migrationsResult = await tryCatch(
     async () => {
       const { data, error } = await api.migrations.full.get();
@@ -175,7 +217,6 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
   const allMigrations = migrationsResult.value;
   if (!allMigrations.length) return ok(null);
 
-  // Check which migrations are already applied
   const localMigrationsResult = await getLocalAppliedMigrations();
   if (!localMigrationsResult.ok) return localMigrationsResult;
 
@@ -195,8 +236,19 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
   for (const migration of requiredMigrations) {
     const nowTimestampMs = Date.now();
 
+    // libSQL's execAsync only executes the first statement in a
+    // multi-statement string, so split and run each individually.
+    const statements = migration.sql_script
+      .split(";")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     const execResult = await tryCatch(
-      () => db!.exec(migration.sql_script),
+      async () => {
+        for (const statement of statements) {
+          await db!.exec(`${statement};`);
+        }
+      },
       (error) => ({
         type: "migration_failed",
         reason: String(error),
@@ -204,7 +256,6 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
     );
 
     if (!execResult.ok) {
-      // Record failed migration
       await tryCatch(
         () =>
           db!
@@ -258,7 +309,9 @@ const getLocalAppliedMigrations = async (): Promise<
   const tableExists = await tryCatch(
     async () => {
       const result = await db!
-        .prepare<{ name: string }>(
+        .prepare<{
+          name: string;
+        }>(
           "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';"
         )
         .get();

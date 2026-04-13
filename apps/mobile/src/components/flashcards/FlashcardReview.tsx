@@ -10,11 +10,7 @@
 
 import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
-import {
-  createScheduler,
-  getSchedulingOptions,
-  gradeFlashcard,
-} from "@bahar/fsrs";
+import { createScheduler, getSchedulingOptions } from "@bahar/fsrs";
 import { Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Archive, Brain, PartyPopper, X } from "lucide-react-native";
@@ -32,7 +28,7 @@ import {
   type FlashcardWithDictionaryEntry,
   flashcardsTable,
 } from "../../lib/db/operations/flashcards";
-import { queryClient } from "../../utils/api";
+import { api, queryClient } from "../../utils/api";
 import { FlashcardCard } from "./FlashcardCard";
 import { GradeButtons, ShowAnswerButton } from "./GradeButtons";
 import { GradeFeedback } from "./GradeFeedback";
@@ -171,7 +167,6 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
     useState<FlashcardQueue>(initialQueue);
   const scheduler = useMemo(() => createScheduler(), []);
 
-  // Fetch counts if not provided
   const { data: fetchedCounts } = useQuery({
     queryFn: () =>
       flashcardsTable.counts.query({
@@ -184,10 +179,12 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       showReverse,
       JSON.stringify(filters),
     ],
-    enabled: !queueCounts,
+    placeholderData: queueCounts
+      ? { ...queueCounts, total: queueCounts.regular + queueCounts.backlog }
+      : undefined,
   });
 
-  const counts = queueCounts ?? fetchedCounts ?? { regular: 0, backlog: 0 };
+  const counts = fetchedCounts ?? { regular: 0, backlog: 0 };
 
   // Fetch flashcards for selected queue
   const { data, status } = useQuery({
@@ -287,32 +284,34 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
     }
   }, [showAnswer, schedulingCards, handleGrade]);
 
+  const RATING_TO_LABEL: Record<Rating, "again" | "hard" | "good" | "easy"> = {
+    [Rating.Manual]: "again",
+    [Rating.Again]: "again",
+    [Rating.Hard]: "hard",
+    [Rating.Good]: "good",
+    [Rating.Easy]: "easy",
+  };
+
   const handleGradeComplete = useCallback(async () => {
     if (!(schedulingCards && currentCard) || pendingGrade === null) return;
 
     const grade = pendingGrade;
-    const updates = gradeFlashcard(
-      scheduler,
-      {
-        id: currentCard.id,
-        dictionary_entry_id: currentCard.dictionary_entry_id,
-        difficulty: currentCard.difficulty,
-        due: currentCard.due,
-        due_timestamp_ms: currentCard.due_timestamp_ms,
-        elapsed_days: currentCard.elapsed_days,
-        lapses: currentCard.lapses,
-        last_review: currentCard.last_review,
-        last_review_timestamp_ms: currentCard.last_review_timestamp_ms,
-        reps: currentCard.reps,
-        scheduled_days: currentCard.scheduled_days,
-        stability: currentCard.stability,
-        state: currentCard.state,
-        direction: currentCard.direction,
-        learning_steps: currentCard.learning_steps,
-        is_hidden: currentCard.is_hidden,
-      },
-      grade
-    );
+    const { card: selectedCard, log } = schedulingCards[grade];
+
+    const updates = {
+      due: selectedCard.due.toISOString(),
+      due_timestamp_ms: selectedCard.due.getTime(),
+      last_review: selectedCard.last_review?.toISOString() ?? null,
+      last_review_timestamp_ms: selectedCard.last_review?.getTime() ?? null,
+      state: selectedCard.state,
+      stability: selectedCard.stability,
+      difficulty: selectedCard.difficulty,
+      reps: selectedCard.reps,
+      lapses: selectedCard.lapses,
+      elapsed_days: selectedCard.elapsed_days,
+      scheduled_days: selectedCard.scheduled_days,
+      learning_steps: selectedCard.learning_steps,
+    };
 
     setShowAnswer(false);
     setCards((prev) => prev.filter((c) => c.id !== currentCard.id));
@@ -322,13 +321,21 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       id: currentCard.id,
       updates,
     });
-  }, [
-    schedulingCards,
-    currentCard,
-    pendingGrade,
-    scheduler,
-    updateFlashcardLocal,
-  ]);
+
+    // Post revlog to server (fire-and-forget)
+    api.stats.revlogs
+      .post({
+        ...log,
+        due: log.due.toISOString(),
+        review: log.review.toISOString(),
+        rating: RATING_TO_LABEL[log.rating],
+        direction: currentCard.direction,
+        dictionary_entry_id: currentCard.dictionary_entry_id,
+      })
+      .catch((err) => {
+        console.warn("[revlog] Failed to post revlog:", err);
+      });
+  }, [schedulingCards, currentCard, pendingGrade, updateFlashcardLocal]);
 
   if (status === "pending") {
     return (
@@ -405,6 +412,8 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
 
   return (
     <View className="flex-1 bg-background">
+      <GradeFeedback grade={pendingGrade} onComplete={handleGradeComplete} />
+
       {/* Header */}
       <View className="border-border/30 border-b px-4 py-3">
         <View className="flex-row items-center">
@@ -442,8 +451,6 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
 
       {/* Card area */}
       <View className="flex-1 justify-center p-4">
-        <GradeFeedback grade={pendingGrade} onComplete={handleGradeComplete} />
-
         <ReAnimated.View
           entering={FadeIn.duration(200)}
           exiting={FadeOut.duration(150)}
