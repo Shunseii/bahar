@@ -1,6 +1,7 @@
 import { expoClient } from "@better-auth/expo/client";
 import { polarClient } from "@polar-sh/better-auth/client";
 import {
+  anonymousClient,
   emailOTPClient,
   inferAdditionalFields,
 } from "better-auth/client/plugins";
@@ -17,6 +18,7 @@ export const authClient = createAuthClient({
       storage: SecureStore,
     }),
     inferAdditionalFields<typeof auth>(),
+    anonymousClient(),
     emailOTPClient(),
     polarClient(),
   ],

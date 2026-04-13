@@ -134,6 +134,20 @@
       "when": 1775697248179,
       "tag": "0018_bizarre_siren",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1775968418103,
+      "tag": "0019_foamy_ben_urich",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1775969867626,
+      "tag": "0020_harsh_celestials",
+      "breakpoints": true
     }
   ]
 }

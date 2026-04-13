@@ -8,8 +8,11 @@ export const useUserPlan = () => {
     userData?.user.plan === "pro" &&
     activeStatuses.includes(userData.user.subscriptionStatus ?? "");
 
+  const isAnonymous = userData?.user.isAnonymous ?? false;
+
   return {
     isProUser,
     isFreeUser: !isProUser,
+    isAnonymous,
   };
 };

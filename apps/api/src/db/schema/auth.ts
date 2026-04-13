@@ -1,33 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-// https://polar.sh/docs/integrate/webhooks/events#cancellation-sequences
-export const SUBSCRIPTION_STATUSES = [
-  // Initial payment hasn't been completed yet
-  "incomplete",
-
-  // The incomplete subscription expired before payment was completed
-  "incomplete_expired",
-
-  // Subscription is in a free trial period
-  "trialing",
-
-  // Subscription is running normally with successful billing. Also includes when a user
-  // has cancelled their subscription but the billing period hasn't ended yet.
-  "active",
-
-  // A payment has failed; the customer can recover by updating their payment method
-  "past_due",
-
-  // Subscription has been definitively canceled (billing stopped, benefits revoked). Also used for the "revoked" logical state
-  "canceled",
-
-  // Subscription remains unpaid after exhausting retry attempts
-  "unpaid",
-] as const;
-
-export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUSES)[number];
-
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -47,8 +20,19 @@ export const users = sqliteTable("users", {
   banned: integer("banned", { mode: "boolean" }).default(false),
   banReason: text("ban_reason"),
   banExpires: integer("ban_expires", { mode: "timestamp_ms" }),
+  isAnonymous: integer("is_anonymous", { mode: "boolean" }).default(false),
   plan: text({ enum: ["pro"] }),
-  subscriptionStatus: text({ enum: SUBSCRIPTION_STATUSES }),
+  subscriptionStatus: text({
+    enum: [
+      "incomplete",
+      "incomplete_expired",
+      "trialing",
+      "active",
+      "past_due",
+      "canceled",
+      "unpaid",
+    ],
+  }),
 });
 
 export const sessions = sqliteTable(
@@ -128,8 +112,8 @@ export const consentEvents = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    action: text("action", { enum: ["granted", "withdrawn"] }).notNull(),
-    source: text("source", {
+    action: text({ enum: ["granted", "withdrawn"] }).notNull(),
+    source: text({
       enum: ["app_modal", "app_settings", "resend_webhook"],
     }).notNull(),
     ipAddress: text("ip_address"),
@@ -137,7 +121,7 @@ export const consentEvents = sqliteTable(
       .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
       .notNull(),
   },
-  (table) => [index("consent_events_userId_idx").on(table.userId)]
+  (table) => [index("consentEvents_userId_idx").on(table.userId)]
 );
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -161,7 +145,7 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 }));
 
 export const consentEventsRelations = relations(consentEvents, ({ one }) => ({
-  user: one(users, {
+  users: one(users, {
     fields: [consentEvents.userId],
     references: [users.id],
   }),

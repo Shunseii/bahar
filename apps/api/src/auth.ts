@@ -8,10 +8,12 @@ import {
 } from "@polar-sh/better-auth";
 // @ts-ignore - resolves under Node moduleResolution but not Bundler (web app imports App type from this file)
 import type { WebhookSubscriptionUpdatedPayload } from "@polar-sh/sdk/dist/commonjs/models/components/webhooksubscriptionupdatedpayload";
+import type { BetterAuthPlugin } from "better-auth";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
   admin,
+  anonymous,
   createAuthMiddleware,
   emailOTP,
   openAPI,
@@ -21,19 +23,19 @@ import { nanoid } from "nanoid";
 import { sendMail } from "./clients/mail";
 import { polarClient } from "./clients/polar";
 import { redisClient } from "./clients/redis";
-import { applyAllNewMigrations, createNewUserDb } from "./clients/turso";
-import { db } from "./db";
 import {
-  accounts,
-  SUBSCRIPTION_STATUSES,
-  sessions,
-  users,
-  verifications,
-} from "./db/schema/auth";
+  applyAllNewMigrations,
+  createNewUserDb,
+  tursoPlatformClient,
+} from "./clients/turso";
+import { db } from "./db";
+import { accounts, sessions, users, verifications } from "./db/schema/auth";
 import { databases } from "./db/schema/databases";
+import { revlogs } from "./db/schema/revlogs";
 import { getAllowedDomains } from "./utils";
 import { config } from "./utils/config";
 import { LogCategory, logger } from "./utils/logger";
+import { SUBSCRIPTION_STATUSES } from "./utils/subscription-statuses";
 
 const APP_NAME = "Bahar";
 const OTP_LENGTH = 6;
@@ -42,6 +44,45 @@ const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
 const MOBILE_DEEP_LINK_SCHEME = "bahar://";
 
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
+
+const consentEventsPlugin = () => {
+  return {
+    id: "consent-event",
+    schema: {
+      consentEvent: {
+        fields: {
+          userId: {
+            type: "string",
+            required: true,
+            index: true,
+            references: {
+              model: "users",
+              field: "id",
+              onDelete: "cascade",
+            },
+          },
+          action: {
+            type: ["granted", "withdrawn"] as const,
+            required: true,
+          },
+          source: {
+            type: ["app_modal", "app_settings", "resend_webhook"] as const,
+            required: true,
+          },
+          ipAddress: {
+            type: "string",
+            required: false,
+          },
+          createdAt: {
+            type: "date",
+            required: true,
+            defaultValue: () => new Date(),
+          },
+        },
+      },
+    },
+  } satisfies BetterAuthPlugin;
+};
 
 export const auth = betterAuth({
   trustedOrigins: [...allowedDomains, MOBILE_DEEP_LINK_SCHEME],
@@ -188,6 +229,15 @@ export const auth = betterAuth({
       logger[level](mergedArgs, message);
     },
   },
+  rateLimit: {
+    customRules: {
+      "/sign-in/anonymous": {
+        window: 60, // in seconds
+        max: 3, // max requests in window
+      },
+    },
+    storage: config.NODE_ENV === "production" ? "secondary-storage" : "memory",
+  },
   secondaryStorage: {
     // TODO: add trace ids to these logs
 
@@ -268,6 +318,73 @@ export const auth = betterAuth({
     openAPI(),
     expo(),
     admin(),
+    consentEventsPlugin(),
+    anonymous({
+      onLinkAccount: async ({ anonymousUser, newUser }) => {
+        const anonymousUserId = anonymousUser.user.id;
+        const newUserId = newUser.user.id;
+
+        logger.info(
+          {
+            event: "anonymous_link_account.start",
+            category: LogCategory.AUTH,
+            anonymousUserId,
+            newUserId,
+          },
+          "Linking anonymous account..."
+        );
+
+        const [newUserDb] = await db
+          .select({ dbName: databases.db_name })
+          .from(databases)
+          .where(eq(databases.user_id, newUserId));
+
+        // Swap database ownership and migrate revlogs atomically
+        await db.transaction(async (tx) => {
+          if (newUserDb) {
+            await tx.delete(databases).where(eq(databases.user_id, newUserId));
+          }
+
+          await tx
+            .update(databases)
+            .set({ user_id: newUserId })
+            .where(eq(databases.user_id, anonymousUserId));
+
+          await tx
+            .update(revlogs)
+            .set({ user_id: newUserId })
+            .where(eq(revlogs.user_id, anonymousUserId));
+        });
+
+        // Clean up the orphaned Turso database (non-critical — if this fails,
+        // the DB is empty and can be cleaned up later)
+        if (newUserDb) {
+          try {
+            await tursoPlatformClient.databases.delete(newUserDb.dbName);
+          } catch (error) {
+            logger.warn(
+              {
+                event: "anonymous_link_account.turso_cleanup_failed",
+                category: LogCategory.AUTH,
+                dbName: newUserDb.dbName,
+                error,
+              },
+              "Failed to delete orphaned Turso database"
+            );
+          }
+        }
+
+        logger.info(
+          {
+            event: "anonymous_link_account.end",
+            category: LogCategory.AUTH,
+            anonymousUserId,
+            newUserId,
+          },
+          "Linked anonymous account."
+        );
+      },
+    }),
     emailOTP({
       otpLength: OTP_LENGTH,
       expiresIn: OTP_EXPIRY_SECS,

@@ -2,8 +2,8 @@ import * as Sentry from "@sentry/bun";
 import Elysia from "elysia";
 import { auth, type User } from "./auth";
 import { redisClient } from "./clients/redis";
-import type { SubscriptionStatus } from "./db/schema/auth";
 import { getTraceContext } from "./utils/logger";
+import type { SubscriptionStatus } from "./utils/subscription-statuses";
 
 const ACTIVE_SUBSCRIPTION_STATUSES: SubscriptionStatus[] = [
   "active",

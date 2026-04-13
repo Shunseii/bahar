@@ -52,6 +52,10 @@ export const marketingRouter = new Elysia({ prefix: "/marketing" })
   .post(
     "/consent",
     async ({ user, body, request, server }) => {
+      if (user.isAnonymous) {
+        return { success: false } as const;
+      }
+
       const action = body.consent ? "granted" : "withdrawn";
       const ipAddress =
         request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??

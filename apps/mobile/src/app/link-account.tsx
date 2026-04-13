@@ -2,22 +2,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useRouter } from "expo-router";
+import { Info } from "lucide-react-native";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { z } from "zod";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
-import { GuestLoginButton } from "@/components/GuestLoginButton";
 import { Page } from "@/components/Page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useThemeColors } from "@/lib/theme";
 import { authClient } from "@/utils/auth-client";
 
-const LoginFormSchema = z.object({
+const LinkAccountFormSchema = z.object({
   email: z.string().email().min(5).max(256),
 });
 
-export default function LoginScreen() {
+export default function LinkAccountScreen() {
   const router = useRouter();
+  const { primary } = useThemeColors();
 
   const {
     control,
@@ -25,15 +27,15 @@ export default function LoginScreen() {
     setError,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(LoginFormSchema),
+    resolver: zodResolver(LinkAccountFormSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof LoginFormSchema>> = async ({
-    email,
-  }) => {
+  const onSubmit: SubmitHandler<
+    z.infer<typeof LinkAccountFormSchema>
+  > = async ({ email }) => {
     const lowerCaseEmail = email.toLowerCase();
 
     const { error } = await authClient.emailOtp.sendVerificationOtp({
@@ -51,17 +53,24 @@ export default function LoginScreen() {
       return;
     }
 
-    router.push(`/code/${lowerCaseEmail}`);
+    router.push(`/link-code/${lowerCaseEmail}`);
   };
 
   return (
     <Page className="!bg-background">
+      <View className="flex-row items-start gap-2.5 rounded-lg bg-primary/10 p-3">
+        <Info color={primary} size={16} />
+        <Text className="flex-1 text-foreground/70 text-xs">
+          <Trans>Your existing words and progress will be kept.</Trans>
+        </Text>
+      </View>
+
       <Text className="text-center font-bold text-2xl text-foreground tracking-tight">
-        <Trans>Welcome to Bahar!</Trans>
+        <Trans>Create Your Account</Trans>
       </Text>
 
-      <Text className="mt-2 text-center text-muted-foreground text-sm">
-        <Trans>Log in to your existing account or sign up for a new one</Trans>
+      <Text className="mt-[-12] text-center text-muted-foreground text-sm">
+        <Trans>Sign up to save your dictionary and sync across devices</Trans>
       </Text>
 
       <View className="mb-6 w-full gap-y-2">
@@ -116,7 +125,12 @@ export default function LoginScreen() {
 
       <GithubLoginButton />
 
-      <GuestLoginButton />
+      <Text
+        className="mt-2 text-center font-medium text-muted-foreground text-sm"
+        onPress={() => router.back()}
+      >
+        <Trans>Maybe Later</Trans>
+      </Text>
     </Page>
   );
 }
