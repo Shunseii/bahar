@@ -102,13 +102,15 @@ export const Button: FC<ButtonProps> = ({
       <View className={cn(buttonVariants({ variant, size, className }))}>
         {Icon && <Icon color={iconColor} size={16} />}
 
-        <Text
-          className={cn(textVariants({ variant, className }), "text-center")}
-        >
-          {typeof children === "function"
-            ? children({ pressed: false, hovered: false })
-            : children}
-        </Text>
+        {children && (
+          <Text
+            className={cn(textVariants({ variant, className }), "text-center")}
+          >
+            {typeof children === "function"
+              ? children({ pressed: false, hovered: false })
+              : children}
+          </Text>
+        )}
       </View>
     </Pressable>
   );

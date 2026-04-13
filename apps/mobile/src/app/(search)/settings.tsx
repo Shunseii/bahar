@@ -170,8 +170,7 @@ export default function SettingsScreen() {
 
   return (
     <Animated.ScrollView
-      className="flex-1 bg-background"
-      contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+      className="flex-1 bg-background pb-safe-offset-6"
       onScroll={scrollHandler}
       scrollEventThrottle={16}
     >

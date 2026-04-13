@@ -209,7 +209,16 @@ export const useInfiniteSearch = (
     } catch (error) {
       console.error("Search error:", error);
     }
-  }, [offset, isLoading, hasMore, search, params.term, whereFilter, sortBy, searchQueryLanguage]);
+  }, [
+    offset,
+    isLoading,
+    hasMore,
+    search,
+    params.term,
+    whereFilter,
+    sortBy,
+    searchQueryLanguage,
+  ]);
 
   const refresh = useCallback(() => {
     try {
