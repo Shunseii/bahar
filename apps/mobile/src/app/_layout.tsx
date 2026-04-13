@@ -109,7 +109,6 @@ export default function RootLayout() {
                     />
                   </View>
                 </SafeAreaListener>
-
               </SafeAreaProvider>
             </KeyboardProvider>
           </BottomSheetModalProvider>

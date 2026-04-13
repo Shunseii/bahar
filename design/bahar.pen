@@ -50502,6 +50502,513 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "809va",
+      "x": 9553,
+      "y": 1174,
+      "name": "Mobile Feature Graphic",
+      "clip": true,
+      "width": 1200,
+      "height": 630,
+      "fill": "#FFFFFF",
+      "layout": "none",
+      "children": [
+        {
+          "type": "ellipse",
+          "id": "7E3sf",
+          "x": -100,
+          "y": -150,
+          "name": "glow1",
+          "fill": {
+            "type": "gradient",
+            "gradientType": "radial",
+            "enabled": true,
+            "rotation": 0,
+            "size": {
+              "width": 1,
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#306AE715",
+                "position": 0
+              },
+              {
+                "color": "#306AE700",
+                "position": 1
+              }
+            ]
+          },
+          "width": 600,
+          "height": 500
+        },
+        {
+          "type": "ellipse",
+          "id": "Lz7v5",
+          "x": 700,
+          "y": 250,
+          "name": "glow2",
+          "fill": {
+            "type": "gradient",
+            "gradientType": "radial",
+            "enabled": true,
+            "rotation": 0,
+            "size": {
+              "width": 1,
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#306AE710",
+                "position": 0
+              },
+              {
+                "color": "#306AE700",
+                "position": 1
+              }
+            ]
+          },
+          "width": 600,
+          "height": 500
+        },
+        {
+          "type": "ellipse",
+          "id": "Q3h0J",
+          "x": 350,
+          "y": -50,
+          "name": "glow3",
+          "fill": {
+            "type": "gradient",
+            "gradientType": "radial",
+            "enabled": true,
+            "rotation": 0,
+            "size": {
+              "width": 1,
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#306AE708",
+                "position": 0
+              },
+              {
+                "color": "#306AE700",
+                "position": 1
+              }
+            ]
+          },
+          "width": 500,
+          "height": 400
+        },
+        {
+          "type": "text",
+          "id": "kVEA5",
+          "x": -20,
+          "y": 80,
+          "name": "leftArabic",
+          "rotation": -10,
+          "fill": "#306AE718",
+          "content": "عَرَبِيّ",
+          "fontFamily": "Noto Naskh Arabic",
+          "fontSize": 180,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "UFdqA",
+          "x": 850,
+          "y": 320,
+          "name": "rightArabic",
+          "enabled": false,
+          "rotation": 8,
+          "fill": "#306AE718",
+          "content": "لُغَة",
+          "fontFamily": "Noto Naskh Arabic",
+          "fontSize": 160,
+          "fontWeight": "700"
+        },
+        {
+          "type": "frame",
+          "id": "MtRmv",
+          "x": 0,
+          "y": 0,
+          "name": "Content",
+          "width": 640,
+          "height": 630,
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            0,
+            60,
+            0,
+            80
+          ],
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "jjHwM",
+              "name": "Logo Mark",
+              "width": 56,
+              "height": 56,
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./logo.png",
+                "mode": "fit"
+              }
+            },
+            {
+              "type": "text",
+              "id": "9ICqK",
+              "name": "arabicDecor",
+              "fill": "$foreground",
+              "content": "بَحْر",
+              "fontFamily": "Noto Naskh Arabic",
+              "fontSize": 72,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "7j3y7",
+              "name": "logo",
+              "fill": "$muted-foreground",
+              "content": "Bahar",
+              "fontFamily": "Inter",
+              "fontSize": 28,
+              "fontWeight": "normal",
+              "letterSpacing": -2
+            },
+            {
+              "type": "text",
+              "id": "TRTB0",
+              "name": "tagline",
+              "fill": "$muted-foreground",
+              "content": "Master Arabic, Your Way",
+              "fontFamily": "Inter",
+              "fontSize": 26,
+              "fontWeight": "500"
+            },
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "tvObz",
+              "name": "divider",
+              "fill": "$primary",
+              "width": 48,
+              "height": 3
+            },
+            {
+              "type": "text",
+              "id": "dSCP3",
+              "name": "subtitle",
+              "fill": "$muted-foreground",
+              "content": "Personal dictionary  ·  Flashcards  ·  Spaced repetition",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "AkYwj",
+              "name": "domain",
+              "fill": "$primary",
+              "content": "getbahar.com",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "500",
+              "letterSpacing": 1
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "06JtW",
+          "x": 0,
+          "y": 0,
+          "name": "border",
+          "width": 1200,
+          "height": 630,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "AkQfz",
+          "x": 680,
+          "y": 40,
+          "name": "App Preview",
+          "rotation": 3.0000000000000004,
+          "width": 460,
+          "height": 550,
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "./flashcard-preview.png",
+            "mode": "fill"
+          },
+          "cornerRadius": 16,
+          "effect": [
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#306AE720",
+              "offset": {
+                "x": 0,
+                "y": 8
+              },
+              "blur": 32
+            },
+            {
+              "type": "shadow",
+              "shadowType": "outer",
+              "color": "#00000015",
+              "offset": {
+                "x": 0,
+                "y": 1
+              },
+              "blur": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "2Wwn5",
+      "x": -1273,
+      "y": 9576,
+      "name": "Play Store Screenshots",
+      "gap": 40,
+      "children": [
+        {
+          "type": "frame",
+          "id": "ymVaT",
+          "name": "Screenshot 1 - Homepage",
+          "clip": true,
+          "width": 1080,
+          "height": 1920,
+          "fill": "$primary",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            80,
+            40,
+            40,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "kNKMI",
+              "name": "t1",
+              "fill": "$primary-foreground",
+              "textGrowth": "fixed-width",
+              "width": 900,
+              "content": "Build Your Personal Dictionary",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 42,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "81aFd",
+              "name": "img1",
+              "clip": true,
+              "width": 920,
+              "height": "fill_container",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./bahar-mobile-homepage.jpg.jpg",
+                "mode": "fill"
+              },
+              "cornerRadius": 24
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "CKNtn",
+          "name": "Screenshot 2 - Expanded",
+          "clip": true,
+          "width": 1080,
+          "height": 1920,
+          "fill": "$primary",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            80,
+            40,
+            40,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "KRaod",
+              "name": "t2",
+              "fill": "$primary-foreground",
+              "textGrowth": "fixed-width",
+              "width": 900,
+              "content": "Rich Word Details, Morphology, and Review History",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 42,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "SgHp6",
+              "name": "img2",
+              "clip": true,
+              "width": 920,
+              "height": "fill_container",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./bahar-mobile-expanded.jpg.jpg",
+                "mode": "fill"
+              },
+              "cornerRadius": 24
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "wj8au",
+          "name": "Screenshot 3 - Flashcards Combined",
+          "clip": true,
+          "width": 1080,
+          "height": 1920,
+          "fill": "$primary",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            80,
+            40,
+            40,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "xjIsm",
+              "name": "t3",
+              "fill": "$primary-foreground",
+              "textGrowth": "fixed-width",
+              "width": 900,
+              "content": "Smart Flashcard Reviews Using Spaced Repetition",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 42,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "FA5j9",
+              "name": "row",
+              "width": 960,
+              "height": "fill_container",
+              "gap": 24,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "9kusE",
+                  "name": "left",
+                  "rotation": 3.0000000000000004,
+                  "clip": true,
+                  "width": 440,
+                  "height": 780,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./bahar-mobile-flashcard.jpg.jpg",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 20
+                },
+                {
+                  "type": "frame",
+                  "id": "s2RXE",
+                  "name": "right",
+                  "rotation": -3.0000000000000004,
+                  "clip": true,
+                  "width": 440,
+                  "height": 780,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./bahar-mobile-flashcard-ans.jpg",
+                    "mode": "fill"
+                  },
+                  "cornerRadius": 20
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "qgAgy",
+          "name": "Screenshot 5 - Dark Mode",
+          "clip": true,
+          "width": 1080,
+          "height": 1920,
+          "fill": "$primary",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            80,
+            40,
+            40,
+            40
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "VM5He",
+              "name": "t5",
+              "fill": "$primary-foreground",
+              "textGrowth": "fixed-width",
+              "width": 900,
+              "content": "Beautiful Dark Mode",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 42,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "yU4nC",
+              "name": "img5",
+              "clip": true,
+              "width": 920,
+              "height": "fill_container",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "./bahar-mobile-dark-mode.jpg.jpg",
+                "mode": "fill"
+              },
+              "cornerRadius": 24
+            }
+          ]
+        }
+      ]
     }
   ],
   "variables": {

@@ -2,6 +2,7 @@
  * Grade feedback animation component.
  *
  * Shows animated feedback based on the grade selected.
+ * Animations match the web implementation.
  */
 
 import * as Haptics from "expo-haptics";
@@ -36,25 +37,21 @@ const feedbackConfig: Record<
   }
 > = {
   1: {
-    // Again
     Icon: RotateCcw,
     colorKey: "mutedForeground",
     bgColor: "bg-muted/30",
   },
   2: {
-    // Hard
     Icon: Brain,
     colorKey: "warning",
     bgColor: "bg-warning/20",
   },
   3: {
-    // Good
     Icon: ThumbsUp,
     colorKey: "primary",
     bgColor: "bg-primary/20",
   },
   4: {
-    // Easy
     Icon: Zap,
     colorKey: "success",
     bgColor: "bg-success/20",
@@ -69,6 +66,7 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0);
   const rotation = useSharedValue(0);
+  const translateY = useSharedValue(0);
   const bgOpacity = useSharedValue(0);
 
   useEffect(() => {
@@ -83,38 +81,53 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
 
-    // Animate in
-    opacity.value = withTiming(1, { duration: 100 });
+    // Background pulse: fade in then out
     bgOpacity.value = withSequence(
-      withTiming(1, { duration: 150 }),
-      withTiming(0, { duration: 400 })
+      withTiming(0.5, { duration: 150 }),
+      withTiming(0, { duration: 450 })
     );
 
-    // Scale and rotation based on grade
+    // Animate in
+    opacity.value = withTiming(1, { duration: 100 });
+
     if (grade === Rating.Again) {
+      // Scale up with shake — matches web: scale [0, 1.2, 1], rotate [0, -10, 10, -10, 0]
+      translateY.value = 0;
+      scale.value = withSequence(
+        withTiming(1.2, { duration: 200, easing: Easing.out(Easing.ease) }),
+        withTiming(1, { duration: 300, easing: Easing.out(Easing.ease) })
+      );
       rotation.value = withSequence(
-        withTiming(-10, { duration: 50 }),
+        withTiming(-10, { duration: 100 }),
         withTiming(10, { duration: 100 }),
         withTiming(-10, { duration: 100 }),
-        withTiming(0, { duration: 50 })
+        withTiming(0, { duration: 100 })
       );
+    } else if (grade === Rating.Hard) {
+      // Scale up — matches web: scale [0, 1.3, 1]
+      translateY.value = 0;
+      rotation.value = 0;
       scale.value = withSequence(
-        withSpring(1.2, { damping: 10, stiffness: 300 }),
-        withTiming(1, { duration: 200 })
+        withTiming(1.3, { duration: 200, easing: Easing.out(Easing.ease) }),
+        withTiming(1, { duration: 300, easing: Easing.out(Easing.ease) })
       );
+    } else if (grade === Rating.Good) {
+      // Spring up — matches web: spring with y translation
+      rotation.value = 0;
+      translateY.value = 10;
+      scale.value = withSpring(1, { damping: 15, stiffness: 200 });
+      translateY.value = withSpring(0, { damping: 15, stiffness: 200 });
     } else if (grade === Rating.Easy) {
+      // Scale + rotate — matches web: scale [0, 1.4, 1], rotate [-20, 10, 0]
+      translateY.value = 0;
+      rotation.value = -20;
+      scale.value = withSequence(
+        withTiming(1.4, { duration: 200, easing: Easing.out(Easing.ease) }),
+        withTiming(1, { duration: 200, easing: Easing.out(Easing.ease) })
+      );
       rotation.value = withSequence(
-        withTiming(-15, { duration: 100 }),
-        withSpring(0, { damping: 8, stiffness: 200 })
-      );
-      scale.value = withSequence(
-        withSpring(1.4, { damping: 8, stiffness: 300 }),
-        withTiming(1, { duration: 200 })
-      );
-    } else {
-      scale.value = withSequence(
-        withSpring(1.3, { damping: 10, stiffness: 300 }),
-        withTiming(1, { duration: 200 })
+        withTiming(10, { duration: 200, easing: Easing.out(Easing.ease) }),
+        withTiming(0, { duration: 200, easing: Easing.out(Easing.ease) })
       );
     }
 
@@ -123,21 +136,25 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
       opacity.value = withTiming(0, { duration: 150 }, () => {
         runOnJS(onComplete)();
       });
-    }, 500);
+    }, 600);
 
     return () => clearTimeout(timer);
-  }, [grade, opacity, scale, rotation, bgOpacity, onComplete]);
+  }, [grade, opacity, scale, rotation, translateY, bgOpacity, onComplete]);
 
   const containerStyle = useAnimatedStyle(() => ({
     opacity: opacity.value,
   }));
 
   const bgStyle = useAnimatedStyle(() => ({
-    opacity: bgOpacity.value * 0.5,
+    opacity: bgOpacity.value,
   }));
 
   const iconContainerStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }, { rotate: `${rotation.value}deg` }],
+    transform: [
+      { translateY: translateY.value },
+      { scale: scale.value },
+      { rotate: `${rotation.value}deg` },
+    ],
   }));
 
   if (grade === null) return null;

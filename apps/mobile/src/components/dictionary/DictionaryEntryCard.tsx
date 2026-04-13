@@ -329,12 +329,7 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
       rotation.value = withTiming(isExpanded ? 180 : 0, { duration: 200 });
     }, [isExpanded]);
 
-    const hasExpandableContent =
-      entry.definition ||
-      (entry.root && entry.root.length > 0) ||
-      (entry.tags && entry.tags.length > 0) ||
-      (entry.examples && entry.examples.length > 0) ||
-      entry.morphology;
+    const hasExpandableContent = true;
 
     const toggleExpanded = () => {
       onToggleExpand(entry.id);
