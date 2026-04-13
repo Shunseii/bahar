@@ -3,7 +3,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { Check, Plus, Search, X } from "lucide-react-native";
+import { Plus, Search, X } from "lucide-react-native";
 import { useMemo, useState } from "react";
 import {
   FlatList,
@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Checkbox } from "@/components/ui/checkbox";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { recentTagsAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
@@ -91,12 +92,12 @@ export const TagsInput = ({ value, onChange }: TagsInputProps) => {
         </View>
       )}
 
-      {/* Browse button */}
+      {/* Search button */}
       <Pressable onPress={() => setModalOpen(true)}>
         <View className="h-10 flex-row items-center justify-center gap-2 rounded-lg border border-border">
           <Search color={colors.mutedForeground} size={16} />
           <Text className="text-muted-foreground text-sm">
-            <Trans>Browse all tags...</Trans>
+            <Trans>Search tags...</Trans>
           </Text>
         </View>
       </Pressable>
@@ -254,16 +255,7 @@ const TagsModal = ({
             return (
               <Pressable onPress={() => handleToggle(item.tag)}>
                 <View className="flex-row items-center gap-3 px-4 py-3">
-                  <View
-                    className={cn(
-                      "h-5 w-5 items-center justify-center rounded",
-                      isSelected ? "bg-primary" : "border-1.5 border-border"
-                    )}
-                  >
-                    {isSelected && (
-                      <Check color={colors.primaryForeground} size={14} />
-                    )}
-                  </View>
+                  <Checkbox checked={isSelected} />
                   <Text
                     className={cn(
                       "flex-1 text-sm",
