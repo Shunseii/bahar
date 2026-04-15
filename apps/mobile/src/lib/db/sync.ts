@@ -1,4 +1,4 @@
-import { recoverFromSyncConflict, ensureDb } from "@/lib/db";
+import { ensureDb, recoverFromSyncConflict } from "@/lib/db";
 import { isSyncError, syncDatabase } from "@/lib/db/adapter";
 import {
   dictionaryChangedAtom,
