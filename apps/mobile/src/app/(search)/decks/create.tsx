@@ -150,7 +150,11 @@ export default function CreateDeckScreen() {
               </Text>
             </View>
             <View className="px-4 pt-2 pb-4">
-              <TagsInput onChange={setTags} showRecentTags={false} value={tags} />
+              <TagsInput
+                onChange={setTags}
+                showRecentTags={false}
+                value={tags}
+              />
             </View>
           </View>
 

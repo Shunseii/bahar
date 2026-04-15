@@ -1,12 +1,7 @@
 import type { WordType } from "@bahar/drizzle-user-db-schemas";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import {
-  CircleCheck,
-  MoreHorizontal,
-  Play,
-  Tag,
-} from "lucide-react-native";
+import { CircleCheck, MoreHorizontal, Play, Tag } from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,

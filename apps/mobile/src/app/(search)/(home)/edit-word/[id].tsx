@@ -28,10 +28,10 @@ import {
 } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
+import { useSearch } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { FormSchema } from "@/lib/schemas/dictionary";
-import { useSearch } from "@/hooks/useSearch";
 import { removeFromSearchIndex, updateSearchIndex } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";

@@ -37,6 +37,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { Button } from "@/components/ui/button";
 import { HeaderScrollContext } from "@/contexts/header-scroll";
+import { useSearch } from "@/hooks/useSearch";
 import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
 import { performSync } from "@/lib/db/sync";
 import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
@@ -185,6 +186,7 @@ export default function Layout() {
   const [headerTitle, setHeaderTitle] = useState("");
   const scrollY = useSharedValue(0);
   const syncCompletedCount = useAtomValue(syncCompletedCountAtom);
+  const { refresh } = useSearch();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -200,9 +202,12 @@ export default function Layout() {
     const refreshAfterSync = async () => {
       const dictionaryChanged = store.get(dictionaryChangedAtom);
       if (dictionaryChanged) {
+        store.set(isSyncingAtom, true);
         await rehydrateOramaDb();
+        refresh();
         setSearchQuery("");
         store.set(dictionaryChangedAtom, false);
+        store.set(isSyncingAtom, false);
         console.log("[sync] Orama reindexed after sync");
       }
 
@@ -210,7 +215,7 @@ export default function Layout() {
     };
 
     refreshAfterSync();
-  }, [syncCompletedCount]);
+  }, [syncCompletedCount, refresh]);
 
   const dir = locales[0].textDirection;
 

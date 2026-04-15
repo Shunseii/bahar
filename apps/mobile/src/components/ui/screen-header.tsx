@@ -8,7 +8,11 @@ interface ScreenHeaderProps {
   right?: React.ReactNode;
 }
 
-export const ScreenHeader = ({ icon: Icon, title, right }: ScreenHeaderProps) => {
+export const ScreenHeader = ({
+  icon: Icon,
+  title,
+  right,
+}: ScreenHeaderProps) => {
   const colors = useThemeColors();
 
   return (

@@ -12,7 +12,11 @@ import {
   Text,
   View,
 } from "react-native";
-import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  LinearTransition,
+} from "react-native-reanimated";
 import { DeckCard } from "@/components/decks/DeckCard";
 import { Button } from "@/components/ui/button";
 import { ScreenHeader } from "@/components/ui/screen-header";
@@ -157,7 +161,7 @@ export default function DecksListScreen() {
             entering={FadeIn.delay(index * 50).duration(300)}
             exiting={FadeOut.duration(200)}
             key={deck.id}
-            layout={Layout.springify()}
+            layout={LinearTransition.springify()}
           >
             <DeckCard
               deck={deck}

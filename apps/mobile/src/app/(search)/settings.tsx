@@ -1,7 +1,13 @@
 import type { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Brain, Languages, Palette, Settings, Trash2 } from "lucide-react-native";
+import {
+  Brain,
+  Languages,
+  Palette,
+  Settings,
+  Trash2,
+} from "lucide-react-native";
 import type React from "react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
