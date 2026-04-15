@@ -2,18 +2,23 @@ import type { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  Bell,
   Brain,
+  CreditCard,
+  ExternalLink,
+  FolderSync,
   Languages,
   Palette,
   Settings,
   Trash2,
 } from "lucide-react-native";
 import type React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   Pressable,
   Switch,
   Text,
@@ -26,11 +31,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { resetDb } from "@/lib/db";
 import { settingsTable, type UserSettings } from "@/lib/db/operations/settings";
 import { resetOramaDb } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
-import { queryClient } from "@/utils/api";
+import { api, queryClient } from "@/utils/api";
 import { authClient } from "@/utils/auth-client";
 
 interface SettingRowProps {
@@ -92,6 +98,118 @@ const SelectOptions: React.FC<SelectOptionProps> = ({
         </Pressable>
       ))}
     </View>
+  );
+};
+
+const BillingCard = () => {
+  const colors = useThemeColors();
+  const { t } = useLingui();
+  const { isFreeUser } = useUserPlan();
+
+  const planName = !isFreeUser ? t`Pro` : t`Free`;
+
+  return (
+    <Card>
+      <CardHeader>
+        <View className="flex-row items-center gap-2">
+          <CreditCard color={colors.mutedForeground} size={18} />
+          <CardTitle>
+            <Trans>Billing</Trans>
+          </CardTitle>
+        </View>
+      </CardHeader>
+      <CardContent>
+        <View className="gap-4">
+          <View>
+            <Text className="text-muted-foreground text-sm">
+              <Trans>Current plan</Trans>
+            </Text>
+            <Text className="font-semibold text-foreground text-xl">
+              {planName}
+            </Text>
+          </View>
+          <Button
+            Icon={ExternalLink}
+            onPress={() =>
+              Linking.openURL("https://bahar.dev/settings#billing")
+            }
+            variant="outline"
+          >
+            <Trans>Manage Account</Trans>
+          </Button>
+        </View>
+      </CardContent>
+    </Card>
+  );
+};
+
+const PreferencesCard = () => {
+  const colors = useThemeColors();
+  const { t } = useLingui();
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const { data: consent } = useQuery({
+    queryKey: ["marketing", "consent"] as const,
+    queryFn: async () => {
+      const { data } = await api.marketing.consent.get();
+      return data?.consent ?? null;
+    },
+  });
+
+  const hasConsented = consent?.action === "granted";
+
+  const handleToggle = async (checked: boolean) => {
+    setIsUpdating(true);
+    try {
+      await api.marketing.consent.post({
+        consent: checked,
+        source: "app_settings",
+      });
+      queryClient.invalidateQueries({ queryKey: ["marketing", "consent"] });
+      toast.success(
+        checked
+          ? t`Subscribed to marketing emails`
+          : t`Unsubscribed from marketing emails`
+      );
+    } catch {
+      toast.error(t`Failed to update preference`);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <View className="flex-row items-center gap-2">
+          <Bell color={colors.mutedForeground} size={18} />
+          <CardTitle>
+            <Trans>Preferences</Trans>
+          </CardTitle>
+        </View>
+      </CardHeader>
+      <CardContent>
+        <View className="flex-row items-center justify-between">
+          <View className="mr-4 flex-1">
+            <Text className="font-medium text-base text-foreground">
+              <Trans>Marketing emails</Trans>
+            </Text>
+            <Text className="mt-0.5 text-muted-foreground text-sm">
+              <Trans>
+                Receive product updates, tips, and new feature announcements.
+              </Trans>
+            </Text>
+          </View>
+          <Switch
+            disabled={isUpdating}
+            onValueChange={handleToggle}
+            thumbColor="white"
+            trackColor={{ false: colors.muted, true: colors.primary }}
+            value={hasConsented}
+          />
+        </View>
+      </CardContent>
+    </Card>
   );
 };
 
@@ -177,6 +295,85 @@ export default function SettingsScreen() {
       <ScreenHeader icon={Settings} title={t`Settings`} />
 
       <View className="gap-4 px-4 pt-4">
+        {/* Appearance */}
+        <Card>
+          <CardHeader>
+            <View className="flex-row items-center gap-2">
+              <Palette color={colors.mutedForeground} size={18} />
+              <CardTitle>
+                <Trans>Appearance</Trans>
+              </CardTitle>
+            </View>
+          </CardHeader>
+          <CardContent>
+            <SettingRow
+              description={t`Follows your system settings`}
+              title={t`Theme`}
+            >
+              <Text className="text-muted-foreground text-sm capitalize">
+                {colorScheme === "dark" ? t`Dark` : t`Light`}
+              </Text>
+            </SettingRow>
+          </CardContent>
+        </Card>
+
+        {/* Language */}
+        <Card>
+          <CardHeader>
+            <View className="flex-row items-center gap-2">
+              <Languages color={colors.mutedForeground} size={18} />
+              <CardTitle>
+                <Trans>Language</Trans>
+              </CardTitle>
+            </View>
+          </CardHeader>
+          <CardContent>
+            <SettingRow
+              description={t`Follows your device language`}
+              title={t`App language`}
+            >
+              <Text className="text-muted-foreground text-sm">
+                <Trans>System</Trans>
+              </Text>
+            </SettingRow>
+          </CardContent>
+        </Card>
+
+        {/* Import / Export */}
+        <Card>
+          <CardHeader>
+            <View className="flex-row items-center gap-2">
+              <FolderSync color={colors.mutedForeground} size={18} />
+              <CardTitle>
+                <Trans>Import / Export</Trans>
+              </CardTitle>
+            </View>
+          </CardHeader>
+          <CardContent>
+            <Text className="mb-4 text-muted-foreground text-sm">
+              <Trans>
+                Importing and exporting your dictionary is not available on
+                mobile. Please use the web app to manage your data.
+              </Trans>
+            </Text>
+            <Button
+              Icon={ExternalLink}
+              onPress={() =>
+                Linking.openURL("https://bahar.dev/settings#dictionary")
+              }
+              variant="outline"
+            >
+              <Trans>Open Web App</Trans>
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Billing */}
+        <BillingCard />
+
+        {/* Preferences */}
+        <PreferencesCard />
+
         {/* Flashcard Settings */}
         <Card>
           <CardHeader>
@@ -241,50 +438,6 @@ export default function SettingsScreen() {
                 />
               </View>
             </View>
-          </CardContent>
-        </Card>
-
-        {/* Appearance */}
-        <Card>
-          <CardHeader>
-            <View className="flex-row items-center gap-2">
-              <Palette color={colors.mutedForeground} size={18} />
-              <CardTitle>
-                <Trans>Appearance</Trans>
-              </CardTitle>
-            </View>
-          </CardHeader>
-          <CardContent>
-            <SettingRow
-              description={t`Follows your system settings`}
-              title={t`Theme`}
-            >
-              <Text className="text-muted-foreground text-sm capitalize">
-                {colorScheme === "dark" ? t`Dark` : t`Light`}
-              </Text>
-            </SettingRow>
-          </CardContent>
-        </Card>
-
-        {/* Language */}
-        <Card>
-          <CardHeader>
-            <View className="flex-row items-center gap-2">
-              <Languages color={colors.mutedForeground} size={18} />
-              <CardTitle>
-                <Trans>Language</Trans>
-              </CardTitle>
-            </View>
-          </CardHeader>
-          <CardContent>
-            <SettingRow
-              description={t`Follows your device language`}
-              title={t`App language`}
-            >
-              <Text className="text-muted-foreground text-sm">
-                <Trans>System</Trans>
-              </Text>
-            </SettingRow>
           </CardContent>
         </Card>
 
