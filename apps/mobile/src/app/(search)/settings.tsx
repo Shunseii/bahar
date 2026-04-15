@@ -21,7 +21,6 @@ import {
   View,
 } from "react-native";
 import Animated from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -96,7 +95,6 @@ const SelectOptions: React.FC<SelectOptionProps> = ({
 };
 
 export default function SettingsScreen() {
-  const insets = useSafeAreaInsets();
   const colors = useThemeColors();
   const colorScheme = useColorScheme();
   const { t } = useLingui();
@@ -170,7 +168,8 @@ export default function SettingsScreen() {
 
   return (
     <Animated.ScrollView
-      className="flex-1 bg-background pb-safe-offset-6"
+      className="flex-1 bg-background"
+      contentContainerClassName="pb-safe-offset-6"
       onScroll={scrollHandler}
       scrollEventThrottle={16}
     >

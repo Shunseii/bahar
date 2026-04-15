@@ -8,7 +8,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { z } from "zod";
 import {
@@ -76,7 +75,6 @@ const BackButton = () => {
 
 export default function AddWordScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { scrollHandler } = useCollapsibleHeader(t`Add a new word`);
   const { reset } = useSearch();
 
@@ -196,7 +194,7 @@ export default function AddWordScreen() {
       <KeyboardAwareScrollView
         bottomOffset={20}
         className="flex-1 bg-background"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        contentContainerClassName="pb-safe-offset-6"
         keyboardShouldPersistTaps="handled"
         onScroll={scrollHandler}
         scrollEventThrottle={16}

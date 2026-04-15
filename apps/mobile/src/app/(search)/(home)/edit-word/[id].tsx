@@ -14,7 +14,6 @@ import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { z } from "zod";
 import {
@@ -83,7 +82,6 @@ export default function EditWordScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const insets = useSafeAreaInsets();
   const { scrollHandler } = useCollapsibleHeader(t`Edit word`);
   const { reset: resetSearch } = useSearch();
 
@@ -341,7 +339,7 @@ export default function EditWordScreen() {
       <KeyboardAwareScrollView
         bottomOffset={20}
         className="flex-1 bg-background"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}
+        contentContainerClassName="pb-safe-offset-6"
         keyboardShouldPersistTaps="handled"
         onScroll={scrollHandler}
         scrollEventThrottle={16}
