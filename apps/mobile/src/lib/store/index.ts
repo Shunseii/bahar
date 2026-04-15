@@ -16,3 +16,10 @@ export const recentTagsAtom = atomWithStorage(
   createJSONStorage<string[]>(() => AsyncStorage),
   { getOnInit: true }
 );
+
+export const createMultipleAtom = atomWithStorage(
+  "bahar:createMultiple",
+  false,
+  createJSONStorage<boolean>(() => AsyncStorage),
+  { getOnInit: true }
+);

@@ -8,6 +8,7 @@ import {
   BreadcrumbSeparator,
 } from "@bahar/web-ui/components/breadcrumb";
 import { Button } from "@bahar/web-ui/components/button";
+import { Checkbox } from "@bahar/web-ui/components/checkbox";
 import { Form } from "@bahar/web-ui/components/form";
 import {
   Tooltip,
@@ -17,11 +18,13 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useAtom } from "jotai";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { createMultipleAtom } from "@/atoms/create-multiple";
 import {
   AdditionalDetailsFormSection,
   BasicDetailsFormSection,
@@ -30,6 +33,7 @@ import {
 } from "@/components/features/dictionary/add";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
 import { Page } from "@/components/Page";
+import { InfoTooltip } from "@/components/InfoTooltip";
 import { useAddDictionaryEntry } from "@/hooks/db";
 import { useDir } from "@/hooks/useDir";
 import { useUserPlan } from "@/hooks/useUserPlan";
@@ -89,6 +93,9 @@ const BackButton = () => {
 const Add = () => {
   const { addDictionaryEntry } = useAddDictionaryEntry();
   const { isProUser } = useUserPlan();
+  const [createMultiple, setCreateMultiple] = useAtom(createMultipleAtom);
+  const navigate = useNavigate();
+  const shouldNavigateRef = useRef(false);
 
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -166,6 +173,10 @@ const Add = () => {
       toast.success(t`Successfully added word!`, {
         description: t`The word has been added to your dictionary.`,
       });
+
+      if (!createMultiple) {
+        shouldNavigateRef.current = true;
+      }
     } catch (err) {
       if (err instanceof Error) {
         console.error(err.message);
@@ -179,9 +190,14 @@ const Add = () => {
 
   useEffect(() => {
     if (form.formState.isSubmitSuccessful) {
-      form.reset();
+      if (shouldNavigateRef.current) {
+        shouldNavigateRef.current = false;
+        navigate({ to: "/" });
+      } else {
+        form.reset();
+      }
     }
-  }, [form.formState, form.reset]);
+  }, [form.formState, form.reset, navigate]);
 
   const canAutofill =
     form.watch("word") && form.watch("translation") && form.watch("type");
@@ -409,19 +425,69 @@ const Add = () => {
                 <CategoryFormSection />
 
                 <TagsFormSection />
+
+                <div className="hidden items-center gap-2 md:flex">
+                  <label
+                    className="flex cursor-pointer items-center gap-2"
+                    htmlFor="create-multiple"
+                  >
+                    <Checkbox
+                      checked={createMultiple}
+                      id="create-multiple"
+                      onCheckedChange={(checked) =>
+                        setCreateMultiple(checked === true)
+                      }
+                    />
+                    <span className="text-muted-foreground text-sm select-none">
+                      <Trans>Create multiple</Trans>
+                    </span>
+                  </label>
+                  <InfoTooltip>
+                    <Trans>
+                      Keep adding words after saving instead of going back to
+                      the homepage.
+                    </Trans>
+                  </InfoTooltip>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-2 md:hidden">
-              <Button asChild size="sm" type="button" variant="outline">
-                <Link to="/">
-                  <Trans>Discard</Trans>
-                </Link>
-              </Button>
+            <div className="flex flex-col items-center gap-3 md:hidden">
+              <div className="flex items-center gap-2">
+                <label
+                  className="flex cursor-pointer items-center gap-2"
+                  htmlFor="create-multiple-mobile"
+                >
+                  <Checkbox
+                    checked={createMultiple}
+                    id="create-multiple-mobile"
+                    onCheckedChange={(checked) =>
+                      setCreateMultiple(checked === true)
+                    }
+                  />
+                  <span className="text-muted-foreground text-sm select-none">
+                    <Trans>Create multiple</Trans>
+                  </span>
+                </label>
+                <InfoTooltip>
+                  <Trans>
+                    Keep adding words after saving instead of going back to the
+                    homepage.
+                  </Trans>
+                </InfoTooltip>
+              </div>
 
-              <Button size="sm">
-                <Trans>Save</Trans>
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button asChild size="sm" type="button" variant="outline">
+                  <Link to="/">
+                    <Trans>Discard</Trans>
+                  </Link>
+                </Button>
+
+                <Button size="sm">
+                  <Trans>Save</Trans>
+                </Button>
+              </div>
             </div>
           </div>
         </form>

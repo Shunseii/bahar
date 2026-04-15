@@ -4,9 +4,11 @@ import { Trans } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import { useLocales } from "expo-localization";
 import { useRouter } from "expo-router";
-import { ChevronLeft, ChevronRight } from "lucide-react-native";
+import { useAtom } from "jotai";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react-native";
+import { useRef } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { toast } from "sonner-native";
 import { z } from "zod";
@@ -21,13 +23,14 @@ import {
   VerbMorphologySection,
 } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import { addToSearchIndex } from "@/lib/search";
-import { recentTagsAtom, store } from "@/lib/store";
+import { createMultipleAtom, recentTagsAtom, store } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { errorMap } from "@/utils/zod";
@@ -77,6 +80,9 @@ export default function AddWordScreen() {
   const router = useRouter();
   const { scrollHandler } = useCollapsibleHeader(t`Add a new word`);
   const { reset } = useSearch();
+  const [createMultiple, setCreateMultiple] = useAtom(createMultipleAtom);
+  const colors = useThemeColors();
+  const shouldResetFormRef = useRef(false);
 
   const addWordMutation = useMutation({
     mutationFn: dictionaryEntriesTable.addWord.mutation,
@@ -114,7 +120,12 @@ export default function AddWordScreen() {
       }
 
       toast.success(t`Word added successfully`);
-      router.back();
+
+      if (createMultiple) {
+        shouldResetFormRef.current = true;
+      } else {
+        router.back();
+      }
     },
     onError: (error) => {
       toast.error(t`Failed to add word`);
@@ -187,6 +198,11 @@ export default function AddWordScreen() {
         morphology: data.morphology,
       },
     });
+
+    if (shouldResetFormRef.current) {
+      shouldResetFormRef.current = false;
+      methods.reset();
+    }
   };
 
   return (
@@ -231,6 +247,32 @@ export default function AddWordScreen() {
                 )}
               />
             </CollapsibleCard>
+
+            <View className="flex-row items-center gap-2 self-center pt-2">
+              <Pressable
+                className="flex-row items-center gap-2"
+                onPress={() => setCreateMultiple(!createMultiple)}
+              >
+                <Checkbox
+                  checked={createMultiple}
+                  onCheckedChange={setCreateMultiple}
+                />
+                <Text className="text-muted-foreground text-sm">
+                  <Trans>Create multiple</Trans>
+                </Text>
+              </Pressable>
+              <Pressable
+                hitSlop={8}
+                onPress={() =>
+                  Alert.alert(
+                    t`Create multiple`,
+                    t`Keep adding words after saving instead of going back to the homepage.`
+                  )
+                }
+              >
+                <Info color={colors.mutedForeground} size={14} />
+              </Pressable>
+            </View>
 
             <View className="flex-row items-center justify-center gap-3 pt-2">
               <Button onPress={() => router.back()} variant="outline">
