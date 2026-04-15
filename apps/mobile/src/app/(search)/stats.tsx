@@ -1,8 +1,10 @@
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Activity, Globe } from "lucide-react-native";
 import { Linking, Text, View } from "react-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/ui/screen-header";
 import { useThemeColors } from "@/lib/theme";
 
 export default function StatsScreen() {
@@ -10,16 +12,7 @@ export default function StatsScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      <View className="border-border border-b px-4 py-4">
-        <View className="flex-row items-center gap-3">
-          <View className="rounded-xl bg-primary/10 p-2">
-            <Activity color={colors.primary} size={24} />
-          </View>
-          <Text className="font-bold text-2xl text-foreground">
-            <Trans>Progress</Trans>
-          </Text>
-        </View>
-      </View>
+      <ScreenHeader icon={Activity} title={t`Progress`} />
 
       <View className="flex-1 items-center justify-center px-8">
         <Card className="w-full">

@@ -8,6 +8,8 @@ export const syncCompletedCountAtom = atom(0);
 
 export const isSyncingAtom = atom(false);
 
+export const dictionaryChangedAtom = atom(false);
+
 export const recentTagsAtom = atomWithStorage(
   "bahar:recentTags",
   [] as string[],

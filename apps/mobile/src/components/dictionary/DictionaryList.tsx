@@ -28,10 +28,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { type SortOption, useInfiniteSearch } from "@/hooks/useSearch";
-import { recoverFromSyncConflict } from "@/lib/db";
-import { isSyncError, syncDatabase } from "@/lib/db/adapter";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
+import { performSync } from "@/lib/db/sync";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { DictionaryEntryCard } from "./DictionaryEntryCard";
@@ -158,19 +156,11 @@ export const DictionaryList: FC<DictionaryListProps> = ({
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    store.set(isSyncingAtom, true);
     try {
-      await syncDatabase();
-      store.set(syncCompletedCountAtom, (c) => c + 1);
-    } catch (error) {
-      console.warn("[DictionaryList] Pull-to-refresh sync failed:", error);
-      if (isSyncError(error)) {
-        await recoverFromSyncConflict();
-        return;
-      }
+      await performSync();
+    } catch {
       refresh();
     } finally {
-      store.set(isSyncingAtom, false);
       setRefreshing(false);
     }
   };

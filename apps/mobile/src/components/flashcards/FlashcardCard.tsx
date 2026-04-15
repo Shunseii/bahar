@@ -160,9 +160,9 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
   const entry = flashcard.dictionary_entry;
 
   const typeLabels: Record<string, string> = {
-    ism: t`Noun`,
-    "fi'l": t`Verb`,
-    harf: t`Particle`,
+    ism: t`Ism`,
+    "fi'l": t`Fi'l`,
+    harf: t`Harf`,
     expression: t`Expression`,
   };
 

@@ -3,9 +3,9 @@ import { useLingui } from "@lingui/react/macro";
 export const useWordTypeOptions = () => {
   const { t } = useLingui();
   return [
-    { value: "ism", label: t`Ism (Noun)` },
-    { value: "fi'l", label: t`Fi'l (Verb)` },
-    { value: "harf", label: t`Harf (Particle)` },
+    { value: "ism", label: t`Ism` },
+    { value: "fi'l", label: t`Fi'l` },
+    { value: "harf", label: t`Harf` },
     { value: "expression", label: t`Expression` },
   ];
 };

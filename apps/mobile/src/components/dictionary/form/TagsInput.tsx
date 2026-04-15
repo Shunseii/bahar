@@ -22,9 +22,14 @@ import { useThemeColors } from "@/lib/theme";
 interface TagsInputProps {
   value: { name: string }[] | undefined;
   onChange: (value: { name: string }[]) => void;
+  showRecentTags?: boolean;
 }
 
-export const TagsInput = ({ value, onChange }: TagsInputProps) => {
+export const TagsInput = ({
+  value,
+  onChange,
+  showRecentTags = true,
+}: TagsInputProps) => {
   const colors = useThemeColors();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -75,7 +80,7 @@ export const TagsInput = ({ value, onChange }: TagsInputProps) => {
         </View>
       )}
 
-      {recentTags.length > 0 && (
+      {showRecentTags && recentTags.length > 0 && (
         <View>
           <Text className="mb-2 font-medium text-muted-foreground text-xs">
             <Trans>Recently used</Trans>
@@ -255,7 +260,10 @@ const TagsModal = ({
             return (
               <Pressable onPress={() => handleToggle(item.tag)}>
                 <View className="flex-row items-center gap-3 px-4 py-3">
-                  <Checkbox checked={isSelected} />
+                  <Checkbox
+                    checked={isSelected}
+                    onCheckedChange={() => handleToggle(item.tag)}
+                  />
                   <Text
                     className={cn(
                       "flex-1 text-sm",

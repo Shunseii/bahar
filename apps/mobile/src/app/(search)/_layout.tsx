@@ -37,11 +37,15 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { Button } from "@/components/ui/button";
 import { HeaderScrollContext } from "@/contexts/header-scroll";
-import { recoverFromSyncConflict, resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
-import { isSyncError, syncDatabase } from "@/lib/db/adapter";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
+import { performSync } from "@/lib/db/sync";
 import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
-import { isSyncingAtom, store, syncCompletedCountAtom } from "@/lib/store";
+import {
+  dictionaryChangedAtom,
+  isSyncingAtom,
+  store,
+  syncCompletedCountAtom,
+} from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { authClient } from "@/utils/auth-client";
@@ -181,32 +185,10 @@ export default function Layout() {
   const [headerTitle, setHeaderTitle] = useState("");
   const scrollY = useSharedValue(0);
   const syncCompletedCount = useAtomValue(syncCompletedCountAtom);
-  const dictionaryChangedRef = useRef(false);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        store.set(isSyncingAtom, true);
-
-        const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
-
-        await syncDatabase();
-
-        const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
-        dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
-
-        store.set(syncCompletedCountAtom, (c) => c + 1);
-        console.log("[sync] Background sync complete", {
-          dictionaryChanged: dictionaryChangedRef.current,
-        });
-      } catch (error) {
-        console.warn("[sync] Background sync failed:", error);
-        if (isSyncError(error)) {
-          await recoverFromSyncConflict();
-        }
-      } finally {
-        store.set(isSyncingAtom, false);
-      }
+    const interval = setInterval(() => {
+      performSync().catch(() => {});
     }, SYNC_INTERVAL_MS);
 
     return () => clearInterval(interval);
@@ -216,9 +198,11 @@ export default function Layout() {
     if (syncCompletedCount === 0) return;
 
     const refreshAfterSync = async () => {
-      if (dictionaryChangedRef.current) {
+      const dictionaryChanged = store.get(dictionaryChangedAtom);
+      if (dictionaryChanged) {
         await rehydrateOramaDb();
         setSearchQuery("");
+        store.set(dictionaryChangedAtom, false);
         console.log("[sync] Orama reindexed after sync");
       }
 

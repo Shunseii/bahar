@@ -8,11 +8,11 @@ import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcard
 const getTranslatedType = (entryType: SelectDictionaryEntry["type"]) => {
   switch (entryType) {
     case "ism":
-      return t`Noun`;
+      return t`Ism`;
     case "fi'l":
-      return t`Verb`;
+      return t`Fi'l`;
     case "harf":
-      return t`Preposition`;
+      return t`Harf`;
     case "expression":
       return t`Expression`;
   }

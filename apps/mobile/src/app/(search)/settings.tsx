@@ -1,13 +1,7 @@
 import type { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  Brain,
-  Languages,
-  Palette,
-  Settings,
-  Trash2,
-} from "lucide-react-native";
+import { Brain, Languages, Palette, Settings, Trash2 } from "lucide-react-native";
 import type React from "react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -24,6 +18,7 @@ import Animated from "react-native-reanimated";
 import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { resetDb } from "@/lib/db";
 import { settingsTable, type UserSettings } from "@/lib/db/operations/settings";
@@ -173,17 +168,7 @@ export default function SettingsScreen() {
       onScroll={scrollHandler}
       scrollEventThrottle={16}
     >
-      {/* Header */}
-      <View className="border-border border-b px-4 py-4">
-        <View className="flex-row items-center gap-3">
-          <View className="rounded-xl bg-primary/10 p-2">
-            <Settings color={colors.primary} size={24} />
-          </View>
-          <Text className="font-bold text-2xl text-foreground">
-            <Trans>Settings</Trans>
-          </Text>
-        </View>
-      </View>
+      <ScreenHeader icon={Settings} title={t`Settings`} />
 
       <View className="gap-4 px-4 pt-4">
         {/* Flashcard Settings */}

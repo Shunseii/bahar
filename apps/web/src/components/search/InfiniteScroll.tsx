@@ -45,9 +45,9 @@ import { Highlight } from "./Highlight";
 const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {
   const { t } = useLingui();
   return {
-    ism: t`Noun`,
-    "fi'l": t`Verb`,
-    harf: t`Particle`,
+    ism: t`Ism`,
+    "fi'l": t`Fi'l`,
+    harf: t`Harf`,
     expression: t`Expression`,
   };
 };
