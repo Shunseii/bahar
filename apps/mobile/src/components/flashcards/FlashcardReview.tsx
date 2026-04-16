@@ -232,6 +232,9 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       queryClient.invalidateQueries({
         queryKey: decksTable.list.cacheOptions.queryKey,
       });
+      queryClient.invalidateQueries({ queryKey: ["turso.progress"] });
+      queryClient.invalidateQueries({ queryKey: ["stats.revlogs.recent"] });
+      queryClient.invalidateQueries({ queryKey: ["stats.retention"] });
     },
   });
 

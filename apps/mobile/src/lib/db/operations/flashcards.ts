@@ -438,6 +438,38 @@ export const flashcardsTable = {
     },
   },
 
+  findByEntryAndDirection: {
+    query: async ({
+      dictionaryEntryId,
+      direction,
+    }: {
+      dictionaryEntryId: string;
+      direction: string;
+    }): Promise<{ data: SelectFlashcard | null }> => {
+      const db = await ensureDb();
+
+      const res = await db
+        .prepare<RawFlashcard>(
+          "SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;"
+        )
+        .get([dictionaryEntryId, direction]);
+
+      if (!res) return { data: null };
+
+      return {
+        data: {
+          ...res,
+          direction: (res.direction ??
+            "forward") as SelectFlashcard["direction"],
+          is_hidden: Boolean(res.is_hidden),
+        },
+      };
+    },
+    cacheOptions: {
+      queryKey: ["turso.flashcards.findByEntryAndDirection"] as const,
+    },
+  },
+
   reset: {
     mutation: async ({
       dictionary_entry_id,

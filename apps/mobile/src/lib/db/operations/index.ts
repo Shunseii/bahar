@@ -6,5 +6,6 @@ export { decksTable } from "./decks";
 export { dictionaryEntriesTable } from "./dictionary-entries";
 export type { FlashcardWithDictionaryEntry } from "./flashcards";
 export { FLASHCARD_LIMIT, flashcardsTable } from "./flashcards";
+export { progressTable } from "./progress";
 export type { UserSettings } from "./settings";
 export { settingsTable } from "./settings";

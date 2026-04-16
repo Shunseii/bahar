@@ -1,5 +1,5 @@
 {
-  "version": "2.10",
+  "version": "2.11",
   "children": [
     {
       "type": "frame",
@@ -23004,7 +23004,8 @@
                               "fill": "#717396",
                               "content": "Hospital",
                               "fontFamily": "Inter",
-                              "fontSize": 13
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -23106,7 +23107,8 @@
                               "fill": "#717396",
                               "content": "Teacher",
                               "fontFamily": "Inter",
-                              "fontSize": 13
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -23202,7 +23204,8 @@
                               "fill": "#717396",
                               "content": "Economy",
                               "fontFamily": "Inter",
-                              "fontSize": 13
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -23419,7 +23422,8 @@
                               "fill": "#717396",
                               "content": "Morning",
                               "fontFamily": "Inter",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -23509,7 +23513,8 @@
                               "fill": "#717396",
                               "content": "House",
                               "fontFamily": "Inter",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -23599,7 +23604,8 @@
                               "fill": "#717396",
                               "content": "Library",
                               "fontFamily": "Inter",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -23683,7 +23689,8 @@
                               "fill": "#717396",
                               "content": "Word",
                               "fontFamily": "Inter",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -24800,7 +24807,8 @@
                               "fill": "#717396",
                               "content": "Hospital",
                               "fontFamily": "Inter",
-                              "fontSize": 13
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -24902,7 +24910,8 @@
                               "fill": "#717396",
                               "content": "Teacher",
                               "fontFamily": "Inter",
-                              "fontSize": 13
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -24998,7 +25007,8 @@
                               "fill": "#717396",
                               "content": "Economy",
                               "fontFamily": "Inter",
-                              "fontSize": 13
+                              "fontSize": 13,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -25215,7 +25225,8 @@
                               "fill": "#717396",
                               "content": "Morning",
                               "fontFamily": "Inter",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -25305,7 +25316,8 @@
                               "fill": "#717396",
                               "content": "House",
                               "fontFamily": "Inter",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -25395,7 +25407,8 @@
                               "fill": "#717396",
                               "content": "Library",
                               "fontFamily": "Inter",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -25479,7 +25492,8 @@
                               "fill": "#717396",
                               "content": "Word",
                               "fontFamily": "Inter",
-                              "fontSize": 12
+                              "fontSize": 12,
+                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -25519,6 +25533,406 @@
                       ]
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nX8F7",
+      "x": 5073,
+      "y": 0,
+      "name": "Welcome Screen",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#F1F0F7",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "htsXO",
+          "name": "Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            0,
+            32,
+            48,
+            32
+          ],
+          "justifyContent": "end",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "iELqe",
+              "name": "Brand Section",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "2zK8R",
+                  "name": "Logo Container",
+                  "width": 100,
+                  "height": 100,
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "./logo.png",
+                    "mode": "fit"
+                  },
+                  "layout": "none"
+                },
+                {
+                  "type": "text",
+                  "id": "CvMSE",
+                  "name": "App Name Arabic",
+                  "fill": "#141530",
+                  "content": "بحر",
+                  "fontFamily": "Inter",
+                  "fontSize": 44,
+                  "fontWeight": "700",
+                  "letterSpacing": -0.5
+                },
+                {
+                  "type": "text",
+                  "id": "VLwT6",
+                  "name": "App Name",
+                  "fill": "#717396",
+                  "content": "Bahar",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "500",
+                  "letterSpacing": -1
+                },
+                {
+                  "type": "text",
+                  "id": "iQrAZ",
+                  "name": "Tagline",
+                  "fill": "#717396",
+                  "content": "Your Arabic learning companion",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "vFAVW",
+              "name": "Button Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "n4atu",
+                  "name": "Get Started Button",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#3451B2",
+                        "position": 0
+                      },
+                      {
+                        "color": "#4A65C4",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "95I6f",
+                      "name": "getStartedTxt",
+                      "fill": "#FFFFFF",
+                      "content": "Get Started",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zDMjA",
+                  "name": "Sign Up or Log In Button",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 12,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#E4E3EF"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rtQFs",
+                      "name": "signUpTxt",
+                      "fill": "#3451B2",
+                      "content": "Sign up or Log in",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "nnync",
+                  "name": "Legal Note",
+                  "fill": "#9CA3AF",
+                  "textGrowth": "fixed-width",
+                  "width": 280,
+                  "content": "By continuing, you agree to our Terms and Privacy Policy",
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "0z4kg",
+      "x": 5566,
+      "y": 0,
+      "name": "Login Screen (Auth Flow)",
+      "clip": true,
+      "width": 393,
+      "height": 852,
+      "fill": "#F1F0F7",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "e11sx",
+          "x": 0,
+          "y": 0,
+          "name": "Login Content",
+          "width": 393,
+          "height": 852,
+          "layout": "vertical",
+          "gap": 24,
+          "padding": [
+            120,
+            32,
+            32,
+            32
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "jYsqQ",
+              "name": "title",
+              "fill": "#141530",
+              "content": "Welcome to Bahar!",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "700",
+              "letterSpacing": -0.5
+            },
+            {
+              "type": "text",
+              "id": "6UXbL",
+              "name": "subtitle",
+              "fill": "#717396",
+              "textGrowth": "fixed-width",
+              "width": 300,
+              "content": "Log in to your existing account or sign up for a new one",
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "0o0hj",
+              "name": "emailSection",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "rTpf9",
+                  "name": "emailLabel",
+                  "fill": "#141530",
+                  "content": "Email",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "REVH8",
+                  "name": "emailInput",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#E4E3EF"
+                  },
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ydDQI",
+                      "name": "emailPlaceholder",
+                      "fill": "#B0B0C0",
+                      "content": "you@example.com",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "hmfnS",
+                  "name": "emailHint",
+                  "fill": "#717396",
+                  "content": "This is case insensitive.",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bnQHD",
+              "name": "continueBtn",
+              "width": "fill_container",
+              "height": 44,
+              "fill": "#3451B2",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "h4rIM",
+                  "name": "continueTxt",
+                  "fill": "#F7F8FC",
+                  "content": "Continue with Email",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VDqHX",
+              "name": "dividerRow",
+              "width": "fill_container",
+              "height": 20,
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "3ruKc",
+                  "name": "divLine1",
+                  "fill": "#E4E3EF",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "ymvuX",
+                  "name": "divText",
+                  "fill": "#9CA3AF",
+                  "content": "Or continue with",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "eNH9c",
+                  "name": "divLine2",
+                  "fill": "#E4E3EF",
+                  "width": "fill_container",
+                  "height": 1
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "QJjis",
+              "name": "ghBtn",
+              "width": "fill_container",
+              "height": 44,
+              "fill": "#0D0D0D",
+              "cornerRadius": 8,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E4E3EF"
+              },
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "YKtFa",
+                  "name": "ghIcon",
+                  "width": 18,
+                  "height": 18,
+                  "iconFontName": "github",
+                  "iconFontFamily": "lucide",
+                  "fill": "#FFFFFF"
+                },
+                {
+                  "type": "text",
+                  "id": "Usmxx",
+                  "name": "ghText",
+                  "fill": "#F1F0F7",
+                  "content": "GitHub",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
                 }
               ]
             }
