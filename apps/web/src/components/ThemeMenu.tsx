@@ -1,3 +1,4 @@
+import { cn } from "@bahar/design-system";
 import {
   Select,
   SelectContent,
@@ -19,7 +20,6 @@ import {
   themeAtom,
 } from "@/atoms/theme";
 import { useDir } from "@/hooks/useDir";
-import { cn } from "@bahar/design-system";
 
 export const ThemeIcon: FC<{ theme: Theme }> = ({ theme }) => {
   switch (theme) {

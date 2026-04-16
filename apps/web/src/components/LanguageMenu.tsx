@@ -1,3 +1,4 @@
+import { cn } from "@bahar/design-system";
 import {
   Select,
   SelectContent,
@@ -11,7 +12,6 @@ import { Trans } from "@lingui/react/macro";
 import type { FC } from "react";
 import { useDir } from "@/hooks/useDir";
 import { dynamicActivate, getLocaleKeys, type TLocale } from "@/lib/i18n";
-import { cn } from "@bahar/design-system";
 
 export const LocaleLabel: FC<{ locale: TLocale }> = ({ locale }) => {
   switch (locale) {
