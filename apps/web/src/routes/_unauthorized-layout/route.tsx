@@ -8,8 +8,8 @@ const Layout = () => {
   return (
     <div className="h-screen p-8">
       <div className="flex justify-between">
-        <ThemeMenu />
-        <LanguageMenu />
+        <ThemeMenu className="min-w-max" />
+        <LanguageMenu className="min-w-max" />
       </div>
 
       <Outlet />

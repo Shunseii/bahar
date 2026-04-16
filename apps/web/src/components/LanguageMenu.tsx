@@ -11,6 +11,7 @@ import { Trans } from "@lingui/react/macro";
 import type { FC } from "react";
 import { useDir } from "@/hooks/useDir";
 import { dynamicActivate, getLocaleKeys, type TLocale } from "@/lib/i18n";
+import { cn } from "@bahar/design-system";
 
 export const LocaleLabel: FC<{ locale: TLocale }> = ({ locale }) => {
   switch (locale) {
@@ -23,7 +24,7 @@ export const LocaleLabel: FC<{ locale: TLocale }> = ({ locale }) => {
   }
 };
 
-export const LanguageMenu = () => {
+export const LanguageMenu: FC<{ className?: string }> = ({ className }) => {
   const dir = useDir();
 
   return (
@@ -35,7 +36,7 @@ export const LanguageMenu = () => {
       }}
     >
       <SelectTrigger
-        className="w-max min-w-[150px] gap-x-2"
+        className={cn("w-max min-w-[150px] gap-x-2", className)}
         id="settings-language-menu"
       >
         <SelectValue />

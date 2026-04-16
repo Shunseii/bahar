@@ -19,6 +19,7 @@ import {
   themeAtom,
 } from "@/atoms/theme";
 import { useDir } from "@/hooks/useDir";
+import { cn } from "@bahar/design-system";
 
 export const ThemeIcon: FC<{ theme: Theme }> = ({ theme }) => {
   switch (theme) {
@@ -48,7 +49,7 @@ export const ThemeLabel: FC<{ theme: Theme }> = ({ theme }) => {
   }
 };
 
-export const ThemeMenu = () => {
+export const ThemeMenu: FC<{ className?: string }> = ({ className }) => {
   const [theme, setTheme] = useAtom(themeAtom);
   const dir = useDir();
 
@@ -61,7 +62,7 @@ export const ThemeMenu = () => {
       }}
     >
       <SelectTrigger
-        className="w-max min-w-[150px] gap-x-2"
+        className={cn("w-max min-w-[150px] gap-x-2", className)}
         id="settings-theme-menu"
       >
         <SelectValue />

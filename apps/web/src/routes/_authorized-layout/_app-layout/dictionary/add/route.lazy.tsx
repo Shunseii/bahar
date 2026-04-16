@@ -32,8 +32,8 @@ import {
   MorphologyFormSection,
 } from "@/components/features/dictionary/add";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
-import { Page } from "@/components/Page";
 import { InfoTooltip } from "@/components/InfoTooltip";
+import { Page } from "@/components/Page";
 import { useAddDictionaryEntry } from "@/hooks/db";
 import { useDir } from "@/hooks/useDir";
 import { useUserPlan } from "@/hooks/useUserPlan";
@@ -438,7 +438,7 @@ const Add = () => {
                         setCreateMultiple(checked === true)
                       }
                     />
-                    <span className="text-muted-foreground text-sm select-none">
+                    <span className="select-none text-muted-foreground text-sm">
                       <Trans>Create multiple</Trans>
                     </span>
                   </label>
@@ -465,7 +465,7 @@ const Add = () => {
                       setCreateMultiple(checked === true)
                     }
                   />
-                  <span className="text-muted-foreground text-sm select-none">
+                  <span className="select-none text-muted-foreground text-sm">
                     <Trans>Create multiple</Trans>
                   </span>
                 </label>
