@@ -6,7 +6,6 @@ import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { z } from "zod";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
-import { GuestLoginButton } from "@/components/GuestLoginButton";
 import { Page } from "@/components/Page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -115,8 +114,6 @@ export default function LoginScreen() {
       </View>
 
       <GithubLoginButton />
-
-      <GuestLoginButton />
     </Page>
   );
 }
