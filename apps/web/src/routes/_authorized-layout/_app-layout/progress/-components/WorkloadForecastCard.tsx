@@ -58,8 +58,8 @@ export const WorkloadForecastCard: FC<WorkloadForecastCardProps> = ({
         </span>
         <InfoTooltip>
           <Trans>
-            Predicted number of cards due for review each day over the next
-            week.
+            New cards scheduled for review each day, in addition to any cards
+            that are already due.
           </Trans>
         </InfoTooltip>
       </div>

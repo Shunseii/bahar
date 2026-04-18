@@ -476,6 +476,7 @@ msgstr "Backlog cleared!"
 #: ../../apps/web/src/routes/__root.tsx:22
 #: ../../apps/web/src/components/MobileHeader.tsx:140
 #: ../../apps/web/src/components/DesktopNavigation.tsx:43
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:27
 msgid "Bahar"
 msgstr "Bahar"
 
@@ -500,6 +501,10 @@ msgstr "Billed monthly"
 #: ../../apps/mobile/src/app/(search)/settings.tsx:117
 msgid "Billing"
 msgstr "Billing"
+
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:54
+msgid "By continuing, you agree to our"
+msgstr "By continuing, you agree to our"
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:164
 msgid "By signing in, you agree to our <0>Privacy Policy</0>"
@@ -600,7 +605,7 @@ msgstr "Continue as Guest"
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:142
 #: ../../apps/mobile/src/app/link-account.tsx:115
-#: ../../apps/mobile/src/app/(auth)/login.tsx:106
+#: ../../apps/mobile/src/app/(auth)/login.tsx:105
 msgid "Continue with Email"
 msgstr "Continue with Email"
 
@@ -939,7 +944,7 @@ msgstr "Edit your deck by choosing filters. The deck will be composed of the car
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:116
 #: ../../apps/mobile/src/app/link-account.tsx:78
-#: ../../apps/mobile/src/app/(auth)/login.tsx:69
+#: ../../apps/mobile/src/app/(auth)/login.tsx:68
 msgid "Email"
 msgstr "Email"
 
@@ -1246,6 +1251,10 @@ msgstr "Generate example"
 msgid "Generating..."
 msgstr "Generating..."
 
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:42
+msgid "Get Started"
+msgstr "Get Started"
+
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:160
 #: ../../apps/mobile/src/components/GithubLoginButton.tsx:24
 msgid "GitHub"
@@ -1352,6 +1361,10 @@ msgstr "How the word is categorized based on its type or context."
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:325
 msgid "Huroof"
 msgstr "Huroof"
+
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:50
+msgid "I already have an account"
+msgstr "I already have an account"
 
 #: ../../apps/web/src/components/errors/ErrorMessage.tsx:115
 msgid "ID:"
@@ -1498,7 +1511,7 @@ msgstr "Loading..."
 #~ msgstr "Local data reset successfully!"
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:98
-#: ../../apps/mobile/src/app/(auth)/login.tsx:64
+#: ../../apps/mobile/src/app/(auth)/login.tsx:63
 msgid "Log in to your existing account or sign up for a new one"
 msgstr "Log in to your existing account or sign up for a new one"
 
@@ -1724,7 +1737,7 @@ msgstr "Open Web App"
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:154
 #: ../../apps/mobile/src/app/link-account.tsx:121
-#: ../../apps/mobile/src/app/(auth)/login.tsx:112
+#: ../../apps/mobile/src/app/(auth)/login.tsx:111
 msgid "Or continue with"
 msgstr "Or continue with"
 
@@ -1793,7 +1806,7 @@ msgstr "Please try again or reload the page."
 #: ../../apps/web/src/components/OTPForm.tsx:114
 #: ../../apps/mobile/src/app/link-account.tsx:50
 #: ../../apps/mobile/src/app/link-code/[email].tsx:38
-#: ../../apps/mobile/src/app/(auth)/login.tsx:48
+#: ../../apps/mobile/src/app/(auth)/login.tsx:47
 #: ../../apps/mobile/src/app/(auth)/code/[email].tsx:35
 msgid "Please try again."
 msgstr "Please try again."
@@ -1826,8 +1839,8 @@ msgstr "Plurals"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/WorkloadForecastCard.tsx:60
 #: ../../apps/mobile/src/components/progress/WorkloadForecastCard.tsx:43
-msgid "Predicted number of cards due for review each day over the next week."
-msgstr "Predicted number of cards due for review each day over the next week."
+msgid "New cards scheduled for review each day, in addition to any cards that are already due."
+msgstr "New cards scheduled for review each day, in addition to any cards that are already due."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:92
 #: ../../apps/mobile/src/app/(search)/settings.tsx:187
@@ -1866,6 +1879,10 @@ msgstr "Present Tense"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/StreakCard.tsx:78
 #~ msgid "Previous: {longestStreak} days"
 #~ msgstr "Previous: {longestStreak} days"
+
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:59
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/route.lazy.tsx:247
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/ProPlaceholder.tsx:59
@@ -2440,13 +2457,13 @@ msgstr "This cannot be undone. Your words and flashcards will not be affected."
 #: ../../apps/mobile/src/utils/zod.ts:6
 #: ../../apps/mobile/src/utils/zod.ts:18
 #: ../../apps/mobile/src/app/link-account.tsx:99
-#: ../../apps/mobile/src/app/(auth)/login.tsx:90
+#: ../../apps/mobile/src/app/(auth)/login.tsx:89
 msgid "This field is required."
 msgstr "This field is required."
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:124
 #: ../../apps/mobile/src/app/link-account.tsx:104
-#: ../../apps/mobile/src/app/(auth)/login.tsx:95
+#: ../../apps/mobile/src/app/(auth)/login.tsx:94
 msgid "This is case insensitive."
 msgstr "This is case insensitive."
 
@@ -2647,7 +2664,7 @@ msgid "We're having trouble with your account setup. Please try again."
 msgstr "We're having trouble with your account setup. Please try again."
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:94
-#: ../../apps/mobile/src/app/(auth)/login.tsx:60
+#: ../../apps/mobile/src/app/(auth)/login.tsx:59
 msgid "Welcome to Bahar!"
 msgstr "Welcome to Bahar!"
 
@@ -2759,6 +2776,10 @@ msgstr "You're browsing as a guest"
 msgid "Your account needs maintenance. We've been notified. Please try again later."
 msgstr "Your account needs maintenance. We've been notified. Please try again later."
 
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:31
+msgid "Your Arabic learning companion"
+msgstr "Your Arabic learning companion"
+
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:571
 #~ msgid "Your data has been re-synced from the server."
 #~ msgstr "Your data has been re-synced from the server."
@@ -2804,6 +2825,10 @@ msgstr "Your existing words and progress will be kept."
 #: ../../apps/mobile/src/components/progress/RecentReviewsCard.tsx:82
 msgid "Your most recent flashcard reviews. You can undo a review to restore the card to its previous state."
 msgstr "Your most recent flashcard reviews. You can undo a review to restore the card to its previous state."
+
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:23
+msgid "بحر"
+msgstr "بحر"
 
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:269
 msgid "محمد is a triptote;"
