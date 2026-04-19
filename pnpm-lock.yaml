@@ -43,11 +43,11 @@ importers:
         specifier: ^0.10.0
         version: 0.10.0
       '@polar-sh/better-auth':
-        specifier: ^1.8.1
-        version: 1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.5)(react@19.1.0)(zod@4.3.6)
+        specifier: ^1.8.3
+        version: 1.8.3(@polar-sh/sdk@0.47.0)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.5)(react@19.1.0)(zod@4.3.6)
       '@polar-sh/sdk':
-        specifier: ^0.42.1
-        version: 0.42.5
+        specifier: ^0.47.0
+        version: 0.47.0
       '@sentry/bun':
         specifier: ^10.32.1
         version: 10.32.1
@@ -7755,16 +7755,16 @@ packages:
       - redux
     dev: false
 
-  /@polar-sh/better-auth@1.8.1(@polar-sh/sdk@0.42.5)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.5)(react@19.1.0)(zod@4.3.6):
-    resolution: {integrity: sha512-wZjF1xcxw1+blnR8JspPwZ0WhwoHkG4C2oFhVzb1RJKQfwTBjSmnrBftjaV6D3WFHDnrs0wFPnW/YHXzg8paOA==}
+  /@polar-sh/better-auth@1.8.3(@polar-sh/sdk@0.47.0)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.5)(react@19.1.0)(zod@4.3.6):
+    resolution: {integrity: sha512-9lASF4si+iU3pi3yNVhb+uZdqF7ZvF7J7GSq0w6YaZsr/oVXxd4l+v8cmJiq3crsEaXiJIBni6v3xHpzgCjtmQ==}
     engines: {node: '>=16'}
     peerDependencies:
-      '@polar-sh/sdk': ^0.42.1
+      '@polar-sh/sdk': ^0.46.4
       better-auth: ^1.4.12
       zod: ^3.24.2 || ^4
     dependencies:
       '@polar-sh/checkout': 0.2.0(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(react-dom@19.1.0)(react-is@19.2.5)(react@19.1.0)
-      '@polar-sh/sdk': 0.42.5
+      '@polar-sh/sdk': 0.47.0
       better-auth: 1.4.19(drizzle-kit@0.31.9)(drizzle-orm@0.45.1)(react-dom@19.1.0)(react@19.1.0)
       zod: 4.3.6
     transitivePeerDependencies:
@@ -7852,6 +7852,13 @@ packages:
 
   /@polar-sh/sdk@0.42.5:
     resolution: {integrity: sha512-GzC3/ElCtMO55+KeXwFTANlydZzw5qI3DU/F9vAFIsUKuegSmh+Xu03KCL+ct9/imJOvLUQucYhUSsNKqo2j2Q==}
+    dependencies:
+      standardwebhooks: 1.0.0
+      zod: 4.3.6
+    dev: false
+
+  /@polar-sh/sdk@0.47.0:
+    resolution: {integrity: sha512-tZEt8eLWsQVhmyfUQzXhnN84e5Cnu/JsYFnCci1ranWkIGveQc+wTiyzDCG9Tl1xiz1Y/ztPsAJ1fevj6ExdAA==}
     dependencies:
       standardwebhooks: 1.0.0
       zod: 4.3.6

@@ -24,3 +24,8 @@ export const SUBSCRIPTION_STATUSES = [
 ] as const;
 
 export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUSES)[number];
+
+export const isSubscriptionStatus = (
+  value: string
+): value is SubscriptionStatus =>
+  (SUBSCRIPTION_STATUSES as readonly string[]).includes(value);
