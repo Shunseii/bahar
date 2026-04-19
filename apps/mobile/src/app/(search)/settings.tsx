@@ -1,6 +1,7 @@
 import type { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { reloadAppAsync } from "expo";
 import {
   Bell,
   Brain,
@@ -32,7 +33,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import { resetDb } from "@/lib/db";
+import { deleteLocalDb, resetDb } from "@/lib/db";
 import { settingsTable, type UserSettings } from "@/lib/db/operations/settings";
 import { resetOramaDb } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
@@ -247,6 +248,43 @@ export default function SettingsScreen() {
     onError: () => toast.error(t`Failed to update settings`),
   });
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      t`Delete Account`,
+      t`This will permanently delete your account, all your dictionary entries, flashcards, decks, and any active subscription. This action cannot be undone.`,
+      [
+        { text: t`Cancel`, style: "cancel" },
+        {
+          text: t`Delete Account`,
+          style: "destructive",
+          onPress: async () => {
+            const { error } = await authClient.deleteUser({});
+
+            if (error) {
+              console.error("Failed to delete account:", error);
+              if (error.message === authClient.$ERROR_CODES.SESSION_EXPIRED) {
+                toast.error(t`Please sign in again to delete your account`);
+                return;
+              }
+              toast.error(t`Failed to delete account`);
+              return;
+            }
+
+            try {
+              await resetDb();
+              deleteLocalDb();
+              resetOramaDb();
+            } catch (err) {
+              console.error("Failed to clear local data:", err);
+            }
+
+            await reloadAppAsync("Account deleted");
+          },
+        },
+      ]
+    );
+  };
+
   const handleDeleteDictionary = () => {
     Alert.alert(
       t`Delete Dictionary`,
@@ -452,15 +490,33 @@ export default function SettingsScreen() {
             </View>
           </CardHeader>
           <CardContent>
-            <Text className="mb-4 text-muted-foreground text-sm">
-              <Trans>
-                Permanently delete all your data including words, flashcards,
-                and decks.
-              </Trans>
-            </Text>
-            <Button onPress={handleDeleteDictionary} variant="destructive">
-              <Trans>Delete All Data</Trans>
-            </Button>
+            <View className="gap-6">
+              <View>
+                <Text className="mb-4 text-muted-foreground text-sm">
+                  <Trans>
+                    Permanently delete all your data including words,
+                    flashcards, and decks.
+                  </Trans>
+                </Text>
+                <Button onPress={handleDeleteDictionary} variant="destructive">
+                  <Trans>Delete All Data</Trans>
+                </Button>
+              </View>
+
+              <View className="border-border/50 border-t" />
+
+              <View>
+                <Text className="mb-4 text-muted-foreground text-sm">
+                  <Trans>
+                    Permanently delete your Bahar account, including your
+                    subscription and all data.
+                  </Trans>
+                </Text>
+                <Button onPress={handleDeleteAccount} variant="destructive">
+                  <Trans>Delete Account</Trans>
+                </Button>
+              </View>
+            </View>
           </CardContent>
         </Card>
       </View>

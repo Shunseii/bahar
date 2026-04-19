@@ -6,6 +6,7 @@
  */
 
 import { err, ok, type Result, tryCatch } from "@bahar/result";
+import { reloadAppAsync } from "expo";
 import { File, Paths } from "expo-file-system/next";
 import { api } from "../../utils/api";
 import {
@@ -96,7 +97,6 @@ export const deleteLocalDb = (): void => {
 export const recoverFromSyncConflict = async (): Promise<void> => {
   console.warn("[db] Sync conflict — deleting local DB and restarting...");
   deleteLocalDb();
-  const { reloadAppAsync } = await import("expo");
   await reloadAppAsync("Resolving sync conflict");
 };
 

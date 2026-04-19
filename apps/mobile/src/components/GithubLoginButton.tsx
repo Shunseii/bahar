@@ -16,7 +16,7 @@ export const GithubLoginButton = () => {
         opacity: pressed ? 0.7 : 1,
       })}
     >
-      <View className="flex h-10 w-full flex-row items-center justify-center gap-x-2 rounded-md border border-input bg-foreground px-4 py-2 transition-colors disabled:opacity-50">
+      <View className="flex h-10 w-full flex-row items-center justify-center gap-x-2 rounded-md bg-foreground px-4 py-2 transition-colors disabled:opacity-50">
         <FontAwesome5 color={primaryForeground} name="github" size={18} />
 
         <Text className="font-medium text-primary-foreground">

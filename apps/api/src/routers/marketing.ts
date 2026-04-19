@@ -26,16 +26,6 @@ const getLatestConsentEvent = async (userId: string) => {
   return latest ?? null;
 };
 
-const hasAnyConsentEvent = async (userId: string) => {
-  const [row] = await db
-    .select({ id: consentEvents.id })
-    .from(consentEvents)
-    .where(eq(consentEvents.userId, userId))
-    .limit(1);
-
-  return !!row;
-};
-
 export const marketingRouter = new Elysia({ prefix: "/marketing" })
   .use(betterAuthGuard)
   .get(
@@ -64,8 +54,6 @@ export const marketingRouter = new Elysia({ prefix: "/marketing" })
         server?.requestIP(request)?.address ??
         null;
 
-      const contactExists = await hasAnyConsentEvent(user.id);
-
       await db.insert(consentEvents).values({
         id: nanoid(),
         userId: user.id,
@@ -81,24 +69,28 @@ export const marketingRouter = new Elysia({ prefix: "/marketing" })
       });
 
       if (config.RESEND_SEGMENT_ID) {
-        try {
-          if (contactExists) {
-            await resend.contacts.update({
-              email: user.email,
-              unsubscribed: !body.consent,
-            });
-          } else {
-            await resend.contacts.create({
-              email: user.email,
-              unsubscribed: !body.consent,
-              segments: [{ id: config.RESEND_SEGMENT_ID }],
-            });
+        const createResult = await resend.contacts.create({
+          email: user.email,
+          unsubscribed: !body.consent,
+          segments: [{ id: config.RESEND_SEGMENT_ID }],
+        });
+
+        if (createResult.error) {
+          const updateResult = await resend.contacts.update({
+            email: user.email,
+            unsubscribed: !body.consent,
+          });
+
+          if (updateResult.error) {
+            marketingLogger.error(
+              {
+                event: "resend_contact_sync.error",
+                createError: createResult.error,
+                updateError: updateResult.error,
+              },
+              "Failed to sync contact with Resend"
+            );
           }
-        } catch (error) {
-          marketingLogger.error(
-            { event: "resend_contact_sync.error", error },
-            "Failed to sync contact with Resend"
-          );
         }
       }
 

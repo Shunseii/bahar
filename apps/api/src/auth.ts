@@ -18,10 +18,10 @@ import {
   emailOTP,
   openAPI,
 } from "better-auth/plugins";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { buildAppleClientSecret } from "./clients/apple";
-import { sendMail } from "./clients/mail";
+import { buildAppleClientSecret, revokeAppleToken } from "./clients/apple";
+import { resend, sendMail } from "./clients/mail";
 import { polarClient } from "./clients/polar";
 import { redisClient } from "./clients/redis";
 import {
@@ -337,6 +337,111 @@ export const auth = betterAuth({
         input: false,
       },
     },
+    deleteUser: {
+      enabled: true,
+      beforeDelete: async (user) => {
+        const deleteLogger = logger.child({
+          category: LogCategory.AUTH,
+          userId: user.id,
+          event: "delete_user.cleanup",
+        });
+
+        deleteLogger.info("Starting delete_user cleanup");
+
+        const [appleAccount] = await db
+          .select({ refreshToken: accounts.refreshToken })
+          .from(accounts)
+          .where(
+            and(eq(accounts.userId, user.id), eq(accounts.providerId, "apple"))
+          );
+
+        const [userDb] = await db
+          .select({ dbName: databases.db_name })
+          .from(databases)
+          .where(eq(databases.user_id, user.id));
+
+        const userSessions = await db
+          .select({ token: sessions.token })
+          .from(sessions)
+          .where(eq(sessions.userId, user.id));
+
+        await db.transaction(async (tx) => {
+          await tx.delete(databases).where(eq(databases.user_id, user.id));
+          await tx.delete(revlogs).where(eq(revlogs.user_id, user.id));
+        });
+
+        const cleanupTasks: Promise<unknown>[] = [];
+
+        if (appleAccount?.refreshToken) {
+          cleanupTasks.push(
+            revokeAppleToken({ refreshToken: appleAccount.refreshToken })
+              .then(() => deleteLogger.info("Revoked Apple refresh token"))
+              .catch((error) =>
+                deleteLogger.error(
+                  { error },
+                  "Failed to revoke Apple refresh token"
+                )
+              )
+          );
+        }
+
+        if (userDb) {
+          cleanupTasks.push(
+            tursoPlatformClient.databases
+              .delete(userDb.dbName)
+              .then(() =>
+                deleteLogger.info(
+                  { dbName: userDb.dbName },
+                  "Deleted Turso database"
+                )
+              )
+              .catch((error) =>
+                deleteLogger.error(
+                  { error, dbName: userDb.dbName },
+                  "Failed to delete Turso database"
+                )
+              )
+          );
+        }
+
+        if (userSessions.length > 0) {
+          cleanupTasks.push(
+            Promise.all(
+              userSessions.map((s) => redisClient.del(s.token))
+            ).catch((error) =>
+              deleteLogger.error(
+                { error },
+                "Failed to clear Redis session cache"
+              )
+            )
+          );
+        }
+
+        cleanupTasks.push(
+          polarClient.customers
+            .deleteExternal({ externalId: user.id })
+            .then(() => deleteLogger.info("Deleted Polar customer"))
+            .catch((error) =>
+              deleteLogger.error({ error }, "Failed to delete Polar customer")
+            )
+        );
+
+        if (config.RESEND_SEGMENT_ID) {
+          cleanupTasks.push(
+            resend.contacts
+              .remove({ email: user.email })
+              .then(() => deleteLogger.info("Removed Resend contact"))
+              .catch((error) =>
+                deleteLogger.error({ error }, "Failed to remove Resend contact")
+              )
+          );
+        }
+
+        await Promise.all(cleanupTasks);
+
+        deleteLogger.info("Completed delete_user cleanup");
+      },
+    },
   },
   plugins: [
     openAPI(),
@@ -469,7 +574,7 @@ export const auth = betterAuth({
               slug: "pro_annual",
             },
           ],
-          successUrl: `https://${config.WEB_CLIENT_DOMAIN}/checkout-success`,
+          successUrl: `${config.WEB_CLIENT_DOMAIN.includes("localhost") ? "http" : "https"}://${config.WEB_CLIENT_DOMAIN}/checkout-success`,
           authenticatedUsersOnly: true,
         }),
         portal(),

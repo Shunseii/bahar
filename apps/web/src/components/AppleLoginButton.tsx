@@ -12,7 +12,7 @@ export const AppleLoginButton: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <Button
-      className="flex w-full items-center border border-black bg-white text-black hover:bg-neutral-100 dark:border-white dark:bg-black dark:text-white dark:hover:bg-neutral-900"
+      className="flex w-full items-center border border-black bg-white text-black hover:bg-neutral-100 dark:border-0 dark:bg-black dark:text-white dark:hover:bg-neutral-900"
       onClick={async () => {
         await authClient.signIn.social({
           provider: "apple",

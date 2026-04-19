@@ -25,7 +25,7 @@ import {
 import { Switch } from "@bahar/web-ui/components/switch";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -126,6 +126,7 @@ const PreferencesSettingsCard = () => {
 const Settings = () => {
   const { t } = useLingui();
   const { reset } = useSearch();
+  const navigate = useNavigate();
   const [file, setFile] = useState<File>();
   const [isLoading, setIsLoading] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
@@ -223,6 +224,40 @@ const Settings = () => {
     },
     [t]
   );
+
+  const deleteAccount = useCallback(async () => {
+    try {
+      const { error } = await authClient.deleteUser({});
+
+      if (error) {
+        console.error("Failed to delete account:", error);
+        if (error.message === authClient.$ERROR_CODES.SESSION_EXPIRED) {
+          toast.error(t`Please sign in again to delete your account`, {
+            description: t`For security, account deletion requires a recent sign-in.`,
+          });
+          return;
+        }
+        toast.error(t`Failed to delete account`, {
+          description: error.message || t`Please try again later.`,
+        });
+        return;
+      }
+
+      try {
+        await deleteLocalDatabase();
+        resetOramaDb();
+      } catch (cleanupErr) {
+        console.error("Failed to clear local data:", cleanupErr);
+      }
+
+      await navigate({ to: "/goodbye" });
+    } catch (err: unknown) {
+      console.error(err);
+      toast.error(t`Failed to delete account`, {
+        description: t`Please try again later.`,
+      });
+    }
+  }, [navigate, t]);
 
   const deleteDictionary = useCallback(async () => {
     try {
@@ -679,6 +714,63 @@ const Settings = () => {
                       variant="secondary"
                     >
                       <Trans>Reset and re-sync</Trans>
+                    </Button>
+                  </DialogClose>
+
+                  <DialogClose asChild>
+                    <Button variant="outline">
+                      <Trans>Cancel</Trans>
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader id="account">
+            <CardTitle>
+              <Trans>Account</Trans>
+            </CardTitle>
+
+            <CardDescription>
+              <Trans>
+                Permanently delete your Bahar account and all associated data.
+              </Trans>
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="destructive">
+                  <Trans>Delete account</Trans>
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>
+                    <Trans>Delete your account?</Trans>
+                  </DialogTitle>
+
+                  <DialogDescription>
+                    <Trans>
+                      This will permanently delete your account, all your
+                      dictionary entries, flashcards, decks, and any active
+                      subscription. This action cannot be undone.
+                      <br />
+                      <br />
+                      We'll email you a link to confirm the deletion.
+                    </Trans>
+                  </DialogDescription>
+                </DialogHeader>
+
+                <DialogFooter className="gap-y-4">
+                  <DialogClose asChild>
+                    <Button onClick={deleteAccount} variant="destructive">
+                      <Trans>Delete account</Trans>
                     </Button>
                   </DialogClose>
 

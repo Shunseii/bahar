@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as UnauthorizedLayoutRouteImport } from './routes/_unauthorized-layout/route'
 import { Route as AuthorizedLayoutRouteImport } from './routes/_authorized-layout/route'
 import { Route as UnauthorizedLayoutLoginRouteImport } from './routes/_unauthorized-layout/login/route'
+import { Route as UnauthorizedLayoutGoodbyeRouteImport } from './routes/_unauthorized-layout/goodbye/route'
 import { Route as AuthorizedLayoutSearchLayoutRouteImport } from './routes/_authorized-layout/_search-layout/route'
 import { Route as AuthorizedLayoutAppLayoutRouteImport } from './routes/_authorized-layout/_app-layout/route'
 import { Route as AuthorizedLayoutAppLayoutDictionaryEditWordIdImport } from './routes/_authorized-layout/_app-layout/dictionary/edit/$wordId'
@@ -63,6 +64,13 @@ const UnauthorizedLayoutLoginRouteRoute =
       (d) => d.Route,
     ),
   )
+
+const UnauthorizedLayoutGoodbyeRouteRoute =
+  UnauthorizedLayoutGoodbyeRouteImport.update({
+    id: '/goodbye',
+    path: '/goodbye',
+    getParentRoute: () => UnauthorizedLayoutRouteRoute,
+  } as any)
 
 const AuthorizedLayoutSearchLayoutRouteRoute =
   AuthorizedLayoutSearchLayoutRouteImport.update({
@@ -180,6 +188,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof AuthorizedLayoutSearchLayoutRouteImport
       parentRoute: typeof AuthorizedLayoutRouteImport
+    }
+    '/_unauthorized-layout/goodbye': {
+      id: '/_unauthorized-layout/goodbye'
+      path: '/goodbye'
+      fullPath: '/goodbye'
+      preLoaderRoute: typeof UnauthorizedLayoutGoodbyeRouteImport
+      parentRoute: typeof UnauthorizedLayoutRouteImport
     }
     '/_unauthorized-layout/login': {
       id: '/_unauthorized-layout/login'
@@ -305,11 +320,13 @@ const AuthorizedLayoutRouteRouteWithChildren =
   )
 
 interface UnauthorizedLayoutRouteRouteChildren {
+  UnauthorizedLayoutGoodbyeRouteRoute: typeof UnauthorizedLayoutGoodbyeRouteRoute
   UnauthorizedLayoutLoginRouteRoute: typeof UnauthorizedLayoutLoginRouteRoute
 }
 
 const UnauthorizedLayoutRouteRouteChildren: UnauthorizedLayoutRouteRouteChildren =
   {
+    UnauthorizedLayoutGoodbyeRouteRoute: UnauthorizedLayoutGoodbyeRouteRoute,
     UnauthorizedLayoutLoginRouteRoute: UnauthorizedLayoutLoginRouteRoute,
   }
 
@@ -320,6 +337,7 @@ const UnauthorizedLayoutRouteRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
+  '/goodbye': typeof UnauthorizedLayoutGoodbyeRouteRoute
   '/login': typeof UnauthorizedLayoutLoginRouteRoute
   '/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
@@ -332,6 +350,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '': typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
+  '/goodbye': typeof UnauthorizedLayoutGoodbyeRouteRoute
   '/login': typeof UnauthorizedLayoutLoginRouteRoute
   '/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
@@ -348,6 +367,7 @@ export interface FileRoutesById {
   '/_unauthorized-layout': typeof UnauthorizedLayoutRouteRouteWithChildren
   '/_authorized-layout/_app-layout': typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
   '/_authorized-layout/_search-layout': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
+  '/_unauthorized-layout/goodbye': typeof UnauthorizedLayoutGoodbyeRouteRoute
   '/_unauthorized-layout/login': typeof UnauthorizedLayoutLoginRouteRoute
   '/_authorized-layout/_app-layout/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/_authorized-layout/_app-layout/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
@@ -362,6 +382,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/goodbye'
     | '/login'
     | '/checkout-success'
     | '/decks'
@@ -373,6 +394,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
+    | '/goodbye'
     | '/login'
     | '/checkout-success'
     | '/decks'
@@ -387,6 +409,7 @@ export interface FileRouteTypes {
     | '/_unauthorized-layout'
     | '/_authorized-layout/_app-layout'
     | '/_authorized-layout/_search-layout'
+    | '/_unauthorized-layout/goodbye'
     | '/_unauthorized-layout/login'
     | '/_authorized-layout/_app-layout/checkout-success'
     | '/_authorized-layout/_app-layout/decks'
@@ -432,6 +455,7 @@ export const routeTree = rootRoute
     "/_unauthorized-layout": {
       "filePath": "_unauthorized-layout/route.tsx",
       "children": [
+        "/_unauthorized-layout/goodbye",
         "/_unauthorized-layout/login"
       ]
     },
@@ -453,6 +477,10 @@ export const routeTree = rootRoute
       "children": [
         "/_authorized-layout/_search-layout/"
       ]
+    },
+    "/_unauthorized-layout/goodbye": {
+      "filePath": "_unauthorized-layout/goodbye/route.tsx",
+      "parent": "/_unauthorized-layout"
     },
     "/_unauthorized-layout/login": {
       "filePath": "_unauthorized-layout/login/route.tsx",
