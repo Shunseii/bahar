@@ -8,12 +8,12 @@ import { useThemeColors } from "@/lib/theme";
 export const GuestBanner = () => {
   const [dismissed, setDismissed] = useState(false);
   const router = useRouter();
-  const { primaryForeground, primary, mutedForeground } = useThemeColors();
+  const { primaryForeground, mutedForeground } = useThemeColors();
 
   if (dismissed) return null;
 
   return (
-    <View className="gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
+    <View className="my-4 gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
       <View className="flex-row items-start justify-between">
         <View className="flex-1 gap-1">
           <Text className="font-semibold text-foreground text-sm">
