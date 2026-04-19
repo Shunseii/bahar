@@ -20,6 +20,7 @@ import {
 } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { buildAppleClientSecret } from "./clients/apple";
 import { sendMail } from "./clients/mail";
 import { polarClient } from "./clients/polar";
 import { redisClient } from "./clients/redis";
@@ -35,15 +36,21 @@ import { revlogs } from "./db/schema/revlogs";
 import { getAllowedDomains } from "./utils";
 import { config } from "./utils/config";
 import { LogCategory, logger } from "./utils/logger";
-import { SUBSCRIPTION_STATUSES } from "./utils/subscription-statuses";
+import {
+  isSubscriptionStatus,
+  SUBSCRIPTION_STATUSES,
+} from "./utils/subscription-statuses";
 
 const APP_NAME = "Bahar";
 const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
 const MOBILE_DEEP_LINK_SCHEME = "bahar://";
+const MOBILE_APP_BUNDLE_ID = "dev.bahar.app";
 
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
+
+const appleClientSecret = await buildAppleClientSecret();
 
 const consentEventsPlugin = () => {
   return {
@@ -85,13 +92,24 @@ const consentEventsPlugin = () => {
 };
 
 export const auth = betterAuth({
-  trustedOrigins: [...allowedDomains, MOBILE_DEEP_LINK_SCHEME],
+  trustedOrigins: [
+    ...allowedDomains,
+    MOBILE_DEEP_LINK_SCHEME,
+    // Needed for Apple SSO
+    "https://appleid.apple.com",
+  ],
   emailAndPassword: {
     enabled: false,
   },
   appName: APP_NAME,
   secret: config.BETTER_AUTH_SECRET,
   baseURL: config.APP_DOMAIN,
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: config.NODE_ENV === "production" ? "lax" : "none",
+      secure: true,
+    },
+  },
   onAPIError: {
     throw: false,
     onError: (error) => {
@@ -221,7 +239,6 @@ export const auth = betterAuth({
     }),
   },
   logger: {
-    disabled: true,
     level: "debug",
     log: (level, message, ...args) => {
       const mergedArgs = args.reduce((acc, curr) => ({ ...acc, ...curr }), {});
@@ -283,14 +300,21 @@ export const auth = betterAuth({
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ["github"],
+      trustedProviders: ["github", "apple"],
     },
+    skipStateCookieCheck: true,
   },
   socialProviders: {
     github: {
       enabled: true,
       clientId: config.GITHUB_CLIENT_ID,
       clientSecret: config.GITHUB_CLIENT_SECRET,
+    },
+    apple: {
+      enabled: true,
+      clientId: config.APPLE_CLIENT_ID,
+      clientSecret: appleClientSecret,
+      appBundleIdentifier: MOBILE_APP_BUNDLE_ID,
     },
   },
   session: {
@@ -493,33 +517,36 @@ export const auth = betterAuth({
               );
             }
 
-            if (!customer.externalId) {
-              childLogger.error(
-                {
-                  event: "webhook_subscription_updated",
-                },
-                "User's external ID is missing"
-              );
-
-              throw new Error("User's external ID is missing.");
-            }
-
-            const [existingUser] = await db
-              .select({ id: users.id })
-              .from(users)
-              .where(eq(users.id, customer.externalId));
+            const existingUser = await resolveLocalUserForPolarCustomer({
+              customerId,
+              externalId: customer.externalId,
+              email: customer.email,
+              logger: childLogger,
+            });
 
             if (!existingUser) {
               childLogger.error(
                 {
                   event: "webhook_subscription_updated.user_not_found",
+                  customerEmail: customer.email,
                 },
-                "No local user matches the Polar external ID."
+                "No local user matches the Polar customer."
               );
 
               throw new Error(
-                `No local user found for external ID: ${customer.externalId}`
+                `No local user found for Polar customer ${customerId} (externalId: ${customer.externalId ?? "null"}, email: ${customer.email ?? "null"})`
               );
+            }
+
+            if (!isSubscriptionStatus(status)) {
+              childLogger.error(
+                {
+                  event: "webhook_subscription_updated.unknown_status",
+                },
+                "Unknown Polar subscription status, cannot persist"
+              );
+
+              throw new Error(`Unknown Polar subscription status: ${status}`);
             }
 
             childLogger.info({
@@ -537,7 +564,7 @@ export const auth = betterAuth({
             const userSessions = await db
               .select({ token: sessions.token })
               .from(sessions)
-              .where(eq(sessions.userId, customer.externalId));
+              .where(eq(sessions.userId, existingUser.id));
 
             await Promise.all(
               userSessions.map((s) => redisClient.del(s.token))
@@ -640,6 +667,84 @@ export const auth = betterAuth({
     },
   },
 });
+
+/**
+ * Resolves the local user for a Polar customer. Falls back to email-matching
+ * when `externalId` is missing (e.g. the customer was created via a raw Polar
+ * checkout link rather than through the Better-Auth plugin). When a match is
+ * found via email, the Polar customer is backfilled with the local user's ID
+ * so subsequent webhooks use the fast path.
+ */
+const resolveLocalUserForPolarCustomer = async ({
+  customerId,
+  externalId,
+  email,
+  logger: childLogger,
+}: {
+  customerId: string;
+  externalId: string | null | undefined;
+  email: string | null | undefined;
+  logger: typeof logger;
+}): Promise<{ id: string } | null> => {
+  if (externalId) {
+    const [matchedByExternalId] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.id, externalId));
+
+    if (matchedByExternalId) {
+      return matchedByExternalId;
+    }
+
+    childLogger.warn(
+      {
+        event: "webhook_subscription_updated.external_id_orphan",
+        externalId,
+      },
+      "Polar customer has externalId but no local user matches; falling back to email."
+    );
+  }
+
+  if (!email) {
+    return null;
+  }
+
+  const [matchedByEmail] = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, email.toLowerCase()));
+
+  if (!matchedByEmail) {
+    return null;
+  }
+
+  childLogger.info(
+    {
+      event: "webhook_subscription_updated.email_match",
+      matchedUserId: matchedByEmail.id,
+    },
+    "Matched Polar customer to local user by email; backfilling externalId on Polar."
+  );
+
+  try {
+    await polarClient.customers.update({
+      id: customerId,
+      customerUpdate: { externalId: matchedByEmail.id },
+    });
+  } catch (error) {
+    childLogger.error(
+      {
+        event: "webhook_subscription_updated.polar_update_failed",
+        error,
+      },
+      "Failed to backfill externalId on Polar customer."
+    );
+
+    throw error;
+  }
+
+  return matchedByEmail;
+};
 
 /**
  * Fully sets up a new user database

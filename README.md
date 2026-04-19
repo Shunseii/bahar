@@ -22,7 +22,7 @@ Bahar is an Arabic language learning application built as a monorepo using pnpm 
 4. Access the API at `http://localhost:3000`
 5. Access the marketing website at `http://localhost:4321`
 6. To run drizzle studio to access the local database, run `pnpm run --filter api drizzle:studio`.
-7. If you need to test payments, make sure to set up a Cloudflare Tunnel by reading the instructions [here](./apps/api/README.md#local-development).
+7. If you need to test payments or SSO providers (GitHub, Apple), set up a Cloudflare Tunnel by reading the instructions [here](./apps/api/README.md#local-development). SSO providers reject `http://localhost` callbacks, so the tunnel is required. When using the tunnel, you must also update `APP_DOMAIN` (api), `VITE_API_BASE_URL` (web), and `EXPO_PUBLIC_API_BASE_URL` (mobile) to the tunnel domain — all three must match or OAuth state cookies won't flow end-to-end.
 
 ## Projects
 

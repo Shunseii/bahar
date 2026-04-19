@@ -6,6 +6,7 @@ import { Info } from "lucide-react-native";
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
 import { z } from "zod";
+import { AppleLoginButton } from "@/components/AppleLoginButton";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
 import { Page } from "@/components/Page";
 import { Button } from "@/components/ui/button";
@@ -118,12 +119,15 @@ export default function LinkAccountScreen() {
       <View className="my-6 flex-row items-center">
         <View className="h-[1px] flex-1 bg-gray-300 dark:bg-gray-700" />
         <Text className="mx-4 text-gray-500 text-sm dark:text-gray-400">
-          <Trans>Or continue with</Trans>
+          <Trans>Or</Trans>
         </Text>
         <View className="h-[1px] flex-1 bg-gray-300 dark:bg-gray-700" />
       </View>
 
-      <GithubLoginButton />
+      <View className="gap-y-3">
+        <GithubLoginButton />
+        <AppleLoginButton />
+      </View>
 
       <Text
         className="mt-2 text-center font-medium text-muted-foreground text-sm"

@@ -2,11 +2,9 @@ import { Button } from "@bahar/web-ui/components/button";
 import type { FC, ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Route } from "@/routes/_unauthorized-layout/login/route";
-import { GithubLogo } from "./ui/icons";
+import { AppleLogo } from "./ui/icons";
 
-export const GithubLoginButton: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const AppleLoginButton: FC<{ children: ReactNode }> = ({ children }) => {
   const { redirect } = Route.useSearch();
   const redirectUrl = redirect
     ? `${window.location.origin}${redirect}`
@@ -14,15 +12,15 @@ export const GithubLoginButton: FC<{ children: ReactNode }> = ({
 
   return (
     <Button
-      className="flex w-full items-center bg-black hover:bg-black/85 dark:bg-white dark:hover:bg-white/85"
+      className="flex w-full items-center border border-black bg-white text-black hover:bg-neutral-100 dark:border-white dark:bg-black dark:text-white dark:hover:bg-neutral-900"
       onClick={async () => {
         await authClient.signIn.social({
-          provider: "github",
+          provider: "apple",
           callbackURL: redirectUrl,
         });
       }}
     >
-      <GithubLogo className="ltr:mr-2 rtl:ml-2" />
+      <AppleLogo className="ltr:mr-2 rtl:ml-2" />
 
       {children}
     </Button>

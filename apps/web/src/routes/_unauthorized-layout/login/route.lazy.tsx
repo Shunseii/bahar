@@ -18,6 +18,7 @@ import { useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
 import { showOTPFormAtom } from "@/atoms/otp";
+import { AppleLoginButton } from "@/components/AppleLoginButton";
 import { GithubLoginButton } from "@/components/GithubLoginButton";
 import { OTPForm } from "@/components/OTPForm";
 import { Page } from "@/components/Page";
@@ -151,14 +152,18 @@ const Login = () => {
 
         <div className="relative flex justify-center font-medium leading-6 ltr:text-sm rtl:text-base">
           <span className="bg-background px-6 text-muted-foreground">
-            <Trans>Or continue with</Trans>
+            <Trans>Or</Trans>
           </span>
         </div>
       </div>
 
       <GithubLoginButton>
-        <Trans>GitHub</Trans>
+        <Trans>Continue with GitHub</Trans>
       </GithubLoginButton>
+
+      <AppleLoginButton>
+        <Trans>Continue with Apple</Trans>
+      </AppleLoginButton>
 
       <p className="mt-4 text-center text-muted-foreground text-xs">
         <Trans>

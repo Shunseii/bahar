@@ -76,11 +76,19 @@ pnpm install
 
 The API runs on `http://localhost:3000`.
 
-4. For testing Polar payments integration locally, use a Cloudflare Tunnel to expose the API.
+4. For testing Polar payments or SSO providers (GitHub, Apple Sign in) locally, use a Cloudflare Tunnel to expose the API. SSO providers reject `http://localhost` callbacks over unencrypted HTTP, so the tunnel is required to test any OAuth flow.
 
 See [the docs](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/create-local-tunnel/) to set up Cloudflare Tunnel. Contact an admin to get the tunnel name and config file. You'll need access to Cloudflare.
 
 Once set up, run the tunnel with `cloudflared tunnel run <tunnel-name>`.
+
+When running with the tunnel, update these env vars to point at the tunnel domain (e.g., `https://local.bahar.dev`):
+
+- `apps/api/.env` → `APP_DOMAIN` — used by Better Auth to build OAuth redirect URIs and for CORS/cookie scope
+- `apps/web/.env` → `VITE_API_BASE_URL` — so the web app calls the API through the tunnel (otherwise cookies set on `localhost:3000` won't be sent back on callbacks routed through the tunnel, causing `state_mismatch`)
+- `apps/mobile/.env` → `EXPO_PUBLIC_API_BASE_URL` — same reason, for mobile
+
+All three must match for the OAuth state cookie to flow end-to-end. Restart each dev server after changing its env file.
 
 ### Setting Up a New User (Fresh Local DB)
 

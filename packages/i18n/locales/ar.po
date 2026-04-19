@@ -476,7 +476,7 @@ msgstr "تم مسح المتراكمات!"
 #: ../../apps/web/src/routes/__root.tsx:22
 #: ../../apps/web/src/components/MobileHeader.tsx:140
 #: ../../apps/web/src/components/DesktopNavigation.tsx:43
-#: ../../apps/mobile/src/app/(auth)/welcome.tsx:27
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:30
 msgid "Bahar"
 msgstr "بحر"
 
@@ -502,11 +502,11 @@ msgstr "يُدفع شهريًا"
 msgid "Billing"
 msgstr "الفوترة"
 
-#: ../../apps/mobile/src/app/(auth)/welcome.tsx:54
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:58
 msgid "By continuing, you agree to our"
 msgstr "بالمتابعة، فإنك توافق على"
 
-#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:164
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:169
 msgid "By signing in, you agree to our <0>Privacy Policy</0>"
 msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة الخصوصية</0>"
 
@@ -603,11 +603,21 @@ msgstr "استمر"
 msgid "Continue as Guest"
 msgstr "المتابعة كضيف"
 
-#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:142
-#: ../../apps/mobile/src/app/link-account.tsx:115
-#: ../../apps/mobile/src/app/(auth)/login.tsx:105
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:165
+#: ../../apps/mobile/src/components/AppleLoginButton.tsx:24
+msgid "Continue with Apple"
+msgstr "المتابعة باستخدام Apple"
+
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:143
+#: ../../apps/mobile/src/app/link-account.tsx:116
+#: ../../apps/mobile/src/app/(auth)/login.tsx:106
 msgid "Continue with Email"
 msgstr "استمرّ مع بريد الإلكتروني"
+
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:161
+#: ../../apps/mobile/src/components/GithubLoginButton.tsx:24
+msgid "Continue with GitHub"
+msgstr "المتابعة باستخدام GitHub"
 
 #: ../../apps/mobile/src/app/(search)/settings.tsx:419
 msgid "Control where antonyms appear during review"
@@ -672,7 +682,7 @@ msgstr "أنشئ مجموعة"
 msgid "Create multiple"
 msgstr "إضافة متعددة"
 
-#: ../../apps/mobile/src/app/link-account.tsx:69
+#: ../../apps/mobile/src/app/link-account.tsx:70
 msgid "Create Your Account"
 msgstr "أنشئ حسابك"
 
@@ -942,9 +952,9 @@ msgstr "عدّل مجموعتك"
 msgid "Edit your deck by choosing filters. The deck will be composed of the cards that match the filters."
 msgstr "عدّل مجموعتك من خلال اختيار الفلاتر. ستتكون المجموعة من البطاقات التي تطابق الفلاتر."
 
-#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:116
-#: ../../apps/mobile/src/app/link-account.tsx:78
-#: ../../apps/mobile/src/app/(auth)/login.tsx:68
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:117
+#: ../../apps/mobile/src/app/link-account.tsx:79
+#: ../../apps/mobile/src/app/(auth)/login.tsx:69
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
@@ -1251,14 +1261,14 @@ msgstr "توليد مثال"
 msgid "Generating..."
 msgstr "جارٍ التوليد..."
 
-#: ../../apps/mobile/src/app/(auth)/welcome.tsx:42
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:46
 msgid "Get Started"
 msgstr "ابدأ"
 
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:160
 #: ../../apps/mobile/src/components/GithubLoginButton.tsx:24
-msgid "GitHub"
-msgstr "GitHub"
+#~ msgid "GitHub"
+#~ msgstr "GitHub"
 
 #: ../../apps/web/src/components/OTPForm.tsx:129
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:331
@@ -1362,7 +1372,7 @@ msgstr "طريقة تصنف الكلمة حسب نوعها أو سياقها."
 msgid "Huroof"
 msgstr "حروف"
 
-#: ../../apps/mobile/src/app/(auth)/welcome.tsx:50
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:54
 msgid "I already have an account"
 msgstr "لدي حساب بالفعل"
 
@@ -1506,8 +1516,8 @@ msgstr "جارٍ التحميل..."
 #~ msgid "Local data reset successfully!"
 #~ msgstr "تمت إعادة تعيين البيانات المحلية بنجاح!"
 
-#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:98
-#: ../../apps/mobile/src/app/(auth)/login.tsx:63
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:99
+#: ../../apps/mobile/src/app/(auth)/login.tsx:64
 msgid "Log in to your existing account or sign up for a new one"
 msgstr "قم بتسجيل الدخول إلى حسابك الحالي أو قم بالتسجيل للحصول على حساب جديد"
 
@@ -1579,7 +1589,7 @@ msgstr "المصدر {0}"
 msgid "Matching tags"
 msgstr "علامات مطابقة"
 
-#: ../../apps/mobile/src/app/link-account.tsx:132
+#: ../../apps/mobile/src/app/link-account.tsx:136
 msgid "Maybe Later"
 msgstr "ربما لاحقًا"
 
@@ -1636,6 +1646,11 @@ msgstr "اسم"
 #: ../../apps/web/src/components/MobileHeader.tsx:74
 msgid "Navigation menu"
 msgstr "قائمة التنقل"
+
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/WorkloadForecastCard.tsx:60
+#: ../../apps/mobile/src/components/progress/WorkloadForecastCard.tsx:43
+msgid "New cards scheduled for review each day, in addition to any cards that are already due."
+msgstr "البطاقات الجديدة المقرر مراجعتها كل يوم، بالإضافة إلى أي بطاقات مستحقة بالفعل."
 
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:198
 msgid "New deck"
@@ -1731,11 +1746,17 @@ msgstr "الأقدم"
 msgid "Open Web App"
 msgstr "فتح تطبيق الويب"
 
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:155
+#: ../../apps/mobile/src/app/link-account.tsx:122
+#: ../../apps/mobile/src/app/(auth)/login.tsx:112
+msgid "Or"
+msgstr "أو"
+
 #: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:154
 #: ../../apps/mobile/src/app/link-account.tsx:121
 #: ../../apps/mobile/src/app/(auth)/login.tsx:111
-msgid "Or continue with"
-msgstr "أو استمر مع"
+#~ msgid "Or continue with"
+#~ msgstr "أو استمر مع"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:488
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:37
@@ -1798,11 +1819,11 @@ msgstr "اختر ملف JSON لمعجمك من فضلك."
 msgid "Please try again or reload the page."
 msgstr "حاول مرة أخرى أو أعد تحميل الصفحة."
 
-#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:56
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:57
 #: ../../apps/web/src/components/OTPForm.tsx:114
-#: ../../apps/mobile/src/app/link-account.tsx:50
+#: ../../apps/mobile/src/app/link-account.tsx:51
 #: ../../apps/mobile/src/app/link-code/[email].tsx:38
-#: ../../apps/mobile/src/app/(auth)/login.tsx:47
+#: ../../apps/mobile/src/app/(auth)/login.tsx:48
 #: ../../apps/mobile/src/app/(auth)/code/[email].tsx:35
 msgid "Please try again."
 msgstr "حاول مرّة أخرى."
@@ -1832,11 +1853,6 @@ msgstr "صيغة الجمع"
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:71
 msgid "Plurals"
 msgstr "صيغ جمع"
-
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/WorkloadForecastCard.tsx:60
-#: ../../apps/mobile/src/components/progress/WorkloadForecastCard.tsx:43
-msgid "New cards scheduled for review each day, in addition to any cards that are already due."
-msgstr "البطاقات الجديدة المقرر مراجعتها كل يوم، بالإضافة إلى أي بطاقات مستحقة بالفعل."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:92
 #: ../../apps/mobile/src/app/(search)/settings.tsx:187
@@ -1876,7 +1892,7 @@ msgstr "المضارع"
 #~ msgid "Previous: {longestStreak} days"
 #~ msgstr "السابق: {longestStreak} أيام"
 
-#: ../../apps/mobile/src/app/(auth)/welcome.tsx:59
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:63
 msgid "Privacy Policy"
 msgstr "سياسة الخصوصية"
 
@@ -2189,7 +2205,7 @@ msgstr "عرض المرشحات"
 msgid "Show reverse flashcards"
 msgstr "إظهار البطاقات العكسية"
 
-#: ../../apps/mobile/src/app/link-account.tsx:73
+#: ../../apps/mobile/src/app/link-account.tsx:74
 msgid "Sign up to save your dictionary and sync across devices"
 msgstr "سجّل لحفظ قاموسك ومزامنته عبر الأجهزة"
 
@@ -2452,14 +2468,14 @@ msgstr "لا يمكن التراجع عن هذا الإجراء. لن تتأثر
 #: ../../apps/web/src/lib/schemas/dictionary.ts:12
 #: ../../apps/mobile/src/utils/zod.ts:6
 #: ../../apps/mobile/src/utils/zod.ts:18
-#: ../../apps/mobile/src/app/link-account.tsx:99
-#: ../../apps/mobile/src/app/(auth)/login.tsx:89
+#: ../../apps/mobile/src/app/link-account.tsx:100
+#: ../../apps/mobile/src/app/(auth)/login.tsx:90
 msgid "This field is required."
 msgstr "هذه الخانة لازم."
 
-#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:124
-#: ../../apps/mobile/src/app/link-account.tsx:104
-#: ../../apps/mobile/src/app/(auth)/login.tsx:94
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:125
+#: ../../apps/mobile/src/app/link-account.tsx:105
+#: ../../apps/mobile/src/app/(auth)/login.tsx:95
 msgid "This is case insensitive."
 msgstr "هذا حالة غير حساسة."
 
@@ -2659,8 +2675,8 @@ msgstr "لا يمكننا الوصول إلى خوادمنا الآن. تحقق 
 msgid "We're having trouble with your account setup. Please try again."
 msgstr "نواجه مشكلة في إعداد حسابك. حاول مرة أخرى من فضلك."
 
-#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:94
-#: ../../apps/mobile/src/app/(auth)/login.tsx:59
+#: ../../apps/web/src/routes/_unauthorized-layout/login/route.lazy.tsx:95
+#: ../../apps/mobile/src/app/(auth)/login.tsx:60
 msgid "Welcome to Bahar!"
 msgstr "مرحباً بكم في بحر!"
 
@@ -2772,7 +2788,7 @@ msgstr "أنت تتصفح كضيف"
 msgid "Your account needs maintenance. We've been notified. Please try again later."
 msgstr "حسابك يحتاج إلى صيانة. تم إخطارنا. حاول مرة أخرى لاحقا من فضلك."
 
-#: ../../apps/mobile/src/app/(auth)/welcome.tsx:31
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:35
 msgid "Your Arabic learning companion"
 msgstr "رفيقك لتعلم اللغة العربية"
 
@@ -2813,7 +2829,7 @@ msgstr "معجمك فارغ"
 msgid "Your dictionary is not valid. Please fix the errors and upload it again."
 msgstr "معجمك غير صالح. صوب الأخطاء و استورد مرة أخرى من فضلك."
 
-#: ../../apps/mobile/src/app/link-account.tsx:64
+#: ../../apps/mobile/src/app/link-account.tsx:65
 msgid "Your existing words and progress will be kept."
 msgstr "سيتم الاحتفاظ بكلماتك وتقدمك الحالي."
 
@@ -2822,7 +2838,7 @@ msgstr "سيتم الاحتفاظ بكلماتك وتقدمك الحالي."
 msgid "Your most recent flashcard reviews. You can undo a review to restore the card to its previous state."
 msgstr "أحدث مراجعات البطاقات. يمكنك التراجع عن مراجعة لاستعادة البطاقة إلى حالتها السابقة."
 
-#: ../../apps/mobile/src/app/(auth)/welcome.tsx:23
+#: ../../apps/mobile/src/app/(auth)/welcome.tsx:25
 msgid "بحر"
 msgstr "بحر"
 
