@@ -18,7 +18,9 @@
       },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "CFBundleAllowMixedLocalizations": true
+        "CFBundleAllowMixedLocalizations": true,
+        "UIBackgroundModes": ["remote-notification"],
+        "ExpoLocalization_supportsRTL": true
       }
     },
     "android": {
@@ -60,7 +62,8 @@
         {
           "useLibSQL": true
         }
-      ]
+      ],
+      "expo-notifications"
     ],
     "experiments": {
       "typedRoutes": true
@@ -74,6 +77,12 @@
         "projectId": "b6d34ce9-eea1-4afe-8928-a40612cf502a"
       }
     },
-    "owner": "shunsei"
+    "owner": "shunsei",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b6d34ce9-eea1-4afe-8928-a40612cf502a"
+    }
   }
 }

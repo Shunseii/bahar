@@ -76,4 +76,7 @@ const validateEnv = () => {
 
 const config = validateEnv();
 
-export { config };
+const MOBILE_APP_BUNDLE_ID =
+  config.NODE_ENV === "development" ? "dev.bahar.app.dev" : "dev.bahar.app";
+
+export { config, MOBILE_APP_BUNDLE_ID };

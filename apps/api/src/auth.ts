@@ -34,7 +34,7 @@ import { accounts, sessions, users, verifications } from "./db/schema/auth";
 import { databases } from "./db/schema/databases";
 import { revlogs } from "./db/schema/revlogs";
 import { getAllowedDomains } from "./utils";
-import { config } from "./utils/config";
+import { config, MOBILE_APP_BUNDLE_ID } from "./utils/config";
 import { LogCategory, logger } from "./utils/logger";
 import {
   isSubscriptionStatus,
@@ -46,7 +46,6 @@ const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
 const MOBILE_DEEP_LINK_SCHEME = "bahar://";
-const MOBILE_APP_BUNDLE_ID = "dev.bahar.app";
 
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
