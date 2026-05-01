@@ -8,6 +8,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import type { DeckWithCounts } from "@/lib/db/operations/decks";
 import { useThemeColors } from "@/lib/theme";
 
@@ -26,6 +27,7 @@ interface DeckCardProps {
 
 export const DeckCard = ({ deck, onStudy, onMenu }: DeckCardProps) => {
   const colors = useThemeColors();
+  const { formatNumber } = useFormatNumber();
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -69,14 +71,14 @@ export const DeckCard = ({ deck, onStudy, onMenu }: DeckCardProps) => {
           {hasDueCards && (
             <View className="flex-row items-center gap-1 rounded-md bg-primary/10 px-2.5 py-1">
               <Text className="font-semibold text-primary text-xs">
-                {deck.to_review} {t`due`}
+                {formatNumber(deck.to_review)} {t`due`}
               </Text>
             </View>
           )}
           {hasBacklog && (
             <View className="rounded-md bg-warning/10 px-2.5 py-1">
               <Text className="font-medium text-warning text-xs">
-                {deck.to_review_backlog} {t`backlog`}
+                {formatNumber(deck.to_review_backlog)} {t`backlog`}
               </Text>
             </View>
           )}
@@ -90,7 +92,7 @@ export const DeckCard = ({ deck, onStudy, onMenu }: DeckCardProps) => {
           )}
           <View className="rounded-md px-2.5 py-1">
             <Text className="text-muted-foreground text-xs">
-              {deck.total_hits} {t`total`}
+              {formatNumber(deck.total_hits)} {t`total`}
             </Text>
           </View>
         </View>

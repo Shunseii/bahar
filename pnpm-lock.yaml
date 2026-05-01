@@ -188,9 +188,15 @@ importers:
       '@expo/vector-icons':
         specifier: ^15.0.3
         version: 15.0.3(expo-font@14.0.11)(react-native@0.81.5)(react@19.1.0)
+      '@formatjs/intl-datetimeformat':
+        specifier: ^7.4.1
+        version: 7.4.1
       '@formatjs/intl-locale':
         specifier: ^4.2.11
         version: 4.2.11
+      '@formatjs/intl-numberformat':
+        specifier: ^9.3.4
+        version: 9.3.4
       '@formatjs/intl-pluralrules':
         specifier: ^5.4.4
         version: 5.4.4
@@ -1357,7 +1363,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/traverse': 7.28.3
-      '@babel/types': 7.28.2
+      '@babel/types': 7.29.0
     transitivePeerDependencies:
       - supports-color
 
@@ -5756,6 +5762,10 @@ packages:
     resolution: {integrity: sha512-GeaxHZbUoYvHL9tC5eltHLs+1zU70aPw0s7LwqgktIzF5oMhNY4o4deEtusJMsq7WFJF3Ye2zQEzdG8beVk73w==}
     dev: false
 
+  /@formatjs/bigdecimal@0.2.2:
+    resolution: {integrity: sha512-RfaAMveJdnjmCGZ+MPuzLJB8y5WTI/IK5uIoauBs6NffoMBOGwYutbRm0UsyFTejF9aayAolD+Kb8lfBTRLV7Q==}
+    dev: false
+
   /@formatjs/ecma402-abstract@2.3.4:
     resolution: {integrity: sha512-qrycXDeaORzIqNhBOx0btnhpD1c+/qFIHAN9znofuMJX6QBwtbrmlpWfD4oiUUD2vJUOIYFA/gYtg2KAMGG7sA==}
     dependencies:
@@ -5781,6 +5791,17 @@ packages:
 
   /@formatjs/fast-memoize@3.1.1:
     resolution: {integrity: sha512-CbNbf+tlJn1baRnPkNePnBqTLxGliG6DDgNa/UtV66abwIjwsliPMOt0172tzxABYzSuxZBZfcp//qI8AvBWPg==}
+    dev: false
+
+  /@formatjs/fast-memoize@3.1.3:
+    resolution: {integrity: sha512-Ocd1vPuD68rW6BJDuAOtnnc1GPeVepY5kZXML1psGVFQ+1Q8CfkftT3Tnam+Mxx97Pz08jIEDCotl/GV+Naccg==}
+    dev: false
+
+  /@formatjs/intl-datetimeformat@7.4.1:
+    resolution: {integrity: sha512-Nr+kwAO1OULdZQqS78X1ixhRxErGvAhLw3pC0XYIWCCinMIdwDimenLZeUma8RKTj4ypl/aAzNiYiu2yALXP0A==}
+    dependencies:
+      '@formatjs/bigdecimal': 0.2.2
+      '@formatjs/intl-localematcher': 0.8.5
     dev: false
 
   /@formatjs/intl-enumerator@1.8.10:
@@ -5815,6 +5836,19 @@ packages:
     resolution: {integrity: sha512-q05KMYGJLyqFNFtIb8NhWLF5X3aK/k0wYt7dnRFuy6aLQL+vUwQ1cg5cO4qawEiINybeCPXAWlprY2mSBjSXAQ==}
     dependencies:
       '@formatjs/fast-memoize': 3.1.1
+    dev: false
+
+  /@formatjs/intl-localematcher@0.8.5:
+    resolution: {integrity: sha512-TEW/NR367c3PcQ2AXfkNig9jC740+qbkM0LgKl7UCE7Xtv7C5Uk1mvlu86MjQZBmscUai8HSWjcEETpwaVvJ6A==}
+    dependencies:
+      '@formatjs/fast-memoize': 3.1.3
+    dev: false
+
+  /@formatjs/intl-numberformat@9.3.4:
+    resolution: {integrity: sha512-qZAXmsZ6NsDmAXQ9z/ovf22UVaDLqy5H88uoo0BKeklxYW25emJ5pinww7qd7wjtc0W/0GH3ohDvkYInMqiU5A==}
+    dependencies:
+      '@formatjs/bigdecimal': 0.2.2
+      '@formatjs/intl-localematcher': 0.8.5
     dev: false
 
   /@formatjs/intl-pluralrules@5.4.4:

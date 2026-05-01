@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import { InfoTooltip } from "@/components/progress/InfoTooltip";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 
 interface WorkloadForecastCardProps {
   data:
@@ -19,6 +20,8 @@ export const WorkloadForecastCard: FC<WorkloadForecastCardProps> = ({
   data,
   isLoading,
 }) => {
+  const { formatNumber } = useFormatNumber();
+
   if (isLoading) {
     return (
       <Card className="gap-3 p-5">
@@ -49,7 +52,7 @@ export const WorkloadForecastCard: FC<WorkloadForecastCardProps> = ({
 
       <View className="flex-row items-baseline gap-2">
         <Text className="font-bold text-3xl text-foreground tracking-tight">
-          ~{tomorrowCount.toLocaleString()}
+          ~{formatNumber(tomorrowCount)}
         </Text>
         <Text className="text-muted-foreground text-sm">
           <Plural
@@ -80,7 +83,7 @@ export const WorkloadForecastCard: FC<WorkloadForecastCardProps> = ({
                   }
                   style={{ fontSize: 10 }}
                 >
-                  {day.count}
+                  {formatNumber(day.count)}
                 </Text>
                 <View
                   className={

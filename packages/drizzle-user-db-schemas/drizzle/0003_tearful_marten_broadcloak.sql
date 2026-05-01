@@ -1,0 +1,1 @@
+ALTER TABLE `user_stats` ADD `timezone` text;

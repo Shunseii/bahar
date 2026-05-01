@@ -4,6 +4,8 @@
  * Shows Again, Hard, Good, Easy buttons with interval previews.
  */
 
+import { t } from "@lingui/core/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import * as Haptics from "expo-haptics";
 import {
   Brain,
@@ -38,11 +40,11 @@ type GradeConfig = {
   pressedBg: string;
 };
 
-const gradeConfig: GradeConfig[] = [
+const useGradeConfig = (): GradeConfig[] => [
   {
     grade: Rating.Again as Grade,
     Icon: RotateCcw,
-    label: "Again",
+    label: t`Again`,
     colorKey: "mutedForeground",
     borderColor: "border-muted-foreground/30",
     pressedBg: "bg-muted/50",
@@ -50,7 +52,7 @@ const gradeConfig: GradeConfig[] = [
   {
     grade: Rating.Hard as Grade,
     Icon: Brain,
-    label: "Hard",
+    label: t`Hard`,
     colorKey: "warning" as const,
     borderColor: "border-warning/30",
     pressedBg: "bg-warning/10",
@@ -58,7 +60,7 @@ const gradeConfig: GradeConfig[] = [
   {
     grade: Rating.Good as Grade,
     Icon: ThumbsUp,
-    label: "Good",
+    label: t`Good`,
     colorKey: "primary" as const,
     borderColor: "border-primary/30",
     pressedBg: "bg-primary/10",
@@ -66,7 +68,7 @@ const gradeConfig: GradeConfig[] = [
   {
     grade: Rating.Easy as Grade,
     Icon: Zap,
-    label: "Easy",
+    label: t`Easy`,
     colorKey: "success" as const,
     borderColor: "border-success/30",
     pressedBg: "bg-success/10",
@@ -78,6 +80,7 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
   onGrade,
   disabled = false,
 }) => {
+  const gradeConfig = useGradeConfig();
   return (
     <View className="flex-row gap-2 px-4">
       {gradeConfig.map((config) => (
@@ -107,6 +110,7 @@ const GradeButton: React.FC<GradeButtonProps> = ({
   disabled,
 }) => {
   const colors = useThemeColors();
+  const { i18n } = useLingui();
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -130,6 +134,7 @@ const GradeButton: React.FC<GradeButtonProps> = ({
   const resolvedColor = colors[colorKey];
   const intervalText = intlFormatDistance(interval, new Date(), {
     style: "narrow",
+    locale: i18n.locale,
   }).label;
 
   return (
@@ -190,7 +195,7 @@ export const ShowAnswerButton: React.FC<ShowAnswerButtonProps> = ({
         style={animatedStyle}
       >
         <Text className="font-semibold text-base text-primary-foreground">
-          Show Answer
+          <Trans>Show Answer</Trans>
         </Text>
       </Animated.View>
     </Pressable>

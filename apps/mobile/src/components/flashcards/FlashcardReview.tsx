@@ -11,7 +11,7 @@
 import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { createScheduler, getSchedulingOptions } from "@bahar/fsrs";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Archive, Brain, PartyPopper, X } from "lucide-react-native";
 import type React from "react";
@@ -19,6 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import ReAnimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { type Grade, Rating } from "ts-fsrs";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useThemeColors } from "@/lib/theme";
 import { decksTable } from "../../lib/db/operations/decks";
 import {
@@ -28,6 +29,7 @@ import {
   type FlashcardWithDictionaryEntry,
   flashcardsTable,
 } from "../../lib/db/operations/flashcards";
+import { progressTable } from "../../lib/db/operations/progress";
 import { api, queryClient } from "../../utils/api";
 import { FlashcardCard } from "./FlashcardCard";
 import { GradeButtons, ShowAnswerButton } from "./GradeButtons";
@@ -53,6 +55,7 @@ const QueueTabs = ({
   backlogCount: number;
 }) => {
   const colors = useThemeColors();
+  const { formatNumber } = useFormatNumber();
   const isRegular = selectedQueue === "regular";
   const isBacklog = selectedQueue === "backlog";
 
@@ -93,7 +96,7 @@ const QueueTabs = ({
                       : "text-muted-foreground"
                   )}
                 >
-                  {regularCount}
+                  {formatNumber(regularCount)}
                 </Text>
               </View>
             )}
@@ -132,7 +135,7 @@ const QueueTabs = ({
                     isBacklog ? "text-warning-foreground" : "text-warning"
                   )}
                 >
-                  {backlogCount}
+                  {formatNumber(backlogCount)}
                 </Text>
               </View>
             )}
@@ -159,6 +162,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   queueCounts,
 }) => {
   const colors = useThemeColors();
+  const { formatNumber } = useFormatNumber();
   const [showAnswer, setShowAnswer] = useState(false);
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
   const [cards, setCards] = useState<FlashcardWithDictionaryEntry[]>([]);
@@ -325,6 +329,11 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       updates,
     });
 
+    await progressTable.recordReview.mutation();
+    queryClient.invalidateQueries({
+      queryKey: progressTable.streak.cacheOptions.queryKey,
+    });
+
     // Post revlog to server (fire-and-forget)
     api.stats.revlogs
       .post({
@@ -434,9 +443,18 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
               <Brain color={colors.primary} size={20} />
             </View>
             <Text className="font-semibold text-foreground">
-              {hasMore
-                ? `${FLASHCARD_LIMIT}+ cards`
-                : `${cards.length} card${cards.length === 1 ? "" : "s"} left`}
+              {hasMore ? (
+                <Trans>{formatNumber(FLASHCARD_LIMIT)}+ cards</Trans>
+              ) : (
+                <>
+                  {formatNumber(cards.length)}{" "}
+                  <Plural
+                    one="card left"
+                    other="cards left"
+                    value={cards.length}
+                  />
+                </>
+              )}
             </Text>
           </View>
 

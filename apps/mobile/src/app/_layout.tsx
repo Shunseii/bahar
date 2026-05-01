@@ -4,9 +4,18 @@ import "@formatjs/intl-pluralrules/polyfill-force";
 import "@formatjs/intl-pluralrules/locale-data/en"; // locale-data for en
 import "@formatjs/intl-pluralrules/locale-data/ar"; // locale-data for ar
 
+import "@formatjs/intl-numberformat/polyfill-force";
+import "@formatjs/intl-numberformat/locale-data/en";
+import "@formatjs/intl-numberformat/locale-data/ar-EG";
+
 import "@formatjs/intl-relativetimeformat/polyfill-force.js";
 import "@formatjs/intl-relativetimeformat/locale-data/en.js";
-import "@formatjs/intl-relativetimeformat/locale-data/ar.js";
+import "@formatjs/intl-relativetimeformat/locale-data/ar-EG.js";
+
+import "@formatjs/intl-datetimeformat/polyfill-force.js";
+import "@formatjs/intl-datetimeformat/locale-data/en.js";
+import "@formatjs/intl-datetimeformat/locale-data/ar-EG.js";
+import "@formatjs/intl-datetimeformat/add-all-tz.js";
 
 import {
   DarkTheme,
@@ -153,8 +162,11 @@ function ThemeColorsInner({
                 options={{
                   headerShown: false,
                   animation: "slide_from_bottom",
-                  gestureEnabled: true,
-                  gestureDirection: "vertical",
+                  // Disabled on iOS for parity with Android (no swipe-to-
+                  // dismiss). Closing happens via the X button. Keeping the
+                  // native gesture caused stuck-state bugs with horizontal
+                  // card swipes after partial swipe-down attempts.
+                  gestureEnabled: false,
                 }}
               />
               <Stack.Screen

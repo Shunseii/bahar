@@ -1,14 +1,14 @@
 import { cn } from "@bahar/design-system";
 import type { FlashcardDirection } from "@bahar/drizzle-user-db-schemas";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
-import { formatDistanceToNow } from "date-fns";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { Clock, Undo2 } from "lucide-react-native";
 import type { FC } from "react";
 import { Pressable, Text, View } from "react-native";
 import { InfoTooltip } from "@/components/progress/InfoTooltip";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { intlFormatDistance } from "@/lib/date";
 import { useThemeColors } from "@/lib/theme";
 
 const RATING_DOT_STYLES: Record<string, string> = {
@@ -57,6 +57,7 @@ export const RecentReviewsCard: FC<RecentReviewsCardProps> = ({
   isUndoing,
 }) => {
   const colors = useThemeColors();
+  const { i18n } = useLingui();
 
   if (isLoading) {
     return (
@@ -107,9 +108,13 @@ export const RecentReviewsCard: FC<RecentReviewsCardProps> = ({
                   />
                   <Text className="text-muted-foreground text-xs">
                     {ratingLabel(review.rating)} ·{" "}
-                    {formatDistanceToNow(new Date(review.reviewTimestampMs), {
-                      addSuffix: true,
-                    })}
+                    {
+                      intlFormatDistance(
+                        new Date(review.reviewTimestampMs),
+                        new Date(),
+                        { locale: i18n.locale }
+                      ).label
+                    }
                   </Text>
                 </View>
 

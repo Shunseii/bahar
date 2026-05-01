@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Lock, Timer } from "lucide-react-native";
 import type { FC } from "react";
 import { Text, View } from "react-native";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { intlFormatDistance } from "@/lib/date";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
@@ -31,9 +32,13 @@ const formatNextReview = ({
 }): { label: string; isOverdue: boolean } => {
   const dueDate = new Date(due);
   const now = new Date();
-  const isOverdue = dueDate.getTime() <= now.getTime();
+  const isPastDue = dueDate.getTime() <= now.getTime();
+  const isSameDay = dueDate.toDateString() === now.toDateString();
 
-  if (isOverdue) {
+  if (isPastDue) {
+    if (isSameDay) {
+      return { label: t`now`, isOverdue: false };
+    }
     return { label: t`overdue`, isOverdue: true };
   }
 
@@ -70,6 +75,7 @@ const DirectionTimeline: FC<{
   label?: string;
   locale: string;
 }> = ({ revlogs, flashcard, label, locale }) => {
+  const { formatNumber } = useFormatNumber();
   const reviewCount = revlogs.length;
   const lapseCount = flashcard?.lapses ?? 0;
   const lastReviewMs =
@@ -78,14 +84,14 @@ const DirectionTimeline: FC<{
   const metaParts: string[] = [];
   metaParts.push(
     plural(reviewCount, {
-      one: `${reviewCount} review`,
-      other: `${reviewCount} reviews`,
+      one: `${formatNumber(reviewCount)} review`,
+      other: `${formatNumber(reviewCount)} reviews`,
     })
   );
   metaParts.push(
     plural(lapseCount, {
-      one: `${lapseCount} lapse`,
-      other: `${lapseCount} lapses`,
+      one: `${formatNumber(lapseCount)} lapse`,
+      other: `${formatNumber(lapseCount)} lapses`,
     })
   );
 

@@ -11,6 +11,7 @@ import { motion } from "motion/react";
 import { useDeferredValue } from "react";
 import { DictionaryFilters } from "@/components/features/dictionary/filters/DictionaryFilters";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
+import StreakChip from "@/components/features/progress/StreakChip";
 import { itemVariants, Page } from "@/components/Page";
 import { InfiniteScroll } from "@/components/search/InfiniteScroll";
 import { searchQueryAtom } from "@/components/search/state";
@@ -69,9 +70,12 @@ const Index = () => {
                     <BookOpen className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h1 className="font-semibold text-lg tracking-tight">
-                      <Trans>Your Dictionary</Trans>
-                    </h1>
+                    <div className="flex items-center gap-2">
+                      <h1 className="font-semibold text-lg tracking-tight">
+                        <Trans>Your Dictionary</Trans>
+                      </h1>
+                      <StreakChip />
+                    </div>
                     <p className="text-muted-foreground text-sm">
                       {totalHits !== undefined ? (
                         <>

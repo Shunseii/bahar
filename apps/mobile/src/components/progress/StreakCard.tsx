@@ -5,6 +5,7 @@ import type { FC } from "react";
 import { Text, View } from "react-native";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useThemeColors } from "@/lib/theme";
 
 interface StreakCardProps {
@@ -20,6 +21,7 @@ interface StreakCardProps {
 
 export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
   const colors = useThemeColors();
+  const { formatNumber } = useFormatNumber();
 
   if (isLoading) {
     return (
@@ -63,7 +65,7 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
                   reviewedToday ? "text-foreground" : "text-muted-foreground"
                 )}
               >
-                {streakCount.toLocaleString()}
+                {formatNumber(streakCount)}
               </Text>
               <Text className="font-medium text-muted-foreground text-sm">
                 <Plural
@@ -76,14 +78,14 @@ export const StreakCard: FC<StreakCardProps> = ({ data, isLoading }) => {
             <Text className="text-muted-foreground text-xs">
               {isBroken && longestStreak > 0 ? (
                 <Plural
-                  one={`Previous: ${longestStreak} day`}
-                  other={`Previous: ${longestStreak} days`}
+                  one={`Previous: ${formatNumber(longestStreak)} day`}
+                  other={`Previous: ${formatNumber(longestStreak)} days`}
                   value={longestStreak}
                 />
               ) : (
                 <Plural
-                  one={`Longest: ${longestStreak} day`}
-                  other={`Longest: ${longestStreak} days`}
+                  one={`Longest: ${formatNumber(longestStreak)} day`}
+                  other={`Longest: ${formatNumber(longestStreak)} days`}
                   value={longestStreak}
                 />
               )}

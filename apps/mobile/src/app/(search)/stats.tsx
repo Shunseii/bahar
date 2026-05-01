@@ -19,6 +19,7 @@ import { StreakCard } from "@/components/progress/StreakCard";
 import { WorkloadForecastCard } from "@/components/progress/WorkloadForecastCard";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { flashcardsTable } from "@/lib/db/operations/flashcards";
 import { progressTable } from "@/lib/db/operations/progress";
@@ -33,6 +34,7 @@ export default function StatsScreen() {
   const colors = useThemeColors();
   const { scrollHandler } = useCollapsibleHeader(t`Progress`);
   const { isFreeUser } = useUserPlan();
+  const { formatNumber } = useFormatNumber();
 
   const { data: settingsData } = useQuery({
     queryFn: settingsTable.get.query,
@@ -244,16 +246,17 @@ export default function StatsScreen() {
 
   const retentionPct =
     retentionData?.rate != null
-      ? `${Math.round(retentionData.rate * 100)}%`
+      ? `${formatNumber(Math.round(retentionData.rate * 100))}%`
       : "—";
 
   const retentionTrend = (() => {
     const trend = retentionData?.trend;
     if (trend == null) return null;
     const pct = Number((trend * 100).toFixed(1));
+    if (pct === 0) return null;
     return {
-      text: `${pct >= 0 ? "+" : ""}${pct}% ${t`vs last week`}`,
-      positive: pct >= 0,
+      text: `${pct > 0 ? "+" : ""}${formatNumber(pct)}% ${t`vs last week`}`,
+      positive: pct > 0,
     };
   })();
 
@@ -291,12 +294,12 @@ export default function StatsScreen() {
           trend={
             wordsData?.thisWeek
               ? {
-                  text: `+${wordsData.thisWeek.toLocaleString()} ${t`this week`}`,
+                  text: `+${formatNumber(wordsData.thisWeek)} ${t`this week`}`,
                   positive: true,
                 }
               : null
           }
-          value={(wordsData?.total ?? 0).toLocaleString()}
+          value={formatNumber(wordsData?.total ?? 0)}
         />
 
         {/* Pro-gated insights section */}
@@ -316,7 +319,7 @@ export default function StatsScreen() {
             </View>
 
             <StatCard
-              detail={`${(wordsLearnedData?.learned ?? 0).toLocaleString()} ${t`words`}`}
+              detail={`${formatNumber(wordsLearnedData?.learned ?? 0)} ${t`words`}`}
               isLoading={isWordsLearnedLoading}
               label={t`Words Learned`}
               tooltip={
@@ -327,12 +330,12 @@ export default function StatsScreen() {
               trend={
                 wordsLearnedData?.thisWeek
                   ? {
-                      text: `+${wordsLearnedData.thisWeek.toLocaleString()} ${t`this week`}`,
+                      text: `+${formatNumber(wordsLearnedData.thisWeek)} ${t`this week`}`,
                       positive: true,
                     }
                   : null
               }
-              value={`${wordsLearnedPct}%`}
+              value={`${formatNumber(wordsLearnedPct)}%`}
             />
             <StatCard
               detail={t`7-day average`}

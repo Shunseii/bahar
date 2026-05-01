@@ -5,6 +5,7 @@ export const userStats = sqliteTable("user_stats", {
   streak_count: integer("streak_count").default(0),
   longest_streak: integer("longest_streak").default(0),
   last_review_date: text("last_review_date"),
+  timezone: text("timezone"),
 });
 
 export type SelectUserStats = typeof userStats.$inferSelect;

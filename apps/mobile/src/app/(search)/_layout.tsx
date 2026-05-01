@@ -34,6 +34,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import StreakChip from "@/components/progress/StreakChip";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { Button } from "@/components/ui/button";
 import { HeaderScrollContext } from "@/contexts/header-scroll";
@@ -114,19 +115,22 @@ function SearchBarHeader({
         </TouchableOpacity>
 
         {showSearchBar ? (
-          <TextInput
-            autoCapitalize="none"
-            autoComplete="off"
-            autoCorrect={false}
-            className="ml-2 h-10 flex-1 rounded-md border border-border px-3 text-foreground"
-            clearButtonMode="while-editing"
-            onChangeText={onSearchChange}
-            placeholder={t`Search...`}
-            placeholderTextColor={colors.mutedForeground}
-            ref={inputRef}
-            spellCheck={false}
-            value={searchQuery}
-          />
+          <>
+            <TextInput
+              autoCapitalize="none"
+              autoComplete="off"
+              autoCorrect={false}
+              className="ml-2 h-10 flex-1 rounded-md border border-border px-3 text-foreground"
+              clearButtonMode="while-editing"
+              onChangeText={onSearchChange}
+              placeholder={t`Search...`}
+              placeholderTextColor={colors.mutedForeground}
+              ref={inputRef}
+              spellCheck={false}
+              value={searchQuery}
+            />
+            <StreakChip className="ml-2" />
+          </>
         ) : headerTitle ? (
           <Animated.View className="ml-3" style={titleAnimatedStyle}>
             <RNText className="font-semibold text-foreground text-lg">

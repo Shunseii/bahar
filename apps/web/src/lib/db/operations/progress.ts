@@ -22,15 +22,88 @@ import { nanoid } from "nanoid";
 import { ensureDb, getDrizzleDb } from "..";
 import type { TableOperation } from "./types";
 
-function getToday() {
-  return new Date().toLocaleDateString("en-CA");
-}
+const getDeviceTimezone = (): string =>
+  Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-function getYesterday() {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  return d.toLocaleDateString("en-CA");
-}
+const isValidTimezone = (tz: string): boolean => {
+  try {
+    new Intl.DateTimeFormat(undefined, { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const resolveTimezone = (stored: string | null | undefined): string =>
+  stored && isValidTimezone(stored) ? stored : getDeviceTimezone();
+
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+const isValidDateString = (s: string | null | undefined): s is string =>
+  !!s && ISO_DATE_RE.test(s);
+
+// Build the ISO date string manually via formatToParts so the output is the
+// same on Hermes (mobile) and V8 (web). `toLocaleDateString("en-CA", ...)` is
+// honored by V8 but ignored by RN Hermes, which falls back to the device
+// locale (e.g. "M/D/YYYY" on US devices).
+const formatDateInTz = ({
+  date,
+  timezone,
+}: {
+  date: Date;
+  timezone: string;
+}) => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")}`;
+};
+
+const getToday = (timezone: string) =>
+  formatDateInTz({ date: new Date(), timezone });
+
+const getYesterday = (timezone: string) => {
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  return formatDateInTz({ date: oneDayAgo, timezone });
+};
+
+const hasDueCardsInGap = async ({
+  drizzleDb,
+  lastReviewDate,
+  today,
+}: {
+  drizzleDb: ReturnType<typeof getDrizzleDb>;
+  lastReviewDate: string;
+  today: string;
+}): Promise<boolean> => {
+  const [yStart, mStart, dStart] = lastReviewDate.split("-").map(Number);
+  const [yEnd, mEnd, dEnd] = today.split("-").map(Number);
+  const gapStart = new Date(yStart, mStart - 1, dStart);
+  gapStart.setDate(gapStart.getDate() + 1);
+  const gapEnd = new Date(yEnd, mEnd - 1, dEnd);
+  gapEnd.setDate(gapEnd.getDate() - 1);
+  if (gapEnd < gapStart) return false;
+
+  const startMs = startOfDay(gapStart).getTime();
+  const endMs = endOfDay(gapEnd).getTime();
+
+  const [result] = await drizzleDb
+    .select({ c: count() })
+    .from(flashcards)
+    .where(
+      and(
+        gte(flashcards.due_timestamp_ms, startMs),
+        lte(flashcards.due_timestamp_ms, endMs),
+        eq(flashcards.is_hidden, false)
+      )
+    );
+  return (result?.c ?? 0) > 0;
+};
 
 export const progressTable = {
   wordsAdded: {
@@ -222,30 +295,49 @@ export const progressTable = {
       await ensureDb();
       const drizzleDb = getDrizzleDb();
 
-      const [row] = await drizzleDb.select().from(userStats).limit(1);
+      const [row] = (await drizzleDb
+        .select()
+        .from(userStats)
+        .limit(1)) as SelectUserStats[];
 
       if (!row) {
         return { streakCount: 0, longestStreak: 0, reviewedToday: false };
       }
 
-      const today = getToday();
-      const yesterday = getYesterday();
-      const lastReview = row.last_review_date;
-      const reviewedToday = lastReview === today;
-
-      // If streak is stale (last review before yesterday), it's broken
-      if (lastReview && lastReview < yesterday) {
-        // Update the DB to reflect the broken streak
+      const timezone = resolveTimezone(row.timezone);
+      if (row.timezone !== timezone) {
         await drizzleDb
           .update(userStats)
-          .set({ streak_count: 0 })
+          .set({ timezone })
           .where(eq(userStats.id, row.id));
+      }
 
-        return {
-          streakCount: 0,
-          longestStreak: row.longest_streak ?? 0,
-          reviewedToday: false,
-        };
+      const today = getToday(timezone);
+      const yesterday = getYesterday(timezone);
+      const lastReview = isValidDateString(row.last_review_date)
+        ? row.last_review_date
+        : null;
+      const reviewedToday = lastReview === today;
+
+      if (lastReview && lastReview < yesterday) {
+        const hadDueInGap = await hasDueCardsInGap({
+          drizzleDb,
+          lastReviewDate: lastReview,
+          today,
+        });
+
+        if (hadDueInGap) {
+          await drizzleDb
+            .update(userStats)
+            .set({ streak_count: 0 })
+            .where(eq(userStats.id, row.id));
+
+          return {
+            streakCount: 0,
+            longestStreak: row.longest_streak ?? 0,
+            reviewedToday: false,
+          };
+        }
       }
 
       return {
@@ -263,31 +355,56 @@ export const progressTable = {
       await ensureDb();
       const drizzleDb = getDrizzleDb();
 
-      const today = getToday();
-      const yesterday = getYesterday();
-
       const [row] = (await drizzleDb
         .select()
         .from(userStats)
         .limit(1)) as SelectUserStats[];
 
       if (!row) {
+        const timezone = getDeviceTimezone();
         await drizzleDb.insert(userStats).values({
           id: nanoid(),
           streak_count: 1,
           longest_streak: 1,
-          last_review_date: today,
+          last_review_date: getToday(timezone),
+          timezone,
         });
         return;
       }
 
-      if (row.last_review_date === today) return;
+      const timezone = resolveTimezone(row.timezone);
+      const today = getToday(timezone);
+      const yesterday = getYesterday(timezone);
+      const lastReview = isValidDateString(row.last_review_date)
+        ? row.last_review_date
+        : null;
+
+      if (lastReview === today) {
+        if (row.timezone !== timezone) {
+          await drizzleDb
+            .update(userStats)
+            .set({ timezone })
+            .where(eq(userStats.id, row.id));
+        }
+        return;
+      }
 
       const currentStreak = row.streak_count ?? 0;
       const longestStreak = row.longest_streak ?? 0;
 
       let newStreak: number;
-      if (row.last_review_date === yesterday) {
+      if (lastReview === yesterday) {
+        newStreak = currentStreak + 1;
+      } else if (lastReview && lastReview < yesterday) {
+        const hadDueInGap = await hasDueCardsInGap({
+          drizzleDb,
+          lastReviewDate: lastReview,
+          today,
+        });
+        newStreak = hadDueInGap ? 1 : currentStreak + 1;
+      } else if (lastReview === null && currentStreak > 0) {
+        // Streak exists but last_review_date is missing or unparseable
+        // — give the user the benefit of the doubt and continue.
         newStreak = currentStreak + 1;
       } else {
         newStreak = 1;
@@ -301,6 +418,7 @@ export const progressTable = {
           streak_count: newStreak,
           longest_streak: newLongest,
           last_review_date: today,
+          ...(row.timezone === timezone ? {} : { timezone }),
         })
         .where(eq(userStats.id, row.id));
     },

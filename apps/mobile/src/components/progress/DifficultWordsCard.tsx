@@ -7,6 +7,7 @@ import { Pressable, Text, View } from "react-native";
 import { InfoTooltip } from "@/components/progress/InfoTooltip";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { sortOptionAtom } from "@/lib/store/filters";
 import { useThemeColors } from "@/lib/theme";
 
@@ -32,6 +33,7 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
   const colors = useThemeColors();
   const router = useRouter();
   const setSortOption = useSetAtom(sortOptionAtom);
+  const { formatNumber } = useFormatNumber();
 
   if (isLoading) {
     return (
@@ -66,7 +68,7 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
         {total > 0 && (
           <View className="rounded-full bg-muted px-2.5 py-0.5">
             <Text className="text-muted-foreground text-xs">
-              {total.toLocaleString()} <Trans>total</Trans>
+              {formatNumber(total)} <Trans>total</Trans>
             </Text>
           </View>
         )}
