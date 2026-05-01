@@ -28,9 +28,14 @@ All commands run from monorepo root.
 
 ```bash
 make local-db                        # Local database (port 8080) — required for API
+make tunnel                          # Cloudflared tunnel — required for mobile dev + OAuth
 pnpm run dev                         # API + web + marketing dev servers
-pnpm run start --filter mobile       # Mobile (requires API server running)
+pnpm run start --filter mobile       # Mobile (requires API server + tunnel running)
 ```
+
+Run `make local-db` and `make tunnel` in separate terminals before `pnpm run dev`. The
+tunnel exposes the local API over HTTPS so the mobile dev client and OAuth callbacks (Apple
+Sign In) can reach it. Web-only work doesn't strictly need the tunnel.
 
 Individual servers: `pnpm run dev --filter api|web|marketing`
 

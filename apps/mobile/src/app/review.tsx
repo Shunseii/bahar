@@ -1,6 +1,10 @@
 /**
  * Flashcard review screen - dedicated route outside of drawer navigation.
  * This prevents drawer swipe gestures from interfering with card swiping.
+ *
+ * Native modal-dismiss is disabled in _layout.tsx for consistency with
+ * Android (which doesn't have iOS-style swipe-to-dismiss). Closing happens
+ * via the X button in the FlashcardReview header.
  */
 
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
@@ -10,7 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashcardReview } from "@/components/flashcards/FlashcardReview";
 import type { FlashcardQueue } from "@/lib/db/operations/flashcards";
 
-export default function ReviewScreen() {
+const ReviewScreen = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
@@ -52,4 +56,6 @@ export default function ReviewScreen() {
       />
     </View>
   );
-}
+};
+
+export default ReviewScreen;
