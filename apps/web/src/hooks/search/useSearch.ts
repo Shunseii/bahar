@@ -1,3 +1,4 @@
+import type { WordType } from "@bahar/drizzle-user-db-schemas";
 import {
   type SearchDictionaryOptions,
   type SearchLanguage,
@@ -129,6 +130,7 @@ export const useInfiniteScroll = (
     term?: string;
     filters?: {
       tags?: string[];
+      types?: WordType[];
     };
     sort?: (typeof SORT_OPTIONS)[number];
   } = {}
@@ -147,10 +149,12 @@ export const useInfiniteScroll = (
   const paramsKey = JSON.stringify(params);
 
   const whereFilter = useMemo<SearchDictionaryOptions["where"]>(() => {
-    if (!params.filters?.tags?.length) return undefined;
-
+    const tags = params.filters?.tags;
+    const types = params.filters?.types;
+    if (!tags?.length && !types?.length) return undefined;
     return {
-      tags: { containsAll: params.filters.tags },
+      ...(tags?.length ? { tags: { containsAll: tags } } : {}),
+      ...(types?.length ? { type: { in: types } } : {}),
     };
   }, [paramsKey]);
 

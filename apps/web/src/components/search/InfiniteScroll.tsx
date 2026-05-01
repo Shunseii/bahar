@@ -482,9 +482,13 @@ const formatNextReview = ({
 }): { label: string; isOverdue: boolean } => {
   const dueDate = new Date(due);
   const now = new Date();
-  const isOverdue = dueDate.getTime() <= now.getTime();
+  const isPastDue = dueDate.getTime() <= now.getTime();
+  const isSameDay = dueDate.toDateString() === now.toDateString();
 
-  if (isOverdue) {
+  if (isPastDue) {
+    if (isSameDay) {
+      return { label: t`now`, isOverdue: false };
+    }
     return { label: t`overdue`, isOverdue: true };
   }
 
@@ -757,7 +761,7 @@ const PIXEL_HEIGHT_OFFSET = 800;
 export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   searchQuery,
 }) => {
-  const { tags, sort } = useSearch({
+  const { tags, types, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
   const { isFreeUser } = useUserPlan();
@@ -768,7 +772,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
     hasMore,
   } = useInfiniteScroll({
     term: searchQuery,
-    filters: { tags },
+    filters: { tags, types },
     sort: sort === "difficulty" && isFreeUser ? undefined : sort,
   });
   const [ref, { height }] = useMeasure();

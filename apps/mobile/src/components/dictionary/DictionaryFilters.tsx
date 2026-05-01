@@ -1,8 +1,10 @@
+import { WORD_TYPES, type WordType } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
   ArrowDownUp,
+  BookType,
   Check,
   ChevronDown,
   FunnelX,
@@ -27,12 +29,14 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import type { SortOption } from "@/hooks/useSearch";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
 import {
   activeFilterCountAtom,
   selectedTagsAtom,
+  selectedTypesAtom,
   sortOptionAtom,
 } from "@/lib/store/filters";
 import { useThemeColors } from "@/lib/theme";
@@ -52,6 +56,16 @@ const useSortLabels = (): Record<SortOption, string> => {
     updatedAt: t`Recently updated`,
     createdAt: t`Recently added`,
     difficulty: t`Most difficult`,
+  };
+};
+
+const useWordTypeLabels = (): Record<WordType, string> => {
+  const { t } = useLingui();
+  return {
+    ism: t`Ism`,
+    "fi'l": t`Fi'l`,
+    harf: t`Harf`,
+    expression: t`Expression`,
   };
 };
 
@@ -113,24 +127,30 @@ const FiltersModal: FC<{
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const { isFreeUser } = useUserPlan();
+  const { formatNumber } = useFormatNumber();
   const sortLabels = useSortLabels();
+  const wordTypeLabels = useWordTypeLabels();
 
   const appliedTags = useAtomValue(selectedTagsAtom);
+  const appliedTypes = useAtomValue(selectedTypesAtom);
   const appliedSort = useAtomValue(sortOptionAtom);
   const setAppliedTags = useSetAtom(selectedTagsAtom);
+  const setAppliedTypes = useSetAtom(selectedTypesAtom);
   const setAppliedSort = useSetAtom(sortOptionAtom);
 
   const [draftTags, setDraftTags] = useState<string[]>([]);
+  const [draftTypes, setDraftTypes] = useState<WordType[]>([]);
   const [draftSort, setDraftSort] = useState<SortOption>("relevance");
   const [tagSearch, setTagSearch] = useState("");
   const [expandedSection, setExpandedSection] = useState<
-    "tags" | "sort" | null
+    "tags" | "types" | "sort" | null
   >("sort");
 
   // Sync draft state from applied state when modal opens
   useEffect(() => {
     if (visible) {
       setDraftTags(appliedTags);
+      setDraftTypes(appliedTypes);
       setDraftSort(appliedSort);
       setTagSearch("");
       setExpandedSection("sort");
@@ -154,28 +174,47 @@ const FiltersModal: FC<{
     );
   };
 
+  const toggleType = (type: WordType) => {
+    setDraftTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
+
   const clearAll = () => {
     setAppliedTags([]);
+    setAppliedTypes([]);
     setAppliedSort("relevance");
     setDraftTags([]);
+    setDraftTypes([]);
     setDraftSort("relevance");
   };
 
   const handleApply = () => {
     setAppliedTags(draftTags);
+    setAppliedTypes(draftTypes);
     setAppliedSort(draftSort);
     onClose();
   };
 
   const hasAppliedFilters =
-    appliedTags.length > 0 || appliedSort !== "relevance";
+    appliedTags.length > 0 ||
+    appliedTypes.length > 0 ||
+    appliedSort !== "relevance";
 
   const hasDraftChanges =
     JSON.stringify(draftTags) !== JSON.stringify(appliedTags) ||
+    JSON.stringify(draftTypes) !== JSON.stringify(appliedTypes) ||
     draftSort !== appliedSort;
 
   const tagsSummary =
-    draftTags.length > 0 ? t`${draftTags.length} tags selected` : undefined;
+    draftTags.length > 0
+      ? t`${formatNumber(draftTags.length)} tags selected`
+      : undefined;
+
+  const typesSummary =
+    draftTypes.length > 0
+      ? draftTypes.map((type) => wordTypeLabels[type]).join(", ")
+      : undefined;
 
   return (
     <Modal
@@ -266,7 +305,7 @@ const FiltersModal: FC<{
                       </Text>
                     </View>
                     <Text className="text-muted-foreground text-sm">
-                      {count}
+                      {formatNumber(count)}
                     </Text>
                   </Pressable>
                 );
@@ -280,6 +319,44 @@ const FiltersModal: FC<{
                 </View>
               )}
             </ScrollView>
+          </CollapsibleSection>
+
+          {/* Word Types section */}
+          <CollapsibleSection
+            icon={BookType}
+            isExpanded={expandedSection === "types"}
+            label={t`Word types`}
+            onToggle={() =>
+              setExpandedSection((prev) => (prev === "types" ? null : "types"))
+            }
+            summary={typesSummary}
+          >
+            <View className="flex-row flex-wrap gap-2 px-4 pb-3">
+              {WORD_TYPES.map((type) => {
+                const isSelected = draftTypes.includes(type);
+                return (
+                  <Pressable
+                    className={`rounded-full border px-3.5 py-2 ${
+                      isSelected
+                        ? "border-primary bg-primary/10"
+                        : "border-border bg-background"
+                    }`}
+                    key={type}
+                    onPress={() => toggleType(type)}
+                  >
+                    <Text
+                      className={`text-sm ${
+                        isSelected
+                          ? "font-medium text-primary"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {wordTypeLabels[type]}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
           </CollapsibleSection>
 
           {/* Sort section */}
@@ -353,14 +430,17 @@ const FiltersModal: FC<{
 
 export const DictionaryFilters: FC = () => {
   const colors = useThemeColors();
+  const { formatNumber } = useFormatNumber();
   const [showModal, setShowModal] = useState(false);
   const setSelectedTags = useSetAtom(selectedTagsAtom);
+  const setSelectedTypes = useSetAtom(selectedTypesAtom);
   const setSortOption = useSetAtom(sortOptionAtom);
   const activeFilterCount = useAtomValue(activeFilterCountAtom);
   const hasActiveFilters = activeFilterCount > 0;
 
   const clearAll = () => {
     setSelectedTags([]);
+    setSelectedTypes([]);
     setSortOption("relevance");
   };
 
@@ -377,7 +457,7 @@ export const DictionaryFilters: FC = () => {
         {hasActiveFilters && (
           <View className="h-4.5 min-w-4.5 items-center justify-center rounded-full bg-primary px-1">
             <Text className="font-semibold text-[10px] text-primary-foreground">
-              {activeFilterCount}
+              {formatNumber(activeFilterCount)}
             </Text>
           </View>
         )}

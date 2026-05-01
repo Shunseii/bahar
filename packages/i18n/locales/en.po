@@ -20,6 +20,7 @@ msgstr "{0, plural, one {# tag selected} other {# tags selected}}"
 
 #. placeholder {0}: cards.length
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:361
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:448
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {card left} other {cards left}}"
 
@@ -43,7 +44,7 @@ msgid "{0} cards have been rescheduled."
 msgstr "{0} cards have been rescheduled."
 
 #. placeholder {0}: draftTags.length
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:178
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:208
 msgid "{0} tags selected"
 msgstr "{0} tags selected"
 
@@ -55,10 +56,22 @@ msgstr "{0} tags selected"
 #~ msgid "{0} words"
 #~ msgstr "{0} words"
 
+#: ../../apps/mobile/src/components/flashcards/card/FormsSection.tsx:60
+#~ msgid "{0}: {1}"
+#~ msgstr "{0}: {1}"
+
 #. placeholder {0}: item.count
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:278
 msgid "{0}x"
 msgstr "{0}x"
+
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:446
+#~ msgid "{2, plural, one {{0} card left} other {{1} cards left}}"
+#~ msgstr "{2, plural, one {{0} card left} other {{1} cards left}}"
+
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:444
+msgid "{FLASHCARD_LIMIT}+ cards"
+msgstr "{FLASHCARD_LIMIT}+ cards"
 
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:157
 msgid "{hydrationSkippedCount, plural, one {# entry was skipped due to data issues. Your data is preserved, but you won't be able to search for the entry that wasn't loaded.} other {# entries were skipped due to data issues. Your data is preserved, but you won't be able to search for any entries that weren't loaded.}}"
@@ -66,11 +79,11 @@ msgstr "{hydrationSkippedCount, plural, one {# entry was skipped due to data iss
 
 #. placeholder {0}: formatNumber(lapseCount)
 #. placeholder {1}: formatNumber(lapseCount)
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:601
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:605
 msgid "{lapseCount, plural, one {{0} lapse} other {{1} lapses}}"
 msgstr "{lapseCount, plural, one {{0} lapse} other {{1} lapses}}"
 
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:86
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:90
 msgid "{lapseCount, plural, one {{lapseCount} lapse} other {{lapseCount} lapses}}"
 msgstr "{lapseCount, plural, one {{lapseCount} lapse} other {{lapseCount} lapses}}"
 
@@ -110,11 +123,11 @@ msgstr "{longestStreak, plural, one {Previous: {longestStreak} day} other {Previ
 
 #. placeholder {0}: formatNumber(reviewCount)
 #. placeholder {1}: formatNumber(reviewCount)
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:595
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:599
 msgid "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 msgstr "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:80
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:84
 msgid "{reviewCount, plural, one {{reviewCount} review} other {{reviewCount} reviews}}"
 msgstr "{reviewCount, plural, one {{reviewCount} review} other {{reviewCount} reviews}}"
 
@@ -136,11 +149,11 @@ msgstr "{streakCount, plural, one {day streak} other {day streak}}"
 msgid "{tomorrowCount, plural, one {review tomorrow} other {reviews tomorrow}}"
 msgstr "{tomorrowCount, plural, one {review tomorrow} other {reviews tomorrow}}"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:81
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:85
 msgid "{totalHits, plural, one {result} other {results}}"
 msgstr "{totalHits, plural, one {result} other {results}}"
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:117
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:121
 msgid "{totalResults, plural, one {{totalResults} result} other {{totalResults} results}}"
 msgstr "{totalResults, plural, one {{totalResults} result} other {{totalResults} results}}"
 
@@ -166,7 +179,7 @@ msgstr "+{0} this week"
 #~ msgstr "+{thisWeek} this week"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/RetentionRateCard.tsx:85
-#: ../../apps/mobile/src/app/(search)/stats.tsx:338
+#: ../../apps/mobile/src/app/(search)/stats.tsx:339
 msgid "7-day average"
 msgstr "7-day average"
 
@@ -262,11 +275,11 @@ msgstr "Add plural"
 msgid "Add Plural"
 msgstr "Add Plural"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:846
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:850
 msgid "Add some to get started!"
 msgstr "Add some to get started!"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:61
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:65
 msgid "Add some words to get started!"
 msgstr "Add some words to get started!"
 
@@ -282,9 +295,9 @@ msgstr "Add tag {value}"
 msgid "Add tags to your word."
 msgstr "Add tags to your word."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:113
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:117
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:60
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:138
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:142
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:56
 msgid "Add word"
 msgstr "Add word"
@@ -297,7 +310,7 @@ msgstr "Additional Details"
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:464
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:35
 #: ../../apps/mobile/src/components/progress/RecentReviewsCard.tsx:24
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:54
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:58
 msgid "Again"
 msgstr "Again"
 
@@ -388,7 +401,7 @@ msgstr "Appearance"
 msgid "Apple sign-in failed. Please try again."
 msgstr "Apple sign-in failed. Please try again."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:345
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:418
 msgid "Apply"
 msgstr "Apply"
 
@@ -397,9 +410,9 @@ msgid "Arabic"
 msgstr "Arabic"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:423
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:522
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:178
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:526
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:182
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:312
 msgid "Arabic → English"
 msgstr "Arabic → English"
 
@@ -470,7 +483,7 @@ msgstr "Back"
 msgid "Back to sign in"
 msgstr "Back to sign in"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:185
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:189
 msgid "Back to top"
 msgstr "Back to top"
 
@@ -480,13 +493,13 @@ msgstr "backlog"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:123
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:325
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:120
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:121
 msgid "Backlog"
 msgstr "Backlog"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:93
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:379
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:391
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:397
 msgid "Backlog cleared!"
 msgstr "Backlog cleared!"
 
@@ -530,14 +543,14 @@ msgstr "By signing in, you agree to our <0>Privacy Policy</0>"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:640
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:722
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:779
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:340
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:413
 #: ../../apps/mobile/src/app/(search)/settings.tsx:256
 #: ../../apps/mobile/src/app/(search)/settings.tsx:293
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:87
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:97
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:164
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:112
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:247
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:169
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:117
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:252
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:279
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:278
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:298
@@ -546,12 +559,12 @@ msgid "Cancel"
 msgstr "Cancel"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:344
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:147
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:148
 msgid "Cards due today or recently"
 msgstr "Cards due today or recently"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:346
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:145
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:146
 msgid "Cards overdue by more than 7 days"
 msgstr "Cards overdue by more than 7 days"
 
@@ -580,15 +593,15 @@ msgid "Choose file"
 msgstr "Choose file"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:255
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:393
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:468
 msgid "Clear"
 msgstr "Clear"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:206
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:241
 msgid "Clear all"
 msgstr "Clear all"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:235
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:300
 msgid "Clear all filters"
 msgstr "Clear all filters"
 
@@ -672,8 +685,8 @@ msgstr "Create \"{0}\""
 #~ msgstr "Create a deck to organize your flashcard reviews"
 
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:77
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:42
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:98
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:46
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:103
 msgid "Create a new deck"
 msgstr "Create a new deck"
 
@@ -735,7 +748,7 @@ msgid "Customize how the application looks for you."
 msgstr "Customize how the application looks for you."
 
 #: ../../apps/mobile/src/app/(search)/settings.tsx:488
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:220
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:225
 msgid "Danger Zone"
 msgstr "Danger Zone"
 
@@ -752,16 +765,16 @@ msgstr "Dark"
 msgid "Debugging"
 msgstr "Debugging"
 
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:54
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:59
 msgid "Deck created"
 msgstr "Deck created"
 
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:90
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:95
 msgid "Deck deleted"
 msgstr "Deck deleted"
 
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:106
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:161
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:111
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:166
 msgid "Deck Name"
 msgstr "Deck Name"
 
@@ -777,7 +790,7 @@ msgstr "Deck successfully deleted!"
 msgid "Deck successfully updated!"
 msgstr "Deck successfully updated!"
 
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:77
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:82
 msgid "Deck updated"
 msgstr "Deck updated"
 
@@ -785,11 +798,11 @@ msgstr "Deck updated"
 #: ../../apps/web/src/components/MobileHeader.tsx:166
 #: ../../apps/web/src/components/DesktopNavigation.tsx:69
 #: ../../apps/web/src/components/DesktopNavigation.tsx:75
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:262
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:266
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:32
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:133
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:193
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:276
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:198
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:281
 msgid "Decks"
 msgstr "Decks"
 
@@ -815,7 +828,7 @@ msgstr "Definition"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:207
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:80
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:89
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:114
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:119
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:280
 msgid "Delete"
 msgstr "Delete"
@@ -825,7 +838,7 @@ msgstr "Delete"
 msgid "Delete \"{0}\"?"
 msgstr "Delete \"{0}\"?"
 
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:109
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:114
 msgid "Delete \"{name}\"?"
 msgstr "Delete \"{name}\"?"
 
@@ -844,7 +857,7 @@ msgstr "Delete Account"
 msgid "Delete All Data"
 msgstr "Delete All Data"
 
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:238
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:243
 msgid "Delete Deck"
 msgstr "Delete Deck"
 
@@ -939,8 +952,8 @@ msgstr "Dual"
 msgid "due"
 msgstr "due"
 
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:113
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:168
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:118
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:173
 msgid "e.g. Essential Vocabulary"
 msgstr "e.g. Essential Vocabulary"
 
@@ -957,7 +970,7 @@ msgstr "e.g. فعل, أفعل"
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:469
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:62
 #: ../../apps/mobile/src/components/progress/RecentReviewsCard.tsx:30
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:59
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:63
 msgid "Easy"
 msgstr "Easy"
 
@@ -970,9 +983,9 @@ msgstr "Edit"
 msgid "Edit {word}"
 msgstr "Edit {word}"
 
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:44
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:153
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:281
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:48
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:158
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:286
 msgid "Edit deck"
 msgstr "Edit deck"
 
@@ -1005,9 +1018,9 @@ msgid "English"
 msgstr "English"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:429
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:537
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:193
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:314
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:541
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:197
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:318
 msgid "English → Arabic"
 msgstr "English → Arabic"
 
@@ -1094,12 +1107,17 @@ msgstr "Exporting dictionary with flashcards will save your flashcard progress a
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:51
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:17
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:59
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:136
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:69
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:166
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:360
+#: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:15
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:67
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:41
 #: ../../apps/mobile/src/components/dictionary/form/constants.ts:9
 #: ../../apps/mobile/src/components/decks/DeckCard.tsx:18
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:39
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:40
 msgid "Expression"
 msgstr "Expression"
 
@@ -1124,7 +1142,7 @@ msgstr "Failed to autofill"
 msgid "Failed to clear backlog"
 msgstr "Failed to clear backlog"
 
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:58
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:63
 msgid "Failed to create deck"
 msgstr "Failed to create deck"
 
@@ -1178,7 +1196,7 @@ msgstr "Failed to retrieve data from local database."
 msgid "Failed to retrieve database information."
 msgstr "Failed to retrieve database information."
 
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:81
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:86
 msgid "Failed to update deck"
 msgstr "Failed to update deck"
 
@@ -1220,13 +1238,18 @@ msgstr "Feminine"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:49
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:13
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:57
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:90
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:130
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:65
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:164
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:356
+#: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:13
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:65
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:39
 #: ../../apps/mobile/src/components/dictionary/form/constants.ts:7
 #: ../../apps/mobile/src/components/decks/DeckCard.tsx:16
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:37
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:38
 msgid "Fi'l"
 msgstr "Fi'l"
 
@@ -1249,9 +1272,9 @@ msgstr "Fill in the word, translation, and type first."
 msgid "Filter by tags..."
 msgstr "Filter by tags..."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:114
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:197
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:375
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:136
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:232
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:450
 msgid "Filters"
 msgstr "Filters"
 
@@ -1289,6 +1312,11 @@ msgstr "For security, account deletion requires a recent sign-in."
 #: ../../apps/mobile/src/components/dictionary/form/VerbMorphologySection.tsx:133
 msgid "Form"
 msgstr "Form"
+
+#. placeholder {0}: verb.form
+#: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:31
+msgid "Form {0}"
+msgstr "Form {0}"
 
 #: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:27
 #: ../../apps/mobile/src/app/(search)/settings.tsx:110
@@ -1346,7 +1374,7 @@ msgstr "Goal met!"
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:468
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:53
 #: ../../apps/mobile/src/components/progress/RecentReviewsCard.tsx:28
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:58
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:62
 msgid "Good"
 msgstr "Good"
 
@@ -1356,7 +1384,7 @@ msgid "Great work on the backlog! You still have {0} regular reviews."
 msgstr "Great work on the backlog! You still have {0} regular reviews."
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:396
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:407
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:413
 msgid "Great work! Come back later for more reviews."
 msgstr "Great work! Come back later for more reviews."
 
@@ -1364,20 +1392,25 @@ msgstr "Great work! Come back later for more reviews."
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:466
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/GradeOption.tsx:44
 #: ../../apps/mobile/src/components/progress/RecentReviewsCard.tsx:26
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:56
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:60
 msgid "Hard"
 msgstr "Hard"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:50
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:15
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:58
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:350
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:101
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:133
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:67
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:165
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:358
+#: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:14
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:66
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:40
 #: ../../apps/mobile/src/components/dictionary/form/constants.ts:8
 #: ../../apps/mobile/src/components/decks/DeckCard.tsx:17
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:38
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:39
 msgid "Harf"
 msgstr "Harf"
 
@@ -1399,7 +1432,7 @@ msgstr "Hidden"
 msgid "Hide details"
 msgstr "Hide details"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:85
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:107
 msgid "Hide filters"
 msgstr "Hide filters"
 
@@ -1412,7 +1445,7 @@ msgstr "Hint"
 #: ../../apps/web/src/components/MobileHeader.tsx:154
 #: ../../apps/web/src/components/DesktopNavigation.tsx:53
 #: ../../apps/web/src/components/DesktopNavigation.tsx:59
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:251
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:255
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:51
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:53
 msgid "Home"
@@ -1494,7 +1527,7 @@ msgstr "Information such as the word's root, meaning, and examples."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/route.lazy.tsx:244
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/ProPlaceholder.tsx:56
-#: ../../apps/mobile/src/app/(search)/stats.tsx:309
+#: ../../apps/mobile/src/app/(search)/stats.tsx:310
 msgid "Insights"
 msgstr "Insights"
 
@@ -1522,13 +1555,18 @@ msgstr "Invalid value. Expected one of: {0}"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:48
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:11
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:56
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:76
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:127
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:63
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:163
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:354
+#: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:12
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:64
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:38
 #: ../../apps/mobile/src/components/dictionary/form/constants.ts:6
 #: ../../apps/mobile/src/components/decks/DeckCard.tsx:15
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:36
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:37
 msgid "Ism"
 msgstr "Ism"
 
@@ -1551,8 +1589,8 @@ msgstr "Keep adding words after saving instead of going back to the homepage."
 msgid "Language"
 msgstr "Language"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:644
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:127
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:648
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:131
 msgid "Latest"
 msgstr "Latest"
 
@@ -1565,12 +1603,12 @@ msgstr "Light"
 msgid "Loading details..."
 msgstr "Loading details..."
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:272
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:277
 msgid "Loading your dictionary..."
 msgstr "Loading your dictionary..."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:95
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:130
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:99
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:134
 msgid "Loading..."
 msgstr "Loading..."
 
@@ -1585,7 +1623,7 @@ msgstr "Log in to your existing account or sign up for a new one"
 
 #: ../../apps/web/src/components/MobileHeader.tsx:203
 #: ../../apps/web/src/components/DesktopNavigation.tsx:135
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:174
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:178
 msgid "Logout"
 msgstr "Logout"
 
@@ -1691,8 +1729,8 @@ msgstr "Morphology"
 msgid "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
 msgstr "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:40
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:54
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:42
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:57
 msgid "Most difficult"
 msgstr "Most difficult"
 
@@ -1714,7 +1752,7 @@ msgstr "Navigation menu"
 msgid "New cards scheduled for review each day, in addition to any cards that are already due."
 msgstr "New cards scheduled for review each day, in addition to any cards that are already due."
 
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:198
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:203
 msgid "New deck"
 msgstr "New deck"
 
@@ -1727,13 +1765,13 @@ msgstr "New Deck"
 msgid "Next 7 days"
 msgstr "Next 7 days"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:563
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:220
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:567
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:224
 msgid "Next review"
 msgstr "Next review"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:516
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:172
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:520
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:176
 msgid "Next Review"
 msgstr "Next Review"
 
@@ -1758,8 +1796,8 @@ msgstr "No difficult words yet."
 msgid "No file chosen"
 msgstr "No file chosen"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:823
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:78
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:827
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:82
 msgid "No results found"
 msgstr "No results found"
 
@@ -1768,7 +1806,7 @@ msgstr "No results found"
 msgid "No reviews yet today."
 msgstr "No reviews yet today."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:278
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:313
 msgid "No tags found"
 msgstr "No tags found"
 
@@ -1784,10 +1822,7 @@ msgstr "No thanks"
 msgid "Nord"
 msgstr "Nord"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:48
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:11
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:163
-#: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:38
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:370
 #~ msgid "Noun"
 #~ msgstr "Noun"
 
@@ -1795,8 +1830,13 @@ msgstr "Nord"
 msgid "Noun Morphology"
 msgstr "Noun Morphology"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:624
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:110
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:490
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:39
+msgid "now"
+msgstr "now"
+
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:628
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:114
 msgid "Oldest"
 msgstr "Oldest"
 
@@ -1820,14 +1860,12 @@ msgstr "Or"
 #~ msgid "Or continue with"
 #~ msgstr "Or continue with"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:488
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:37
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:492
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:41
 msgid "overdue"
 msgstr "overdue"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:50
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:165
-#: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:40
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:374
 #~ msgid "Particle"
 #~ msgstr "Particle"
 
@@ -1853,7 +1891,7 @@ msgid "Past Tense"
 msgstr "Past Tense"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/RetentionRateCard.tsx:55
-#: ../../apps/mobile/src/app/(search)/stats.tsx:342
+#: ../../apps/mobile/src/app/(search)/stats.tsx:343
 msgid "Percentage of mature card reviews not rated \"Again\" over the last 7 days."
 msgstr "Percentage of mature card reviews not rated \"Again\" over the last 7 days."
 
@@ -1861,7 +1899,7 @@ msgstr "Percentage of mature card reviews not rated \"Again\" over the last 7 da
 msgid "Permanently delete all your data including words, flashcards, and decks."
 msgstr "Permanently delete all your data including words, flashcards, and decks."
 
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:225
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:230
 msgid "Permanently delete this deck. Your words and flashcards will not be affected."
 msgstr "Permanently delete this deck. Your words and flashcards will not be affected."
 
@@ -1979,7 +2017,7 @@ msgstr "Privacy Policy"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/route.lazy.tsx:247
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/ProPlaceholder.tsx:59
 #: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:24
-#: ../../apps/mobile/src/app/(search)/stats.tsx:313
+#: ../../apps/mobile/src/app/(search)/stats.tsx:314
 #: ../../apps/mobile/src/app/(search)/settings.tsx:110
 msgid "Pro"
 msgstr "Pro"
@@ -1989,8 +2027,8 @@ msgstr "Pro"
 #: ../../apps/web/src/components/DesktopNavigation.tsx:85
 #: ../../apps/web/src/components/DesktopNavigation.tsx:91
 #: ../../apps/mobile/src/app/(search)/stats.tsx:34
-#: ../../apps/mobile/src/app/(search)/stats.tsx:282
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:273
+#: ../../apps/mobile/src/app/(search)/stats.tsx:283
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:277
 msgid "Progress"
 msgstr "Progress"
 
@@ -2005,6 +2043,10 @@ msgstr "Rate limit reached"
 msgid "Rate limit reached. Please wait a moment."
 msgstr "Rate limit reached. Please wait a moment."
 
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:262
+msgid "Recall the Arabic word"
+msgstr "Recall the Arabic word"
+
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:108
 #: ../../apps/mobile/src/app/(search)/settings.tsx:199
 msgid "Receive product updates, tips, and new feature announcements."
@@ -2015,13 +2057,13 @@ msgstr "Receive product updates, tips, and new feature announcements."
 msgid "Recent Reviews"
 msgstr "Recent Reviews"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:38
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:53
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:40
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:56
 msgid "Recently added"
 msgstr "Recently added"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:36
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:52
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:38
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:55
 msgid "Recently updated"
 msgstr "Recently updated"
 
@@ -2030,12 +2072,12 @@ msgstr "Recently updated"
 msgid "Recently used"
 msgstr "Recently used"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:389
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:395
 msgid "Regular reviews done!"
 msgstr "Regular reviews done!"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:34
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:51
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:36
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:54
 msgid "Relevance"
 msgstr "Relevance"
 
@@ -2090,7 +2132,7 @@ msgid "Resetting local data..."
 msgstr "Resetting local data..."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/RetentionRateCard.tsx:52
-#: ../../apps/mobile/src/app/(search)/stats.tsx:340
+#: ../../apps/mobile/src/app/(search)/stats.tsx:341
 msgid "Retention Rate"
 msgstr "Retention Rate"
 
@@ -2098,10 +2140,10 @@ msgstr "Retention Rate"
 msgid "Reverse flashcards"
 msgstr "Reverse flashcards"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:139
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:143
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:300
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:79
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:154
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:80
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:158
 msgid "Review"
 msgstr "Review"
 
@@ -2120,8 +2162,8 @@ msgstr "Review flashcards with spaced repetition"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:387
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:415
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:273
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:300
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:277
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:304
 msgid "Review History"
 msgstr "Review History"
 
@@ -2151,8 +2193,8 @@ msgstr "Root Letters"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:488
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:232
 #: ../../apps/web/src/components/features/settings/AdminSettingsCardSection.tsx:146
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:174
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:257
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:179
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:262
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:289
 msgid "Save"
 msgstr "Save"
@@ -2183,14 +2225,14 @@ msgstr "Search for a tag..."
 msgid "Search tag..."
 msgstr "Search tag..."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:229
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:264
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:105
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:217
 msgid "Search tags..."
 msgstr "Search tags..."
 
 #: ../../apps/web/src/components/search/SearchInput.tsx:63
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:124
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:126
 msgid "Search..."
 msgstr "Search..."
 
@@ -2227,8 +2269,8 @@ msgstr "Select the types of words that you want to include in the deck."
 msgid "Select type"
 msgstr "Select type"
 
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:127
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:182
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:132
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:187
 msgid "Select which types of words to include"
 msgstr "Select which types of words to include"
 
@@ -2249,7 +2291,7 @@ msgstr "Separate letters with spaces or commas"
 #: ../../apps/web/src/components/DesktopNavigation.tsx:123
 #: ../../apps/mobile/src/app/(search)/settings.tsx:221
 #: ../../apps/mobile/src/app/(search)/settings.tsx:333
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:284
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:288
 msgid "Settings"
 msgstr "Settings"
 
@@ -2260,6 +2302,10 @@ msgstr "Show after revealing the answer"
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:512
 msgid "Show answer"
 msgstr "Show answer"
+
+#: ../../apps/mobile/src/components/flashcards/GradeButtons.tsx:194
+msgid "Show Answer"
+msgstr "Show Answer"
 
 #: ../../apps/mobile/src/app/(search)/settings.tsx:454
 msgid "Show antonyms"
@@ -2277,7 +2323,7 @@ msgstr "Show details"
 msgid "Show English to Arabic flashcards."
 msgstr "Show English to Arabic flashcards."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:85
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:107
 msgid "Show filters"
 msgstr "Show filters"
 
@@ -2300,7 +2346,7 @@ msgstr "Singular"
 msgid "Some dictionary entries couldn't be loaded"
 msgstr "Some dictionary entries couldn't be loaded"
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:282
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:287
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
@@ -2311,8 +2357,8 @@ msgstr "Something went wrong"
 msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:171
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:289
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:236
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:362
 msgid "Sort by"
 msgstr "Sort by"
 
@@ -2366,7 +2412,7 @@ msgstr "Successfully reset the flashcard."
 msgid "Successfully updated the word!"
 msgstr "Successfully updated the word!"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:402
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:408
 msgid "Switch to the Review tab if you have regular cards due."
 msgstr "Switch to the Review tab if you have regular cards due."
 
@@ -2381,19 +2427,19 @@ msgid "System"
 msgstr "System"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:329
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:123
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:145
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:219
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:254
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:305
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:146
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:201
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:151
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:206
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:241
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:387
 msgid "Tags"
 msgstr "Tags"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:281
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:264
 msgid "Tap to reveal answer"
 msgstr "Tap to reveal answer"
 
@@ -2538,7 +2584,7 @@ msgid "There's a temporary issue loading your account. Please try reloading the 
 msgstr "There's a temporary issue loading your account. Please try reloading the page."
 
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:85
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:110
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:115
 msgid "This cannot be undone. Your words and flashcards will not be affected."
 msgstr "This cannot be undone. Your words and flashcards will not be affected."
 
@@ -2567,8 +2613,8 @@ msgstr "This is the name of your deck."
 msgid "This refers to how many case endings the word can take."
 msgstr "This refers to how many case endings the word can take."
 
-#: ../../apps/mobile/src/app/(search)/stats.tsx:294
-#: ../../apps/mobile/src/app/(search)/stats.tsx:330
+#: ../../apps/mobile/src/app/(search)/stats.tsx:295
+#: ../../apps/mobile/src/app/(search)/stats.tsx:331
 msgid "this week"
 msgstr "this week"
 
@@ -2644,8 +2690,8 @@ msgstr "Triptote"
 #~ msgid "Troubleshooting"
 #~ msgstr "Troubleshooting"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:826
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:81
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:830
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:85
 msgid "Try a different search term"
 msgstr "Try a different search term"
 
@@ -2697,7 +2743,7 @@ msgid "Upgrade to Pro to generate examples."
 msgstr "Upgrade to Pro to generate examples."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:392
-#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:278
+#: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:282
 msgid "Upgrade to Pro to see your review history for this word."
 msgstr "Upgrade to Pro to see your review history for this word."
 
@@ -2718,10 +2764,7 @@ msgstr "Value must be {0} or greater"
 msgid "Value must be {0} or less"
 msgstr "Value must be {0} or less"
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:49
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/TagBadgesList.tsx:13
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:164
-#: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:39
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:372
 #~ msgid "Verb"
 #~ msgstr "Verb"
 
@@ -2760,7 +2803,7 @@ msgstr "View all in dictionary"
 #~ msgstr "View your learning stats, streaks, and review history on the web app for now."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/RetentionRateCard.tsx:76
-#: ../../apps/mobile/src/app/(search)/stats.tsx:255
+#: ../../apps/mobile/src/app/(search)/stats.tsx:256
 msgid "vs last week"
 msgstr "vs last week"
 
@@ -2806,8 +2849,13 @@ msgstr "Word deleted successfully"
 msgid "Word not found"
 msgstr "Word not found"
 
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:124
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:179
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:193
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:324
+msgid "Word types"
+msgstr "Word types"
+
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:129
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:184
 msgid "Word Types"
 msgstr "Word Types"
 
@@ -2815,17 +2863,17 @@ msgstr "Word Types"
 msgid "Word updated successfully"
 msgstr "Word updated successfully"
 
-#: ../../apps/mobile/src/app/(search)/stats.tsx:319
+#: ../../apps/mobile/src/app/(search)/stats.tsx:320
 msgid "words"
 msgstr "words"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/WordsAddedCard.tsx:36
-#: ../../apps/mobile/src/app/(search)/stats.tsx:290
+#: ../../apps/mobile/src/app/(search)/stats.tsx:291
 msgid "Words Added"
 msgstr "Words Added"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/WordsLearnedCard.tsx:41
-#: ../../apps/mobile/src/app/(search)/stats.tsx:321
+#: ../../apps/mobile/src/app/(search)/stats.tsx:322
 msgid "Words Learned"
 msgstr "Words Learned"
 
@@ -2834,7 +2882,7 @@ msgid "Words that have any of these tags will be included in the deck."
 msgstr "Words that have any of these tags will be included in the deck."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/WordsLearnedCard.tsx:44
-#: ../../apps/mobile/src/app/(search)/stats.tsx:323
+#: ../../apps/mobile/src/app/(search)/stats.tsx:324
 msgid "Words that have graduated from the learning phase into review."
 msgstr "Words that have graduated from the learning phase into review."
 
@@ -2842,8 +2890,8 @@ msgstr "Words that have graduated from the learning phase into review."
 msgid "Words that have the opposite meaning."
 msgstr "Words that have the opposite meaning."
 
-#: ../../apps/mobile/src/app/(search)/decks/create.tsx:149
-#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:204
+#: ../../apps/mobile/src/app/(search)/decks/create.tsx:154
+#: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:209
 msgid "Words with any of these tags will be included"
 msgstr "Words with any of these tags will be included"
 
@@ -2874,11 +2922,11 @@ msgstr "You have {0} cards in your backlog when you're ready."
 msgid "You have no decks yet."
 msgstr "You have no decks yet."
 
-#: ../../apps/web/src/components/search/InfiniteScroll.tsx:843
+#: ../../apps/web/src/components/search/InfiniteScroll.tsx:847
 msgid "You have no words in your dictionary yet."
 msgstr "You have no words in your dictionary yet."
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:397
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:403
 msgid "You still have backlog cards to review. Switch to the Backlog tab to tackle them."
 msgstr "You still have backlog cards to review. Switch to the Backlog tab to tackle them."
 
@@ -2914,8 +2962,8 @@ msgstr "Your deck was not created. Please try again."
 msgid "Your deck was not updated. Please try again."
 msgstr "Your deck was not updated. Please try again."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:73
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:112
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:75
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:116
 msgid "Your Dictionary"
 msgstr "Your Dictionary"
 
@@ -2931,7 +2979,7 @@ msgstr "Your dictionary has been downloaded."
 msgid "Your dictionary has been updated!"
 msgstr "Your dictionary has been updated!"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:58
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:62
 msgid "Your dictionary is empty"
 msgstr "Your dictionary is empty"
 

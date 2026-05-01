@@ -1,6 +1,6 @@
 import type { DeckFilters, WordType } from "@bahar/drizzle-user-db-schemas";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { useLocales } from "expo-localization";
@@ -29,17 +29,22 @@ import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 
 const WORD_TYPES: WordType[] = ["ism", "fi'l", "harf", "expression"];
-const WORD_TYPE_LABELS: Record<WordType, string> = {
-  ism: "Ism",
-  "fi'l": "Fi'l",
-  harf: "Harf",
-  expression: "Expression",
+
+const useWordTypeLabels = (): Record<WordType, string> => {
+  const { t } = useLingui();
+  return {
+    ism: t`Ism`,
+    "fi'l": t`Fi'l`,
+    harf: t`Harf`,
+    expression: t`Expression`,
+  };
 };
 
 export default function CreateDeckScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const { scrollHandler } = useCollapsibleHeader(t`Create a new deck`);
+  const wordTypeLabels = useWordTypeLabels();
 
   const [name, setName] = useState("");
   const [selectedTypes, setSelectedTypes] = useState<WordType[]>([]);
@@ -131,7 +136,7 @@ export default function CreateDeckScreen() {
               {WORD_TYPES.map((type) => (
                 <TypeChip
                   key={type}
-                  label={WORD_TYPE_LABELS[type]}
+                  label={wordTypeLabels[type]}
                   onPress={() => toggleType(type)}
                   selected={selectedTypes.includes(type)}
                 />

@@ -5,6 +5,7 @@
  * Jotai atoms for shared state so search can be reset from other screens.
  */
 
+import type { WordType } from "@bahar/drizzle-user-db-schemas";
 import { detectLanguage } from "@bahar/search/arabic";
 import {
   type SearchDictionaryOptions,
@@ -101,6 +102,7 @@ interface UseInfiniteSearchParams {
   term?: string;
   filters?: {
     tags?: string[];
+    types?: WordType[];
   };
   sort?: SortOption;
 }
@@ -137,8 +139,13 @@ export const useInfiniteSearch = (
   }, [params.term]);
 
   const whereFilter = useMemo<SearchDictionaryOptions["where"]>(() => {
-    if (!params.filters?.tags?.length) return undefined;
-    return { tags: { containsAll: params.filters.tags } };
+    const tags = params.filters?.tags;
+    const types = params.filters?.types;
+    if (!tags?.length && !types?.length) return undefined;
+    return {
+      ...(tags?.length ? { tags: { containsAll: tags } } : {}),
+      ...(types?.length ? { type: { in: types } } : {}),
+    };
   }, [paramsKey]);
 
   const sortBy = useMemo<SearchDictionaryOptions["sortBy"]>(() => {

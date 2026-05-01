@@ -1,6 +1,6 @@
 import type { DeckFilters, WordType } from "@bahar/drizzle-user-db-schemas";
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { useLocales } from "expo-localization";
@@ -30,11 +30,15 @@ import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 
 const WORD_TYPES: WordType[] = ["ism", "fi'l", "harf", "expression"];
-const WORD_TYPE_LABELS: Record<WordType, string> = {
-  ism: "Ism",
-  "fi'l": "Fi'l",
-  harf: "Harf",
-  expression: "Expression",
+
+const useWordTypeLabels = (): Record<WordType, string> => {
+  const { t } = useLingui();
+  return {
+    ism: t`Ism`,
+    "fi'l": t`Fi'l`,
+    harf: t`Harf`,
+    expression: t`Expression`,
+  };
 };
 
 export default function EditDeckScreen() {
@@ -42,6 +46,7 @@ export default function EditDeckScreen() {
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { scrollHandler } = useCollapsibleHeader(t`Edit deck`);
+  const wordTypeLabels = useWordTypeLabels();
 
   const { data: deck, status } = useQuery({
     queryFn: () => decksTable.get.query({ id }),
@@ -186,7 +191,7 @@ export default function EditDeckScreen() {
               {WORD_TYPES.map((type) => (
                 <TypeChip
                   key={type}
-                  label={WORD_TYPE_LABELS[type]}
+                  label={wordTypeLabels[type]}
                   onPress={() => toggleType(type)}
                   selected={selectedTypes.includes(type)}
                 />

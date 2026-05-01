@@ -18,30 +18,38 @@ import { DictionaryFilters } from "@/components/dictionary/DictionaryFilters";
 import { GuestBanner } from "@/components/GuestBanner";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
 } from "@/lib/db/operations/flashcards";
 import { settingsTable } from "@/lib/db/operations/settings";
-import { selectedTagsAtom, sortOptionAtom } from "@/lib/store/filters";
+import {
+  selectedTagsAtom,
+  selectedTypesAtom,
+  sortOptionAtom,
+} from "@/lib/store/filters";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
 
-/**
- * Formats nanoseconds to a human-readable elapsed time string.
- */
-const formatElapsedTime = (nanoseconds: number): string => {
+const formatElapsedTime = ({
+  nanoseconds,
+  format,
+}: {
+  nanoseconds: number;
+  format: (n: number) => string;
+}): string => {
   if (nanoseconds < 1000) {
-    return `${nanoseconds.toFixed(0)}ns`;
+    return `${format(Math.round(nanoseconds))}ns`;
   }
   if (nanoseconds < 1_000_000) {
-    return `${(nanoseconds / 1000).toFixed(2)}μs`;
+    return `${format(Number((nanoseconds / 1000).toFixed(2)))}μs`;
   }
   if (nanoseconds < 1_000_000_000) {
-    return `${(nanoseconds / 1_000_000).toFixed(2)}ms`;
+    return `${format(Number((nanoseconds / 1_000_000).toFixed(2)))}ms`;
   }
-  return `${(nanoseconds / 1_000_000_000).toFixed(2)}s`;
+  return `${format(Number((nanoseconds / 1_000_000_000).toFixed(2)))}s`;
 };
 
 const PulsingDot = () => {
@@ -93,6 +101,7 @@ const HeaderCard = ({
   onAddPress: () => void;
 }) => {
   const colors = useThemeColors();
+  const { formatNumber } = useFormatNumber();
 
   return (
     <View className="mt-1 mb-4 overflow-hidden rounded-xl border border-border/50 bg-card">
@@ -115,14 +124,17 @@ const HeaderCard = ({
               {totalResults !== null ? (
                 <>
                   <Plural
-                    one={`${totalResults} result`}
-                    other={`${totalResults} results`}
+                    one={`${formatNumber(totalResults)} result`}
+                    other={`${formatNumber(totalResults)} results`}
                     value={totalResults}
                   />
                   {elapsedTimeNs !== null && (
                     <Text className="text-muted-foreground/60">
                       {" · "}
-                      {formatElapsedTime(elapsedTimeNs)}
+                      {formatElapsedTime({
+                        nanoseconds: elapsedTimeNs,
+                        format: formatNumber,
+                      })}
                     </Text>
                   )}
                 </>
@@ -163,7 +175,7 @@ const HeaderCard = ({
                       className="font-semibold text-xs"
                       style={{ color: colors.primaryForeground }}
                     >
-                      {regularCount}
+                      {formatNumber(regularCount)}
                     </Text>
                   </View>
                 )}
@@ -189,6 +201,7 @@ export default function HomeScreen() {
   const { searchQuery } = useSearchQuery();
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const selectedTags = useAtomValue(selectedTagsAtom);
+  const selectedTypes = useAtomValue(selectedTypesAtom);
   const sortOption = useAtomValue(sortOptionAtom);
   const { isAnonymous } = useUserPlan();
   const { state, error } = useAppInit();
@@ -296,6 +309,7 @@ export default function HomeScreen() {
         searchQuery={deferredSearchQuery}
         sort={sortOption}
         tags={selectedTags}
+        types={selectedTypes}
       />
     </View>
   );

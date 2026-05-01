@@ -1,4 +1,5 @@
 import { cn } from "@bahar/design-system";
+import { WORD_TYPES, type WordType } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import {
   Select,
@@ -9,11 +10,12 @@ import {
   SelectValue,
 } from "@bahar/web-ui/components/select";
 import { Separator } from "@bahar/web-ui/components/separator";
-import { Trans } from "@lingui/react/macro";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useSessionStorage } from "@uidotdev/usehooks";
 import {
   ArrowDownUp,
+  BookType,
   ChevronDown,
   FunnelXIcon,
   Lock,
@@ -48,25 +50,45 @@ const sortOptions: SortOption[] = [
   "difficulty",
 ];
 
+const useWordTypeLabels = (): Record<WordType, string> => {
+  const { t } = useLingui();
+  return {
+    ism: t`Ism`,
+    "fi'l": t`Fi'l`,
+    harf: t`Harf`,
+    expression: t`Expression`,
+  };
+};
+
 export const DictionaryFilters = () => {
   const navigate = useNavigate();
   const dir = useDir();
   const { formatNumber } = useFormatNumber();
   const { isFreeUser } = useUserPlan();
-  const { tags: filteredTags, sort } = useSearch({
+  const wordTypeLabels = useWordTypeLabels();
+  const {
+    tags: filteredTags,
+    types: filteredTypes,
+    sort,
+  } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
   const [isExpanded, setIsExpanded] = useSessionStorage(
     "isFiltersExpanded",
-    !!(filteredTags?.length || (sort && sort !== "relevance"))
+    !!(
+      filteredTags?.length ||
+      filteredTypes?.length ||
+      (sort && sort !== "relevance")
+    )
   );
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filteredTags?.length) count += filteredTags.length;
+    if (filteredTypes?.length) count += filteredTypes.length;
     if (sort && sort !== "relevance") count += 1;
     return count;
-  }, [filteredTags, sort]);
+  }, [filteredTags, filteredTypes, sort]);
 
   const hasActiveFilters = activeFilterCount > 0;
 
@@ -162,6 +184,49 @@ export const DictionaryFilters = () => {
                   ))}
                 </ul>
               ) : null}
+            </section>
+
+            <section className="flex flex-row items-center gap-x-4">
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <BookType className="h-4 w-4" />
+                <span className="whitespace-nowrap font-medium text-sm">
+                  <Trans>Word types</Trans>
+                </span>
+              </div>
+
+              <Separator className="shrink bg-linear-to-r from-border/50 via-border to-border/50" />
+            </section>
+
+            <section className="flex flex-wrap gap-2">
+              {WORD_TYPES.map((type) => {
+                const isSelected = filteredTypes?.includes(type) ?? false;
+                return (
+                  <button
+                    className={cn(
+                      "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
+                      isSelected
+                        ? "border-primary bg-primary/10 font-medium text-primary"
+                        : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                    )}
+                    key={type}
+                    onClick={() => {
+                      const next = isSelected
+                        ? filteredTypes?.filter((t) => t !== type)
+                        : [...(filteredTypes ?? []), type];
+                      navigate({
+                        to: "/",
+                        search: (prev) => ({
+                          ...prev,
+                          types: next?.length ? next : undefined,
+                        }),
+                      });
+                    }}
+                    type="button"
+                  >
+                    {wordTypeLabels[type]}
+                  </button>
+                );
+              })}
             </section>
 
             <section className="flex flex-row items-center gap-x-4">

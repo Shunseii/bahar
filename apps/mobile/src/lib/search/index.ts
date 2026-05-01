@@ -8,6 +8,7 @@ import { safeJsonParse } from "@bahar/db-operations";
 import {
   AntonymSchema,
   ExampleSchema,
+  flashcards,
   MorphologySchema,
   type RawDictionaryEntry,
   RootLettersSchema,
@@ -23,8 +24,24 @@ import {
   updateDocument,
 } from "@bahar/search/database";
 import type { DictionaryDocument, DictionaryOrama } from "@bahar/search/schema";
+import { eq, max } from "drizzle-orm";
 import { z } from "zod";
 import { ensureDb } from "../db";
+import { getDrizzleDb } from "../db/adapter";
+
+const buildDifficultyMap = async (): Promise<Map<string, number>> => {
+  const drizzleDb = getDrizzleDb();
+  const rows = await drizzleDb
+    .select({
+      entryId: flashcards.dictionary_entry_id,
+      maxDifficulty: max(flashcards.difficulty).mapWith(Number),
+    })
+    .from(flashcards)
+    .where(eq(flashcards.is_hidden, false))
+    .groupBy(flashcards.dictionary_entry_id);
+
+  return new Map(rows.map((r) => [r.entryId, r.maxDifficulty ?? 0]));
+};
 
 const BATCH_SIZE = 500;
 
@@ -56,6 +73,8 @@ export const resetOramaDb = (): void => {
 export const rehydrateOramaDb = async (): Promise<void> => {
   const db = await ensureDb();
   const newOramaDb = createDictionaryDatabase();
+
+  const difficultyMap = await buildDifficultyMap();
 
   let offset = 0;
 
@@ -111,6 +130,7 @@ export const rehydrateOramaDb = async (): Promise<void> => {
           created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
           updated_at: entry.updated_at ?? undefined,
           updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
+          max_difficulty: difficultyMap.get(entry.id) ?? 0,
           definition: entry.definition ?? undefined,
           type: entry.type ?? undefined,
           root: rootResult.value ?? undefined,
@@ -166,6 +186,8 @@ export const hydrateOramaDb = async (): Promise<
 
   const db = await ensureDb();
   const orama = getOramaDb();
+
+  const difficultyMap = await buildDifficultyMap();
 
   let offset = 0;
   let skippedCount = 0;
@@ -275,6 +297,7 @@ export const hydrateOramaDb = async (): Promise<
           created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
           updated_at: entry.updated_at ?? undefined,
           updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
+          max_difficulty: difficultyMap.get(entry.id) ?? 0,
           definition: entry.definition ?? undefined,
           type: entry.type ?? undefined,
           root: rootResult.value ?? undefined,

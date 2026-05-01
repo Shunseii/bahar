@@ -2,7 +2,10 @@
  * Dictionary list component with infinite scroll using FlashList.
  */
 
-import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import type {
+  SelectDictionaryEntry,
+  WordType,
+} from "@bahar/drizzle-user-db-schemas";
 import { Trans } from "@lingui/react/macro";
 import {
   FlashList,
@@ -37,6 +40,7 @@ import { DictionaryEntryCard } from "./DictionaryEntryCard";
 interface DictionaryListProps {
   searchQuery: string;
   tags?: string[];
+  types?: WordType[];
   sort?: SortOption;
   bottomInset?: number;
   onTotalCountChange?: (count: number) => void;
@@ -93,12 +97,20 @@ const LoadingIndicator: FC = () => (
 export const DictionaryList: FC<DictionaryListProps> = ({
   searchQuery,
   tags,
+  types,
   sort,
   bottomInset = 0,
   onTotalCountChange,
   onElapsedTimeChange,
   ListHeaderComponent,
 }) => {
+  const filters =
+    tags?.length || types?.length
+      ? {
+          tags: tags?.length ? tags : undefined,
+          types: types?.length ? types : undefined,
+        }
+      : undefined;
   const {
     hits,
     hasMore,
@@ -109,7 +121,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     elapsedTimeNs,
   } = useInfiniteSearch({
     term: searchQuery,
-    filters: tags?.length ? { tags } : undefined,
+    filters,
     sort,
   });
   const [refreshing, setRefreshing] = useState(false);
@@ -119,7 +131,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   useEffect(() => {
     expandedIdsRef.current.clear();
     setExpandedVersion((n) => n + 1);
-  }, [searchQuery, tags, sort]);
+  }, [searchQuery, tags, types, sort]);
 
   const toggleExpanded = useCallback((id: string) => {
     const set = expandedIdsRef.current;

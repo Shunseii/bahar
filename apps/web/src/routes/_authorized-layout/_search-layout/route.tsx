@@ -1,3 +1,4 @@
+import { WORD_TYPES } from "@bahar/drizzle-user-db-schemas";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -11,6 +12,7 @@ import { queryClient } from "@/lib/query";
 
 const filtersSchema = z.object({
   tags: z.array(z.string()).optional(),
+  types: z.array(z.enum(WORD_TYPES)).optional(),
   sort: z.enum(SORT_OPTIONS).optional(),
 });
 
