@@ -16,13 +16,46 @@ Bahar is an Arabic language learning application built as a monorepo using pnpm 
 
 ## Getting Started
 
-1. Get the environment variables from Infisical
+1. Get the environment variables from Infisical (see [Environment variables](#environment-variables-infisical) below)
 2. Run `pnpm run dev` and `make local-db`
 3. Access the web app at `http://localhost:5173`
 4. Access the API at `http://localhost:3000`
 5. Access the marketing website at `http://localhost:4321`
 6. To run drizzle studio to access the local database, run `pnpm run --filter api drizzle:studio`.
 7. If you need to test payments or SSO providers (GitHub, Apple), set up a Cloudflare Tunnel by reading the instructions [here](./apps/api/README.md#local-development). SSO providers reject `http://localhost` callbacks, so the tunnel is required. When using the tunnel, you must also update `APP_DOMAIN` (api), `VITE_API_BASE_URL` (web), and `EXPO_PUBLIC_API_BASE_URL` (mobile) to the tunnel domain — all three must match or OAuth state cookies won't flow end-to-end.
+
+### Environment variables (Infisical)
+
+Secrets are managed with [Infisical](https://infisical.com/). The repo is already linked to the workspace via the committed `.infisical.json` files, so there's no `infisical init` step — you just need the CLI and an account with access to the project.
+
+1. **Install the CLI** — see the [official install docs](https://infisical.com/docs/cli/overview). On Debian/Ubuntu:
+
+   ```bash
+   curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | sudo -E bash
+   sudo apt-get update && sudo apt-get install -y infisical
+   ```
+
+2. **Log in** (interactive; opens a browser — pick _Infisical Cloud (US Region)_):
+
+   ```bash
+   infisical login
+   ```
+
+3. **Export each app's secrets into its `.env`.** Secrets are organized into per-app folders (`/api`, `/web`, `/mobile`) under the `local` environment, so export each one to where its app expects it:
+
+   ```bash
+   infisical export --env=local --path=/api    --format=dotenv > apps/api/.env
+   infisical export --env=local --path=/web    --format=dotenv > apps/web/.env
+   infisical export --env=local --path=/mobile --format=dotenv > apps/mobile/.env
+   ```
+
+   The `.env` files are gitignored; the committed `.example.env` in each app lists the keys it expects. Re-run the relevant export whenever the secrets change in Infisical.
+
+**Alternative — inject at runtime (no `.env` on disk).** Instead of exporting, wrap a per-app dev command so Infisical injects the secrets as environment variables. This matches the folder layout above:
+
+```bash
+cd apps/api && infisical run --env=local --path=/api -- bun run --watch src/index.ts
+```
 
 ## Projects
 
