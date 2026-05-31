@@ -4,9 +4,11 @@ local-db:
 
 # Cloudflared tunnel for local dev — exposes local API over HTTPS
 # so the mobile dev client and OAuth callbacks (Apple Sign In) can reach it.
-# Requires `cloudflared login` once to fetch credentials for the bahar-dev tunnel.
+# bahar-dev is a remotely-managed (dashboard) tunnel; cloudflared reads its
+# token from the TUNNEL_TOKEN env var. Set it before running, e.g.:
+#   export TUNNEL_TOKEN=$(op read 'op://Bahar/Cloudflared tunnel token/password')
 tunnel:
-	cloudflared tunnel run bahar-dev
+	cloudflared tunnel run
 
 # Serve production web app
 serve:

@@ -78,9 +78,14 @@ The API runs on `http://localhost:3000`.
 
 4. For testing Polar payments or SSO providers (GitHub, Apple Sign in) locally, use a Cloudflare Tunnel to expose the API. SSO providers reject `http://localhost` callbacks over unencrypted HTTP, so the tunnel is required to test any OAuth flow.
 
-See [the docs](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/create-local-tunnel/) to set up Cloudflare Tunnel. Contact an admin to get the tunnel name and config file. You'll need access to Cloudflare.
+The `bahar-dev` tunnel is a [remotely-managed (dashboard) tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/get-started/create-remote-tunnel/) — its routing (public hostname → `http://localhost:3000`) lives in the Cloudflare Zero Trust dashboard, and its token is stored in Cloudflare (re-fetch anytime with `cloudflared tunnel token bahar-dev`). You'll need access to the Cloudflare account; the token is kept in 1Password (`op://Bahar/Cloudflared tunnel token/password`).
 
-Once set up, run the tunnel with `cloudflared tunnel run <tunnel-name>`.
+`cloudflared` reads the token from the `TUNNEL_TOKEN` env var, so set it and run the tunnel:
+
+```bash
+export TUNNEL_TOKEN=$(op read 'op://Bahar/Cloudflared tunnel token/password')
+cloudflared tunnel run
+```
 
 When running with the tunnel, update these env vars to point at the tunnel domain (e.g., `https://local.bahar.dev`):
 
