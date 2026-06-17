@@ -12,7 +12,7 @@ WORKDIR /app
 
 FROM base AS prune
 
-RUN bun add -g pnpm turbo
+RUN bun add -g pnpm@8.15.3 turbo
 
 COPY . .
 
@@ -20,7 +20,7 @@ RUN turbo prune api --docker
 
 FROM base AS build
 
-RUN bun add -g pnpm turbo
+RUN bun add -g pnpm@8.15.3 turbo
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
