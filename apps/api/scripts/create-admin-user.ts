@@ -53,7 +53,10 @@ const createAdminUser = async () => {
     role: "admin",
   });
 
-  logger.info({ email, userId }, "Created admin user, provisioning database...");
+  logger.info(
+    { email, userId },
+    "Created admin user, provisioning database..."
+  );
 
   await setUpUserDb(userId);
 
