@@ -5,17 +5,12 @@ import type { TableOperation } from "./types";
 export const migrationTable = {
   latestMigration: {
     query: async (): Promise<SelectMigration> => {
-      try {
-        const db = await ensureDb();
-        const res: SelectMigration = await db
-          .prepare("SELECT * FROM migrations ORDER BY version DESC LIMIT 1;")
-          .get();
+      const db = await ensureDb();
+      const res: SelectMigration = await db
+        .prepare("SELECT * FROM migrations ORDER BY version DESC LIMIT 1;")
+        .get();
 
-        return res;
-      } catch (err) {
-        console.error("Error querying latest migration", err);
-        throw err;
-      }
+      return res;
     },
     cacheOptions: {
       queryKey: ["turso.schema.latestMigration"],

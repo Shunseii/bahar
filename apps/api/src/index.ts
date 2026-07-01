@@ -7,6 +7,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
   release: process.env.GITHUB_SHA,
   tracesSampleRate: 1.0,
+  enableLogs: true,
 });
 
 import { cors } from "@elysiajs/cors";

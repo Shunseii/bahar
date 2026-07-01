@@ -23,6 +23,9 @@ Bahar is an Arabic language learning application built as a monorepo using pnpm 
 5. Access the marketing website at `http://localhost:4321`
 6. To run drizzle studio to access the local database, run `pnpm run --filter api drizzle:studio`.
 7. If you need to test payments or SSO providers (GitHub, Apple), set up a Cloudflare Tunnel by reading the instructions [here](./apps/api/README.md#local-development). SSO providers reject `http://localhost` callbacks, so the tunnel is required. When using the tunnel, you must also update `APP_DOMAIN` (api), `VITE_API_BASE_URL` (web), and `EXPO_PUBLIC_API_BASE_URL` (mobile) to the tunnel domain — all three must match or OAuth state cookies won't flow end-to-end.
+8. Before you can sign up as a real user, run `pnpm run --filter api drizzle:migrate` to apply the central schema, then register the per-user-db migrations with `apps/api/scripts/register-schema-migrations.ts`. To skip the sign-up flow entirely and get a working admin account, use `apps/api/scripts/create-admin-user.ts <your-email>` — see [`apps/api/scripts/README.md`](./apps/api/scripts/README.md) for exact commands.
+
+> **Tip:** if you're using Claude Code, the whole flow above (env vars, local DB/tunnel, running the app, migration registry, admin account) is automated by the `setup-local-env` skill in [`.claude/skills/setup-local-env`](./.claude/skills/setup-local-env/SKILL.md).
 
 ### Environment variables (Infisical)
 

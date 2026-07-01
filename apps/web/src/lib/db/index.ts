@@ -177,32 +177,24 @@ const _initDbInternal = async () => {
     async (sql, params, method) => {
       if (!db) return { rows: [] };
 
-      try {
-        const stmt = db.prepare(sql);
+      const stmt = db.prepare(sql);
 
-        if (method === "run") {
-          await stmt.run(params);
-          return { rows: [] };
-        }
-
-        if (method === "all" || method === "values") {
-          const rows = (await stmt.all(params)) as Record<string, unknown>[];
-          return { rows: rows.map((row) => Object.values(row)) };
-        }
-
-        if (method === "get") {
-          const row = (await stmt.get(params)) as Record<
-            string,
-            unknown
-          > | null;
-          return { rows: row ? Object.values(row) : [] };
-        }
-
+      if (method === "run") {
+        await stmt.run(params);
         return { rows: [] };
-      } catch (e) {
-        console.error("SQL Error: ", e);
-        throw e;
       }
+
+      if (method === "all" || method === "values") {
+        const rows = (await stmt.all(params)) as Record<string, unknown>[];
+        return { rows: rows.map((row) => Object.values(row)) };
+      }
+
+      if (method === "get") {
+        const row = (await stmt.get(params)) as Record<string, unknown> | null;
+        return { rows: row ? Object.values(row) : [] };
+      }
+
+      return { rows: [] };
     },
     { schema }
   );

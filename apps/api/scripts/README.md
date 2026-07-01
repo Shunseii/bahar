@@ -18,6 +18,18 @@ Applies all pending schema migrations to each user's database.
 
 Note: This script is for initial testing and administrative purposes. In production, clients manage their own databases and apply schemas themselves.
 
+### `register-schema-migrations.ts`
+
+Registers each per-user-db drizzle migration (`packages/drizzle-user-db-schemas/drizzle/*.sql`) into the central `migrations` table, stripping the `--> statement-breakpoint` markers into plain newlines.
+
+**Purpose**: Bootstraps the central migration registry on a fresh local database, so `setUpUserDb`/`applyAllNewMigrations` have migrations to apply to new per-user Turso databases. Safe to run multiple times — skips files already registered (matched by filename).
+
+### `create-admin-user.ts`
+
+Creates a user directly in the central `users` table (bypassing the email-OTP sign-up flow), sets its role to `admin`, and provisions its per-user Turso database.
+
+**Purpose**: Gives you a working admin account for local dev without a real signup round-trip. Pass a real email you can receive mail at — since email/password sign-up is disabled, logging into the app still goes through the normal `/sign-in/email-otp` flow with the same address. Safe to run multiple times — if the email already exists, it's just (re-)promoted to admin.
+
 ## Environment Setup
 
 Before running any scripts, ensure you have the required environment variables configured:
@@ -54,6 +66,8 @@ cd apps/api
 # Load environment variables when running tsx
 npx tsx --env-file=.env scripts/create-user-dbs.ts
 npx tsx --env-file=.env scripts/apply-user-db-migrations.ts
+npx tsx --env-file=.env scripts/register-schema-migrations.ts
+npx tsx --env-file=.env scripts/create-admin-user.ts you@example.com
 ```
 
 ## Prerequisites

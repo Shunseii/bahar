@@ -1,5 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import pino from "pino";
+import * as Sentry from "@sentry/bun";
 import { config } from "./config";
 
 interface TraceContext {
@@ -28,6 +29,18 @@ export enum LogCategory {
   DATABASE = "database",
   APPLICATION = "application",
 }
+
+const sentryLogMethods: Record<
+  string,
+  (message: string, attributes?: Record<string, unknown>) => void
+> = {
+  trace: Sentry.logger.trace,
+  debug: Sentry.logger.debug,
+  info: Sentry.logger.info,
+  warn: Sentry.logger.warn,
+  error: Sentry.logger.error,
+  fatal: Sentry.logger.fatal,
+};
 
 export const logger = pino({
   level: config.LOG_LEVEL,
@@ -69,6 +82,23 @@ export const logger = pino({
     app: config.APP_NAME,
     version: "1.0.0",
     environment: config.NODE_ENV || "development",
+  },
+  hooks: {
+    logMethod(inputArgs, method, level) {
+      const sentryLog = sentryLogMethods[this.levels.labels[level]];
+
+      if (sentryLog) {
+        const [first, second] = inputArgs;
+
+        if (typeof first === "string") {
+          sentryLog(first);
+        } else {
+          sentryLog(typeof second === "string" ? second : "", first);
+        }
+      }
+
+      return method.apply(this, inputArgs);
+    },
   },
 });
 

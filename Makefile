@@ -10,6 +10,11 @@ local-db:
 tunnel:
 	cloudflared tunnel run
 
+# Run local-db and tunnel together. Loads the tunnel token from 1Password
+# and runs both processes in parallel; Ctrl-C stops both.
+dev-backend:
+	@TUNNEL_TOKEN=$$(op read 'op://Bahar/Cloudflared tunnel token/password') $(MAKE) -j2 local-db tunnel
+
 # Serve production web app
 serve:
 	pnpm run --filter web wrangler:dev
@@ -25,4 +30,4 @@ delete-local-data:
 	sudo rm -rf ./libsql
 	sudo rm -rf ./apps/api/local.db*
 
-.PHONY: local-db tunnel serve build delete-local-data
+.PHONY: local-db tunnel dev-backend serve build delete-local-data
