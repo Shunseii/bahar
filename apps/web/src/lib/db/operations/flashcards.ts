@@ -1,14 +1,8 @@
 import {
-  buildSelectWithNestedJson,
-  convertRawDictionaryEntryToSelect,
-  DICTIONARY_ENTRY_COLUMNS,
-} from "@bahar/db-operations";
-import {
   dictionaryEntries,
   FlashcardState,
   flashcards,
   type InsertFlashcard,
-  type RawFlashcard,
   type SelectDeck,
   type SelectDictionaryEntry,
   type SelectFlashcard,
@@ -16,7 +10,7 @@ import {
 } from "@bahar/drizzle-user-db-schemas";
 import { createScheduler } from "@bahar/fsrs";
 import * as Sentry from "@sentry/react";
-import { and, eq, inArray, lte, sql } from "drizzle-orm";
+import { and, eq, gt, inArray, lte, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { type Card, Rating, type ReviewLog } from "ts-fsrs";
 import { api } from "../../api";
@@ -63,7 +57,8 @@ export const flashcardsTable = {
         backlogThresholdDays?: number;
       } = { showReverse: false }
     ): Promise<FlashcardWithDictionaryEntry[]> => {
-      const db = await ensureDb();
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
       const now = Date.now();
       const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
 
@@ -79,94 +74,89 @@ export const flashcardsTable = {
             FlashcardState.RE_LEARNING,
           ];
 
-      const directions = showReverse ? ["forward", "reverse"] : ["forward"];
+      const directions: SelectFlashcard["direction"][] = showReverse
+        ? ["forward", "reverse"]
+        : ["forward"];
 
-      const whereConditions: string[] = ["f.due_timestamp_ms <= ?"];
-      const params: unknown[] = [now];
+      const conditions = [
+        lte(flashcards.due_timestamp_ms, now),
+        ...(queue === "regular"
+          ? [gt(flashcards.due_timestamp_ms, backlogThresholdMs)]
+          : []),
+        ...(queue === "backlog"
+          ? [lte(flashcards.due_timestamp_ms, backlogThresholdMs)]
+          : []),
+        inArray(flashcards.direction, directions),
+        inArray(flashcards.state, state),
+        inArray(dictionaryEntries.type, types),
+        eq(flashcards.is_hidden, false),
+        ...(tags.length > 0
+          ? [
+              sql`EXISTS (SELECT 1 FROM json_each(${dictionaryEntries.tags}) WHERE value IN (${sql.join(
+                tags.map((t) => sql`${t}`),
+                sql`, `
+              )}))`,
+            ]
+          : []),
+      ];
 
-      if (queue === "regular") {
-        whereConditions.push("f.due_timestamp_ms > ?");
-        params.push(backlogThresholdMs);
-      } else if (queue === "backlog") {
-        whereConditions.push("f.due_timestamp_ms <= ?");
-        params.push(backlogThresholdMs);
-      }
-
-      whereConditions.push(
-        `f.direction IN (${directions.map(() => "?").join(", ")})`
-      );
-      params.push(...directions);
-
-      whereConditions.push(`f.state IN (${state.map(() => "?").join(", ")})`);
-      params.push(...state);
-
-      whereConditions.push(`d.type IN (${types.map(() => "?").join(", ")})`);
-      params.push(...types);
-
-      whereConditions.push("f.is_hidden = 0");
-
-      const whereClause = whereConditions.join(" AND ");
-
-      // When tags are specified, use JOIN with json_each to filter
-      const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
-      const tagCondition =
-        tags.length > 0
-          ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
-          : "";
-      const tagParams = tags.length > 0 ? tags : [];
-
-      const nestedDictionary = buildSelectWithNestedJson({
-        columns: DICTIONARY_ENTRY_COLUMNS,
-        jsonObjectAlias: "dictionary_entry",
-        tableAlias: "d",
-      });
-
-      const sql = `SELECT DISTINCT f.*, ${nestedDictionary}
-        FROM flashcards f
-        LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin}
-        WHERE ${whereClause}${tagCondition}
-        `;
-
-      const rawResults: (RawFlashcard & {
-        dictionary_entry: string;
-      })[] = await db.prepare(sql).all([...params, ...tagParams]);
-
-      return rawResults
-        ?.map((raw) => {
-          const result = convertRawDictionaryEntryToSelect(
-            JSON.parse(raw.dictionary_entry)
-          );
-
-          if (!result.ok) {
-            Sentry.captureMessage(
-              `Flashcard query: failed to parse dictionary entry for flashcard ${raw.id}`,
-              {
-                level: "warning",
-                extra: {
-                  flashcardId: raw.id,
-                  error: result.error,
-                },
-              }
-            );
-            return null;
-          }
-
-          return {
-            ...raw,
-            direction: (raw.direction ??
-              "forward") as SelectFlashcard["direction"],
-            is_hidden: Boolean(raw.is_hidden),
-            dictionary_entry: result.value,
-          };
+      const rows = await drizzleDb
+        .selectDistinct({
+          id: flashcards.id,
+          difficulty: flashcards.difficulty,
+          due: flashcards.due,
+          due_timestamp_ms: flashcards.due_timestamp_ms,
+          elapsed_days: flashcards.elapsed_days,
+          lapses: flashcards.lapses,
+          last_review: flashcards.last_review,
+          last_review_timestamp_ms: flashcards.last_review_timestamp_ms,
+          learning_steps: flashcards.learning_steps,
+          reps: flashcards.reps,
+          scheduled_days: flashcards.scheduled_days,
+          stability: flashcards.stability,
+          state: flashcards.state,
+          direction: flashcards.direction,
+          is_hidden: flashcards.is_hidden,
+          dictionary_entry: {
+            id: dictionaryEntries.id,
+            word: dictionaryEntries.word,
+            translation: dictionaryEntries.translation,
+            definition: dictionaryEntries.definition,
+            type: dictionaryEntries.type,
+            root: dictionaryEntries.root,
+            tags: dictionaryEntries.tags,
+            antonyms: dictionaryEntries.antonyms,
+            examples: dictionaryEntries.examples,
+            morphology: dictionaryEntries.morphology,
+            created_at: dictionaryEntries.created_at,
+            created_at_timestamp_ms: dictionaryEntries.created_at_timestamp_ms,
+            updated_at: dictionaryEntries.updated_at,
+            updated_at_timestamp_ms: dictionaryEntries.updated_at_timestamp_ms,
+          },
         })
-        .filter((entry) => entry !== null);
+        .from(flashcards)
+        .innerJoin(
+          dictionaryEntries,
+          eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
+        )
+        .where(and(...conditions));
+
+      // dictionary_entry_id is intentionally not selected directly above --
+      // its natural drizzle-generated alias for the nested dictionary_entry.id
+      // path collides with it, corrupting row mapping through the custom
+      // sqlite-proxy adapter. It always equals dictionary_entry.id here
+      // anyway, since that's the join condition.
+      return rows.map((row) => ({
+        ...row,
+        dictionary_entry_id: row.dictionary_entry.id,
+      }));
     },
     cacheOptions: {
       queryKey: ["turso.flashcards.today.query"],
     },
   },
   create: {
-    mutation: async ({
+    mutation: ({
       flashcard,
     }: {
       flashcard: Omit<
@@ -175,52 +165,37 @@ export const flashcardsTable = {
       >;
     }): Promise<SelectFlashcard> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
-        const id = nanoid();
-        const dueDateMs = new Date(flashcard.due).getTime();
-        const lastReviewDateMs = flashcard.last_review
-          ? new Date(flashcard.last_review).getTime()
-          : null;
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
 
-        await db
-          .prepare(
-            `INSERT INTO flashcards (
-          id, dictionary_entry_id, difficulty, due, due_timestamp_ms, elapsed_days,
-          lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state, direction, is_hidden
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-          )
-          .run([
-            id,
-            flashcard.dictionary_entry_id,
-            flashcard.difficulty,
-            flashcard.due,
-            dueDateMs,
-            flashcard.elapsed_days,
-            flashcard.lapses,
-            flashcard.last_review,
-            lastReviewDateMs,
-            flashcard.reps,
-            flashcard.scheduled_days,
-            flashcard.stability,
-            flashcard.state,
-            flashcard.direction,
-            0,
-          ]);
-
-        const res: RawFlashcard | undefined = await db
-          .prepare("SELECT * FROM flashcards WHERE id = ?;")
-          .get([id]);
+        const [res] = await drizzleDb
+          .insert(flashcards)
+          .values({
+            id: nanoid(),
+            dictionary_entry_id: flashcard.dictionary_entry_id,
+            difficulty: flashcard.difficulty,
+            due: flashcard.due,
+            due_timestamp_ms: new Date(flashcard.due).getTime(),
+            elapsed_days: flashcard.elapsed_days,
+            lapses: flashcard.lapses,
+            last_review: flashcard.last_review,
+            last_review_timestamp_ms: flashcard.last_review
+              ? new Date(flashcard.last_review).getTime()
+              : null,
+            reps: flashcard.reps,
+            scheduled_days: flashcard.scheduled_days,
+            stability: flashcard.stability,
+            state: flashcard.state,
+            direction: flashcard.direction,
+            is_hidden: false,
+          })
+          .returning();
 
         if (!res) {
-          throw new Error(`Failed to retrieve newly created flashcard: ${id}`);
+          throw new Error("Failed to retrieve newly created flashcard");
         }
 
-        return {
-          ...res,
-          direction: (res.direction ??
-            "forward") as SelectFlashcard["direction"],
-          is_hidden: Boolean(res.is_hidden),
-        };
+        return res;
       }),
     cacheOptions: {
       queryKey: ["turso.flashcards.create"],
@@ -228,110 +203,86 @@ export const flashcardsTable = {
   },
 
   update: {
-    mutation: async ({
+    mutation: ({
       id,
       updates,
     }: {
       id: string;
-      updates: Partial<Omit<RawFlashcard, "id" | "dictionary_entry_id">>;
+      updates: Partial<Omit<SelectFlashcard, "id" | "dictionary_entry_id">>;
     }): Promise<SelectFlashcard> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
 
-        const setClauses: string[] = [];
-        const params: unknown[] = [];
+        const setValues: Partial<InsertFlashcard> = {};
 
         if ("difficulty" in updates && updates.difficulty !== undefined) {
-          setClauses.push("difficulty = ?");
-          params.push(updates.difficulty);
+          setValues.difficulty = updates.difficulty;
         }
         if ("due" in updates && updates.due !== undefined) {
-          setClauses.push("due = ?");
-          params.push(updates.due);
+          setValues.due = updates.due;
         }
         if (
           "due_timestamp_ms" in updates &&
           updates.due_timestamp_ms !== undefined
         ) {
-          setClauses.push("due_timestamp_ms = ?");
-          params.push(updates.due_timestamp_ms);
+          setValues.due_timestamp_ms = updates.due_timestamp_ms;
         }
         if ("elapsed_days" in updates && updates.elapsed_days !== undefined) {
-          setClauses.push("elapsed_days = ?");
-          params.push(updates.elapsed_days);
+          setValues.elapsed_days = updates.elapsed_days;
         }
         if ("lapses" in updates && updates.lapses !== undefined) {
-          setClauses.push("lapses = ?");
-          params.push(updates.lapses);
+          setValues.lapses = updates.lapses;
         }
         if (
           "learning_steps" in updates &&
           updates.learning_steps !== undefined
         ) {
-          setClauses.push("learning_steps = ?");
-          params.push(updates.learning_steps);
+          setValues.learning_steps = updates.learning_steps;
         }
         if ("last_review" in updates && updates.last_review !== undefined) {
-          setClauses.push("last_review = ?");
-          params.push(updates.last_review);
+          setValues.last_review = updates.last_review;
         }
         if (
           "last_review_timestamp_ms" in updates &&
           updates.last_review_timestamp_ms !== undefined
         ) {
-          setClauses.push("last_review_timestamp_ms = ?");
-          params.push(updates.last_review_timestamp_ms);
+          setValues.last_review_timestamp_ms = updates.last_review_timestamp_ms;
         }
         if ("reps" in updates && updates.reps !== undefined) {
-          setClauses.push("reps = ?");
-          params.push(updates.reps);
+          setValues.reps = updates.reps;
         }
         if (
           "scheduled_days" in updates &&
           updates.scheduled_days !== undefined
         ) {
-          setClauses.push("scheduled_days = ?");
-          params.push(updates.scheduled_days);
+          setValues.scheduled_days = updates.scheduled_days;
         }
         if ("stability" in updates && updates.stability !== undefined) {
-          setClauses.push("stability = ?");
-          params.push(updates.stability);
+          setValues.stability = updates.stability;
         }
         if ("state" in updates && updates.state !== undefined) {
-          setClauses.push("state = ?");
-          params.push(updates.state);
+          setValues.state = updates.state;
         }
         if ("is_hidden" in updates && updates.is_hidden !== undefined) {
-          setClauses.push("is_hidden = ?");
-          params.push(updates.is_hidden);
+          setValues.is_hidden = updates.is_hidden;
         }
 
-        if (setClauses.length === 0) {
+        if (Object.keys(setValues).length === 0) {
           throw new Error("No fields to update");
         }
 
-        params.push(id);
-
-        await db
-          .prepare(
-            `UPDATE flashcards SET ${setClauses.join(", ")} WHERE id = ?;`
-          )
-          .run(params);
-
-        const res: RawFlashcard | undefined = await db
-          .prepare("SELECT * FROM flashcards WHERE id = ?;")
-          .get([id]);
+        const [res] = await drizzleDb
+          .update(flashcards)
+          .set(setValues)
+          .where(eq(flashcards.id, id))
+          .returning();
 
         if (!res) {
           throw new Error(`Flashcard not found: ${id}`);
         }
 
-        return {
-          ...res,
-          direction: (res.direction ??
-            "forward") as SelectFlashcard["direction"],
-          is_hidden: Boolean(res.is_hidden),
-        };
+        return res;
       }),
     cacheOptions: {
       queryKey: ["turso.flashcards.update"],
@@ -346,38 +297,32 @@ export const flashcardsTable = {
       direction: SelectFlashcard["direction"];
     }): Promise<SelectFlashcard> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
         const now = new Date();
-        const dueDate = now.toISOString();
-        const dueDateMs = now.getTime();
 
-        await db
-          .prepare(
-            `UPDATE flashcards
-           SET state = ?, difficulty = ?, stability = ?, reps = ?, lapses = ?,
-               elapsed_days = ?, scheduled_days = ?, last_review = NULL,
-               last_review_timestamp_ms = NULL, due = ?, due_timestamp_ms = ?
-           WHERE dictionary_entry_id = ? AND direction = ?;`
+        const [res] = await drizzleDb
+          .update(flashcards)
+          .set({
+            state: FlashcardState.NEW,
+            difficulty: 0,
+            stability: 0,
+            reps: 0,
+            lapses: 0,
+            elapsed_days: 0,
+            scheduled_days: 0,
+            last_review: null,
+            last_review_timestamp_ms: null,
+            due: now.toISOString(),
+            due_timestamp_ms: now.getTime(),
+          })
+          .where(
+            and(
+              eq(flashcards.dictionary_entry_id, dictionary_entry_id),
+              eq(flashcards.direction, direction)
+            )
           )
-          .run([
-            FlashcardState.NEW,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            dueDate,
-            dueDateMs,
-            dictionary_entry_id,
-            direction,
-          ]);
-
-        const res: RawFlashcard | undefined = await db
-          .prepare(
-            "SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;"
-          )
-          .get([dictionary_entry_id, direction]);
+          .returning();
 
         if (!res) {
           throw new Error(
@@ -385,12 +330,7 @@ export const flashcardsTable = {
           );
         }
 
-        return {
-          ...res,
-          direction: (res.direction ??
-            "forward") as SelectFlashcard["direction"],
-          is_hidden: Boolean(res.is_hidden),
-        };
+        return res;
       }),
     cacheOptions: {
       queryKey: ["turso.flashcards.reset"],
@@ -399,17 +339,13 @@ export const flashcardsTable = {
 
   findByEntryId: {
     query: async (entryId: string): Promise<SelectFlashcard[]> => {
-      const db = await ensureDb();
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
 
-      const rows: RawFlashcard[] = await db
-        .prepare("SELECT * FROM flashcards WHERE dictionary_entry_id = ?;")
-        .all([entryId]);
-
-      return rows.map((res) => ({
-        ...res,
-        direction: (res.direction ?? "forward") as SelectFlashcard["direction"],
-        is_hidden: Boolean(res.is_hidden),
-      }));
+      return drizzleDb
+        .select()
+        .from(flashcards)
+        .where(eq(flashcards.dictionary_entry_id, entryId));
     },
     cacheOptions: {
       queryKey: ["turso.flashcards.findByEntryId"] as const,
@@ -422,26 +358,23 @@ export const flashcardsTable = {
       direction,
     }: {
       dictionaryEntryId: string;
-      direction: string;
+      direction: SelectFlashcard["direction"];
     }): Promise<{ data: SelectFlashcard | null }> => {
-      const db = await ensureDb();
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
 
-      const res: RawFlashcard | undefined = await db
-        .prepare(
-          "SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;"
+      const [res] = await drizzleDb
+        .select()
+        .from(flashcards)
+        .where(
+          and(
+            eq(flashcards.dictionary_entry_id, dictionaryEntryId),
+            eq(flashcards.direction, direction)
+          )
         )
-        .get([dictionaryEntryId, direction]);
+        .limit(1);
 
-      if (!res) return { data: null };
-
-      return {
-        data: {
-          ...res,
-          direction: (res.direction ??
-            "forward") as SelectFlashcard["direction"],
-          is_hidden: Boolean(res.is_hidden),
-        },
-      };
+      return { data: res ?? null };
     },
     cacheOptions: {
       queryKey: ["turso.flashcards.findByEntryAndDirection"] as const,

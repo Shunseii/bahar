@@ -41,14 +41,22 @@ export const buildDrizzleDb = (getDb: () => Database | null) =>
         return { rows: [] };
       }
 
+      // Raw mode returns rows as plain positional arrays instead of
+      // name-keyed objects. This matters for joined queries that select
+      // same-named columns from different tables (e.g. both flashcards.id
+      // and dictionaryEntries.id) -- a name-keyed row would silently
+      // collapse the duplicate key, dropping a column and misaligning
+      // every value after it.
+      stmt.raw(true);
+
       if (method === "all" || method === "values") {
-        const rows = (await stmt.all(params)) as Record<string, unknown>[];
-        return { rows: rows.map((row) => Object.values(row)) };
+        const rows = (await stmt.all(params)) as unknown[][];
+        return { rows };
       }
 
       if (method === "get") {
-        const row = (await stmt.get(params)) as Record<string, unknown> | null;
-        return { rows: row ? Object.values(row) : [] };
+        const row = (await stmt.get(params)) as unknown[] | null;
+        return { rows: row ?? [] };
       }
 
       return { rows: [] };

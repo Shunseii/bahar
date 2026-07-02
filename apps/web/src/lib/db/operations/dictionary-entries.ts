@@ -1,44 +1,33 @@
 import {
-  type ConvertDictionaryEntryError,
-  convertRawDictionaryEntryToSelect,
-} from "@bahar/db-operations";
-import type {
-  InsertDictionaryEntry,
-  RawDictionaryEntry,
-  SelectDictionaryEntry,
+  dictionaryEntries,
+  flashcards,
+  type InsertDictionaryEntry,
+  type SelectDictionaryEntry,
 } from "@bahar/drizzle-user-db-schemas";
+import { eq, max } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import type { NullToUndefined } from "../../utils";
-import { ensureDb } from "..";
+import { ensureDb, getDrizzleDb } from "..";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "./types";
-
-class DictionaryEntryParseError extends Error {
-  constructor(public details: ConvertDictionaryEntryError) {
-    super(
-      `Failed to parse dictionary entry "${details.word}" (${details.entryId}): field "${details.field}" - ${details.reason}`
-    );
-    this.name = "DictionaryEntryParseError";
-  }
-}
 
 export const dictionaryEntriesTable = {
   entry: {
     query: async (id: string): Promise<SelectDictionaryEntry> => {
-      const db = await ensureDb();
-      const res: RawDictionaryEntry | undefined = await db
-        .prepare("SELECT * FROM dictionary_entries WHERE id = ?")
-        .get([id]);
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
+
+      const [res] = await drizzleDb
+        .select()
+        .from(dictionaryEntries)
+        .where(eq(dictionaryEntries.id, id))
+        .limit(1);
 
       if (!res) {
         throw new Error(`Dictionary entry not found: ${id}`);
       }
 
-      const result = convertRawDictionaryEntryToSelect(res);
-      if (!result.ok) {
-        throw new DictionaryEntryParseError(result.error);
-      }
-      return result.value;
+      return res;
     },
     cacheOptions: {
       queryKey: ["turso.dictionaryEntries.entry.query"],
@@ -67,7 +56,7 @@ export const dictionaryEntriesTable = {
     },
   },
   addWord: {
-    mutation: async ({
+    mutation: ({
       word,
     }: {
       word: Omit<
@@ -80,58 +69,42 @@ export const dictionaryEntriesTable = {
       >;
     }): Promise<SelectDictionaryEntry> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
-        const id = nanoid();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
         const now = new Date();
-        const createdAt = now.toISOString();
-        const createdAtTimestampMs = now.getTime();
 
-        await db
-          .prepare(
-            `INSERT INTO dictionary_entries (
-            id, word, translation, definition, type, root, tags, antonyms, examples, morphology,
-            created_at, created_at_timestamp_ms, updated_at, updated_at_timestamp_ms
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
-          )
-          .run([
-            id,
-            word.word,
-            word.translation,
-            word.definition ?? null,
-            word.type,
-            word.root ? JSON.stringify(word.root) : null,
-            word.tags ? JSON.stringify(word.tags) : null,
-            word.antonyms ? JSON.stringify(word.antonyms) : null,
-            word.examples ? JSON.stringify(word.examples) : null,
-            word.morphology ? JSON.stringify(word.morphology) : null,
-            createdAt,
-            createdAtTimestampMs,
-            createdAt,
-            createdAtTimestampMs,
-          ]);
-
-        const res: RawDictionaryEntry | undefined = await db
-          .prepare("SELECT * FROM dictionary_entries WHERE id = ?;")
-          .get([id]);
+        const [res] = await drizzleDb
+          .insert(dictionaryEntries)
+          .values({
+            id: nanoid(),
+            word: word.word,
+            translation: word.translation,
+            definition: word.definition ?? null,
+            type: word.type,
+            root: word.root ?? null,
+            tags: word.tags ?? null,
+            antonyms: word.antonyms ?? null,
+            examples: word.examples ?? null,
+            morphology: word.morphology ?? null,
+            created_at: now.toISOString(),
+            created_at_timestamp_ms: now.getTime(),
+            updated_at: now.toISOString(),
+            updated_at_timestamp_ms: now.getTime(),
+          })
+          .returning();
 
         if (!res) {
-          throw new Error(
-            `Failed to retrieve newly created dictionary entry: ${id}`
-          );
+          throw new Error("Failed to retrieve newly created dictionary entry");
         }
 
-        const result = convertRawDictionaryEntryToSelect(res);
-        if (!result.ok) {
-          throw new DictionaryEntryParseError(result.error);
-        }
-        return result.value;
+        return res;
       }),
     cacheOptions: {
       queryKey: ["turso.dictionaryEntries.addWord"],
     },
   },
   editWord: {
-    mutation: async ({
+    mutation: ({
       id,
       updates,
     }: {
@@ -148,104 +121,73 @@ export const dictionaryEntriesTable = {
       >;
     }): Promise<SelectDictionaryEntry> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
         const now = new Date();
-        const updatedAt = now.toISOString();
-        const updatedAtTimestampMs = now.getTime();
 
-        const setClauses: string[] = [];
-        const params: unknown[] = [];
+        // Always bump updated_at, even if no other fields are provided --
+        // matches the current behavior of the raw-SQL implementation this
+        // replaced (no "No fields to update" guard exists for this mutation).
+        const setValues: Partial<InsertDictionaryEntry> = {
+          updated_at: now.toISOString(),
+          updated_at_timestamp_ms: now.getTime(),
+        };
 
         if ("word" in updates && updates.word !== undefined) {
-          setClauses.push("word = ?");
-          params.push(updates.word);
+          setValues.word = updates.word;
         }
         if ("translation" in updates && updates.translation !== undefined) {
-          setClauses.push("translation = ?");
-          params.push(updates.translation);
+          setValues.translation = updates.translation;
         }
         if ("definition" in updates && updates.definition !== undefined) {
-          setClauses.push("definition = ?");
-          params.push(updates.definition ?? null);
+          setValues.definition = updates.definition;
         }
         if ("type" in updates && updates.type !== undefined) {
-          setClauses.push("type = ?");
-          params.push(updates.type);
+          setValues.type = updates.type;
         }
         if ("root" in updates && updates.root !== undefined) {
-          setClauses.push("root = ?");
-          params.push(
-            updates.root !== null ? JSON.stringify(updates.root) : null
-          );
+          setValues.root = updates.root;
         }
         if ("tags" in updates && updates.tags !== undefined) {
-          setClauses.push("tags = ?");
-          params.push(
-            updates.tags !== null ? JSON.stringify(updates.tags) : null
-          );
+          setValues.tags = updates.tags;
         }
         if ("antonyms" in updates && updates.antonyms !== undefined) {
-          setClauses.push("antonyms = ?");
-          params.push(
-            updates.antonyms !== null ? JSON.stringify(updates.antonyms) : null
-          );
+          setValues.antonyms = updates.antonyms;
         }
         if ("examples" in updates && updates.examples !== undefined) {
-          setClauses.push("examples = ?");
-          params.push(
-            updates.examples !== null ? JSON.stringify(updates.examples) : null
-          );
+          setValues.examples = updates.examples;
         }
         if ("morphology" in updates && updates.morphology !== undefined) {
-          setClauses.push("morphology = ?");
-          params.push(
-            updates.morphology !== null
-              ? JSON.stringify(updates.morphology)
-              : null
-          );
+          setValues.morphology = updates.morphology;
         }
 
-        // Always update the updated_at fields
-        setClauses.push("updated_at = ?");
-        params.push(updatedAt);
-        setClauses.push("updated_at_timestamp_ms = ?");
-        params.push(updatedAtTimestampMs);
-
-        // Add id for the WHERE clause
-        params.push(id);
-
-        await db
-          .prepare(
-            `UPDATE dictionary_entries SET ${setClauses.join(", ")} WHERE id = ?;`
-          )
-          .run(params);
-
-        const res: RawDictionaryEntry | undefined = await db
-          .prepare("SELECT * FROM dictionary_entries WHERE id = ?;")
-          .get([id]);
+        const [res] = await drizzleDb
+          .update(dictionaryEntries)
+          .set(setValues)
+          .where(eq(dictionaryEntries.id, id))
+          .returning();
 
         if (!res) {
           throw new Error(`Dictionary entry not found: ${id}`);
         }
 
-        const result = convertRawDictionaryEntryToSelect(res);
-        if (!result.ok) {
-          throw new DictionaryEntryParseError(result.error);
-        }
-        return result.value;
+        return res;
       }),
     cacheOptions: {
       queryKey: ["turso.dictionaryEntries.editWord"],
     },
   },
   delete: {
-    mutation: async ({ id }: { id: string }): Promise<SelectDictionaryEntry> =>
+    mutation: ({ id }: { id: string }): Promise<SelectDictionaryEntry> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
 
-        const res: RawDictionaryEntry | undefined = await db
-          .prepare("SELECT * FROM dictionary_entries WHERE id = ?;")
-          .get([id]);
+        const [res] = await drizzleDb
+          .select()
+          .from(dictionaryEntries)
+          .where(eq(dictionaryEntries.id, id))
+          .limit(1);
 
         if (!res) {
           throw new Error(`Dictionary entry not found: ${id}`);
@@ -253,19 +195,15 @@ export const dictionaryEntriesTable = {
 
         // Explicitly delete flashcards since sync-wasm doesn't support
         // ON DELETE CASCADE (foreign key actions other than NO ACTION)
-        await db
-          .prepare("DELETE FROM flashcards WHERE dictionary_entry_id = ?;")
-          .run([id]);
+        await drizzleDb
+          .delete(flashcards)
+          .where(eq(flashcards.dictionary_entry_id, id));
 
-        await db
-          .prepare("DELETE FROM dictionary_entries WHERE id = ?;")
-          .run([id]);
+        await drizzleDb
+          .delete(dictionaryEntries)
+          .where(eq(dictionaryEntries.id, id));
 
-        const result = convertRawDictionaryEntryToSelect(res);
-        if (!result.ok) {
-          throw new DictionaryEntryParseError(result.error);
-        }
-        return result.value;
+        return res;
       }),
     cacheOptions: {
       queryKey: ["turso.dictionaryEntries.delete"],
@@ -273,12 +211,13 @@ export const dictionaryEntriesTable = {
   },
   maxUpdatedAt: {
     query: async (): Promise<number | null> => {
-      const db = await ensureDb();
-      const res: { max_ts: number | null } | undefined = await db
-        .prepare(
-          "SELECT MAX(updated_at_timestamp_ms) as max_ts FROM dictionary_entries"
-        )
-        .get([]);
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
+
+      const [res] = await drizzleDb
+        .select({ max_ts: max(dictionaryEntries.updated_at_timestamp_ms) })
+        .from(dictionaryEntries);
+
       return res?.max_ts ?? null;
     },
     cacheOptions: {

@@ -1,11 +1,15 @@
 import {
+  decks,
+  dictionaryEntries,
   FlashcardState,
-  type RawDeck,
+  flashcards,
+  type InsertDeck,
   type SelectDeck,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { ensureDb } from "..";
+import { ensureDb, getDrizzleDb } from "..";
 import { enqueueDbOperation } from "../queue";
 import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "./flashcards";
 import type { TableOperation } from "./types";
@@ -30,21 +34,17 @@ export const decksTable = {
         total_hits: number;
       })[]
     > => {
-      const db = await ensureDb();
+      await ensureDb();
+      const drizzleDb = getDrizzleDb();
       const now = Date.now();
       const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
 
-      const rawDecks: RawDeck[] = await db
-        .prepare("SELECT id, name, filters FROM decks")
-        .all();
-
-      const decks = rawDecks.map<SelectDeck>((rawDeck) => ({
-        ...rawDeck,
-        filters: rawDeck.filters ? JSON.parse(rawDeck.filters) : null,
-      }));
+      const decksList = await drizzleDb
+        .select({ id: decks.id, name: decks.name, filters: decks.filters })
+        .from(decks);
 
       const enrichedDecks = await Promise.all(
-        decks.map(async (deck) => {
+        decksList.map(async (deck) => {
           const {
             tags = [],
             types: rawTypes,
@@ -61,62 +61,37 @@ export const decksTable = {
                 FlashcardState.RE_LEARNING,
               ];
 
-          const directions = show_reverse
+          const directions: ("forward" | "reverse")[] = show_reverse
             ? ["forward", "reverse"]
             : ["forward"];
 
-          const whereConditions: string[] = [];
-          const baseParams: unknown[] = [];
+          const conditions = [
+            inArray(flashcards.direction, directions),
+            inArray(flashcards.state, state),
+            inArray(dictionaryEntries.type, types),
+            eq(flashcards.is_hidden, false),
+            ...(tags.length > 0
+              ? [
+                  sql`EXISTS (SELECT 1 FROM json_each(${dictionaryEntries.tags}) WHERE value IN (${sql.join(
+                    tags.map((t) => sql`${t}`),
+                    sql`, `
+                  )}))`,
+                ]
+              : []),
+          ];
 
-          whereConditions.push(
-            `f.direction IN (${directions.map(() => "?").join(", ")})`
-          );
-          baseParams.push(...directions);
-
-          whereConditions.push(
-            `f.state IN (${state.map(() => "?").join(", ")})`
-          );
-          baseParams.push(...state);
-
-          whereConditions.push(
-            `d.type IN (${types.map(() => "?").join(", ")})`
-          );
-          baseParams.push(...types);
-
-          whereConditions.push("f.is_hidden = 0");
-
-          const whereClause = whereConditions.join(" AND ");
-
-          // When tags are specified, use JOIN with json_each to filter
-          const tagJoin = tags.length > 0 ? ", json_each(d.tags) AS jt" : "";
-          const tagCondition =
-            tags.length > 0
-              ? ` AND jt.value IN (${tags.map(() => "?").join(", ")})`
-              : "";
-
-          // Single query with conditional aggregation for all counts
-          const countsSql = `
-                SELECT
-                  COUNT(DISTINCT CASE WHEN f.due_timestamp_ms <= ? AND f.due_timestamp_ms > ? THEN f.id END) as to_review,
-                  COUNT(DISTINCT CASE WHEN f.due_timestamp_ms <= ? THEN f.id END) as to_review_backlog,
-                  COUNT(DISTINCT f.id) as total_hits
-                FROM flashcards f
-                LEFT JOIN dictionary_entries d ON f.dictionary_entry_id = d.id${tagJoin}
-                WHERE ${whereClause}${tagCondition}
-              `;
-          const counts: {
-            to_review: number;
-            to_review_backlog: number;
-            total_hits: number;
-          } = await db
-            .prepare(countsSql)
-            .get([
-              now,
-              backlogThresholdMs,
-              backlogThresholdMs,
-              ...baseParams,
-              ...tags,
-            ]);
+          const [counts] = await drizzleDb
+            .select({
+              to_review: sql<number>`COUNT(DISTINCT CASE WHEN ${flashcards.due_timestamp_ms} <= ${now} AND ${flashcards.due_timestamp_ms} > ${backlogThresholdMs} THEN ${flashcards.id} END)`,
+              to_review_backlog: sql<number>`COUNT(DISTINCT CASE WHEN ${flashcards.due_timestamp_ms} <= ${backlogThresholdMs} THEN ${flashcards.id} END)`,
+              total_hits: sql<number>`COUNT(DISTINCT ${flashcards.id})`,
+            })
+            .from(flashcards)
+            .leftJoin(
+              dictionaryEntries,
+              eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
+            )
+            .where(and(...conditions));
 
           return {
             ...deck,
@@ -134,42 +109,36 @@ export const decksTable = {
     },
   },
   create: {
-    mutation: async ({
+    mutation: ({
       deck,
     }: {
       deck: Omit<SelectDeck, "id">;
     }): Promise<SelectDeck> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
-        const id = nanoid();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
 
-        await db
-          .prepare("INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);")
-          .run([
-            id,
-            deck.name,
-            deck.filters ? JSON.stringify(deck.filters) : null,
-          ]);
-
-        const res: RawDeck | undefined = await db
-          .prepare("SELECT * FROM decks WHERE id = ?;")
-          .get([id]);
+        const [res] = await drizzleDb
+          .insert(decks)
+          .values({
+            id: nanoid(),
+            name: deck.name,
+            filters: deck.filters ?? null,
+          })
+          .returning();
 
         if (!res) {
-          throw new Error(`Failed to retrieve newly created deck: ${id}`);
+          throw new Error("Failed to retrieve newly created deck");
         }
 
-        return {
-          ...res,
-          filters: res.filters ? JSON.parse(res.filters) : null,
-        };
+        return res;
       }),
     cacheOptions: {
       queryKey: ["turso.decks.create"],
     },
   },
   update: {
-    mutation: async ({
+    mutation: ({
       id,
       updates,
     }: {
@@ -177,42 +146,33 @@ export const decksTable = {
       updates: Partial<Omit<SelectDeck, "id">>;
     }): Promise<SelectDeck> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
 
-        const setClauses: string[] = [];
-        const params: unknown[] = [];
+        const setValues: Partial<InsertDeck> = {};
 
         if ("name" in updates && updates.name !== undefined) {
-          setClauses.push("name = ?");
-          params.push(updates.name);
+          setValues.name = updates.name;
         }
         if ("filters" in updates && updates.filters !== undefined) {
-          setClauses.push("filters = ?");
-          params.push(updates.filters ? JSON.stringify(updates.filters) : null);
+          setValues.filters = updates.filters;
         }
 
-        if (setClauses.length === 0) {
+        if (Object.keys(setValues).length === 0) {
           throw new Error("No fields to update");
         }
 
-        params.push(id);
-
-        await db
-          .prepare(`UPDATE decks SET ${setClauses.join(", ")} WHERE id = ?;`)
-          .run(params);
-
-        const res: RawDeck | undefined = await db
-          .prepare("SELECT * FROM decks WHERE id = ?;")
-          .get([id]);
+        const [res] = await drizzleDb
+          .update(decks)
+          .set(setValues)
+          .where(eq(decks.id, id))
+          .returning();
 
         if (!res) {
           throw new Error(`Deck not found: ${id}`);
         }
 
-        return {
-          ...res,
-          filters: res.filters ? JSON.parse(res.filters) : null,
-        };
+        return res;
       }),
     cacheOptions: {
       queryKey: ["turso.decks.update"],
@@ -221,9 +181,10 @@ export const decksTable = {
   delete: {
     mutation: ({ id }: { id: string }): Promise<{ success: boolean }> =>
       enqueueDbOperation(async () => {
-        const db = await ensureDb();
+        await ensureDb();
+        const drizzleDb = getDrizzleDb();
 
-        await db.prepare("DELETE FROM decks WHERE id = ?;").run([id]);
+        await drizzleDb.delete(decks).where(eq(decks.id, id));
 
         return { success: true };
       }),

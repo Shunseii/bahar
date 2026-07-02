@@ -1,6 +1,6 @@
 import {
   FlashcardState,
-  type RawFlashcard,
+  type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb, type TestDb } from "../test/create-test-db";
@@ -119,8 +119,8 @@ describe("flashcardsTable", () => {
         reps: 4,
         scheduled_days: 5,
         state: FlashcardState.REVIEW,
-        is_hidden: 1,
-      } satisfies Partial<Omit<RawFlashcard, "id" | "dictionary_entry_id">>;
+        is_hidden: true,
+      } satisfies Partial<Omit<SelectFlashcard, "id" | "dictionary_entry_id">>;
 
       const updatedFlashcard = await flashcardsTable.update.mutation({
         id: flashcard.id,
