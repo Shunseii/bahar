@@ -6,6 +6,7 @@ import {
 } from "@bahar/drizzle-user-db-schemas";
 import { nanoid } from "nanoid";
 import { ensureDb } from "..";
+import { enqueueDbOperation } from "../queue";
 import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "./flashcards";
 import type { TableOperation } from "./types";
 
@@ -137,31 +138,32 @@ export const decksTable = {
       deck,
     }: {
       deck: Omit<SelectDeck, "id">;
-    }): Promise<SelectDeck> => {
-      const db = await ensureDb();
-      const id = nanoid();
+    }): Promise<SelectDeck> =>
+      enqueueDbOperation(async () => {
+        const db = await ensureDb();
+        const id = nanoid();
 
-      await db
-        .prepare("INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);")
-        .run([
-          id,
-          deck.name,
-          deck.filters ? JSON.stringify(deck.filters) : null,
-        ]);
+        await db
+          .prepare("INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);")
+          .run([
+            id,
+            deck.name,
+            deck.filters ? JSON.stringify(deck.filters) : null,
+          ]);
 
-      const res: RawDeck | undefined = await db
-        .prepare("SELECT * FROM decks WHERE id = ?;")
-        .get([id]);
+        const res: RawDeck | undefined = await db
+          .prepare("SELECT * FROM decks WHERE id = ?;")
+          .get([id]);
 
-      if (!res) {
-        throw new Error(`Failed to retrieve newly created deck: ${id}`);
-      }
+        if (!res) {
+          throw new Error(`Failed to retrieve newly created deck: ${id}`);
+        }
 
-      return {
-        ...res,
-        filters: res.filters ? JSON.parse(res.filters) : null,
-      };
-    },
+        return {
+          ...res,
+          filters: res.filters ? JSON.parse(res.filters) : null,
+        };
+      }),
     cacheOptions: {
       queryKey: ["turso.decks.create"],
     },
@@ -173,56 +175,58 @@ export const decksTable = {
     }: {
       id: string;
       updates: Partial<Omit<SelectDeck, "id">>;
-    }): Promise<SelectDeck> => {
-      const db = await ensureDb();
+    }): Promise<SelectDeck> =>
+      enqueueDbOperation(async () => {
+        const db = await ensureDb();
 
-      const setClauses: string[] = [];
-      const params: unknown[] = [];
+        const setClauses: string[] = [];
+        const params: unknown[] = [];
 
-      if ("name" in updates && updates.name !== undefined) {
-        setClauses.push("name = ?");
-        params.push(updates.name);
-      }
-      if ("filters" in updates && updates.filters !== undefined) {
-        setClauses.push("filters = ?");
-        params.push(updates.filters ? JSON.stringify(updates.filters) : null);
-      }
+        if ("name" in updates && updates.name !== undefined) {
+          setClauses.push("name = ?");
+          params.push(updates.name);
+        }
+        if ("filters" in updates && updates.filters !== undefined) {
+          setClauses.push("filters = ?");
+          params.push(updates.filters ? JSON.stringify(updates.filters) : null);
+        }
 
-      if (setClauses.length === 0) {
-        throw new Error("No fields to update");
-      }
+        if (setClauses.length === 0) {
+          throw new Error("No fields to update");
+        }
 
-      params.push(id);
+        params.push(id);
 
-      await db
-        .prepare(`UPDATE decks SET ${setClauses.join(", ")} WHERE id = ?;`)
-        .run(params);
+        await db
+          .prepare(`UPDATE decks SET ${setClauses.join(", ")} WHERE id = ?;`)
+          .run(params);
 
-      const res: RawDeck | undefined = await db
-        .prepare("SELECT * FROM decks WHERE id = ?;")
-        .get([id]);
+        const res: RawDeck | undefined = await db
+          .prepare("SELECT * FROM decks WHERE id = ?;")
+          .get([id]);
 
-      if (!res) {
-        throw new Error(`Deck not found: ${id}`);
-      }
+        if (!res) {
+          throw new Error(`Deck not found: ${id}`);
+        }
 
-      return {
-        ...res,
-        filters: res.filters ? JSON.parse(res.filters) : null,
-      };
-    },
+        return {
+          ...res,
+          filters: res.filters ? JSON.parse(res.filters) : null,
+        };
+      }),
     cacheOptions: {
       queryKey: ["turso.decks.update"],
     },
   },
   delete: {
-    mutation: async ({ id }: { id: string }): Promise<{ success: boolean }> => {
-      const db = await ensureDb();
+    mutation: ({ id }: { id: string }): Promise<{ success: boolean }> =>
+      enqueueDbOperation(async () => {
+        const db = await ensureDb();
 
-      await db.prepare("DELETE FROM decks WHERE id = ?;").run([id]);
+        await db.prepare("DELETE FROM decks WHERE id = ?;").run([id]);
 
-      return { success: true };
-    },
+        return { success: true };
+      }),
     cacheOptions: {
       queryKey: ["turso.decks.delete"],
     },

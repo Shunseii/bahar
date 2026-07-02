@@ -21,6 +21,7 @@ import { nanoid } from "nanoid";
 import { type Card, Rating, type ReviewLog } from "ts-fsrs";
 import { api } from "../../api";
 import { ensureDb, getDrizzleDb } from "..";
+import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "./types";
 
 /**
@@ -172,53 +173,55 @@ export const flashcardsTable = {
         InsertFlashcard,
         "id" | "last_review_timestamp_ms" | "due_timestamp_ms"
       >;
-    }): Promise<SelectFlashcard> => {
-      const db = await ensureDb();
-      const id = nanoid();
-      const dueDateMs = new Date(flashcard.due).getTime();
-      const lastReviewDateMs = flashcard.last_review
-        ? new Date(flashcard.last_review).getTime()
-        : null;
+    }): Promise<SelectFlashcard> =>
+      enqueueDbOperation(async () => {
+        const db = await ensureDb();
+        const id = nanoid();
+        const dueDateMs = new Date(flashcard.due).getTime();
+        const lastReviewDateMs = flashcard.last_review
+          ? new Date(flashcard.last_review).getTime()
+          : null;
 
-      await db
-        .prepare(
-          `INSERT INTO flashcards (
+        await db
+          .prepare(
+            `INSERT INTO flashcards (
           id, dictionary_entry_id, difficulty, due, due_timestamp_ms, elapsed_days,
           lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state, direction, is_hidden
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        )
-        .run([
-          id,
-          flashcard.dictionary_entry_id,
-          flashcard.difficulty,
-          flashcard.due,
-          dueDateMs,
-          flashcard.elapsed_days,
-          flashcard.lapses,
-          flashcard.last_review,
-          lastReviewDateMs,
-          flashcard.reps,
-          flashcard.scheduled_days,
-          flashcard.stability,
-          flashcard.state,
-          flashcard.direction,
-          0,
-        ]);
+          )
+          .run([
+            id,
+            flashcard.dictionary_entry_id,
+            flashcard.difficulty,
+            flashcard.due,
+            dueDateMs,
+            flashcard.elapsed_days,
+            flashcard.lapses,
+            flashcard.last_review,
+            lastReviewDateMs,
+            flashcard.reps,
+            flashcard.scheduled_days,
+            flashcard.stability,
+            flashcard.state,
+            flashcard.direction,
+            0,
+          ]);
 
-      const res: RawFlashcard | undefined = await db
-        .prepare("SELECT * FROM flashcards WHERE id = ?;")
-        .get([id]);
+        const res: RawFlashcard | undefined = await db
+          .prepare("SELECT * FROM flashcards WHERE id = ?;")
+          .get([id]);
 
-      if (!res) {
-        throw new Error(`Failed to retrieve newly created flashcard: ${id}`);
-      }
+        if (!res) {
+          throw new Error(`Failed to retrieve newly created flashcard: ${id}`);
+        }
 
-      return {
-        ...res,
-        direction: (res.direction ?? "forward") as SelectFlashcard["direction"],
-        is_hidden: Boolean(res.is_hidden),
-      };
-    },
+        return {
+          ...res,
+          direction: (res.direction ??
+            "forward") as SelectFlashcard["direction"],
+          is_hidden: Boolean(res.is_hidden),
+        };
+      }),
     cacheOptions: {
       queryKey: ["turso.flashcards.create"],
     },
@@ -231,152 +234,164 @@ export const flashcardsTable = {
     }: {
       id: string;
       updates: Partial<Omit<RawFlashcard, "id" | "dictionary_entry_id">>;
-    }): Promise<SelectFlashcard> => {
-      const db = await ensureDb();
+    }): Promise<SelectFlashcard> =>
+      enqueueDbOperation(async () => {
+        const db = await ensureDb();
 
-      const setClauses: string[] = [];
-      const params: unknown[] = [];
+        const setClauses: string[] = [];
+        const params: unknown[] = [];
 
-      if ("difficulty" in updates && updates.difficulty !== undefined) {
-        setClauses.push("difficulty = ?");
-        params.push(updates.difficulty);
-      }
-      if ("due" in updates && updates.due !== undefined) {
-        setClauses.push("due = ?");
-        params.push(updates.due);
-      }
-      if (
-        "due_timestamp_ms" in updates &&
-        updates.due_timestamp_ms !== undefined
-      ) {
-        setClauses.push("due_timestamp_ms = ?");
-        params.push(updates.due_timestamp_ms);
-      }
-      if ("elapsed_days" in updates && updates.elapsed_days !== undefined) {
-        setClauses.push("elapsed_days = ?");
-        params.push(updates.elapsed_days);
-      }
-      if ("lapses" in updates && updates.lapses !== undefined) {
-        setClauses.push("lapses = ?");
-        params.push(updates.lapses);
-      }
-      if ("learning_steps" in updates && updates.learning_steps !== undefined) {
-        setClauses.push("learning_steps = ?");
-        params.push(updates.learning_steps);
-      }
-      if ("last_review" in updates && updates.last_review !== undefined) {
-        setClauses.push("last_review = ?");
-        params.push(updates.last_review);
-      }
-      if (
-        "last_review_timestamp_ms" in updates &&
-        updates.last_review_timestamp_ms !== undefined
-      ) {
-        setClauses.push("last_review_timestamp_ms = ?");
-        params.push(updates.last_review_timestamp_ms);
-      }
-      if ("reps" in updates && updates.reps !== undefined) {
-        setClauses.push("reps = ?");
-        params.push(updates.reps);
-      }
-      if ("scheduled_days" in updates && updates.scheduled_days !== undefined) {
-        setClauses.push("scheduled_days = ?");
-        params.push(updates.scheduled_days);
-      }
-      if ("stability" in updates && updates.stability !== undefined) {
-        setClauses.push("stability = ?");
-        params.push(updates.stability);
-      }
-      if ("state" in updates && updates.state !== undefined) {
-        setClauses.push("state = ?");
-        params.push(updates.state);
-      }
-      if ("is_hidden" in updates && updates.is_hidden !== undefined) {
-        setClauses.push("is_hidden = ?");
-        params.push(updates.is_hidden);
-      }
+        if ("difficulty" in updates && updates.difficulty !== undefined) {
+          setClauses.push("difficulty = ?");
+          params.push(updates.difficulty);
+        }
+        if ("due" in updates && updates.due !== undefined) {
+          setClauses.push("due = ?");
+          params.push(updates.due);
+        }
+        if (
+          "due_timestamp_ms" in updates &&
+          updates.due_timestamp_ms !== undefined
+        ) {
+          setClauses.push("due_timestamp_ms = ?");
+          params.push(updates.due_timestamp_ms);
+        }
+        if ("elapsed_days" in updates && updates.elapsed_days !== undefined) {
+          setClauses.push("elapsed_days = ?");
+          params.push(updates.elapsed_days);
+        }
+        if ("lapses" in updates && updates.lapses !== undefined) {
+          setClauses.push("lapses = ?");
+          params.push(updates.lapses);
+        }
+        if (
+          "learning_steps" in updates &&
+          updates.learning_steps !== undefined
+        ) {
+          setClauses.push("learning_steps = ?");
+          params.push(updates.learning_steps);
+        }
+        if ("last_review" in updates && updates.last_review !== undefined) {
+          setClauses.push("last_review = ?");
+          params.push(updates.last_review);
+        }
+        if (
+          "last_review_timestamp_ms" in updates &&
+          updates.last_review_timestamp_ms !== undefined
+        ) {
+          setClauses.push("last_review_timestamp_ms = ?");
+          params.push(updates.last_review_timestamp_ms);
+        }
+        if ("reps" in updates && updates.reps !== undefined) {
+          setClauses.push("reps = ?");
+          params.push(updates.reps);
+        }
+        if (
+          "scheduled_days" in updates &&
+          updates.scheduled_days !== undefined
+        ) {
+          setClauses.push("scheduled_days = ?");
+          params.push(updates.scheduled_days);
+        }
+        if ("stability" in updates && updates.stability !== undefined) {
+          setClauses.push("stability = ?");
+          params.push(updates.stability);
+        }
+        if ("state" in updates && updates.state !== undefined) {
+          setClauses.push("state = ?");
+          params.push(updates.state);
+        }
+        if ("is_hidden" in updates && updates.is_hidden !== undefined) {
+          setClauses.push("is_hidden = ?");
+          params.push(updates.is_hidden);
+        }
 
-      if (setClauses.length === 0) {
-        throw new Error("No fields to update");
-      }
+        if (setClauses.length === 0) {
+          throw new Error("No fields to update");
+        }
 
-      params.push(id);
+        params.push(id);
 
-      await db
-        .prepare(`UPDATE flashcards SET ${setClauses.join(", ")} WHERE id = ?;`)
-        .run(params);
+        await db
+          .prepare(
+            `UPDATE flashcards SET ${setClauses.join(", ")} WHERE id = ?;`
+          )
+          .run(params);
 
-      const res: RawFlashcard | undefined = await db
-        .prepare("SELECT * FROM flashcards WHERE id = ?;")
-        .get([id]);
+        const res: RawFlashcard | undefined = await db
+          .prepare("SELECT * FROM flashcards WHERE id = ?;")
+          .get([id]);
 
-      if (!res) {
-        throw new Error(`Flashcard not found: ${id}`);
-      }
+        if (!res) {
+          throw new Error(`Flashcard not found: ${id}`);
+        }
 
-      return {
-        ...res,
-        direction: (res.direction ?? "forward") as SelectFlashcard["direction"],
-        is_hidden: Boolean(res.is_hidden),
-      };
-    },
+        return {
+          ...res,
+          direction: (res.direction ??
+            "forward") as SelectFlashcard["direction"],
+          is_hidden: Boolean(res.is_hidden),
+        };
+      }),
     cacheOptions: {
       queryKey: ["turso.flashcards.update"],
     },
   },
   reset: {
-    mutation: async ({
+    mutation: ({
       dictionary_entry_id,
       direction,
     }: {
       dictionary_entry_id: string;
       direction: SelectFlashcard["direction"];
-    }): Promise<SelectFlashcard> => {
-      const db = await ensureDb();
-      const now = new Date();
-      const dueDate = now.toISOString();
-      const dueDateMs = now.getTime();
+    }): Promise<SelectFlashcard> =>
+      enqueueDbOperation(async () => {
+        const db = await ensureDb();
+        const now = new Date();
+        const dueDate = now.toISOString();
+        const dueDateMs = now.getTime();
 
-      await db
-        .prepare(
-          `UPDATE flashcards
+        await db
+          .prepare(
+            `UPDATE flashcards
            SET state = ?, difficulty = ?, stability = ?, reps = ?, lapses = ?,
                elapsed_days = ?, scheduled_days = ?, last_review = NULL,
                last_review_timestamp_ms = NULL, due = ?, due_timestamp_ms = ?
            WHERE dictionary_entry_id = ? AND direction = ?;`
-        )
-        .run([
-          FlashcardState.NEW,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          dueDate,
-          dueDateMs,
-          dictionary_entry_id,
-          direction,
-        ]);
+          )
+          .run([
+            FlashcardState.NEW,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            dueDate,
+            dueDateMs,
+            dictionary_entry_id,
+            direction,
+          ]);
 
-      const res: RawFlashcard | undefined = await db
-        .prepare(
-          "SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;"
-        )
-        .get([dictionary_entry_id, direction]);
+        const res: RawFlashcard | undefined = await db
+          .prepare(
+            "SELECT * FROM flashcards WHERE dictionary_entry_id = ? AND direction = ?;"
+          )
+          .get([dictionary_entry_id, direction]);
 
-      if (!res) {
-        throw new Error(
-          `Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`
-        );
-      }
+        if (!res) {
+          throw new Error(
+            `Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`
+          );
+        }
 
-      return {
-        ...res,
-        direction: (res.direction ?? "forward") as SelectFlashcard["direction"],
-        is_hidden: Boolean(res.is_hidden),
-      };
-    },
+        return {
+          ...res,
+          direction: (res.direction ??
+            "forward") as SelectFlashcard["direction"],
+          is_hidden: Boolean(res.is_hidden),
+        };
+      }),
     cacheOptions: {
       queryKey: ["turso.flashcards.reset"],
     },
