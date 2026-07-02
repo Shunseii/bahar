@@ -128,6 +128,16 @@ export const initDb = async () => {
   return result;
 };
 
+const isApiError = (
+  err: unknown
+): err is NonNullable<
+  Awaited<ReturnType<typeof api.databases.user.get>>
+>["error"] => {
+  return (
+    typeof err === "object" && err !== null && "status" in err && "value" in err
+  );
+};
+
 const _initDbInternal = async () => {
   const infoResult = await tryCatch(
     async () => {
@@ -135,10 +145,19 @@ const _initDbInternal = async () => {
       if (error) throw error;
       return data;
     },
-    (error) => ({
-      type: "get_db_info_failed",
-      reason: String(error),
-    })
+    (error) => {
+      if (isApiError(error) && error?.status === 401) {
+        return {
+          type: "unauthorized",
+          reason: String(error),
+        };
+      }
+
+      return {
+        type: "get_db_info_failed",
+        reason: String(error),
+      };
+    }
   );
   if (!infoResult.ok) return infoResult;
 
