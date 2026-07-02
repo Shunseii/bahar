@@ -21,6 +21,41 @@ let drizzleDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
 
 const LOCAL_DB_PATH_PREFIX = "bahar-local";
 
+/**
+ * Builds the drizzle sqlite-proxy adapter around a sync-wasm `Database`.
+ * There's no first-party drizzle driver for `@tursodatabase/sync-wasm`,
+ * so this translates drizzle's generic query calls into the db's own
+ * prepare/run/all/get API. Shared with the test harness so both stay
+ * in sync with the same query/row-mapping behavior.
+ */
+export const buildDrizzleDb = (getDb: () => Database | null) =>
+  drizzle(
+    async (sql, params, method) => {
+      const db = getDb();
+      if (!db) return { rows: [] };
+
+      const stmt = db.prepare(sql);
+
+      if (method === "run") {
+        await stmt.run(params);
+        return { rows: [] };
+      }
+
+      if (method === "all" || method === "values") {
+        const rows = (await stmt.all(params)) as Record<string, unknown>[];
+        return { rows: rows.map((row) => Object.values(row)) };
+      }
+
+      if (method === "get") {
+        const row = (await stmt.get(params)) as Record<string, unknown> | null;
+        return { rows: row ? Object.values(row) : [] };
+      }
+
+      return { rows: [] };
+    },
+    { schema }
+  );
+
 export const getDrizzleDb = () => {
   if (!drizzleDb) {
     throw new Error("Database not initialized.");
@@ -192,31 +227,7 @@ const _initDbInternal = async () => {
 
   db = connectionResult.value;
 
-  drizzleDb = drizzle(
-    async (sql, params, method) => {
-      if (!db) return { rows: [] };
-
-      const stmt = db.prepare(sql);
-
-      if (method === "run") {
-        await stmt.run(params);
-        return { rows: [] };
-      }
-
-      if (method === "all" || method === "values") {
-        const rows = (await stmt.all(params)) as Record<string, unknown>[];
-        return { rows: rows.map((row) => Object.values(row)) };
-      }
-
-      if (method === "get") {
-        const row = (await stmt.get(params)) as Record<string, unknown> | null;
-        return { rows: row ? Object.values(row) : [] };
-      }
-
-      return { rows: [] };
-    },
-    { schema }
-  );
+  drizzleDb = buildDrizzleDb(() => db);
 
   const dbPullResult = await tryCatch(
     async () => {

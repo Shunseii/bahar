@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import pino from "pino";
 import * as Sentry from "@sentry/bun";
+import pino from "pino";
 import { config } from "./config";
 
 interface TraceContext {

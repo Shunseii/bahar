@@ -70,9 +70,13 @@ export const settingsTable = {
           .prepare(`UPDATE settings SET ${setClauses.join(", ")};`)
           .run(params);
 
-        const res: RawSetting = await db
+        const res: RawSetting | undefined = await db
           .prepare("SELECT * FROM settings")
           .get();
+
+        if (!res) {
+          throw new Error("Settings not found");
+        }
 
         return {
           show_antonyms_in_flashcard: res.show_antonyms_in_flashcard,
