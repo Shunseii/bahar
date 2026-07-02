@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as CliAuthRouteImport } from './routes/cli-auth/route'
 import { Route as UnauthorizedLayoutRouteImport } from './routes/_unauthorized-layout/route'
 import { Route as AuthorizedLayoutRouteImport } from './routes/_authorized-layout/route'
 import { Route as UnauthorizedLayoutLoginRouteImport } from './routes/_unauthorized-layout/login/route'
@@ -43,6 +44,14 @@ const AuthorizedLayoutAppLayoutDictionaryAddRouteLazyImport = createFileRoute(
 )()
 
 // Create/Update Routes
+
+const CliAuthRouteRoute = CliAuthRouteImport.update({
+  id: '/cli-auth',
+  path: '/cli-auth',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/cli-auth/route.lazy').then((d) => d.Route),
+)
 
 const UnauthorizedLayoutRouteRoute = UnauthorizedLayoutRouteImport.update({
   id: '/_unauthorized-layout',
@@ -173,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof UnauthorizedLayoutRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/cli-auth': {
+      id: '/cli-auth'
+      path: '/cli-auth'
+      fullPath: '/cli-auth'
+      preLoaderRoute: typeof CliAuthRouteImport
       parentRoute: typeof rootRoute
     }
     '/_authorized-layout/_app-layout': {
@@ -337,6 +353,7 @@ const UnauthorizedLayoutRouteRouteWithChildren =
 
 export interface FileRoutesByFullPath {
   '': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
+  '/cli-auth': typeof CliAuthRouteRoute
   '/goodbye': typeof UnauthorizedLayoutGoodbyeRouteRoute
   '/login': typeof UnauthorizedLayoutLoginRouteRoute
   '/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
@@ -350,6 +367,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '': typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
+  '/cli-auth': typeof CliAuthRouteRoute
   '/goodbye': typeof UnauthorizedLayoutGoodbyeRouteRoute
   '/login': typeof UnauthorizedLayoutLoginRouteRoute
   '/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
@@ -365,6 +383,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authorized-layout': typeof AuthorizedLayoutRouteRouteWithChildren
   '/_unauthorized-layout': typeof UnauthorizedLayoutRouteRouteWithChildren
+  '/cli-auth': typeof CliAuthRouteRoute
   '/_authorized-layout/_app-layout': typeof AuthorizedLayoutAppLayoutRouteRouteWithChildren
   '/_authorized-layout/_search-layout': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
   '/_unauthorized-layout/goodbye': typeof UnauthorizedLayoutGoodbyeRouteRoute
@@ -382,6 +401,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/cli-auth'
     | '/goodbye'
     | '/login'
     | '/checkout-success'
@@ -394,6 +414,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | ''
+    | '/cli-auth'
     | '/goodbye'
     | '/login'
     | '/checkout-success'
@@ -407,6 +428,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authorized-layout'
     | '/_unauthorized-layout'
+    | '/cli-auth'
     | '/_authorized-layout/_app-layout'
     | '/_authorized-layout/_search-layout'
     | '/_unauthorized-layout/goodbye'
@@ -424,11 +446,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthorizedLayoutRouteRoute: typeof AuthorizedLayoutRouteRouteWithChildren
   UnauthorizedLayoutRouteRoute: typeof UnauthorizedLayoutRouteRouteWithChildren
+  CliAuthRouteRoute: typeof CliAuthRouteRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthorizedLayoutRouteRoute: AuthorizedLayoutRouteRouteWithChildren,
   UnauthorizedLayoutRouteRoute: UnauthorizedLayoutRouteRouteWithChildren,
+  CliAuthRouteRoute: CliAuthRouteRoute,
 }
 
 export const routeTree = rootRoute
@@ -442,7 +466,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/_authorized-layout",
-        "/_unauthorized-layout"
+        "/_unauthorized-layout",
+        "/cli-auth"
       ]
     },
     "/_authorized-layout": {
@@ -458,6 +483,9 @@ export const routeTree = rootRoute
         "/_unauthorized-layout/goodbye",
         "/_unauthorized-layout/login"
       ]
+    },
+    "/cli-auth": {
+      "filePath": "cli-auth/route.tsx"
     },
     "/_authorized-layout/_app-layout": {
       "filePath": "_authorized-layout/_app-layout/route.tsx",
