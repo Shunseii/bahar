@@ -321,7 +321,7 @@ export const Route = createFileRoute("/_authorized-layout")({
       const error = initDbResult.error;
       const errReason = "reason" in error ? error.reason : null;
 
-      Sentry.captureException(new Error(error.type), {
+      Sentry.captureException(new Error(error.type, { cause: error }), {
         fingerprint: ["db-init-error", error.type],
         contexts: {
           db_init: {
