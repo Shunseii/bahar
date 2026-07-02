@@ -559,6 +559,13 @@ describe("flashcardsTable", () => {
           translation: "book",
           tags: ["foo"],
         });
+        // Regression check: flashcards.id and dictionary_entry.id are both
+        // literally "id" in the underlying SQL -- pins down that the flat
+        // dictionary_entry_id field reflects the entry's id, not the
+        // flashcard's own id (see the .as("dictionary_entry_id") alias in
+        // flashcards.ts's today.query).
+        expect(result?.dictionary_entry_id).toBe(entry.id);
+        expect(result?.id).toBe(flashcard.id);
       });
     });
 

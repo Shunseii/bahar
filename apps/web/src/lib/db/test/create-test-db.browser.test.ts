@@ -1,4 +1,9 @@
-import { settings } from "@bahar/drizzle-user-db-schemas";
+import {
+  dictionaryEntries,
+  flashcards,
+  settings,
+} from "@bahar/drizzle-user-db-schemas";
+import { eq, sql } from "drizzle-orm";
 import { afterEach, describe, expect, it } from "vitest";
 import { createTestDb, type TestDb } from "./create-test-db";
 
@@ -63,6 +68,55 @@ describe("createTestDb", () => {
         show_reverse_flashcards: 0,
       },
     ]);
+  });
+
+  it("an explicit alias correctly disambiguates same-named columns across a join", async () => {
+    // drizzle's sqlite-proxy protocol doesn't emit SQL aliases to guarantee
+    // unique column names across a join -- a bare, unaliased select of both
+    // flashcards.id and dictionaryEntries.id (both literally "id" in the
+    // compiled SQL) silently collapses in a name-keyed row object, dropping
+    // one and misaligning every value selected after it. This broke
+    // flashcardsTable.today's nested dictionary_entry select.
+    //
+    // There's no automatic protection against this (the adapter returns
+    // name-keyed rows, matched to web and mobile alike) -- every query that
+    // selects plain columns from both sides of a join into the same output
+    // must explicitly alias any name that could collide, via
+    // sql<T>`column`.as("uniqueName"). This test documents and pins down
+    // that the supported pattern actually works.
+    testDb = await createTestDb();
+
+    await testDb.drizzleDb.insert(dictionaryEntries).values({
+      id: "entry-1",
+      word: "كتاب",
+      translation: "book",
+      type: "ism",
+    });
+    await testDb.drizzleDb.insert(flashcards).values({
+      id: "flashcard-1",
+      dictionary_entry_id: "entry-1",
+      due: "2026-01-01T00:00:00.000Z",
+      due_timestamp_ms: 0,
+    });
+
+    const [row] = await testDb.drizzleDb
+      .select({
+        flashcardId: flashcards.id,
+        entryId: sql<string>`${dictionaryEntries.id}`.as("entry_id"),
+        word: dictionaryEntries.word,
+      })
+      .from(flashcards)
+      .innerJoin(
+        dictionaryEntries,
+        eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
+      )
+      .where(eq(flashcards.id, "flashcard-1"));
+
+    expect(row).toEqual({
+      flashcardId: "flashcard-1",
+      entryId: "entry-1",
+      word: "كتاب",
+    });
   });
 
   it("gives each createTestDb() call an isolated database", async () => {

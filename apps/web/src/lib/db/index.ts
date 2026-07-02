@@ -27,6 +27,14 @@ const LOCAL_DB_PATH_PREFIX = "bahar-local";
  * so this translates drizzle's generic query calls into the db's own
  * prepare/run/all/get API. Shared with the test harness so both stay
  * in sync with the same query/row-mapping behavior.
+ *
+ * Rows come back name-keyed, matched to the query's compiled column names --
+ * drizzle doesn't emit SQL aliases to guarantee those names are unique
+ * across a join. Any query selecting plain columns from both sides of a
+ * join into the same output (e.g. both flashcards.id and
+ * dictionaryEntries.id, both literally "id") must alias the colliding one
+ * explicitly via `sql<T>\`column\`.as("uniqueName")`, or the duplicate name
+ * silently collapses and misaligns every value after it.
  */
 export const buildDrizzleDb = (getDb: () => Database | null) =>
   drizzle(
@@ -41,22 +49,14 @@ export const buildDrizzleDb = (getDb: () => Database | null) =>
         return { rows: [] };
       }
 
-      // Raw mode returns rows as plain positional arrays instead of
-      // name-keyed objects. This matters for joined queries that select
-      // same-named columns from different tables (e.g. both flashcards.id
-      // and dictionaryEntries.id) -- a name-keyed row would silently
-      // collapse the duplicate key, dropping a column and misaligning
-      // every value after it.
-      stmt.raw(true);
-
       if (method === "all" || method === "values") {
-        const rows = (await stmt.all(params)) as unknown[][];
-        return { rows };
+        const rows = (await stmt.all(params)) as Record<string, unknown>[];
+        return { rows: rows.map((row) => Object.values(row)) };
       }
 
       if (method === "get") {
-        const row = (await stmt.get(params)) as unknown[] | null;
-        return { rows: row ?? [] };
+        const row = (await stmt.get(params)) as Record<string, unknown> | null;
+        return { rows: row ? Object.values(row) : [] };
       }
 
       return { rows: [] };

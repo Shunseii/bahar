@@ -100,9 +100,10 @@ export const flashcardsTable = {
           : []),
       ];
 
-      const rows = await drizzleDb
+      return drizzleDb
         .selectDistinct({
           id: flashcards.id,
+          dictionary_entry_id: flashcards.dictionary_entry_id,
           difficulty: flashcards.difficulty,
           due: flashcards.due,
           due_timestamp_ms: flashcards.due_timestamp_ms,
@@ -118,7 +119,17 @@ export const flashcardsTable = {
           direction: flashcards.direction,
           is_hidden: flashcards.is_hidden,
           dictionary_entry: {
-            id: dictionaryEntries.id,
+            // Explicitly aliased: dictionaryEntries.id would otherwise
+            // compile to a bare, unaliased "id" column in the SQL, which is
+            // literally the same raw name as flashcards.id above. drizzle
+            // doesn't disambiguate that on its own -- see buildDrizzleDb in
+            // apps/web/src/lib/db/index.ts for the full explanation. Must be
+            // unique against every other selected name in this query, not
+            // just the field it's disambiguating from -- "dictionary_entry_id"
+            // looked safe but collides with the flat field above.
+            id: sql<string>`${dictionaryEntries.id}`.as(
+              "joined_dictionary_entry_id"
+            ),
             word: dictionaryEntries.word,
             translation: dictionaryEntries.translation,
             definition: dictionaryEntries.definition,
@@ -140,16 +151,6 @@ export const flashcardsTable = {
           eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
         )
         .where(and(...conditions));
-
-      // dictionary_entry_id is intentionally not selected directly above --
-      // its natural drizzle-generated alias for the nested dictionary_entry.id
-      // path collides with it, corrupting row mapping through the custom
-      // sqlite-proxy adapter. It always equals dictionary_entry.id here
-      // anyway, since that's the join condition.
-      return rows.map((row) => ({
-        ...row,
-        dictionary_entry_id: row.dictionary_entry.id,
-      }));
     },
     cacheOptions: {
       queryKey: ["turso.flashcards.today.query"],
