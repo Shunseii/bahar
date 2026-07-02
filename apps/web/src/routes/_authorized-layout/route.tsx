@@ -15,6 +15,7 @@ import {
   createFileRoute,
   type ErrorRouteComponent,
   Outlet,
+  redirect,
 } from "@tanstack/react-router";
 import { useMeasure } from "@uidotdev/usehooks";
 import { useAtom, useAtomValue } from "jotai";
@@ -303,8 +304,12 @@ const AuthorizedLayoutError: ErrorRouteComponent = ({ error }) => {
 };
 
 export const Route = createFileRoute("/_authorized-layout")({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const { data: session } = await authClient.getSession();
+
+    if (!session) {
+      throw redirect({ to: "/login", search: { redirect: location.href } });
+    }
 
     if (session?.user) {
       Sentry.setUser({ id: session.user.id, email: session.user.email });
@@ -316,7 +321,7 @@ export const Route = createFileRoute("/_authorized-layout")({
       const error = initDbResult.error;
       const errReason = "reason" in error ? error.reason : null;
 
-      Sentry.captureException(new Error(error.type), {
+      Sentry.captureException(new Error(error.type, { cause: error }), {
         fingerprint: ["db-init-error", error.type],
         contexts: {
           db_init: {
@@ -336,6 +341,9 @@ export const Route = createFileRoute("/_authorized-layout")({
           // Fixing this will require manual work by a developer,
           // so capturing it as an issue in Sentry above is sufficient.
           break;
+
+        case "unauthorized":
+          throw redirect({ to: "/login", search: { redirect: location.href } });
 
         case "get_db_info_failed":
           throw new DisplayError({
