@@ -15,6 +15,9 @@ const dbQueue = asyncQueue(
   },
   {
     concurrency: 1,
+    asyncRetryerOptions: {
+      maxAttempts: 1,
+    },
     onError: (error) => {
       Sentry.logger.error("Database queue operation failed", {
         error: String(error),
