@@ -102,6 +102,22 @@ Bun backend:
 - **Logging**: Pino, Sentry
 - **Hosting**: Fly.io (Docker)
 
+#### CLI (`apps/cli`)
+
+Standalone command-line tool for querying your own dictionary/flashcard data directly
+(e.g. from an AI agent) without a browser:
+
+- **Framework**: Bun, bunli
+- **Auth**: `bahar login` opens a browser, signs in via Better Auth, stores a personal
+  API key locally
+- **Data access**: `bahar db-info` prints direct Turso connection info — no REST API
+  involved, same as web/mobile
+- **Distribution**: standalone compiled binaries via GitHub Releases (see
+  [Releasing the CLI](#releasing-the-cli) below)
+
+See [`.claude/skills/bahar-data-access`](./.claude/skills/bahar-data-access/SKILL.md)
+for how an agent is expected to use it.
+
 #### Marketing (`apps/marketing`)
 
 Static marketing site and blog:
@@ -169,6 +185,35 @@ pnpm run --filter api auth:gen
 
 # Open Drizzle Studio
 pnpm run --filter api drizzle:studio
+```
+
+## Releasing the CLI
+
+The CLI has its own release pipeline (`.github/workflows/release-cli.yml`), separate
+from the web/mobile app releases, since it publishes standalone binaries rather than
+deploying anywhere:
+
+1. One-time setup: set the `BAHAR_WEB_URL` and `BAHAR_API_URL` repository variables
+   (Settings > Secrets and variables > Actions > Variables) to the production web/API
+   URLs — these get baked into the compiled binaries so the CLI doesn't default to
+   localhost.
+2. Cut a release by pushing a tag matching `cli-v*`:
+   ```bash
+   git tag cli-v1.0.0
+   git push origin cli-v1.0.0
+   ```
+3. The workflow cross-compiles binaries for Linux, macOS (x64 + arm64), and Windows
+   from a single runner and publishes them to a GitHub Release.
+
+Use `cli-v*` (not plain `v*`) — this repo's web/mobile releases already use plain `v*`
+tags, and both the CLI's self-update check and `install.sh`/`install.ps1` rely on the
+prefix to find the right release instead of GitHub's repo-wide "latest release".
+
+Users install via:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Shunseii/bahar/main/apps/cli/scripts/install.sh | sh   # macOS/Linux
+irm https://raw.githubusercontent.com/Shunseii/bahar/main/apps/cli/scripts/install.ps1 | iex          # Windows
 ```
 
 ## i18n
