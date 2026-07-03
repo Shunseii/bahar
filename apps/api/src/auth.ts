@@ -54,6 +54,7 @@ const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
 const MOBILE_DEEP_LINK_SCHEME = "bahar://";
 const CLI_API_KEY_PREFIX = "bahar_cli_";
+const CLI_API_KEY_EXPIRY_SECS = 60 * 60 * 24 * 7; // 7 days
 
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
@@ -457,6 +458,9 @@ export const auth = betterAuth({
     apiKey({
       defaultPrefix: CLI_API_KEY_PREFIX,
       enableSessionForAPIKeys: true,
+      keyExpiration: {
+        defaultExpiresIn: CLI_API_KEY_EXPIRY_SECS,
+      },
     }),
     consentEventsPlugin(),
     anonymous({
