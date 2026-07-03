@@ -14,6 +14,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
   admin,
   anonymous,
+  apiKey,
   createAuthMiddleware,
   emailOTP,
   openAPI,
@@ -30,7 +31,13 @@ import {
   tursoPlatformClient,
 } from "./clients/turso";
 import { db } from "./db";
-import { accounts, sessions, users, verifications } from "./db/schema/auth";
+import {
+  accounts,
+  apikeys,
+  sessions,
+  users,
+  verifications,
+} from "./db/schema/auth";
 import { databases } from "./db/schema/databases";
 import { revlogs } from "./db/schema/revlogs";
 import { getAllowedDomains } from "./utils";
@@ -46,6 +53,8 @@ const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
 const MOBILE_DEEP_LINK_SCHEME = "bahar://";
+const CLI_API_KEY_PREFIX = "bahar_cli_";
+const CLI_API_KEY_EXPIRY_SECS = 60 * 60 * 24 * 7; // 7 days
 
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
@@ -446,6 +455,13 @@ export const auth = betterAuth({
     openAPI(),
     expo(),
     admin(),
+    apiKey({
+      defaultPrefix: CLI_API_KEY_PREFIX,
+      enableSessionForAPIKeys: true,
+      keyExpiration: {
+        defaultExpiresIn: CLI_API_KEY_EXPIRY_SECS,
+      },
+    }),
     consentEventsPlugin(),
     anonymous({
       onLinkAccount: async ({ anonymousUser, newUser }) => {
@@ -692,6 +708,7 @@ export const auth = betterAuth({
       users,
       sessions,
       accounts,
+      apikeys,
     },
   }),
   databaseHooks: {

@@ -1,0 +1,25 @@
+{
+  "name": "@bahar/cli",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "bahar": "./src/index.ts"
+  },
+  "scripts": {
+    "clean": "rm -rf ./dist",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "npm run clean && npm run typecheck",
+    "build:binary": "bun build --compile --minify-whitespace --minify-syntax --outfile bahar src/index.ts",
+    "dev": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "@bunli/core": "0.1.0",
+    "open": "^10.1.0"
+  },
+  "devDependencies": {
+    "@bahar/typescript-config": "workspace:*",
+    "bun-types": "^1.3.5",
+    "typescript": "^5.8.3"
+  }
+}

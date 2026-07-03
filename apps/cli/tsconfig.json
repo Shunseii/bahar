@@ -1,0 +1,9 @@
+{
+  "extends": "@bahar/typescript-config/trpc.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": false,
+    "declarationMap": false
+  },
+  "include": ["src/**/*"]
+}

@@ -18,6 +18,14 @@
     "indentStyle": "space",
     "indentWidth": 2
   },
+  "overrides": [
+    {
+      "includes": ["apps/cli/**"],
+      "javascript": {
+        "globals": ["Bun"]
+      }
+    }
+  ],
   "linter": {
     "rules": {
       "a11y": {
