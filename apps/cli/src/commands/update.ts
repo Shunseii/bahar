@@ -1,6 +1,6 @@
 import { rename } from "node:fs/promises";
 import { defineCommand } from "@bunli/core";
-import packageJson from "../../package.json";
+import { CLI_VERSION } from "../lib/config";
 import {
   getAssetNameForPlatform,
   getLatestRelease,
@@ -26,7 +26,7 @@ export const updateCommand = defineCommand({
 
     const latestVersion = versionFromTag(release.tag_name);
 
-    if (latestVersion === packageJson.version) {
+    if (latestVersion === CLI_VERSION) {
       s.succeed("Already up to date.");
       return;
     }

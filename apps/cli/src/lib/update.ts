@@ -1,7 +1,6 @@
 import { join } from "node:path";
 import { colors } from "@bunli/utils";
-import packageJson from "../../package.json";
-import { GITHUB_REPO } from "./config";
+import { CLI_VERSION, GITHUB_REPO } from "./config";
 import { configDir } from "./credentials";
 
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
@@ -96,7 +95,7 @@ export const checkForUpdate = async (): Promise<void> => {
 
     const latestVersion = versionFromTag(release.tag_name);
 
-    if (latestVersion !== packageJson.version) {
+    if (latestVersion !== CLI_VERSION) {
       console.log(
         colors.yellow(
           `A new version of the Bahar CLI is available (${latestVersion}). Run \`bahar update\` to upgrade.`

@@ -1,15 +1,15 @@
 #!/usr/bin/env bun
 import { createCLI } from "@bunli/core";
-import packageJson from "../package.json";
 import { dbInfoCommand } from "./commands/db-info";
 import { loginCommand } from "./commands/login";
 import { skillCommand } from "./commands/skill";
 import { updateCommand } from "./commands/update";
+import { CLI_VERSION } from "./lib/config";
 import { checkForUpdate } from "./lib/update";
 
 const cli = createCLI({
   name: "bahar",
-  version: packageJson.version,
+  version: CLI_VERSION,
   description:
     "Query your Bahar dictionary and flashcard data from the command line",
 });
