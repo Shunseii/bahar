@@ -43,9 +43,10 @@ export const updateCommand = defineCommand({
     s.update(`Downloading ${latestVersion}...`);
 
     const binaryResponse = await fetch(asset.browser_download_url);
+    const binary = await binaryResponse.arrayBuffer();
     const tempPath = `${process.execPath}.download`;
 
-    await Bun.write(tempPath, binaryResponse);
+    await Bun.write(tempPath, binary);
 
     if (process.platform !== "win32") {
       await Bun.$`chmod +x ${tempPath}`.quiet();
