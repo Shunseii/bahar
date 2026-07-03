@@ -193,10 +193,9 @@ The CLI has its own release pipeline (`.github/workflows/release-cli.yml`), sepa
 from the web/mobile app releases, since it publishes standalone binaries rather than
 deploying anywhere:
 
-1. One-time setup: set the `BAHAR_WEB_URL` and `BAHAR_API_URL` repository variables
-   (Settings > Secrets and variables > Actions > Variables) to the production web/API
-   URLs — these get baked into the compiled binaries so the CLI doesn't default to
-   localhost.
+1. One-time setup: set the `BAHAR_WEB_URL` and `BAHAR_API_URL` secrets (managed via
+   Infisical, synced to GitHub Actions secrets) to the production web/API URLs — these
+   get baked into the compiled binaries so the CLI doesn't default to localhost.
 2. Cut a release by pushing a tag matching `cli-v*`:
    ```bash
    git tag cli-v1.0.0

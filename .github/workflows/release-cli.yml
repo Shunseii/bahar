@@ -24,14 +24,20 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Verify release URLs are configured
+        env:
+          BAHAR_WEB_URL: ${{ secrets.BAHAR_WEB_URL }}
+          BAHAR_API_URL: ${{ secrets.BAHAR_API_URL }}
         run: |
-          if [ -z "${{ vars.BAHAR_WEB_URL }}" ] || [ -z "${{ vars.BAHAR_API_URL }}" ]; then
-            echo "::error::Set the BAHAR_WEB_URL and BAHAR_API_URL repository variables (Settings > Secrets and variables > Actions > Variables) before cutting a CLI release."
+          if [ -z "$BAHAR_WEB_URL" ] || [ -z "$BAHAR_API_URL" ]; then
+            echo "::error::Set the BAHAR_WEB_URL and BAHAR_API_URL secrets (Settings > Secrets and variables > Actions > Secrets) before cutting a CLI release."
             exit 1
           fi
 
       - name: Build binaries
         working-directory: apps/cli
+        env:
+          BAHAR_WEB_URL: ${{ secrets.BAHAR_WEB_URL }}
+          BAHAR_API_URL: ${{ secrets.BAHAR_API_URL }}
         run: |
           declare -A targets=(
             [bun-linux-x64]=bahar-linux-x64
@@ -47,8 +53,8 @@ jobs:
               --target="$target" \
               --minify-whitespace \
               --minify-syntax \
-              --define "process.env.BAHAR_WEB_URL='${{ vars.BAHAR_WEB_URL }}'" \
-              --define "process.env.BAHAR_API_URL='${{ vars.BAHAR_API_URL }}'" \
+              --define "process.env.BAHAR_WEB_URL='$BAHAR_WEB_URL'" \
+              --define "process.env.BAHAR_API_URL='$BAHAR_API_URL'" \
               --outfile "$asset" \
               src/index.ts
           done
