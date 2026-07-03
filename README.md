@@ -115,8 +115,9 @@ Standalone command-line tool for querying your own dictionary/flashcard data dir
 - **Distribution**: standalone compiled binaries via GitHub Releases (see
   [Releasing the CLI](#releasing-the-cli) below)
 
-See [`.claude/skills/bahar-data-access`](./.claude/skills/bahar-data-access/SKILL.md)
-for how an agent is expected to use it.
+Run `bahar skill install` to install the bundled
+[`bahar-data-access`](./apps/cli/skill/SKILL.md) Claude Code skill, which explains this
+flow to an agent.
 
 #### Marketing (`apps/marketing`)
 

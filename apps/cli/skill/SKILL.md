@@ -28,7 +28,7 @@ bahar login
 
 Opens the user's browser to sign in to their Bahar account, then stores a personal API
 key locally (`~/.config/bahar/credentials.json`, or the platform equivalent). Only needs
-to be run again if the user explicitly logs out or the key is revoked.
+to be run again if the user explicitly logs out or the key expires (keys last 7 days).
 
 ## Step 2 — get connection info
 
@@ -88,16 +88,16 @@ per Step 4.
 ## Gotchas
 
 - Several `dictionary_entries` columns (`root`, `tags`, `antonyms`, `examples`,
-  `morphology`) are stored as JSON *text*. The web/mobile apps parse them through
-  Drizzle's `mode: "json"` on the way out — a raw SQL client will hand you back the raw
-  JSON string, so `JSON.parse()` (or your language's equivalent) it yourself.
+  `morphology`) are stored as JSON *text*. The app parses them on the way out — a raw
+  SQL client will hand you back the raw JSON string, so `JSON.parse()` (or your
+  language's equivalent) it yourself.
 - `flashcards` scheduling fields (`difficulty`, `stability`, `due`, `state`, `reps`,
-  `lapses`, etc.) are FSRS algorithm state, not plain data. Reading them for
-  study-coaching purposes is safe; writing to them to record a review requires running
-  the actual FSRS update logic first (see `packages/fsrs` in this repo) — don't
-  hand-write a new `due`/`state` value directly, it will desync the schedule.
-  Straightforward additive writes (new dictionary entries, new flashcards/decks) don't
-  have this concern.
+  `lapses`, etc.) are FSRS spaced-repetition algorithm state, not plain data. Reading
+  them for study-coaching purposes is safe. Writing a new review result requires
+  running the actual FSRS scheduling algorithm to compute the next values — don't
+  hand-write a new `due`/`state` directly, it will desync the schedule. If you can't
+  run the real FSRS algorithm, stick to additive writes only (new dictionary entries,
+  new flashcards/decks) and leave grading to the app itself.
 - The `access_token` from `bahar db-info` is a real credential scoped to that user's
   database. Treat it like a password — don't print it to logs or persist it anywhere
   beyond what's needed to make the connection.
