@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
   "peerDependencies": {
     "@bahar/drizzle-user-db-schemas": "workspace:*",
     "@bahar/result": "workspace:*",
@@ -14,9 +17,16 @@
     "@bahar/drizzle-user-db-schemas": "workspace:*",
     "@bahar/result": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
+    "@tursodatabase/sync": "^0.6.1",
+    "drizzle-orm": "^0.45.1",
+    "vitest": "^4.1.9",
     "zod": "4.3.6"
   },
   "dependencies": {
-    "nanoid": "^5.0.7"
+    "@bahar/fsrs": "workspace:^",
+    "@tanstack/pacer": "^0.16.3",
+    "date-fns": "^3.6.0",
+    "nanoid": "^5.0.7",
+    "ts-fsrs": "^5.2.3"
   }
 }

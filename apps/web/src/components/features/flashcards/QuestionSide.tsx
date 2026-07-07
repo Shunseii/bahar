@@ -1,8 +1,8 @@
+import type { FlashcardWithDictionaryEntry } from "@bahar/db-operations";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "motion/react";
 import type { FC } from "react";
-import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
-import { settingsTable } from "@/lib/db/operations/settings";
+import { settingsTable } from "@/lib/db/operations";
 
 /**
  * This displays the front side of the flashcard which contains

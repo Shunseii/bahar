@@ -31,6 +31,12 @@ export const DICTIONARY_ENTRY_COLUMNS = [
 export const FLASHCARD_LIMIT = 100;
 
 /**
+ * Default number of days after which a due card is considered part of the
+ * backlog queue instead of the regular queue.
+ */
+export const DEFAULT_BACKLOG_THRESHOLD_DAYS = 7;
+
+/**
  * Batch size for bulk operations.
  */
 export const BATCH_SIZE = 500;

@@ -1,3 +1,8 @@
+import {
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  type FlashcardQueue,
+  type FlashcardWithDictionaryEntry,
+} from "@bahar/db-operations";
 import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { createScheduler, toFsrsCard } from "@bahar/fsrs";
@@ -30,18 +35,14 @@ import {
   useState,
 } from "react";
 import { type Grade, Rating } from "ts-fsrs";
-
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { api } from "@/lib/api";
-import { decksTable } from "@/lib/db/operations/decks";
 import {
-  DEFAULT_BACKLOG_THRESHOLD_DAYS,
-  type FlashcardQueue,
-  type FlashcardWithDictionaryEntry,
+  decksTable,
   flashcardsTable,
-} from "@/lib/db/operations/flashcards";
-import { progressTable } from "@/lib/db/operations/progress";
+  progressTable,
+} from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 import { AnswerSide } from "../AnswerSide";
 import { QuestionSide } from "../QuestionSide";

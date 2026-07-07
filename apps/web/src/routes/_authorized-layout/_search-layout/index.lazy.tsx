@@ -1,3 +1,4 @@
+import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "@bahar/db-operations";
 import { cn } from "@bahar/design-system";
 import { Button } from "@bahar/web-ui/components/button";
 import { Card } from "@bahar/web-ui/components/card";
@@ -17,11 +18,7 @@ import { InfiniteScroll } from "@/components/search/InfiniteScroll";
 import { searchQueryAtom } from "@/components/search/state";
 import { useSearch } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import {
-  DEFAULT_BACKLOG_THRESHOLD_DAYS,
-  flashcardsTable,
-} from "@/lib/db/operations/flashcards";
-import { settingsTable } from "@/lib/db/operations/settings";
+import { flashcardsTable, settingsTable } from "@/lib/db/operations";
 
 const Index = () => {
   const { formatNumber, formatElapsedTime } = useFormatNumber();

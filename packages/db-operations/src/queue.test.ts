@@ -5,15 +5,42 @@ import {
   hasPendingOperations,
 } from "./queue";
 
-vi.mock("@sentry/react", () => ({
-  logger: { error: vi.fn(), info: vi.fn() },
-}));
-
-const wait = async (ms: number): Promise<void> => {
-  return new Promise((resolve) => {
+const wait = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-};
+
+describe("enqueueDbOperation", () => {
+  it("resolves with the operation's result", async () => {
+    const dummyFn = vi.fn(() => Promise.resolve("result"));
+
+    await expect(enqueueDbOperation(dummyFn)).resolves.toBe("result");
+  });
+
+  it("rejects when the operation throws", async () => {
+    const dummyFn = vi.fn(() => Promise.reject(new Error("error")));
+
+    await expect(enqueueDbOperation(dummyFn)).rejects.toThrow("error");
+  });
+
+  it("runs operations serially (concurrency 1)", async () => {
+    const order: string[] = [];
+
+    const first = enqueueDbOperation(async () => {
+      order.push("first-start");
+      await wait(20);
+      order.push("first-end");
+    });
+    const second = enqueueDbOperation(async () => {
+      order.push("second-start");
+    });
+
+    await Promise.all([first, second]);
+
+    // The second op must not start until the first fully finishes.
+    expect(order).toEqual(["first-start", "first-end", "second-start"]);
+  });
+});
 
 describe("enqueueSyncOperation", () => {
   it("merges concurrent calls into a single in-flight promise", async () => {
@@ -32,34 +59,14 @@ describe("enqueueSyncOperation", () => {
   it("resets pending state after the operation rejects", async () => {
     const sync1 = vi.fn(() => Promise.reject(new Error("sync1 failed")));
 
-    const promise1 = enqueueSyncOperation(sync1);
-
-    await expect(promise1).rejects.toThrow("sync1 failed");
+    await expect(enqueueSyncOperation(sync1)).rejects.toThrow("sync1 failed");
     expect(hasPendingOperations()).toBe(false);
 
     const sync2 = vi.fn(() => Promise.resolve());
-
     const promise2 = enqueueSyncOperation(sync2);
     await promise2;
 
     expect(sync2).toHaveBeenCalledTimes(1);
-    expect(promise2).not.toBe(promise1);
-  });
-});
-
-describe("enqueueDbOperation", () => {
-  it("resolves with the operation's result", async () => {
-    const dummyFn = vi.fn(() => Promise.resolve("result"));
-    const promise = enqueueDbOperation(dummyFn);
-
-    await expect(promise).resolves.toBe("result");
-  });
-
-  it("rejects when the operation throws", async () => {
-    const dummyFn = vi.fn(() => Promise.reject(new Error("error")));
-    const promise = enqueueDbOperation(dummyFn);
-
-    await expect(promise).rejects.toThrow("error");
   });
 });
 
@@ -67,13 +74,10 @@ describe("hasPendingOperations", () => {
   it("reflects sync-pending state across the operation's lifecycle", async () => {
     expect(hasPendingOperations()).toBe(false);
 
-    const dummyFn = vi.fn(() => wait(10));
-    const promise = enqueueSyncOperation(dummyFn);
-
+    const promise = enqueueSyncOperation(() => wait(10));
     expect(hasPendingOperations()).toBe(true);
 
     await promise;
-
     expect(hasPendingOperations()).toBe(false);
   });
 });

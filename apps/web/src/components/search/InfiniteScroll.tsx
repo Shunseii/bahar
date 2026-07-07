@@ -37,9 +37,11 @@ import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
 import { intlFormatDistance } from "@/lib/date";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
-import { settingsTable } from "@/lib/db/operations/settings";
+import {
+  dictionaryEntriesTable,
+  flashcardsTable,
+  settingsTable,
+} from "@/lib/db/operations";
 import { Highlight } from "./Highlight";
 
 const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {

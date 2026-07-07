@@ -26,7 +26,7 @@ import { useMutation } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { decksTable } from "@/lib/db/operations/decks";
+import { decksTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 import { z } from "@/lib/zod";
 import { Autocomplete } from "../../Autocomplete";

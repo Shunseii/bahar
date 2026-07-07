@@ -31,8 +31,7 @@ import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { Page } from "@/components/Page";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { decksTable } from "@/lib/db/operations/decks";
-import { settingsTable } from "@/lib/db/operations/settings";
+import { decksTable, settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 
 const Decks = () => {
