@@ -1,3 +1,4 @@
+import { enqueueSyncOperation } from "@bahar/db-operations";
 import { ensureDb, recoverFromSyncConflict } from "@/lib/db";
 import { isSyncError, syncDatabase } from "@/lib/db/adapter";
 import {
@@ -31,7 +32,10 @@ export const performSync = async () => {
     const maxTsBefore = await getMaxTimestamp();
     const countBefore = await getEntryCount();
 
-    await syncDatabase();
+    // Route through the shared queue so sync (pull/push) serializes with local
+    // writes on the single DB queue -- they never overlap -- and concurrent
+    // sync requests merge into one in-flight run.
+    await enqueueSyncOperation(() => syncDatabase());
 
     const maxTsAfter = await getMaxTimestamp();
     const countAfter = await getEntryCount();
