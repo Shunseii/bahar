@@ -5,7 +5,7 @@ import {
   type SelectDictionaryEntry,
 } from "@bahar/drizzle-user-db-schemas";
 import { eq, max, sql } from "drizzle-orm";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 import { enqueueDbOperation } from "../queue";
 import type { NullToUndefined, TableOperation } from "../types";
 import type { OperationDeps } from "./deps";

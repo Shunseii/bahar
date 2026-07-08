@@ -8,7 +8,7 @@ import {
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
 import { and, eq, inArray, sql } from "drizzle-orm";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "../constants";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";

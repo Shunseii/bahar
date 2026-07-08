@@ -3,7 +3,7 @@ import {
   type SelectSetting,
   settings,
 } from "@bahar/drizzle-user-db-schemas";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
 import type { OperationDeps } from "./deps";

@@ -18,7 +18,7 @@ import {
   lte,
   max,
 } from "drizzle-orm";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 import type { TableOperation } from "../types";
 import type { DrizzleDb, OperationDeps } from "./deps";
 

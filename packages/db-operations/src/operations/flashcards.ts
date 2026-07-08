@@ -10,7 +10,7 @@ import {
 } from "@bahar/drizzle-user-db-schemas";
 import { createScheduler } from "@bahar/fsrs";
 import { and, countDistinct, eq, gt, inArray, lte, sql } from "drizzle-orm";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 import { type Card, Rating, type ReviewLog } from "ts-fsrs";
 import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "../constants";
 import { enqueueDbOperation } from "../queue";
