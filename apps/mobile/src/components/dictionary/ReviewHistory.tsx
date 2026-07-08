@@ -9,8 +9,8 @@ import { Text, View } from "react-native";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { intlFormatDistance } from "@/lib/date";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
-import { settingsTable } from "@/lib/db/operations/settings";
+import { flashcardsTable } from "@/lib/db/operations";
+import { settingsTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { api } from "@/utils/api";
 
@@ -244,8 +244,8 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
   const { i18n } = useLingui();
 
   const { data: settingsData } = useQuery({
-    queryFn: settingsTable.get.query,
-    ...settingsTable.get.cacheOptions,
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
   });
   const showReverse = settingsData?.show_reverse_flashcards ?? false;
 
@@ -260,7 +260,7 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
   });
 
   const { data: flashcardData } = useQuery({
-    queryFn: () => flashcardsTable.findByEntryId.query({ entryId }),
+    queryFn: () => flashcardsTable.findByEntryId.query(entryId),
     queryKey: [...flashcardsTable.findByEntryId.cacheOptions.queryKey, entryId],
   });
 

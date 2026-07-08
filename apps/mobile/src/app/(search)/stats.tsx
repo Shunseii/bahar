@@ -21,9 +21,9 @@ import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
-import { progressTable } from "@/lib/db/operations/progress";
-import { settingsTable } from "@/lib/db/operations/settings";
+import { flashcardsTable } from "@/lib/db/operations";
+import { progressTable } from "@/lib/db/operations";
+import { settingsTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { api, queryClient } from "@/utils/api";
 
@@ -37,8 +37,8 @@ export default function StatsScreen() {
   const { formatNumber } = useFormatNumber();
 
   const { data: settingsData } = useQuery({
-    queryFn: settingsTable.get.query,
-    ...settingsTable.get.cacheOptions,
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
   });
 
   const showReverse = settingsData?.show_reverse_flashcards ?? false;

@@ -19,6 +19,12 @@ import type { OperationDeps } from "./deps";
  */
 const daysToMs = (days: number) => days * 24 * 60 * 60 * 1000;
 
+export type DeckWithCounts = SelectDeck & {
+  to_review: number;
+  to_review_backlog: number;
+  total_hits: number;
+};
+
 export const makeDecksTable = ({ getDb }: OperationDeps) =>
   ({
     list: {
@@ -28,7 +34,7 @@ export const makeDecksTable = ({ getDb }: OperationDeps) =>
       }: {
         show_reverse?: boolean;
         backlogThresholdDays?: number;
-      }): Promise<
+      } = {}): Promise<
         (SelectDeck & {
           to_review: number;
           to_review_backlog: number;
@@ -193,6 +199,22 @@ export const makeDecksTable = ({ getDb }: OperationDeps) =>
         }),
       cacheOptions: {
         queryKey: ["turso.decks.delete"],
+      },
+    },
+    get: {
+      query: async ({ id }: { id: string }): Promise<SelectDeck | null> => {
+        const drizzleDb = await getDb();
+
+        const [res] = await drizzleDb
+          .select()
+          .from(decks)
+          .where(eq(decks.id, id))
+          .limit(1);
+
+        return res ?? null;
+      },
+      cacheOptions: {
+        queryKey: ["turso.decks.get"],
       },
     },
   }) satisfies Record<string, TableOperation>;
