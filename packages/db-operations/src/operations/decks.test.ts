@@ -509,4 +509,19 @@ describe("decksTable", () => {
       });
     });
   });
+
+  describe("get", () => {
+    it("returns the deck by id", async () => {
+      const deck = await insertDeck(testDb, { name: "My Deck" });
+
+      expect(await decksTable.get.query({ id: deck.id })).toMatchObject({
+        id: deck.id,
+        name: "My Deck",
+      });
+    });
+
+    it("returns null when the deck does not exist", async () => {
+      expect(await decksTable.get.query({ id: "not-a-real-id" })).toBeNull();
+    });
+  });
 });

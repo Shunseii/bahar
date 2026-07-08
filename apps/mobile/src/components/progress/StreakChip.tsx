@@ -4,7 +4,7 @@ import { Flame } from "lucide-react-native";
 import type { FC } from "react";
 import { Text, View } from "react-native";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { progressTable } from "@/lib/db/operations/progress";
+import { progressTable } from "@/lib/db/operations";
 
 interface StreakChipProps {
   className?: string;

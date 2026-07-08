@@ -8,7 +8,7 @@ import {
   type SelectFlashcard,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
-import { createScheduler } from "@bahar/fsrs";
+import { createNewFlashcard, createScheduler } from "@bahar/fsrs";
 import { and, countDistinct, eq, gt, inArray, lte, sql } from "drizzle-orm";
 import { nanoid } from "nanoid/non-secure";
 import { type Card, Rating, type ReviewLog } from "ts-fsrs";
@@ -441,6 +441,46 @@ export const makeFlashcardsTable = (
       },
       cacheOptions: {
         queryKey: ["turso.flashcards.findByEntryId"],
+      },
+    },
+    /**
+     * Creates the forward + reverse flashcard pair for a dictionary entry --
+     * the two review cards every new entry gets. Both start as fresh FSRS
+     * cards (createNewFlashcard = the canonical empty card, due now).
+     */
+    createFlashcardPair: {
+      mutation: ({
+        dictionary_entry_id,
+      }: {
+        dictionary_entry_id: string;
+      }): Promise<{ forward: SelectFlashcard; reverse: SelectFlashcard }> =>
+        enqueueDbOperation(async () => {
+          const drizzleDb = await getDb();
+
+          const values = (["forward", "reverse"] as const).map((direction) => ({
+            id: nanoid(),
+            is_hidden: false,
+            ...createNewFlashcard(dictionary_entry_id, direction),
+          }));
+
+          const rows = await drizzleDb
+            .insert(flashcards)
+            .values(values)
+            .returning();
+
+          const forward = rows.find((r) => r.direction === "forward");
+          const reverse = rows.find((r) => r.direction === "reverse");
+
+          if (!(forward && reverse)) {
+            throw new Error(
+              `Failed to create flashcard pair for entry: ${dictionary_entry_id}`
+            );
+          }
+
+          return { forward, reverse };
+        }),
+      cacheOptions: {
+        queryKey: ["turso.flashcards.createFlashcardPair"],
       },
     },
     findByEntryAndDirection: {

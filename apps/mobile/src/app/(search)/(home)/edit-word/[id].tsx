@@ -29,8 +29,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
+import { flashcardsTable } from "@/lib/db/operations";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import { removeFromSearchIndex, updateSearchIndex } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
@@ -90,7 +90,7 @@ export default function EditWordScreen() {
     isLoading,
     error,
   } = useQuery({
-    queryFn: () => dictionaryEntriesTable.entry.query({ id: id! }),
+    queryFn: () => dictionaryEntriesTable.entry.query(id!),
     queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, id],
     enabled: !!id,
   });

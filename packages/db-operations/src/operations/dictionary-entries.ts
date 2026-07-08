@@ -4,7 +4,7 @@ import {
   type InsertDictionaryEntry,
   type SelectDictionaryEntry,
 } from "@bahar/drizzle-user-db-schemas";
-import { eq, max, sql } from "drizzle-orm";
+import { desc, eq, inArray, max, sql } from "drizzle-orm";
 import { nanoid } from "nanoid/non-secure";
 import { enqueueDbOperation } from "../queue";
 import type { NullToUndefined, TableOperation } from "../types";
@@ -226,6 +226,47 @@ export const makeDictionaryEntriesTable = ({ getDb }: OperationDeps) =>
       },
       cacheOptions: {
         queryKey: ["turso.dictionaryEntries.maxUpdatedAt"],
+      },
+    },
+    entriesByIds: {
+      query: async ({
+        ids,
+      }: {
+        ids: string[];
+      }): Promise<Map<string, SelectDictionaryEntry>> => {
+        if (ids.length === 0) return new Map();
+
+        const drizzleDb = await getDb();
+        const rows = await drizzleDb
+          .select()
+          .from(dictionaryEntries)
+          .where(inArray(dictionaryEntries.id, ids));
+
+        return new Map(rows.map((row) => [row.id, row]));
+      },
+      cacheOptions: {
+        queryKey: ["turso.dictionaryEntries.entriesByIds"],
+      },
+    },
+    list: {
+      query: async ({
+        limit = 50,
+        offset = 0,
+      }: {
+        limit?: number;
+        offset?: number;
+      } = {}): Promise<SelectDictionaryEntry[]> => {
+        const drizzleDb = await getDb();
+
+        return drizzleDb
+          .select()
+          .from(dictionaryEntries)
+          .orderBy(desc(dictionaryEntries.created_at_timestamp_ms))
+          .limit(limit)
+          .offset(offset);
+      },
+      cacheOptions: {
+        queryKey: ["turso.dictionaryEntries.list"],
       },
     },
   }) satisfies Record<string, TableOperation>;

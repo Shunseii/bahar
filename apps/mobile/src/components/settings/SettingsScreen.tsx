@@ -22,7 +22,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useThemeColors } from "@/lib/theme";
-import { settingsTable } from "../../lib/db/operations/settings";
+import { settingsTable } from "../../lib/db/operations";
 import { queryClient } from "../../utils/api";
 
 const ANTONYMS_MODES: {
@@ -50,22 +50,22 @@ interface SettingsScreenProps {
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
   const colors = useThemeColors();
   const { data: settings, status } = useQuery({
-    queryFn: () => settingsTable.get.query(),
-    ...settingsTable.get.cacheOptions,
+    queryFn: () => settingsTable.getSettings.query(),
+    ...settingsTable.getSettings.cacheOptions,
   });
 
   const { mutateAsync: updateSettings } = useMutation({
     mutationFn: settingsTable.update.mutation,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: settingsTable.get.cacheOptions.queryKey,
+        queryKey: settingsTable.getSettings.cacheOptions.queryKey,
       });
     },
   });
 
   const handleAntonymsModeChange = async (mode: ShowAntonymsMode) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    await updateSettings({ updates: { show_antonyms_mode: mode } });
+    await updateSettings({ updates: { show_antonyms_in_flashcard: mode } });
   };
 
   const handleLogout = () => {
@@ -112,7 +112,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ onLogout }) => {
                   key={mode.value}
                   mode={mode}
                   onSelect={() => handleAntonymsModeChange(mode.value)}
-                  selected={settings?.show_antonyms_mode === mode.value}
+                  selected={settings?.show_antonyms_in_flashcard === mode.value}
                 />
               ))}
             </View>

@@ -24,7 +24,7 @@ import { toast } from "sonner-native";
 import { TagsInput } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
-import { decksTable } from "@/lib/db/operations/decks";
+import { decksTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 

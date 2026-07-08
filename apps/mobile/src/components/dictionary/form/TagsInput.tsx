@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Checkbox } from "@/components/ui/checkbox";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { recentTagsAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 
@@ -34,7 +34,7 @@ export const TagsInput = ({
   const [modalOpen, setModalOpen] = useState(false);
 
   const { data: allTags } = useQuery({
-    queryFn: dictionaryEntriesTable.tags.query,
+    queryFn: () => dictionaryEntriesTable.tags.query(),
     ...dictionaryEntriesTable.tags.cacheOptions,
   });
 

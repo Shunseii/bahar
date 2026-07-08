@@ -31,7 +31,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { type SortOption, useInfiniteSearch } from "@/hooks/useSearch";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { performSync } from "@/lib/db/sync";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";

@@ -250,4 +250,44 @@ describe("dictionaryEntriesTable", () => {
       expect(await dictionaryEntriesTable.maxUpdatedAt.query()).toBeNull();
     });
   });
+
+  describe("entriesByIds", () => {
+    it("returns a map of the requested ids", async () => {
+      const a = await insertDictionaryEntry(testDb, { word: "أ" });
+      const b = await insertDictionaryEntry(testDb, { word: "ب" });
+      await insertDictionaryEntry(testDb); // not requested
+
+      const map = await dictionaryEntriesTable.entriesByIds.query({
+        ids: [a.id, b.id],
+      });
+
+      expect(map.size).toBe(2);
+      expect(map.get(a.id)?.word).toBe("أ");
+      expect(map.get(b.id)?.word).toBe("ب");
+    });
+
+    it("returns an empty map for an empty id list", async () => {
+      const map = await dictionaryEntriesTable.entriesByIds.query({ ids: [] });
+      expect(map.size).toBe(0);
+    });
+  });
+
+  describe("list", () => {
+    it("returns entries newest-first, paginated", async () => {
+      await insertDictionaryEntry(testDb, { created_at_timestamp_ms: 1000 });
+      await insertDictionaryEntry(testDb, { created_at_timestamp_ms: 3000 });
+      await insertDictionaryEntry(testDb, { created_at_timestamp_ms: 2000 });
+
+      const all = await dictionaryEntriesTable.list.query();
+      expect(all.map((e) => e.created_at_timestamp_ms)).toEqual([
+        3000, 2000, 1000,
+      ]);
+
+      const page = await dictionaryEntriesTable.list.query({
+        limit: 1,
+        offset: 1,
+      });
+      expect(page.map((e) => e.created_at_timestamp_ms)).toEqual([2000]);
+    });
+  });
 });

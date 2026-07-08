@@ -482,4 +482,30 @@ describe("flashcardsTable", () => {
       expect(postRevlogBatch).not.toHaveBeenCalled();
     });
   });
+
+  describe("createFlashcardPair", () => {
+    it("creates fresh forward + reverse cards for an entry", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+
+      const { forward, reverse } =
+        await flashcardsTable.createFlashcardPair.mutation({
+          dictionary_entry_id: entry.id,
+        });
+
+      expect(forward).toMatchObject({
+        dictionary_entry_id: entry.id,
+        direction: "forward",
+        state: FlashcardState.NEW,
+        is_hidden: false,
+      });
+      expect(reverse).toMatchObject({
+        dictionary_entry_id: entry.id,
+        direction: "reverse",
+        state: FlashcardState.NEW,
+      });
+
+      const all = await flashcardsTable.findByEntryId.query(entry.id);
+      expect(all).toHaveLength(2);
+    });
+  });
 });
