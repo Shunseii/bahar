@@ -6,8 +6,9 @@
  */
 
 import { err, ok, type Result, tryCatch } from "@bahar/result";
+import { getDbPath } from "@tursodatabase/sync-react-native";
 import { reloadAppAsync } from "expo";
-import { File, Paths } from "expo-file-system/next";
+import { File } from "expo-file-system/next";
 import { api } from "../../utils/api";
 import {
   connect,
@@ -71,17 +72,21 @@ export const resetDb = async (): Promise<void> => {
 
 /**
  * Deletes the local replica files. The remote Turso database is not affected.
- * Requires an app restart afterwards because libsql's native state
- * can only be fully reset by restarting the process.
+ * Requires an app restart afterwards because the native engine's state can
+ * only be fully reset by restarting the process.
+ *
+ * sync-react-native stores the replica in its own writable directory (iOS
+ * Documents / Android database dir), resolved via getDbPath -- not the
+ * expo-sqlite `Documents/SQLite` location -- writing the db file plus sidecar
+ * files (-wal, -shm, -info).
  */
 export const deleteLocalDb = (): void => {
   if (!currentDbName) return;
+  const basePath = getDbPath(currentDbName);
   for (const suffix of ["", "-wal", "-shm", "-info"]) {
-    const file = new File(
-      Paths.document,
-      "SQLite",
-      `${currentDbName}${suffix}`
-    );
+    const path = `${basePath}${suffix}`;
+    const uri = path.startsWith("file://") ? path : `file://${path}`;
+    const file = new File(uri);
     if (file.exists) {
       file.delete();
     }

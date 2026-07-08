@@ -57,12 +57,6 @@
         }
       ],
       "expo-secure-store",
-      [
-        "expo-sqlite",
-        {
-          "useLibSQL": true
-        }
-      ],
       "expo-notifications"
     ],
     "experiments": {
