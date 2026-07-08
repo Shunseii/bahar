@@ -17,16 +17,22 @@ const SNIPPET_LENGTH = 300;
 const bodySnippet = (body: string): string =>
   body.trim().replace(/\s+/g, " ").slice(0, SNIPPET_LENGTH);
 
-const looksRateLimited = ({
-  status,
-  body,
-}: {
-  status: number;
-  body: string;
-}): boolean =>
-  status === 429 ||
-  status === 503 ||
-  /rate limit|too many requests|try again/i.test(body);
+/**
+ * Status-based hint only. We deliberately do NOT sniff the body text for
+ * phrases like "rate limit" — an unrelated response (e.g. a 401 whose body
+ * happens to mention "try again") was being mislabeled as rate limiting,
+ * hiding the real error. Trust the status code, and always surface the raw
+ * body so the exact server message is visible.
+ */
+const statusHint = (status: number): string => {
+  if (status === 401 || status === 403) {
+    return " You're not authenticated or your session expired — run `bahar login` and try again.";
+  }
+  if (status === 429 || status === 503) {
+    return " The server is rate limiting or temporarily unavailable — wait a moment and try again.";
+  }
+  return "";
+};
 
 /**
  * Reads a fetch `Response` as JSON, turning the two failure modes that
@@ -49,11 +55,8 @@ export const readJsonResponse = async <T>({
   const body = await response.text();
 
   if (!response.ok) {
-    const hint = looksRateLimited({ status: response.status, body })
-      ? " The server is rate limiting or temporarily unavailable — wait a moment and try again."
-      : "";
     throw new HttpResponseError({
-      message: `${context} failed (${response.status} ${response.statusText}).${hint}${
+      message: `${context} failed (${response.status} ${response.statusText}).${statusHint(response.status)}${
         body ? ` Response: ${bodySnippet(body)}` : ""
       }`,
       status: response.status,
@@ -64,12 +67,9 @@ export const readJsonResponse = async <T>({
     return JSON.parse(body) as T;
   } catch {
     const contentType = response.headers.get("content-type") ?? "unknown";
-    const hint = looksRateLimited({ status: response.status, body })
-      ? " This looks like a rate-limit or maintenance page — wait a moment and try again."
-      : " The server returned a non-JSON response, which usually means a proxy/CDN error or maintenance page.";
     throw new HttpResponseError({
-      message: `${context} returned a non-JSON response (status ${response.status}, content-type ${contentType}).${hint}${
-        body ? ` Response: ${bodySnippet(body)}` : ""
+      message: `${context} returned a non-JSON response (status ${response.status}, content-type ${contentType}).${statusHint(response.status)} Response: ${
+        body ? bodySnippet(body) : "(empty body)"
       }`,
       status: response.status,
     });

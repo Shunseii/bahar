@@ -61,6 +61,38 @@ describe("readJsonResponse", () => {
     await expect(promise).rejects.toThrow(/rate limiting|try again/i);
   });
 
+  test("adds an auth hint for a 401", async () => {
+    const response = new Response("Unauthorized", {
+      status: 401,
+      statusText: "Unauthorized",
+    });
+
+    const promise = readJsonResponse({
+      response,
+      context: "Fetching database info",
+    });
+
+    // Should point the user at `bahar login`, and still surface the raw body.
+    await expect(promise).rejects.toThrow(/bahar login/);
+    await expect(promise).rejects.toThrow(/Unauthorized/);
+  });
+
+  test("does not label a non-429 as rate limited just because the body says so", async () => {
+    // Regression: a 401 whose body happens to contain rate-limit-ish phrasing
+    // must not be reported as rate limiting (the real error was auth).
+    const response = new Response("Please try again later", {
+      status: 401,
+      statusText: "Unauthorized",
+    });
+
+    const promise = readJsonResponse({
+      response,
+      context: "Fetching database info",
+    });
+
+    await expect(promise).rejects.not.toThrow(/rate limit/i);
+  });
+
   test("exposes the status on the thrown error", async () => {
     const response = new Response("nope", { status: 503 });
 
