@@ -307,7 +307,21 @@ export const Route = createFileRoute("/_authorized-layout")({
   beforeLoad: async ({ location }) => {
     const sessionResult = await getCachedSession();
 
+    if (sessionResult.error) {
+      // Distinguishes 429 (rate limit) vs 401 (real unauth) vs network/other.
+      Sentry.logger.warn("getSession failed", {
+        status: sessionResult.error.status,
+        statusText: sessionResult.error.statusText,
+        href: location.href,
+      });
+    }
+
     if (isLoggedOut(sessionResult)) {
+      Sentry.logger.warn("Redirecting to login", {
+        reason: "no_session",
+        status: sessionResult.error?.status ?? null,
+        href: location.href,
+      });
       throw redirect({ to: "/login", search: { redirect: location.href } });
     }
 
@@ -345,6 +359,10 @@ export const Route = createFileRoute("/_authorized-layout")({
           break;
 
         case "unauthorized":
+          Sentry.logger.warn("Redirecting to login", {
+            reason: "initdb_unauthorized",
+            href: location.href,
+          });
           throw redirect({ to: "/login", search: { redirect: location.href } });
 
         case "get_db_info_failed":

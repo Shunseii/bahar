@@ -38,7 +38,7 @@ export const useLogout = () => {
     Sentry.setUser(null);
 
     resetOramaDb();
-    await resetDb();
+    await resetDb("logout");
   };
 
   return { logout };
