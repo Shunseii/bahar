@@ -1,22 +1,35 @@
 /**
- * Expo-SQLite database adapter with libSQL/Turso sync support.
+ * Database adapter backed by @tursodatabase/sync-react-native.
  *
- * Implements the DatabaseAdapter interface from @bahar/db-operations
- * for cross-platform database operations using expo-sqlite.
+ * Mobile runs the same Turso engine as web (sync-wasm) rather than the older
+ * expo-sqlite/libSQL integration, so both platforms share one engine, one
+ * sync protocol, and the same behavior the shared @bahar/db-operations test
+ * harness verifies.
+ *
+ * Two surfaces are exposed:
+ * - getDrizzleDb(): a drizzle instance (via the sqlite-proxy adapter in
+ *   ./turso-sync-adapter) used by the shared operations. There's no first-party
+ *   drizzle driver for sync-react-native (its Database doesn't extend
+ *   @tursodatabase/database-common's DatabasePromise), so the proxy is the
+ *   supported path -- see BAH-155.
+ * - the DatabaseAdapter interface (prepare/exec/run/push/pull/close) used by
+ *   migrations (../index) and sync bookkeeping (./sync) that need raw SQL.
  */
 
 import type { DatabaseAdapter, PreparedStatement } from "@bahar/db-operations";
-import * as schema from "@bahar/drizzle-user-db-schemas";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import * as SQLite from "expo-sqlite";
+import {
+  type BindParams,
+  type Database,
+  connect as tursoConnect,
+} from "@tursodatabase/sync-react-native";
+import { buildDrizzleDb } from "./turso-sync-adapter";
 
 export const isSyncError = (error: unknown): boolean =>
   String(error).includes("sync error");
 
-// Store the database instance for sync operations
-let dbInstance: SQLite.SQLiteDatabase | null = null;
+let dbInstance: Database | null = null;
 
-type DrizzleDb = ReturnType<typeof drizzle<typeof schema>>;
+type DrizzleDb = ReturnType<typeof buildDrizzleDb>;
 let drizzleDb: DrizzleDb | null = null;
 
 export const getDrizzleDb = (): DrizzleDb => {
@@ -27,51 +40,44 @@ export const getDrizzleDb = (): DrizzleDb => {
 };
 
 /**
- * Wraps an expo-sqlite database to implement the DatabaseAdapter interface.
+ * Wraps a sync-react-native Database as the DatabaseAdapter interface for the
+ * raw-SQL callers (migrations, sync bookkeeping).
  */
-const createAdapter = (db: SQLite.SQLiteDatabase): DatabaseAdapter => {
-  // Store reference for sync operations
+const createAdapter = (db: Database): DatabaseAdapter => {
   dbInstance = db;
 
   return {
     prepare<T = unknown>(sql: string): PreparedStatement<T> {
+      const stmt = db.prepare(sql);
       return {
         async all(params: unknown[] = []): Promise<T[]> {
-          const result = await db.getAllAsync<T>(
-            sql,
-            params as SQLite.SQLiteBindParams
-          );
-          return result;
+          return (await stmt.all(params as BindParams)) as T[];
         },
         async get(params: unknown[] = []): Promise<T | undefined> {
-          const result = await db.getFirstAsync<T>(
-            sql,
-            params as SQLite.SQLiteBindParams
-          );
-          return result ?? undefined;
+          return (await stmt.get(params as BindParams)) as T | undefined;
         },
         async run(params: unknown[] = []): Promise<void> {
-          await db.runAsync(sql, params as SQLite.SQLiteBindParams);
+          await stmt.run(params as BindParams);
         },
       };
     },
 
     async exec(sql: string): Promise<void> {
-      await db.execAsync(sql);
+      await db.exec(sql);
     },
 
     async push(): Promise<void> {
-      await db.syncLibSQL();
+      await db.push();
     },
 
     async pull(): Promise<void> {
-      await db.syncLibSQL();
+      await db.pull();
     },
 
     async close(): Promise<void> {
       drizzleDb = null;
       dbInstance = null;
-      await db.closeAsync();
+      db.close();
     },
   };
 };
@@ -86,32 +92,30 @@ export interface ConnectOptions {
 }
 
 /**
- * Opens a local SQLite database that syncs with a remote Turso database.
+ * Opens a local database that syncs with a remote Turso database.
  */
 export const connect = async (
   options: ConnectOptions
 ): Promise<DatabaseAdapter> => {
-  const db = await SQLite.openDatabaseAsync(options.name, {
-    finalizeUnusedStatementsBeforeClosing: false,
-    libSQLOptions: {
-      url: options.url,
-      authToken: options.authToken,
-      remoteOnly: false,
-    },
+  const db = await tursoConnect({
+    path: options.name,
+    url: options.url,
+    authToken: options.authToken,
   });
 
-  drizzleDb = drizzle(db, { schema });
+  drizzleDb = buildDrizzleDb(() => dbInstance);
 
   return createAdapter(db);
 };
 
 /**
- * Manually triggers a sync with the remote database.
- * Call this periodically or after local changes.
+ * Manually triggers a sync with the remote database: pull remote changes, then
+ * push local ones. Call periodically or after local changes.
  */
 export const syncDatabase = async (): Promise<void> => {
   if (dbInstance) {
-    await dbInstance.syncLibSQL();
+    await dbInstance.pull();
+    await dbInstance.push();
   }
 };
 
