@@ -32,7 +32,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import type { SortOption } from "@/hooks/useSearch";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
 import {
   activeFilterCountAtom,
   selectedTagsAtom,

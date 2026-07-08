@@ -27,7 +27,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import type { FlashcardWithDictionaryEntry } from "../../lib/db/operations/flashcards";
+import type { FlashcardWithDictionaryEntry } from "../../lib/db/operations";
 import {
   ExamplesSection,
   HuroofSection,

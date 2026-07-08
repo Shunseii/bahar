@@ -34,11 +34,16 @@ import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { deleteLocalDb, resetDb } from "@/lib/db";
-import { settingsTable, type UserSettings } from "@/lib/db/operations/settings";
+import { settingsTable } from "@/lib/db/operations";
 import { resetOramaDb } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import { api, queryClient } from "@/utils/api";
 import { authClient } from "@/utils/auth-client";
+
+interface SettingsFormValues {
+  show_antonyms_in_flashcard: ShowAntonymsMode;
+  show_reverse_flashcards: boolean;
+}
 
 interface SettingRowProps {
   title: string;
@@ -221,20 +226,24 @@ export default function SettingsScreen() {
   const { scrollHandler } = useCollapsibleHeader(t`Settings`);
 
   const { data: settings, isLoading } = useQuery({
-    queryFn: settingsTable.get.query,
-    ...settingsTable.get.cacheOptions,
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
   });
 
-  const { control, reset } = useForm<UserSettings>({
+  const { control, reset } = useForm<SettingsFormValues>({
     defaultValues: {
-      show_antonyms_mode: "answer",
+      show_antonyms_in_flashcard: "answer",
       show_reverse_flashcards: false,
     },
   });
 
   useEffect(() => {
     if (settings) {
-      reset(settings);
+      reset({
+        show_antonyms_in_flashcard:
+          settings.show_antonyms_in_flashcard ?? "answer",
+        show_reverse_flashcards: settings.show_reverse_flashcards ?? false,
+      });
     }
   }, [settings, reset]);
 
@@ -242,7 +251,7 @@ export default function SettingsScreen() {
     mutationFn: settingsTable.update.mutation,
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: settingsTable.get.cacheOptions.queryKey,
+        queryKey: settingsTable.getSettings.cacheOptions.queryKey,
       });
     },
     onError: () => toast.error(t`Failed to update settings`),
@@ -458,14 +467,15 @@ export default function SettingsScreen() {
                 </Text>
                 <Controller
                   control={control}
-                  name="show_antonyms_mode"
+                  name="show_antonyms_in_flashcard"
                   render={({ field: { value, onChange } }) => (
                     <SelectOptions
                       onChange={(newValue) => {
                         onChange(newValue);
                         updateMutation.mutate({
                           updates: {
-                            show_antonyms_mode: newValue as ShowAntonymsMode,
+                            show_antonyms_in_flashcard:
+                              newValue as ShowAntonymsMode,
                           },
                         });
                       }}

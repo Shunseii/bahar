@@ -21,7 +21,7 @@ import { DeckCard } from "@/components/decks/DeckCard";
 import { Button } from "@/components/ui/button";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
-import { type DeckWithCounts, decksTable } from "@/lib/db/operations/decks";
+import { type DeckWithCounts, decksTable } from "@/lib/db/operations";
 import { performSync } from "@/lib/db/sync";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";

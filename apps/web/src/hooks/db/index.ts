@@ -1,7 +1,6 @@
 import { insert, remove, update } from "@orama/orama";
 import { useMutation } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
-import { createEmptyCard } from "ts-fsrs";
 import { suggestedTagsAtom } from "@/atoms/suggested-tags";
 import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
@@ -32,35 +31,15 @@ export const useAddDictionaryEntry = () => {
       params: Parameters<typeof mutateAsync>[0],
       opts: Parameters<typeof mutateAsync>[1] = {}
     ) => {
-      const emptyFlashcard = createEmptyCard();
-
       const newWord = await mutateAsync(params, opts);
 
       if (params.word.tags && params.word.tags.length > 0) {
         setSuggestedTags(params.word.tags);
       }
 
-      const formattedEmptyCard = {
-        ...emptyFlashcard,
-        due: emptyFlashcard.due.toISOString(),
-        last_review: emptyFlashcard.last_review?.toISOString() ?? null,
+      await flashcardsTable.createFlashcardPair.mutation({
         dictionary_entry_id: newWord.id,
-      };
-
-      await Promise.all([
-        flashcardsTable.create.mutation({
-          flashcard: {
-            ...formattedEmptyCard,
-            direction: "forward",
-          },
-        }),
-        flashcardsTable.create.mutation({
-          flashcard: {
-            ...formattedEmptyCard,
-            direction: "reverse",
-          },
-        }),
-      ]);
+      });
 
       insert(getOramaDb(), toOramaDocument(newWord));
       reset();

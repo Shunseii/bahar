@@ -22,7 +22,7 @@ export {
   nullToUndefined,
   safeJsonParse,
 } from "./converters";
-export { makeDecksTable } from "./operations/decks";
+export { type DeckWithCounts, makeDecksTable } from "./operations/decks";
 export type { DrizzleDb, OperationDeps } from "./operations/deps";
 export { makeDictionaryEntriesTable } from "./operations/dictionary-entries";
 export {
