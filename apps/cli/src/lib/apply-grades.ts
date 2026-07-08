@@ -2,12 +2,12 @@ import {
   flashcards,
   type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
+import { makeProgressTable } from "@bahar/db-operations";
 import { createScheduler } from "@bahar/fsrs";
 import { eq, inArray } from "drizzle-orm";
 import type { UserDb } from "./db";
 import { scheduleGrade } from "./grade";
 import type { GradeItem } from "./grade-input";
-import { recordReview } from "./streak";
 import type { RevlogInput } from "./revlog";
 
 export type GradeResult = { id: string; grade: string; due: string };
@@ -74,7 +74,7 @@ export const applyGrades = async ({
         ...(typeof updateStatements)[number][],
       ]
     );
-    await recordReview(db);
+    await makeProgressTable({ getDb: async () => db }).recordReview.mutation();
   }
 
   return { results, missing, revlogEntries };
