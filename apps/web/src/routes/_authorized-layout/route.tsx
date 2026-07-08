@@ -31,7 +31,7 @@ import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/search/useSearch";
 import { api } from "@/lib/api";
-import { authClient } from "@/lib/auth-client";
+import { getCachedSession, isLoggedOut } from "@/lib/auth-client";
 import { ensureDb, initDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
 import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
@@ -305,11 +305,13 @@ const AuthorizedLayoutError: ErrorRouteComponent = ({ error }) => {
 
 export const Route = createFileRoute("/_authorized-layout")({
   beforeLoad: async ({ location }) => {
-    const { data: session } = await authClient.getSession();
+    const sessionResult = await getCachedSession();
 
-    if (!session) {
+    if (isLoggedOut(sessionResult)) {
       throw redirect({ to: "/login", search: { redirect: location.href } });
     }
+
+    const { data: session } = sessionResult;
 
     if (session?.user) {
       Sentry.setUser({ id: session.user.id, email: session.user.email });
