@@ -21,6 +21,6 @@ export const Route = createFileRoute("/_unauthorized-layout")({
   component: Layout,
   beforeLoad: async () => {
     resetOramaDb();
-    await resetDb();
+    await resetDb("unauthorized_redirect");
   },
 });

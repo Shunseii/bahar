@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
-import { authClient } from "@/lib/auth-client";
+import { authClient, getCachedSession, isLoggedOut } from "@/lib/auth-client";
 
 const AppLayout = () => {
   const { data } = authClient.useSession();
@@ -30,11 +30,9 @@ const AppLayout = () => {
 export const Route = createFileRoute("/_authorized-layout/_app-layout")({
   component: AppLayout,
   beforeLoad: async ({ location }) => {
-    const { data } = await authClient.getSession();
+    const sessionResult = await getCachedSession();
 
-    const isAuthenticated = !!data?.user;
-
-    if (!isAuthenticated) {
+    if (isLoggedOut(sessionResult)) {
       throw redirect({
         to: "/login",
         search: {
