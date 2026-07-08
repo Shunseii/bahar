@@ -109,7 +109,16 @@ export const ensureDb = async () => {
   return getDb();
 };
 
-export const resetDb = async () => {
+/**
+ * Why resetDb ran. `hadLiveDb: true` in the log means a live connection was
+ * closed -- the dangerous case, since it releases the OPFS SyncAccessHandle
+ * out from under any in-flight reads.
+ */
+type ResetDbCaller = "logout" | "unauthorized_redirect" | "delete_local_db";
+
+export const resetDb = async (caller: ResetDbCaller) => {
+  Sentry.logger.info("resetDb called", { caller, hadLiveDb: db != null });
+
   if (db) {
     await db.close();
     db = null;
@@ -129,7 +138,7 @@ export const resetDb = async () => {
  * the data will be in a worse state.
  */
 export const deleteLocalDatabase = async () => {
-  await resetDb();
+  await resetDb("delete_local_db");
 
   // Delete all OPFS files starting with our prefix
   const opfsRoot = await navigator.storage.getDirectory();
@@ -183,7 +192,10 @@ export const initDb = async () => {
 
   dbInitPromise = _initDbInternal();
   const result = await dbInitPromise;
-  if (!result.ok) dbInitPromise = null; // Allow retry on failure
+  if (!result.ok) {
+    dbInitPromise = null; // Allow retry on failure
+    Sentry.logger.warn("initDb failed", { outcome: result.error.type });
+  }
   return result;
 };
 

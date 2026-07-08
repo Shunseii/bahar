@@ -42,6 +42,42 @@ const sentryLogMethods: Record<
   fatal: Sentry.logger.fatal,
 };
 
+const isPrimitive = (
+  value: unknown
+): value is string | number | boolean =>
+  typeof value === "string" ||
+  typeof value === "number" ||
+  typeof value === "boolean";
+
+/**
+ * Sentry log attributes are only searchable when they are flat, primitive
+ * top-level keys. Nested objects (e.g. `req.path`, `res.statusCode`) get
+ * stringified into a single opaque attribute and can't be filtered on, so we
+ * flatten them into dot-notation keys before forwarding. Arrays and other
+ * non-primitives are dropped to keep attributes flat and low-noise.
+ */
+const flattenLogAttributes = (
+  input: Record<string, unknown>,
+  prefix = "",
+  out: Record<string, string | number | boolean> = {}
+): Record<string, string | number | boolean> => {
+  for (const [key, value] of Object.entries(input)) {
+    if (value === undefined || value === null) continue;
+
+    const attributeKey = prefix ? `${prefix}.${key}` : key;
+
+    if (isPrimitive(value)) {
+      out[attributeKey] = value;
+    } else if (value instanceof Error) {
+      out[attributeKey] = value.message;
+    } else if (typeof value === "object" && !Array.isArray(value)) {
+      flattenLogAttributes(value as Record<string, unknown>, attributeKey, out);
+    }
+  }
+
+  return out;
+};
+
 export const logger = pino({
   level: config.LOG_LEVEL,
   timestamp: pino.stdTimeFunctions.isoTime,
@@ -92,8 +128,12 @@ export const logger = pino({
 
         if (typeof first === "string") {
           sentryLog(first);
-        } else {
-          sentryLog(typeof second === "string" ? second : "", first);
+        } else if (first && typeof first === "object") {
+          const message = typeof second === "string" ? second : "";
+          sentryLog(
+            message,
+            flattenLogAttributes(first as Record<string, unknown>)
+          );
         }
       }
 
