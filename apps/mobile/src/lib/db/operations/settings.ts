@@ -1,87 +1,59 @@
 /**
- * Settings database operations for mobile app.
+ * Settings operations for mobile — thin wiring over the shared
+ * @bahar/db-operations factory, adapted to mobile's existing public shape:
+ * the `get` method name and the `show_antonyms_mode` field (the shared/DB
+ * column is `show_antonyms_in_flashcard`; mobile's UI has always used the
+ * `show_antonyms_mode` alias). Same underlying column and values.
+ *
+ * Note: the shared getSettings self-heals a missing row by inserting the
+ * default ("hidden") and persisting it -- mobile previously returned an
+ * in-memory default of "answer" without persisting. New/no-row users now
+ * default to "hidden" (matching web). See BAH-151.
  */
 
-import type { TableOperation } from "@bahar/db-operations";
-import type {
-  RawSetting,
-  ShowAntonymsMode,
-} from "@bahar/drizzle-user-db-schemas";
-import { ensureDb } from "..";
-
-const SETTINGS_ID = "default";
+import { makeSettingsTable } from "@bahar/db-operations";
+import type { ShowAntonymsMode } from "@bahar/drizzle-user-db-schemas";
+import { getDb } from "./get-db";
 
 export interface UserSettings {
   show_antonyms_mode: ShowAntonymsMode;
   show_reverse_flashcards: boolean;
 }
 
-const DEFAULT_SETTINGS: UserSettings = {
-  show_antonyms_mode: "answer",
-  show_reverse_flashcards: false,
-};
+const base = makeSettingsTable({ getDb });
 
-/**
- * Convert raw settings row to typed settings.
- */
-const toUserSettings = (raw: RawSetting | undefined): UserSettings => {
-  if (!raw) return DEFAULT_SETTINGS;
-  return {
-    show_antonyms_mode:
-      (raw.show_antonyms_in_flashcard as ShowAntonymsMode) ??
-      DEFAULT_SETTINGS.show_antonyms_mode,
-    show_reverse_flashcards: Boolean(raw.show_reverse_flashcards),
-  };
-};
+const toUserSettings = (s: {
+  show_antonyms_in_flashcard: ShowAntonymsMode | null;
+  show_reverse_flashcards: boolean | null;
+}): UserSettings => ({
+  show_antonyms_mode: s.show_antonyms_in_flashcard ?? "hidden",
+  show_reverse_flashcards: s.show_reverse_flashcards ?? false,
+});
 
 export const settingsTable = {
   get: {
-    query: async (): Promise<UserSettings> => {
-      const db = await ensureDb();
-
-      const row = await db
-        .prepare<RawSetting>("SELECT * FROM settings WHERE id = ?;")
-        .get([SETTINGS_ID]);
-
-      return toUserSettings(row);
-    },
-    cacheOptions: {
-      queryKey: ["turso.settings.get"] as const,
-      staleTime: 60 * 1000, // 1 minute
-    },
+    query: async (): Promise<UserSettings> =>
+      toUserSettings(await base.getSettings.query()),
+    cacheOptions: base.getSettings.cacheOptions,
   },
-
   update: {
     mutation: async ({
       updates,
     }: {
       updates: Partial<UserSettings>;
     }): Promise<UserSettings> => {
-      const db = await ensureDb();
-
-      // Get current settings
-      const current = await settingsTable.get.query();
-      const newSettings = { ...current, ...updates };
-
-      // Upsert settings
-      await db
-        .prepare(
-          `INSERT INTO settings (id, show_antonyms_in_flashcard, show_reverse_flashcards)
-           VALUES (?, ?, ?)
-           ON CONFLICT(id) DO UPDATE SET
-             show_antonyms_in_flashcard = excluded.show_antonyms_in_flashcard,
-             show_reverse_flashcards = excluded.show_reverse_flashcards;`
-        )
-        .run([
-          SETTINGS_ID,
-          newSettings.show_antonyms_mode,
-          newSettings.show_reverse_flashcards ? 1 : 0,
-        ]);
-
-      return newSettings;
+      const mapped: Partial<{
+        show_antonyms_in_flashcard: ShowAntonymsMode;
+        show_reverse_flashcards: boolean;
+      }> = {};
+      if (updates.show_antonyms_mode !== undefined) {
+        mapped.show_antonyms_in_flashcard = updates.show_antonyms_mode;
+      }
+      if (updates.show_reverse_flashcards !== undefined) {
+        mapped.show_reverse_flashcards = updates.show_reverse_flashcards;
+      }
+      return toUserSettings(await base.update.mutation({ updates: mapped }));
     },
-    cacheOptions: {
-      queryKey: ["turso.settings.update"] as const,
-    },
+    cacheOptions: base.update.cacheOptions,
   },
-} as const satisfies Record<string, TableOperation>;
+};
