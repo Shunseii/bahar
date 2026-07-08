@@ -6,7 +6,7 @@ import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/search/SearchInput";
 import { SORT_OPTIONS } from "@/hooks/search/useSearch";
-import { authClient } from "@/lib/auth-client";
+import { authClient, getCachedSession, isLoggedOut } from "@/lib/auth-client";
 import { settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 
@@ -46,11 +46,9 @@ export const Route = createFileRoute("/_authorized-layout/_search-layout")({
   component: AppLayout,
   validateSearch: zodValidator(filtersSchema),
   beforeLoad: async ({ location, search }) => {
-    const { data } = await authClient.getSession();
+    const sessionResult = await getCachedSession();
 
-    const isAuthenticated = !!data?.user;
-
-    if (!isAuthenticated) {
+    if (isLoggedOut(sessionResult)) {
       throw redirect({
         to: "/login",
         search: {
@@ -63,6 +61,11 @@ export const Route = createFileRoute("/_authorized-layout/_search-layout")({
       queryKey: settingsTable.getSettings.cacheOptions.queryKey,
       queryFn: settingsTable.getSettings.query,
     });
+
+    // `data` can be null on a transient error (429/network) that isn't a
+    // logout; skip the plan-gated redirect since we can't read the plan then.
+    const { data } = sessionResult;
+    if (!data?.user) return;
 
     const activeStatuses = ["active", "trialing", "past_due"];
     const isFreeUser =

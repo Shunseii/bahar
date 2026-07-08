@@ -1,6 +1,7 @@
 import { defineCommand } from "@bunli/core";
 import { API_URL } from "../lib/config";
 import { loadCredentials } from "../lib/credentials";
+import { readJsonResponse } from "../lib/http";
 
 export const dbInfoCommand = defineCommand({
   name: "db-info",
@@ -19,14 +20,17 @@ export const dbInfoCommand = defineCommand({
       headers: { "x-api-key": credentials.token },
     });
 
-    if (!response.ok) {
+    try {
+      const info = await readJsonResponse<unknown>({
+        response,
+        context: "Fetching database info",
+      });
+      console.log(JSON.stringify(info, null, 2));
+    } catch (error) {
       console.error(
-        colors.red(`Failed to fetch database info (${response.status}).`)
+        colors.red(error instanceof Error ? error.message : String(error))
       );
       process.exitCode = 1;
-      return;
     }
-
-    console.log(JSON.stringify(await response.json(), null, 2));
   },
 });

@@ -2,6 +2,7 @@ import * as schema from "@bahar/drizzle-user-db-schemas";
 import { type Client, createClient } from "@libsql/client/web";
 import { drizzle } from "drizzle-orm/libsql/web";
 import { API_URL } from "./config";
+import { readJsonResponse } from "./http";
 
 export type UserDb = ReturnType<typeof drizzle<typeof schema>>;
 
@@ -24,11 +25,10 @@ export const connectUserDb = async (
     headers: { "x-api-key": token },
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch database info (${response.status}).`);
-  }
-
-  const info = (await response.json()) as UserDatabaseInfo;
+  const info = await readJsonResponse<UserDatabaseInfo>({
+    response,
+    context: "Fetching database info",
+  });
 
   const client = createClient({
     url: `libsql://${info.hostname}`,
