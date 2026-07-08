@@ -97,7 +97,7 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
 };
 
 interface GradeButtonProps {
-  config: (typeof gradeConfig)[0];
+  config: GradeConfig;
   interval: Date;
   onPress: () => void;
   disabled: boolean;

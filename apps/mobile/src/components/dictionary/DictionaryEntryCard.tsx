@@ -20,7 +20,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { HighlightText } from "./HighlightText";
 import { ReviewHistory } from "./ReviewHistory";
@@ -91,7 +91,7 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = ({ id, document }) => {
 
   const { data: fullEntry } = useQuery({
     queryKey: [...dictionaryEntriesTable.entry.cacheOptions.queryKey, id],
-    queryFn: () => dictionaryEntriesTable.entry.query({ id }),
+    queryFn: () => dictionaryEntriesTable.entry.query(id),
   });
 
   const hasDefinition = document.definition;

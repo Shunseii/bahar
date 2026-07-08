@@ -4,7 +4,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useClickAway, useDebounce } from "@uidotdev/usehooks";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
 
 interface AutocompleteProps {
   className?: string;

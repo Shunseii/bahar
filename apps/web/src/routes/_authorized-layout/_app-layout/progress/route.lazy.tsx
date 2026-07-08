@@ -8,9 +8,11 @@ import { Rating, type ReviewLog } from "ts-fsrs";
 import { Page } from "@/components/Page";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
-import { progressTable } from "@/lib/db/operations/progress";
-import { settingsTable } from "@/lib/db/operations/settings";
+import {
+  flashcardsTable,
+  progressTable,
+  settingsTable,
+} from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 import { DifficultWordsCard } from "./-components/DifficultWordsCard";
 import { ProPlaceholder } from "./-components/ProPlaceholder";

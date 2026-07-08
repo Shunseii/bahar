@@ -23,8 +23,8 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
-} from "@/lib/db/operations/flashcards";
-import { settingsTable } from "@/lib/db/operations/settings";
+} from "@/lib/db/operations";
+import { settingsTable } from "@/lib/db/operations";
 import {
   selectedTagsAtom,
   selectedTypesAtom,
@@ -209,8 +209,8 @@ export default function HomeScreen() {
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
 
   const { data: settings } = useQuery({
-    queryFn: settingsTable.get.query,
-    ...settingsTable.get.cacheOptions,
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
     enabled: state === "ready",
   });
   const showReverse = settings?.show_reverse_flashcards ?? false;

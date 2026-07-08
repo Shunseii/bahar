@@ -1,13 +1,32 @@
-import * as Sentry from "@sentry/react";
 import { asyncQueue } from "@tanstack/pacer";
 
 type DbOperation<T> = () => Promise<T>;
 
 /**
- * Queue for serializing all database operations to prevent
- * "database is busy" errors from concurrent access.
- *
- * All local DB writes and sync operations should go through this queue.
+ * Logging hooks for the queue. Default to no-ops; apps wire their own logger
+ * once at startup via {@link configureDbQueue} (e.g. Sentry on web,
+ * @sentry/react-native on mobile). Kept injectable so this package stays free
+ * of any platform-specific logging dependency.
+ */
+let onError: (error: unknown) => void = () => {
+  // no-op until an app configures a real handler
+};
+let onInfo: (message: string) => void = () => {
+  // no-op until an app configures a real handler
+};
+
+export const configureDbQueue = (opts: {
+  onError?: (error: unknown) => void;
+  onInfo?: (message: string) => void;
+}): void => {
+  if (opts.onError) onError = opts.onError;
+  if (opts.onInfo) onInfo = opts.onInfo;
+};
+
+/**
+ * Queue for serializing all database operations to prevent "database is busy"
+ * errors from concurrent access. All local DB writes and sync operations
+ * should go through this single queue so they never overlap.
  */
 const dbQueue = asyncQueue(
   <T>(operation: DbOperation<T>): Promise<T> => {
@@ -19,9 +38,7 @@ const dbQueue = asyncQueue(
       maxAttempts: 1,
     },
     onError: (error) => {
-      Sentry.logger.error("Database queue operation failed", {
-        error: String(error),
-      });
+      onError(error);
     },
   }
 );
@@ -50,21 +67,22 @@ export const enqueueDbOperation = <T>(
 };
 
 /**
- * Track if a sync operation is already pending to merge multiple sync requests.
+ * Tracks whether a sync operation is already in flight, so concurrent sync
+ * requests merge into the one pending run instead of stacking up behind each
+ * other on the queue.
  */
 let syncPending = false;
 let syncPromise: Promise<void> | null = null;
 
 /**
- * Enqueue a sync operation (pull/push) with merging.
- * If a sync is already pending, returns the existing promise instead of queueing another.
- * This prevents sync operations from stacking up.
+ * Enqueue a sync operation (pull/push) with merging. If a sync is already
+ * pending, returns the existing promise instead of queueing another.
  */
 export const enqueueSyncOperation = (
   operation: () => Promise<void>
 ): Promise<void> => {
   if (syncPending && syncPromise) {
-    Sentry.logger.info("Sync already pending, merging request");
+    onInfo("Sync already pending, merging request");
     return syncPromise;
   }
 
@@ -82,7 +100,7 @@ export const enqueueSyncOperation = (
 };
 
 /**
- * Check if there are pending operations in the queue.
+ * Whether a sync operation is currently pending.
  */
 export const hasPendingOperations = (): boolean => {
   return syncPending;

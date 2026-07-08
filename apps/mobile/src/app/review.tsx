@@ -12,7 +12,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FlashcardReview } from "@/components/flashcards/FlashcardReview";
-import type { FlashcardQueue } from "@/lib/db/operations/flashcards";
+import type { FlashcardQueue } from "@/lib/db/operations";
 
 const ReviewScreen = () => {
   const router = useRouter();

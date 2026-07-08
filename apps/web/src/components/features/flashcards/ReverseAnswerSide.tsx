@@ -1,10 +1,10 @@
+import type { FlashcardWithDictionaryEntry } from "@bahar/db-operations";
 import { Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2 } from "lucide-react";
 import { motion } from "motion/react";
 import type { FC } from "react";
-import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations/flashcards";
-import { settingsTable } from "@/lib/db/operations/settings";
+import { settingsTable } from "@/lib/db/operations";
 
 /**
  * This displays the back side of the reverse flashcard which

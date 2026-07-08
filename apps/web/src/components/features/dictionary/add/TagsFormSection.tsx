@@ -12,7 +12,7 @@ import { Plus } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { suggestedTagsAtom } from "@/atoms/suggested-tags";
 import { TagsCombobox } from "@/components/TagsCombobox";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
 import type { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 

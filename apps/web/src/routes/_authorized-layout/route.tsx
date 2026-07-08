@@ -1,3 +1,4 @@
+import { enqueueSyncOperation } from "@bahar/db-operations";
 import { Button } from "@bahar/web-ui/components/button";
 import {
   Dialog,
@@ -34,9 +35,7 @@ import { api } from "@/lib/api";
 import { getCachedSession, isLoggedOut } from "@/lib/auth-client";
 import { ensureDb, initDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { migrationTable } from "@/lib/db/operations/migration";
-import { enqueueSyncOperation } from "@/lib/db/queue";
+import { dictionaryEntriesTable, migrationTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 import { hydrateOramaDb, rehydrateOramaDb } from "@/lib/search";
 import { store } from "@/lib/store";

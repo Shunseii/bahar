@@ -9,7 +9,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import type { DeckWithCounts } from "@/lib/db/operations/decks";
+import type { DeckWithCounts } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 
 const WORD_TYPE_LABELS: Record<WordType, () => string> = {

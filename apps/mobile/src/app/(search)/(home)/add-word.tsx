@@ -26,8 +26,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
-import { dictionaryEntriesTable } from "@/lib/db/operations/dictionary-entries";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
+import { flashcardsTable } from "@/lib/db/operations";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import { addToSearchIndex } from "@/lib/search";
 import { createMultipleAtom, recentTagsAtom, store } from "@/lib/store";
@@ -99,7 +99,7 @@ export default function AddWordScreen() {
       reset();
 
       try {
-        await flashcardsTable.createForEntry.mutation({
+        await flashcardsTable.createFlashcardPair.mutation({
           dictionary_entry_id: newEntry.id,
         });
       } catch (error) {
@@ -181,7 +181,7 @@ export default function AddWordScreen() {
 
   const onSubmit = async (data: FormData) => {
     await addWordMutation.mutateAsync({
-      entry: {
+      word: {
         word: data.word,
         translation: data.translation,
         definition: data.definition || undefined,

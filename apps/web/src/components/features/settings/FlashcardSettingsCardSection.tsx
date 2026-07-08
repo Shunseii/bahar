@@ -1,3 +1,4 @@
+import { enqueueDbOperation, enqueueSyncOperation } from "@bahar/db-operations";
 import { Button } from "@bahar/web-ui/components/button";
 import {
   Card,
@@ -28,9 +29,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { BetaBadge } from "@/components/BetaBadge";
 import { ensureDb } from "@/lib/db";
-import { flashcardsTable } from "@/lib/db/operations/flashcards";
-import { settingsTable } from "@/lib/db/operations/settings";
-import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
+import { flashcardsTable, settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 import { z } from "@/lib/zod";
 

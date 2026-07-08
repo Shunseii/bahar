@@ -1,3 +1,4 @@
+import { configureDbQueue } from "@bahar/db-operations";
 import type { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import * as schema from "@bahar/drizzle-user-db-schemas";
 import { err, ok, tryCatch } from "@bahar/result";
@@ -5,6 +6,21 @@ import * as Sentry from "@sentry/react";
 import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
 import { drizzle } from "drizzle-orm/sqlite-proxy";
 import { api } from "../api";
+
+// Wire web's Sentry logger into the shared DB queue (which has no logging
+// dependency of its own). Done here because every DB path -- operations and
+// sync alike -- initializes through this module's ensureDb, so the handlers
+// are always set before any queued operation runs.
+configureDbQueue({
+  onError: (error) => {
+    Sentry.logger.error("Database queue operation failed", {
+      error: String(error),
+    });
+  },
+  onInfo: (message) => {
+    Sentry.logger.info(message);
+  },
+});
 
 /**
  * Singleton database instance connected to

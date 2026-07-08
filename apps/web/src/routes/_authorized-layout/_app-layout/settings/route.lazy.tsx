@@ -1,3 +1,4 @@
+import { enqueueDbOperation, enqueueSyncOperation } from "@bahar/db-operations";
 import {
   dictionaryEntries,
   flashcards,
@@ -47,7 +48,6 @@ import {
   parseImportData,
   readFileAsText,
 } from "@/lib/db/import";
-import { enqueueDbOperation, enqueueSyncOperation } from "@/lib/db/queue";
 import { ImportError, ImportErrorCode, parseImportErrors } from "@/lib/error";
 import { queryClient } from "@/lib/query";
 import { hydrateOramaDb, resetOramaDb } from "@/lib/search";

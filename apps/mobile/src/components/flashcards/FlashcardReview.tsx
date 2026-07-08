@@ -21,15 +21,15 @@ import ReAnimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { type Grade, Rating } from "ts-fsrs";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useThemeColors } from "@/lib/theme";
-import { decksTable } from "../../lib/db/operations/decks";
+import { decksTable } from "../../lib/db/operations";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   FLASHCARD_LIMIT,
   type FlashcardQueue,
   type FlashcardWithDictionaryEntry,
   flashcardsTable,
-} from "../../lib/db/operations/flashcards";
-import { progressTable } from "../../lib/db/operations/progress";
+} from "../../lib/db/operations";
+import { progressTable } from "../../lib/db/operations";
 import { api, queryClient } from "../../utils/api";
 import { FlashcardCard } from "./FlashcardCard";
 import { GradeButtons, ShowAnswerButton } from "./GradeButtons";

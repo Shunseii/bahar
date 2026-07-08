@@ -7,7 +7,7 @@ import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/search/SearchInput";
 import { SORT_OPTIONS } from "@/hooks/search/useSearch";
 import { authClient, getCachedSession, isLoggedOut } from "@/lib/auth-client";
-import { settingsTable } from "@/lib/db/operations/settings";
+import { settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 
 const filtersSchema = z.object({

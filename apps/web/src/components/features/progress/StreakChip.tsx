@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Flame } from "lucide-react";
 import type { FC } from "react";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { progressTable } from "@/lib/db/operations/progress";
+import { progressTable } from "@/lib/db/operations";
 
 interface StreakChipProps {
   className?: string;
