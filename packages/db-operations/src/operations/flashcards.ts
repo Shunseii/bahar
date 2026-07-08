@@ -10,7 +10,7 @@ import {
 } from "@bahar/drizzle-user-db-schemas";
 import { createScheduler } from "@bahar/fsrs";
 import { and, countDistinct, eq, gt, inArray, lte, sql } from "drizzle-orm";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 import { type Card, Rating, type ReviewLog } from "ts-fsrs";
 import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "../constants";
 import { enqueueDbOperation } from "../queue";
@@ -81,7 +81,12 @@ const buildFilterConditions = ({
     eq(flashcards.is_hidden, false),
     ...(tags.length > 0
       ? [
-          sql`EXISTS (SELECT 1 FROM json_each(${dictionaryEntries.tags}) WHERE value IN (${sql.join(
+          // Non-correlated subquery, not `EXISTS (json_each(...))`. The
+          // correlated form re-runs json_each per candidate row, which the WASM
+          // SQLite build evaluates pathologically slowly for filters matching
+          // many rows (effectively hangs, wedging the single connection).
+          // Materializing the matching entry ids once keeps it in the tens of ms.
+          sql`${dictionaryEntries.id} IN (SELECT de_t.id FROM dictionary_entries de_t, json_each(de_t.tags) jt WHERE jt.value IN (${sql.join(
             tags.map((t) => sql`${t}`),
             sql`, `
           )}))`,
