@@ -339,6 +339,31 @@ describe("flashcardsTable", () => {
       expect(result?.dictionary_entry_id).toBe(entry.id);
       expect(result?.id).toBe(flashcard.id);
     });
+
+    it("returns entries whose text fields contain double quotes and backslashes verbatim (BAH-138)", async () => {
+      // Regression: the query previously hand-built json_object() with manual
+      // REPLACE escaping, which double-escaped quotes on top of json_object's
+      // own escaping and produced malformed JSON. Values must round-trip
+      // unchanged through the drizzle nested select.
+      const entry = await insertDictionaryEntry(testDb, {
+        word: "تنحنح",
+        translation: 'to clear one\'s throat (say "ahem")',
+        definition: 'path\\to\\thing and a trailing quote"',
+      });
+      const flashcard = await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+      });
+
+      const results = await flashcardsTable.today.query({});
+      const result = results.find((r) => r.id === flashcard.id);
+
+      expect(result?.dictionary_entry).toMatchObject({
+        id: entry.id,
+        word: "تنحنح",
+        translation: 'to clear one\'s throat (say "ahem")',
+        definition: 'path\\to\\thing and a trailing quote"',
+      });
+    });
   });
 
   describe("counts", () => {
