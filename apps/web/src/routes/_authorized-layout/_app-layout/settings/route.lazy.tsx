@@ -1,5 +1,6 @@
 import { enqueueDbOperation, enqueueSyncOperation } from "@bahar/db-operations";
 import {
+  decks,
   dictionaryEntries,
   flashcards,
   type RawDictionaryEntry,
@@ -270,6 +271,7 @@ const Settings = () => {
         await drizzleDb.transaction(async (tx) => {
           await tx.delete(flashcards);
           await tx.delete(dictionaryEntries);
+          await tx.delete(decks);
         });
       });
 
