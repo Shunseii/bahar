@@ -45,6 +45,7 @@ let connectPromise: Promise<void> | null = null;
 // pull/push should hit the engine at a time.
 let pullPromise: Promise<boolean> | null = null;
 let pushPromise: Promise<void> | null = null;
+let checkpointPromise: Promise<void> | null = null;
 
 const dataChanged = new BroadcastChannel(DATA_CHANGED_CHANNEL);
 
@@ -106,6 +107,16 @@ const doPush = () => {
   return pushPromise;
 };
 
+const doCheckpoint = () => {
+  if (!db) throw new Error("DB not connected");
+  if (!checkpointPromise) {
+    checkpointPromise = db.checkpoint().finally(() => {
+      checkpointPromise = null;
+    });
+  }
+  return checkpointPromise;
+};
+
 const deleteLocal = async (prefix: string) => {
   if (db) {
     await db.close();
@@ -151,6 +162,9 @@ const handleRpc = async (request: DbWorkerRequest): Promise<unknown> => {
     }
     case "push":
       await doPush();
+      return null;
+    case "checkpoint":
+      await doCheckpoint();
       return null;
     case "close": {
       if (db) await db.close();

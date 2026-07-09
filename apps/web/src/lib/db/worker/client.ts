@@ -256,12 +256,30 @@ const createDbProxy = (): Database => {
     exec: (sql: string) => rpc("exec", { sql }),
     pull: () => rpc("pull", undefined),
     push: () => rpc("push", undefined),
+    checkpoint: () => rpc("checkpoint", undefined),
     close: () => rpc("close", undefined),
+    // Mirrors sync-wasm's own Database.transaction: wrap fn in BEGIN/COMMIT and
+    // ROLLBACK on throw. The wrapping exec and fn's inner prepare().run() calls
+    // all route to the one worker-owned connection, so the whole thing is a real
+    // transaction on that connection -- no separate transaction RPC needed.
+    transaction:
+      (fn: (...args: unknown[]) => Promise<unknown>) =>
+      async (...args: unknown[]) => {
+        await proxy.exec("BEGIN");
+        try {
+          const result = await fn(...args);
+          await proxy.exec("COMMIT");
+          return result;
+        } catch (err) {
+          await proxy.exec("ROLLBACK");
+          throw err;
+        }
+      },
   };
 
   // The proxy implements only the subset of `Database` the app uses
-  // (prepare/exec/pull/push/close). Cast at this single boundary so callers
-  // downstream stay typed against the real `Database`.
+  // (prepare/exec/pull/push/checkpoint/close/transaction). Cast at this single
+  // boundary so callers downstream stay typed against the real `Database`.
   return proxy as unknown as Database;
 };
 
