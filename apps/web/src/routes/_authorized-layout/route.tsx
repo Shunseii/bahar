@@ -36,6 +36,7 @@ import { getCachedSession, isLoggedOut } from "@/lib/auth-client";
 import { ensureDb, initDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
 import { dictionaryEntriesTable, migrationTable } from "@/lib/db/operations";
+import { subscribeToDataChanged } from "@/lib/db/worker/client";
 import { queryClient } from "@/lib/query";
 import { hydrateOramaDb, rehydrateOramaDb } from "@/lib/search";
 import { store } from "@/lib/store";
@@ -265,6 +266,20 @@ const AuthorizedLayout = () => {
 
     refreshAfterSync();
   }, [syncCompletedCount, refresh]);
+
+  // When the DB is shared across tabs, the worker broadcasts after local writes
+  // and after remote pulls that changed data. Any tab (including the one that
+  // made the change) rebuilds its search index and refetches so every open tab
+  // stays consistent. No-op in the single-tab fallback (nothing broadcasts).
+  useEffect(() => {
+    const unsubscribe = subscribeToDataChanged(async () => {
+      await rehydrateOramaDb();
+      refresh();
+      queryClient.invalidateQueries();
+    });
+
+    return unsubscribe;
+  }, [refresh]);
 
   return (
     <div style={schemaIsOutdated ? { marginTop: `${bannerHeight}px` } : {}}>

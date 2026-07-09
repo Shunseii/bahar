@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/react";
 import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
 import { drizzle } from "drizzle-orm/sqlite-proxy";
 import { api } from "../api";
+import { getDbWorkerClient, isSharedDbSupported } from "./worker/client";
 
 // Wire web's Sentry logger into the shared DB queue (which has no logging
 // dependency of its own). Done here because every DB path -- operations and
@@ -23,12 +24,13 @@ configureDbQueue({
 });
 
 /**
- * Singleton database instance connected to
- * a local copy of the user's database that syncs
- * with the remote database in turso.
+ * Singleton handle to the local copy of the user's database, which syncs with
+ * the remote Turso database. Depending on browser support this is either a
+ * direct sync-wasm `Database` (fallback, single-tab) or a `Database`-shaped
+ * proxy backed by the shared DB worker (multi-tab). Callers can't tell the
+ * difference — both expose the same prepare/exec/pull/push/close surface.
  *
- * Initially undefined, but we initialize it
- * in the pre load of the root router.
+ * Initially null; initialized in the pre-load of the authorized route.
  */
 let db: Database | null = null;
 let dbInitPromise: ReturnType<typeof _initDbInternal> | null = null;
@@ -140,7 +142,17 @@ export const resetDb = async (caller: ResetDbCaller) => {
 export const deleteLocalDatabase = async () => {
   await resetDb("delete_local_db");
 
-  // Delete all OPFS files starting with our prefix
+  if (isSharedDbSupported()) {
+    // The worker owns the OPFS files and (unlike the fallback) keeps sync
+    // metadata in IndexedDB, not this context's localStorage. It can't be
+    // deleted from here — the worker holds the OPFS handles — so delegate.
+    const client = await getDbWorkerClient();
+    await client.deleteLocal(LOCAL_DB_PATH_PREFIX);
+    return;
+  }
+
+  // Fallback (direct in-tab connection): OPFS files and localStorage sync
+  // metadata live in this context.
   const opfsRoot = await navigator.storage.getDirectory();
 
   const filesToDelete: string[] = [];
@@ -209,7 +221,21 @@ const isApiError = (
   );
 };
 
+/**
+ * When the DB is shared across tabs, serialize init across them with a Web Lock
+ * so two tabs opening at once don't race on applying migrations (the connect
+ * and pull/push are already idempotent / single-flighted in the worker). Within
+ * a tab, the `dbInitPromise` singleton in `initDb` still dedupes. Falls through
+ * to an unlocked init when Web Locks or SharedWorker aren't available.
+ */
 const _initDbInternal = async () => {
+  if (isSharedDbSupported()) {
+    return navigator.locks.request("bahar-db-init", () => _initDbUnlocked());
+  }
+  return _initDbUnlocked();
+};
+
+const _initDbUnlocked = async () => {
   const infoResult = await tryCatch(
     async () => {
       const { data, error } = await api.databases.user.get();
@@ -473,7 +499,15 @@ const _formatDbUrl = (hostname: string) => `libsql://${hostname}`;
 const _formatLocalDbName = (dbName: string) =>
   `${LOCAL_DB_PATH_PREFIX}-${dbName}.db`;
 
-const _connectToLocalDb = ({
+/**
+ * Opens the local user DB. When SharedWorker is supported (every modern browser
+ * incl. iOS 16.4+), ownership lives in a dedicated worker shared across all
+ * tabs, and this returns a `Database`-shaped proxy over RPC — so a second tab no
+ * longer fights over the browser-wide OPFS SyncAccessHandle. Older browsers
+ * (iOS < 16.4) fall back to a direct in-tab connection: the previous
+ * single-tab behavior, unchanged.
+ */
+const _connectToLocalDb = async ({
   hostname,
   authToken,
   dbName,
@@ -481,10 +515,18 @@ const _connectToLocalDb = ({
   hostname: string;
   authToken: string;
   dbName: string;
-}) => {
-  return connect({
+}): Promise<Database> => {
+  const params = {
     path: _formatLocalDbName(dbName),
     url: _formatDbUrl(hostname),
     authToken,
-  });
+  };
+
+  if (isSharedDbSupported()) {
+    const client = await getDbWorkerClient();
+    await client.connect(params);
+    return client.dbProxy;
+  }
+
+  return connect(params);
 };

@@ -42,9 +42,7 @@ const sentryLogMethods: Record<
   fatal: Sentry.logger.fatal,
 };
 
-const isPrimitive = (
-  value: unknown
-): value is string | number | boolean =>
+const isPrimitive = (value: unknown): value is string | number | boolean =>
   typeof value === "string" ||
   typeof value === "number" ||
   typeof value === "boolean";

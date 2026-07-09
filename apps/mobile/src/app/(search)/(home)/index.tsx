@@ -23,8 +23,8 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
+  settingsTable,
 } from "@/lib/db/operations";
-import { settingsTable } from "@/lib/db/operations";
 import {
   selectedTagsAtom,
   selectedTypesAtom,

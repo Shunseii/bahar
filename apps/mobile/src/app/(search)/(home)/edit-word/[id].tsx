@@ -29,8 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
-import { dictionaryEntriesTable } from "@/lib/db/operations";
-import { flashcardsTable } from "@/lib/db/operations";
+import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import { removeFromSearchIndex, updateSearchIndex } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";

@@ -1,8 +1,8 @@
+import { makeProgressTable } from "@bahar/db-operations";
 import {
   flashcards,
   type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
-import { makeProgressTable } from "@bahar/db-operations";
 import { createScheduler } from "@bahar/fsrs";
 import { eq, inArray } from "drizzle-orm";
 import type { UserDb } from "./db";

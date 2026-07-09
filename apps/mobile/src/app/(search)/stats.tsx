@@ -21,9 +21,11 @@ import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import { flashcardsTable } from "@/lib/db/operations";
-import { progressTable } from "@/lib/db/operations";
-import { settingsTable } from "@/lib/db/operations";
+import {
+  flashcardsTable,
+  progressTable,
+  settingsTable,
+} from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { api, queryClient } from "@/utils/api";
 

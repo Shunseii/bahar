@@ -9,8 +9,7 @@ import { Text, View } from "react-native";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { intlFormatDistance } from "@/lib/date";
-import { flashcardsTable } from "@/lib/db/operations";
-import { settingsTable } from "@/lib/db/operations";
+import { flashcardsTable, settingsTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { api } from "@/utils/api";
 
