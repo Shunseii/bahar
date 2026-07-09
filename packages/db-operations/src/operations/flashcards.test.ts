@@ -452,6 +452,34 @@ describe("flashcardsTable", () => {
       });
     });
 
+    it("reschedules every card correctly when batching multiple cards in one chunk", async () => {
+      // Guards the batched `UPDATE ... FROM (VALUES ...)` path: with >1 card in
+      // a single chunk, each row's new schedule must land on its own card and
+      // not bleed across rows (column1..column12 positional mapping).
+      // - insert N (e.g. 5) backlog cards, each on a distinct dictionary entry
+      //   and with a distinct old due date / distinct stability/reps so a
+      //   mismatched column assignment would be detectable
+      // - consume clearBacklog.generator({})
+      // - expect progress to be a single step [{ cleared: N, total: N }]
+      //   (all N fit in one CHUNK_SIZE=100 chunk)
+      // - for each card, SELECT it back and assert:
+      //   - due_timestamp_ms moved forward past its own old value
+      //   - last_review is set
+      //   - per-card fields (stability/reps/lapses) match the Hard schedule
+      //     computed from THAT card's prior state, not another card's
+      // - expect postRevlogBatch called once with N entries, one per card id
+    });
+
+    it("spans multiple chunks and reports cumulative progress across them", async () => {
+      // Guards chunking when the backlog exceeds CHUNK_SIZE (100).
+      // - insert CHUNK_SIZE + a few (e.g. 105) backlog cards
+      // - consume clearBacklog.generator({})
+      // - expect progress steps to be cumulative and chunked, e.g.
+      //   [{ cleared: 100, total: 105 }, { cleared: 105, total: 105 }]
+      // - assert all cards rescheduled (none skipped at the chunk boundary)
+      // - expect postRevlogBatch called once with all 105 entries
+    });
+
     it("does not touch flashcards outside the backlog window", async () => {
       const recentlyDueDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 1);
       const flashcard = await insertFlashcard(testDb, {

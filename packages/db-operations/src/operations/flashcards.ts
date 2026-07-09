@@ -580,54 +580,87 @@ export const makeFlashcardsTable = (
           dictionary_entry_id: string;
         }[] = [];
 
+        // Reschedule in chunks: one `UPDATE ... FROM (VALUES ...)` per chunk
+        // instead of one UPDATE per card, collapsing thousands of round-trips
+        // into a handful. CHUNK_SIZE * 12 columns stays well under SQLite's
+        // bound-parameter limit. Progress is yielded per chunk, so the UI bar
+        // advances in steps of up to CHUNK_SIZE.
+        const CHUNK_SIZE = 100;
+
         let committed = false;
         await drizzleDb.run(sql`BEGIN TRANSACTION`);
         try {
-          for (let i = 0; i < backlogCards.length; i++) {
-            const row = backlogCards[i];
-            const card: Card = {
-              due: new Date(row.due),
-              stability: row.stability ?? 0,
-              difficulty: row.difficulty ?? 0,
-              elapsed_days: row.elapsed_days ?? 0,
-              scheduled_days: row.scheduled_days ?? 0,
-              reps: row.reps ?? 0,
-              lapses: row.lapses ?? 0,
-              state: row.state ?? FlashcardState.NEW,
-              learning_steps: row.learning_steps ?? 0,
-              last_review: row.last_review
-                ? new Date(row.last_review)
-                : undefined,
-            };
+          for (
+            let start = 0;
+            start < backlogCards.length;
+            start += CHUNK_SIZE
+          ) {
+            const chunk = backlogCards.slice(start, start + CHUNK_SIZE);
 
-            const scheduling = f.repeat(card, nowDate);
-            const { card: newCard, log } = scheduling[Rating.Hard];
+            const updates = chunk.map((row) => {
+              const card: Card = {
+                due: new Date(row.due),
+                stability: row.stability ?? 0,
+                difficulty: row.difficulty ?? 0,
+                elapsed_days: row.elapsed_days ?? 0,
+                scheduled_days: row.scheduled_days ?? 0,
+                reps: row.reps ?? 0,
+                lapses: row.lapses ?? 0,
+                state: row.state ?? FlashcardState.NEW,
+                learning_steps: row.learning_steps ?? 0,
+                last_review: row.last_review
+                  ? new Date(row.last_review)
+                  : undefined,
+              };
 
-            revlogEntries.push({
-              log,
-              direction: row.direction,
-              dictionary_entry_id: row.dictionary_entry_id,
+              const { card: newCard, log } = f.repeat(card, nowDate)[
+                Rating.Hard
+              ];
+
+              revlogEntries.push({
+                log,
+                direction: row.direction,
+                dictionary_entry_id: row.dictionary_entry_id,
+              });
+
+              return { id: row.id, newCard };
             });
 
-            await drizzleDb
-              .update(flashcards)
-              .set({
-                due: newCard.due.toISOString(),
-                due_timestamp_ms: newCard.due.getTime(),
-                last_review: newCard.last_review?.toISOString() ?? null,
-                last_review_timestamp_ms:
-                  newCard.last_review?.getTime() ?? null,
-                state: newCard.state,
-                stability: newCard.stability,
-                difficulty: newCard.difficulty,
-                reps: newCard.reps,
-                lapses: newCard.lapses,
-                elapsed_days: newCard.elapsed_days,
-                scheduled_days: newCard.scheduled_days,
-              })
-              .where(eq(flashcards.id, row.id));
+            // SQLite names VALUES columns column1..columnN (no aliased column
+            // list), so the SET clause below references them positionally.
+            // Order must match: id, due, due_timestamp_ms, last_review,
+            // last_review_timestamp_ms, state, stability, difficulty, reps,
+            // lapses, elapsed_days, scheduled_days.
+            const rows = updates.map(
+              ({ id, newCard }) =>
+                sql`(${id}, ${newCard.due.toISOString()}, ${newCard.due.getTime()}, ${
+                  newCard.last_review?.toISOString() ?? null
+                }, ${newCard.last_review?.getTime() ?? null}, ${newCard.state}, ${
+                  newCard.stability
+                }, ${newCard.difficulty}, ${newCard.reps}, ${newCard.lapses}, ${
+                  newCard.elapsed_days
+                }, ${newCard.scheduled_days})`
+            );
 
-            yield { cleared: i + 1, total };
+            await drizzleDb.run(sql`
+              UPDATE flashcards
+              SET
+                due = v.column2,
+                due_timestamp_ms = v.column3,
+                last_review = v.column4,
+                last_review_timestamp_ms = v.column5,
+                state = v.column6,
+                stability = v.column7,
+                difficulty = v.column8,
+                reps = v.column9,
+                lapses = v.column10,
+                elapsed_days = v.column11,
+                scheduled_days = v.column12
+              FROM (VALUES ${sql.join(rows, sql`, `)}) AS v
+              WHERE flashcards.id = v.column1
+            `);
+
+            yield { cleared: Math.min(start + CHUNK_SIZE, total), total };
           }
           await drizzleDb.run(sql`COMMIT`);
           committed = true;
