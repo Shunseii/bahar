@@ -20,6 +20,16 @@ export default defineConfig({
 
     rollupOptions: {
       external: ["workbox-window"],
+      output: {
+        // Keep sync-wasm in its own chunk. It self-spawns a worker via
+        // `new Worker(import.meta.url, { type: "module" })`; if its code is
+        // inlined into the app entry, `import.meta.url` resolves to that entry
+        // and the worker loads the app bootstrap (top-level `document` access)
+        // in a DOM-less worker scope -> "document is not defined". Isolating it
+        // makes the worker load only sync-wasm's own module.
+        manualChunks: (id) =>
+          id.includes("@tursodatabase/sync-wasm") ? "sync-wasm" : undefined,
+      },
     },
 
     sourcemap: true,

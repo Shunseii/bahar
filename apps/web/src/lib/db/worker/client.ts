@@ -40,16 +40,44 @@ export const isSharedDbSupported = () =>
 
 const LEADER_LOCK = "bahar-db-leader";
 
+/**
+ * How long to wait for the dedicated worker to signal ready before giving up.
+ * The worker can stall indefinitely during init (e.g. its `/bundle` WASM
+ * pthread never completes its `loaded` handshake in some production bundles),
+ * and that throws nothing — so without this timeout the whole DB init hangs and
+ * the app is stuck on the splash. On timeout we reject so callers fall back to a
+ * direct in-tab connection instead of waiting forever.
+ */
+const WORKER_READY_TIMEOUT_MS = 10_000;
+
 // ---- Dedicated worker (leader only) --------------------------------------
 
-const waitForReady = (port: MessagePort) =>
-  new Promise<void>((resolve) => {
+const waitForReady = (worker: Worker, port: MessagePort) =>
+  new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      cleanup();
+      reject(new Error("DB worker did not signal ready before timeout"));
+    }, WORKER_READY_TIMEOUT_MS);
+
+    const cleanup = () => {
+      clearTimeout(timer);
+      port.removeEventListener("message", onReady);
+      worker.removeEventListener("error", onError);
+    };
+
     const onReady = (event: MessageEvent<DbWorkerResponse>) => {
       if (event.data.id !== READY_ID) return;
-      port.removeEventListener("message", onReady);
+      cleanup();
       resolve();
     };
+
+    const onError = (event: ErrorEvent) => {
+      cleanup();
+      reject(new Error(`DB worker error: ${event.message || "unknown"}`));
+    };
+
     port.addEventListener("message", onReady);
+    worker.addEventListener("error", onError);
     port.start();
   });
 
@@ -80,11 +108,17 @@ const spawnWorkerRpc = async (): Promise<WorkerRpc> => {
 
   const channel = new MessageChannel();
   const port = channel.port2;
-  const ready = waitForReady(port);
+  const ready = waitForReady(worker, port);
 
   const newClient: NewClientMessage = { type: "client" };
   worker.postMessage(newClient, [channel.port1]);
-  await ready;
+
+  try {
+    await ready;
+  } catch (error) {
+    worker.terminate();
+    throw error;
+  }
 
   return createWorkerRpc(port);
 };
@@ -112,8 +146,10 @@ let requestCounter = 0;
 const pending = new Map<string, PendingRequest>();
 
 let resolveRoleReady: () => void;
-const roleReady = new Promise<void>((resolve) => {
+let rejectRoleReady: (error: Error) => void;
+const roleReady = new Promise<void>((resolve, reject) => {
   resolveRoleReady = resolve;
+  rejectRoleReady = reject;
 });
 
 const post = (message: RelayMessage) => relay?.postMessage(message);
@@ -124,7 +160,15 @@ const flushPending = (send: (request: PendingRequest, id: string) => void) => {
 };
 
 const becomeLeader = async () => {
-  workerRpc = await spawnWorkerRpc();
+  try {
+    workerRpc = await spawnWorkerRpc();
+  } catch (error) {
+    // The worker never came up. Reject role readiness so `establish` (and thus
+    // `initDb`) fails fast and callers fall back to a direct connection, then
+    // rethrow to release the Web Lock so another tab can attempt the election.
+    rejectRoleReady(error instanceof Error ? error : new Error(String(error)));
+    throw error;
+  }
   role = "leader";
 
   // Serve follower requests off the relay.
@@ -172,14 +216,19 @@ const becomeLeader = async () => {
 const startLeaderElection = () => {
   // The request queues until whichever tab currently holds the lock releases it
   // (on tab close). The callback holds the lock for this tab's whole lifetime.
-  navigator.locks.request(LEADER_LOCK, { mode: "exclusive" }, async () => {
-    await becomeLeader();
-    // Hold the lock for this tab's whole lifetime; it releases on tab unload,
-    // letting another tab win the election and take over as leader.
-    await new Promise<never>(() => {
-      // never resolves
-    });
-  });
+  navigator.locks
+    .request(LEADER_LOCK, { mode: "exclusive" }, async () => {
+      await becomeLeader();
+      // Hold the lock for this tab's whole lifetime; it releases on tab unload,
+      // letting another tab win the election and take over as leader.
+      await new Promise<never>(() => {
+        // never resolves
+      });
+    })
+    // becomeLeader rethrows on worker failure to release the lock; it has
+    // already rejected roleReady so callers fall back. Swallow the released-lock
+    // rejection here so it isn't reported as an unhandled promise rejection.
+    .catch(() => {});
 };
 
 const onRelayMessageAsFollower = (event: MessageEvent<RelayMessage>) => {
@@ -295,9 +344,33 @@ export type DbWorkerClient = {
 
 let clientPromise: Promise<DbWorkerClient> | null = null;
 
+/**
+ * Resolves when this tab knows its role (leader or follower). Rejects if the
+ * leader's worker fails (via `becomeLeader`) or — the follower case, where no
+ * leader ever comes online and nothing rejects `roleReady` — after a timeout,
+ * so `establish` can't hang forever waiting on a dead election.
+ */
+const awaitRoleReady = () =>
+  new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error("Shared DB role election timed out")),
+      WORKER_READY_TIMEOUT_MS + 2000
+    );
+    roleReady.then(
+      () => {
+        clearTimeout(timer);
+        resolve();
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
+
 const establish = async (): Promise<DbWorkerClient> => {
   start();
-  await roleReady;
+  await awaitRoleReady();
 
   return {
     connect: async (params) => {
@@ -312,7 +385,14 @@ const establish = async (): Promise<DbWorkerClient> => {
 
 /** Lazily establishes (once per tab) and returns the shared DB client. */
 export const getDbWorkerClient = () => {
-  if (!clientPromise) clientPromise = establish();
+  if (!clientPromise) {
+    // Clear the memo on failure so a rejected establish isn't cached forever;
+    // callers handle the rejection (e.g. fall back to a direct connection).
+    clientPromise = establish().catch((error) => {
+      clientPromise = null;
+      throw error;
+    });
+  }
   return clientPromise;
 };
 

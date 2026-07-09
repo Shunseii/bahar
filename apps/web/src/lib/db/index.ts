@@ -40,6 +40,26 @@ let drizzleDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
 const LOCAL_DB_PATH_PREFIX = "bahar-local";
 
 /**
+ * Kill switch for the shared-DB-across-tabs worker path (BAH-139).
+ *
+ * The `@tursodatabase/sync-wasm/bundle` build the dedicated worker uses spawns
+ * an emscripten pthread worker and blocks the main WASM thread in `Atomics.wait`
+ * until that pthread posts `loaded`. In the production Rollup build (minified,
+ * nested worker emitted as a separate chunk, forced `type: "module"` via
+ * vite.config `worker.format`) the pthread never completes that handshake, so
+ * the worker never signals ready, `initDb` hangs, and the app is stuck on the
+ * splash. It works in dev because Vite serves the nested worker live/unminified.
+ *
+ * Until `/bundle` boots in the prod bundle, force the proven single-tab direct
+ * connection (the pre-BAH-139 path). Flip back to `true` to re-enable multi-tab
+ * once the worker init is fixed and verified in a production build.
+ */
+const ENABLE_SHARED_DB = false;
+
+/** Whether to use the shared-DB worker path (feature-flagged + browser-gated). */
+const useSharedDb = () => ENABLE_SHARED_DB && isSharedDbSupported();
+
+/**
  * Builds the drizzle sqlite-proxy adapter around a sync-wasm `Database`.
  * There's no first-party drizzle driver for `@tursodatabase/sync-wasm`,
  * so this translates drizzle's generic query calls into the db's own
@@ -142,7 +162,7 @@ export const resetDb = async (caller: ResetDbCaller) => {
 export const deleteLocalDatabase = async () => {
   await resetDb("delete_local_db");
 
-  if (isSharedDbSupported()) {
+  if (useSharedDb()) {
     // The worker owns the OPFS files and (unlike the fallback) keeps sync
     // metadata in IndexedDB, not this context's localStorage. It can't be
     // deleted from here — the worker holds the OPFS handles — so delegate.
@@ -522,10 +542,26 @@ const _connectToLocalDb = async ({
     authToken,
   };
 
-  if (isSharedDbSupported()) {
-    const client = await getDbWorkerClient();
-    await client.connect(params);
-    return client.dbProxy;
+  if (useSharedDb()) {
+    // Fall back to a direct in-tab connection if the shared worker can't come
+    // up (e.g. it never signals ready). Without this, a hung worker leaves
+    // initDb awaiting forever and the app stuck on the splash. The direct path
+    // is the proven single-tab behavior; multi-tab OPFS contention degrades to
+    // an opfs_lock_error the caller already handles.
+    try {
+      const client = await getDbWorkerClient();
+      await client.connect(params);
+      return client.dbProxy;
+    } catch (error) {
+      Sentry.captureException(
+        error instanceof Error ? error : new Error(String(error)),
+        { fingerprint: ["shared-db-worker-unavailable"] }
+      );
+      Sentry.logger.warn(
+        "Shared DB worker unavailable; falling back to direct connection",
+        { reason: String(error) }
+      );
+    }
   }
 
   return connect(params);
