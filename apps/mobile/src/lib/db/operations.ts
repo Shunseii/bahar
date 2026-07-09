@@ -1,16 +1,19 @@
 /**
- * Mobile wiring for the shared @bahar/db-operations factories. All operation
- * logic + tests live in that package; here we just inject mobile's DB
- * singleton via getDb. Same contract as web -- no mobile-specific wrappers.
+ * Mobile wiring for the shared @bahar/db-operations factories. Every
+ * operation's logic + tests live in that package; here we inject mobile's DB
+ * singleton via getDb, plus -- for clearBacklog -- the revlog batch post, which
+ * is mobile-specific (Eden API client). Mirrors web's wiring.
  */
 
 import {
+  type ClearBacklogRevlogEntry,
   makeDecksTable,
   makeDictionaryEntriesTable,
   makeFlashcardsTable,
   makeProgressTable,
   makeSettingsTable,
 } from "@bahar/db-operations";
+import { api } from "../../utils/api";
 import { ensureDb } from ".";
 import { getDrizzleDb } from "./adapter";
 
@@ -27,8 +30,22 @@ const getDb = async () => {
   return getDrizzleDb();
 };
 
+/**
+ * Sends the clearBacklog review logs to the server. Fire-and-forget --
+ * clearBacklog doesn't await this. Mirrors the single-revlog post in
+ * FlashcardReview: mobile has no Sentry, so failures are logged to the console.
+ */
+const postClearBacklogRevlogs = (entries: ClearBacklogRevlogEntry[]) => {
+  api.stats.revlogs.batch.post({ entries }).catch((err) => {
+    console.warn("[clearBacklog] Failed to post revlogs:", err);
+  });
+};
+
 export const decksTable = makeDecksTable({ getDb });
 export const dictionaryEntriesTable = makeDictionaryEntriesTable({ getDb });
-export const flashcardsTable = makeFlashcardsTable({ getDb });
+export const flashcardsTable = makeFlashcardsTable(
+  { getDb },
+  { postRevlogBatch: postClearBacklogRevlogs }
+);
 export const progressTable = makeProgressTable({ getDb });
 export const settingsTable = makeSettingsTable({ getDb });

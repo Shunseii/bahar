@@ -361,6 +361,31 @@ describe("flashcardsTable", () => {
       expect(result?.dictionary_entry_id).toBe(entry.id);
       expect(result?.id).toBe(flashcard.id);
     });
+
+    it("returns entries whose text fields contain double quotes and backslashes verbatim (BAH-138)", async () => {
+      // Regression: the query previously hand-built json_object() with manual
+      // REPLACE escaping, which double-escaped quotes on top of json_object's
+      // own escaping and produced malformed JSON. Values must round-trip
+      // unchanged through the drizzle nested select.
+      const entry = await insertDictionaryEntry(testDb, {
+        word: "تنحنح",
+        translation: 'to clear one\'s throat (say "ahem")',
+        definition: 'path\\to\\thing and a trailing quote"',
+      });
+      const flashcard = await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+      });
+
+      const results = await flashcardsTable.today.query({});
+      const result = results.find((r) => r.id === flashcard.id);
+
+      expect(result?.dictionary_entry).toMatchObject({
+        id: entry.id,
+        word: "تنحنح",
+        translation: 'to clear one\'s throat (say "ahem")',
+        definition: 'path\\to\\thing and a trailing quote"',
+      });
+    });
   });
 
   describe("counts", () => {
@@ -472,6 +497,116 @@ describe("flashcardsTable", () => {
         rating: "hard",
         source: "clear_backlog",
       });
+    });
+
+    it("reschedules every card correctly when batching multiple cards in one chunk", async () => {
+      // Guards the batched `UPDATE ... FROM (VALUES ...)` path: with >1 card in
+      // a single chunk, each row's new schedule must land on its own card and
+      // not bleed across rows (column1..column12 positional mapping). Each card
+      // gets a distinct `lapses` value as a fingerprint -- grading Hard never
+      // adds a lapse, so it must round-trip unchanged onto the SAME card; a
+      // misaligned column/row mapping would surface as a mismatched lapses.
+      const N = 5;
+      const oldDue = new Date(Date.now() - 1000 * 60 * 60 * 24 * 10);
+      const lastReview = new Date(Date.now() - 1000 * 60 * 60 * 24 * 20);
+
+      const cards = await Promise.all(
+        Array.from({ length: N }, async (_, i) => {
+          const entry = await insertDictionaryEntry(testDb);
+          const flashcard = await insertFlashcard(testDb, {
+            dictionary_entry_id: entry.id,
+            due: oldDue.toISOString(),
+            due_timestamp_ms: oldDue.getTime(),
+            state: FlashcardState.REVIEW,
+            stability: 10 + i,
+            difficulty: 5,
+            reps: 3 + i,
+            lapses: i, // distinct fingerprint: 0,1,2,3,4
+            last_review: lastReview.toISOString(),
+            last_review_timestamp_ms: lastReview.getTime(),
+          });
+          return { entry, flashcard, lapses: i };
+        })
+      );
+
+      const postRevlogBatch = vi.fn<(e: ClearBacklogRevlogEntry[]) => void>();
+      const table = makeFlashcardsTable(
+        { getDb: async () => testDb.drizzleDb },
+        { postRevlogBatch }
+      );
+
+      const progress = await consumeGenerator(table.clearBacklog.generator({}));
+
+      // All N fit in one CHUNK_SIZE=100 chunk -> a single progress step.
+      expect(progress).toEqual([{ cleared: N, total: N }]);
+
+      for (const { flashcard, lapses } of cards) {
+        const row = (await (
+          await testDb.db.prepare("SELECT * FROM flashcards WHERE id = ?")
+        ).get([flashcard.id])) as {
+          due_timestamp_ms: number;
+          last_review: string | null;
+          lapses: number;
+        };
+
+        // Rescheduled: due moved forward past its own old value, review logged.
+        expect(row.due_timestamp_ms).toBeGreaterThan(oldDue.getTime());
+        expect(row.last_review).not.toBeNull();
+        // Fingerprint landed on the right card (no cross-row/column bleed).
+        expect(row.lapses).toBe(lapses);
+      }
+
+      // One revlog per card, exactly the N cards we inserted.
+      expect(postRevlogBatch).toHaveBeenCalledTimes(1);
+      const entries = postRevlogBatch.mock.calls[0][0];
+      expect(entries).toHaveLength(N);
+      expect(new Set(entries.map((e) => e.dictionary_entry_id))).toEqual(
+        new Set(cards.map((c) => c.entry.id))
+      );
+    });
+
+    it("spans multiple chunks and reports cumulative progress across them", async () => {
+      // Guards chunking when the backlog exceeds CHUNK_SIZE (100): no card is
+      // dropped at the boundary and progress is cumulative across chunks.
+      const total = 105;
+      const oldDue = new Date(Date.now() - 1000 * 60 * 60 * 24 * 10);
+
+      await Promise.all(
+        Array.from({ length: total }, async () => {
+          const entry = await insertDictionaryEntry(testDb);
+          await insertFlashcard(testDb, {
+            dictionary_entry_id: entry.id,
+            due: oldDue.toISOString(),
+            due_timestamp_ms: oldDue.getTime(),
+            state: FlashcardState.NEW,
+          });
+        })
+      );
+
+      const postRevlogBatch = vi.fn<(e: ClearBacklogRevlogEntry[]) => void>();
+      const table = makeFlashcardsTable(
+        { getDb: async () => testDb.drizzleDb },
+        { postRevlogBatch }
+      );
+
+      const progress = await consumeGenerator(table.clearBacklog.generator({}));
+
+      // Cumulative, chunked at CHUNK_SIZE=100.
+      expect(progress).toEqual([
+        { cleared: 100, total },
+        { cleared: 105, total },
+      ]);
+
+      // Every card rescheduled -- none skipped at the chunk boundary.
+      const remaining = (await (
+        await testDb.db.prepare(
+          "SELECT COUNT(*) AS cnt FROM flashcards WHERE due_timestamp_ms <= ?"
+        )
+      ).get([oldDue.getTime()])) as { cnt: number };
+      expect(remaining.cnt).toBe(0);
+
+      expect(postRevlogBatch).toHaveBeenCalledTimes(1);
+      expect(postRevlogBatch.mock.calls[0][0]).toHaveLength(total);
     });
 
     it("does not touch flashcards outside the backlog window", async () => {

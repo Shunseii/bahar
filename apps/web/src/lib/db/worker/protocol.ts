@@ -31,6 +31,7 @@ export type DbWorkerRequest =
   | { id: number; method: "exec"; params: { sql: string } }
   | { id: number; method: "pull"; params: undefined }
   | { id: number; method: "push"; params: undefined }
+  | { id: number; method: "checkpoint"; params: undefined }
   | { id: number; method: "close"; params: undefined }
   | { id: number; method: "deleteLocal"; params: { prefix: string } };
 
