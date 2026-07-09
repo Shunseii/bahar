@@ -20,6 +20,7 @@ import {
   Edit,
   Loader2,
   Lock,
+  RotateCcw,
   SearchX,
   Timer,
 } from "lucide-react";
@@ -472,6 +473,12 @@ const RatingLegend = () => (
         </span>
       </div>
     ))}
+    <div className="flex items-center gap-1">
+      <RotateCcw className="size-2.5 text-muted-foreground/70" />
+      <span className="text-muted-foreground text-xs capitalize">
+        <Trans>Reset</Trans>
+      </span>
+    </div>
   </div>
 );
 
@@ -583,17 +590,26 @@ const NextReviewSection: FC<{
 
 const MAX_VISIBLE_DOTS = 10;
 
+const ResetMarker: FC = () => (
+  <RotateCcw className="size-2.5 text-muted-foreground/70" />
+);
+
 const DirectionTimeline: FC<{
-  revlogs: { rating: string | null; reviewTimestampMs: number }[];
+  revlogs: {
+    rating: string | null;
+    reviewTimestampMs: number;
+    source: string;
+  }[];
   flashcard?: { due: string; lapses: number | null } | undefined;
   label?: string;
   locale: string;
 }> = ({ revlogs, flashcard, label, locale }) => {
   const { formatNumber } = useFormatNumber();
-  const reviewCount = revlogs.length;
+  const reviews = revlogs.filter((r) => r.source !== "reset");
+  const reviewCount = reviews.length;
   const lapseCount = flashcard?.lapses ?? 0;
   const lastReviewMs =
-    revlogs.length > 0 ? revlogs[revlogs.length - 1].reviewTimestampMs : null;
+    reviews.length > 0 ? reviews[reviews.length - 1].reviewTimestampMs : null;
 
   const metaParts: string[] = [];
 
@@ -623,7 +639,7 @@ const DirectionTimeline: FC<{
 
   return (
     <div className="flex justify-between gap-1.5">
-      {reviewCount > 0 && (
+      {revlogs.length > 0 && (
         <div className="flex flex-wrap items-center gap-1">
           {showOldestLatest && (
             <span className="text-muted-foreground/60 text-xs">
@@ -636,15 +652,19 @@ const DirectionTimeline: FC<{
           {(revlogs.length > MAX_VISIBLE_DOTS
             ? revlogs.slice(revlogs.length - MAX_VISIBLE_DOTS)
             : revlogs
-          ).map((r, i) => (
-            <div
-              className={cn(
-                "h-2.5 w-2.5 rounded-full",
-                RATING_DOT_STYLES[r.rating ?? "good"] ?? "bg-primary"
-              )}
-              key={i}
-            />
-          ))}
+          ).map((r, i) =>
+            r.source === "reset" ? (
+              <ResetMarker key={i} />
+            ) : (
+              <div
+                className={cn(
+                  "h-2.5 w-2.5 rounded-full",
+                  RATING_DOT_STYLES[r.rating ?? "good"] ?? "bg-primary"
+                )}
+                key={i}
+              />
+            )
+          )}
           {showOldestLatest && (
             <span className="text-muted-foreground/60 text-xs">
               <Trans>Latest</Trans>

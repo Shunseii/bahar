@@ -20,6 +20,7 @@ import {
   type Grade,
   generatorParameters,
   type RecordLog,
+  type ReviewLog,
   type State,
 } from "ts-fsrs";
 
@@ -150,5 +151,60 @@ export const gradeFlashcard = (
     elapsed_days: selectedCard.elapsed_days,
     scheduled_days: selectedCard.scheduled_days,
     learning_steps: selectedCard.learning_steps,
+  };
+};
+
+/**
+ * Resets a flashcard back to a new card and returns the updated database
+ * fields alongside the FSRS review log for the reset.
+ *
+ * The log has `rating === Rating.Manual` and records the card's pre-reset
+ * state, so it can be persisted as a `manual` revlog marking the reset in the
+ * card's review history.
+ */
+export const forgetFlashcard = (
+  scheduler: FSRS,
+  flashcard: SelectFlashcard,
+  now: Date = new Date()
+): {
+  card: Pick<
+    SelectFlashcard,
+    | "due"
+    | "due_timestamp_ms"
+    | "last_review"
+    | "last_review_timestamp_ms"
+    | "state"
+    | "stability"
+    | "difficulty"
+    | "reps"
+    | "lapses"
+    | "elapsed_days"
+    | "scheduled_days"
+    | "learning_steps"
+  >;
+  log: ReviewLog;
+} => {
+  const fsrsCard = toFsrsCard(flashcard);
+  // reset_count: true zeroes the lifetime reps/lapses counters (forget keeps
+  // them by default). forget always preserves last_review, so we null it here
+  // to match a brand-new card.
+  const { card, log } = scheduler.forget(fsrsCard, now, true);
+
+  return {
+    card: {
+      due: card.due.toISOString(),
+      due_timestamp_ms: card.due.getTime(),
+      last_review: null,
+      last_review_timestamp_ms: null,
+      state: card.state,
+      stability: card.stability,
+      difficulty: card.difficulty,
+      reps: card.reps,
+      lapses: card.lapses,
+      elapsed_days: card.elapsed_days,
+      scheduled_days: card.scheduled_days,
+      learning_steps: card.learning_steps,
+    },
+    log,
   };
 };

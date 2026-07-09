@@ -33,7 +33,7 @@ import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import { removeFromSearchIndex, updateSearchIndex } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
-import { queryClient } from "@/utils/api";
+import { api, queryClient } from "@/utils/api";
 import { errorMap } from "@/utils/zod";
 
 z.config({ customError: errorMap });
@@ -143,7 +143,7 @@ export default function EditWordScreen() {
     }: {
       dictionary_entry_id: string;
     }) => {
-      await Promise.all([
+      const results = await Promise.all([
         flashcardsTable.reset.mutation({
           dictionary_entry_id,
           direction: "forward",
@@ -153,10 +153,30 @@ export default function EditWordScreen() {
           direction: "reverse",
         }),
       ]);
+
+      // Post the manual reset revlogs to the server (fire-and-forget).
+      for (const { flashcard, log } of results) {
+        api.stats.revlogs
+          .post({
+            ...log,
+            due: log.due.toISOString(),
+            review: log.review.toISOString(),
+            rating: "manual",
+            source: "reset",
+            direction: flashcard.direction,
+            dictionary_entry_id,
+          })
+          .catch((err) => {
+            console.warn("[revlog] Failed to post reset revlog:", err);
+          });
+      }
     },
-    onSuccess: async () => {
+    onSuccess: async (_data, { dictionary_entry_id }) => {
       await queryClient.invalidateQueries({
         queryKey: flashcardsTable.today.cacheOptions.queryKey,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ["stats.revlogs.entry", dictionary_entry_id],
       });
       toast.success(t`Flashcard reset successfully`);
     },

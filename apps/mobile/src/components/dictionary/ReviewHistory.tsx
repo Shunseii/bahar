@@ -3,7 +3,7 @@ import type { SelectFlashcard } from "@bahar/drizzle-user-db-schemas";
 import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { Lock, Timer } from "lucide-react-native";
+import { Lock, RotateCcw, Timer } from "lucide-react-native";
 import type { FC } from "react";
 import { Text, View } from "react-native";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
@@ -21,6 +21,12 @@ const RATING_DOT_COLORS: Record<string, string> = {
 };
 
 const MAX_VISIBLE_DOTS = 10;
+
+const ResetMarker: FC = () => {
+  const colors = useThemeColors();
+
+  return <RotateCcw color={colors.mutedForeground} size={10} />;
+};
 
 const formatNextReview = ({
   due,
@@ -64,21 +70,40 @@ const RatingLegend: FC = () => {
           </Text>
         </View>
       ))}
+      <ResetLegendItem />
+    </View>
+  );
+};
+
+const ResetLegendItem: FC = () => {
+  const colors = useThemeColors();
+
+  return (
+    <View className="flex-row items-center gap-1">
+      <RotateCcw color={colors.mutedForeground} size={10} />
+      <Text className="text-muted-foreground text-xs capitalize">
+        <Trans>Reset</Trans>
+      </Text>
     </View>
   );
 };
 
 const DirectionTimeline: FC<{
-  revlogs: { rating: string | null; reviewTimestampMs: number }[];
+  revlogs: {
+    rating: string | null;
+    reviewTimestampMs: number;
+    source: string;
+  }[];
   flashcard?: Pick<SelectFlashcard, "due" | "lapses"> | undefined;
   label?: string;
   locale: string;
 }> = ({ revlogs, flashcard, label, locale }) => {
   const { formatNumber } = useFormatNumber();
-  const reviewCount = revlogs.length;
+  const reviews = revlogs.filter((r) => r.source !== "reset");
+  const reviewCount = reviews.length;
   const lapseCount = flashcard?.lapses ?? 0;
   const lastReviewMs =
-    revlogs.length > 0 ? revlogs[revlogs.length - 1].reviewTimestampMs : null;
+    reviews.length > 0 ? reviews[reviews.length - 1].reviewTimestampMs : null;
 
   const metaParts: string[] = [];
   metaParts.push(
@@ -108,7 +133,7 @@ const DirectionTimeline: FC<{
 
   return (
     <View className="gap-1.5">
-      {reviewCount > 0 && (
+      {revlogs.length > 0 && (
         <View className="flex-row flex-wrap items-center gap-1">
           {showOldestLatest && (
             <Text className="text-muted-foreground/60 text-xs">
@@ -118,15 +143,19 @@ const DirectionTimeline: FC<{
           {revlogs.length > MAX_VISIBLE_DOTS && (
             <Text className="text-muted-foreground text-xs">…</Text>
           )}
-          {visibleRevlogs.map((r, i) => (
-            <View
-              className={cn(
-                "size-2.5 rounded-full",
-                RATING_DOT_COLORS[r.rating ?? "good"] ?? "bg-primary"
-              )}
-              key={i}
-            />
-          ))}
+          {visibleRevlogs.map((r, i) =>
+            r.source === "reset" ? (
+              <ResetMarker key={i} />
+            ) : (
+              <View
+                className={cn(
+                  "size-2.5 rounded-full",
+                  RATING_DOT_COLORS[r.rating ?? "good"] ?? "bg-primary"
+                )}
+                key={i}
+              />
+            )
+          )}
           {showOldestLatest && (
             <Text className="text-muted-foreground/60 text-xs">
               <Trans>Latest</Trans>

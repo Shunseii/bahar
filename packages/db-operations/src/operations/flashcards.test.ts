@@ -2,6 +2,7 @@ import {
   FlashcardState,
   type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
+import { Rating } from "ts-fsrs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb, type TestDb } from "../test/create-test-db";
 import { insertDictionaryEntry, insertFlashcard } from "../test/factories";
@@ -133,7 +134,7 @@ describe("flashcardsTable", () => {
         direction: "forward",
       });
 
-      expect(reset).toMatchObject({
+      expect(reset.flashcard).toMatchObject({
         id: flashcard.id,
         state: FlashcardState.NEW,
         stability: 0,
@@ -144,6 +145,27 @@ describe("flashcardsTable", () => {
         scheduled_days: 0,
         last_review: null,
       });
+    });
+
+    it("returns a manual review log capturing the pre-reset state", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+        direction: "forward",
+        state: FlashcardState.REVIEW,
+        stability: 10,
+      });
+
+      const reset = await flashcardsTable.reset.mutation({
+        dictionary_entry_id: entry.id,
+        direction: "forward",
+      });
+
+      // The log is rated Manual (the reset marker) and records the card's
+      // state/stability from before the wipe, not the reset-to-NEW values.
+      expect(reset.log.rating).toBe(Rating.Manual);
+      expect(reset.log.state).toBe(FlashcardState.REVIEW);
+      expect(reset.log.stability).toBe(10);
     });
 
     it("throws when no matching flashcard exists for that entry and direction", async () => {

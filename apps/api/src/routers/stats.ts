@@ -1,5 +1,5 @@
 import { FlashcardState } from "@bahar/drizzle-user-db-schemas";
-import { and, desc, eq, gte, isNotNull } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, isNotNull } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { nanoid } from "nanoid";
 import { z } from "zod";
@@ -197,6 +197,7 @@ export const statsRouter = new Elysia({ prefix: "/stats" })
         .select({
           rating: revlogs.rating,
           direction: revlogs.direction,
+          source: revlogs.source,
           reviewTimestampMs: revlogs.review_timestamp_ms,
         })
         .from(revlogs)
@@ -204,7 +205,7 @@ export const statsRouter = new Elysia({ prefix: "/stats" })
           and(
             eq(revlogs.user_id, user.id),
             eq(revlogs.dictionary_entry_id, params.entryId),
-            eq(revlogs.source, "review")
+            inArray(revlogs.source, ["review", "reset"])
           )
         )
         .orderBy(revlogs.review_timestamp_ms);

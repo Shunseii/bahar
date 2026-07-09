@@ -61,7 +61,7 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
     }: {
       dictionary_entry_id: string;
     }) => {
-      await Promise.all([
+      const results = await Promise.all([
         flashcardsTable.reset.mutation({
           dictionary_entry_id,
           direction: "forward",
@@ -71,6 +71,24 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
           direction: "reverse",
         }),
       ]);
+
+      await Promise.all(
+        results.map(({ flashcard, log }) =>
+          api.stats.revlogs.post({
+            ...log,
+            due: log.due.toISOString(),
+            review: log.review.toISOString(),
+            rating: "manual",
+            source: "reset",
+            direction: flashcard.direction,
+            dictionary_entry_id,
+          })
+        )
+      );
+
+      await queryClient.invalidateQueries({
+        queryKey: ["stats.revlogs.entry", dictionary_entry_id],
+      });
     },
   });
 

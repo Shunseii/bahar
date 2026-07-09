@@ -13,12 +13,13 @@ import { users } from "./auth";
 /**
  * The source of the revlog. Review refers to a manual
  * review by the user. Clear backlog refers to a bulk reset
- * with the clear backlog button.
+ * with the clear backlog button. Reset refers to resetting a
+ * single flashcard's progress back to a new card.
  *
- * Typically we want to exclude the latter from most
- * statistics.
+ * Typically we want to exclude everything but `review` from
+ * most statistics.
  */
-export const REVLOG_SOURCES = ["review", "clear_backlog"] as const;
+export const REVLOG_SOURCES = ["review", "clear_backlog", "reset"] as const;
 
 export const REVLOG_RATINGS = [
   "again",

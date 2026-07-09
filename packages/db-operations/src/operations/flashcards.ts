@@ -8,7 +8,11 @@ import {
   type SelectFlashcard,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
-import { createNewFlashcard, createScheduler } from "@bahar/fsrs";
+import {
+  createNewFlashcard,
+  createScheduler,
+  forgetFlashcard,
+} from "@bahar/fsrs";
 import { and, countDistinct, eq, gt, inArray, lte, sql } from "drizzle-orm";
 import { nanoid } from "nanoid/non-secure";
 import { type Card, Rating, type ReviewLog } from "ts-fsrs";
@@ -390,41 +394,41 @@ export const makeFlashcardsTable = (
       }: {
         dictionary_entry_id: string;
         direction: SelectFlashcard["direction"];
-      }): Promise<SelectFlashcard> =>
+      }): Promise<{ flashcard: SelectFlashcard; log: ReviewLog }> =>
         enqueueDbOperation(async () => {
           const drizzleDb = await getDb();
           const now = new Date();
 
-          const [res] = await drizzleDb
-            .update(flashcards)
-            .set({
-              state: FlashcardState.NEW,
-              difficulty: 0,
-              stability: 0,
-              reps: 0,
-              lapses: 0,
-              elapsed_days: 0,
-              scheduled_days: 0,
-              last_review: null,
-              last_review_timestamp_ms: null,
-              due: now.toISOString(),
-              due_timestamp_ms: now.getTime(),
-            })
+          const [current] = await drizzleDb
+            .select()
+            .from(flashcards)
             .where(
               and(
                 eq(flashcards.dictionary_entry_id, dictionary_entry_id),
                 eq(flashcards.direction, direction)
               )
-            )
-            .returning();
+            );
 
-          if (!res) {
+          if (!current) {
             throw new Error(
               `Flashcard not found for dictionary entry: ${dictionary_entry_id}, direction: ${direction}`
             );
           }
 
-          return res;
+          const scheduler = createScheduler();
+          const { card, log } = forgetFlashcard(scheduler, current, now);
+
+          const [res] = await drizzleDb
+            .update(flashcards)
+            .set(card)
+            .where(eq(flashcards.id, current.id))
+            .returning();
+
+          if (!res) {
+            throw new Error(`Flashcard not found: ${current.id}`);
+          }
+
+          return { flashcard: res, log };
         }),
       cacheOptions: {
         queryKey: ["turso.flashcards.reset"],
