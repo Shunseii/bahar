@@ -25,3 +25,9 @@ dist-ssr
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Playwright / e2e
+/e2e/.auth
+/test-results
+/playwright-report
+/playwright/.cache

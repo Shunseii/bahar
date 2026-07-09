@@ -1,0 +1,11 @@
+{
+  "extends": "@bahar/typescript-config/vite.json",
+  "compilerOptions": {
+    "types": ["node", "@playwright/test"],
+    "lib": ["ESNext", "DOM"],
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": ["**/*.ts", "**/*.mts", "**/*.mjs", "../playwright.config.ts"]
+}
