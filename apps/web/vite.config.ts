@@ -34,12 +34,6 @@ export default defineConfig({
 
     sourcemap: true,
   },
-  // The leader tab spawns the dedicated DB worker as an ES module
-  // (`new Worker(new URL(...), { type: "module" })`); emit workers as ES modules
-  // so it bundles correctly in production.
-  worker: {
-    format: "es",
-  },
   optimizeDeps: {
     include: ["react", "react-dom", "@uidotdev/usehooks"],
     esbuildOptions: {
