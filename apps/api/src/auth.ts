@@ -56,6 +56,13 @@ const MOBILE_DEEP_LINK_SCHEME = "bahar://";
 const CLI_API_KEY_PREFIX = "bahar_cli_";
 const CLI_API_KEY_EXPIRY_SECS = 60 * 60 * 24 * 7; // 7 days
 
+// Per-key rate limit. better-auth's defaults (10 requests / 24h) are far too
+// low for a CLI that spends a request per command to mint a DB token; a single
+// batch session blows through them. The CLI now caches the token, so real usage
+// is a handful of fetches a day -- this ceiling just bounds abuse.
+const CLI_API_KEY_RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const CLI_API_KEY_RATE_LIMIT_MAX = 1000;
+
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
 const appleClientSecret = await buildAppleClientSecret();
@@ -460,6 +467,11 @@ export const auth = betterAuth({
       enableSessionForAPIKeys: true,
       keyExpiration: {
         defaultExpiresIn: CLI_API_KEY_EXPIRY_SECS,
+      },
+      rateLimit: {
+        enabled: true,
+        timeWindow: CLI_API_KEY_RATE_LIMIT_WINDOW_MS,
+        maxRequests: CLI_API_KEY_RATE_LIMIT_MAX,
       },
     }),
     consentEventsPlugin(),

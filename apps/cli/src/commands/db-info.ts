@@ -1,13 +1,20 @@
-import { defineCommand } from "@bunli/core";
-import { API_URL } from "../lib/config";
+import { defineCommand, option } from "@bunli/core";
+import { z } from "zod";
 import { loadCredentials } from "../lib/credentials";
-import { readJsonResponse } from "../lib/http";
+import { getUserDbInfo } from "../lib/db";
 
 export const dbInfoCommand = defineCommand({
   name: "db-info",
   description:
     "Print connection info (hostname, db name, access token) for your personal database",
-  handler: async ({ colors }) => {
+  options: {
+    refresh: option(z.coerce.boolean().optional().default(false), {
+      short: "r",
+      description:
+        "Bypass the local cache and fetch a fresh token from the API.",
+    }),
+  },
+  handler: async ({ flags, colors }) => {
     const credentials = await loadCredentials();
 
     if (!credentials) {
@@ -16,14 +23,10 @@ export const dbInfoCommand = defineCommand({
       return;
     }
 
-    const response = await fetch(new URL("/databases/user", API_URL), {
-      headers: { "x-api-key": credentials.token },
-    });
-
     try {
-      const info = await readJsonResponse<unknown>({
-        response,
-        context: "Fetching database info",
+      const info = await getUserDbInfo({
+        token: credentials.token,
+        forceRefresh: flags.refresh,
       });
       console.log(JSON.stringify(info, null, 2));
     } catch (error) {

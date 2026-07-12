@@ -3,6 +3,7 @@ import { defineCommand } from "@bunli/core";
 import open from "open";
 import { WEB_URL } from "../lib/config";
 import { saveCredentials } from "../lib/credentials";
+import { clearDbInfoCache } from "../lib/db-info-cache";
 
 const LOGIN_TIMEOUT_MS = 5 * 60 * 1000;
 
@@ -64,6 +65,7 @@ export const loginCommand = defineCommand({
       const token = await waitForCallback(state);
 
       await saveCredentials({ token });
+      await clearDbInfoCache();
 
       s.succeed(colors.green("Logged in successfully."));
     } catch (error) {

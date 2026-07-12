@@ -22,7 +22,8 @@
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.45.1",
     "open": "^10.1.0",
-    "ts-fsrs": "^5.2.3"
+    "ts-fsrs": "^5.2.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@bahar/typescript-config": "workspace:*",

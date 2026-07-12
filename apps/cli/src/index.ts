@@ -1,6 +1,9 @@
 #!/usr/bin/env bun
 import { createCLI } from "@bunli/core";
+import { addCommand } from "./commands/add";
 import { dbInfoCommand } from "./commands/db-info";
+import { deleteCommand } from "./commands/delete";
+import { editCommand } from "./commands/edit";
 import { gradeCommand } from "./commands/grade";
 import { loginCommand } from "./commands/login";
 import { skillCommand } from "./commands/skill";
@@ -29,6 +32,9 @@ const cli = createCLI({
 
 cli.command(loginCommand);
 cli.command(dbInfoCommand);
+cli.command(addCommand);
+cli.command(editCommand);
+cli.command(deleteCommand);
 cli.command(gradeCommand);
 cli.command(updateCommand);
 cli.command(skillCommand);

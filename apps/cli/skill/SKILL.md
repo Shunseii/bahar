@@ -15,28 +15,40 @@ description: >
 
 ## Supported actions — and nothing else
 
-You may perform **only** these write actions against the user's database:
+You may perform **only** these write actions against the user's database. For words and
+flashcards, **use the `bahar` CLI commands below — do not write these with your own SQL.**
+The commands run the same logic the app does (flashcard creation, FSRS, sync timestamps),
+so they keep invariants a raw `INSERT`/`UPDATE` silently breaks.
 
-1. **Add words** — insert new `dictionary_entries` (and, if asked, their `flashcards`).
-2. **Edit words** — update fields on existing `dictionary_entries` (word, translation,
-   definition, tags, examples, etc.).
+1. **Add words** — **only** via `bahar add` (see "Adding words"). It creates the entry
+   *and* its forward + reverse flashcards atomically. A raw SQL `INSERT` into
+   `dictionary_entries` skips the flashcards, leaving the word with no review schedule —
+   don't do it.
+2. **Edit words** — **only** via `bahar edit` (see "Editing words"). It bumps the sync
+   timestamp and serializes JSON fields correctly, which a hand-written `UPDATE` forgets.
 3. **Grade flashcards** — record a spaced-repetition review, **only** via the `bahar grade`
-   command (see "Grading flashcards" below). Never hand-write FSRS fields.
-4. **Manage decks** — full CRUD on `decks` (create, rename, edit filters, delete). Safe:
+   command (see "Grading flashcards"). Never hand-write FSRS fields.
+4. **Delete words** — **only** via `bahar delete` (see "Deleting words"). Destructive and
+   irreversible: it removes the entry and its flashcards, permanently losing their FSRS
+   review history. Requires `--yes`, and you must warn the user and get explicit
+   confirmation first.
+5. **Manage decks** — full CRUD on `decks` (create, rename, edit filters, delete). Safe:
    a deck is just a saved filter config (`id`, `name`, `filters`), and `flashcards` hold
    no reference to it, so deleting a deck only removes that grouping — no card or review
-   data is affected.
+   data is affected. No CLI command yet; SQL is acceptable here.
 
-Reading/querying anything for lookup, search, or study-coaching is always fine.
+Reading/querying anything for lookup, search, or study-coaching is always fine — connect
+directly (Step 3) for reads. Writes to words/flashcards go through the CLI, not SQL.
 
 **Anything not on this list is unsupported and may cause irreversible damage to the user's
 database. Assume there is no undo.** Do not do it even if the user asks, without first
 warning them of the consequences and getting explicit confirmation. Unsupported includes
 (non-exhaustive):
 
-- **Deleting flashcards or `dictionary_entries`** — deleting an entry cascades to delete
-  its flashcards and permanently loses their FSRS review history. (Deleting *decks* is
-  fine — see supported actions above.)
+- **Deleting flashcards or `dictionary_entries` with raw SQL** — deleting an entry
+  removes its flashcards and permanently loses their FSRS review history. Delete words
+  only through `bahar delete` (with the user's explicit confirmation), never a raw
+  `DELETE`. (Deleting *decks* is fine — see supported actions above.)
 - **Hand-editing FSRS scheduling fields** (`due`, `state`, `stability`, `difficulty`,
   `reps`, `lapses`, …) — desyncs the schedule. Use `bahar grade`.
 - **Editing `user_stats` / streak directly** — `bahar grade` maintains these.
@@ -132,6 +144,60 @@ per Step 4.
 - The `access_token` from `bahar db-info` is a real credential scoped to that user's
   database. Treat it like a password — don't print it to logs or persist it anywhere
   beyond what's needed to make the connection.
+
+## Adding words
+
+Add words with `bahar add`, which reads a JSON array of word objects on stdin and, for
+each, creates the dictionary entry together with its forward + reverse flashcards in one
+atomic step. This is the only correct way to add a word — a raw `INSERT` leaves the entry
+with no flashcards and no review schedule.
+
+```bash
+echo '[{"word":"نور","translation":"light","type":"ism","tags":["nature"]}]' | bahar add
+
+# Full usage, including every accepted field
+bahar add help
+```
+
+Each word object requires `word`, `translation`, and `type` (`ism` | `fi'l` | `harf` |
+`expression`); `definition`, `root`, `tags`, `antonyms`, `examples`, and `morphology` are
+optional. Pass the JSON fields as real arrays/objects — the CLI serializes them.
+
+## Editing words
+
+Edit existing entries with `bahar edit`, a JSON array of `{ "id", ...fields }` objects on
+stdin. Only the fields you include change; omit a field to leave it untouched, or pass
+`null` to clear a nullable one. The command bumps the entry's sync timestamp for you.
+
+```bash
+echo '[{"id":"<entry-id>","translation":"light, glow","tags":["nature"]}]' | bahar edit
+
+bahar edit help
+```
+
+Ids with no matching entry are reported and skipped. Editable fields: `word`,
+`translation`, `definition`, `type`, `root`, `tags`, `antonyms`, `examples`, `morphology`.
+
+## Deleting words
+
+Deleting is destructive and irreversible — it removes the entry and its flashcards and
+permanently loses their FSRS review history. **Warn the user and get explicit confirmation
+first.** Then use `bahar delete`, which requires `--yes` to actually delete; without it,
+it prints what would be deleted so you can confirm.
+
+```bash
+# Preview first (deletes nothing)
+bahar delete <entry-id>
+
+# Delete for real, after the user confirms
+bahar delete <entry-id> --yes
+
+# Many ids, or from stdin
+bahar delete <id1> <id2> --yes
+echo '["<id1>","<id2>"]' | bahar delete --yes
+
+bahar delete help
+```
 
 ## Grading flashcards
 
