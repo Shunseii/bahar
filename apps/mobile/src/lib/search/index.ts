@@ -24,6 +24,7 @@ import {
   updateDocument,
 } from "@bahar/search/database";
 import type { DictionaryDocument, DictionaryOrama } from "@bahar/search/schema";
+import * as Sentry from "@sentry/react-native";
 import { eq, max } from "drizzle-orm";
 import { z } from "zod";
 import { ensureDb } from "../db";
@@ -172,7 +173,10 @@ export const rehydrateOramaDb = async (): Promise<void> => {
     oramaDb = newOramaDb;
     isHydrated = true;
   } catch (error) {
-    console.error("[orama] Rehydration failed:", error);
+    Sentry.captureException(error, {
+      fingerprint: ["orama-rehydration-error"],
+      contexts: { orama_hydration: { stage: "rehydration_failed" } },
+    });
   }
 };
 

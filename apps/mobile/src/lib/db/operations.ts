@@ -13,6 +13,7 @@ import {
   makeProgressTable,
   makeSettingsTable,
 } from "@bahar/db-operations";
+import * as Sentry from "@sentry/react-native";
 import { api } from "../../utils/api";
 import { ensureDb } from ".";
 import { getDrizzleDb } from "./adapter";
@@ -32,12 +33,14 @@ const getDb = async () => {
 
 /**
  * Sends the clearBacklog review logs to the server. Fire-and-forget --
- * clearBacklog doesn't await this. Mirrors the single-revlog post in
- * FlashcardReview: mobile has no Sentry, so failures are logged to the console.
+ * clearBacklog doesn't await this. Failures are captured to Sentry, matching
+ * web's clearBacklog.revlogs tag.
  */
 const postClearBacklogRevlogs = (entries: ClearBacklogRevlogEntry[]) => {
   api.stats.revlogs.batch.post({ entries }).catch((err) => {
-    console.warn("[clearBacklog] Failed to post revlogs:", err);
+    Sentry.captureException(err, {
+      tags: { operation: "clearBacklog.revlogs" },
+    });
   });
 };
 

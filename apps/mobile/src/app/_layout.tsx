@@ -22,8 +22,10 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import * as Sentry from "@sentry/react-native";
+import { isRunningInExpoGo } from "expo";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useNavigationContainerRef } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
@@ -76,11 +78,37 @@ const setup = () => {
   setRootViewBackgroundColor();
 };
 
+const navigationIntegration = Sentry.reactNavigationIntegration({
+  enableTimeToInitialDisplay: !isRunningInExpoGo(),
+});
+
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  environment:
+    process.env.EXPO_PUBLIC_SENTRY_ENV ??
+    (process.env.NODE_ENV === "production" ? "production" : "local"),
+  enableLogs: true,
+  tracesSampleRate: 1.0,
+  // Sends user id/email (matching web/api) and enables route params on spans.
+  sendDefaultPii: true,
+  tracePropagationTargets: [
+    new RegExp(`^${process.env.EXPO_PUBLIC_API_BASE_URL}`),
+  ],
+  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+  integrations: [
+    navigationIntegration,
+    Sentry.mobileReplayIntegration(),
+    Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
+  ],
+});
+
 setup();
 
-export default function RootLayout() {
+function RootLayout() {
   const { isPending, data: authData } = authClient.useSession();
   const colorScheme = useColorScheme();
+  const navigationRef = useNavigationContainerRef();
   const hasResolved = useRef(false);
   const [loaded] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
@@ -92,6 +120,20 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded, isPending]);
+
+  useEffect(() => {
+    if (navigationRef?.current) {
+      navigationIntegration.registerNavigationContainer(navigationRef);
+    }
+  }, [navigationRef]);
+
+  useEffect(() => {
+    if (authData?.user) {
+      Sentry.setUser({ id: authData.user.id, email: authData.user.email });
+    } else {
+      Sentry.setUser(null);
+    }
+  }, [authData?.user]);
 
   if (!loaded || (!hasResolved.current && isPending)) {
     return null;
@@ -215,3 +257,5 @@ function ThemeColorsInner({
 const DefaultComponent = (props: TransRenderProps) => {
   return <Text>{props.children}</Text>;
 };
+
+export default Sentry.wrap(RootLayout);

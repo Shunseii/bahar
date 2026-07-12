@@ -1,11 +1,12 @@
 // Learn more: https://docs.expo.dev/guides/monorepos/
-const { getDefaultConfig } = require("expo/metro-config");
+const { getSentryExpoConfig } = require("@sentry/react-native/metro");
 const { withUniwindConfig } = require("uniwind/metro");
 
 const path = require("node:path");
 
-// First apply monorepo paths
-const baseConfig = withMonorepoPaths(getDefaultConfig(__dirname));
+// First apply monorepo paths. getSentryExpoConfig wraps Expo's getDefaultConfig
+// to assign Debug IDs to bundles + source maps for Sentry.
+const baseConfig = withMonorepoPaths(getSentryExpoConfig(__dirname));
 
 // Add Lingui extensions
 baseConfig.resolver.sourceExts = [

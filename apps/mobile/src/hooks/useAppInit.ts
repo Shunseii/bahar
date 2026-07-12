@@ -4,6 +4,7 @@
  * Initializes the database and hydrates Orama search index on app startup.
  */
 
+import * as Sentry from "@sentry/react-native";
 import { useEffect, useState } from "react";
 import { initDb } from "@/lib/db";
 import { hydrateOramaDb } from "@/lib/search";
@@ -27,7 +28,13 @@ export const useAppInit = (): UseAppInitResult => {
       if (!dbResult.ok) {
         setState("error");
         setError(`Database error: ${dbResult.error.type}`);
-        console.error(dbResult.error);
+        Sentry.captureException(
+          new Error(dbResult.error.type, { cause: dbResult.error }),
+          {
+            fingerprint: ["db-init-error", dbResult.error.type],
+            contexts: { db_init: { type: dbResult.error.type } },
+          }
+        );
         return;
       }
 
@@ -35,7 +42,18 @@ export const useAppInit = (): UseAppInitResult => {
       if (!oramaResult.ok) {
         setState("error");
         setError(`Search error: ${oramaResult.error.type}`);
-        console.error(oramaResult.error);
+        Sentry.captureException(
+          new Error(oramaResult.error.type, { cause: oramaResult.error }),
+          {
+            fingerprint: ["orama-hydration-error", oramaResult.error.type],
+            contexts: {
+              orama_hydration: {
+                type: oramaResult.error.type,
+                reason: oramaResult.error.reason,
+              },
+            },
+          }
+        );
         return;
       }
 
