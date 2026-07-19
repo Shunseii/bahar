@@ -8,8 +8,19 @@ import {
   BreadcrumbSeparator,
 } from "@bahar/web-ui/components/breadcrumb";
 import { Button } from "@bahar/web-ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@bahar/web-ui/components/card";
 import { Checkbox } from "@bahar/web-ui/components/checkbox";
 import { Form } from "@bahar/web-ui/components/form";
+import {
+  SegmentedControl,
+  SegmentedControlItem,
+} from "@bahar/web-ui/components/segmented-control";
 import {
   Tooltip,
   TooltipContent,
@@ -17,11 +28,11 @@ import {
 } from "@bahar/web-ui/components/tooltip";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { createMultipleAtom } from "@/atoms/create-multiple";
@@ -38,6 +49,7 @@ import { useAddDictionaryEntry } from "@/hooks/db";
 import { useDir } from "@/hooks/useDir";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
+import { settingsTable } from "@/lib/db/operations";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import type { z } from "@/lib/zod";
 
@@ -96,6 +108,19 @@ const Add = () => {
   const [createMultiple, setCreateMultiple] = useAtom(createMultipleAtom);
   const navigate = useNavigate();
   const shouldNavigateRef = useRef(false);
+
+  const { data: settingsData } = useQuery({
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
+  });
+  // Per-word reverse choice for this new entry. Null = follow the account
+  // default (`create_reverse_by_default`); once the user flips the switch their
+  // choice wins for this word.
+  const [createReverseOverride, setCreateReverseOverride] = useState<
+    boolean | null
+  >(null);
+  const createReverse =
+    createReverseOverride ?? settingsData?.create_reverse_by_default ?? false;
 
   const { t } = useLingui();
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -166,9 +191,13 @@ const Add = () => {
         };
       })();
 
-      await addDictionaryEntry({
-        word: { ...wordData, type: data.type ?? "ism" },
-      });
+      await addDictionaryEntry(
+        {
+          word: { ...wordData, type: data.type ?? "ism" },
+        },
+        {},
+        { createReverse }
+      );
 
       toast.success(t`Successfully added word!`, {
         description: t`The word has been added to your dictionary.`,
@@ -425,6 +454,47 @@ const Add = () => {
                 <CategoryFormSection />
 
                 <TagsFormSection />
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <Trans>Flashcards</Trans>
+                    </CardTitle>
+                    <CardDescription>
+                      <Trans>Configure the flashcards for this entry.</Trans>
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-medium text-sm">
+                          <Trans>Create a reverse card</Trans>
+                        </span>
+                        <span className="text-muted-foreground text-xs">
+                          <Trans>English → Arabic, for this word.</Trans>
+                        </span>
+                      </div>
+
+                      <SegmentedControl
+                        onValueChange={(value) => {
+                          if (value) {
+                            setCreateReverseOverride(value === "on");
+                          }
+                        }}
+                        type="single"
+                        value={createReverse ? "on" : "off"}
+                      >
+                        <SegmentedControlItem value="off">
+                          <Trans>Off</Trans>
+                        </SegmentedControlItem>
+                        <SegmentedControlItem value="on">
+                          <Trans>On</Trans>
+                        </SegmentedControlItem>
+                      </SegmentedControl>
+                    </div>
+                  </CardContent>
+                </Card>
 
                 <div className="hidden items-center gap-2 md:flex">
                   <label

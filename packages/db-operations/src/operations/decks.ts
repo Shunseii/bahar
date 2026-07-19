@@ -29,10 +29,8 @@ export const makeDecksTable = ({ getDb }: OperationDeps) =>
   ({
     list: {
       query: async ({
-        show_reverse,
         backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }: {
-        show_reverse?: boolean;
         backlogThresholdDays?: number;
       } = {}): Promise<
         (SelectDeck & {
@@ -67,12 +65,9 @@ export const makeDecksTable = ({ getDb }: OperationDeps) =>
                   FlashcardState.RE_LEARNING,
                 ];
 
-            const directions: ("forward" | "reverse")[] = show_reverse
-              ? ["forward", "reverse"]
-              : ["forward"];
-
+            // Reverse cards are per-word row presence now, not a global gate,
+            // so counts include whatever forward/reverse rows exist.
             const conditions = [
-              inArray(flashcards.direction, directions),
               inArray(flashcards.state, state),
               inArray(dictionaryEntries.type, types),
               eq(flashcards.is_hidden, false),

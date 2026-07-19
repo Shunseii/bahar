@@ -180,7 +180,6 @@ describe("progressTable", () => {
       });
 
       const result = await progressTable.workloadForecast.query({
-        showReverse: false,
         locale: "en-US",
       });
 
@@ -190,7 +189,7 @@ describe("progressTable", () => {
       expect(result.tomorrowCount).toBe(result.days[0].count);
     });
 
-    it("includes reverse-direction cards only when showReverse is true", async () => {
+    it("counts both forward and reverse cards (reverse is row presence, no gate)", async () => {
       await insertFlashcard(testDb, {
         direction: "forward",
         due_timestamp_ms: noonDaysFromNow(1),
@@ -200,17 +199,11 @@ describe("progressTable", () => {
         due_timestamp_ms: noonDaysFromNow(1),
       });
 
-      const forwardOnly = await progressTable.workloadForecast.query({
-        showReverse: false,
-        locale: "en-US",
-      });
-      const both = await progressTable.workloadForecast.query({
-        showReverse: true,
+      const result = await progressTable.workloadForecast.query({
         locale: "en-US",
       });
 
-      expect(forwardOnly.tomorrowCount).toBe(1);
-      expect(both.tomorrowCount).toBe(2);
+      expect(result.tomorrowCount).toBe(2);
     });
   });
 

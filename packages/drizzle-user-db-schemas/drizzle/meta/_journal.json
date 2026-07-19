@@ -29,6 +29,13 @@
       "when": 1777584283320,
       "tag": "0003_tearful_marten_broadcloak",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1784395644196,
+      "tag": "0004_delete_reverse_for_disabled_users",
+      "breakpoints": true
     }
   ]
 }

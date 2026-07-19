@@ -231,10 +231,8 @@ export const makeProgressTable = ({ getDb }: OperationDeps) =>
     },
     workloadForecast: {
       query: async ({
-        showReverse,
         locale,
       }: {
-        showReverse: boolean;
         locale: string;
       }): Promise<{
         days: { label: string; count: number }[];
@@ -243,9 +241,6 @@ export const makeProgressTable = ({ getDb }: OperationDeps) =>
         const drizzleDb = await getDb();
 
         const tomorrow = startOfDay(addDays(new Date(), 1));
-        const directions: ("forward" | "reverse")[] = showReverse
-          ? ["forward", "reverse"]
-          : ["forward"];
         const dayFormatter = new Intl.DateTimeFormat(locale, {
           weekday: "short",
         });
@@ -263,8 +258,7 @@ export const makeProgressTable = ({ getDb }: OperationDeps) =>
               and(
                 gte(flashcards.due_timestamp_ms, dayStart.getTime()),
                 lte(flashcards.due_timestamp_ms, dayEnd.getTime()),
-                eq(flashcards.is_hidden, false),
-                inArray(flashcards.direction, directions)
+                eq(flashcards.is_hidden, false)
               )
             );
 

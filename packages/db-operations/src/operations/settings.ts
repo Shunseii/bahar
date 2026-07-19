@@ -21,18 +21,18 @@ export const makeSettingsTable = ({ getDb }: OperationDeps) =>
             drizzleDb.insert(settings).values({
               id: nanoid(),
               show_antonyms_in_flashcard: "hidden",
-              show_reverse_flashcards: false,
+              create_reverse_by_default: false,
             })
           );
           return {
             show_antonyms_in_flashcard: "hidden",
-            show_reverse_flashcards: false,
+            create_reverse_by_default: false,
           };
         }
 
         return {
           show_antonyms_in_flashcard: res.show_antonyms_in_flashcard,
-          show_reverse_flashcards: res.show_reverse_flashcards,
+          create_reverse_by_default: res.create_reverse_by_default,
         };
       },
       cacheOptions: {
@@ -58,10 +58,11 @@ export const makeSettingsTable = ({ getDb }: OperationDeps) =>
               updates.show_antonyms_in_flashcard;
           }
           if (
-            "show_reverse_flashcards" in updates &&
-            updates.show_reverse_flashcards !== undefined
+            "create_reverse_by_default" in updates &&
+            updates.create_reverse_by_default !== undefined
           ) {
-            setValues.show_reverse_flashcards = updates.show_reverse_flashcards;
+            setValues.create_reverse_by_default =
+              updates.create_reverse_by_default;
           }
 
           if (Object.keys(setValues).length === 0) {
@@ -78,7 +79,7 @@ export const makeSettingsTable = ({ getDb }: OperationDeps) =>
 
           return {
             show_antonyms_in_flashcard: res.show_antonyms_in_flashcard,
-            show_reverse_flashcards: res.show_reverse_flashcards,
+            create_reverse_by_default: res.create_reverse_by_default,
           };
         }),
       cacheOptions: {

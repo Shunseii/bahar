@@ -54,7 +54,7 @@ import { authClient } from "@/utils/auth-client";
 
 interface SettingsFormValues {
   show_antonyms_in_flashcard: ShowAntonymsMode;
-  show_reverse_flashcards: boolean;
+  create_reverse_by_default: boolean;
 }
 
 interface SettingRowProps {
@@ -246,7 +246,7 @@ export default function SettingsScreen() {
   const { control, reset } = useForm<SettingsFormValues>({
     defaultValues: {
       show_antonyms_in_flashcard: "answer",
-      show_reverse_flashcards: false,
+      create_reverse_by_default: false,
     },
   });
 
@@ -255,7 +255,7 @@ export default function SettingsScreen() {
       reset({
         show_antonyms_in_flashcard:
           settings.show_antonyms_in_flashcard ?? "answer",
-        show_reverse_flashcards: settings.show_reverse_flashcards ?? false,
+        create_reverse_by_default: settings.create_reverse_by_default ?? false,
       });
     }
   }, [settings, reset]);
@@ -298,9 +298,7 @@ export default function SettingsScreen() {
       let lastProgress = { cleared: 0, total: 0 };
       let lastPaintAt = 0;
 
-      for await (const progress of flashcardsTable.clearBacklog.generator({
-        showReverse: settings?.show_reverse_flashcards ?? false,
-      })) {
+      for await (const progress of flashcardsTable.clearBacklog.generator()) {
         lastProgress = progress;
 
         // The generator drains as a tight chain of awaited DB writes, which
@@ -548,18 +546,18 @@ export default function SettingsScreen() {
           <CardContent>
             <View className="gap-1">
               <SettingRow
-                description={t`Include English to Arabic flashcards`}
-                title={t`Show reverse flashcards`}
+                description={t`New words get an English to Arabic reverse card. You can still turn reverse on or off per word.`}
+                title={t`Create reverse cards by default`}
               >
                 <Controller
                   control={control}
-                  name="show_reverse_flashcards"
+                  name="create_reverse_by_default"
                   render={({ field: { value, onChange } }) => (
                     <Switch
                       onValueChange={(newValue) => {
                         onChange(newValue);
                         updateMutation.mutate({
-                          updates: { show_reverse_flashcards: newValue },
+                          updates: { create_reverse_by_default: newValue },
                         });
                       }}
                       thumbColor="white"

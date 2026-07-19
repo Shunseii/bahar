@@ -35,7 +35,7 @@ import { z } from "@/lib/zod";
 
 const FormSchema = z.object({
   show_antonyms_in_flashcard: z.enum(["hidden", "answer", "hint"]).optional(),
-  show_reverse_flashcards: z.boolean().optional(),
+  create_reverse_by_default: z.boolean().optional(),
 });
 
 export const FlashcardSettingsCardSection = () => {
@@ -64,9 +64,7 @@ export const FlashcardSettingsCardSection = () => {
       let lastProgress = { cleared: 0, total: 0 };
 
       await enqueueDbOperation(async () => {
-        for await (const progress of flashcardsTable.clearBacklog.generator({
-          showReverse: data?.show_reverse_flashcards ?? false,
-        })) {
+        for await (const progress of flashcardsTable.clearBacklog.generator()) {
           setClearingProgress(progress);
           lastProgress = progress;
         }
@@ -100,17 +98,17 @@ export const FlashcardSettingsCardSection = () => {
     } finally {
       setClearingProgress(null);
     }
-  }, [data?.show_reverse_flashcards, t]);
+  }, [t]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       show_antonyms_in_flashcard: "hidden",
-      show_reverse_flashcards: false,
+      create_reverse_by_default: false,
     },
     values: {
       show_antonyms_in_flashcard: data?.show_antonyms_in_flashcard ?? "hidden",
-      show_reverse_flashcards: data?.show_reverse_flashcards ?? false,
+      create_reverse_by_default: data?.create_reverse_by_default ?? false,
     },
   });
 
@@ -199,17 +197,20 @@ export const FlashcardSettingsCardSection = () => {
 
               <FormField
                 control={form.control}
-                name="show_reverse_flashcards"
+                name="create_reverse_by_default"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="flex items-center gap-x-2 text-base">
-                        <Trans>Reverse flashcards</Trans>
+                        <Trans>Create reverse cards by default</Trans>
                         <BetaBadge />
                       </FormLabel>
 
                       <FormDescription>
-                        <Trans>Show English to Arabic flashcards.</Trans>
+                        <Trans>
+                          New words get an English → Arabic reverse card. You
+                          can still turn reverse on or off per word.
+                        </Trans>
                       </FormDescription>
                     </div>
 

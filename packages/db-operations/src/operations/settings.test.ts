@@ -22,7 +22,7 @@ describe("settingsTable", () => {
 
       expect(result).toEqual({
         show_antonyms_in_flashcard: "hidden",
-        show_reverse_flashcards: false,
+        create_reverse_by_default: false,
       });
 
       const row = await (
@@ -35,14 +35,14 @@ describe("settingsTable", () => {
     it("returns existing settings when a row already exists", async () => {
       await insertSettings(testDb, {
         show_antonyms_in_flashcard: "hint",
-        show_reverse_flashcards: true,
+        create_reverse_by_default: true,
       });
 
       const result = await settingsTable.getSettings.query();
 
       expect(result).toEqual({
         show_antonyms_in_flashcard: "hint",
-        show_reverse_flashcards: true,
+        create_reverse_by_default: true,
       });
     });
   });
@@ -51,18 +51,21 @@ describe("settingsTable", () => {
     it("updates only the provided fields, leaving others untouched", async () => {
       await insertSettings(testDb, {
         show_antonyms_in_flashcard: "hidden",
-        show_reverse_flashcards: false,
+        create_reverse_by_default: false,
       });
 
       const updated = await settingsTable.update.mutation({
-        updates: { show_reverse_flashcards: true },
+        updates: { create_reverse_by_default: true },
       });
 
       expect(updated).toEqual({
         show_antonyms_in_flashcard: "hidden",
-        show_reverse_flashcards: true,
+        create_reverse_by_default: true,
       });
 
+      // Raw read: the underlying SQL column is still `show_reverse_flashcards`
+      // (the Drizzle field `create_reverse_by_default` is an alias -- the column
+      // was never renamed). Confirms the alias writes through to the real column.
       const row = (await (
         await testDb.db.prepare("SELECT * FROM settings")
       ).get()) as {
@@ -77,7 +80,7 @@ describe("settingsTable", () => {
     it("updates the show_antonyms_in_flashcard field", async () => {
       await insertSettings(testDb, {
         show_antonyms_in_flashcard: "hidden",
-        show_reverse_flashcards: false,
+        create_reverse_by_default: false,
       });
 
       const updated = await settingsTable.update.mutation({
@@ -86,7 +89,7 @@ describe("settingsTable", () => {
 
       expect(updated).toEqual({
         show_antonyms_in_flashcard: "hint",
-        show_reverse_flashcards: false,
+        create_reverse_by_default: false,
       });
     });
 
@@ -101,7 +104,7 @@ describe("settingsTable", () => {
     it("throws a controlled error when no settings row exists", async () => {
       await expect(
         settingsTable.update.mutation({
-          updates: { show_reverse_flashcards: true },
+          updates: { create_reverse_by_default: true },
         })
       ).rejects.toThrow("Settings not found");
     });

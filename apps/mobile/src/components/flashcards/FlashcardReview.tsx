@@ -37,7 +37,6 @@ import { GradeFeedback } from "./GradeFeedback";
 
 interface FlashcardReviewProps {
   filters?: SelectDeck["filters"];
-  showReverse?: boolean;
   onClose?: () => void;
   initialQueue?: FlashcardQueue;
   queueCounts?: { regular: number; backlog: number };
@@ -156,7 +155,6 @@ const QueueTabs = ({
 
 export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   filters = {},
-  showReverse = false,
   onClose,
   initialQueue = "regular",
   queueCounts,
@@ -175,12 +173,10 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
     queryFn: () =>
       flashcardsTable.counts.query({
         filters,
-        showReverse,
         backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }),
     queryKey: [
       ...flashcardsTable.counts.cacheOptions.queryKey,
-      showReverse,
       JSON.stringify(filters),
     ],
     placeholderData: queueCounts
@@ -195,14 +191,12 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
     queryFn: () =>
       flashcardsTable.today.query({
         filters,
-        showReverse,
         queue: selectedQueue,
         backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }),
     ...flashcardsTable.today.cacheOptions,
     queryKey: [
       ...flashcardsTable.today.cacheOptions.queryKey,
-      showReverse,
       JSON.stringify(filters),
       selectedQueue,
     ],

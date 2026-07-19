@@ -41,7 +41,7 @@ describe("createTestDb", () => {
     await testDb.drizzleDb.insert(settings).values({
       id: "settings-1",
       show_antonyms_in_flashcard: "hidden",
-      show_reverse_flashcards: false,
+      create_reverse_by_default: false,
     });
 
     const [row] = await testDb.drizzleDb.select().from(settings);
@@ -49,7 +49,7 @@ describe("createTestDb", () => {
     expect(row).toMatchObject({
       id: "settings-1",
       show_antonyms_in_flashcard: "hidden",
-      show_reverse_flashcards: false,
+      create_reverse_by_default: false,
     });
   });
 
@@ -100,7 +100,7 @@ describe("createTestDb", () => {
     await testDb.drizzleDb.insert(settings).values({
       id: "settings-1",
       show_antonyms_in_flashcard: "hidden",
-      show_reverse_flashcards: false,
+      create_reverse_by_default: false,
     });
 
     const other = await createTestDb();

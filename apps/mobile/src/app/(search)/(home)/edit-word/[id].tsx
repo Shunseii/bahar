@@ -26,6 +26,7 @@ import {
   TagsInput,
   VerbMorphologySection,
 } from "@/components/dictionary/form";
+import { ReverseToggle } from "@/components/dictionary/ReviewHistory";
 import { Button } from "@/components/ui/button";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
@@ -411,6 +412,10 @@ export default function EditWordScreen() {
                   <TagsInput onChange={onChange} value={value} />
                 )}
               />
+            </CollapsibleCard>
+
+            <CollapsibleCard title={t`Flashcards`}>
+              <ReverseToggle entryId={entry.id} />
             </CollapsibleCard>
 
             <View className="flex-row items-center justify-center gap-3 pt-2">

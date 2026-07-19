@@ -10,7 +10,11 @@ export const settings = sqliteTable("settings", {
   show_antonyms_in_flashcard: text("show_antonyms_in_flashcard", {
     enum: ANTONYMS_MODES,
   }).default("hidden"),
-  show_reverse_flashcards: integer("show_reverse_flashcards", {
+  // Field name ≠ column name on purpose: renaming a synced column silently
+  // reverts (see BAH-161). Repurposed too -- was a query-time gate ("show
+  // reverse cards in study"), now a create-time default ("new words get a
+  // reverse card"). Reverse existence is per-word row presence, not this flag.
+  create_reverse_by_default: integer("show_reverse_flashcards", {
     mode: "boolean",
   }).default(false),
 });
@@ -18,6 +22,6 @@ export const settings = sqliteTable("settings", {
 export type SelectSetting = typeof settings.$inferSelect;
 export type InsertSetting = typeof settings.$inferInsert;
 
-export type RawSetting = Omit<SelectSetting, "show_reverse_flashcards"> & {
-  show_reverse_flashcards: number;
+export type RawSetting = Omit<SelectSetting, "create_reverse_by_default"> & {
+  create_reverse_by_default: number;
 };

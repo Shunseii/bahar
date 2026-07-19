@@ -341,30 +341,20 @@ describe("decksTable", () => {
       });
     });
 
-    describe("show_reverse", () => {
-      it("excludes reverse-direction flashcards when show_reverse is false", async () => {
+    describe("reverse cards", () => {
+      it("counts both forward and reverse cards (reverse is row presence, no gate)", async () => {
         const deck = await insertDeck(testDb, { filters: null });
 
         await insertFlashcard(testDb, { direction: "forward" });
         await insertFlashcard(testDb, { direction: "reverse" });
 
-        const decks = await decksTable.list.query({ show_reverse: false });
-        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(1);
-      });
-
-      it("includes reverse-direction flashcards when show_reverse is true", async () => {
-        const deck = await insertDeck(testDb, { filters: null });
-
-        await insertFlashcard(testDb, { direction: "forward" });
-        await insertFlashcard(testDb, { direction: "reverse" });
-
-        const decks = await decksTable.list.query({ show_reverse: true });
+        const decks = await decksTable.list.query({});
         expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(2);
       });
     });
 
     describe("combined filters", () => {
-      it("applies type, state, tags, and show_reverse filters together", async () => {
+      it("applies type, state, and tags filters together", async () => {
         const deck = await insertDeck(testDb, {
           filters: {
             types: ["ism"],
@@ -417,7 +407,9 @@ describe("decksTable", () => {
           direction: "forward",
         });
 
-        // Reverse direction, excluded since show_reverse is false.
+        // Reverse direction, fully matching -- counted now that reverse is row
+        // presence (no direction gate), so it adds to the total alongside the
+        // matching forward card.
         const reverseEntry = await insertDictionaryEntry(testDb, {
           type: "ism",
           tags: ["foo"],
@@ -428,8 +420,8 @@ describe("decksTable", () => {
           direction: "reverse",
         });
 
-        const decks = await decksTable.list.query({ show_reverse: false });
-        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(1);
+        const decks = await decksTable.list.query({});
+        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(2);
       });
     });
 

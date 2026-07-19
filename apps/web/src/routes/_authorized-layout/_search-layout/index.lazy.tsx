@@ -18,7 +18,7 @@ import { InfiniteScroll } from "@/components/search/InfiniteScroll";
 import { searchQueryAtom } from "@/components/search/state";
 import { useSearch } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { flashcardsTable, settingsTable } from "@/lib/db/operations";
+import { flashcardsTable } from "@/lib/db/operations";
 
 const Index = () => {
   const { formatNumber, formatElapsedTime } = useFormatNumber();
@@ -27,21 +27,12 @@ const Index = () => {
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const { results } = useSearch();
   const { height } = useWindowSize();
-  const { data: flashcardSettings } = useQuery({
-    queryFn: settingsTable.getSettings.query,
-    ...settingsTable.getSettings.cacheOptions,
-  });
-
-  const show_reverse = flashcardSettings?.show_reverse_flashcards ?? false;
-
   const { data: counts, isPending } = useQuery({
-    queryFn: async ({ queryKey: [, showReverse] }) =>
+    queryFn: () =>
       flashcardsTable.counts.query({
-        showReverse: showReverse as boolean,
         backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }),
     ...flashcardsTable.counts.cacheOptions,
-    queryKey: [...flashcardsTable.counts.cacheOptions.queryKey, show_reverse],
   });
 
   // Check that the window dimensions are available
@@ -116,10 +107,7 @@ const Index = () => {
                     </Link>
                   </Button>
 
-                  <FlashcardDrawer
-                    queueCounts={counts}
-                    show_reverse={show_reverse}
-                  >
+                  <FlashcardDrawer queueCounts={counts}>
                     <Button
                       className={cn(
                         "relative h-9 px-3 text-muted-foreground",
