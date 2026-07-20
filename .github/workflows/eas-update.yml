@@ -1,0 +1,50 @@
+name: EAS Update (Mobile OTA)
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/mobile/**"
+      - "packages/**"
+
+jobs:
+  update:
+    name: Publish OTA update
+    runs-on: ubuntu-latest
+    concurrency: eas-update-production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.3
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Publish update
+        working-directory: apps/mobile
+        run: eas update --branch production --auto --non-interactive
+
+      # OTA bundles skip the native build-phase Sentry upload, so prod OTA
+      # stack traces stay minified unless uploaded per-update. Debug IDs are
+      # content-derived, so this re-export matches the published bundle.
+      - name: Export bundle with source maps
+        working-directory: apps/mobile
+        run: npx expo export --dump-sourcemap --output-dir dist
+
+      - name: Upload source maps to Sentry
+        working-directory: apps/mobile
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_API_AUTH_TOKEN }}
+        run: pnpm exec sentry-expo-upload-sourcemaps dist
