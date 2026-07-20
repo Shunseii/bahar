@@ -55,7 +55,6 @@ import { formatScheduleOptions } from "./utils";
 
 interface FlashcardDrawerProps extends PropsWithChildren {
   filters?: SelectDeck["filters"];
-  show_reverse?: boolean;
   initialQueue?: FlashcardQueue;
   /** If provided, shows queue counts and allows switching between queues */
   queueCounts?: { regular: number; backlog: number };
@@ -72,7 +71,6 @@ const RATING_TO_LABEL = {
 export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   children,
   filters = {},
-  show_reverse = false,
   initialQueue = "regular",
   queueCounts,
 }) => {
@@ -91,15 +89,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     queryFn: () =>
       flashcardsTable.counts.query({
         filters,
-        showReverse: show_reverse,
         backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }),
     ...flashcardsTable.counts.cacheOptions,
-    queryKey: [
-      ...flashcardsTable.counts.cacheOptions.queryKey,
-      show_reverse,
-      filters,
-    ],
+    queryKey: [...flashcardsTable.counts.cacheOptions.queryKey, filters],
     enabled: !queueCounts,
   });
 
@@ -109,14 +102,12 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     queryFn: () =>
       flashcardsTable.today.query({
         filters,
-        showReverse: show_reverse,
         queue: selectedQueue,
         backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }),
     ...flashcardsTable.today.cacheOptions,
     queryKey: [
       ...flashcardsTable.today.cacheOptions.queryKey,
-      show_reverse,
       filters,
       selectedQueue,
     ],

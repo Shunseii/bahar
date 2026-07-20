@@ -31,25 +31,13 @@ import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { Page } from "@/components/Page";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { decksTable, settingsTable } from "@/lib/db/operations";
+import { decksTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 
 const Decks = () => {
-  const { data: settingsData } = useQuery({
-    queryFn: settingsTable.getSettings.query,
-    ...settingsTable.getSettings.cacheOptions,
-  });
-
   const { data } = useQuery({
-    queryFn: ({ queryKey: [, showReverse] }) =>
-      decksTable.list.query({
-        show_reverse: (showReverse as boolean | null) ?? undefined,
-      }),
+    queryFn: () => decksTable.list.query({}),
     ...decksTable.list.cacheOptions,
-    queryKey: [
-      ...decksTable.list.cacheOptions.queryKey,
-      settingsData?.show_reverse_flashcards,
-    ],
   });
 
   const { mutateAsync: deleteDeck } = useMutation({
@@ -160,9 +148,6 @@ const Decks = () => {
                           regular: deck.to_review,
                           backlog: deck.to_review_backlog,
                         }}
-                        show_reverse={
-                          settingsData?.show_reverse_flashcards ?? undefined
-                        }
                       >
                         <Button size="sm" variant="outline">
                           <Trans>Study</Trans>

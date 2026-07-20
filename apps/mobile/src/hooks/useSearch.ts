@@ -133,11 +133,6 @@ export const useInfiniteSearch = (
 
   const paramsKey = JSON.stringify(params);
 
-  const language = useMemo<SearchDictionaryOptions["language"]>(() => {
-    const detected = detectLanguage(params.term ?? "");
-    return detected === "ar" ? "arabic" : "english";
-  }, [params.term]);
-
   const whereFilter = useMemo<SearchDictionaryOptions["where"]>(() => {
     const tags = params.filters?.tags;
     const types = params.filters?.types;
@@ -202,7 +197,7 @@ export const useInfiniteSearch = (
     setOffset(newOffset);
 
     try {
-      const { hits: newHits } = search(
+      const { hits: newHits, ...metadata } = search(
         {
           offset: newOffset,
           sortBy,
@@ -213,6 +208,7 @@ export const useInfiniteSearch = (
       );
 
       setHits((prev) => [...(prev ?? []), ...newHits]);
+      setHasMore(newOffset + newHits.length < metadata.count);
     } catch (error) {
       console.error("Search error:", error);
     }

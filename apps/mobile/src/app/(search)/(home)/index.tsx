@@ -23,7 +23,6 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   flashcardsTable,
-  settingsTable,
 } from "@/lib/db/operations";
 import {
   selectedTagsAtom,
@@ -208,20 +207,12 @@ export default function HomeScreen() {
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
 
-  const { data: settings } = useQuery({
-    queryFn: settingsTable.getSettings.query,
-    ...settingsTable.getSettings.cacheOptions,
-    enabled: state === "ready",
-  });
-  const showReverse = settings?.show_reverse_flashcards ?? false;
-
   const { data: counts, isPending } = useQuery({
     queryFn: () =>
       flashcardsTable.counts.query({
         backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
-        showReverse,
       }),
-    queryKey: [...flashcardsTable.counts.cacheOptions.queryKey, showReverse],
+    ...flashcardsTable.counts.cacheOptions,
     enabled: state === "ready",
     refetchOnMount: true,
   });
@@ -243,10 +234,9 @@ export default function HomeScreen() {
       params: {
         regularCount: String(regularCount),
         backlogCount: String(backlogCount),
-        showReverse: String(showReverse),
       },
     });
-  }, [router, regularCount, backlogCount, showReverse]);
+  }, [router, regularCount, backlogCount]);
 
   const handleAddPress = useCallback(() => {
     router.push("/(search)/(home)/add-word");

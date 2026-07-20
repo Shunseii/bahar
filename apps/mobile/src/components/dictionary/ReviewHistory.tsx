@@ -1,17 +1,21 @@
 import { cn } from "@bahar/design-system";
-import type { SelectFlashcard } from "@bahar/drizzle-user-db-schemas";
+import {
+  FlashcardState,
+  type SelectFlashcard,
+} from "@bahar/drizzle-user-db-schemas";
 import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Lock, RotateCcw, Timer } from "lucide-react-native";
 import type { FC } from "react";
-import { Text, View } from "react-native";
+import { Alert, Text, View } from "react-native";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { intlFormatDistance } from "@/lib/date";
-import { flashcardsTable, settingsTable } from "@/lib/db/operations";
+import { flashcardsTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
-import { api } from "@/utils/api";
+import { api, queryClient } from "@/utils/api";
 
 const RATING_DOT_COLORS: Record<string, string> = {
   again: "bg-muted-foreground",
@@ -133,6 +137,12 @@ const DirectionTimeline: FC<{
 
   return (
     <View className="gap-1.5">
+      {label && (
+        <Text className="font-medium text-muted-foreground text-xs">
+          {label}
+        </Text>
+      )}
+
       {revlogs.length > 0 && (
         <View className="flex-row flex-wrap items-center gap-1">
           {showOldestLatest && (
@@ -164,19 +174,10 @@ const DirectionTimeline: FC<{
         </View>
       )}
 
-      {(label || reviewCount > 0) && (
-        <View className="flex-row items-center justify-between">
-          {label && (
-            <Text className="font-semibold text-foreground text-xs">
-              {label}
-            </Text>
-          )}
-          {reviewCount > 0 && (
-            <Text className="text-muted-foreground text-xs">
-              {metaParts.join(" · ")}
-            </Text>
-          )}
-        </View>
+      {reviewCount > 0 && (
+        <Text className="text-muted-foreground/70 text-xs">
+          {metaParts.join(" · ")}
+        </Text>
       )}
     </View>
   );
@@ -185,12 +186,13 @@ const DirectionTimeline: FC<{
 const NextReviewSection: FC<{
   forwardFlashcard?: Pick<SelectFlashcard, "due"> | undefined;
   reverseFlashcard?: Pick<SelectFlashcard, "due"> | undefined;
-  showReverse: boolean;
-}> = ({ forwardFlashcard, reverseFlashcard, showReverse }) => {
+}> = ({ forwardFlashcard, reverseFlashcard }) => {
   const colors = useThemeColors();
   const { i18n } = useLingui();
 
-  if (showReverse) {
+  // Show the reverse row iff a reverse card exists for this entry (row
+  // presence), not a global setting.
+  if (reverseFlashcard) {
     const forwardNext = forwardFlashcard
       ? formatNextReview({ due: forwardFlashcard.due, locale: i18n.locale })
       : null;
@@ -266,16 +268,92 @@ const NextReviewSection: FC<{
   );
 };
 
+export const ReverseToggle: FC<{ entryId: string }> = ({ entryId }) => {
+  const { data: flashcardData } = useQuery({
+    queryFn: () => flashcardsTable.findByEntryId.query(entryId),
+    queryKey: [...flashcardsTable.findByEntryId.cacheOptions.queryKey, entryId],
+  });
+  const reverseCard = flashcardData?.find((f) => f.direction === "reverse");
+  const hasReverse = Boolean(reverseCard);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (enabled: boolean) =>
+      flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: entryId,
+        enabled,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          ...flashcardsTable.findByEntryId.cacheOptions.queryKey,
+          entryId,
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: flashcardsTable.today.cacheOptions.queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+      });
+    },
+  });
+
+  const handleChange = (enabled: boolean) => {
+    // Only prompt when there's progress to lose; a NEW card has none.
+    if (!enabled && reverseCard && reverseCard.state !== FlashcardState.NEW) {
+      Alert.alert(
+        t`Remove reverse card?`,
+        t`This deletes the reverse flashcard and its review progress. This can't be undone.`,
+        [
+          { style: "cancel", text: t`Cancel` },
+          {
+            onPress: () => mutate(false),
+            style: "destructive",
+            text: t`Remove`,
+          },
+        ]
+      );
+      return;
+    }
+    mutate(enabled);
+  };
+
+  return (
+    <View className="gap-1 border-border/50 border-t pt-3">
+      <View className="flex-row items-center justify-between gap-3">
+        <View className="flex-1 gap-0.5">
+          <Text className="font-medium text-foreground text-sm">
+            <Trans>Reverse card</Trans>
+          </Text>
+          <Text className="text-muted-foreground text-xs">
+            <Trans>Study English to Arabic for this word.</Trans>
+          </Text>
+        </View>
+
+        <SegmentedControl
+          disabled={isPending}
+          onValueChange={(v) => handleChange(v === "on")}
+          options={[
+            { value: "off", label: t`Off` },
+            { value: "on", label: t`On` },
+          ]}
+          value={hasReverse ? "on" : "off"}
+        />
+      </View>
+
+      {hasReverse && (
+        <Text className="text-muted-foreground/70 text-xs">
+          <Trans>Turning this off deletes the reverse flashcard.</Trans>
+        </Text>
+      )}
+    </View>
+  );
+};
+
 export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
   const { isProUser } = useUserPlan();
   const colors = useThemeColors();
   const { i18n } = useLingui();
-
-  const { data: settingsData } = useQuery({
-    queryFn: settingsTable.getSettings.query,
-    ...settingsTable.getSettings.cacheOptions,
-  });
-  const showReverse = settingsData?.show_reverse_flashcards ?? false;
 
   const { data: revlogData } = useQuery({
     queryFn: async () => {
@@ -316,7 +394,6 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
         <NextReviewSection
           forwardFlashcard={forwardFlashcard}
           reverseFlashcard={reverseFlashcard}
-          showReverse={showReverse}
         />
       </View>
     );
@@ -335,7 +412,7 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
       </Text>
 
       {hasRevlogs ? (
-        showReverse ? (
+        reverseFlashcard ? (
           <>
             <DirectionTimeline
               flashcard={forwardFlashcard}
@@ -366,7 +443,6 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
       <NextReviewSection
         forwardFlashcard={forwardFlashcard}
         reverseFlashcard={reverseFlashcard}
-        showReverse={showReverse}
       />
     </View>
   );

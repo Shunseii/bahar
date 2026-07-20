@@ -92,7 +92,7 @@ export const insertSettings = async (
     .values({
       id: nanoid(),
       show_antonyms_in_flashcard: "hidden",
-      show_reverse_flashcards: false,
+      create_reverse_by_default: false,
       ...overrides,
     })
     .returning();

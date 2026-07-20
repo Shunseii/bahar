@@ -19,7 +19,6 @@ const ReviewScreen = () => {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
     filters?: string;
-    showReverse?: string;
     initialQueue?: string;
     regularCount?: string;
     backlogCount?: string;
@@ -28,7 +27,6 @@ const ReviewScreen = () => {
   const filters: SelectDeck["filters"] = params.filters
     ? JSON.parse(params.filters)
     : {};
-  const showReverse = params.showReverse === "true";
   const initialQueue = (params.initialQueue ?? "regular") as FlashcardQueue;
   const queueCounts = {
     regular: Number(params.regularCount ?? 0),
@@ -52,7 +50,6 @@ const ReviewScreen = () => {
         initialQueue={initialQueue}
         onClose={handleClose}
         queueCounts={queueCounts}
-        showReverse={showReverse}
       />
     </View>
   );

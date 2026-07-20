@@ -24,12 +24,15 @@ export const useAddDictionaryEntry = () => {
 
   return {
     /**
-     *  Adds a new word to the local database and the search index,
-     *  and creates reverse and forward flashcards for the new word.
+     *  Adds a new word to the local database and the search index, and creates
+     *  its flashcards. A forward card is always created; a reverse card is
+     *  created when `createReverse` is passed (the add-word form's per-word
+     *  choice) or, if omitted, per the `create_reverse_by_default` setting.
      */
     addDictionaryEntry: async (
       params: Parameters<typeof mutateAsync>[0],
-      opts: Parameters<typeof mutateAsync>[1] = {}
+      opts: Parameters<typeof mutateAsync>[1] = {},
+      { createReverse }: { createReverse?: boolean } = {}
     ) => {
       const newWord = await mutateAsync(params, opts);
 
@@ -39,6 +42,7 @@ export const useAddDictionaryEntry = () => {
 
       await flashcardsTable.createFlashcardPair.mutation({
         dictionary_entry_id: newWord.id,
+        createReverse,
       });
 
       insert(getOramaDb(), toOramaDocument(newWord));

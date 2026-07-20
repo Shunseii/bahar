@@ -56,7 +56,7 @@ describe("createTestDb", () => {
     await testDb.drizzleDb.insert(settings).values({
       id: "settings-1",
       show_antonyms_in_flashcard: "hidden",
-      show_reverse_flashcards: false,
+      create_reverse_by_default: false,
     });
 
     const rows = await testDb.db.prepare("SELECT * FROM settings;").all();
@@ -65,7 +65,7 @@ describe("createTestDb", () => {
       {
         id: "settings-1",
         show_antonyms_in_flashcard: "hidden",
-        show_reverse_flashcards: 0,
+        create_reverse_by_default: 0,
       },
     ]);
   });

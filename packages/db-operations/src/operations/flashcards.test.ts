@@ -5,7 +5,11 @@ import {
 import { Rating } from "ts-fsrs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb, type TestDb } from "../test/create-test-db";
-import { insertDictionaryEntry, insertFlashcard } from "../test/factories";
+import {
+  insertDictionaryEntry,
+  insertFlashcard,
+  insertSettings,
+} from "../test/factories";
 import {
   type ClearBacklogRevlogEntry,
   makeFlashcardsTable,
@@ -275,19 +279,24 @@ describe("flashcardsTable", () => {
       expect(results.map((r) => r.id)).toEqual([fooFlashcard.id]);
     });
 
-    it("excludes reverse cards when showReverse is false", async () => {
+    it("includes both forward and reverse cards (row presence, no global gate)", async () => {
+      // Reverse cards are no longer gated by a setting -- whatever reverse rows
+      // exist are studied. A word only has a reverse card if one was created for
+      // it (create-time default or per-word toggle), so simply include both.
       const entry = await insertDictionaryEntry(testDb);
       const forward = await insertFlashcard(testDb, {
         dictionary_entry_id: entry.id,
         direction: "forward",
       });
-      await insertFlashcard(testDb, {
+      const reverse = await insertFlashcard(testDb, {
         dictionary_entry_id: entry.id,
         direction: "reverse",
       });
 
-      const results = await flashcardsTable.today.query({ showReverse: false });
-      expect(results.map((r) => r.id)).toEqual([forward.id]);
+      const results = await flashcardsTable.today.query({});
+      expect(results.map((r) => r.id).sort()).toEqual(
+        [forward.id, reverse.id].sort()
+      );
     });
 
     it("restricts to the regular queue when queue is 'regular'", async () => {
@@ -416,7 +425,7 @@ describe("flashcardsTable", () => {
       expect(result).toEqual({ regular: 0, backlog: 0, total: 0 });
     });
 
-    it("applies the same type/state/tags/showReverse filters as today.query", async () => {
+    it("applies the same type/state/tags filters as today.query", async () => {
       const matchEntry = await insertDictionaryEntry(testDb, {
         type: "ism",
         tags: ["foo"],
@@ -442,7 +451,6 @@ describe("flashcardsTable", () => {
           state: [FlashcardState.NEW],
           tags: ["foo"],
         },
-        showReverse: false,
       });
 
       expect(result.total).toBe(1);
@@ -641,7 +649,8 @@ describe("flashcardsTable", () => {
   });
 
   describe("createFlashcardPair", () => {
-    it("creates fresh forward + reverse cards for an entry", async () => {
+    it("creates only a forward card when create_reverse_by_default is off", async () => {
+      // Default (no settings row) is off -- reverse is opt-in per word now.
       const entry = await insertDictionaryEntry(testDb);
 
       const { forward, reverse } =
@@ -655,6 +664,26 @@ describe("flashcardsTable", () => {
         state: FlashcardState.NEW,
         is_hidden: false,
       });
+      expect(reverse).toBeNull();
+
+      const all = await flashcardsTable.findByEntryId.query(entry.id);
+      expect(all).toHaveLength(1);
+    });
+
+    it("creates forward + reverse when create_reverse_by_default is on", async () => {
+      await insertSettings(testDb, { create_reverse_by_default: true });
+      const entry = await insertDictionaryEntry(testDb);
+
+      const { forward, reverse } =
+        await flashcardsTable.createFlashcardPair.mutation({
+          dictionary_entry_id: entry.id,
+        });
+
+      expect(forward).toMatchObject({
+        dictionary_entry_id: entry.id,
+        direction: "forward",
+        state: FlashcardState.NEW,
+      });
       expect(reverse).toMatchObject({
         dictionary_entry_id: entry.id,
         direction: "reverse",
@@ -663,6 +692,87 @@ describe("flashcardsTable", () => {
 
       const all = await flashcardsTable.findByEntryId.query(entry.id);
       expect(all).toHaveLength(2);
+    });
+
+    it("honors an explicit createReverse override over the setting", async () => {
+      // Setting is on, but the per-word override wins (add-word form opting out).
+      await insertSettings(testDb, { create_reverse_by_default: true });
+      const entry = await insertDictionaryEntry(testDb);
+
+      const { reverse } = await flashcardsTable.createFlashcardPair.mutation({
+        dictionary_entry_id: entry.id,
+        createReverse: false,
+      });
+
+      expect(reverse).toBeNull();
+      const all = await flashcardsTable.findByEntryId.query(entry.id);
+      expect(all).toHaveLength(1);
+    });
+  });
+
+  describe("setReverse", () => {
+    it("creates a reverse card born due now when enabling", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+      const before = Date.now();
+
+      const { reverse } = await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: entry.id,
+        enabled: true,
+      });
+
+      expect(reverse).toMatchObject({
+        dictionary_entry_id: entry.id,
+        direction: "reverse",
+        state: FlashcardState.NEW,
+      });
+      // Born due now -> "due today", never surfaces as backlog.
+      expect(reverse?.due_timestamp_ms).toBeGreaterThanOrEqual(before - 1000);
+      expect(reverse?.due_timestamp_ms).toBeLessThanOrEqual(Date.now() + 1000);
+    });
+
+    it("is idempotent when enabling twice (one reverse card)", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+
+      const first = await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: entry.id,
+        enabled: true,
+      });
+      const second = await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: entry.id,
+        enabled: true,
+      });
+
+      expect(second.reverse?.id).toBe(first.reverse?.id);
+      const all = await flashcardsTable.findByEntryId.query(entry.id);
+      expect(all.filter((c) => c.direction === "reverse")).toHaveLength(1);
+    });
+
+    it("deletes the reverse card when disabling", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+      await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: entry.id,
+        enabled: true,
+      });
+
+      const { reverse } = await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: entry.id,
+        enabled: false,
+      });
+
+      expect(reverse).toBeNull();
+      const all = await flashcardsTable.findByEntryId.query(entry.id);
+      expect(all.filter((c) => c.direction === "reverse")).toHaveLength(0);
+    });
+
+    it("disabling when no reverse card exists is a no-op", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+
+      const { reverse } = await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: entry.id,
+        enabled: false,
+      });
+
+      expect(reverse).toBeNull();
     });
   });
 });

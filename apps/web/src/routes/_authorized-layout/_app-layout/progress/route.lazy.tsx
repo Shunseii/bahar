@@ -8,11 +8,7 @@ import { Rating, type ReviewLog } from "ts-fsrs";
 import { Page } from "@/components/Page";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
-import {
-  flashcardsTable,
-  progressTable,
-  settingsTable,
-} from "@/lib/db/operations";
+import { flashcardsTable, progressTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 import { DifficultWordsCard } from "./-components/DifficultWordsCard";
 import { ProPlaceholder } from "./-components/ProPlaceholder";
@@ -29,13 +25,6 @@ import { WorkloadForecastCard } from "./-components/WorkloadForecastCard";
 const Progress = () => {
   const { i18n } = useLingui();
   const { isFreeUser } = useUserPlan();
-
-  const { data: settingsData } = useQuery({
-    queryFn: settingsTable.getSettings.query,
-    ...settingsTable.getSettings.cacheOptions,
-  });
-
-  const showReverse = settingsData?.show_reverse_flashcards ?? false;
 
   const { data: streakData, isLoading: isStreakLoading } = useQuery({
     queryFn: progressTable.streak.query,
@@ -79,12 +68,10 @@ const Progress = () => {
   const { data: forecastData, isLoading: isForecastLoading } = useQuery({
     queryFn: () =>
       progressTable.workloadForecast.query({
-        showReverse,
         locale: i18n.locale,
       }),
     queryKey: [
       ...progressTable.workloadForecast.cacheOptions.queryKey,
-      showReverse,
       i18n.locale,
     ],
     staleTime: 5 * 60 * 1000,

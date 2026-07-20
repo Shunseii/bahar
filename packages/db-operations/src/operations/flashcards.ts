@@ -6,6 +6,7 @@ import {
   type SelectDeck,
   type SelectDictionaryEntry,
   type SelectFlashcard,
+  settings,
   WORD_TYPES,
 } from "@bahar/drizzle-user-db-schemas";
 import {
@@ -51,16 +52,18 @@ export type ClearBacklogRevlogEntry = Omit<
 };
 
 /**
- * Builds the shared filter conditions used by both today and counts:
- * direction, FSRS state, dictionary-entry type, not-hidden, and an optional
- * tag membership check via json_each. Defaults mirror the UI's "everything"
- * selection when a filter is unset.
+ * Builds the shared filter conditions used by both today and counts: FSRS
+ * state, dictionary-entry type, not-hidden, and an optional tag membership
+ * check via json_each. Defaults mirror the UI's "everything" selection when a
+ * filter is unset.
+ *
+ * Reverse cards are no longer gated by a global setting -- a reverse card is
+ * simply whatever `direction = 'reverse'` rows exist (per-word row presence),
+ * so both directions are always included and there is no direction condition.
  */
 const buildFilterConditions = ({
-  showReverse,
   filters,
 }: {
-  showReverse?: boolean;
   filters?: SelectDeck["filters"];
 }) => {
   const { tags = [], types: rawTypes, state: rawState } = filters ?? {};
@@ -74,12 +77,8 @@ const buildFilterConditions = ({
         FlashcardState.REVIEW,
         FlashcardState.RE_LEARNING,
       ];
-  const directions: SelectFlashcard["direction"][] = showReverse
-    ? ["forward", "reverse"]
-    : ["forward"];
 
   return [
-    inArray(flashcards.direction, directions),
     inArray(flashcards.state, state),
     inArray(dictionaryEntries.type, types),
     eq(flashcards.is_hidden, false),
@@ -116,19 +115,15 @@ export const makeFlashcardsTable = (
 ) =>
   ({
     today: {
-      query: async (
-        {
-          showReverse,
-          filters,
-          queue = "all",
-          backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
-        }: {
-          showReverse?: boolean;
-          filters?: SelectDeck["filters"];
-          queue?: FlashcardQueue;
-          backlogThresholdDays?: number;
-        } = { showReverse: false }
-      ): Promise<FlashcardWithDictionaryEntry[]> => {
+      query: async ({
+        filters,
+        queue = "all",
+        backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
+      }: {
+        filters?: SelectDeck["filters"];
+        queue?: FlashcardQueue;
+        backlogThresholdDays?: number;
+      } = {}): Promise<FlashcardWithDictionaryEntry[]> => {
         const drizzleDb = await getDb();
         const now = Date.now();
         const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
@@ -141,7 +136,7 @@ export const makeFlashcardsTable = (
           ...(queue === "backlog"
             ? [lte(flashcards.due_timestamp_ms, backlogThresholdMs)]
             : []),
-          ...buildFilterConditions({ showReverse, filters }),
+          ...buildFilterConditions({ filters }),
         ];
 
         return drizzleDb
@@ -204,11 +199,9 @@ export const makeFlashcardsTable = (
     },
     counts: {
       query: async ({
-        showReverse = false,
         filters,
         backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }: {
-        showReverse?: boolean;
         filters?: SelectDeck["filters"];
         backlogThresholdDays?: number;
       } = {}): Promise<{ regular: number; backlog: number; total: number }> => {
@@ -216,7 +209,7 @@ export const makeFlashcardsTable = (
         const now = Date.now();
         const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
 
-        const baseConditions = buildFilterConditions({ showReverse, filters });
+        const baseConditions = buildFilterConditions({ filters });
 
         const [regularResult] = await drizzleDb
           .select({ count: countDistinct(flashcards.id) })
@@ -448,20 +441,47 @@ export const makeFlashcardsTable = (
       },
     },
     /**
-     * Creates the forward + reverse flashcard pair for a dictionary entry --
-     * the two review cards every new entry gets. Both start as fresh FSRS
-     * cards (createNewFlashcard = the canonical empty card, due now).
+     * Creates the flashcards a new dictionary entry starts with. Forward is
+     * always created; reverse is created only when the `create_reverse_by_default`
+     * setting is on -- reverse existence is per-word row presence, so a new word
+     * gets a reverse card only if the create-time default says so (toggle it
+     * later per word via `setReverse`). Both start as fresh FSRS cards
+     * (createNewFlashcard = the canonical empty card, due now).
      */
     createFlashcardPair: {
       mutation: ({
         dictionary_entry_id,
+        createReverse,
       }: {
         dictionary_entry_id: string;
-      }): Promise<{ forward: SelectFlashcard; reverse: SelectFlashcard }> =>
+        /**
+         * Per-word override for whether to create a reverse card. When omitted,
+         * falls back to the `create_reverse_by_default` setting. The add-word
+         * form passes this so a word can opt in/out at creation regardless of
+         * the default.
+         */
+        createReverse?: boolean;
+      }): Promise<{
+        forward: SelectFlashcard;
+        reverse: SelectFlashcard | null;
+      }> =>
         enqueueDbOperation(async () => {
           const drizzleDb = await getDb();
 
-          const values = (["forward", "reverse"] as const).map((direction) => ({
+          let shouldCreateReverse = createReverse;
+          if (shouldCreateReverse === undefined) {
+            const [settingsRow] = await drizzleDb
+              .select({ createReverse: settings.create_reverse_by_default })
+              .from(settings)
+              .limit(1);
+            shouldCreateReverse = settingsRow?.createReverse ?? false;
+          }
+
+          const directions: SelectFlashcard["direction"][] = shouldCreateReverse
+            ? ["forward", "reverse"]
+            : ["forward"];
+
+          const values = directions.map((direction) => ({
             id: nanoid(),
             is_hidden: false,
             ...createNewFlashcard(dictionary_entry_id, direction),
@@ -473,11 +493,11 @@ export const makeFlashcardsTable = (
             .returning();
 
           const forward = rows.find((r) => r.direction === "forward");
-          const reverse = rows.find((r) => r.direction === "reverse");
+          const reverse = rows.find((r) => r.direction === "reverse") ?? null;
 
-          if (!(forward && reverse)) {
+          if (!forward) {
             throw new Error(
-              `Failed to create flashcard pair for entry: ${dictionary_entry_id}`
+              `Failed to create forward flashcard for entry: ${dictionary_entry_id}`
             );
           }
 
@@ -485,6 +505,70 @@ export const makeFlashcardsTable = (
         }),
       cacheOptions: {
         queryKey: ["turso.flashcards.createFlashcardPair"],
+      },
+    },
+    /**
+     * Per-word reverse toggle. Reverse existence = row presence, so enabling
+     * creates a fresh reverse card (born due now -- state NEW, "due today",
+     * never old-due, so it can't surface as backlog) and disabling deletes the
+     * row. Enable is idempotent (returns the existing card if already present);
+     * disabling drops FSRS progress, which the caller should confirm.
+     */
+    setReverse: {
+      mutation: ({
+        dictionary_entry_id,
+        enabled,
+      }: {
+        dictionary_entry_id: string;
+        enabled: boolean;
+      }): Promise<{ reverse: SelectFlashcard | null }> =>
+        enqueueDbOperation(async () => {
+          const drizzleDb = await getDb();
+
+          const [existing] = await drizzleDb
+            .select()
+            .from(flashcards)
+            .where(
+              and(
+                eq(flashcards.dictionary_entry_id, dictionary_entry_id),
+                eq(flashcards.direction, "reverse")
+              )
+            )
+            .limit(1);
+
+          if (enabled) {
+            if (existing) {
+              return { reverse: existing };
+            }
+
+            const [row] = await drizzleDb
+              .insert(flashcards)
+              .values({
+                id: nanoid(),
+                is_hidden: false,
+                ...createNewFlashcard(dictionary_entry_id, "reverse"),
+              })
+              .returning();
+
+            if (!row) {
+              throw new Error(
+                `Failed to create reverse flashcard for entry: ${dictionary_entry_id}`
+              );
+            }
+
+            return { reverse: row };
+          }
+
+          if (existing) {
+            await drizzleDb
+              .delete(flashcards)
+              .where(eq(flashcards.id, existing.id));
+          }
+
+          return { reverse: null };
+        }),
+      cacheOptions: {
+        queryKey: ["turso.flashcards.setReverse"],
       },
     },
     findByEntryAndDirection: {
@@ -527,11 +611,9 @@ export const makeFlashcardsTable = (
      */
     clearBacklog: {
       async *generator({
-        showReverse = false,
         filters,
         backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
       }: {
-        showReverse?: boolean;
         filters?: SelectDeck["filters"];
         backlogThresholdDays?: number;
       } = {}): AsyncGenerator<{ cleared: number; total: number }> {
@@ -541,7 +623,7 @@ export const makeFlashcardsTable = (
 
         const conditions = [
           lte(flashcards.due_timestamp_ms, backlogThresholdMs),
-          ...buildFilterConditions({ showReverse, filters }),
+          ...buildFilterConditions({ filters }),
         ];
 
         const backlogCards = await drizzleDb

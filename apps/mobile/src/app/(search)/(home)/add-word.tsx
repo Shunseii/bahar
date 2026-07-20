@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
 import { ChevronLeft, ChevronRight, Info } from "lucide-react-native";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
@@ -24,9 +24,14 @@ import {
 } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
-import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
+import {
+  dictionaryEntriesTable,
+  flashcardsTable,
+  settingsTable,
+} from "@/lib/db/operations";
 import { FormSchema } from "@/lib/schemas/dictionary";
 import { addToSearchIndex } from "@/lib/search";
 import { createMultipleAtom, recentTagsAtom, store } from "@/lib/store";
@@ -83,6 +88,18 @@ export default function AddWordScreen() {
   const colors = useThemeColors();
   const shouldResetFormRef = useRef(false);
 
+  const { data: settingsData } = useQuery({
+    queryFn: settingsTable.getSettings.query,
+    ...settingsTable.getSettings.cacheOptions,
+  });
+  // Per-word reverse choice for this new entry. Null = follow the account
+  // default; flipping the switch overrides it for this word.
+  const [createReverseOverride, setCreateReverseOverride] = useState<
+    boolean | null
+  >(null);
+  const createReverse =
+    createReverseOverride ?? settingsData?.create_reverse_by_default ?? false;
+
   const addWordMutation = useMutation({
     mutationFn: dictionaryEntriesTable.addWord.mutation,
     onSuccess: async (newEntry) => {
@@ -100,6 +117,7 @@ export default function AddWordScreen() {
       try {
         await flashcardsTable.createFlashcardPair.mutation({
           dictionary_entry_id: newEntry.id,
+          createReverse,
         });
       } catch (error) {
         console.warn("Failed to create flashcards:", error);
@@ -245,6 +263,28 @@ export default function AddWordScreen() {
                   <TagsInput onChange={onChange} value={value} />
                 )}
               />
+            </CollapsibleCard>
+
+            <CollapsibleCard title={t`Flashcards`}>
+              <View className="flex-row items-center justify-between gap-3">
+                <View className="flex-1 gap-0.5">
+                  <Text className="font-medium text-foreground text-sm">
+                    <Trans>Create a reverse card</Trans>
+                  </Text>
+                  <Text className="text-muted-foreground text-xs">
+                    <Trans>English to Arabic, for this word.</Trans>
+                  </Text>
+                </View>
+
+                <SegmentedControl
+                  onValueChange={(v) => setCreateReverseOverride(v === "on")}
+                  options={[
+                    { value: "off", label: t`Off` },
+                    { value: "on", label: t`On` },
+                  ]}
+                  value={createReverse ? "on" : "off"}
+                />
+              </View>
             </CollapsibleCard>
 
             <View className="flex-row items-center gap-2 self-center pt-2">

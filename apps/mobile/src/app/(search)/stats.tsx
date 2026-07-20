@@ -21,29 +21,16 @@ import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import {
-  flashcardsTable,
-  progressTable,
-  settingsTable,
-} from "@/lib/db/operations";
-import { useThemeColors } from "@/lib/theme";
+import { flashcardsTable, progressTable } from "@/lib/db/operations";
 import { api, queryClient } from "@/utils/api";
 
 const STALE_TIME = 5 * 60 * 1000;
 
 export default function StatsScreen() {
   const { i18n } = useLingui();
-  const colors = useThemeColors();
   const { scrollHandler } = useCollapsibleHeader(t`Progress`);
   const { isFreeUser } = useUserPlan();
   const { formatNumber } = useFormatNumber();
-
-  const { data: settingsData } = useQuery({
-    queryFn: settingsTable.getSettings.query,
-    ...settingsTable.getSettings.cacheOptions,
-  });
-
-  const showReverse = settingsData?.show_reverse_flashcards ?? false;
 
   // -- Free tier queries --
   const { data: streakData, isLoading: isStreakLoading } = useQuery({
@@ -82,12 +69,10 @@ export default function StatsScreen() {
   const { data: forecastData, isLoading: isForecastLoading } = useQuery({
     queryFn: () =>
       progressTable.workloadForecast.query({
-        showReverse,
         locale: i18n.locale,
       }),
     queryKey: [
       ...progressTable.workloadForecast.cacheOptions.queryKey,
-      showReverse,
       i18n.locale,
     ],
     staleTime: STALE_TIME,

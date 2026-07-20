@@ -9,6 +9,13 @@ import {
 } from "@bahar/web-ui/components/breadcrumb";
 import { Button } from "@bahar/web-ui/components/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@bahar/web-ui/components/card";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -44,6 +51,7 @@ import {
   MorphologyFormSection,
 } from "@/components/features/dictionary/add";
 import { TagsFormSection } from "@/components/features/dictionary/add/TagsFormSection";
+import { ReverseToggle } from "@/components/features/flashcards/ReverseToggle";
 import { Page } from "@/components/Page";
 import { useDeleteDictionaryEntry, useEditDictionaryEntry } from "@/hooks/db";
 import { useDir } from "@/hooks/useDir";
@@ -582,6 +590,21 @@ const Edit = () => {
                 <CategoryFormSection />
 
                 <TagsFormSection />
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <Trans>Flashcards</Trans>
+                    </CardTitle>
+                    <CardDescription>
+                      <Trans>Configure the flashcards for this entry.</Trans>
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent>
+                    <ReverseToggle entryId={data!.id} />
+                  </CardContent>
+                </Card>
 
                 <div className="hidden sm:block">
                   <ResetFlashcardButton id={data!.id} />

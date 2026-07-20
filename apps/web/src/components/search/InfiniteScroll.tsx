@@ -38,11 +38,7 @@ import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
 import { intlFormatDistance } from "@/lib/date";
-import {
-  dictionaryEntriesTable,
-  flashcardsTable,
-  settingsTable,
-} from "@/lib/db/operations";
+import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
 import { Highlight } from "./Highlight";
 
 const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {
@@ -360,12 +356,6 @@ const ReviewHistory: FC<{ entryId: string }> = memo(({ entryId }) => {
   const { i18n } = useLingui();
   const { isProUser } = useUserPlan();
 
-  const { data: settingsData } = useQuery({
-    queryFn: settingsTable.getSettings.query,
-    ...settingsTable.getSettings.cacheOptions,
-  });
-  const showReverse = settingsData?.show_reverse_flashcards ?? false;
-
   const { data: revlogData } = useQuery({
     queryFn: async () => {
       const { data, error } = await api.stats.revlogs.entry({ entryId }).get();
@@ -419,7 +409,7 @@ const ReviewHistory: FC<{ entryId: string }> = memo(({ entryId }) => {
       </p>
 
       {hasRevlogs ? (
-        showReverse ? (
+        reverseFlashcard ? (
           <>
             <DirectionTimeline
               flashcard={forwardFlashcard}
@@ -451,7 +441,6 @@ const ReviewHistory: FC<{ entryId: string }> = memo(({ entryId }) => {
         forwardFlashcard={forwardFlashcard}
         locale={i18n.locale}
         reverseFlashcard={reverseFlashcard}
-        showReverse={showReverse}
       />
     </div>
   );
@@ -510,10 +499,11 @@ const formatNextReview = ({
 const NextReviewSection: FC<{
   forwardFlashcard?: { due: string } | undefined;
   reverseFlashcard?: { due: string } | undefined;
-  showReverse: boolean;
   locale: string;
-}> = ({ forwardFlashcard, reverseFlashcard, showReverse, locale }) => {
-  if (showReverse) {
+}> = ({ forwardFlashcard, reverseFlashcard, locale }) => {
+  // Show the reverse row iff a reverse card exists for this entry (row
+  // presence), not a global setting.
+  if (reverseFlashcard) {
     const forwardNext = forwardFlashcard
       ? formatNextReview({ due: forwardFlashcard.due, locale })
       : null;
@@ -638,7 +628,22 @@ const DirectionTimeline: FC<{
   const showOldestLatest = reviewCount > 1;
 
   return (
-    <div className="flex justify-between gap-1.5">
+    <div className="flex flex-col gap-1.5">
+      {(label || reviewCount > 0) && (
+        <div className="flex items-center justify-between gap-2">
+          {label && (
+            <span className="font-medium text-muted-foreground text-xs">
+              {label}
+            </span>
+          )}
+          {reviewCount > 0 && (
+            <span className="text-muted-foreground/70 text-xs">
+              {metaParts.join(" · ")}
+            </span>
+          )}
+        </div>
+      )}
+
       {revlogs.length > 0 && (
         <div className="flex flex-wrap items-center gap-1">
           {showOldestLatest && (
@@ -668,21 +673,6 @@ const DirectionTimeline: FC<{
           {showOldestLatest && (
             <span className="text-muted-foreground/60 text-xs">
               <Trans>Latest</Trans>
-            </span>
-          )}
-        </div>
-      )}
-
-      {(label || reviewCount > 0) && (
-        <div className="flex items-center justify-between">
-          {label && (
-            <span className="font-semibold text-foreground text-xs">
-              {label}
-            </span>
-          )}
-          {reviewCount > 0 && (
-            <span className="text-muted-foreground text-xs">
-              {metaParts.join(" · ")}
             </span>
           )}
         </div>
