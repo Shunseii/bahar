@@ -5,7 +5,25 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./globals.css";
 
-registerSW({ immediate: true });
+// `autoUpdate` applies a new service worker and reloads the page as soon as one
+// takes control, but it only checks for an update at registration (page load).
+// Installed PWAs stay warm for days and never re-register, so a client can keep
+// running a stale bundle indefinitely — which stranded users on an old sync-wasm
+// engine that could no longer decode the remote's sync frames. Poll for a new
+// service worker on an interval so long-lived sessions pick up fixes without a
+// manual reinstall.
+const SW_UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
+
+registerSW({
+  immediate: true,
+  onRegisteredSW(_swScriptUrl, registration) {
+    if (!registration) return;
+
+    setInterval(() => {
+      registration.update();
+    }, SW_UPDATE_CHECK_INTERVAL_MS);
+  },
+});
 
 // The sync-wasm OPFS worker rejects with "Cannot read properties of undefined
 // (reading 'read')" (at readFileAtWorker/read_async) when its SyncAccessHandle
