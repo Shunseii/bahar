@@ -13,13 +13,17 @@ export const router = createRouter({
   },
 });
 
+const isLocalEnv = import.meta.env.VITE_SENTRY_ENV === "local";
+
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   environment: import.meta.env.VITE_SENTRY_ENV,
   enableLogs: true,
   integrations: [
     Sentry.tanstackRouterBrowserTracingIntegration(router),
-    Sentry.replayIntegration(),
+    // Skip session replay locally -- no value in recording dev sessions, and it
+    // avoids loading the replay bundle in development.
+    ...(isLocalEnv ? [] : [Sentry.replayIntegration()]),
     Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],
 
@@ -38,8 +42,8 @@ Sentry.init({
   // plus for 100% of sessions with an error
   // Learn more at
   // https://docs.sentry.io/platforms/javascript/session-replay/configuration/#general-integration-configuration
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: isLocalEnv ? 0 : 0.1,
+  replaysOnErrorSampleRate: isLocalEnv ? 0 : 1.0,
 });
 
 // Register the router instance for type safety

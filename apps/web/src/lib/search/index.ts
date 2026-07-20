@@ -106,9 +106,10 @@ export const hydrateOramaDb = async () => {
   try {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      const results: RawDictionaryEntry[] = await db
-        .prepare("SELECT * FROM dictionary_entries LIMIT ? OFFSET ?")
-        .all([BATCH_SIZE, offset]);
+      const results: RawDictionaryEntry[] = await db.all(
+        "SELECT * FROM dictionary_entries LIMIT ? OFFSET ?",
+        [BATCH_SIZE, offset]
+      );
 
       if (results.length === 0) break;
 
@@ -299,9 +300,10 @@ export const rehydrateOramaDb = async () => {
   try {
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      const results: RawDictionaryEntry[] = await db
-        .prepare("SELECT * FROM dictionary_entries LIMIT ? OFFSET ?")
-        .all([BATCH_SIZE, offset]);
+      const results: RawDictionaryEntry[] = await db.all(
+        "SELECT * FROM dictionary_entries LIMIT ? OFFSET ?",
+        [BATCH_SIZE, offset]
+      );
 
       if (results.length === 0) break;
 

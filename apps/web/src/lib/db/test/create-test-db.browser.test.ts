@@ -18,11 +18,9 @@ describe("createTestDb", () => {
   it("applies migrations so the schema tables exist", async () => {
     testDb = await createTestDb();
 
-    const tables = await testDb.db
-      .prepare(
-        "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name"
-      )
-      .all();
+    const tables = await testDb.db.all(
+      "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name"
+    );
 
     const tableNames = tables.map((row: { name: string }) => row.name);
 
@@ -39,13 +37,14 @@ describe("createTestDb", () => {
   it("runs real writes and reads through the raw db handle", async () => {
     testDb = await createTestDb();
 
-    await testDb.db
-      .prepare("INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);")
-      .run(["deck-1", "Test Deck", null]);
+    await testDb.db.run(
+      "INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);",
+      ["deck-1", "Test Deck", null]
+    );
 
-    const deck = await testDb.db
-      .prepare("SELECT * FROM decks WHERE id = ?;")
-      .get(["deck-1"]);
+    const deck = await testDb.db.get("SELECT * FROM decks WHERE id = ?;", [
+      "deck-1",
+    ]);
 
     expect(deck).toEqual({ id: "deck-1", name: "Test Deck", filters: null });
   });
@@ -59,13 +58,16 @@ describe("createTestDb", () => {
       create_reverse_by_default: false,
     });
 
-    const rows = await testDb.db.prepare("SELECT * FROM settings;").all();
+    const rows = await testDb.db.all("SELECT * FROM settings;");
 
+    // Raw SELECT * returns the real SQL column name (`show_reverse_flashcards`),
+    // not the Drizzle field alias (`create_reverse_by_default`) used on insert
+    // above. The column was repurposed via alias, never renamed (BAH-161).
     expect(rows).toEqual([
       {
         id: "settings-1",
         show_antonyms_in_flashcard: "hidden",
-        create_reverse_by_default: 0,
+        show_reverse_flashcards: 0,
       },
     ]);
   });
@@ -122,14 +124,15 @@ describe("createTestDb", () => {
   it("gives each createTestDb() call an isolated database", async () => {
     testDb = await createTestDb();
 
-    await testDb.db
-      .prepare("INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);")
-      .run(["deck-1", "Test Deck", null]);
+    await testDb.db.run(
+      "INSERT INTO decks (id, name, filters) VALUES (?, ?, ?);",
+      ["deck-1", "Test Deck", null]
+    );
 
     const otherDb = await createTestDb();
 
     try {
-      const decks = await otherDb.db.prepare("SELECT * FROM decks;").all();
+      const decks = await otherDb.db.all("SELECT * FROM decks;");
       expect(decks).toEqual([]);
     } finally {
       await otherDb.close();

@@ -152,19 +152,18 @@ const Settings = () => {
 
         const db = await ensureDb();
 
-        const entries: RawDictionaryEntry[] = await db
-          .prepare("SELECT * FROM dictionary_entries")
-          .all();
+        const entries: RawDictionaryEntry[] = await db.all(
+          "SELECT * FROM dictionary_entries"
+        );
 
         const exportData: unknown[] = [];
 
         let skippedCount = 0;
         for (const entry of entries) {
-          const flashcards: SelectFlashcard[] = await db
-            .prepare(
-              "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction"
-            )
-            .all([entry.id]);
+          const flashcards: SelectFlashcard[] = await db.all(
+            "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction",
+            [entry.id]
+          );
 
           const result = transformForExport({
             entry,
@@ -433,13 +432,9 @@ const Settings = () => {
                           const { dictEntry, flashcards } =
                             createImportStatements(word, version);
 
-                          await db.prepare(dictEntry.sql).run(dictEntry.args);
-                          await db
-                            .prepare(flashcards[0].sql)
-                            .run(flashcards[0].args);
-                          await db
-                            .prepare(flashcards[1].sql)
-                            .run(flashcards[1].args);
+                          await db.run(dictEntry.sql, dictEntry.args);
+                          await db.run(flashcards[0].sql, flashcards[0].args);
+                          await db.run(flashcards[1].sql, flashcards[1].args);
                         }
                       }
                     );

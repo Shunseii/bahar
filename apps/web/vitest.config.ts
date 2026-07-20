@@ -14,7 +14,9 @@ export default defineConfig({
         test: {
           name: "node",
           environment: "node",
-          exclude: ["**/node_modules/**", "**/*.browser.test.ts"],
+          // Exclude Playwright e2e specs -- they use @playwright/test's `test()`,
+          // which throws if collected by vitest's runner.
+          exclude: ["**/node_modules/**", "**/*.browser.test.ts", "**/e2e/**"],
         },
       },
       {
