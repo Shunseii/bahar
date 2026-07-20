@@ -593,8 +593,8 @@ importers:
         specifier: ^1.150.0
         version: 1.150.0(@tanstack/react-router@1.120.13)(zod@4.3.6)
       '@tursodatabase/sync-wasm':
-        specifier: ^0.3.2
-        version: 0.3.2
+        specifier: ^0.6.1
+        version: 0.6.1
       '@uidotdev/usehooks':
         specifier: ^2.4.1
         version: 2.4.1(react-dom@19.1.0)(react@19.1.0)
@@ -3880,7 +3880,7 @@ packages:
     peerDependencies:
       elysia: '>=1.4.19'
     dependencies:
-      elysia: 1.4.27(@sinclair/typebox@0.34.49)(exact-mirror@1.0.0)(file-type@22.0.0)(openapi-types@12.1.3)(typescript@5.9.2)
+      elysia: 1.4.27(@sinclair/typebox@0.34.49)(@types/bun@1.3.11)(exact-mirror@1.0.0)(file-type@22.0.0)(openapi-types@12.1.3)(typescript@5.8.3)
     dev: false
 
   /@emmetio/abbreviation@2.3.3:
@@ -3915,9 +3915,25 @@ packages:
 
   /@emnapi/core@1.5.0:
     resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
+    requiresBuild: true
     dependencies:
       '@emnapi/wasi-threads': 1.1.0
       tslib: 2.8.1
+    dev: true
+    optional: true
+
+  /@emnapi/core@1.8.1:
+    resolution: {integrity: sha512-AvT9QFpxK0Zd8J0jopedNm+w/2fIzvtPKPjqyw9jwvBaReTTqPBk9Hixaz7KbjimP+QNz605/XnjFcDAL2pqBg==}
+    dependencies:
+      '@emnapi/wasi-threads': 1.1.0
+      tslib: 2.8.1
+    dev: false
+
+  /@emnapi/runtime@1.8.1:
+    resolution: {integrity: sha512-mehfKSMWjjNol8659Z8KxEMrdSJDDot5SXMq00dM8BN4o+CLNXQ0xH2V7EchNHV4RmbZLmmPdEaXZc5H2FXmDg==}
+    dependencies:
+      tslib: 2.8.1
+    dev: false
 
   /@emnapi/runtime@1.9.2:
     resolution: {integrity: sha512-3U4+MIWHImeyu1wnmVygh5WlgfYDtyf0k8AbLhMFxOipihf6nrWC4syIm/SwEeec0mNSafiiNnMJwbza/Is6Lw==}
@@ -7086,7 +7102,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
-    dev: true
 
   /@lingui/babel-plugin-lingui-macro@5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.2):
     resolution: {integrity: sha512-NdXrq8aZlPjN4jeA/LkSLNyx5vPGmrW+r2ywMNQDPQPVP28Hq8c3hF9SQc1t7hwBorGQ3qzIQ7i2Vm6Y8PnjQw==}
@@ -7215,7 +7230,6 @@ packages:
       jiti: 1.21.7
     transitivePeerDependencies:
       - typescript
-    dev: true
 
   /@lingui/conf@5.3.2(typescript@5.9.2):
     resolution: {integrity: sha512-c0Dfovr9BLuwAnY5GADxKcwBUQdVl0Jo/JUa3cumIXFhHzZGb78kfhCHjWWQdX8+WQD8qzSl/YkVDbxhcQJGmg==}
@@ -7259,7 +7273,7 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.26.7
-      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.2)
+      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.8.3)
       '@lingui/message-utils': 5.3.2
       babel-plugin-macros: 3.1.0
       unraw: 3.0.0
@@ -7483,7 +7497,7 @@ packages:
   /@napi-rs/wasm-runtime@1.0.7:
     resolution: {integrity: sha512-SeDnOO0Tk7Okiq6DbXmmBODgOAb9dp9gjlphokTUxmt8U3liIP1ZsozBahH69j/RJv+Rfs6IwUKHTgQYJ/HBAw==}
     dependencies:
-      '@emnapi/core': 1.5.0
+      '@emnapi/core': 1.8.1
       '@emnapi/runtime': 1.9.2
       '@tybys/wasm-util': 0.10.1
     dev: false
@@ -13459,36 +13473,25 @@ packages:
       whatwg-fetch: 3.6.20
     dev: false
 
-  /@tursodatabase/database-common@0.3.2:
-    resolution: {integrity: sha512-CPkPuvDMUS6mKIdAwpCbfU7g6U81/mSfCcMDXZ6Bt1dA8DJyOgTZRf80MDaWTKLQ+0mjkmQ0cZPb9zD/R41Vkg==}
-    dev: false
-
   /@tursodatabase/database-common@0.6.1:
     resolution: {integrity: sha512-fkmkhgSUDg3MXkcziTG9Ime3AY5+YvvDN7VvUDEMNV7MP+XgwE/i5tU6eQP1EKa/zDkdSYPq8gPcmROmKmKL8Q==}
-    dev: true
 
-  /@tursodatabase/database-wasm-common@0.3.2:
-    resolution: {integrity: sha512-ljpo471synyHzse8unmD+d2azo32A9nbiONS43URWlvEhSOpnkhuE5MjNgP9m468f8VyEU2qjvbgqxH8Ko9Q6A==}
+  /@tursodatabase/database-wasm-common@0.6.1:
+    resolution: {integrity: sha512-lZdZ7b8YSF0RKN0U1ZTtPNaf9zR6k+8tGpN3eWN8vtCXWIPVEw4ydhZodSuFK+EkoPekVHcW/yAYHvGu2KQLug==}
     dependencies:
+      '@emnapi/core': 1.8.1
+      '@emnapi/runtime': 1.8.1
       '@napi-rs/wasm-runtime': 1.0.7
     dev: false
 
   /@tursodatabase/serverless@0.2.4:
     resolution: {integrity: sha512-kqf3FINvTGx8N1iH/4e1Dkbr/om5q9qitshzvljtQXwZFQIsVP/mDE76mGg9U2dg/ElOZKFKtT1VXDgd39Dr1w==}
-    dev: true
-
-  /@tursodatabase/sync-common@0.3.2:
-    resolution: {integrity: sha512-cUQEHUu79sbPNVi2bba2jTDz3GIN/HOf5bLkdMNqX5lXy78/H/HrnkflZ1QbjgutVLyIkz5jkd0PgvzojFwh+A==}
-    dependencies:
-      '@tursodatabase/database-common': 0.3.2
-    dev: false
 
   /@tursodatabase/sync-common@0.6.1:
     resolution: {integrity: sha512-QjImpfwGomXRPmr7+KQUxN1RHslOCY77ElHgmAdpDy0IAqp4WDO12waPpzV45hxoVb6tlmuArFEDdBGdiq9npQ==}
     dependencies:
       '@tursodatabase/database-common': 0.6.1
       '@tursodatabase/serverless': 0.2.4
-    dev: true
 
   /@tursodatabase/sync-darwin-arm64@0.6.1:
     resolution: {integrity: sha512-OneZUhTPTPkf048nu2rr39YLM2+CnAcY9oJUsAJvUc2ClLUIvFQtHSgTP7L13LtaLXLjR6Htzy77jKz+0hF4Tw==}
@@ -13526,12 +13529,12 @@ packages:
       react-native: 0.81.5(@babel/core@7.26.0)(@types/react@19.1.17)(react@19.1.0)
     dev: false
 
-  /@tursodatabase/sync-wasm@0.3.2:
-    resolution: {integrity: sha512-R1JkmyjcJGtTz59sTWvyFWHvYa0Xiqkcs66EoVo99E4S7lXYGbwVSuulI7GY23T2sI3E895hOiKjSLoWPOkdnw==}
+  /@tursodatabase/sync-wasm@0.6.1:
+    resolution: {integrity: sha512-VPkpJYIJzutTjkmkwZe8v313GdMP+brXRoMGPC3pPptHxW5vn9WZ7wWp4vfEc00O4vMUSeOFpc9WbENnHzvdiA==}
     dependencies:
-      '@tursodatabase/database-common': 0.3.2
-      '@tursodatabase/database-wasm-common': 0.3.2
-      '@tursodatabase/sync-common': 0.3.2
+      '@tursodatabase/database-common': 0.6.1
+      '@tursodatabase/database-wasm-common': 0.6.1
+      '@tursodatabase/sync-common': 0.6.1
     dev: false
 
   /@tursodatabase/sync-win32-x64-msvc@0.6.1:
@@ -16119,7 +16122,6 @@ packages:
       parse-json: 5.2.0
       path-type: 4.0.0
       typescript: 5.8.3
-    dev: true
 
   /cosmiconfig@8.3.6(typescript@5.9.2):
     resolution: {integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==}
@@ -17001,31 +17003,6 @@ packages:
       memoirist: 0.4.0
       openapi-types: 12.1.3
       typescript: 5.8.3
-    dev: false
-
-  /elysia@1.4.27(@sinclair/typebox@0.34.49)(exact-mirror@1.0.0)(file-type@22.0.0)(openapi-types@12.1.3)(typescript@5.9.2):
-    resolution: {integrity: sha512-2UlmNEjPJVA/WZVPYKy+KdsrfFwwNlqSBW1lHz6i2AHc75k7gV4Rhm01kFeotH7PDiHIX2G8X3KnRPc33SGVIg==}
-    peerDependencies:
-      '@sinclair/typebox': '>= 0.34.0 < 1'
-      '@types/bun': '>= 1.2.0'
-      exact-mirror: '>= 0.0.9'
-      file-type: '>= 20.0.0'
-      openapi-types: '>= 12.0.0'
-      typescript: '>= 5.0.0'
-    peerDependenciesMeta:
-      '@types/bun':
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      '@sinclair/typebox': 0.34.49
-      cookie: 1.1.1
-      exact-mirror: 1.0.0
-      fast-decode-uri-component: 1.0.1
-      file-type: 22.0.0
-      memoirist: 0.4.0
-      openapi-types: 12.1.3
-      typescript: 5.9.2
     dev: false
 
   /emittery@0.13.1:

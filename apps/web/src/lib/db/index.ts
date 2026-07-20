@@ -57,7 +57,7 @@ export const buildDrizzleDb = (getDb: () => Database | null) =>
       const db = getDb();
       if (!db) return { rows: [] };
 
-      const stmt = db.prepare(sql);
+      const stmt = await db.prepare(sql);
 
       if (method === "run") {
         await stmt.run(params);
@@ -391,16 +391,10 @@ const applyRequiredMigrations = async () => {
     if (!execResult.ok) {
       await tryCatch(
         () =>
-          db!
-            .prepare(
-              "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)"
-            )
-            .run([
-              migration.version,
-              migration.description,
-              nowTimestampMs,
-              "failed",
-            ]),
+          db!.run(
+            "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)",
+            [migration.version, migration.description, nowTimestampMs, "failed"]
+          ),
         (error) => {
           Sentry.logger.error("Failed to log failed migration", {
             migrationVersion: migration.version,
@@ -415,16 +409,10 @@ const applyRequiredMigrations = async () => {
 
     await tryCatch(
       () =>
-        db!
-          .prepare(
-            "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)"
-          )
-          .run([
-            migration.version,
-            migration.description,
-            nowTimestampMs,
-            "applied",
-          ]),
+        db!.run(
+          "INSERT INTO migrations (version, description, applied_at_ms, status) VALUES (?, ?, ?, ?)",
+          [migration.version, migration.description, nowTimestampMs, "applied"]
+        ),
       (error) => {
         Sentry.logger.error("Failed to log successful migration", {
           migrationVersion: migration.version,
@@ -443,11 +431,9 @@ const getLocalAppliedMigrations = async () => {
 
   const tableExists = await tryCatch(
     async () => {
-      const result = await db!
-        .prepare(
-          "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';"
-        )
-        .get();
+      const result = await db!.get(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='migrations';"
+      );
       return !!result;
     },
     () => ({ type: "check_migration_table_exists_query_failed" })
@@ -458,9 +444,9 @@ const getLocalAppliedMigrations = async () => {
 
   return tryCatch(
     async () => {
-      const rows: SelectMigration[] = await db!
-        .prepare("SELECT * FROM migrations;")
-        .all();
+      const rows: SelectMigration[] = await db!.all(
+        "SELECT * FROM migrations;"
+      );
       return rows;
     },
     () => ({ type: "local_migrations_query_failed" })
