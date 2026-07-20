@@ -2,7 +2,7 @@
   "expo": {
     "name": "Bahar",
     "slug": "bahar",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "bahar",
     "userInterfaceStyle": "automatic",
@@ -81,7 +81,7 @@
     },
     "owner": "shunsei",
     "runtimeVersion": {
-      "policy": "fingerprint"
+      "policy": "appVersion"
     },
     "updates": {
       "url": "https://u.expo.dev/b6d34ce9-eea1-4afe-8928-a40612cf502a"
