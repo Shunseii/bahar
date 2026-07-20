@@ -82,11 +82,14 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: !isRunningInExpoGo(),
 });
 
+const sentryEnv =
+  process.env.EXPO_PUBLIC_SENTRY_ENV ??
+  (process.env.NODE_ENV === "production" ? "production" : "local");
+const isLocalEnv = sentryEnv === "local";
+
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
-  environment:
-    process.env.EXPO_PUBLIC_SENTRY_ENV ??
-    (process.env.NODE_ENV === "production" ? "production" : "local"),
+  environment: sentryEnv,
   enableLogs: true,
   tracesSampleRate: 1.0,
   // Sends user id/email (matching web/api) and enables route params on spans.
@@ -94,11 +97,12 @@ Sentry.init({
   tracePropagationTargets: [
     new RegExp(`^${process.env.EXPO_PUBLIC_API_BASE_URL}`),
   ],
-  replaysOnErrorSampleRate: 1.0,
-  replaysSessionSampleRate: 0.1,
+  // No session replay locally -- no value recording dev sessions.
+  replaysOnErrorSampleRate: isLocalEnv ? 0 : 1.0,
+  replaysSessionSampleRate: isLocalEnv ? 0 : 0.1,
   integrations: [
     navigationIntegration,
-    Sentry.mobileReplayIntegration(),
+    ...(isLocalEnv ? [] : [Sentry.mobileReplayIntegration()]),
     Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],
 });
