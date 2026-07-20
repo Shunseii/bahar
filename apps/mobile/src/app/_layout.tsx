@@ -92,7 +92,9 @@ Sentry.init({
   environment: sentryEnv,
   enableLogs: true,
   tracesSampleRate: 1.0,
-  // Sends user id/email (matching web/api) and enables route params on spans.
+  // Attaches the user's IP and lets reactNavigationIntegration record route
+  // param values on spans (e.g. the word/deck id being edited). User id/email
+  // are set separately via Sentry.setUser, independent of this flag.
   sendDefaultPii: true,
   tracePropagationTargets: [
     new RegExp(`^${process.env.EXPO_PUBLIC_API_BASE_URL}`),
