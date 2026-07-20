@@ -57,7 +57,15 @@
         }
       ],
       "expo-secure-store",
-      "expo-notifications"
+      "expo-notifications",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "organization": "bahar-app",
+          "project": "bahar-mobile"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -13,6 +13,7 @@ import {
 } from "@bahar/search/database";
 import type { DictionaryDocument } from "@bahar/search/schema";
 import type { InternalTypedDocument, Result, Results } from "@orama/orama";
+import * as Sentry from "@sentry/react-native";
 import { atom, useAtom, useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getOramaDb } from "@/lib/search";
@@ -171,7 +172,7 @@ export const useInfiniteSearch = (
       setSearchResultsMetadata({ ...metadata, searchTerm: params.term });
       setHasMore(newHits.length < metadata.count);
     } catch (error) {
-      console.error("Search error:", error);
+      Sentry.captureException(error, { tags: { operation: "search" } });
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +211,7 @@ export const useInfiniteSearch = (
       setHits((prev) => [...(prev ?? []), ...newHits]);
       setHasMore(newOffset + newHits.length < metadata.count);
     } catch (error) {
-      console.error("Search error:", error);
+      Sentry.captureException(error, { tags: { operation: "search" } });
     }
   }, [
     offset,
@@ -240,7 +241,7 @@ export const useInfiniteSearch = (
       setSearchResultsMetadata({ ...metadata, searchTerm: params.term });
       setHasMore(newHits.length < metadata.count);
     } catch (error) {
-      console.error("Search error:", error);
+      Sentry.captureException(error, { tags: { operation: "search" } });
     }
   }, [search, params.term, whereFilter, sortBy, searchQueryLanguage]);
 
