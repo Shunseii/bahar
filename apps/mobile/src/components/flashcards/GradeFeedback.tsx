@@ -133,9 +133,11 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
 
     // Complete after animation
     const timer = setTimeout(() => {
-      opacity.value = withTiming(0, { duration: 150 }, () => {
-        runOnJS(onComplete)();
-      });
+      // Advance immediately and let the fade-out run in parallel, matching web
+      // (which fires onComplete at 600ms). Gating the advance on the fade's
+      // completion callback added ~150ms where the card just sat there.
+      opacity.value = withTiming(0, { duration: 150 });
+      runOnJS(onComplete)();
     }, 600);
 
     return () => clearTimeout(timer);

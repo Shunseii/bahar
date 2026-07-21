@@ -309,7 +309,7 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
     <PropertiesRow morphology={entry.morphology} type={entry.type} />
 
     {entry.definition && (
-      <Text className="text-center text-[13px] text-muted-foreground italic">
+      <Text className="text-center text-[13px] text-muted-foreground">
         {entry.definition}
       </Text>
     )}

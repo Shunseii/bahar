@@ -19,6 +19,7 @@ import { GuestBanner } from "@/components/GuestBanner";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { usePreloadDrawerScreens } from "@/hooks/usePreloadDrawerScreens";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -204,6 +205,8 @@ export default function HomeScreen() {
   const sortOption = useAtomValue(sortOptionAtom);
   const { isAnonymous } = useUserPlan();
   const { state, error } = useAppInit();
+
+  usePreloadDrawerScreens(state === "ready");
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
 
