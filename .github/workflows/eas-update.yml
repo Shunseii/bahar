@@ -34,14 +34,22 @@ jobs:
 
       - name: Publish update
         working-directory: apps/mobile
-        run: eas update --branch production --auto --non-interactive
+        # --environment production loads the production EAS environment
+        # variables (EXPO_PUBLIC_API_BASE_URL, etc.) into the bundle, matching
+        # `eas build --profile production`. Without it the OTA bundle inlines an
+        # undefined API base URL and every network call silently fails.
+        run: eas update --branch production --environment production --auto --non-interactive
 
       # OTA bundles skip the native build-phase Sentry upload, so prod OTA
       # stack traces stay minified unless uploaded per-update. Debug IDs are
       # content-derived, so this re-export matches the published bundle.
       - name: Export bundle with source maps
         working-directory: apps/mobile
-        run: npx expo export --dump-sourcemap --output-dir dist
+        # Must build with the same production env as the published update above,
+        # otherwise the exported bundle differs and its content-derived debug IDs
+        # won't match the published bundle — Sentry then can't symbolicate prod
+        # OTA crashes.
+        run: eas env:exec --environment production -- npx expo export --dump-sourcemap --output-dir dist
 
       - name: Upload source maps to Sentry
         working-directory: apps/mobile
