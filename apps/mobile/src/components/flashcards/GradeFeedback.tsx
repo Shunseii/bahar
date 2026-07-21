@@ -133,12 +133,14 @@ export const GradeFeedback: React.FC<GradeFeedbackProps> = ({
 
     // Complete after animation
     const timer = setTimeout(() => {
-      // Advance immediately and let the fade-out run in parallel, matching web
-      // (which fires onComplete at 600ms). Gating the advance on the fade's
-      // completion callback added ~150ms where the card just sat there.
-      opacity.value = withTiming(0, { duration: 150 });
-      runOnJS(onComplete)();
-    }, 600);
+      // Keep the exit fade sequential (advance in its completion callback) so
+      // the feedback icon fades out before the card swaps instead of popping.
+      // Delays trimmed from the original 600ms hold + 150ms fade so the next
+      // card comes up faster once the grade animation has settled.
+      opacity.value = withTiming(0, { duration: 100 }, () => {
+        runOnJS(onComplete)();
+      });
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [grade, opacity, scale, rotation, translateY, bgOpacity, onComplete]);
