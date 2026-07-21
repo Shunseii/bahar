@@ -233,11 +233,11 @@ export default function Layout() {
           drawerContent={(props) => <DrawerContent {...props} />}
           screenOptions={{
             headerShown: true,
-            // Freeze blurred screens so keeping them mounted (via preload) stays
-            // cheap. Screens are preloaded after the home screen is ready (see
-            // its usePreloadDrawerScreens) so switching is instant without
-            // paying the mount cost up front on cold start.
-            freezeOnBlur: true,
+            // Screens are preloaded after the home screen is ready (see its
+            // usePreloadDrawerScreens) and kept fully live — no freezeOnBlur —
+            // so refocusing an already-visited screen is instant instead of
+            // paying an unfreeze re-render. Cost of a few live screens is
+            // negligible for this drawer.
             drawerPosition: dir === "rtl" ? "right" : "left",
             header: ({ navigation }) => (
               <SearchBarHeader
