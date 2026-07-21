@@ -35,6 +35,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import StreakChip from "@/components/progress/StreakChip";
+import { ScreenFocusTransition } from "@/components/ScreenFocusTransition";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { Button } from "@/components/ui/button";
 import { HeaderScrollContext } from "@/contexts/header-scroll";
@@ -230,14 +231,22 @@ export default function Layout() {
       <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
         <Drawer
           backBehavior="history"
+          // Keep blurred screens attached to the native view hierarchy so
+          // returning to an already-visited screen is as instant as the first
+          // visit (no re-attach + re-render). Cheap for this 4-screen drawer.
+          detachInactiveScreens={false}
           drawerContent={(props) => <DrawerContent {...props} />}
+          // Ease each screen in on focus so switching doesn't pop the new
+          // content in behind the closing drawer.
+          screenLayout={({ children }) => (
+            <ScreenFocusTransition>{children}</ScreenFocusTransition>
+          )}
           screenOptions={{
             headerShown: true,
             // Screens are preloaded after the home screen is ready (see its
             // usePreloadDrawerScreens) and kept fully live — no freezeOnBlur —
-            // so refocusing an already-visited screen is instant instead of
-            // paying an unfreeze re-render. Cost of a few live screens is
-            // negligible for this drawer.
+            // so refocusing an already-visited screen doesn't pay an unfreeze
+            // re-render. See also detachInactiveScreens on the navigator below.
             drawerPosition: dir === "rtl" ? "right" : "left",
             header: ({ navigation }) => (
               <SearchBarHeader
