@@ -49,7 +49,7 @@ jobs:
         # otherwise the exported bundle differs and its content-derived debug IDs
         # won't match the published bundle — Sentry then can't symbolicate prod
         # OTA crashes.
-        run: eas env:exec --environment production -- npx expo export --dump-sourcemap --output-dir dist
+        run: eas env:exec production "npx expo export --dump-sourcemap --output-dir dist" --non-interactive
 
       - name: Upload source maps to Sentry
         working-directory: apps/mobile
