@@ -241,26 +241,43 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   const totalHits = cards.length;
   const hasMore = initialHasMore || totalHits > FLASHCARD_LIMIT;
 
-  const schedulingCards = currentCard
-    ? getSchedulingOptions(scheduler, {
-        id: currentCard.id,
-        dictionary_entry_id: currentCard.dictionary_entry_id,
-        difficulty: currentCard.difficulty,
-        due: currentCard.due,
-        due_timestamp_ms: currentCard.due_timestamp_ms,
-        elapsed_days: currentCard.elapsed_days,
-        lapses: currentCard.lapses,
-        last_review: currentCard.last_review,
-        last_review_timestamp_ms: currentCard.last_review_timestamp_ms,
-        reps: currentCard.reps,
-        scheduled_days: currentCard.scheduled_days,
-        stability: currentCard.stability,
-        state: currentCard.state,
-        direction: currentCard.direction,
-        learning_steps: currentCard.learning_steps,
-        is_hidden: currentCard.is_hidden,
-      })
-    : null;
+  const fsrsInput = useMemo(
+    () =>
+      currentCard
+        ? {
+            id: currentCard.id,
+            dictionary_entry_id: currentCard.dictionary_entry_id,
+            difficulty: currentCard.difficulty,
+            due: currentCard.due,
+            due_timestamp_ms: currentCard.due_timestamp_ms,
+            elapsed_days: currentCard.elapsed_days,
+            lapses: currentCard.lapses,
+            last_review: currentCard.last_review,
+            last_review_timestamp_ms: currentCard.last_review_timestamp_ms,
+            reps: currentCard.reps,
+            scheduled_days: currentCard.scheduled_days,
+            stability: currentCard.stability,
+            state: currentCard.state,
+            direction: currentCard.direction,
+            learning_steps: currentCard.learning_steps,
+            is_hidden: currentCard.is_hidden,
+          }
+        : null,
+    [currentCard]
+  );
+
+  // Freeze a reference time per card so the interval previews under the grade
+  // buttons stay stable while the card is on screen. Recomputing against a fresh
+  // `now` on every render made all four previews jump the moment a grade was
+  // tapped (the tap triggers a render). The persisted grade is still computed at
+  // grade time in handleGradeComplete, so scheduling is unaffected.
+  const cardNow = useMemo(() => new Date(), [currentCard?.id]);
+
+  const schedulingCards = useMemo(
+    () =>
+      fsrsInput ? getSchedulingOptions(scheduler, fsrsInput, cardNow) : null,
+    [fsrsInput, scheduler, cardNow]
+  );
 
   const handleFlip = useCallback(() => {
     setShowAnswer(true);
@@ -295,10 +312,16 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   };
 
   const handleGradeComplete = useCallback(async () => {
-    if (!(schedulingCards && currentCard) || pendingGrade === null) return;
+    if (!(fsrsInput && currentCard) || pendingGrade === null) return;
 
     const grade = pendingGrade;
-    const { card: selectedCard, log } = schedulingCards[grade];
+    // Compute at grade time (not the frozen preview time) so the persisted due
+    // reflects when the user actually graded.
+    const { card: selectedCard, log } = getSchedulingOptions(
+      scheduler,
+      fsrsInput,
+      new Date()
+    )[grade];
 
     const updates = {
       due: selectedCard.due.toISOString(),
@@ -347,7 +370,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
           error: String(err),
         });
       });
-  }, [schedulingCards, currentCard, pendingGrade, updateFlashcardLocal]);
+  }, [fsrsInput, scheduler, currentCard, pendingGrade, updateFlashcardLocal]);
 
   if (status === "pending") {
     return (
@@ -493,6 +516,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
           <ReAnimated.View entering={FadeIn.duration(200)}>
             <GradeButtons
               disabled={pendingGrade !== null}
+              now={cardNow}
               onGrade={handleGrade}
               schedulingCards={schedulingCards}
             />

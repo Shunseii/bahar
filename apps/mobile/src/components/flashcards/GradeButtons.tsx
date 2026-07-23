@@ -29,6 +29,8 @@ interface GradeButtonsProps {
   schedulingCards: RecordLog;
   onGrade: (grade: Grade) => void;
   disabled?: boolean;
+  /** Reference time for the interval previews, frozen per card by the parent. */
+  now: Date;
 }
 
 type GradeConfig = {
@@ -79,6 +81,7 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
   schedulingCards,
   onGrade,
   disabled = false,
+  now,
 }) => {
   const gradeConfig = useGradeConfig();
   return (
@@ -89,6 +92,7 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
           disabled={disabled}
           interval={schedulingCards[config.grade].card.due}
           key={config.grade}
+          now={now}
           onPress={() => onGrade(config.grade)}
         />
       ))}
@@ -101,6 +105,7 @@ interface GradeButtonProps {
   interval: Date;
   onPress: () => void;
   disabled: boolean;
+  now: Date;
 }
 
 const GradeButton: React.FC<GradeButtonProps> = ({
@@ -108,6 +113,7 @@ const GradeButton: React.FC<GradeButtonProps> = ({
   interval,
   onPress,
   disabled,
+  now,
 }) => {
   const colors = useThemeColors();
   const { i18n } = useLingui();
@@ -132,7 +138,7 @@ const GradeButton: React.FC<GradeButtonProps> = ({
 
   const { Icon, label, colorKey, borderColor } = config;
   const resolvedColor = colors[colorKey];
-  const intervalText = intlFormatDistance(interval, new Date(), {
+  const intervalText = intlFormatDistance(interval, now, {
     style: "narrow",
     locale: i18n.locale,
   }).label;
