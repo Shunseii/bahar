@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react-native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocales } from "expo-localization";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -168,7 +169,12 @@ export default function EditWordScreen() {
             dictionary_entry_id,
           })
           .catch((err) => {
-            console.warn("[revlog] Failed to post reset revlog:", err);
+            Sentry.logger.warn("Failed to post reset revlog", {
+              operation: "reset.revlogs",
+              direction: flashcard.direction,
+              dictionary_entry_id,
+              error: String(err),
+            });
           });
       }
     },

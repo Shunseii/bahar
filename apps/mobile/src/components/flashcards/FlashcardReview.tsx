@@ -12,6 +12,7 @@ import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { createScheduler, getSchedulingOptions } from "@bahar/fsrs";
 import { Plural, Trans } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react-native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Archive, Brain, PartyPopper, X } from "lucide-react-native";
 import type React from "react";
@@ -339,7 +340,12 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
         dictionary_entry_id: currentCard.dictionary_entry_id,
       })
       .catch((err) => {
-        console.warn("[revlog] Failed to post revlog:", err);
+        Sentry.logger.warn("Failed to post review revlog", {
+          operation: "review.revlogs",
+          direction: currentCard.direction,
+          dictionary_entry_id: currentCard.dictionary_entry_id,
+          error: String(err),
+        });
       });
   }, [schedulingCards, currentCard, pendingGrade, updateFlashcardLocal]);
 
