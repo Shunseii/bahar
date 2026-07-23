@@ -6,6 +6,7 @@
  */
 
 import { err, ok, type Result, tryCatch } from "@bahar/result";
+import * as Sentry from "@sentry/react-native";
 import { getDbPath } from "@tursodatabase/sync-react-native";
 import { reloadAppAsync } from "expo";
 import { File } from "expo-file-system/next";
@@ -30,6 +31,45 @@ let currentDbName: string | null = null;
 type DbError = {
   type: string;
   reason: string;
+  name?: string;
+  stack?: string;
+  cause?: string;
+  wasmTrap?: boolean;
+  migrationVersion?: number;
+};
+
+/**
+ * Serializes an arbitrary thrown value into a Sentry-friendly shape. `String(error)`
+ * alone collapses wasm/Turso errors to opaque one-liners (e.g. "RuntimeError:
+ * unreachable") and drops the stack; this preserves name/stack/cause so the
+ * underlying failure -- including native sync-react-native frames -- is
+ * diagnosable once it reaches Sentry via the init capture in useAppInit.
+ */
+const describeError = (error: unknown) => ({
+  reason: String(error),
+  name: error instanceof Error ? error.name : typeof error,
+  stack: error instanceof Error ? error.stack : undefined,
+  cause:
+    error instanceof Error && error.cause != null
+      ? String(error.cause)
+      : undefined,
+});
+
+/**
+ * Best-effort check of whether the local replica file already exists, to
+ * distinguish a first-run create from a reconnect in init logs. Returns null if
+ * the path can't be resolved.
+ */
+const replicaExists = (dbFileName: string): boolean | null => {
+  try {
+    const basePath = getDbPath(dbFileName);
+    const uri = basePath.startsWith("file://")
+      ? basePath
+      : `file://${basePath}`;
+    return new File(uri).exists;
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -101,6 +141,12 @@ export const deleteLocalDb = (): void => {
  */
 export const recoverFromSyncConflict = async (): Promise<void> => {
   console.warn("[db] Sync conflict — deleting local DB and restarting...");
+  // Destructive: wipes the local replica and restarts. Log before the wipe so
+  // there's a record even though the reload tears down the JS context -- this
+  // path was previously silent (console-only).
+  Sentry.logger.warn("recoverFromSyncConflict: deleting local replica", {
+    dbName: currentDbName,
+  });
   deleteLocalDb();
   await reloadAppAsync("Resolving sync conflict");
 };
@@ -117,11 +163,19 @@ export const initDb = async (): Promise<Result<null, DbError>> => {
 
   dbInitPromise = _initDbInternal();
   const result = await dbInitPromise;
-  if (!result.ok) dbInitPromise = null; // Allow retry on failure
+  if (!result.ok) {
+    dbInitPromise = null; // Allow retry on failure
+    Sentry.logger.warn("initDb failed", {
+      outcome: result.error.type,
+      reason: result.error.reason,
+    });
+  }
   return result;
 };
 
 const _initDbInternal = async (): Promise<Result<null, DbError>> => {
+  Sentry.logger.info("initDb: start");
+
   // Get database connection info from API
   const infoResult = await tryCatch(
     async () => {
@@ -131,11 +185,17 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     },
     (error) => ({
       type: "get_db_info_failed",
-      reason: String(error),
+      ...describeError(error),
     })
   );
 
-  if (!infoResult.ok) return infoResult;
+  if (!infoResult.ok) {
+    Sentry.logger.warn("initDb: failed to fetch db info", {
+      outcome: infoResult.error.type,
+      reason: infoResult.error.reason,
+    });
+    return infoResult;
+  }
 
   const { access_token, hostname, db_name } = infoResult.value;
 
@@ -146,19 +206,45 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     authToken: access_token,
   };
 
+  const dbAlreadyExists = replicaExists(dbFileName);
+  Sentry.logger.info("initDb: fetched db info", {
+    dbName: db_name,
+    hostname,
+    dbAlreadyExists,
+  });
+
   // Connect to local database with remote sync
   const connectionResult = await tryCatch(
     () => connect(connectOptions),
-    (error) => ({
-      type: "db_connection_failed",
-      reason: String(error),
-    })
+    (error) => {
+      const described = describeError(error);
+      // A wasm `unreachable` trap (Rust panic / OOM inside the sync engine)
+      // surfaces as a RuntimeError. Flag it and rely on the captured stack.
+      const wasmTrap =
+        described.name === "RuntimeError" ||
+        described.reason.includes("unreachable");
+      return {
+        type: "db_connection_failed",
+        wasmTrap,
+        ...described,
+      };
+    }
   );
 
-  if (!connectionResult.ok) return connectionResult;
+  if (!connectionResult.ok) {
+    Sentry.logger.warn("initDb: connect failed", {
+      outcome: connectionResult.error.type,
+      wasmTrap: connectionResult.error.wasmTrap,
+      name: connectionResult.error.name,
+      reason: connectionResult.error.reason,
+    });
+    return connectionResult;
+  }
 
   db = connectionResult.value;
   currentDbName = dbFileName;
+
+  Sentry.logger.info("initDb: connected to local db");
 
   // Pull from remote before migrations — local migration writes
   // create frames that conflict with the remote's existing frames.
@@ -166,9 +252,10 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     () => syncDatabase(),
     (error) => ({
       type: "initial_pull_failed" as const,
-      reason: String(error),
+      ...describeError(error),
     })
   );
+  Sentry.logger.info("initDb: initial pull complete", { ok: pullResult.ok });
 
   if (!pullResult.ok && isSyncError(pullResult.error.reason)) {
     await recoverFromSyncConflict();
@@ -178,7 +265,13 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   // Apply any required migrations (split by statement since libSQL's
   // execAsync only executes the first statement in multi-statement SQL)
   const migrationResult = await applyRequiredMigrations();
-  if (!migrationResult.ok) return migrationResult;
+  if (!migrationResult.ok) {
+    Sentry.logger.warn("initDb: migrations failed", {
+      outcome: migrationResult.error.type,
+      reason: migrationResult.error.reason,
+    });
+    return migrationResult;
+  }
 
   // Sync after migrations to push any new migration records
   const syncResult = await tryCatch(
@@ -188,12 +281,19 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     },
     (error) => ({
       type: "post_migration_sync_failed",
-      reason: String(error),
+      ...describeError(error),
     })
   );
+  Sentry.logger.info("initDb: post-migration sync complete", {
+    ok: syncResult.ok,
+  });
 
   if (!syncResult.ok && isSyncError(syncResult.error.reason)) {
     await recoverFromSyncConflict();
+  }
+
+  if (syncResult.ok) {
+    Sentry.logger.info("initDb: success");
   }
 
   return syncResult;
@@ -213,7 +313,7 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
     },
     (error) => ({
       type: "get_migrations_failed",
-      reason: String(error),
+      ...describeError(error),
     })
   );
 
@@ -238,8 +338,18 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
 
   if (!requiredMigrations.length) return ok(null);
 
+  Sentry.logger.info("initDb: applying migrations", {
+    count: requiredMigrations.length,
+    versions: requiredMigrations.map((m) => m.version),
+  });
+
   for (const migration of requiredMigrations) {
     const nowTimestampMs = Date.now();
+
+    Sentry.logger.info("initDb: applying migration", {
+      version: migration.version,
+      description: migration.description,
+    });
 
     // libSQL's execAsync only executes the first statement in a
     // multi-statement string, so split and run each individually.
@@ -256,11 +366,17 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
       },
       (error) => ({
         type: "migration_failed",
-        reason: String(error),
+        migrationVersion: migration.version,
+        ...describeError(error),
       })
     );
 
     if (!execResult.ok) {
+      Sentry.logger.error("initDb: migration exec failed", {
+        version: migration.version,
+        reason: execResult.error.reason,
+      });
+
       await tryCatch(
         () =>
           db!
@@ -273,7 +389,13 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
               nowTimestampMs,
               "failed",
             ]),
-        () => null
+        (error) => {
+          Sentry.logger.error("initDb: failed to record failed migration", {
+            version: migration.version,
+            reason: String(error),
+          });
+          return null;
+        }
       );
       return execResult;
     }
@@ -291,7 +413,13 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
             nowTimestampMs,
             "applied",
           ]),
-      () => null
+      (error) => {
+        Sentry.logger.error("initDb: failed to record applied migration", {
+          version: migration.version,
+          reason: String(error),
+        });
+        return null;
+      }
     );
   }
 
@@ -322,7 +450,10 @@ const getLocalAppliedMigrations = async (): Promise<
         .get();
       return !!result;
     },
-    () => ({ type: "check_migration_table_failed", reason: "" })
+    (error) => ({
+      type: "check_migration_table_failed",
+      ...describeError(error),
+    })
   );
 
   if (!tableExists.ok) return tableExists as Result<never, DbError>;
@@ -335,6 +466,9 @@ const getLocalAppliedMigrations = async (): Promise<
         .all();
       return rows;
     },
-    () => ({ type: "get_local_migrations_failed", reason: "" })
+    (error) => ({
+      type: "get_local_migrations_failed",
+      ...describeError(error),
+    })
   );
 };

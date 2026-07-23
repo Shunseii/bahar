@@ -1,4 +1,5 @@
 import { enqueueSyncOperation } from "@bahar/db-operations";
+import * as Sentry from "@sentry/react-native";
 import { ensureDb, recoverFromSyncConflict } from "@/lib/db";
 import { isSyncError, syncDatabase } from "@/lib/db/adapter";
 import {
@@ -53,9 +54,21 @@ export const performSync = async () => {
       maxTsBefore,
       maxTsAfter,
     });
+    Sentry.logger.info("periodic sync complete", {
+      dictionaryChanged: changed,
+      countBefore,
+      countAfter,
+    });
   } catch (error) {
     console.warn("[sync] Sync failed:", error);
-    if (isSyncError(error)) {
+    // The periodic sync caller swallows this rejection, so capture here or it's
+    // invisible. captureException on the raw error preserves the native stack.
+    const syncConflict = isSyncError(error);
+    Sentry.captureException(error, {
+      fingerprint: ["periodic-sync-failed"],
+      contexts: { sync: { syncConflict } },
+    });
+    if (syncConflict) {
       await recoverFromSyncConflict();
     }
     throw error;

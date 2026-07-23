@@ -32,7 +32,19 @@ export const useAppInit = (): UseAppInitResult => {
           new Error(dbResult.error.type, { cause: dbResult.error }),
           {
             fingerprint: ["db-init-error", dbResult.error.type],
-            contexts: { db_init: { type: dbResult.error.type } },
+            contexts: {
+              db_init: {
+                type: dbResult.error.type,
+                reason: dbResult.error.reason,
+                // Preserved from the underlying throw -- for a wasm trap the
+                // stack carries the native frames that String(error) would drop.
+                name: dbResult.error.name ?? null,
+                stack: dbResult.error.stack ?? null,
+                cause: dbResult.error.cause ?? null,
+                wasmTrap: dbResult.error.wasmTrap ?? null,
+                migrationVersion: dbResult.error.migrationVersion ?? null,
+              },
+            },
           }
         );
         return;
