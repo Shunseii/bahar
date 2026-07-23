@@ -207,18 +207,22 @@ export default function Layout() {
     return () => clearInterval(interval);
   }, []);
 
-  // Set up notifications and schedule an initial pass. Reschedule whenever the
-  // app is backgrounded -- that's when the user leaves mid-/post-review and the
-  // reminder matters, and the due set reflects everything graded this session.
+  // Set up notifications and schedule an initial pass. The schedule is kept
+  // fresh by foreground recomputes only (this mount + the post-sync effect
+  // below).
+  //
+  // Deliberately NOT recomputing on "background": recompute cancels the pending
+  // reminders before it reschedules, but the OS suspends JS on backgrounding
+  // before the async reschedule can finish -- so doing it there wipes the very
+  // reminders meant to fire while the app is closed. Leaving them untouched lets
+  // the OS deliver them when due.
   useEffect(() => {
     configureNotifications()
       .then(() => reconcileNotificationPermission())
       .then(() => recomputeReviewNotifications());
 
     const subscription = AppState.addEventListener("change", (nextState) => {
-      if (nextState === "background") {
-        recomputeReviewNotifications();
-      } else if (nextState === "active") {
+      if (nextState === "active") {
         // Permission may have been revoked in OS settings while backgrounded.
         reconcileNotificationPermission().then(() =>
           recomputeReviewNotifications()

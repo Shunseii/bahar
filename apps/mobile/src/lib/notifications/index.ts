@@ -113,6 +113,12 @@ export const recomputeReviewNotifications = async (): Promise<void> => {
     });
     const reminders = computeReminders(dueTimestamps, Date.now());
 
+    Sentry.logger.info("review notifications rescheduled", {
+      upcoming: dueTimestamps.length,
+      scheduled: reminders.length,
+      fireAts: reminders.map((r) => new Date(r.fireAt).toISOString()),
+    });
+
     await Promise.all(
       reminders.map((reminder) =>
         Notifications.scheduleNotificationAsync({
