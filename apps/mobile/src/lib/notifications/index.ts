@@ -95,6 +95,21 @@ export const cancelReviewNotifications = async (): Promise<void> => {
 };
 
 /**
+ * Dismisses already-delivered review reminders from the tray / notification
+ * center -- distinct from cancelling *scheduled* ones. Called on app foreground:
+ * once the user is in the app, a lingering "cards ready" banner is just noise.
+ * Only clears our own review reminders, not other notifications.
+ */
+export const dismissReviewNotifications = async (): Promise<void> => {
+  const presented = await Notifications.getPresentedNotificationsAsync();
+  await Promise.all(
+    presented
+      .filter((n) => n.request.content.data?.type === REVIEW_NOTIFICATION_TYPE)
+      .map((n) => Notifications.dismissNotificationAsync(n.request.identifier))
+  );
+};
+
+/**
  * Recomputes and reschedules review reminders from the current due schedule.
  * Cancel-then-reschedule so there's always at most MAX_REMINDERS pending. Called
  * on the triggers where the due set can change: app start, app backgrounding,

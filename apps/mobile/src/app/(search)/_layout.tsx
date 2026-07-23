@@ -45,6 +45,7 @@ import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
 import { performSync } from "@/lib/db/sync";
 import {
   configureNotifications,
+  dismissReviewNotifications,
   recomputeReviewNotifications,
   reconcileNotificationPermission,
 } from "@/lib/notifications";
@@ -220,9 +221,13 @@ export default function Layout() {
     configureNotifications()
       .then(() => reconcileNotificationPermission())
       .then(() => recomputeReviewNotifications());
+    // Clear any delivered reminders left in the tray from while the app was closed.
+    dismissReviewNotifications();
 
     const subscription = AppState.addEventListener("change", (nextState) => {
       if (nextState === "active") {
+        // In the app now -- clear delivered reminders from the tray.
+        dismissReviewNotifications();
         // Permission may have been revoked in OS settings while backgrounded.
         reconcileNotificationPermission().then(() =>
           recomputeReviewNotifications()
