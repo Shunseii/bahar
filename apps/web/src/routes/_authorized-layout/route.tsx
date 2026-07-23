@@ -342,6 +342,14 @@ export const Route = createFileRoute("/_authorized-layout")({
           db_init: {
             type: error.type,
             reason: errReason,
+            // Preserved from the underlying throw -- for a wasm trap the stack
+            // carries the `wasm://` frames that String(error) would drop.
+            name: "name" in error ? error.name : null,
+            stack: "stack" in error ? error.stack : null,
+            cause: "cause" in error ? error.cause : null,
+            wasmTrap: "wasmTrap" in error ? error.wasmTrap : null,
+            migrationVersion:
+              "migrationVersion" in error ? error.migrationVersion : null,
           },
         },
       });

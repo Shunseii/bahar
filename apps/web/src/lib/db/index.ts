@@ -23,6 +23,72 @@ configureDbQueue({
 });
 
 /**
+ * Serializes an arbitrary thrown value into a Sentry-friendly shape. `String(error)`
+ * alone collapses wasm/Turso errors to opaque one-liners (e.g. "RuntimeError:
+ * unreachable") and drops the stack, so this preserves name/stack/cause -- for a
+ * wasm trap the stack carries the `wasm://` frames that name the failing engine
+ * function.
+ */
+const describeError = (error: unknown) => ({
+  reason: String(error),
+  name: error instanceof Error ? error.name : typeof error,
+  stack: error instanceof Error ? error.stack : undefined,
+  cause:
+    error instanceof Error && error.cause != null
+      ? String(error.cause)
+      : undefined,
+});
+
+/**
+ * Records the browser storage/runtime environment as Sentry context. This is the
+ * layer with the least visibility for local-DB failures -- OPFS support, storage
+ * quota/pressure, install mode (PWA standalone vs browser tab), cross-origin
+ * isolation, and device memory are the usual suspects behind sync-wasm `connect()`
+ * traps that only reproduce on some devices. Attached to every subsequent event.
+ */
+const setStorageEnvContext = async () => {
+  const estimate = await navigator.storage?.estimate?.().catch(() => null);
+  const standalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (navigator as { standalone?: boolean }).standalone === true;
+
+  Sentry.setContext("storage_env", {
+    displayMode: standalone ? "standalone" : "browser",
+    opfsSupported: typeof navigator.storage?.getDirectory === "function",
+    persisted:
+      (await navigator.storage?.persisted?.().catch(() => null)) ?? null,
+    quota: estimate?.quota ?? null,
+    usage: estimate?.usage ?? null,
+    deviceMemory: (navigator as { deviceMemory?: number }).deviceMemory ?? null,
+    hardwareConcurrency: navigator.hardwareConcurrency ?? null,
+    crossOriginIsolated: window.crossOriginIsolated,
+    online: navigator.onLine,
+    userAgent: navigator.userAgent,
+  });
+};
+
+/**
+ * Best-effort check of whether the local OPFS db file already exists, to
+ * distinguish a first-run create from a reconnect in init logs. Returns null if
+ * OPFS can't be enumerated -- itself a useful signal, since a browser without
+ * usable OPFS is a prime suspect for connect traps.
+ */
+const localDbExists = async (dbName: string) => {
+  try {
+    const fileName = _formatLocalDbName(dbName);
+    const root = await navigator.storage.getDirectory();
+    for await (const [name] of root as unknown as AsyncIterable<
+      [string, FileSystemHandle]
+    >) {
+      if (name === fileName) return true;
+    }
+    return false;
+  } catch {
+    return null;
+  }
+};
+
+/**
  * Singleton handle to the local copy of the user's database, which syncs with
  * the remote Turso database. This is a direct in-tab sync-wasm `Database`,
  * exposing the prepare/exec/pull/push/close surface.
@@ -193,7 +259,10 @@ export const initDb = async () => {
   const result = await dbInitPromise;
   if (!result.ok) {
     dbInitPromise = null; // Allow retry on failure
-    Sentry.logger.warn("initDb failed", { outcome: result.error.type });
+    Sentry.logger.warn("initDb failed", {
+      outcome: result.error.type,
+      reason: "reason" in result.error ? result.error.reason : null,
+    });
   }
   return result;
 };
@@ -209,6 +278,9 @@ const isApiError = (
 };
 
 const _initDbInternal = async () => {
+  Sentry.logger.info("initDb: start");
+  await setStorageEnvContext();
+
   const infoResult = await tryCatch(
     async () => {
       const { data, error } = await api.databases.user.get();
@@ -219,19 +291,32 @@ const _initDbInternal = async () => {
       if (isApiError(error) && error?.status === 401) {
         return {
           type: "unauthorized",
-          reason: String(error),
+          ...describeError(error),
         };
       }
 
       return {
         type: "get_db_info_failed",
-        reason: String(error),
+        ...describeError(error),
       };
     }
   );
-  if (!infoResult.ok) return infoResult;
+  if (!infoResult.ok) {
+    Sentry.logger.warn("initDb: failed to fetch db info", {
+      outcome: infoResult.error.type,
+      reason: infoResult.error.reason,
+    });
+    return infoResult;
+  }
 
   const { access_token, hostname, db_name } = infoResult.value;
+
+  const dbAlreadyExists = await localDbExists(db_name);
+  Sentry.logger.info("initDb: fetched db info", {
+    dbName: db_name,
+    hostname,
+    dbAlreadyExists,
+  });
 
   const connectionResult = await tryCatch(
     () =>
@@ -241,11 +326,18 @@ const _initDbInternal = async () => {
         dbName: db_name,
       }),
     (error) => {
-      const reason = String(error);
-      const isOpfsLock = reason.includes("createSyncAccessHandle");
+      const described = describeError(error);
+      const isOpfsLock = described.reason.includes("createSyncAccessHandle");
+      // A wasm `unreachable` trap (Rust panic / OOM inside sync-wasm) surfaces
+      // as a RuntimeError. Flag it so it's filterable, and rely on the captured
+      // stack (wasm frames) to pinpoint the failing engine function.
+      const wasmTrap =
+        described.name === "RuntimeError" ||
+        described.reason.includes("unreachable");
       return {
         type: isOpfsLock ? "opfs_lock_error" : "db_connection_failed",
-        reason,
+        wasmTrap,
+        ...described,
       };
     }
   );
@@ -255,14 +347,27 @@ const _initDbInternal = async () => {
     !connectionResult.ok &&
     connectionResult.error.type === "opfs_lock_error"
   ) {
+    Sentry.logger.warn("initDb: opfs lock during connect", {
+      reason: connectionResult.error.reason,
+    });
     return connectionResult;
   }
 
-  if (!connectionResult.ok) return connectionResult;
+  if (!connectionResult.ok) {
+    Sentry.logger.warn("initDb: connect failed", {
+      outcome: connectionResult.error.type,
+      wasmTrap: connectionResult.error.wasmTrap,
+      name: connectionResult.error.name,
+      reason: connectionResult.error.reason,
+    });
+    return connectionResult;
+  }
 
   db = connectionResult.value;
 
   drizzleDb = buildDrizzleDb(() => db);
+
+  Sentry.logger.info("initDb: connected to local db");
 
   const dbPullResult = await tryCatch(
     async () => {
@@ -270,12 +375,20 @@ const _initDbInternal = async () => {
     },
     (error) => ({
       type: "turso_remote_sync_failed",
-      reason: String(error),
+      ...describeError(error),
     })
   );
+  Sentry.logger.info("initDb: initial pull complete", { ok: dbPullResult.ok });
 
   const migrationResult = await applyRequiredMigrations();
-  if (!migrationResult.ok) return migrationResult;
+  if (!migrationResult.ok) {
+    Sentry.logger.warn("initDb: migrations failed", {
+      outcome: migrationResult.error.type,
+      reason:
+        "reason" in migrationResult.error ? migrationResult.error.reason : null,
+    });
+    return migrationResult;
+  }
 
   const syncResult = await tryCatch(
     async () => {
@@ -284,9 +397,12 @@ const _initDbInternal = async () => {
     },
     (error) => ({
       type: "turso_remote_sync_failed",
-      reason: String(error),
+      ...describeError(error),
     })
   );
+  Sentry.logger.info("initDb: post-migration sync complete", {
+    ok: syncResult.ok,
+  });
 
   const aggregateResult = (() => {
     if (!dbPullResult.ok && !syncResult.ok) {
@@ -312,6 +428,10 @@ const _initDbInternal = async () => {
 
     return ok(null);
   })();
+
+  if (aggregateResult.ok) {
+    Sentry.logger.info("initDb: success");
+  }
 
   return aggregateResult;
 };
@@ -341,7 +461,7 @@ const applyRequiredMigrations = async () => {
     },
     (error) => ({
       type: "api_schema_verification_failed",
-      reason: String(error),
+      ...describeError(error),
     })
   );
   if (!allMigrationsResult.ok) return allMigrationsResult;
@@ -377,18 +497,35 @@ const applyRequiredMigrations = async () => {
 
   if (!requiredMigrations.length) return ok(null);
 
+  Sentry.logger.info("initDb: applying migrations", {
+    count: requiredMigrations.length,
+    versions: requiredMigrations.map((m) => m.version),
+  });
+
   for (const migration of requiredMigrations) {
     const nowTimestampMs = Date.now();
+
+    Sentry.logger.info("initDb: applying migration", {
+      version: migration.version,
+      description: migration.description,
+    });
 
     const execResult = await tryCatch(
       () => db!.exec(migration.sql_script),
       (error) => ({
         type: "migration_failed",
-        reason: String(error),
+        migrationVersion: migration.version,
+        migrationDescription: migration.description,
+        ...describeError(error),
       })
     );
 
     if (!execResult.ok) {
+      Sentry.logger.error("initDb: migration exec failed", {
+        version: migration.version,
+        reason: execResult.error.reason,
+      });
+
       await tryCatch(
         () =>
           db!.run(
@@ -436,7 +573,10 @@ const getLocalAppliedMigrations = async () => {
       );
       return !!result;
     },
-    () => ({ type: "check_migration_table_exists_query_failed" })
+    (error) => ({
+      type: "check_migration_table_exists_query_failed",
+      ...describeError(error),
+    })
   );
 
   if (!tableExists.ok) return tableExists;
@@ -449,7 +589,10 @@ const getLocalAppliedMigrations = async () => {
       );
       return rows;
     },
-    () => ({ type: "local_migrations_query_failed" })
+    (error) => ({
+      type: "local_migrations_query_failed",
+      ...describeError(error),
+    })
   );
 };
 
