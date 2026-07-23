@@ -29,6 +29,7 @@ export interface SyncAdapterStatement {
   run(...params: BindParams[]): Promise<RunResult>;
   all(...params: BindParams[]): Promise<Row[]>;
   get(...params: BindParams[]): Promise<Row | undefined>;
+  finalize(): Promise<void>;
 }
 
 export interface SyncAdapterDb {
@@ -41,24 +42,33 @@ export const buildDrizzleDb = (getDb: () => SyncAdapterDb | null) =>
       const db = getDb();
       if (!db) return { rows: [] };
 
+      // A fresh statement is prepared per call, so it MUST be finalized after
+      // use. sync-react-native holds native resources on a prepared statement
+      // until finalize(); for a write (UPDATE/INSERT) that includes SQLite's
+      // write lock, so an un-finalized write blocks every later read until the
+      // connection is torn down (app restart). Finalize in a finally so it
+      // happens even if the query throws.
       const stmt = db.prepare(sql);
+      try {
+        if (method === "run") {
+          await stmt.run(params as BindParams);
+          return { rows: [] };
+        }
 
-      if (method === "run") {
-        await stmt.run(params as BindParams);
+        if (method === "all" || method === "values") {
+          const rows = await stmt.all(params as BindParams);
+          return { rows: rows.map((row) => Object.values(row)) };
+        }
+
+        if (method === "get") {
+          const row = await stmt.get(params as BindParams);
+          return { rows: row ? Object.values(row) : [] };
+        }
+
         return { rows: [] };
+      } finally {
+        await stmt.finalize();
       }
-
-      if (method === "all" || method === "values") {
-        const rows = await stmt.all(params as BindParams);
-        return { rows: rows.map((row) => Object.values(row)) };
-      }
-
-      if (method === "get") {
-        const row = await stmt.get(params as BindParams);
-        return { rows: row ? Object.values(row) : [] };
-      }
-
-      return { rows: [] };
     },
     { schema }
   );

@@ -48,16 +48,34 @@ const createAdapter = (db: Database): DatabaseAdapter => {
 
   return {
     prepare<T = unknown>(sql: string): PreparedStatement<T> {
-      const stmt = db.prepare(sql);
+      // Each method finalizes its statement after use: sync-react-native holds
+      // native resources (and, for writes, the SQLite write lock) on a prepared
+      // statement until finalize(), so leaking one wedges the connection until
+      // app restart. A prepared statement here is used for a single call.
       return {
         async all(params: unknown[] = []): Promise<T[]> {
-          return (await stmt.all(params as BindParams)) as T[];
+          const stmt = db.prepare(sql);
+          try {
+            return (await stmt.all(params as BindParams)) as T[];
+          } finally {
+            await stmt.finalize();
+          }
         },
         async get(params: unknown[] = []): Promise<T | undefined> {
-          return (await stmt.get(params as BindParams)) as T | undefined;
+          const stmt = db.prepare(sql);
+          try {
+            return (await stmt.get(params as BindParams)) as T | undefined;
+          } finally {
+            await stmt.finalize();
+          }
         },
         async run(params: unknown[] = []): Promise<void> {
-          await stmt.run(params as BindParams);
+          const stmt = db.prepare(sql);
+          try {
+            await stmt.run(params as BindParams);
+          } finally {
+            await stmt.finalize();
+          }
         },
       };
     },
