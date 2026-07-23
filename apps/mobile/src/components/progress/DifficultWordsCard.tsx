@@ -1,4 +1,5 @@
 import { Trans } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react-native";
 import { useRouter } from "expo-router";
 import { useSetAtom } from "jotai";
 import { ArrowLeftRight, ArrowRight, PencilLine } from "lucide-react-native";
@@ -89,9 +90,17 @@ export const DifficultWordsCard: FC<DifficultWordsCardProps> = ({
               <Pressable
                 className="flex-row items-center justify-between gap-2 rounded-md bg-red-50 px-3 py-2.5 dark:bg-red-950/30"
                 key={w.entryId}
-                onPress={() =>
-                  router.navigate(`/(search)/(home)/edit-word/${w.entryId}`)
-                }
+                onPress={() => {
+                  // See BAH-180: don't navigate to /edit-word/undefined.
+                  if (!w.entryId) {
+                    Sentry.captureMessage("Edit nav with missing entry id", {
+                      level: "warning",
+                      extra: { source: "DifficultWordsCard", entry: w },
+                    });
+                    return;
+                  }
+                  router.navigate(`/(search)/(home)/edit-word/${w.entryId}`);
+                }}
               >
                 <View className="min-w-0 flex-1 gap-0.5">
                   <View className="flex-row items-center gap-1.5">

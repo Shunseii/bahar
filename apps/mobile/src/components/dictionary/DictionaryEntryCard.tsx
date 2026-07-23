@@ -7,6 +7,7 @@
 import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react-native";
 import { useQuery } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
@@ -368,9 +369,24 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
               <Pressable
                 className="rounded-md p-2 active:bg-primary/10"
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                onPress={() =>
-                  router.push(`/(search)/(home)/edit-word/${entry.id}`)
-                }
+                onPress={() => {
+                  // Guard against navigating to /edit-word/undefined (the route
+                  // param then becomes the string "undefined" and the edit page
+                  // throws "Dictionary entry not found"). Capture so we can trace
+                  // where an entry without an id is coming from. See BAH-180.
+                  if (!entry.id) {
+                    Sentry.captureMessage("Edit nav with missing entry id", {
+                      level: "warning",
+                      extra: {
+                        source: "DictionaryEntryCard",
+                        word: entry.word,
+                        translation: entry.translation,
+                      },
+                    });
+                    return;
+                  }
+                  router.push(`/(search)/(home)/edit-word/${entry.id}`);
+                }}
               >
                 <Edit color={colors.mutedForeground} size={18} />
               </Pressable>
