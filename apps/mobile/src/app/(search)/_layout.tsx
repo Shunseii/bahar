@@ -20,6 +20,7 @@ import {
 } from "lucide-react-native";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import {
+  AppState,
   Text as RNText,
   TextInput,
   TouchableOpacity,
@@ -42,6 +43,11 @@ import { HeaderScrollContext } from "@/contexts/header-scroll";
 import { useSearch } from "@/hooks/useSearch";
 import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
 import { performSync } from "@/lib/db/sync";
+import {
+  configureNotifications,
+  recomputeReviewNotifications,
+  reconcileNotificationPermission,
+} from "@/lib/notifications";
 import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
 import {
   dictionaryChangedAtom,
@@ -201,6 +207,28 @@ export default function Layout() {
     return () => clearInterval(interval);
   }, []);
 
+  // Set up notifications and schedule an initial pass. Reschedule whenever the
+  // app is backgrounded -- that's when the user leaves mid-/post-review and the
+  // reminder matters, and the due set reflects everything graded this session.
+  useEffect(() => {
+    configureNotifications()
+      .then(() => reconcileNotificationPermission())
+      .then(() => recomputeReviewNotifications());
+
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "background") {
+        recomputeReviewNotifications();
+      } else if (nextState === "active") {
+        // Permission may have been revoked in OS settings while backgrounded.
+        reconcileNotificationPermission().then(() =>
+          recomputeReviewNotifications()
+        );
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
+
   useEffect(() => {
     if (syncCompletedCount === 0) return;
 
@@ -217,6 +245,10 @@ export default function Layout() {
       }
 
       await queryClient.invalidateQueries();
+
+      // Due data may have changed (e.g. reviewed on another device) -- keep the
+      // scheduled reminders in step.
+      recomputeReviewNotifications();
     };
 
     refreshAfterSync();

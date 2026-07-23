@@ -249,6 +249,48 @@ export const makeFlashcardsTable = (
         queryKey: ["turso.flashcards.counts"],
       },
     },
+    upcomingDue: {
+      /**
+       * Future due timestamps (unix ms) for non-hidden cards, within an optional
+       * horizon, sorted ascending -- one entry per card. Unlike `today`/`counts`
+       * (which hard-filter to `due <= now`), this reads the *upcoming* schedule.
+       * Used by mobile review-reminder notifications to know when cards next
+       * become due; callers bucket/aggregate the timestamps.
+       */
+      query: async ({
+        filters,
+        horizonMs,
+      }: {
+        filters?: SelectDeck["filters"];
+        horizonMs?: number;
+      } = {}): Promise<number[]> => {
+        const drizzleDb = await getDb();
+        const now = Date.now();
+
+        const conditions = [
+          gt(flashcards.due_timestamp_ms, now),
+          ...(horizonMs != null
+            ? [lte(flashcards.due_timestamp_ms, now + horizonMs)]
+            : []),
+          ...buildFilterConditions({ filters }),
+        ];
+
+        const rows = await drizzleDb
+          .select({ due_timestamp_ms: flashcards.due_timestamp_ms })
+          .from(flashcards)
+          .innerJoin(
+            dictionaryEntries,
+            eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
+          )
+          .where(and(...conditions))
+          .orderBy(flashcards.due_timestamp_ms);
+
+        return rows.map((row) => row.due_timestamp_ms);
+      },
+      cacheOptions: {
+        queryKey: ["turso.flashcards.upcomingDue"],
+      },
+    },
     create: {
       mutation: ({
         flashcard,

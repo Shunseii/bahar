@@ -218,6 +218,10 @@ export default function HomeScreen() {
     ...flashcardsTable.counts.cacheOptions,
     enabled: state === "ready",
     refetchOnMount: true,
+    // Cards cross their due time purely by the clock advancing, with nothing to
+    // invalidate the query. Poll while mounted so the due count updates on its
+    // own -- react-query pauses this while the app is backgrounded.
+    refetchInterval: 15_000,
   });
 
   const regularCount = counts?.regular ?? 0;

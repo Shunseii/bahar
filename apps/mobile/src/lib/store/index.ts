@@ -23,3 +23,14 @@ export const createMultipleAtom = atomWithStorage(
   createJSONStorage<boolean>(() => AsyncStorage),
   { getOnInit: true }
 );
+
+/**
+ * Whether local review-reminder notifications are enabled. Device-only
+ * preference; the OS permission is requested separately when this is turned on.
+ */
+export const notificationsEnabledAtom = atomWithStorage(
+  "bahar:notificationsEnabled",
+  false,
+  createJSONStorage<boolean>(() => AsyncStorage),
+  { getOnInit: true }
+);
