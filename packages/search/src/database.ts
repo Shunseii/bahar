@@ -85,7 +85,11 @@ export const updateDocument = (
   id: string,
   document: Partial<DictionaryDocument>
 ) => {
-  return update(db, id, document);
+  // Orama's update() removes then re-inserts the document, so the new body must
+  // carry the `id` field. Callers pass a partial without it, which would drop
+  // the id from the re-indexed doc -- search results then surface an undefined
+  // id and edit navigation builds /edit-word/undefined. See BAH-180.
+  return update(db, id, { ...document, id });
 };
 
 /**
