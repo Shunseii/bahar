@@ -42,12 +42,11 @@ export const buildDrizzleDb = (getDb: () => SyncAdapterDb | null) =>
       const db = getDb();
       if (!db) return { rows: [] };
 
-      // A fresh statement is prepared per call, so it MUST be finalized after
-      // use. sync-react-native holds native resources on a prepared statement
-      // until finalize(); for a write (UPDATE/INSERT) that includes SQLite's
-      // write lock, so an un-finalized write blocks every later read until the
-      // connection is torn down (app restart). Finalize in a finally so it
-      // happens even if the query throws.
+      // A fresh statement is prepared per call and never reused. run/all/get
+      // already reset the statement and release the exec lock internally, but
+      // they don't finalize it -- so without this the native statement handles
+      // accumulate (a leak) over a session. Finalize in a finally so it happens
+      // even if the query throws.
       const stmt = db.prepare(sql);
       try {
         if (method === "run") {
