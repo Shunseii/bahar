@@ -13,9 +13,11 @@ export type {
 export {
   BATCH_SIZE,
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  DEFAULT_POSTPONE_WINDOW_DAYS,
   DICTIONARY_ENTRY_COLUMNS,
   FLASHCARD_LIMIT,
-  POSTPONE_WINDOW_DAYS,
+  MAX_POSTPONE_WINDOW_DAYS,
+  MIN_POSTPONE_WINDOW_DAYS,
 } from "./constants";
 export {
   type ConvertDictionaryEntryError,
@@ -28,11 +30,13 @@ export type { DrizzleDb, OperationDeps } from "./operations/deps";
 export { makeDictionaryEntriesTable } from "./operations/dictionary-entries";
 export {
   assignPostponedDueDates,
+  clampPostponeWindow,
   type FlashcardQueue,
   type FlashcardWithDictionaryEntry,
   keepCurrentCardFirst,
   makeFlashcardsTable,
   type PostponeScope,
+  postponeCardsPerDay,
 } from "./operations/flashcards";
 export { makeMigrationTable } from "./operations/migration";
 export { makeProgressTable } from "./operations/progress";

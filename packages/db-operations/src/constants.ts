@@ -38,9 +38,19 @@ export const DEFAULT_BACKLOG_THRESHOLD_DAYS = 7;
 
 /**
  * Number of days the postpone operation spreads an overdue pile across,
- * starting with today.
+ * starting with today. A default rather than a fixed policy -- the user picks
+ * the window, and `clampPostponeWindow` bounds what they can pick.
  */
-export const POSTPONE_WINDOW_DAYS = 7;
+export const DEFAULT_POSTPONE_WINDOW_DAYS = 7;
+
+export const MIN_POSTPONE_WINDOW_DAYS = 1;
+
+/**
+ * Longest window a user can spread a pile across. Past roughly a month this
+ * stops being recovery and becomes avoidance, and pushing a card that far out
+ * is a scheduling decision better served by resetting it outright.
+ */
+export const MAX_POSTPONE_WINDOW_DAYS = 30;
 
 /**
  * Batch size for bulk operations.

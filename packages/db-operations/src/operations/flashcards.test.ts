@@ -6,7 +6,10 @@ import {
 import { startOfDay } from "date-fns";
 import { Rating } from "ts-fsrs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { POSTPONE_WINDOW_DAYS } from "../constants";
+import {
+  DEFAULT_POSTPONE_WINDOW_DAYS,
+  MAX_POSTPONE_WINDOW_DAYS,
+} from "../constants";
 import { createTestDb, type TestDb } from "../test/create-test-db";
 import {
   insertDictionaryEntry,
@@ -15,9 +18,11 @@ import {
 } from "../test/factories";
 import {
   assignPostponedDueDates,
+  clampPostponeWindow,
   type FlashcardWithDictionaryEntry,
   keepCurrentCardFirst,
   makeFlashcardsTable,
+  postponeCardsPerDay,
 } from "./flashcards";
 
 const consumeGenerator = async (
@@ -652,6 +657,60 @@ describe("flashcardsTable", () => {
     });
   });
 
+  describe("clampPostponeWindow", () => {
+    it("caps the window at the card count, not just the hard maximum", () => {
+      // Spreading 5 cards over 20 days would leave 15 days empty, so the pile
+      // size is the real ceiling below MAX_POSTPONE_WINDOW_DAYS.
+      expect(clampPostponeWindow({ windowDays: 20, cardCount: 5 })).toBe(5);
+      expect(clampPostponeWindow({ windowDays: 3, cardCount: 5 })).toBe(3);
+    });
+
+    it("caps at the hard maximum once the pile is large enough", () => {
+      expect(clampPostponeWindow({ windowDays: 999, cardCount: 5000 })).toBe(
+        MAX_POSTPONE_WINDOW_DAYS
+      );
+    });
+
+    it("floors at one day for zero, negative, and fractional input", () => {
+      expect(clampPostponeWindow({ windowDays: 0, cardCount: 100 })).toBe(1);
+      expect(clampPostponeWindow({ windowDays: -5, cardCount: 100 })).toBe(1);
+      expect(clampPostponeWindow({ windowDays: 1.9, cardCount: 100 })).toBe(1);
+    });
+
+    it("survives NaN rather than propagating it into a due timestamp", () => {
+      // Number("") is 0 and Number("abc") is NaN -- both reachable straight
+      // from the settings text field.
+      expect(
+        clampPostponeWindow({ windowDays: Number.NaN, cardCount: 100 })
+      ).toBe(1);
+      expect(
+        clampPostponeWindow({
+          windowDays: Number.POSITIVE_INFINITY,
+          cardCount: 100,
+        })
+      ).toBe(1);
+    });
+
+    it("returns a usable window even with nothing to postpone", () => {
+      // Callers disable the action at zero; this just must not return 0 or
+      // negative and hand `assignPostponedDueDates` an unusable window.
+      expect(clampPostponeWindow({ windowDays: 7, cardCount: 0 })).toBe(1);
+    });
+  });
+
+  describe("postponeCardsPerDay", () => {
+    it("rounds up to match what the round-robin deal actually produces", () => {
+      // 743 over 7 days is 106.1; the first 743 % 7 days get 107, so the
+      // honest headline number is the ceiling.
+      expect(postponeCardsPerDay({ cardCount: 743, windowDays: 7 })).toBe(107);
+      expect(postponeCardsPerDay({ cardCount: 700, windowDays: 7 })).toBe(100);
+    });
+
+    it("never divides by zero", () => {
+      expect(postponeCardsPerDay({ cardCount: 50, windowDays: 0 })).toBe(50);
+    });
+  });
+
   describe("postpone", () => {
     const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -715,7 +774,7 @@ describe("flashcardsTable", () => {
         before.due_timestamp_ms as number
       );
       expect(after.due_timestamp_ms as number).toBeLessThanOrEqual(
-        startOfDay(new Date()).getTime() + POSTPONE_WINDOW_DAYS * DAY_MS
+        startOfDay(new Date()).getTime() + DEFAULT_POSTPONE_WINDOW_DAYS * DAY_MS
       );
 
       // Comparing whole rows minus the two due columns, rather than naming
@@ -811,9 +870,9 @@ describe("flashcardsTable", () => {
         perDay.set(key, (perDay.get(key) ?? 0) + 1);
       }
 
-      expect(perDay.size).toBe(POSTPONE_WINDOW_DAYS);
+      expect(perDay.size).toBe(DEFAULT_POSTPONE_WINDOW_DAYS);
       for (const count of perDay.values()) {
-        expect(count).toBe(total / POSTPONE_WINDOW_DAYS);
+        expect(count).toBe(total / DEFAULT_POSTPONE_WINDOW_DAYS);
       }
     });
 

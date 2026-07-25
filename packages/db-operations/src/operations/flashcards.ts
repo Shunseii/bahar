@@ -20,7 +20,9 @@ import { nanoid } from "nanoid/non-secure";
 import type { ReviewLog } from "ts-fsrs";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
-  POSTPONE_WINDOW_DAYS,
+  DEFAULT_POSTPONE_WINDOW_DAYS,
+  MAX_POSTPONE_WINDOW_DAYS,
+  MIN_POSTPONE_WINDOW_DAYS,
 } from "../constants";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
@@ -76,6 +78,61 @@ export const keepCurrentCardFirst = ({
  * isn't a thing anyone wants.
  */
 export type PostponeScope = "all" | "backlog";
+
+/**
+ * Bounds a user-entered postpone window to something that actually does
+ * something.
+ *
+ * The upper bound is the card count, not just MAX_POSTPONE_WINDOW_DAYS:
+ * spreading 5 cards over 20 days leaves 15 days empty, so any window past the
+ * pile size is a bigger number with no effect. Purely a UI concern --
+ * `assignPostponedDueDates` handles an oversized window fine, it just doesn't
+ * use the extra days.
+ *
+ * `cardCount` of 0 has no meaningful window; callers are expected to disable
+ * the action entirely rather than rely on the floor returned here.
+ */
+export const clampPostponeWindow = ({
+  windowDays,
+  cardCount,
+}: {
+  windowDays: number;
+  cardCount: number;
+}): number => {
+  if (!Number.isFinite(windowDays)) {
+    return MIN_POSTPONE_WINDOW_DAYS;
+  }
+
+  const max = Math.min(cardCount, MAX_POSTPONE_WINDOW_DAYS);
+  if (max < MIN_POSTPONE_WINDOW_DAYS) {
+    return MIN_POSTPONE_WINDOW_DAYS;
+  }
+
+  return Math.min(
+    Math.max(Math.floor(windowDays), MIN_POSTPONE_WINDOW_DAYS),
+    max
+  );
+};
+
+/**
+ * Cards per day a given window works out to, for the UI to show alongside the
+ * window input -- "14 days" means nothing to a user deciding, "53 cards a day"
+ * does.
+ *
+ * Rounds up because that's what the round-robin deal produces: the first
+ * `cardCount % windowDays` days get the extra card.
+ */
+export const postponeCardsPerDay = ({
+  cardCount,
+  windowDays,
+}: {
+  cardCount: number;
+  windowDays: number;
+}): number => {
+  const days = Math.max(MIN_POSTPONE_WINDOW_DAYS, Math.floor(windowDays));
+
+  return Math.ceil(cardCount / days);
+};
 
 /**
  * Cards within a single day are spaced by a second so `today`'s
@@ -734,7 +791,7 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
         filters,
         scope = "all",
         backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
-        windowDays = POSTPONE_WINDOW_DAYS,
+        windowDays = DEFAULT_POSTPONE_WINDOW_DAYS,
       }: {
         filters?: SelectDeck["filters"];
         scope?: PostponeScope;

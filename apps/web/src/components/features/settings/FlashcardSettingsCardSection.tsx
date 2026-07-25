@@ -1,9 +1,12 @@
 import {
+  clampPostponeWindow,
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  DEFAULT_POSTPONE_WINDOW_DAYS,
   enqueueDbOperation,
   enqueueSyncOperation,
-  POSTPONE_WINDOW_DAYS,
+  MIN_POSTPONE_WINDOW_DAYS,
   type PostponeScope,
+  postponeCardsPerDay,
 } from "@bahar/db-operations";
 import { Button } from "@bahar/web-ui/components/button";
 import {
@@ -22,12 +25,18 @@ import {
   FormLabel,
   FormMessage,
 } from "@bahar/web-ui/components/form";
+import { Input } from "@bahar/web-ui/components/input";
 import { Label } from "@bahar/web-ui/components/label";
 import {
   RadioGroup,
   RadioGroupItem,
 } from "@bahar/web-ui/components/radio-group";
 import { Switch } from "@bahar/web-ui/components/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@bahar/web-ui/components/tooltip";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -68,11 +77,68 @@ export const FlashcardSettingsCardSection = () => {
     postponed: number;
   } | null>(null);
   const [postponeScope, setPostponeScope] = useState<PostponeScope>("all");
+  // Held as the raw string so the field can be empty mid-edit instead of
+  // snapping back to a number the moment the user clears it.
+  const [windowInput, setWindowInput] = useState(
+    String(DEFAULT_POSTPONE_WINDOW_DAYS)
+  );
 
   const { data: counts } = useQuery({
     queryFn: () => flashcardsTable.counts.query(),
     ...flashcardsTable.counts.cacheOptions,
   });
+
+  const scopeCount =
+    (postponeScope === "all" ? counts?.total : counts?.backlog) ?? 0;
+  const hasNothingToPostpone = scopeCount === 0;
+
+  const parsedWindow = Number(windowInput);
+  const isWindowValid =
+    windowInput.trim() !== "" &&
+    Number.isInteger(parsedWindow) &&
+    parsedWindow >= MIN_POSTPONE_WINDOW_DAYS &&
+    parsedWindow ===
+      clampPostponeWindow({
+        windowDays: parsedWindow,
+        cardCount: scopeCount,
+      });
+
+  const windowDays = clampPostponeWindow({
+    windowDays: parsedWindow,
+    cardCount: scopeCount,
+  });
+  const cardsPerDay = postponeCardsPerDay({
+    cardCount: scopeCount,
+    windowDays,
+  });
+
+  // A window longer than the pile leaves days empty, so the count is the real
+  // ceiling until it passes MAX_POSTPONE_WINDOW_DAYS.
+  const maxWindow = clampPostponeWindow({
+    windowDays: Number.POSITIVE_INFINITY,
+    cardCount: scopeCount,
+  });
+
+  // Switching scope changes the count, which can drop the ceiling below what's
+  // currently typed -- re-clamp rather than silently postponing out of range.
+  const handleScopeChange = useCallback(
+    (value: string) => {
+      const nextScope = value as PostponeScope;
+      const nextCount =
+        (nextScope === "all" ? counts?.total : counts?.backlog) ?? 0;
+
+      setPostponeScope(nextScope);
+      setWindowInput((current) =>
+        String(
+          clampPostponeWindow({
+            windowDays: Number(current),
+            cardCount: nextCount,
+          })
+        )
+      );
+    },
+    [counts]
+  );
 
   const handlePostpone = useCallback(async () => {
     try {
@@ -81,6 +147,7 @@ export const FlashcardSettingsCardSection = () => {
       await enqueueDbOperation(async () => {
         for await (const progress of flashcardsTable.postpone.generator({
           scope: postponeScope,
+          windowDays,
         })) {
           setPostponeProgress(progress);
           lastProgress = progress;
@@ -105,7 +172,7 @@ export const FlashcardSettingsCardSection = () => {
         toast.info(t`No overdue cards to reschedule.`);
       } else {
         toast.success(t`Backlog rescheduled!`, {
-          description: t`${lastProgress.postponed} cards have been spread over the next ${POSTPONE_WINDOW_DAYS} days.`,
+          description: t`${lastProgress.postponed} cards have been spread over the next ${windowDays} days.`,
         });
       }
     } catch (_err) {
@@ -115,7 +182,7 @@ export const FlashcardSettingsCardSection = () => {
     } finally {
       setPostponeProgress(null);
     }
-  }, [t, postponeScope]);
+  }, [t, postponeScope, windowDays]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -260,16 +327,15 @@ export const FlashcardSettingsCardSection = () => {
               <p className="text-muted-foreground text-sm">
                 {postponeScope === "all" ? (
                   <Trans>
-                    Spread your overdue cards evenly over the next{" "}
-                    {POSTPONE_WINDOW_DAYS} days. Your progress on each card is
-                    untouched.
+                    Spread your overdue cards evenly across the days ahead. Your
+                    progress on each card is untouched.
                   </Trans>
                 ) : (
                   <Trans>
-                    Spread your backlog cards evenly over the next{" "}
-                    {POSTPONE_WINDOW_DAYS} days. Cards overdue by less than{" "}
-                    {DEFAULT_BACKLOG_THRESHOLD_DAYS} days stay due today. Your
-                    progress on each card is untouched.
+                    Spread your backlog cards evenly across the days ahead.
+                    Cards overdue by less than {DEFAULT_BACKLOG_THRESHOLD_DAYS}{" "}
+                    days stay due today. Your progress on each card is
+                    untouched.
                   </Trans>
                 )}
               </p>
@@ -277,9 +343,7 @@ export const FlashcardSettingsCardSection = () => {
 
             <RadioGroup
               className="flex flex-col space-y-1"
-              onValueChange={(value) =>
-                setPostponeScope(value as PostponeScope)
-              }
+              onValueChange={handleScopeChange}
               value={postponeScope}
             >
               <div className="flex items-center space-x-3">
@@ -307,14 +371,65 @@ export const FlashcardSettingsCardSection = () => {
               </div>
             </RadioGroup>
 
-            <Button
-              className="self-start"
-              disabled={!!postponeProgress}
-              onClick={handlePostpone}
-              variant="outline"
-            >
-              <Trans>Reschedule</Trans>
-            </Button>
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <Label className="font-normal" htmlFor="postpone-window">
+                  <Trans>Spread over</Trans>
+                </Label>
+                <Input
+                  className="w-20"
+                  disabled={hasNothingToPostpone}
+                  id="postpone-window"
+                  inputMode="numeric"
+                  max={maxWindow}
+                  min={MIN_POSTPONE_WINDOW_DAYS}
+                  onChange={(event) => setWindowInput(event.target.value)}
+                  type="number"
+                  value={windowInput}
+                />
+                <span className="text-muted-foreground text-sm">
+                  <Trans>days</Trans>
+                </span>
+              </div>
+
+              {/* "14 days" means nothing to someone deciding; "53 cards a day"
+                  is the number they can actually say yes or no to. */}
+              {!hasNothingToPostpone && isWindowValid && (
+                <p className="text-muted-foreground text-xs">
+                  <Trans>about {formatNumber(cardsPerDay)} cards per day</Trans>
+                </p>
+              )}
+            </div>
+
+            {hasNothingToPostpone ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {/* Disabled buttons don't emit pointer events, so the
+                      trigger has to wrap it to get a hoverable target. */}
+                  <span className="self-start">
+                    <Button disabled variant="outline">
+                      <Trans>Reschedule</Trans>
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {postponeScope === "all" ? (
+                    <Trans>You have no overdue cards to reschedule.</Trans>
+                  ) : (
+                    <Trans>You have no backlog cards to reschedule.</Trans>
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <Button
+                className="self-start"
+                disabled={!!postponeProgress || !isWindowValid}
+                onClick={handlePostpone}
+                variant="outline"
+              >
+                <Trans>Reschedule</Trans>
+              </Button>
+            )}
 
             {postponeProgress && (
               <div className="space-y-2">

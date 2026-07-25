@@ -41,6 +41,7 @@ import Animated, {
 import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
@@ -48,10 +49,13 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import { deleteLocalDb, ensureDb, resetDb } from "@/lib/db";
 import { getDrizzleDb } from "@/lib/db/adapter";
 import {
+  clampPostponeWindow,
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  DEFAULT_POSTPONE_WINDOW_DAYS,
   flashcardsTable,
-  POSTPONE_WINDOW_DAYS,
+  MIN_POSTPONE_WINDOW_DAYS,
   type PostponeScope,
+  postponeCardsPerDay,
   settingsTable,
 } from "@/lib/db/operations";
 import {
@@ -335,11 +339,55 @@ export default function SettingsScreen() {
     postponed: number;
   } | null>(null);
   const [postponeScope, setPostponeScope] = useState<PostponeScope>("all");
+  // Held as the raw string so the field can be empty mid-edit instead of
+  // snapping back to a number the moment the user clears it.
+  const [windowInput, setWindowInput] = useState(
+    String(DEFAULT_POSTPONE_WINDOW_DAYS)
+  );
 
   const { data: counts } = useQuery({
     queryFn: () => flashcardsTable.counts.query(),
     ...flashcardsTable.counts.cacheOptions,
   });
+
+  const scopeCount =
+    (postponeScope === "all" ? counts?.total : counts?.backlog) ?? 0;
+  const hasNothingToPostpone = scopeCount === 0;
+
+  const parsedWindow = Number(windowInput);
+  const isWindowValid =
+    windowInput.trim() !== "" &&
+    Number.isInteger(parsedWindow) &&
+    parsedWindow >= MIN_POSTPONE_WINDOW_DAYS &&
+    parsedWindow ===
+      clampPostponeWindow({ windowDays: parsedWindow, cardCount: scopeCount });
+
+  const windowDays = clampPostponeWindow({
+    windowDays: parsedWindow,
+    cardCount: scopeCount,
+  });
+  const cardsPerDay = postponeCardsPerDay({
+    cardCount: scopeCount,
+    windowDays,
+  });
+
+  // Switching scope changes the count, which can drop the ceiling below what's
+  // currently typed -- re-clamp rather than silently postponing out of range.
+  const handleScopeChange = (value: string) => {
+    const nextScope = value as PostponeScope;
+    const nextCount =
+      (nextScope === "all" ? counts?.total : counts?.backlog) ?? 0;
+
+    setPostponeScope(nextScope);
+    setWindowInput((current) =>
+      String(
+        clampPostponeWindow({
+          windowDays: Number(current),
+          cardCount: nextCount,
+        })
+      )
+    );
+  };
 
   // Animate the bar width so each batch jump (up to CHUNK_SIZE cards at once)
   // eases to its new position instead of snapping.
@@ -366,6 +414,7 @@ export default function SettingsScreen() {
 
       for await (const progress of flashcardsTable.postpone.generator({
         scope: postponeScope,
+        windowDays,
       })) {
         lastProgress = progress;
 
@@ -392,7 +441,7 @@ export default function SettingsScreen() {
         toast.info(t`No overdue cards to reschedule.`);
       } else {
         toast.success(t`Backlog rescheduled!`, {
-          description: t`${lastProgress.postponed} cards have been spread over the next ${POSTPONE_WINDOW_DAYS} days.`,
+          description: t`${lastProgress.postponed} cards have been spread over the next ${windowDays} days.`,
         });
       }
     } catch (_err) {
@@ -686,14 +735,13 @@ export default function SettingsScreen() {
                 <Text className="mb-3 text-muted-foreground text-sm">
                   {postponeScope === "all" ? (
                     <Trans>
-                      Spread your overdue cards evenly over the next{" "}
-                      {POSTPONE_WINDOW_DAYS} days. Your progress on each card is
-                      untouched.
+                      Spread your overdue cards evenly across the days ahead.
+                      Your progress on each card is untouched.
                     </Trans>
                   ) : (
                     <Trans>
-                      Spread your backlog cards evenly over the next{" "}
-                      {POSTPONE_WINDOW_DAYS} days. Cards overdue by less than{" "}
+                      Spread your backlog cards evenly across the days ahead.
+                      Cards overdue by less than{" "}
                       {DEFAULT_BACKLOG_THRESHOLD_DAYS} days stay due today. Your
                       progress on each card is untouched.
                     </Trans>
@@ -702,12 +750,36 @@ export default function SettingsScreen() {
 
                 <View className="mb-3">
                   <SelectOptions
-                    onChange={(newValue) =>
-                      setPostponeScope(newValue as PostponeScope)
-                    }
+                    onChange={handleScopeChange}
                     options={postponeScopeOptions}
                     value={postponeScope}
                   />
+                </View>
+
+                <View className="mb-3">
+                  <View className="flex-row items-center gap-2">
+                    <Text className="text-foreground text-sm">
+                      <Trans>Spread over</Trans>
+                    </Text>
+                    <Input
+                      className="w-20"
+                      editable={!hasNothingToPostpone}
+                      keyboardType="number-pad"
+                      onChangeText={setWindowInput}
+                      value={windowInput}
+                    />
+                    <Text className="text-muted-foreground text-sm">
+                      <Trans>days</Trans>
+                    </Text>
+                  </View>
+
+                  {/* "14 days" means nothing to someone deciding; "53 cards a
+                      day" is the number they can actually say yes or no to. */}
+                  {!hasNothingToPostpone && isWindowValid && (
+                    <Text className="mt-1.5 text-muted-foreground text-xs">
+                      <Trans>about {cardsPerDay} cards per day</Trans>
+                    </Text>
+                  )}
                 </View>
 
                 {postponeProgress ? (
@@ -726,9 +798,32 @@ export default function SettingsScreen() {
                     </Text>
                   </View>
                 ) : (
-                  <Button onPress={handlePostpone} variant="outline">
-                    <Trans>Reschedule</Trans>
-                  </Button>
+                  <View className="gap-1.5">
+                    <Button
+                      disabled={hasNothingToPostpone || !isWindowValid}
+                      onPress={handlePostpone}
+                      variant="outline"
+                    >
+                      <Trans>Reschedule</Trans>
+                    </Button>
+
+                    {/* No hover on touch, so the reason a disabled button is
+                        disabled has to be stated inline rather than in a
+                        tooltip like web. */}
+                    {hasNothingToPostpone && (
+                      <Text className="text-center text-muted-foreground text-xs">
+                        {postponeScope === "all" ? (
+                          <Trans>
+                            You have no overdue cards to reschedule.
+                          </Trans>
+                        ) : (
+                          <Trans>
+                            You have no backlog cards to reschedule.
+                          </Trans>
+                        )}
+                      </Text>
+                    )}
+                  </View>
                 )}
               </View>
             </View>
