@@ -158,6 +158,15 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     listRef.current?.scrollToTop({ animated: true });
   }, []);
 
+  // A new query or filter set produces unrelated results, so land at the top
+  // instead of keeping the previous offset. scrollY is reset alongside it because
+  // a non-animated programmatic scroll doesn't reliably emit onScroll, which
+  // would otherwise leave the scroll-to-top button visible.
+  useEffect(() => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: false });
+    scrollY.value = 0;
+  }, [searchQuery, tags, types, sort]);
+
   const scrollButtonStyle = useAnimatedStyle(() => {
     const show = scrollY.value > screenHeight;
     return {
