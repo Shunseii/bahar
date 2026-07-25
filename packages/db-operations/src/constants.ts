@@ -37,6 +37,12 @@ export const FLASHCARD_LIMIT = 100;
 export const DEFAULT_BACKLOG_THRESHOLD_DAYS = 7;
 
 /**
+ * Number of days the postpone operation spreads an overdue pile across,
+ * starting with today.
+ */
+export const POSTPONE_WINDOW_DAYS = 7;
+
+/**
  * Batch size for bulk operations.
  */
 export const BATCH_SIZE = 500;

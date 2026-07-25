@@ -14,10 +14,14 @@ import {
   createScheduler,
   forgetFlashcard,
 } from "@bahar/fsrs";
+import { addDays, startOfDay } from "date-fns";
 import { and, countDistinct, eq, gt, inArray, lte, sql } from "drizzle-orm";
 import { nanoid } from "nanoid/non-secure";
-import { type Card, Rating, type ReviewLog } from "ts-fsrs";
-import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "../constants";
+import type { ReviewLog } from "ts-fsrs";
+import {
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  POSTPONE_WINDOW_DAYS,
+} from "../constants";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
 import type { OperationDeps } from "./deps";
@@ -65,21 +69,72 @@ export const keepCurrentCardFirst = ({
 };
 
 /**
- * A review-log entry produced by clearBacklog for each rescheduled card,
- * shaped for the server's revlog batch endpoint. Handed to the injected
- * `postRevlogBatch` callback -- this package never talks to the API or Sentry
- * itself, so the host app owns sending these and reporting any failure.
+ * Which overdue cards a postpone run moves.
+ *
+ * Deliberately not `FlashcardQueue` -- that type's "regular" member would mean
+ * "postpone only the cards overdue by less than the backlog threshold", which
+ * isn't a thing anyone wants.
  */
-export type ClearBacklogRevlogEntry = Omit<
-  ReviewLog,
-  "due" | "review" | "rating"
-> & {
-  due: string;
-  review: string;
-  rating: "hard";
-  direction: SelectFlashcard["direction"];
-  dictionary_entry_id: string;
-  source: "clear_backlog";
+export type PostponeScope = "all" | "backlog";
+
+/**
+ * Cards within a single day are spaced by a second so `today`'s
+ * `ORDER BY due_timestamp_ms` returns a stable order. Sharing one timestamp
+ * across a day's cards would leave their relative order up to SQLite.
+ */
+const WITHIN_DAY_STAGGER_MS = 1000;
+
+/**
+ * Spreads overdue cards evenly across a window of days starting today,
+ * returning only the new due fields per card.
+ *
+ * Cards are dealt round-robin over the input order (`index % windowDays`)
+ * rather than sorted by difficulty. Dealing easiest-first would make day 0 feel
+ * winnable, but it also makes every day harder than the last: a user who lapses
+ * again partway through is left holding nothing but the cards they're least
+ * likely to remember. Round-robin keeps each day a representative slice of the
+ * pile, so stopping midway leaves a remainder that looks like what was already
+ * done. Callers pass cards in due order, so each day gets an even mix of
+ * mildly- and severely-overdue cards.
+ *
+ * Day 0 is today, not tomorrow, so the user still has cards to review right
+ * after running this.
+ */
+export const assignPostponedDueDates = ({
+  cards,
+  now,
+  windowDays,
+}: {
+  cards: { id: string }[];
+  now: Date;
+  windowDays: number;
+}): Pick<SelectFlashcard, "id" | "due" | "due_timestamp_ms">[] => {
+  const days = Math.max(1, Math.floor(windowDays));
+  const nowMs = now.getTime();
+
+  // startOfDay(addDays(...)) rather than adding 24h per day: across a DST
+  // boundary a fixed 24h offset lands an hour off the intended midnight.
+  const dayStarts = Array.from({ length: days }, (_, day) =>
+    startOfDay(addDays(now, day)).getTime()
+  );
+
+  return cards.map((card, index) => {
+    const day = index % days;
+    const positionInDay = Math.floor(index / days);
+    const staggered = dayStarts[day] + positionInDay * WITHIN_DAY_STAGGER_MS;
+
+    // Day 0 starts at midnight and staggers forward, which can overshoot `now`
+    // when postponing shortly after midnight or with a very large pile. A due
+    // date in the future would drop the card out of the due query, so today's
+    // cards are clamped to now -- they must stay reviewable today.
+    const dueTimestampMs = day === 0 ? Math.min(staggered, nowMs) : staggered;
+
+    return {
+      id: card.id,
+      due: new Date(dueTimestampMs).toISOString(),
+      due_timestamp_ms: dueTimestampMs,
+    };
+  });
 };
 
 /**
@@ -129,21 +184,7 @@ const buildFilterConditions = ({
   ];
 };
 
-export const makeFlashcardsTable = (
-  { getDb }: OperationDeps,
-  {
-    postRevlogBatch,
-  }: {
-    /**
-     * Called once (fire-and-forget) after clearBacklog commits, with the
-     * review-log entries for the rescheduled cards. The host app wires it to
-     * send them to the server and report failures -- this package owns neither
-     * the API client nor error reporting. Flashcards-specific, so it's a
-     * separate argument rather than part of the shared OperationDeps.
-     */
-    postRevlogBatch?: (entries: ClearBacklogRevlogEntry[]) => void;
-  } = {}
-) =>
+export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
   ({
     today: {
       query: async ({
@@ -673,154 +714,103 @@ export const makeFlashcardsTable = (
       },
     },
     /**
-     * Clear backlog by grading all backlog cards as "Hard". This reschedules
-     * them without fully resetting progress, in a single transaction, yielding
-     * progress as it goes.
+     * Postpones an overdue pile by spreading it across a short window of days
+     * starting today, in a single transaction, yielding progress as it goes.
      *
-     * `postRevlogBatch` (optional, fire-and-forget) is called once after the
-     * transaction commits with the review-log entries for the rescheduled
-     * cards. The host app wires it to send the entries to the server and report
-     * any failure -- this package deliberately owns neither the API client nor
-     * error reporting.
+     * Only `due` (and its `due_timestamp_ms` twin) is rewritten. `due` is a
+     * scheduler OUTPUT, not an input to FSRS's memory model, so moving it is
+     * safe -- `stability`, `difficulty`, `last_review`, `state` and the counters
+     * are deliberately absent from the SET clause below. This is why postpone
+     * exists instead of bulk-grading the pile: a synthetic grade would inject
+     * reviews that never happened and corrupt the model's estimate of what the
+     * user actually knows.
+     *
+     * ts-fsrs has no postpone primitive. Its `reschedule()` is a
+     * history-replay / parameter-migration tool and would recompute memory
+     * state, which is the opposite of what's wanted here.
      */
-    clearBacklog: {
+    postpone: {
       async *generator({
         filters,
+        scope = "all",
         backlogThresholdDays = DEFAULT_BACKLOG_THRESHOLD_DAYS,
+        windowDays = POSTPONE_WINDOW_DAYS,
       }: {
         filters?: SelectDeck["filters"];
+        scope?: PostponeScope;
         backlogThresholdDays?: number;
-      } = {}): AsyncGenerator<{ cleared: number; total: number }> {
+        windowDays?: number;
+      } = {}): AsyncGenerator<{ postponed: number; total: number }> {
         const drizzleDb = await getDb();
-        const now = Date.now();
-        const backlogThresholdMs = now - daysToMs(backlogThresholdDays);
+        const now = new Date();
+        const nowMs = now.getTime();
+
+        // "all" takes everything currently due; "backlog" only what's overdue
+        // past the backlog threshold, leaving mildly-overdue cards due today.
+        const cutoffMs =
+          scope === "backlog" ? nowMs - daysToMs(backlogThresholdDays) : nowMs;
 
         const conditions = [
-          lte(flashcards.due_timestamp_ms, backlogThresholdMs),
+          lte(flashcards.due_timestamp_ms, cutoffMs),
           ...buildFilterConditions({ filters }),
         ];
 
-        const backlogCards = await drizzleDb
-          .selectDistinct({
-            id: flashcards.id,
-            dictionary_entry_id: flashcards.dictionary_entry_id,
-            difficulty: flashcards.difficulty,
-            due: flashcards.due,
-            due_timestamp_ms: flashcards.due_timestamp_ms,
-            elapsed_days: flashcards.elapsed_days,
-            lapses: flashcards.lapses,
-            last_review: flashcards.last_review,
-            last_review_timestamp_ms: flashcards.last_review_timestamp_ms,
-            learning_steps: flashcards.learning_steps,
-            reps: flashcards.reps,
-            scheduled_days: flashcards.scheduled_days,
-            stability: flashcards.stability,
-            state: flashcards.state,
-            direction: flashcards.direction,
-            is_hidden: flashcards.is_hidden,
-          })
+        // Ordered by due so the round-robin deal in assignPostponedDueDates
+        // hands each day an even mix of mildly- and severely-overdue cards.
+        // Also makes the assignment deterministic rather than dependent on
+        // whatever row order SQLite happens to return.
+        const overdueCards = await drizzleDb
+          .selectDistinct({ id: flashcards.id })
           .from(flashcards)
           .leftJoin(
             dictionaryEntries,
             eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
           )
-          .where(and(...conditions));
+          .where(and(...conditions))
+          .orderBy(flashcards.due_timestamp_ms);
 
-        const total = backlogCards.length;
+        const total = overdueCards.length;
 
         if (total === 0) {
           return;
         }
 
-        const f = createScheduler();
-        const nowDate = new Date();
-        const revlogEntries: {
-          log: ReviewLog;
-          direction: SelectFlashcard["direction"];
-          dictionary_entry_id: string;
-        }[] = [];
+        const assignments = assignPostponedDueDates({
+          cards: overdueCards,
+          now,
+          windowDays,
+        });
 
         // Reschedule in chunks: one `UPDATE ... FROM (VALUES ...)` per chunk
         // instead of one UPDATE per card, collapsing thousands of round-trips
-        // into a handful. CHUNK_SIZE * 12 columns stays well under SQLite's
-        // bound-parameter limit. Progress is yielded per chunk, so the UI bar
-        // advances in steps of up to CHUNK_SIZE.
+        // into a handful. Progress is yielded per chunk, so the UI bar advances
+        // in steps of up to CHUNK_SIZE.
         const CHUNK_SIZE = 100;
 
         let committed = false;
         await drizzleDb.run(sql`BEGIN TRANSACTION`);
         try {
-          for (
-            let start = 0;
-            start < backlogCards.length;
-            start += CHUNK_SIZE
-          ) {
-            const chunk = backlogCards.slice(start, start + CHUNK_SIZE);
-
-            const updates = chunk.map((row) => {
-              const card: Card = {
-                due: new Date(row.due),
-                stability: row.stability ?? 0,
-                difficulty: row.difficulty ?? 0,
-                elapsed_days: row.elapsed_days ?? 0,
-                scheduled_days: row.scheduled_days ?? 0,
-                reps: row.reps ?? 0,
-                lapses: row.lapses ?? 0,
-                state: row.state ?? FlashcardState.NEW,
-                learning_steps: row.learning_steps ?? 0,
-                last_review: row.last_review
-                  ? new Date(row.last_review)
-                  : undefined,
-              };
-
-              const { card: newCard, log } = f.repeat(card, nowDate)[
-                Rating.Hard
-              ];
-
-              revlogEntries.push({
-                log,
-                direction: row.direction,
-                dictionary_entry_id: row.dictionary_entry_id,
-              });
-
-              return { id: row.id, newCard };
-            });
+          for (let start = 0; start < assignments.length; start += CHUNK_SIZE) {
+            const chunk = assignments.slice(start, start + CHUNK_SIZE);
 
             // SQLite names VALUES columns column1..columnN (no aliased column
             // list), so the SET clause below references them positionally.
-            // Order must match: id, due, due_timestamp_ms, last_review,
-            // last_review_timestamp_ms, state, stability, difficulty, reps,
-            // lapses, elapsed_days, scheduled_days.
-            const rows = updates.map(
-              ({ id, newCard }) =>
-                sql`(${id}, ${newCard.due.toISOString()}, ${newCard.due.getTime()}, ${
-                  newCard.last_review?.toISOString() ?? null
-                }, ${newCard.last_review?.getTime() ?? null}, ${newCard.state}, ${
-                  newCard.stability
-                }, ${newCard.difficulty}, ${newCard.reps}, ${newCard.lapses}, ${
-                  newCard.elapsed_days
-                }, ${newCard.scheduled_days})`
+            // Order must match: id, due, due_timestamp_ms.
+            const rows = chunk.map(
+              ({ id, due, due_timestamp_ms }) =>
+                sql`(${id}, ${due}, ${due_timestamp_ms})`
             );
 
             await drizzleDb.run(sql`
               UPDATE flashcards
               SET
                 due = v.column2,
-                due_timestamp_ms = v.column3,
-                last_review = v.column4,
-                last_review_timestamp_ms = v.column5,
-                state = v.column6,
-                stability = v.column7,
-                difficulty = v.column8,
-                reps = v.column9,
-                lapses = v.column10,
-                elapsed_days = v.column11,
-                scheduled_days = v.column12
+                due_timestamp_ms = v.column3
               FROM (VALUES ${sql.join(rows, sql`, `)}) AS v
               WHERE flashcards.id = v.column1
             `);
 
-            yield { cleared: Math.min(start + CHUNK_SIZE, total), total };
+            yield { postponed: Math.min(start + CHUNK_SIZE, total), total };
           }
           await drizzleDb.run(sql`COMMIT`);
           committed = true;
@@ -829,23 +819,9 @@ export const makeFlashcardsTable = (
             await drizzleDb.run(sql`ROLLBACK`);
           }
         }
-
-        if (revlogEntries.length > 0) {
-          postRevlogBatch?.(
-            revlogEntries.map(({ log, direction, dictionary_entry_id }) => ({
-              ...log,
-              due: log.due.toISOString(),
-              review: log.review.toISOString(),
-              rating: "hard",
-              direction,
-              dictionary_entry_id,
-              source: "clear_backlog",
-            }))
-          );
-        }
       },
       cacheOptions: {
-        queryKey: ["turso.flashcards.clearBacklog"],
+        queryKey: ["turso.flashcards.postpone"],
       },
     },
   }) satisfies Record<string, TableOperation>;

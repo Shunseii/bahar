@@ -15,6 +15,7 @@ export {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   DICTIONARY_ENTRY_COLUMNS,
   FLASHCARD_LIMIT,
+  POSTPONE_WINDOW_DAYS,
 } from "./constants";
 export {
   type ConvertDictionaryEntryError,
@@ -26,11 +27,12 @@ export { type DeckWithCounts, makeDecksTable } from "./operations/decks";
 export type { DrizzleDb, OperationDeps } from "./operations/deps";
 export { makeDictionaryEntriesTable } from "./operations/dictionary-entries";
 export {
-  type ClearBacklogRevlogEntry,
+  assignPostponedDueDates,
   type FlashcardQueue,
   type FlashcardWithDictionaryEntry,
   keepCurrentCardFirst,
   makeFlashcardsTable,
+  type PostponeScope,
 } from "./operations/flashcards";
 export { makeMigrationTable } from "./operations/migration";
 export { makeProgressTable } from "./operations/progress";

@@ -47,7 +47,13 @@ import { useSearch } from "@/hooks/useSearch";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { deleteLocalDb, ensureDb, resetDb } from "@/lib/db";
 import { getDrizzleDb } from "@/lib/db/adapter";
-import { flashcardsTable, settingsTable } from "@/lib/db/operations";
+import {
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  flashcardsTable,
+  POSTPONE_WINDOW_DAYS,
+  type PostponeScope,
+  settingsTable,
+} from "@/lib/db/operations";
 import {
   cancelReviewNotifications,
   recomputeReviewNotifications,
@@ -324,35 +330,43 @@ export default function SettingsScreen() {
     onError: () => toast.error(t`Failed to update settings`),
   });
 
-  const [clearingProgress, setClearingProgress] = useState<{
+  const [postponeProgress, setPostponeProgress] = useState<{
     total: number;
-    cleared: number;
+    postponed: number;
   } | null>(null);
+  const [postponeScope, setPostponeScope] = useState<PostponeScope>("all");
+
+  const { data: counts } = useQuery({
+    queryFn: () => flashcardsTable.counts.query(),
+    ...flashcardsTable.counts.cacheOptions,
+  });
 
   // Animate the bar width so each batch jump (up to CHUNK_SIZE cards at once)
   // eases to its new position instead of snapping.
-  const clearProgressWidth = useSharedValue(0);
-  const clearProgressBarStyle = useAnimatedStyle(() => ({
-    width: `${clearProgressWidth.value}%`,
+  const postponeProgressWidth = useSharedValue(0);
+  const postponeProgressBarStyle = useAnimatedStyle(() => ({
+    width: `${postponeProgressWidth.value}%`,
   }));
 
   useEffect(() => {
-    if (!clearingProgress || clearingProgress.total === 0) {
-      clearProgressWidth.value = 0;
+    if (!postponeProgress || postponeProgress.total === 0) {
+      postponeProgressWidth.value = 0;
       return;
     }
-    clearProgressWidth.value = withTiming(
-      (clearingProgress.cleared / clearingProgress.total) * 100,
+    postponeProgressWidth.value = withTiming(
+      (postponeProgress.postponed / postponeProgress.total) * 100,
       { duration: 250 }
     );
-  }, [clearingProgress, clearProgressWidth]);
+  }, [postponeProgress, postponeProgressWidth]);
 
-  const handleClearBacklog = async () => {
+  const handlePostpone = async () => {
     try {
-      let lastProgress = { cleared: 0, total: 0 };
+      let lastProgress = { postponed: 0, total: 0 };
       let lastPaintAt = 0;
 
-      for await (const progress of flashcardsTable.clearBacklog.generator()) {
+      for await (const progress of flashcardsTable.postpone.generator({
+        scope: postponeScope,
+      })) {
         lastProgress = progress;
 
         // The generator drains as a tight chain of awaited DB writes, which
@@ -360,8 +374,8 @@ export default function SettingsScreen() {
         // progress bar would stay invisible until the loop ends. Hand control
         // back to the event loop (throttled to ~20fps) so it actually renders.
         const now = Date.now();
-        if (now - lastPaintAt > 200 || progress.cleared === progress.total) {
-          setClearingProgress(progress);
+        if (now - lastPaintAt > 200 || progress.postponed === progress.total) {
+          setPostponeProgress(progress);
           lastPaintAt = now;
           await new Promise((resolve) => setTimeout(resolve, 0));
         }
@@ -375,18 +389,18 @@ export default function SettingsScreen() {
       });
 
       if (lastProgress.total === 0) {
-        toast.info(t`No backlog cards to clear.`);
+        toast.info(t`No overdue cards to reschedule.`);
       } else {
-        toast.success(t`Backlog cleared!`, {
-          description: t`${lastProgress.cleared} cards have been rescheduled.`,
+        toast.success(t`Backlog rescheduled!`, {
+          description: t`${lastProgress.postponed} cards have been spread over the next ${POSTPONE_WINDOW_DAYS} days.`,
         });
       }
     } catch (_err) {
-      toast.error(t`Failed to clear backlog`, {
-        description: t`There was an error clearing your backlog.`,
+      toast.error(t`Failed to reschedule backlog`, {
+        description: t`There was an error rescheduling your backlog.`,
       });
     } finally {
-      setClearingProgress(null);
+      setPostponeProgress(null);
     }
   };
 
@@ -443,7 +457,7 @@ export default function SettingsScreen() {
 
               // Delete flashcards before dictionary entries (flashcards
               // reference entries). Manual BEGIN/COMMIT mirrors the shared
-              // clearBacklog op -- the mobile adapter's drizzle instance is
+              // postpone op -- the mobile adapter's drizzle instance is
               // driven through raw run() rather than .transaction().
               await drizzleDb.run(sql`BEGIN TRANSACTION`);
               try {
@@ -488,6 +502,17 @@ export default function SettingsScreen() {
     { value: "hidden", label: t`Hidden` },
     { value: "hint", label: t`Hint` },
     { value: "answer", label: t`Answer` },
+  ];
+
+  const postponeScopeOptions = [
+    {
+      value: "all",
+      label: t`All overdue (${counts?.total ?? 0})`,
+    },
+    {
+      value: "backlog",
+      label: t`Backlog only (${counts?.backlog ?? 0})`,
+    },
   ];
 
   if (isLoading) {
@@ -656,32 +681,53 @@ export default function SettingsScreen() {
 
               <View className="py-2">
                 <Text className="mb-1 font-medium text-base text-foreground">
-                  <Trans>Clear backlog</Trans>
+                  <Trans>Reschedule backlog</Trans>
                 </Text>
                 <Text className="mb-3 text-muted-foreground text-sm">
-                  <Trans>
-                    Reschedule all backlog cards by grading them as "Hard".
-                  </Trans>
+                  {postponeScope === "all" ? (
+                    <Trans>
+                      Spread your overdue cards evenly over the next{" "}
+                      {POSTPONE_WINDOW_DAYS} days. Your progress on each card is
+                      untouched.
+                    </Trans>
+                  ) : (
+                    <Trans>
+                      Spread your backlog cards evenly over the next{" "}
+                      {POSTPONE_WINDOW_DAYS} days. Cards overdue by less than{" "}
+                      {DEFAULT_BACKLOG_THRESHOLD_DAYS} days stay due today. Your
+                      progress on each card is untouched.
+                    </Trans>
+                  )}
                 </Text>
 
-                {clearingProgress ? (
+                <View className="mb-3">
+                  <SelectOptions
+                    onChange={(newValue) =>
+                      setPostponeScope(newValue as PostponeScope)
+                    }
+                    options={postponeScopeOptions}
+                    value={postponeScope}
+                  />
+                </View>
+
+                {postponeProgress ? (
                   <View className="gap-2">
                     <View className="h-2 w-full overflow-hidden rounded-full bg-muted">
                       <Animated.View
                         className="h-full rounded-full bg-primary"
-                        style={clearProgressBarStyle}
+                        style={postponeProgressBarStyle}
                       />
                     </View>
                     <Text className="text-center text-muted-foreground text-xs">
                       <Trans>
-                        {clearingProgress.cleared} / {clearingProgress.total}{" "}
+                        {postponeProgress.postponed} / {postponeProgress.total}{" "}
                         cards
                       </Trans>
                     </Text>
                   </View>
                 ) : (
-                  <Button onPress={handleClearBacklog} variant="outline">
-                    <Trans>Clear backlog</Trans>
+                  <Button onPress={handlePostpone} variant="outline">
+                    <Trans>Reschedule</Trans>
                   </Button>
                 )}
               </View>

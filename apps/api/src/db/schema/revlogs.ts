@@ -12,9 +12,14 @@ import { users } from "./auth";
 
 /**
  * The source of the revlog. Review refers to a manual
- * review by the user. Clear backlog refers to a bulk reset
- * with the clear backlog button. Reset refers to resetting a
+ * review by the user. Reset refers to resetting a
  * single flashcard's progress back to a new card.
+ *
+ * `clear_backlog` is HISTORICAL -- no new rows are written with it. It came
+ * from a "clear backlog" action that bulk-graded every overdue card as "Hard",
+ * which logged reviews the user never performed. That action was replaced by a
+ * postpone that only rewrites due dates and logs nothing, since no review
+ * happens. The value stays in this enum because existing rows reference it.
  *
  * Typically we want to exclude everything but `review` from
  * most statistics.

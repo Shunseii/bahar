@@ -1,4 +1,10 @@
-import { enqueueDbOperation, enqueueSyncOperation } from "@bahar/db-operations";
+import {
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  enqueueDbOperation,
+  enqueueSyncOperation,
+  POSTPONE_WINDOW_DAYS,
+  type PostponeScope,
+} from "@bahar/db-operations";
 import { Button } from "@bahar/web-ui/components/button";
 import {
   Card,
@@ -16,6 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@bahar/web-ui/components/form";
+import { Label } from "@bahar/web-ui/components/label";
 import {
   RadioGroup,
   RadioGroupItem,
@@ -28,6 +35,7 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { BetaBadge } from "@/components/BetaBadge";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { ensureDb } from "@/lib/db";
 import { flashcardsTable, settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
@@ -40,6 +48,7 @@ const FormSchema = z.object({
 
 export const FlashcardSettingsCardSection = () => {
   const { t } = useLingui();
+  const { formatNumber } = useFormatNumber();
   const { data } = useQuery({
     queryFn: () => settingsTable.getSettings.query(),
     ...settingsTable.getSettings.cacheOptions,
@@ -54,18 +63,26 @@ export const FlashcardSettingsCardSection = () => {
     },
   });
 
-  const [clearingProgress, setClearingProgress] = useState<{
+  const [postponeProgress, setPostponeProgress] = useState<{
     total: number;
-    cleared: number;
+    postponed: number;
   } | null>(null);
+  const [postponeScope, setPostponeScope] = useState<PostponeScope>("all");
 
-  const handleClearBacklog = useCallback(async () => {
+  const { data: counts } = useQuery({
+    queryFn: () => flashcardsTable.counts.query(),
+    ...flashcardsTable.counts.cacheOptions,
+  });
+
+  const handlePostpone = useCallback(async () => {
     try {
-      let lastProgress = { cleared: 0, total: 0 };
+      let lastProgress = { postponed: 0, total: 0 };
 
       await enqueueDbOperation(async () => {
-        for await (const progress of flashcardsTable.clearBacklog.generator()) {
-          setClearingProgress(progress);
+        for await (const progress of flashcardsTable.postpone.generator({
+          scope: postponeScope,
+        })) {
+          setPostponeProgress(progress);
           lastProgress = progress;
         }
       });
@@ -85,20 +102,20 @@ export const FlashcardSettingsCardSection = () => {
       });
 
       if (lastProgress.total === 0) {
-        toast.info(t`No backlog cards to clear.`);
+        toast.info(t`No overdue cards to reschedule.`);
       } else {
-        toast.success(t`Backlog cleared!`, {
-          description: t`${lastProgress.cleared} cards have been rescheduled.`,
+        toast.success(t`Backlog rescheduled!`, {
+          description: t`${lastProgress.postponed} cards have been spread over the next ${POSTPONE_WINDOW_DAYS} days.`,
         });
       }
     } catch (_err) {
-      toast.error(t`Failed to clear backlog`, {
-        description: t`There was an error clearing your backlog.`,
+      toast.error(t`Failed to reschedule backlog`, {
+        description: t`There was an error rescheduling your backlog.`,
       });
     } finally {
-      setClearingProgress(null);
+      setPostponeProgress(null);
     }
-  }, [t]);
+  }, [t, postponeScope]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -236,34 +253,77 @@ export const FlashcardSettingsCardSection = () => {
 
         <div className="mt-4 border-t pt-4">
           <div className="flex flex-col gap-3 rounded-lg border p-4">
-            <div className="flex flex-row items-center justify-between">
-              <div className="space-y-0.5">
-                <p className="font-medium text-sm">
-                  <Trans>Clear backlog</Trans>
-                </p>
-                <p className="text-muted-foreground text-sm">
+            <div className="space-y-0.5">
+              <p className="font-medium text-sm">
+                <Trans>Reschedule backlog</Trans>
+              </p>
+              <p className="text-muted-foreground text-sm">
+                {postponeScope === "all" ? (
                   <Trans>
-                    Reschedule all backlog cards by grading them as "Hard".
+                    Spread your overdue cards evenly over the next{" "}
+                    {POSTPONE_WINDOW_DAYS} days. Your progress on each card is
+                    untouched.
                   </Trans>
-                </p>
-              </div>
-              <Button
-                disabled={!!clearingProgress}
-                onClick={handleClearBacklog}
-                variant="outline"
-              >
-                <Trans>Clear</Trans>
-              </Button>
+                ) : (
+                  <Trans>
+                    Spread your backlog cards evenly over the next{" "}
+                    {POSTPONE_WINDOW_DAYS} days. Cards overdue by less than{" "}
+                    {DEFAULT_BACKLOG_THRESHOLD_DAYS} days stay due today. Your
+                    progress on each card is untouched.
+                  </Trans>
+                )}
+              </p>
             </div>
 
-            {clearingProgress && (
+            <RadioGroup
+              className="flex flex-col space-y-1"
+              onValueChange={(value) =>
+                setPostponeScope(value as PostponeScope)
+              }
+              value={postponeScope}
+            >
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem id="postpone-scope-all" value="all" />
+                <Label
+                  className="cursor-pointer font-normal"
+                  htmlFor="postpone-scope-all"
+                >
+                  <Trans>
+                    All overdue cards ({formatNumber(counts?.total ?? 0)})
+                  </Trans>
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem id="postpone-scope-backlog" value="backlog" />
+                <Label
+                  className="cursor-pointer font-normal"
+                  htmlFor="postpone-scope-backlog"
+                >
+                  <Trans>
+                    Backlog only ({formatNumber(counts?.backlog ?? 0)})
+                  </Trans>
+                </Label>
+              </div>
+            </RadioGroup>
+
+            <Button
+              className="self-start"
+              disabled={!!postponeProgress}
+              onClick={handlePostpone}
+              variant="outline"
+            >
+              <Trans>Reschedule</Trans>
+            </Button>
+
+            {postponeProgress && (
               <div className="space-y-2">
                 <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                   <div
                     className="h-full bg-primary transition-all duration-150"
                     style={{
                       width: `${
-                        (clearingProgress.cleared / clearingProgress.total) *
+                        (postponeProgress.postponed / postponeProgress.total) *
                         100
                       }%`,
                     }}
@@ -271,7 +331,8 @@ export const FlashcardSettingsCardSection = () => {
                 </div>
                 <p className="text-center text-muted-foreground text-xs">
                   <Trans>
-                    {clearingProgress.cleared} / {clearingProgress.total} cards
+                    {postponeProgress.postponed} / {postponeProgress.total}{" "}
+                    cards
                   </Trans>
                 </p>
               </div>

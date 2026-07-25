@@ -1,9 +1,12 @@
 import {
   FlashcardState,
+  type InsertFlashcard,
   type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
+import { startOfDay } from "date-fns";
 import { Rating } from "ts-fsrs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { POSTPONE_WINDOW_DAYS } from "../constants";
 import { createTestDb, type TestDb } from "../test/create-test-db";
 import {
   insertDictionaryEntry,
@@ -11,16 +14,16 @@ import {
   insertSettings,
 } from "../test/factories";
 import {
-  type ClearBacklogRevlogEntry,
+  assignPostponedDueDates,
   type FlashcardWithDictionaryEntry,
   keepCurrentCardFirst,
   makeFlashcardsTable,
 } from "./flashcards";
 
 const consumeGenerator = async (
-  generator: AsyncGenerator<{ cleared: number; total: number }>
+  generator: AsyncGenerator<{ postponed: number; total: number }>
 ) => {
-  const progress: { cleared: number; total: number }[] = [];
+  const progress: { postponed: number; total: number }[] = [];
   for await (const step of generator) {
     progress.push(step);
   }
@@ -494,187 +497,487 @@ describe("flashcardsTable", () => {
     });
   });
 
-  describe("clearBacklog", () => {
-    it("reschedules all backlog flashcards by grading them as Hard, and hands the revlogs to postRevlogBatch", async () => {
-      const entry = await insertDictionaryEntry(testDb);
-      const oldDueDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 10);
-      const flashcard = await insertFlashcard(testDb, {
-        dictionary_entry_id: entry.id,
-        due: oldDueDate.toISOString(),
-        due_timestamp_ms: oldDueDate.getTime(),
-        state: FlashcardState.NEW,
+  describe("assignPostponedDueDates", () => {
+    // Local-time constructors on purpose: assignPostponedDueDates buckets by
+    // startOfDay, which is local. A UTC ISO string would land at an arbitrary
+    // local hour depending on the runner's TZ and make the clamp assertions
+    // non-deterministic.
+    const MID_AFTERNOON = new Date(2026, 2, 10, 15, 0, 0);
+    const JUST_AFTER_MIDNIGHT = new Date(2026, 2, 10, 0, 0, 3);
+
+    /** Groups results by local calendar day, keyed by that day's midnight. */
+    const byDay = (
+      results: Pick<SelectFlashcard, "id" | "due" | "due_timestamp_ms">[]
+    ) => {
+      const days = new Map<number, string[]>();
+      for (const r of results) {
+        const key = startOfDay(new Date(r.due_timestamp_ms)).getTime();
+        days.set(key, [...(days.get(key) ?? []), r.id]);
+      }
+      return days;
+    };
+
+    it("deals cards round-robin so each day gets a representative slice", () => {
+      const now = MID_AFTERNOON;
+      const cards = Array.from({ length: 14 }, (_, i) => ({ id: `card-${i}` }));
+
+      const result = assignPostponedDueDates({ cards, now, windowDays: 7 });
+      expect(result).toHaveLength(cards.length);
+
+      const days = byDay(result);
+
+      // Round-robin, not sliced blocks: cards 0 and 7 share day 0, cards 1 and
+      // 8 share day 1, and so on. Callers pass cards in due order, so this is
+      // what gives every day a mix of mildly- and severely-overdue cards.
+      const dayKeys = [...days.keys()].sort((a, b) => a - b);
+      expect(dayKeys).toHaveLength(7);
+      dayKeys.forEach((key, day) => {
+        expect(days.get(key)).toEqual([`card-${day}`, `card-${day + 7}`]);
       });
 
-      const postRevlogBatch = vi.fn<(e: ClearBacklogRevlogEntry[]) => void>();
-      const table = makeFlashcardsTable(
-        { getDb: async () => testDb.drizzleDb },
-        { postRevlogBatch }
+      // Every input card appears exactly once.
+      expect(new Set(result.map((r) => r.id))).toEqual(
+        new Set(cards.map((c) => c.id))
+      );
+    });
+
+    it("starts the window today rather than tomorrow", () => {
+      const now = MID_AFTERNOON;
+
+      const [only] = assignPostponedDueDates({
+        cards: [{ id: "card-0" }],
+        now,
+        windowDays: 7,
+      });
+
+      // Already due, so postpone leaves the user something to review
+      // immediately instead of an empty queue.
+      expect(only.due_timestamp_ms).toBeLessThanOrEqual(now.getTime());
+      expect(startOfDay(new Date(only.due_timestamp_ms)).getTime()).toBe(
+        startOfDay(now).getTime()
+      );
+    });
+
+    it("clamps day 0 to now so today's cards never land in the future", () => {
+      // Three seconds past midnight: day 0's stagger (1s per card) would run
+      // past `now` from the 4th day-0 card onward without the clamp.
+      const now = JUST_AFTER_MIDNIGHT;
+      const cards = Array.from({ length: 70 }, (_, i) => ({ id: `card-${i}` }));
+
+      const result = assignPostponedDueDates({ cards, now, windowDays: 7 });
+
+      const dayZero = result.filter((_, i) => i % 7 === 0);
+      expect(dayZero).toHaveLength(10);
+      for (const card of dayZero) {
+        // A future timestamp would drop the card out of `today`'s
+        // `due <= now` filter and silently vanish it from the queue.
+        expect(card.due_timestamp_ms).toBeLessThanOrEqual(now.getTime());
+      }
+    });
+
+    it("staggers cards within a day so due order is deterministic", () => {
+      const now = MID_AFTERNOON;
+      const cards = Array.from({ length: 14 }, (_, i) => ({ id: `card-${i}` }));
+
+      const result = assignPostponedDueDates({ cards, now, windowDays: 7 });
+
+      // Sharing one timestamp would leave the pair's relative order in
+      // `today`'s ORDER BY up to SQLite.
+      expect(result[7].due_timestamp_ms - result[0].due_timestamp_ms).toBe(
+        1000
+      );
+      expect(result[8].due_timestamp_ms - result[1].due_timestamp_ms).toBe(
+        1000
+      );
+      expect(new Set(result.map((r) => r.due_timestamp_ms)).size).toBe(14);
+    });
+
+    it("keeps due and due_timestamp_ms in sync", () => {
+      const cards = Array.from({ length: 10 }, (_, i) => ({ id: `card-${i}` }));
+
+      const result = assignPostponedDueDates({
+        cards,
+        now: MID_AFTERNOON,
+        windowDays: 7,
+      });
+
+      // Twins in the schema -- a mismatch means one query path reads a
+      // different schedule than another.
+      for (const r of result) {
+        expect(new Date(r.due).getTime()).toBe(r.due_timestamp_ms);
+      }
+    });
+
+    it("spreads over fewer days than the window when cards are scarce", () => {
+      const now = MID_AFTERNOON;
+      const cards = Array.from({ length: 3 }, (_, i) => ({ id: `card-${i}` }));
+
+      const result = assignPostponedDueDates({ cards, now, windowDays: 7 });
+
+      // One card each on days 0, 1, 2 -- no doubling up, no attempt to fill
+      // all 7 days.
+      const days = byDay(result);
+      expect(days.size).toBe(3);
+      for (const ids of days.values()) {
+        expect(ids).toHaveLength(1);
+      }
+    });
+
+    it("returns an empty array for no cards", () => {
+      // The generator leans on this to no-op without opening a transaction.
+      expect(
+        assignPostponedDueDates({
+          cards: [],
+          now: MID_AFTERNOON,
+          windowDays: 7,
+        })
+      ).toEqual([]);
+    });
+
+    it("treats a window of 0 or less as a single day", () => {
+      const now = MID_AFTERNOON;
+      const cards = Array.from({ length: 4 }, (_, i) => ({ id: `card-${i}` }));
+
+      for (const windowDays of [0, -1]) {
+        const result = assignPostponedDueDates({ cards, now, windowDays });
+
+        // `index % 0` is NaN, which would produce Invalid Date timestamps, so
+        // the floor of 1 day matters.
+        expect(byDay(result).size).toBe(1);
+        for (const r of result) {
+          expect(Number.isNaN(r.due_timestamp_ms)).toBe(false);
+          expect(r.due_timestamp_ms).toBeLessThanOrEqual(now.getTime());
+        }
+      }
+    });
+  });
+
+  describe("postpone", () => {
+    const DAY_MS = 24 * 60 * 60 * 1000;
+
+    /** Inserts an overdue card on its own dictionary entry. */
+    const insertOverdue = async (
+      daysOverdue: number,
+      overrides: Partial<InsertFlashcard> = {}
+    ) => {
+      const entry = await insertDictionaryEntry(testDb);
+      const due = new Date(Date.now() - daysOverdue * DAY_MS);
+      return insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+        due: due.toISOString(),
+        due_timestamp_ms: due.getTime(),
+        state: FlashcardState.REVIEW,
+        ...overrides,
+      });
+    };
+
+    const readRow = async (id: string) =>
+      (await (
+        await testDb.db.prepare("SELECT * FROM flashcards WHERE id = ?")
+      ).get([id])) as Record<string, unknown>;
+
+    const readAllDue = async () =>
+      (await (
+        await testDb.db.prepare("SELECT id, due_timestamp_ms FROM flashcards")
+      ).all([])) as { id: string; due_timestamp_ms: number }[];
+
+    it("moves due dates forward without touching any memory-model field", async () => {
+      // THE load-bearing test for this feature. FSRS treats `due` as a
+      // scheduler output; stability/difficulty/last_review/state and the
+      // counters are the memory model's own state. Postpone must rewrite only
+      // the former. If this test fails, postpone has started corrupting the
+      // user's memory estimates.
+      const lastReview = new Date(Date.now() - 60 * DAY_MS);
+      const flashcard = await insertOverdue(30, {
+        stability: 42.5,
+        difficulty: 6.25,
+        reps: 9,
+        lapses: 3,
+        elapsed_days: 55,
+        scheduled_days: 25,
+        learning_steps: 2,
+        last_review: lastReview.toISOString(),
+        last_review_timestamp_ms: lastReview.getTime(),
+      });
+
+      const before = await readRow(flashcard.id);
+
+      const progress = await consumeGenerator(
+        flashcardsTable.postpone.generator({})
+      );
+      expect(progress).toEqual([{ postponed: 1, total: 1 }]);
+
+      const after = await readRow(flashcard.id);
+
+      // Due moved forward, into the window starting today.
+      expect(after.due_timestamp_ms).not.toBe(before.due_timestamp_ms);
+      expect(after.due_timestamp_ms as number).toBeGreaterThan(
+        before.due_timestamp_ms as number
+      );
+      expect(after.due_timestamp_ms as number).toBeLessThanOrEqual(
+        startOfDay(new Date()).getTime() + POSTPONE_WINDOW_DAYS * DAY_MS
       );
 
-      const progress = await consumeGenerator(table.clearBacklog.generator({}));
-
-      expect(progress).toEqual([{ cleared: 1, total: 1 }]);
-
-      const row = (await (
-        await testDb.db.prepare("SELECT * FROM flashcards WHERE id = ?")
-      ).get([flashcard.id])) as {
-        due_timestamp_ms: number;
-        last_review: string | null;
-      };
-
-      expect(row.due_timestamp_ms).toBeGreaterThan(oldDueDate.getTime());
-      expect(row.last_review).not.toBeNull();
-
-      // The rescheduled card's revlog is handed off exactly once, tagged for
-      // the clear-backlog source, for the host app to POST.
-      expect(postRevlogBatch).toHaveBeenCalledTimes(1);
-      const entries = postRevlogBatch.mock.calls[0][0];
-      expect(entries).toHaveLength(1);
-      expect(entries[0]).toMatchObject({
-        dictionary_entry_id: entry.id,
-        rating: "hard",
-        source: "clear_backlog",
-      });
+      // Comparing whole rows minus the two due columns, rather than naming
+      // each FSRS field: a newly added column is then covered automatically
+      // instead of slipping through unchecked.
+      const {
+        due: _beforeDue,
+        due_timestamp_ms: _beforeMs,
+        ...beforeRest
+      } = before;
+      const {
+        due: _afterDue,
+        due_timestamp_ms: _afterMs,
+        ...afterRest
+      } = after;
+      expect(afterRest).toEqual(beforeRest);
     });
 
     it("reschedules every card correctly when batching multiple cards in one chunk", async () => {
       // Guards the batched `UPDATE ... FROM (VALUES ...)` path: with >1 card in
-      // a single chunk, each row's new schedule must land on its own card and
-      // not bleed across rows (column1..column12 positional mapping). Each card
-      // gets a distinct `lapses` value as a fingerprint -- grading Hard never
-      // adds a lapse, so it must round-trip unchanged onto the SAME card; a
-      // misaligned column/row mapping would surface as a mismatched lapses.
+      // a single chunk, each row's new due date must land on its own card and
+      // not bleed across rows (column1..column3 positional mapping). Each card
+      // gets a distinct `lapses` fingerprint -- postpone never writes lapses,
+      // so a misaligned mapping surfaces as a mismatched fingerprint.
       const N = 5;
-      const oldDue = new Date(Date.now() - 1000 * 60 * 60 * 24 * 10);
-      const lastReview = new Date(Date.now() - 1000 * 60 * 60 * 24 * 20);
+      const cards: { id: string; lapses: number }[] = [];
+      for (let i = 0; i < N; i++) {
+        const flashcard = await insertOverdue(30 + i, { lapses: i });
+        cards.push({ id: flashcard.id, lapses: i });
+      }
 
-      const cards = await Promise.all(
-        Array.from({ length: N }, async (_, i) => {
-          const entry = await insertDictionaryEntry(testDb);
-          const flashcard = await insertFlashcard(testDb, {
-            dictionary_entry_id: entry.id,
-            due: oldDue.toISOString(),
-            due_timestamp_ms: oldDue.getTime(),
-            state: FlashcardState.REVIEW,
-            stability: 10 + i,
-            difficulty: 5,
-            reps: 3 + i,
-            lapses: i, // distinct fingerprint: 0,1,2,3,4
-            last_review: lastReview.toISOString(),
-            last_review_timestamp_ms: lastReview.getTime(),
-          });
-          return { entry, flashcard, lapses: i };
-        })
+      const progress = await consumeGenerator(
+        flashcardsTable.postpone.generator({})
       );
-
-      const postRevlogBatch = vi.fn<(e: ClearBacklogRevlogEntry[]) => void>();
-      const table = makeFlashcardsTable(
-        { getDb: async () => testDb.drizzleDb },
-        { postRevlogBatch }
-      );
-
-      const progress = await consumeGenerator(table.clearBacklog.generator({}));
 
       // All N fit in one CHUNK_SIZE=100 chunk -> a single progress step.
-      expect(progress).toEqual([{ cleared: N, total: N }]);
+      expect(progress).toEqual([{ postponed: N, total: N }]);
 
-      for (const { flashcard, lapses } of cards) {
-        const row = (await (
-          await testDb.db.prepare("SELECT * FROM flashcards WHERE id = ?")
-        ).get([flashcard.id])) as {
-          due_timestamp_ms: number;
-          last_review: string | null;
-          lapses: number;
-        };
-
-        // Rescheduled: due moved forward past its own old value, review logged.
-        expect(row.due_timestamp_ms).toBeGreaterThan(oldDue.getTime());
-        expect(row.last_review).not.toBeNull();
-        // Fingerprint landed on the right card (no cross-row/column bleed).
+      for (const { id, lapses } of cards) {
+        const row = await readRow(id);
         expect(row.lapses).toBe(lapses);
       }
 
-      // One revlog per card, exactly the N cards we inserted.
-      expect(postRevlogBatch).toHaveBeenCalledTimes(1);
-      const entries = postRevlogBatch.mock.calls[0][0];
-      expect(entries).toHaveLength(N);
-      expect(new Set(entries.map((e) => e.dictionary_entry_id))).toEqual(
-        new Set(cards.map((c) => c.entry.id))
+      // Round-robin over a 7-day window puts 5 cards on 5 separate days.
+      const rows = await readAllDue();
+      const days = new Set(
+        rows.map((r) => startOfDay(new Date(r.due_timestamp_ms)).getTime())
       );
+      expect(days.size).toBe(N);
     });
 
     it("spans multiple chunks and reports cumulative progress across them", async () => {
-      // Guards chunking when the backlog exceeds CHUNK_SIZE (100): no card is
+      // Guards chunking when the pile exceeds CHUNK_SIZE (100): no card is
       // dropped at the boundary and progress is cumulative across chunks.
       const total = 105;
-      const oldDue = new Date(Date.now() - 1000 * 60 * 60 * 24 * 10);
+      for (let i = 0; i < total; i++) {
+        await insertOverdue(30 + i);
+      }
 
-      await Promise.all(
-        Array.from({ length: total }, async () => {
-          const entry = await insertDictionaryEntry(testDb);
-          await insertFlashcard(testDb, {
-            dictionary_entry_id: entry.id,
-            due: oldDue.toISOString(),
-            due_timestamp_ms: oldDue.getTime(),
-            state: FlashcardState.NEW,
-          });
-        })
+      const progress = await consumeGenerator(
+        flashcardsTable.postpone.generator({})
       );
 
-      const postRevlogBatch = vi.fn<(e: ClearBacklogRevlogEntry[]) => void>();
-      const table = makeFlashcardsTable(
-        { getDb: async () => testDb.drizzleDb },
-        { postRevlogBatch }
-      );
-
-      const progress = await consumeGenerator(table.clearBacklog.generator({}));
-
-      // Cumulative, chunked at CHUNK_SIZE=100.
       expect(progress).toEqual([
-        { cleared: 100, total },
-        { cleared: 105, total },
+        { postponed: 100, total },
+        { postponed: 105, total },
       ]);
 
-      // Every card rescheduled -- none skipped at the chunk boundary.
-      const remaining = (await (
+      // Nothing left behind at the chunk boundary: every card now sits inside
+      // the window, so none is still deep in the past.
+      const stale = (await (
         await testDb.db.prepare(
-          "SELECT COUNT(*) AS cnt FROM flashcards WHERE due_timestamp_ms <= ?"
+          "SELECT COUNT(*) AS cnt FROM flashcards WHERE due_timestamp_ms < ?"
         )
-      ).get([oldDue.getTime()])) as { cnt: number };
-      expect(remaining.cnt).toBe(0);
-
-      expect(postRevlogBatch).toHaveBeenCalledTimes(1);
-      expect(postRevlogBatch.mock.calls[0][0]).toHaveLength(total);
+      ).get([startOfDay(new Date()).getTime()])) as { cnt: number };
+      expect(stale.cnt).toBe(0);
     });
 
-    it("does not touch flashcards outside the backlog window", async () => {
-      const recentlyDueDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 1);
+    it("spreads the pile across the whole window rather than dumping it on one day", async () => {
+      // The behavioural promise the copy makes -- "spread over 7 days" has to
+      // actually distribute the cards.
+      const total = 70;
+      for (let i = 0; i < total; i++) {
+        await insertOverdue(30 + i);
+      }
+
+      await consumeGenerator(flashcardsTable.postpone.generator({}));
+
+      const rows = await readAllDue();
+      const perDay = new Map<number, number>();
+      for (const r of rows) {
+        const key = startOfDay(new Date(r.due_timestamp_ms)).getTime();
+        perDay.set(key, (perDay.get(key) ?? 0) + 1);
+      }
+
+      expect(perDay.size).toBe(POSTPONE_WINDOW_DAYS);
+      for (const count of perDay.values()) {
+        expect(count).toBe(total / POSTPONE_WINDOW_DAYS);
+      }
+    });
+
+    it("moves all currently-due cards when scope is 'all'", async () => {
+      const deep = await insertOverdue(30);
+      const mild = await insertOverdue(1);
+
+      const progress = await consumeGenerator(
+        flashcardsTable.postpone.generator({ scope: "all" })
+      );
+      expect(progress).toEqual([{ postponed: 2, total: 2 }]);
+
+      // "all" ignores backlogThresholdDays entirely, so a card only 1 day
+      // overdue is still fair game.
+      expect((await readRow(deep.id)).due_timestamp_ms).not.toBe(
+        deep.due_timestamp_ms
+      );
+      expect((await readRow(mild.id)).due_timestamp_ms).not.toBe(
+        mild.due_timestamp_ms
+      );
+    });
+
+    it("leaves mildly-overdue cards alone when scope is 'backlog'", async () => {
+      const deep = await insertOverdue(30);
+      const mild = await insertOverdue(1);
+
+      const progress = await consumeGenerator(
+        flashcardsTable.postpone.generator({ scope: "backlog" })
+      );
+      expect(progress).toEqual([{ postponed: 1, total: 1 }]);
+
+      expect((await readRow(deep.id)).due_timestamp_ms).not.toBe(
+        deep.due_timestamp_ms
+      );
+      // Stays due today -- which is exactly what the backlog-scope copy
+      // promises the user.
+      expect((await readRow(mild.id)).due_timestamp_ms).toBe(
+        mild.due_timestamp_ms
+      );
+    });
+
+    it("never moves cards that aren't due yet", async () => {
+      const future = new Date(Date.now() + 3 * DAY_MS);
       const flashcard = await insertFlashcard(testDb, {
-        due: recentlyDueDate.toISOString(),
-        due_timestamp_ms: recentlyDueDate.getTime(),
+        due: future.toISOString(),
+        due_timestamp_ms: future.getTime(),
+        state: FlashcardState.REVIEW,
       });
 
-      await consumeGenerator(flashcardsTable.clearBacklog.generator({}));
-
-      const row = (await (
-        await testDb.db.prepare("SELECT * FROM flashcards WHERE id = ?")
-      ).get([flashcard.id])) as { due_timestamp_ms: number };
-
-      expect(row.due_timestamp_ms).toBe(recentlyDueDate.getTime());
+      // Postpone is a recovery action; it must not push a healthy schedule
+      // around under either scope.
+      for (const scope of ["all", "backlog"] as const) {
+        await consumeGenerator(flashcardsTable.postpone.generator({ scope }));
+        expect((await readRow(flashcard.id)).due_timestamp_ms).toBe(
+          future.getTime()
+        );
+      }
     });
 
-    it("yields nothing, makes no changes, and does not post when there's no backlog", async () => {
-      await insertFlashcard(testDb);
-      const postRevlogBatch = vi.fn<(e: ClearBacklogRevlogEntry[]) => void>();
-      const table = makeFlashcardsTable(
-        { getDb: async () => testDb.drizzleDb },
-        { postRevlogBatch }
+    it("respects deck filters", async () => {
+      const ismEntry = await insertDictionaryEntry(testDb, { type: "ism" });
+      const filEntry = await insertDictionaryEntry(testDb, { type: "fi'l" });
+      const overdue = new Date(Date.now() - 30 * DAY_MS);
+
+      const ismCard = await insertFlashcard(testDb, {
+        dictionary_entry_id: ismEntry.id,
+        due: overdue.toISOString(),
+        due_timestamp_ms: overdue.getTime(),
+        state: FlashcardState.REVIEW,
+      });
+      const filCard = await insertFlashcard(testDb, {
+        dictionary_entry_id: filEntry.id,
+        due: overdue.toISOString(),
+        due_timestamp_ms: overdue.getTime(),
+        state: FlashcardState.REVIEW,
+      });
+
+      await consumeGenerator(
+        flashcardsTable.postpone.generator({ filters: { types: ["ism"] } })
       );
 
-      const progress = await consumeGenerator(table.clearBacklog.generator({}));
+      // Shares buildFilterConditions with today/counts, so type/tag/state
+      // filtering behaves identically here.
+      expect((await readRow(ismCard.id)).due_timestamp_ms).not.toBe(
+        overdue.getTime()
+      );
+      expect((await readRow(filCard.id)).due_timestamp_ms).toBe(
+        overdue.getTime()
+      );
+    });
 
+    it("skips hidden flashcards", async () => {
+      const hidden = await insertOverdue(30, { is_hidden: true });
+
+      const progress = await consumeGenerator(
+        flashcardsTable.postpone.generator({})
+      );
+
+      // Hidden cards are out of the review system entirely, so they're not
+      // rescheduled and don't inflate the progress total.
       expect(progress).toEqual([]);
-      expect(postRevlogBatch).not.toHaveBeenCalled();
+      expect((await readRow(hidden.id)).due_timestamp_ms).toBe(
+        hidden.due_timestamp_ms
+      );
+    });
+
+    it("yields nothing and makes no changes when there's nothing overdue", async () => {
+      const future = new Date(Date.now() + 2 * DAY_MS);
+      const flashcard = await insertFlashcard(testDb, {
+        due: future.toISOString(),
+        due_timestamp_ms: future.getTime(),
+      });
+
+      const progress = await consumeGenerator(
+        flashcardsTable.postpone.generator({})
+      );
+
+      // Returns before opening a transaction.
+      expect(progress).toEqual([]);
+      expect((await readRow(flashcard.id)).due_timestamp_ms).toBe(
+        future.getTime()
+      );
+    });
+
+    it("leaves the pile untouched when a chunk fails mid-transaction", async () => {
+      // Two chunks' worth, so the first UPDATE succeeds before the second
+      // fails -- that's the case where a missing ROLLBACK would leave half the
+      // pile moved.
+      const total = 105;
+      for (let i = 0; i < total; i++) {
+        await insertOverdue(30 + i);
+      }
+      const before = new Map(
+        (await readAllDue()).map((r) => [r.id, r.due_timestamp_ms])
+      );
+
+      // Call order is BEGIN, UPDATE (chunk 1), UPDATE (chunk 2), COMMIT --
+      // fail the third so the transaction is already dirty. ROLLBACK is call
+      // four and must still reach the real implementation.
+      const realRun = testDb.drizzleDb.run.bind(testDb.drizzleDb);
+      let runCalls = 0;
+      const runSpy = vi.spyOn(testDb.drizzleDb, "run").mockImplementation(((
+        query: Parameters<typeof realRun>[0]
+      ) => {
+        runCalls += 1;
+        if (runCalls === 3) {
+          throw new Error("simulated chunk failure");
+        }
+        return realRun(query);
+      }) as typeof realRun);
+
+      try {
+        await expect(
+          consumeGenerator(flashcardsTable.postpone.generator({}))
+        ).rejects.toThrow("simulated chunk failure");
+      } finally {
+        runSpy.mockRestore();
+      }
+
+      // A partial postpone would leave the schedule in a state the user can't
+      // reason about, so chunk 1 has to be rolled back too.
+      for (const row of await readAllDue()) {
+        expect(row.due_timestamp_ms).toBe(before.get(row.id));
+      }
     });
   });
 
