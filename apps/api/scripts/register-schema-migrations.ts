@@ -9,6 +9,7 @@ const MIGRATIONS_DIR = fileURLToPath(
   new URL("../../../packages/drizzle-user-db-schemas/drizzle", import.meta.url)
 );
 const BREAKPOINT_MARKER = "--> statement-breakpoint";
+const SQL_EXTENSION = /\.sql$/;
 
 /**
  * Registers each per-user-db drizzle migration
@@ -32,7 +33,7 @@ const registerSchemaMigrations = async () => {
   );
 
   for (const file of files) {
-    const description = file.replace(/\.sql$/, "");
+    const description = file.replace(SQL_EXTENSION, "");
 
     if (registeredDescriptions.has(description)) {
       logger.info({ description }, "Already registered, skipping.");

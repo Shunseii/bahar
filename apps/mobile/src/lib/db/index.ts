@@ -9,7 +9,7 @@ import { err, ok, type Result, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react-native";
 import { getDbPath } from "@tursodatabase/sync-react-native";
 import { reloadAppAsync } from "expo";
-import { File } from "expo-file-system/next";
+import { File } from "expo-file-system";
 import { api } from "../../utils/api";
 import {
   connect,
