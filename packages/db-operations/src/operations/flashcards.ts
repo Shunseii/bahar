@@ -34,6 +34,37 @@ export type FlashcardWithDictionaryEntry = SelectFlashcard & {
 export type FlashcardQueue = "regular" | "backlog" | "all";
 
 /**
+ * Merges a refetched review queue into the one already on screen without moving
+ * the card being reviewed.
+ *
+ * `today` is refetched mid-session (app foreground, window focus, invalidation),
+ * and each run re-evaluates "is due" against a fresh now, so cards can join the
+ * queue while the user is part-way through a card. Replacing the queue outright
+ * let a joining card take index 0 and yank the current card away mid-answer.
+ *
+ * Deliberately independent of how the query sorts: the card being reviewed is
+ * pinned wherever the refetch placed it, so `today`'s ORDER BY can change without
+ * reopening this bug. The refetched set stays authoritative about which cards are
+ * in the queue -- cards no longer due are dropped -- only the position of the
+ * current card is preserved.
+ */
+export const keepCurrentCardFirst = ({
+  prev,
+  next,
+}: {
+  prev: FlashcardWithDictionaryEntry[];
+  next: FlashcardWithDictionaryEntry[];
+}): FlashcardWithDictionaryEntry[] => {
+  const currentId = prev[0]?.id;
+  if (!currentId) return next;
+
+  const current = next.find((card) => card.id === currentId);
+  if (!current) return next;
+
+  return [current, ...next.filter((card) => card.id !== currentId)];
+};
+
+/**
  * A review-log entry produced by clearBacklog for each rescheduled card,
  * shaped for the server's revlog batch endpoint. Handed to the injected
  * `postRevlogBatch` callback -- this package never talks to the API or Sentry
@@ -191,7 +222,8 @@ export const makeFlashcardsTable = (
             dictionaryEntries,
             eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
           )
-          .where(and(...conditions));
+          .where(and(...conditions))
+          .orderBy(flashcards.due_timestamp_ms);
       },
       cacheOptions: {
         queryKey: ["turso.flashcards.today.query"],

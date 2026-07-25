@@ -2,6 +2,7 @@ import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   type FlashcardQueue,
   type FlashcardWithDictionaryEntry,
+  keepCurrentCardFirst,
 } from "@bahar/db-operations";
 import { cn } from "@bahar/design-system";
 import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
@@ -132,11 +133,18 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
 
   useEffect(() => {
     if (data) {
-      setCards(data);
+      setCards((prev) => keepCurrentCardFirst({ prev, next: data }));
     }
   }, [data]);
 
   const currentCard = cards[0] ?? null;
+
+  // Every card starts on its question side. Grading resets this too, but that
+  // path isn't the only way the displayed card changes -- a refetch can swap it
+  // out, and without this the incoming card rendered already revealed.
+  useEffect(() => {
+    setShowAnswer(false);
+  }, [currentCard?.id]);
 
   const f = useMemo(() => {
     return createScheduler();

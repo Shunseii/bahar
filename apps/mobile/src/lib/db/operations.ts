@@ -24,6 +24,7 @@ export {
   FLASHCARD_LIMIT,
   type FlashcardQueue,
   type FlashcardWithDictionaryEntry,
+  keepCurrentCardFirst,
 } from "@bahar/db-operations";
 
 const getDb = async () => {

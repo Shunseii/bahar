@@ -29,6 +29,7 @@ import {
   type FlashcardQueue,
   type FlashcardWithDictionaryEntry,
   flashcardsTable,
+  keepCurrentCardFirst,
   progressTable,
 } from "../../lib/db/operations";
 import { api, queryClient } from "../../utils/api";
@@ -205,7 +206,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
 
   useEffect(() => {
     if (data) {
-      setCards(data);
+      setCards((prev) => keepCurrentCardFirst({ prev, next: data }));
       if (data.length > 0 && !initialHasMore) {
         setInitialHasMore(data.length > FLASHCARD_LIMIT);
       }
@@ -240,6 +241,13 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   const currentCard = cards[0] ?? null;
   const totalHits = cards.length;
   const hasMore = initialHasMore || totalHits > FLASHCARD_LIMIT;
+
+  // Every card starts on its question side. Grading resets this too, but that
+  // path isn't the only way the displayed card changes -- a refetch can swap it
+  // out, and without this the incoming card rendered already revealed.
+  useEffect(() => {
+    setShowAnswer(false);
+  }, [currentCard?.id]);
 
   const fsrsInput = useMemo(
     () =>

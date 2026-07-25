@@ -29,6 +29,7 @@ export {
   type ClearBacklogRevlogEntry,
   type FlashcardQueue,
   type FlashcardWithDictionaryEntry,
+  keepCurrentCardFirst,
   makeFlashcardsTable,
 } from "./operations/flashcards";
 export { makeMigrationTable } from "./operations/migration";

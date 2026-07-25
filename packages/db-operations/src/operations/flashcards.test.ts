@@ -12,6 +12,8 @@ import {
 } from "../test/factories";
 import {
   type ClearBacklogRevlogEntry,
+  type FlashcardWithDictionaryEntry,
+  keepCurrentCardFirst,
   makeFlashcardsTable,
 } from "./flashcards";
 
@@ -329,6 +331,34 @@ describe("flashcardsTable", () => {
 
       const results = await flashcardsTable.today.query({ queue: "backlog" });
       expect(results.map((r) => r.id)).toEqual([backlog.id]);
+    });
+
+    it("returns cards ordered by due date ascending", async () => {
+      // Inserted middle-first so a pass can't come from insert order.
+      const twoDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 2);
+      const fiveDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 5);
+      const justNow = new Date(Date.now() - 1000);
+
+      const middle = await insertFlashcard(testDb, {
+        due: twoDaysAgo.toISOString(),
+        due_timestamp_ms: twoDaysAgo.getTime(),
+      });
+      const oldest = await insertFlashcard(testDb, {
+        due: fiveDaysAgo.toISOString(),
+        due_timestamp_ms: fiveDaysAgo.getTime(),
+      });
+      const newest = await insertFlashcard(testDb, {
+        due: justNow.toISOString(),
+        due_timestamp_ms: justNow.getTime(),
+      });
+
+      const results = await flashcardsTable.today.query({});
+
+      expect(results.map((r) => r.id)).toEqual([
+        oldest.id,
+        middle.id,
+        newest.id,
+      ]);
     });
 
     it("excludes hidden flashcards", async () => {
@@ -774,5 +804,55 @@ describe("flashcardsTable", () => {
 
       expect(reverse).toBeNull();
     });
+  });
+});
+
+describe("keepCurrentCardFirst", () => {
+  // Pure helper -- only `id` is read, so plain objects stand in for full cards.
+  const card = (id: string) => ({ id }) as FlashcardWithDictionaryEntry;
+  const a = card("a");
+  const b = card("b");
+  const c = card("c");
+
+  it("keeps the card under review at index 0 when new cards join the queue", () => {
+    const result = keepCurrentCardFirst({
+      prev: [a, b],
+      next: [c, a, b],
+    });
+
+    expect(result.map((r) => r.id)).toEqual(["a", "c", "b"]);
+  });
+
+  it("keeps the card under review at index 0 regardless of how next is ordered", () => {
+    // The actual BAH-174 guarantee: independent of today's ORDER BY, so changing
+    // the query's sort can't reopen the bug.
+    for (const next of [
+      [a, b, c],
+      [c, b, a],
+      [b, c, a],
+    ]) {
+      const result = keepCurrentCardFirst({ prev: [a, b], next });
+
+      expect(result[0].id).toBe("a");
+      expect(result).toHaveLength(3);
+    }
+  });
+
+  it("drops cards the refetch says are no longer due", () => {
+    const result = keepCurrentCardFirst({ prev: [a, b], next: [a] });
+
+    expect(result.map((r) => r.id)).toEqual(["a"]);
+  });
+
+  it("falls back to the refetched order when the current card is gone", () => {
+    const result = keepCurrentCardFirst({ prev: [a, b], next: [b, c] });
+
+    expect(result.map((r) => r.id)).toEqual(["b", "c"]);
+  });
+
+  it("returns the refetched queue when there was nothing on screen", () => {
+    const result = keepCurrentCardFirst({ prev: [], next: [a, b] });
+
+    expect(result.map((r) => r.id)).toEqual(["a", "b"]);
   });
 });
