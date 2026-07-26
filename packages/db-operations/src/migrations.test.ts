@@ -12,13 +12,9 @@ const MIGRATIONS_DIR = join(
 const BREAKPOINT_MARKER = "--> statement-breakpoint";
 
 /**
- * Migrations do not reach a client as files. They are registered as rows in the
- * central `migrations` table and handed to clients as a single `sql_script`
- * string, which each applier then has to execute.
- *
- * These tests apply the real files the way that pipeline does, because the
- * `createTestDb` helpers execute a file whole and so cannot catch a script that
- * only breaks once it has been through registration and an applier.
+ * Migrations reach a client as a `sql_script` row in the central `migrations`
+ * table, not as a file, so these tests apply the real files the way that
+ * pipeline does rather than the way `createTestDb` does.
  */
 
 /**
@@ -62,9 +58,7 @@ describe("per-user database migrations", () => {
     expect(migrations[0].description).toMatch(/^0000_/);
   });
 
-  // The baseline: every migration is valid SQL and applies in order to a fresh
-  // database. Executing each file whole is also what the web and mobile
-  // appliers do, so this covers both questions at once.
+  // Also how the web and mobile appliers execute a script.
   it("applies every migration in order to a fresh database", async () => {
     const db = await connect({ path: ":memory:" });
 
@@ -81,13 +75,9 @@ describe("per-user database migrations", () => {
   });
 
   /**
-   * The api applier splits on ";", which assumes no statement, comment or
-   * string literal contains one. A semicolon inside a comment is the easy way
-   * to break that: the split cuts the comment in half and the tail, no longer
-   * preceded by "--", gets parsed as SQL.
-   *
-   * That is why these files carry no prose. Rationale for a migration belongs in
-   * its commit message, not in the script that gets registered and split.
+   * Splitting on ";" assumes no comment or string literal contains one. A
+   * semicolon in a comment breaks it: the split cuts the comment in half and
+   * the tail, no longer preceded by "--", gets parsed as SQL.
    */
   it("applies as split statements, the way the api does", async () => {
     const db = await connect({ path: ":memory:" });
@@ -109,8 +99,7 @@ describe("per-user database migrations", () => {
   });
 
   it("keeps the scripts free of semicolons inside comments", () => {
-    // Guards the assumption above at the source, so a new migration fails here
-    // with a clear reason rather than as a syntax error in a split fragment.
+    // Fails with the reason rather than as a syntax error in a split fragment.
     for (const migration of migrations) {
       const offending = migration.sqlScript
         .split("\n")
