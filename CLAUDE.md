@@ -12,7 +12,7 @@ Bahar is an Arabic language learning app: personal dictionary, flashcards with s
 | Mobile   | React Native 0.81, Expo SDK 54, UniWind, file-based routing                        |
 | API      | Bun, Elysia, Eden Treaty (type-safe client), Better Auth                           |
 | Database | Turso (central + per-user SQLite DBs), Drizzle ORM                                 |
-| Local DB | sync-wasm (web), Expo SQLite (mobile) — offline-first with 60s bi-directional sync |
+| Local DB | Turso sync: sync-wasm (web), sync-react-native (mobile) — offline-first, 60s bi-directional |
 | Search   | Orama (client-side WASM, Arabic + English)                                         |
 | State    | Tanstack Query (server), Jotai (client)                                            |
 | i18n     | Lingui v5                                                                          |
