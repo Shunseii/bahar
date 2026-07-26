@@ -39,6 +39,7 @@ import StreakChip from "@/components/progress/StreakChip";
 import { ScreenFocusTransition } from "@/components/ScreenFocusTransition";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { Button } from "@/components/ui/button";
+import { UpdatePrompt } from "@/components/updates/UpdatePrompt";
 import { HeaderScrollContext } from "@/contexts/header-scroll";
 import { useSearch } from "@/hooks/useSearch";
 import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
@@ -202,7 +203,9 @@ export default function Layout() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      performSync().catch(() => {});
+      performSync().catch(() => {
+        // Transient sync failures are expected offline; the next tick retries.
+      });
     }, SYNC_INTERVAL_MS);
 
     return () => clearInterval(interval);
@@ -345,6 +348,7 @@ export default function Layout() {
           />
         </Drawer>
         <SyncIndicator />
+        <UpdatePrompt />
       </SearchContext.Provider>
     </HeaderScrollContext.Provider>
   );

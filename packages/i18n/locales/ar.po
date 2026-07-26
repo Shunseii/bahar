@@ -200,6 +200,10 @@ msgstr "+{0} هذا الأسبوع"
 msgid "7-day average"
 msgstr "متوسط ٧ أيام"
 
+#: ../../apps/mobile/src/components/updates/UpdateBanner.tsx:57
+msgid "A new version is ready to install."
+msgstr "إصدار جديد جاهز للتثبيت."
+
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:81
 msgid "A noun, adjective, adverb or pronoun, and anything that is not a verb or preposition."
 msgstr "غير فعل أو حرف."
@@ -609,7 +613,7 @@ msgstr "السبب:"
 #~ msgid "Check your email to confirm"
 #~ msgstr "تحقق من بريدك الإلكتروني للتأكيد"
 
-#: ../../apps/web/src/components/InputFile.tsx:51
+#: ../../apps/web/src/components/InputFile.tsx:54
 msgid "Choose file"
 msgstr "اختر ملف"
 
@@ -836,7 +840,7 @@ msgstr "تم تحديث المجموعة"
 #: ../../apps/web/src/components/MobileHeader.tsx:166
 #: ../../apps/web/src/components/DesktopNavigation.tsx:69
 #: ../../apps/web/src/components/DesktopNavigation.tsx:75
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:321
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:324
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:32
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:133
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:198
@@ -978,6 +982,10 @@ msgstr "لا تعرض"
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:190
 msgid "Done"
 msgstr "تم"
+
+#: ../../apps/mobile/src/components/updates/UpdateBanner.tsx:83
+msgid "Downloading update"
+msgstr "جارٍ تنزيل التحديث"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:183
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:84
@@ -1511,7 +1519,7 @@ msgstr "تلميح"
 #: ../../apps/web/src/components/MobileHeader.tsx:154
 #: ../../apps/web/src/components/DesktopNavigation.tsx:53
 #: ../../apps/web/src/components/DesktopNavigation.tsx:59
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:310
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:313
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:55
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:54
 msgid "Home"
@@ -1651,6 +1659,10 @@ msgstr "استمر في إضافة كلمات بعد الحفظ بدلاً من 
 msgid "Language"
 msgstr "اللغة"
 
+#: ../../apps/mobile/src/components/updates/UpdateRestartModal.tsx:49
+msgid "Later"
+msgstr "لاحقًا"
+
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:675
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:171
 msgid "Latest"
@@ -1685,7 +1697,7 @@ msgstr "قم بتسجيل الدخول إلى حسابك الحالي أو قم 
 
 #: ../../apps/web/src/components/MobileHeader.tsx:203
 #: ../../apps/web/src/components/DesktopNavigation.tsx:135
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:186
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:187
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
@@ -1863,7 +1875,7 @@ msgstr "لا توجد مجموعات بعد"
 msgid "No difficult words yet."
 msgstr "لا توجد كلمات صعبة بعد."
 
-#: ../../apps/web/src/components/InputFile.tsx:59
+#: ../../apps/web/src/components/InputFile.tsx:62
 msgid "No file chosen"
 msgstr "لم يتم اختيار ملف"
 
@@ -2120,7 +2132,7 @@ msgstr "برو"
 #: ../../apps/web/src/components/DesktopNavigation.tsx:91
 #: ../../apps/mobile/src/app/(search)/stats.tsx:31
 #: ../../apps/mobile/src/app/(search)/stats.tsx:272
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:332
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:335
 msgid "Progress"
 msgstr "التقدّم"
 
@@ -2233,6 +2245,14 @@ msgstr "إعادة تعيين البيانات المحلية والمزامنة
 msgid "Resetting local data..."
 msgstr "جارٍ إعادة تعيين البيانات المحلية..."
 
+#: ../../apps/mobile/src/components/updates/UpdateRestartModal.tsx:38
+msgid "Restart Bahar to apply the latest version."
+msgstr "أعد تشغيل بحر لتطبيق أحدث إصدار."
+
+#: ../../apps/mobile/src/components/updates/UpdateRestartModal.tsx:61
+msgid "Restart now"
+msgstr "أعد التشغيل الآن"
+
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/RetentionRateCard.tsx:52
 #: ../../apps/mobile/src/app/(search)/stats.tsx:330
 msgid "Retention Rate"
@@ -2343,7 +2363,7 @@ msgid "Search tags..."
 msgstr "البحث في العلامات..."
 
 #: ../../apps/web/src/components/search/SearchInput.tsx:63
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:134
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:135
 msgid "Search..."
 msgstr "ابحث..."
 
@@ -2402,7 +2422,7 @@ msgstr "افصل الحروف بمسافات أو فواصل"
 #: ../../apps/web/src/components/DesktopNavigation.tsx:123
 #: ../../apps/mobile/src/app/(search)/settings.tsx:292
 #: ../../apps/mobile/src/app/(search)/settings.tsx:508
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:343
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:346
 msgid "Settings"
 msgstr "الإعدادات"
 
@@ -2873,6 +2893,18 @@ msgstr "فتح الإحصائيات"
 #: ../../apps/mobile/src/app/(search)/settings.tsx:226
 msgid "Unsubscribed from marketing emails"
 msgstr "تم إلغاء الاشتراك من رسائل البريد التسويقية"
+
+#: ../../apps/mobile/src/components/updates/UpdateBanner.tsx:67
+msgid "Update"
+msgstr "حدّث"
+
+#: ../../apps/mobile/src/components/updates/UpdateBanner.tsx:53
+msgid "Update available"
+msgstr "يتوفر تحديث"
+
+#: ../../apps/mobile/src/components/updates/UpdateRestartModal.tsx:34
+msgid "Update ready"
+msgstr "التحديث جاهز"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/ProPlaceholder.tsx:94
 #: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:68

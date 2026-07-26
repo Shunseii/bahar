@@ -3,6 +3,7 @@ import { useState } from "react";
 
 const CheckIcon = () => (
   <svg
+    aria-hidden="true"
     className="mt-0.5 h-4 w-4 shrink-0 text-primary"
     fill="none"
     stroke="currentColor"
@@ -171,6 +172,7 @@ export default function PricingCards({ labels, free, pro, trust }: Props) {
       <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-muted-foreground text-sm sm:gap-10">
         <div className="flex items-center gap-2">
           <svg
+            aria-hidden="true"
             className="h-4 w-4 text-primary"
             fill="none"
             stroke="currentColor"
@@ -188,6 +190,7 @@ export default function PricingCards({ labels, free, pro, trust }: Props) {
         </div>
         <div className="flex items-center gap-2">
           <svg
+            aria-hidden="true"
             className="h-4 w-4 text-primary"
             fill="none"
             stroke="currentColor"
@@ -205,6 +208,7 @@ export default function PricingCards({ labels, free, pro, trust }: Props) {
         </div>
         <div className="flex items-center gap-2">
           <svg
+            aria-hidden="true"
             className="h-4 w-4 text-primary"
             fill="none"
             stroke="currentColor"

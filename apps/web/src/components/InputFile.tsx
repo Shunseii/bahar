@@ -46,6 +46,9 @@ export const InputFile: FC<InputFileProps> = ({
             inputRef.current?.click();
           }
         }}
+        // The file input itself is display:none and so out of the tab order --
+        // this label carries the keyboard affordance in its place.
+        role="button"
         tabIndex={0}
       >
         <Trans>Choose file</Trans>

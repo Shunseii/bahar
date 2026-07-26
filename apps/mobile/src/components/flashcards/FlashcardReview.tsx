@@ -17,7 +17,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Archive, Brain, PartyPopper, X } from "lucide-react-native";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { type LayoutChangeEvent, Pressable, Text, View } from "react-native";
 import ReAnimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { type Grade, Rating } from "ts-fsrs";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
@@ -36,6 +36,9 @@ import { api, queryClient } from "../../utils/api";
 import { FlashcardCard } from "./FlashcardCard";
 import { GradeButtons, ShowAnswerButton } from "./GradeButtons";
 import { GradeFeedback } from "./GradeFeedback";
+
+/** Vertical padding on each side of the card area. Mirrors its `p-4`. */
+const CARD_AREA_PADDING = 16;
 
 interface FlashcardReviewProps {
   filters?: SelectDeck["filters"];
@@ -167,6 +170,13 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
   const [cards, setCards] = useState<FlashcardWithDictionaryEntry[]>([]);
   const [initialHasMore, setInitialHasMore] = useState(false);
+  // Measured rather than assumed: the card area is whatever is left after the
+  // header, queue tabs and grade buttons, which varies by device and OS font
+  // scale. The answer scroll view needs this as its ceiling -- see the
+  // availableHeight prop on FlashcardCard.
+  const [cardAreaHeight, setCardAreaHeight] = useState<number | undefined>(
+    undefined
+  );
   const [selectedQueue, setSelectedQueue] =
     useState<FlashcardQueue>(initialQueue);
   const scheduler = useMemo(() => createScheduler(), []);
@@ -289,6 +299,12 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
 
   const handleFlip = useCallback(() => {
     setShowAnswer(true);
+  }, []);
+
+  const handleCardAreaLayout = useCallback((event: LayoutChangeEvent) => {
+    // layout.height is the border box, so drop the padding to get the space
+    // the card actually has to sit in.
+    setCardAreaHeight(event.nativeEvent.layout.height - CARD_AREA_PADDING * 2);
   }, []);
 
   const handleGrade = useCallback(
@@ -502,13 +518,17 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       />
 
       {/* Card area */}
-      <View className="flex-1 justify-center p-4">
+      <View
+        className="flex-1 justify-center p-4"
+        onLayout={handleCardAreaLayout}
+      >
         <ReAnimated.View
           entering={FadeIn.duration(200)}
           exiting={FadeOut.duration(150)}
           key={`${selectedQueue}-${currentCard.id}`}
         >
           <FlashcardCard
+            availableHeight={cardAreaHeight}
             flashcard={currentCard}
             onFlip={handleFlip}
             onSwipeLeft={handleSwipeLeft}
