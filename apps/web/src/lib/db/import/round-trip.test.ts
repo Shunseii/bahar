@@ -53,7 +53,12 @@ const exportAll = async ({
     exported.push(result.value);
   }
 
-  return exported;
+  // The route writes these to a file, so the importer never sees the in-memory
+  // objects. Serializing here keeps the two sides honest: JSON drops keys whose
+  // value is undefined, and rewrites anything that is not JSON-stable.
+  const serialized: ImportWordV1[] = JSON.parse(JSON.stringify(exported));
+
+  return serialized;
 };
 
 /**
