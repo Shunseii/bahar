@@ -58,7 +58,6 @@ describe("per-user database migrations", () => {
     expect(migrations[0].description).toMatch(/^0000_/);
   });
 
-  // Also how the web and mobile appliers execute a script.
   it("applies every migration in order to a fresh database", async () => {
     const db = await connect({ path: ":memory:" });
 
