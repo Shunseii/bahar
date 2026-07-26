@@ -1,3 +1,4 @@
+import { enqueueDbOperation } from "@bahar/db-operations";
 import {
   decks,
   dictionaryEntries,
@@ -5,6 +6,7 @@ import {
   type ShowAntonymsMode,
 } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react-native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { sql } from "drizzle-orm";
 import { reloadAppAsync } from "expo";
@@ -44,6 +46,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useSearch } from "@/hooks/useSearch";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { deleteLocalDb, ensureDb, resetDb } from "@/lib/db";
@@ -58,6 +61,7 @@ import {
   postponeCardsPerDay,
   settingsTable,
 } from "@/lib/db/operations";
+import { performSync } from "@/lib/db/sync";
 import {
   cancelReviewNotifications,
   recomputeReviewNotifications,
@@ -299,6 +303,7 @@ export default function SettingsScreen() {
   const colors = useThemeColors();
   const colorScheme = useColorScheme();
   const { t } = useLingui();
+  const { formatNumber } = useFormatNumber();
   const { scrollHandler } = useCollapsibleHeader(t`Settings`);
   const { reset: resetSearch } = useSearch();
 
@@ -412,22 +417,39 @@ export default function SettingsScreen() {
       let lastProgress = { postponed: 0, total: 0 };
       let lastPaintAt = 0;
 
-      for await (const progress of flashcardsTable.postpone.generator({
-        scope: postponeScope,
-        windowDays,
-      })) {
-        lastProgress = progress;
+      // The whole drain has to sit inside one queue slot. postpone holds its
+      // transaction open across every yield, and the repaint yield below hands
+      // control back to the event loop between chunks -- long enough for the
+      // periodic sync (which shares this single-slot queue) to start a
+      // pull/push against a connection with an open transaction.
+      await enqueueDbOperation(async () => {
+        for await (const progress of flashcardsTable.postpone.generator({
+          scope: postponeScope,
+          windowDays,
+        })) {
+          lastProgress = progress;
 
-        // The generator drains as a tight chain of awaited DB writes, which
-        // only yields microtasks -- RN never gets a frame to repaint, so the
-        // progress bar would stay invisible until the loop ends. Hand control
-        // back to the event loop (throttled to ~20fps) so it actually renders.
-        const now = Date.now();
-        if (now - lastPaintAt > 200 || progress.postponed === progress.total) {
-          setPostponeProgress(progress);
-          lastPaintAt = now;
-          await new Promise((resolve) => setTimeout(resolve, 0));
+          // The generator drains as a tight chain of awaited DB writes, which
+          // only yields microtasks -- RN never gets a frame to repaint, so the
+          // progress bar would stay invisible until the loop ends. Hand control
+          // back to the event loop (throttled to ~20fps) so it actually renders.
+          const now = Date.now();
+          if (
+            now - lastPaintAt > 200 ||
+            progress.postponed === progress.total
+          ) {
+            setPostponeProgress(progress);
+            lastPaintAt = now;
+            await new Promise((resolve) => setTimeout(resolve, 0));
+          }
         }
+      });
+
+      // Rescheduling touches every overdue card, so push it now rather than
+      // leaving the change set to sit until the next periodic sync -- web
+      // pushes immediately and the two shouldn't disagree for a minute.
+      if (lastProgress.total > 0) {
+        await performSync();
       }
 
       queryClient.invalidateQueries({
@@ -444,7 +466,12 @@ export default function SettingsScreen() {
           description: t`${lastProgress.postponed} cards have been spread over the next ${windowDays} days.`,
         });
       }
-    } catch (_err) {
+    } catch (err) {
+      // A failed postpone rolls back, so without this the only trace is a
+      // toast the user dismisses.
+      Sentry.captureException(err, {
+        tags: { operation: "postpone" },
+      });
       toast.error(t`Failed to reschedule backlog`, {
         description: t`There was an error rescheduling your backlog.`,
       });
@@ -556,11 +583,11 @@ export default function SettingsScreen() {
   const postponeScopeOptions = [
     {
       value: "all",
-      label: t`All overdue (${counts?.total ?? 0})`,
+      label: t`All overdue (${formatNumber(counts?.total ?? 0)})`,
     },
     {
       value: "backlog",
-      label: t`Backlog only (${counts?.backlog ?? 0})`,
+      label: t`Backlog only (${formatNumber(counts?.backlog ?? 0)})`,
     },
   ];
 
@@ -777,7 +804,9 @@ export default function SettingsScreen() {
                       day" is the number they can actually say yes or no to. */}
                   {!hasNothingToPostpone && isWindowValid && (
                     <Text className="mt-1.5 text-muted-foreground text-xs">
-                      <Trans>about {cardsPerDay} cards per day</Trans>
+                      <Trans>
+                        about {formatNumber(cardsPerDay)} cards per day
+                      </Trans>
                     </Text>
                   )}
                 </View>

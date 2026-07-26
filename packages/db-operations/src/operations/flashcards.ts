@@ -785,6 +785,13 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
      * ts-fsrs has no postpone primitive. Its `reschedule()` is a
      * history-replay / parameter-migration tool and would recompute memory
      * state, which is the opposite of what's wanted here.
+     *
+     * CALLER CONTRACT: the transaction stays open across every `yield`, and
+     * progress is yielded before COMMIT. Consumers must therefore drain the
+     * whole generator inside `enqueueDbOperation` so nothing else touches the
+     * connection mid-transaction -- the periodic sync's pull/push runs on that
+     * same single-slot queue, and firing it between two chunks would hit a
+     * connection with an open transaction.
      */
     postpone: {
       async *generator({

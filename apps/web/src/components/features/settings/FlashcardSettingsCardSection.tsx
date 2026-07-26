@@ -39,6 +39,7 @@ import {
 } from "@bahar/web-ui/components/tooltip";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, useLingui } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -175,7 +176,12 @@ export const FlashcardSettingsCardSection = () => {
           description: t`${lastProgress.postponed} cards have been spread over the next ${windowDays} days.`,
         });
       }
-    } catch (_err) {
+    } catch (err) {
+      // A failed postpone rolls back, so without this the only trace is a
+      // toast the user dismisses.
+      Sentry.captureException(err, {
+        tags: { operation: "postpone" },
+      });
       toast.error(t`Failed to reschedule backlog`, {
         description: t`There was an error rescheduling your backlog.`,
       });
