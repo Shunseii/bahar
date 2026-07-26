@@ -48,6 +48,14 @@ interface FlashcardCardProps {
   onFlip: () => void;
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
+  /**
+   * Height of the area the card is centered in, measured by the parent. Caps
+   * the answer scroll view: the card is content-sized (its container centers
+   * rather than stretches it), so without a ceiling the scroll view grows to
+   * fit its content, spills out of an unclipped parent, and gets painted over
+   * by the grade buttons below it.
+   */
+  availableHeight?: number;
 }
 
 const TagsRow: React.FC<{ tags: string[] }> = ({ tags }) => {
@@ -69,6 +77,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
   onFlip,
   onSwipeLeft,
   onSwipeRight,
+  availableHeight,
 }) => {
   const translateX = useSharedValue(0);
   const rotation = useSharedValue(0);
@@ -202,7 +211,10 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
         />
 
         {showAnswer ? (
-          <ScrollView showsVerticalScrollIndicator style={styles.scroll}>
+          <ScrollView
+            showsVerticalScrollIndicator
+            style={[styles.scroll, { maxHeight: availableHeight }]}
+          >
             <AnswerContent
               entry={entry}
               examples={examples}
@@ -379,6 +391,5 @@ const hasMorphology = (ism: Ism, verb: Verb) =>
 const styles = StyleSheet.create({
   scroll: {
     width: "100%",
-    maxHeight: 580,
   },
 });
