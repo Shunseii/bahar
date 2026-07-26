@@ -45,6 +45,43 @@ const readFlashcard = (statement: Statement) => {
   };
 };
 
+/** Positional args of the dictionary entry insert, in bind order. */
+const readDictEntry = (statement: Statement) => {
+  const [
+    id,
+    word,
+    translation,
+    definition,
+    type,
+    root,
+    tags,
+    antonyms,
+    examples,
+    morphology,
+    createdAt,
+    createdAtTimestampMs,
+    updatedAt,
+    updatedAtTimestampMs,
+  ] = statement.args;
+
+  return {
+    id,
+    word,
+    translation,
+    definition,
+    type,
+    root,
+    tags,
+    antonyms,
+    examples,
+    morphology,
+    createdAt,
+    createdAtTimestampMs,
+    updatedAt,
+    updatedAtTimestampMs,
+  };
+};
+
 const directionsOf = (statements: Statement[]) =>
   statements.map((statement) => readFlashcard(statement).direction);
 
@@ -60,14 +97,20 @@ const flashcardFor = (statements: Statement[], direction: string) => {
   return match;
 };
 
+/** Exports store second precision, so the import multiplies these back up. */
+const toExportTimestamp = (iso: string) => Math.floor(Date.parse(iso) / 1000);
+
+const DUE_AT = "2025-12-01T04:26:40.315Z";
+const REVIEWED_AT = "2025-11-20T04:26:40.315Z";
+
 const REVIEWED_CARD: NonNullable<ImportWordV1["flashcard"]> = {
   difficulty: 6.32,
-  due: "2025-12-01T04:26:40.315Z",
-  due_timestamp: 1_764_563_200,
+  due: DUE_AT,
+  due_timestamp: toExportTimestamp(DUE_AT),
   elapsed_days: 4,
   lapses: 2,
-  last_review: "2025-11-20T04:26:40.315Z",
-  last_review_timestamp: 1_763_612_800,
+  last_review: REVIEWED_AT,
+  last_review_timestamp: toExportTimestamp(REVIEWED_AT),
   reps: 7,
   scheduled_days: 11,
   stability: 18.5,
@@ -108,11 +151,11 @@ describe("createImportStatements (v1)", () => {
       dictionaryEntryId: "N3WMRETxCG0v84LOv09Yq",
       difficulty: 4.1,
       due: REVIEWED_CARD.due,
-      dueTimestampMs: REVIEWED_CARD.due_timestamp * 1000,
+      dueTimestampMs: toExportTimestamp(DUE_AT) * 1000,
       elapsedDays: REVIEWED_CARD.elapsed_days,
       lapses: REVIEWED_CARD.lapses,
-      lastReview: REVIEWED_CARD.last_review,
-      lastReviewTimestampMs: (REVIEWED_CARD.last_review_timestamp ?? 0) * 1000,
+      lastReview: REVIEWED_AT,
+      lastReviewTimestampMs: toExportTimestamp(REVIEWED_AT) * 1000,
       reps: 3,
       scheduledDays: REVIEWED_CARD.scheduled_days,
       stability: REVIEWED_CARD.stability,
@@ -205,9 +248,11 @@ describe("createImportStatements (v1)", () => {
   it("upserts the dictionary entry so re-importing the same file is idempotent", () => {
     const { dictEntry } = createImportStatements({ word: makeWord() });
 
-    expect(dictEntry.args[0]).toBe("N3WMRETxCG0v84LOv09Yq");
-    expect(dictEntry.args[1]).toBe("مِمحاَة");
-    expect(dictEntry.args[2]).toBe("eraser");
+    expect(readDictEntry(dictEntry)).toMatchObject({
+      id: "N3WMRETxCG0v84LOv09Yq",
+      word: "مِمحاَة",
+      translation: "eraser",
+    });
     expect(dictEntry.sql).toContain("ON CONFLICT(id) DO UPDATE SET");
   });
 
@@ -227,18 +272,23 @@ describe("createImportStatements (v1)", () => {
   });
 
   it("converts exported second-precision timestamps to milliseconds on the entry", () => {
+    const createdAt = "2025-11-12T04:26:40.315Z";
+    const updatedAt = REVIEWED_AT;
+
     const { dictEntry } = createImportStatements({
       word: makeWord({
-        created_at: "2025-11-12T04:26:40.315Z",
-        created_at_timestamp: 1_762_921_600,
-        updated_at: "2025-11-20T04:26:40.315Z",
-        updated_at_timestamp: 1_763_612_800,
+        created_at: createdAt,
+        created_at_timestamp: toExportTimestamp(createdAt),
+        updated_at: updatedAt,
+        updated_at_timestamp: toExportTimestamp(updatedAt),
       }),
     });
 
-    expect(dictEntry.args[10]).toBe("2025-11-12T04:26:40.315Z");
-    expect(dictEntry.args[11]).toBe(1_762_921_600 * 1000);
-    expect(dictEntry.args[12]).toBe("2025-11-20T04:26:40.315Z");
-    expect(dictEntry.args[13]).toBe(1_763_612_800 * 1000);
+    expect(readDictEntry(dictEntry)).toMatchObject({
+      createdAt,
+      createdAtTimestampMs: toExportTimestamp(createdAt) * 1000,
+      updatedAt,
+      updatedAtTimestampMs: toExportTimestamp(updatedAt) * 1000,
+    });
   });
 });
