@@ -24,6 +24,18 @@
       "javascript": {
         "globals": ["Bun"]
       }
+    },
+    {
+      // Assertion patterns are evaluated once per test, so hoisting them out
+      // of the case they belong to only costs readability.
+      "includes": ["**/*.test.ts", "**/*.test.tsx"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "useTopLevelRegex": "off"
+          }
+        }
+      }
     }
   ],
   "linter": {
