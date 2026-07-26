@@ -351,19 +351,12 @@ const applyRequiredMigrations = async (): Promise<Result<null, DbError>> => {
       description: migration.description,
     });
 
-    // libSQL's execAsync only executes the first statement in a
-    // multi-statement string, so split and run each individually.
-    const statements = migration.sql_script
-      .split(";")
-      .map((s) => s.trim())
-      .filter(Boolean);
-
+    // Passed whole rather than split on ";". sync-react-native's exec loops
+    // prepareFirst internally, so it handles multi-statement scripts, and
+    // letting SQLite find the boundaries means a semicolon inside a comment or
+    // a string literal cannot corrupt a statement. Matches the web applier.
     const execResult = await tryCatch(
-      async () => {
-        for (const statement of statements) {
-          await db!.exec(`${statement};`);
-        }
-      },
+      () => db!.exec(migration.sql_script),
       (error) => ({
         type: "migration_failed",
         migrationVersion: migration.version,
