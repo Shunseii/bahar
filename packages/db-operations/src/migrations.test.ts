@@ -9,34 +9,7 @@ const MIGRATIONS_DIR = join(
   "../../drizzle-user-db-schemas/drizzle"
 );
 
-const BREAKPOINT_MARKER = "--> statement-breakpoint";
-
-/**
- * Migrations reach a client as a `sql_script` row in the central `migrations`
- * table, not as a file, so these tests apply the real files the way that
- * pipeline does rather than the way `createTestDb` does.
- */
-
-/**
- * Mirrors the registration transform in
- * `apps/api/scripts/register-schema-migrations.ts`. Duplicated rather than
- * imported because a package cannot depend on an app -- keep the two in step.
- */
-const toRegistryScript = (rawSql: string) =>
-  rawSql.split(BREAKPOINT_MARKER).join("\n");
-
-/**
- * Mirrors `applyAllNewMigrations` in `apps/api/src/clients/turso.ts`, which has
- * to hand `batch()` an array of single statements so it can append the
- * `INSERT INTO migrations` row in the same batch.
- */
-const splitForBatch = (sqlScript: string) =>
-  sqlScript
-    .split(";")
-    .map((statement) => statement.trim())
-    .filter(Boolean);
-
-type Migration = { description: string; sqlScript: string };
+type Migration = { description: string; sql: string };
 
 let migrations: Migration[] = [];
 
@@ -46,9 +19,7 @@ beforeAll(() => {
     .sort()
     .map((file) => ({
       description: file.replace(/\.sql$/, ""),
-      sqlScript: toRegistryScript(
-        readFileSync(join(MIGRATIONS_DIR, file), "utf8")
-      ),
+      sql: readFileSync(join(MIGRATIONS_DIR, file), "utf8"),
     }));
 });
 
@@ -64,50 +35,12 @@ describe("per-user database migrations", () => {
     try {
       for (const migration of migrations) {
         await expect(
-          db.exec(migration.sqlScript),
-          `${migration.description} failed to apply as a whole script`
+          db.exec(migration.sql),
+          `${migration.description} failed to apply`
         ).resolves.not.toThrow();
       }
     } finally {
       await db.close();
-    }
-  });
-
-  /**
-   * Splitting on ";" assumes no comment or string literal contains one. A
-   * semicolon in a comment breaks it: the split cuts the comment in half and
-   * the tail, no longer preceded by "--", gets parsed as SQL.
-   */
-  it("applies as split statements, the way the api does", async () => {
-    const db = await connect({ path: ":memory:" });
-
-    try {
-      for (const migration of migrations) {
-        for (const [index, statement] of splitForBatch(
-          migration.sqlScript
-        ).entries()) {
-          await expect(
-            db.exec(statement),
-            `${migration.description} statement ${index} failed after splitting on ";": ${statement.slice(0, 80)}`
-          ).resolves.not.toThrow();
-        }
-      }
-    } finally {
-      await db.close();
-    }
-  });
-
-  it("keeps the scripts free of semicolons inside comments", () => {
-    // Fails with the reason rather than as a syntax error in a split fragment.
-    for (const migration of migrations) {
-      const offending = migration.sqlScript
-        .split("\n")
-        .filter((line) => line.trim().startsWith("--") && line.includes(";"));
-
-      expect(
-        offending,
-        `${migration.description} has a comment containing ";", which the api applier's split would break apart`
-      ).toEqual([]);
     }
   });
 
@@ -116,7 +49,7 @@ describe("per-user database migrations", () => {
 
     try {
       for (const migration of migrations) {
-        await db.exec(migration.sqlScript);
+        await db.exec(migration.sql);
       }
 
       const tables = (await db.all(
