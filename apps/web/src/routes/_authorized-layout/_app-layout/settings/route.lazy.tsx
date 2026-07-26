@@ -49,6 +49,7 @@ import {
   parseImportData,
   readFileAsText,
 } from "@/lib/db/import";
+import { settingsTable } from "@/lib/db/operations";
 import { ImportError, ImportErrorCode, parseImportErrors } from "@/lib/error";
 import { queryClient } from "@/lib/query";
 import { hydrateOramaDb, resetOramaDb } from "@/lib/search";
@@ -423,6 +424,14 @@ const Settings = () => {
 
                   setImportProgress({ current: 0, total: totalBatches });
 
+                  // Entries exported without flashcards carry no reverse
+                  // information, so they follow the account default the same
+                  // way a freshly added word does.
+                  const importSettings =
+                    await settingsTable.getSettings.query();
+                  const createReverseByDefault =
+                    importSettings.create_reverse_by_default ?? false;
+
                   await enqueueDbOperation(async () => {
                     const db = await ensureDb();
 
@@ -430,11 +439,17 @@ const Settings = () => {
                       async (batch: typeof validatedDictionary) => {
                         for (const word of batch) {
                           const { dictEntry, flashcards } =
-                            createImportStatements(word, version);
+                            createImportStatements({
+                              entry: word,
+                              version,
+                              createReverseByDefault,
+                            });
 
                           await db.run(dictEntry.sql, dictEntry.args);
-                          await db.run(flashcards[0].sql, flashcards[0].args);
-                          await db.run(flashcards[1].sql, flashcards[1].args);
+
+                          for (const flashcard of flashcards) {
+                            await db.run(flashcard.sql, flashcard.args);
+                          }
                         }
                       }
                     );

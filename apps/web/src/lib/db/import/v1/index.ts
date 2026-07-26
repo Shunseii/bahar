@@ -9,11 +9,24 @@ interface SqlStatement {
 }
 
 /**
- * Creates SQL statements for inserting a dictionary entry and its flashcards
+ * Creates SQL statements for inserting a dictionary entry and its flashcards.
+ *
+ * Reverse existence is row presence, so a reverse statement is only emitted
+ * when the entry should have a reverse card:
+ * - the entry carries reverse flashcard data -> keep it
+ * - the entry carries forward-only flashcard data -> reverse was off, keep it off
+ * - the entry carries no flashcard data at all (export without flashcards)
+ *   -> fall back to `createReverseByDefault`, matching a fresh word add
  */
-export function createImportStatements(word: ImportWordV1): {
+export function createImportStatements({
+  word,
+  createReverseByDefault = false,
+}: {
+  word: ImportWordV1;
+  createReverseByDefault?: boolean;
+}): {
   dictEntry: SqlStatement;
-  flashcards: [SqlStatement, SqlStatement];
+  flashcards: SqlStatement[];
 } {
   const now = new Date();
 
@@ -60,18 +73,28 @@ export function createImportStatements(word: ImportWordV1): {
     ],
   };
 
-  const flashcards: [SqlStatement, SqlStatement] = [
+  const hasFlashcardData = Boolean(word.flashcard || word.flashcard_reverse);
+  const shouldCreateReverse = hasFlashcardData
+    ? Boolean(word.flashcard_reverse)
+    : createReverseByDefault;
+
+  const flashcards: SqlStatement[] = [
     createFlashcardStatement({
       dictionaryEntryId: word.id,
       direction: "forward",
       flashcardData: word.flashcard,
     }),
-    createFlashcardStatement({
-      dictionaryEntryId: word.id,
-      direction: "reverse",
-      flashcardData: word.flashcard_reverse,
-    }),
   ];
+
+  if (shouldCreateReverse) {
+    flashcards.push(
+      createFlashcardStatement({
+        dictionaryEntryId: word.id,
+        direction: "reverse",
+        flashcardData: word.flashcard_reverse,
+      })
+    );
+  }
 
   return { dictEntry, flashcards };
 }

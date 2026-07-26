@@ -34,12 +34,21 @@ export function parseImportData(data: unknown) {
 /**
  * Creates SQL statements for a single entry based on version.
  */
-export function createImportStatements(entry: unknown, version: number) {
+export function createImportStatements({
+  entry,
+  version,
+  createReverseByDefault = false,
+}: {
+  entry: unknown;
+  version: number;
+  createReverseByDefault?: boolean;
+}) {
   switch (version) {
     case 1:
-      return createImportStatementsV1(
-        entry as Parameters<typeof createImportStatementsV1>[0]
-      );
+      return createImportStatementsV1({
+        word: entry as Parameters<typeof createImportStatementsV1>[0]["word"],
+        createReverseByDefault,
+      });
     default:
       throw new Error(`Unsupported import version: ${version}`);
   }
