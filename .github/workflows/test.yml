@@ -19,10 +19,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # Pinned rather than read from .nvmrc, which is still on 20.11.1.
-          # Vitest 4 needs ^20.19 or >=22 -- on 20.11.1 it dies at startup with
-          # ERR_REQUIRE_ESM loading std-env.
-          node-version: "22"
+          node-version-file: ".nvmrc"
 
       - uses: pnpm/action-setup@v4
         with:
