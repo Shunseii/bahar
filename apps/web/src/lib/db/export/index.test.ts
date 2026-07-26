@@ -179,6 +179,18 @@ describe("transformForExport", () => {
     );
   });
 
+  it("exports the card's learning step position", () => {
+    const exported = unwrap(
+      transformForExport({
+        entry: makeRawEntry(),
+        flashcards: [makeFlashcardRow({ learning_steps: 2 })],
+        includeFlashcards: true,
+      })
+    );
+
+    expect(exported.flashcard?.learning_steps).toBe(2);
+  });
+
   it("preserves a never-reviewed card's null review fields", () => {
     const exported = unwrap(
       transformForExport({
@@ -210,6 +222,7 @@ describe("transformForExport", () => {
             scheduled_days: null,
             stability: null,
             state: null,
+            learning_steps: null,
           }),
         ],
         includeFlashcards: true,
@@ -217,6 +230,7 @@ describe("transformForExport", () => {
     );
 
     expect(exported.flashcard).toMatchObject({
+      learning_steps: 0,
       difficulty: 0,
       elapsed_days: 0,
       lapses: 0,

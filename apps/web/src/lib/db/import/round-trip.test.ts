@@ -293,6 +293,62 @@ describe("export -> import round trip against the real schema", () => {
     expect(cards[1]).toMatchObject({ reps: 3, difficulty: 4.1, state: 2 });
   });
 
+  it("carries a mid-learning card's step position across", async () => {
+    await seedEntry(source.db, { id: "e-steps" });
+    await seedCard(source.db, {
+      id: "c-steps",
+      entryId: "e-steps",
+      direction: "forward",
+      state: 1,
+      learningSteps: 2,
+    });
+
+    const exported = await exportAll({
+      db: source.db,
+      includeFlashcards: true,
+    });
+    await importAll({ db: target.db, data: exported });
+
+    const [card] = await cardsOf(target.db, "e-steps");
+
+    // Dropping this column would silently restart the card's learning sequence.
+    expect(card).toMatchObject({ state: 1, learning_steps: 2 });
+  });
+
+  it("clears a stale step position when the imported card is fresh", async () => {
+    await seedEntry(source.db, { id: "e-stale" });
+    await seedCard(source.db, {
+      id: "c-stale-src",
+      entryId: "e-stale",
+      direction: "forward",
+      state: 0,
+      reps: 0,
+      learningSteps: 0,
+    });
+
+    await seedEntry(target.db, { id: "e-stale" });
+    await seedCard(target.db, {
+      id: "c-stale-existing",
+      entryId: "e-stale",
+      direction: "forward",
+      state: 1,
+      reps: 9,
+      learningSteps: 3,
+    });
+
+    const exported = await exportAll({
+      db: source.db,
+      includeFlashcards: true,
+    });
+    await importAll({ db: target.db, data: exported });
+
+    const [card] = await cardsOf(target.db, "e-stale");
+
+    // The upsert resets the rest of the FSRS state, so the step position has to
+    // come along or the card claims NEW while sitting three steps into learning.
+    expect(card).toMatchObject({ state: 0, reps: 0, learning_steps: 0 });
+  });
+
   it("preserves the entry's own columns, including parsed json fields", async () => {
     await seedEntry(source.db, { id: "e-cols" });
     await seedCard(source.db, {
@@ -491,6 +547,19 @@ describe("export -> import round trip against the real schema", () => {
       ]);
       expect(cards[1]).toMatchObject({ reps: 5 });
     });
+  });
+
+  it("rejects an entry with no word type before writing anything", async () => {
+    const data = [{ id: "e-untyped", word: "قلم", translation: "pen" }];
+
+    // `dictionary_entries.type` is NOT NULL. Catching this during validation
+    // keeps it from surfacing as a constraint violation part-way through the
+    // insert transaction, which would take the rest of the batch down with it.
+    await expect(importAll({ db: target.db, data })).rejects.toThrow(
+      "Invalid v1 import data"
+    );
+
+    expect(await allEntryIds(target.db)).toHaveLength(0);
   });
 
   describe("committed sample exports", () => {

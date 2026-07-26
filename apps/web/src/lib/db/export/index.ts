@@ -33,7 +33,7 @@ export function transformForExport({
     word: converted.word,
     translation: converted.translation,
     definition: converted.definition ?? undefined,
-    type: converted.type ?? undefined,
+    type: converted.type,
     root: converted.root ?? undefined,
     tags: converted.tags ?? undefined,
     antonyms: converted.antonyms ?? undefined,
@@ -62,6 +62,7 @@ export function transformForExport({
         last_review_timestamp: fc.last_review_timestamp_ms
           ? Math.floor(fc.last_review_timestamp_ms / 1000)
           : null,
+        learning_steps: fc.learning_steps ?? 0,
         reps: fc.reps ?? 0,
         scheduled_days: fc.scheduled_days ?? 0,
         stability: fc.stability ?? 0,

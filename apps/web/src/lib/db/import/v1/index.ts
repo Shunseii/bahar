@@ -60,7 +60,7 @@ export function createImportStatements({
       word.word,
       word.translation,
       word.definition ?? null,
-      word.type ?? null,
+      word.type,
       word.root ? JSON.stringify(word.root) : null,
       word.tags ? JSON.stringify(word.tags) : null,
       word.antonyms ? JSON.stringify(word.antonyms) : null,
@@ -124,8 +124,9 @@ function createFlashcardStatement({
   return {
     sql: `INSERT INTO flashcards (
       id, dictionary_entry_id, difficulty, due, due_timestamp_ms, elapsed_days,
-      lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state, direction, is_hidden
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state,
+      learning_steps, direction, is_hidden
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(dictionary_entry_id, direction) DO UPDATE SET
       difficulty = excluded.difficulty,
       due = excluded.due,
@@ -137,7 +138,8 @@ function createFlashcardStatement({
       reps = excluded.reps,
       scheduled_days = excluded.scheduled_days,
       stability = excluded.stability,
-      state = excluded.state`,
+      state = excluded.state,
+      learning_steps = excluded.learning_steps`,
     args: [
       nanoid(),
       dictionaryEntryId,
@@ -152,6 +154,7 @@ function createFlashcardStatement({
       flashcardData?.scheduled_days ?? emptyCard.scheduled_days,
       flashcardData?.stability ?? emptyCard.stability,
       flashcardData?.state ?? emptyCard.state,
+      flashcardData?.learning_steps ?? emptyCard.learning_steps,
       direction,
       0, // is_hidden
     ],

@@ -40,6 +40,14 @@ const FlashcardSchema = z
         "A UNIX timestamp in seconds that represents the same date as `last_review`, if present."
       )
       .optional(),
+    learning_steps: z
+      .number()
+      .int()
+      .gte(0)
+      .describe(
+        "How many learning steps the card has already advanced through. Files written before this field existed default to 0."
+      )
+      .default(0),
     reps: z.number().int().gte(0).default(0),
     scheduled_days: z.number().int().gte(0).default(0),
     stability: z.number().gte(0).default(0),
@@ -76,10 +84,12 @@ const FullExportSchema = z.object({
     .describe("The definition of the word in Arabic.")
     .optional(),
   translation: z.string().describe("The English translation of the word."),
+  // Required, because `dictionary_entries.type` is NOT NULL and there is no
+  // honest default to pick. Rejecting here names the offending entry instead of
+  // letting the insert fail mid-transaction on a constraint violation.
   type: z
     .enum(["ism", "fi'l", "harf", "expression"])
-    .describe("The type of the word.")
-    .optional(),
+    .describe("The type of the word."),
   root: z
     .array(z.string())
     .describe("An array of letters representing the root letters of the word.")

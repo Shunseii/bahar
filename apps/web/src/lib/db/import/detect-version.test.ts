@@ -10,6 +10,7 @@ const VALID_ENTRY = {
   id: "entry-1",
   word: "كتاب",
   translation: "book",
+  type: "ism",
 };
 
 describe("detectVersion", () => {
@@ -101,6 +102,36 @@ describe("parseImportData", () => {
     expect(() => parseImportData([{ id: "entry-1", word: "كتاب" }])).toThrow(
       "Invalid v1 import data"
     );
+  });
+
+  it("rejects an entry with no word type", () => {
+    const { type: _omitted, ...withoutType } = VALID_ENTRY;
+
+    // dictionary_entries.type is NOT NULL, so this has to fail here rather than
+    // part-way through the insert transaction.
+    expect(() => parseImportData([withoutType])).toThrow(
+      "Invalid v1 import data"
+    );
+  });
+
+  it("rejects a word type outside the known set", () => {
+    expect(() => parseImportData([{ ...VALID_ENTRY, type: "verb" }])).toThrow(
+      "Invalid v1 import data"
+    );
+  });
+
+  it("defaults a flashcard's learning step position to zero", () => {
+    const { entries } = parseImportData([
+      {
+        ...VALID_ENTRY,
+        flashcard: {
+          due: "2025-12-01T04:26:40.315Z",
+          due_timestamp: 1_764_563_200,
+        },
+      },
+    ]);
+
+    expect(entries[0].flashcard?.learning_steps).toBe(0);
   });
 
   it("rejects a flashcard with a due date that is not a datetime", () => {

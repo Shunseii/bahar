@@ -22,6 +22,7 @@ const readFlashcard = (statement: Statement) => {
     scheduledDays,
     stability,
     state,
+    learningSteps,
     direction,
     isHidden,
   ] = statement.args;
@@ -40,6 +41,7 @@ const readFlashcard = (statement: Statement) => {
     scheduledDays,
     stability,
     state,
+    learningSteps,
     direction,
     isHidden,
   };
@@ -111,6 +113,7 @@ const REVIEWED_CARD: NonNullable<ImportWordV1["flashcard"]> = {
   lapses: 2,
   last_review: REVIEWED_AT,
   last_review_timestamp: toExportTimestamp(REVIEWED_AT),
+  learning_steps: 1,
   reps: 7,
   scheduled_days: 11,
   stability: 18.5,
@@ -121,6 +124,7 @@ const makeWord = (overrides: Partial<ImportWordV1> = {}): ImportWordV1 => ({
   id: "N3WMRETxCG0v84LOv09Yq",
   word: "مِمحاَة",
   translation: "eraser",
+  type: "ism",
   ...overrides,
 });
 
@@ -160,6 +164,7 @@ describe("createImportStatements (v1)", () => {
       scheduledDays: REVIEWED_CARD.scheduled_days,
       stability: REVIEWED_CARD.stability,
       state: REVIEWED_CARD.state,
+      learningSteps: REVIEWED_CARD.learning_steps,
       isHidden: 0,
     });
   });
@@ -178,6 +183,7 @@ describe("createImportStatements (v1)", () => {
     expect(flashcardFor(flashcards, "forward")).toMatchObject({
       reps: 0,
       state: 0,
+      learningSteps: 0,
       lastReview: null,
       lastReviewTimestampMs: null,
     });
@@ -208,6 +214,7 @@ describe("createImportStatements (v1)", () => {
         lapses: 0,
         elapsedDays: 0,
         scheduledDays: 0,
+        learningSteps: 0,
         lastReview: null,
         lastReviewTimestampMs: null,
         isHidden: 0,
@@ -219,6 +226,29 @@ describe("createImportStatements (v1)", () => {
 
       expect(directionsOf(flashcards)).toEqual(["forward"]);
     });
+  });
+
+  it("binds learning_steps so the upsert can reset a card's step position", () => {
+    const { flashcards } = createImportStatements({
+      word: makeWord({
+        flashcard: { ...REVIEWED_CARD, learning_steps: 2 },
+      }),
+    });
+
+    // Without this column in the statement the upsert would reset every other
+    // FSRS field while leaving a stale step position behind.
+    expect(flashcardFor(flashcards, "forward").learningSteps).toBe(2);
+    expect(flashcards[0].sql).toContain(
+      "learning_steps = excluded.learning_steps"
+    );
+  });
+
+  it("binds the word type, which the entries table requires", () => {
+    const { dictEntry } = createImportStatements({
+      word: makeWord({ type: "harf" }),
+    });
+
+    expect(readDictEntry(dictEntry).type).toBe("harf");
   });
 
   it("keeps createReverseByDefault from overriding explicit forward-only data", () => {
