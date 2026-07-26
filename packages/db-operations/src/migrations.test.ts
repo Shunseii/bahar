@@ -62,7 +62,10 @@ describe("per-user database migrations", () => {
     expect(migrations[0].description).toMatch(/^0000_/);
   });
 
-  it("applies as one script per migration, the way web and mobile do", async () => {
+  // The baseline: every migration is valid SQL and applies in order to a fresh
+  // database. Executing each file whole is also what the web and mobile
+  // appliers do, so this covers both questions at once.
+  it("applies every migration in order to a fresh database", async () => {
     const db = await connect({ path: ":memory:" });
 
     try {
