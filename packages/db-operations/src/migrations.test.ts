@@ -44,6 +44,29 @@ describe("per-user database migrations", () => {
     }
   });
 
+  /**
+   * The api applier splits a script on ";" before handing the statements to
+   * `batch()`, so a semicolon inside a comment splits that comment in two and
+   * the tail, no longer preceded by "--", gets parsed as SQL. Web and mobile
+   * execute the script whole and are unaffected.
+   *
+   * Guarding it here keeps a new migration from being written that only fails
+   * once the api applies it. Remove this once BAH-188 lands and the api stops
+   * splitting.
+   */
+  it("keeps the scripts free of semicolons inside comments", () => {
+    for (const migration of migrations) {
+      const offending = migration.sql
+        .split("\n")
+        .filter((line) => line.trim().startsWith("--") && line.includes(";"));
+
+      expect(
+        offending,
+        `${migration.description} has a comment containing ";", which the api applier's split would break apart`
+      ).toEqual([]);
+    }
+  });
+
   it("leaves the schema the operations expect", async () => {
     const db = await connect({ path: ":memory:" });
 
