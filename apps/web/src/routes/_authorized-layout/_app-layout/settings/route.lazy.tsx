@@ -540,8 +540,9 @@ const Settings = () => {
                       share your dictionary.
                       <br />
                       <br />
-                      <strong>Warning</strong>: Importing your file without
-                      flashcards will reset all of your flashcards.
+                      <strong>Warning</strong>: Importing a file without
+                      flashcards resets the progress on every card of every word
+                      it contains.
                     </Trans>
                   </DialogDescription>
                 </DialogHeader>

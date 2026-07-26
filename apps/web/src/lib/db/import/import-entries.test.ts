@@ -29,26 +29,21 @@ const countCards = async (db: TestDb["db"]) => {
 };
 
 /**
- * Wraps a real database so the nth statement fails, standing in for any runtime
- * error part-way through a batch -- a constraint violation, a closed connection,
- * a disk problem.
+ * Wraps a real database so every write touching one entry fails, standing in for
+ * any runtime error part-way through a batch: a constraint violation, a closed
+ * connection, a disk problem.
+ *
+ * Targeting an entry rather than the nth statement keeps these tests readable
+ * and stable -- how many statements an entry costs is an implementation detail
+ * that has changed before.
  */
-const failOnNthStatement = (db: TestDb["db"], n: number) => {
-  let calls = 0;
-
-  return {
-    run: (sql: string, args: unknown[]) => {
-      calls += 1;
-
-      if (calls === n) {
-        return Promise.reject(new Error("statement failed"));
-      }
-
-      return db.run(sql, args);
-    },
-    transaction: db.transaction.bind(db),
-  };
-};
+const failOnEntry = (db: TestDb["db"], entryId: string) => ({
+  run: (sql: string, args: unknown[]) =>
+    args.includes(entryId)
+      ? Promise.reject(new Error(`write failed for ${entryId}`))
+      : db.run(sql, args),
+  transaction: db.transaction.bind(db),
+});
 
 describe("importEntries", () => {
   let testDb: TestDb;
@@ -110,8 +105,6 @@ describe("importEntries", () => {
       onProgress: (update) => progress.push(update),
     });
 
-    // The leading 0 lets the caller render a determinate bar before the first
-    // batch lands, which on a large import is several seconds.
     expect(progress).toEqual([
       { current: 0, total: 3 },
       { current: 1, total: 3 },
@@ -143,8 +136,11 @@ describe("importEntries", () => {
     });
 
     expect(result).toEqual({ entryCount: 0, batchCount: 0 });
-    expect(progress).toEqual([{ current: 0, total: 0 }]);
     expect(await countEntries(testDb.db)).toBe(0);
+
+    // No progress at all rather than 0 of 0: callers divide current by total to
+    // render a percentage, and the settings page showed NaN% for an empty file.
+    expect(progress).toEqual([]);
   });
 
   it("rejects on an unsupported version before touching the database", async () => {
@@ -160,11 +156,17 @@ describe("importEntries", () => {
     expect(await countEntries(testDb.db)).toBe(0);
   });
 
-  describe("when a statement fails part-way through", () => {
-    it("rolls back the batch it was in", async () => {
-      // Each entry writes two statements, so the 5th lands inside the third
-      // entry of the batch, after two have already been written.
-      const db = failOnNthStatement(testDb.db, 5);
+  /**
+   * Each batch is its own transaction, so a failure part-way through a large
+   * file leaves the import partial: batches before it stand, the failing batch
+   * writes nothing, and the ones after it never run. Re-running the same file
+   * upserts over whatever landed.
+   */
+  describe("when a write fails part-way through", () => {
+    it("writes nothing from the batch the failure was in", async () => {
+      // The 3rd entry fails, so its two predecessors are already written when
+      // the transaction unwinds.
+      const db = failOnEntry(testDb.db, "entry-2");
 
       await expect(
         importEntries({
@@ -174,16 +176,16 @@ describe("importEntries", () => {
           createReverseByDefault: false,
           batchSize: 4,
         })
-      ).rejects.toThrow("statement failed");
+      ).rejects.toThrow("write failed for entry-2");
 
       expect(await countEntries(testDb.db)).toBe(0);
       expect(await countCards(testDb.db)).toBe(0);
     });
 
-    it("keeps the batches that already committed", async () => {
-      // Batches of 2 means 4 statements per batch, so failing on the 5th puts
-      // the error in the second batch with the first already committed.
-      const db = failOnNthStatement(testDb.db, 5);
+    it("keeps the entries from batches that finished first", async () => {
+      // Batches of two put the failing entry in the second batch, with the
+      // first already committed.
+      const db = failOnEntry(testDb.db, "entry-2");
 
       await expect(
         importEntries({
@@ -193,15 +195,15 @@ describe("importEntries", () => {
           createReverseByDefault: false,
           batchSize: 2,
         })
-      ).rejects.toThrow("statement failed");
+      ).rejects.toThrow("write failed for entry-2");
 
-      // Partial import is the accepted behaviour: committed batches stay, and
-      // re-running the file upserts over them.
       expect(await countEntries(testDb.db)).toBe(2);
     });
 
-    it("stops rather than carrying on to later batches", async () => {
-      const db = failOnNthStatement(testDb.db, 5);
+    it("never runs the batches queued behind the failure", async () => {
+      // Ten entries in batches of two is five batches. The failure is in the
+      // second, so three more are queued and none of them may write.
+      const db = failOnEntry(testDb.db, "entry-2");
 
       await expect(
         importEntries({
@@ -211,7 +213,7 @@ describe("importEntries", () => {
           createReverseByDefault: false,
           batchSize: 2,
         })
-      ).rejects.toThrow("statement failed");
+      ).rejects.toThrow("write failed for entry-2");
 
       expect(await countEntries(testDb.db)).toBe(2);
     });

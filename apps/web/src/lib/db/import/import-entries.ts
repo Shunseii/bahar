@@ -45,6 +45,12 @@ export const importEntries = async ({
 }): Promise<{ entryCount: number; batchCount: number }> => {
   const batches = [...batchArray(entries, batchSize)];
 
+  if (batches.length === 0) {
+    return { entryCount: 0, batchCount: 0 };
+  }
+
+  // Reported before the first batch so a caller can render a determinate bar
+  // during what is, on a large import, several seconds of work.
   onProgress?.({ current: 0, total: batches.length });
 
   const insertBatch = db.transaction(async (batch: ImportEntry[]) => {

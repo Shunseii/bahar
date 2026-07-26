@@ -10,12 +10,19 @@ jobs:
   test:
     name: Run test suites
     runs-on: ubuntu-latest
+    # Nothing here writes to the repository, and the job runs code authored in
+    # the pull request.
+    permissions:
+      contents: read
     # A newer push to the same branch makes the in-flight run redundant.
     concurrency:
       group: tests-${{ github.ref }}
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Keeps the checkout token out of the workspace the test run can read.
+          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:

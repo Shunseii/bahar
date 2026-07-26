@@ -84,11 +84,21 @@ const readDictEntry = (statement: Statement) => {
   };
 };
 
-const directionsOf = (statements: Statement[]) =>
-  statements.map((statement) => readFlashcard(statement).direction);
+/** Cards the statements would create, as opposed to merely reset. */
+const insertedDirectionsOf = (statements: Statement[]) =>
+  statements
+    .filter((statement) => statement.sql.startsWith("INSERT INTO flashcards"))
+    .map((statement) => readFlashcard(statement).direction);
+
+/** Cards the statements would reset only if they already exist. */
+const resetDirectionsOf = (statements: Statement[]) =>
+  statements
+    .filter((statement) => statement.sql.startsWith("UPDATE flashcards"))
+    .map((statement) => statement.args.at(-1));
 
 const flashcardFor = (statements: Statement[], direction: string) => {
   const match = statements
+    .filter((statement) => statement.sql.startsWith("INSERT INTO flashcards"))
     .map(readFlashcard)
     .find((flashcard) => flashcard.direction === direction);
 
@@ -134,9 +144,11 @@ describe("createImportStatements (v1)", () => {
       word: makeWord({ flashcard: REVIEWED_CARD }),
     });
 
-    // A forward-only export means the user had reverse turned off, and reverse
-    // existence is row presence, so no reverse statement may be emitted.
-    expect(directionsOf(flashcards)).toEqual(["forward"]);
+    // A forward-only export means the user had reverse turned off, so no reverse
+    // card may be created -- but an existing one is reset rather than left with
+    // progress its pair just lost.
+    expect(insertedDirectionsOf(flashcards)).toEqual(["forward"]);
+    expect(resetDirectionsOf(flashcards)).toEqual(["reverse"]);
   });
 
   it("creates a forward and a reverse card for an entry with reverse flashcard data", () => {
@@ -147,7 +159,7 @@ describe("createImportStatements (v1)", () => {
       }),
     });
 
-    expect(directionsOf(flashcards)).toEqual(["forward", "reverse"]);
+    expect(insertedDirectionsOf(flashcards)).toEqual(["forward", "reverse"]);
 
     const reverse = flashcardFor(flashcards, "reverse");
 
@@ -175,7 +187,7 @@ describe("createImportStatements (v1)", () => {
     });
 
     // Forward is unconditional, and present reverse data is still honoured.
-    expect(directionsOf(flashcards)).toEqual(["forward", "reverse"]);
+    expect(insertedDirectionsOf(flashcards)).toEqual(["forward", "reverse"]);
 
     expect(flashcardFor(flashcards, "reverse").reps).toBe(REVIEWED_CARD.reps);
 
@@ -196,7 +208,7 @@ describe("createImportStatements (v1)", () => {
         createReverseByDefault: false,
       });
 
-      expect(directionsOf(flashcards)).toEqual(["forward"]);
+      expect(insertedDirectionsOf(flashcards)).toEqual(["forward"]);
     });
 
     it("creates a forward and a reverse card when createReverseByDefault is on", () => {
@@ -205,7 +217,7 @@ describe("createImportStatements (v1)", () => {
         createReverseByDefault: true,
       });
 
-      expect(directionsOf(flashcards)).toEqual(["forward", "reverse"]);
+      expect(insertedDirectionsOf(flashcards)).toEqual(["forward", "reverse"]);
 
       // The export carried no FSRS state, so both cards are born fresh.
       expect(flashcardFor(flashcards, "reverse")).toMatchObject({
@@ -224,7 +236,7 @@ describe("createImportStatements (v1)", () => {
     it("defaults createReverseByDefault to off when omitted", () => {
       const { flashcards } = createImportStatements({ word: makeWord() });
 
-      expect(directionsOf(flashcards)).toEqual(["forward"]);
+      expect(insertedDirectionsOf(flashcards)).toEqual(["forward"]);
     });
   });
 
@@ -259,7 +271,8 @@ describe("createImportStatements (v1)", () => {
 
     // Flashcard data in the file is authoritative and wins over the account
     // default.
-    expect(directionsOf(flashcards)).toEqual(["forward"]);
+    expect(insertedDirectionsOf(flashcards)).toEqual(["forward"]);
+    expect(resetDirectionsOf(flashcards)).toEqual(["reverse"]);
   });
 
   it("gives every flashcard statement its own id scoped to the entry", () => {

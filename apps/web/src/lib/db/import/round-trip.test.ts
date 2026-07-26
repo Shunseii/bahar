@@ -490,7 +490,7 @@ describe("export -> import round trip against the real schema", () => {
       expect(cards[0]).toMatchObject({ reps: 12, difficulty: 8.25 });
     });
 
-    it("leaves an existing reverse card alone when the file is forward-only", async () => {
+    it("resets an existing reverse card the file has no state for", async () => {
       await seedEntry(source.db, { id: "e-keep" });
       await seedCard(source.db, {
         id: "c-keep-fwd",
@@ -504,6 +504,8 @@ describe("export -> import round trip against the real schema", () => {
         entryId: "e-keep",
         direction: "reverse",
         reps: 5,
+        state: 2,
+        learningSteps: 2,
       });
 
       const exported = await exportAll({
@@ -512,14 +514,66 @@ describe("export -> import round trip against the real schema", () => {
       });
       await importAll({ db: target.db, data: exported });
 
-      // Import is a merge, not a mirror: dropping the reverse row would discard
-      // the FSRS progress on it, so the card stays with its own state.
       const cards = await cardsOf(target.db, "e-keep");
+
+      // The row survives -- which cards a word has stays the user's choice, and
+      // the file was forward-only, so it cannot ask for a reverse card to exist.
       expect(cards.map((card) => card.direction)).toEqual([
         "forward",
         "reverse",
       ]);
-      expect(cards[1]).toMatchObject({ reps: 5 });
+
+      // Its schedule does not survive. Wiping the forward card's progress while
+      // leaving its pair's intact would leave the word in a state the user never
+      // reached.
+      expect(cards[1]).toMatchObject({
+        reps: 0,
+        state: 0,
+        learning_steps: 0,
+        last_review: null,
+      });
+    });
+
+    it("still creates no reverse card when the account default is on", async () => {
+      await seedEntry(source.db, { id: "e-fwd-only" });
+      await seedCard(source.db, {
+        id: "c-fwd-only",
+        entryId: "e-fwd-only",
+        direction: "forward",
+      });
+
+      const exported = await exportAll({
+        db: source.db,
+        includeFlashcards: true,
+      });
+      await importAll({
+        db: target.db,
+        data: exported,
+        createReverseByDefault: true,
+      });
+
+      // The account default only applies to entries that carry no flashcard
+      // state at all. This file carries forward state, which says reverse was
+      // switched off for the word.
+      expect(await directionsOf(target.db, "e-fwd-only")).toEqual(["forward"]);
+    });
+
+    it("does not create a reverse card the file has no state for", async () => {
+      await seedEntry(source.db, { id: "e-none" });
+      await seedCard(source.db, {
+        id: "c-none-fwd",
+        entryId: "e-none",
+        direction: "forward",
+      });
+
+      const exported = await exportAll({
+        db: source.db,
+        includeFlashcards: true,
+      });
+      await importAll({ db: target.db, data: exported });
+
+      // The reset is an UPDATE, so it is a no-op when the row is absent.
+      expect(await directionsOf(target.db, "e-none")).toEqual(["forward"]);
     });
   });
 
