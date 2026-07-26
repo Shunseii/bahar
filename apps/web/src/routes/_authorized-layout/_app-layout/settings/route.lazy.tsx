@@ -44,8 +44,7 @@ import { authClient } from "@/lib/auth-client";
 import { deleteLocalDatabase, ensureDb, getDrizzleDb } from "@/lib/db";
 import { transformForExport } from "@/lib/db/export";
 import {
-  batchArray,
-  createImportStatements,
+  importEntries,
   parseImportData,
   readFileAsText,
 } from "@/lib/db/import";
@@ -416,14 +415,6 @@ const Settings = () => {
                   const { version, entries: validatedDictionary } =
                     parsedImport;
 
-                  const BATCH_SIZE = 100;
-                  const batches = [
-                    ...batchArray(validatedDictionary, BATCH_SIZE),
-                  ];
-                  const totalBatches = batches.length;
-
-                  setImportProgress({ current: 0, total: totalBatches });
-
                   // Entries exported without flashcards carry no reverse
                   // information, so they follow the account default the same
                   // way a freshly added word does.
@@ -435,32 +426,13 @@ const Settings = () => {
                   await enqueueDbOperation(async () => {
                     const db = await ensureDb();
 
-                    const insertBatch = db.transaction(
-                      async (batch: typeof validatedDictionary) => {
-                        for (const word of batch) {
-                          const { dictEntry, flashcards } =
-                            createImportStatements({
-                              entry: word,
-                              version,
-                              createReverseByDefault,
-                            });
-
-                          await db.run(dictEntry.sql, dictEntry.args);
-
-                          for (const flashcard of flashcards) {
-                            await db.run(flashcard.sql, flashcard.args);
-                          }
-                        }
-                      }
-                    );
-
-                    for (let i = 0; i < batches.length; i++) {
-                      await insertBatch(batches[i]);
-                      setImportProgress({
-                        current: i + 1,
-                        total: totalBatches,
-                      });
-                    }
+                    await importEntries({
+                      db,
+                      entries: validatedDictionary,
+                      version,
+                      createReverseByDefault,
+                      onProgress: setImportProgress,
+                    });
                   });
 
                   await enqueueSyncOperation(async () => {

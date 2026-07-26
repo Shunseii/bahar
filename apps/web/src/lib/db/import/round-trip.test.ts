@@ -11,7 +11,7 @@ import type {
 } from "@bahar/drizzle-user-db-schemas";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { transformForExport } from "../export";
-import { createImportStatements, parseImportData } from "./index";
+import { importEntries, parseImportData } from "./index";
 import type { ImportWordV1 } from "./v1/schema";
 
 const FIXTURES_DIR = join(dirname(fileURLToPath(import.meta.url)), "v1");
@@ -57,8 +57,7 @@ const exportAll = async ({
 };
 
 /**
- * Mirrors the import loop in the settings route: validate the file, then run the
- * entry statement followed by every flashcard statement.
+ * The same two calls the settings route makes: validate the file, then write it.
  */
 const importAll = async ({
   db,
@@ -71,19 +70,7 @@ const importAll = async ({
 }) => {
   const { version, entries } = parseImportData(data);
 
-  for (const entry of entries) {
-    const { dictEntry, flashcards } = createImportStatements({
-      entry,
-      version,
-      createReverseByDefault,
-    });
-
-    await db.run(dictEntry.sql, dictEntry.args);
-
-    for (const flashcard of flashcards) {
-      await db.run(flashcard.sql, flashcard.args);
-    }
-  }
+  return importEntries({ db, entries, version, createReverseByDefault });
 };
 
 type CardRow = {

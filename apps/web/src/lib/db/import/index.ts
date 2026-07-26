@@ -7,6 +7,7 @@ import { createImportStatements as createImportStatementsV1 } from "./v1";
 import { ImportSchemaV1 } from "./v1/schema";
 
 export { detectVersion, extractEntries, LATEST_VERSION };
+export { type ImportProgress, importEntries } from "./import-entries";
 export { createImportStatements as createImportStatementsV1 } from "./v1";
 export { ImportSchemaV1 } from "./v1/schema";
 
