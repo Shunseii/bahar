@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "prebuild": "npm run clean && npm run typecheck",
     "build:binary": "bun build --compile --minify-whitespace --minify-syntax --outfile bahar src/index.ts",
-    "dev": "bun run src/index.ts"
+    "dev": "bun run src/index.ts",
+    "test": "bun test"
   },
   "dependencies": {
     "@bahar/db-operations": "workspace:*",

@@ -3,8 +3,6 @@ import {
   decks,
   dictionaryEntries,
   flashcards,
-  type RawDictionaryEntry,
-  type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import {
@@ -42,13 +40,13 @@ import { useSearch } from "@/hooks/search/useSearch";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { deleteLocalDatabase, ensureDb, getDrizzleDb } from "@/lib/db";
-import { transformForExport } from "@/lib/db/export";
+import { exportEntries } from "@/lib/db/export";
 import {
-  batchArray,
-  createImportStatements,
+  importEntries,
   parseImportData,
   readFileAsText,
 } from "@/lib/db/import";
+import { settingsTable } from "@/lib/db/operations";
 import { ImportError, ImportErrorCode, parseImportErrors } from "@/lib/error";
 import { queryClient } from "@/lib/query";
 import { hydrateOramaDb, resetOramaDb } from "@/lib/search";
@@ -152,35 +150,18 @@ const Settings = () => {
 
         const db = await ensureDb();
 
-        const entries: RawDictionaryEntry[] = await db.all(
-          "SELECT * FROM dictionary_entries"
-        );
+        const { entries: exportData, skipped } = await exportEntries({
+          db,
+          includeFlashcards,
+        });
 
-        const exportData: unknown[] = [];
-
-        let skippedCount = 0;
-        for (const entry of entries) {
-          const flashcards: SelectFlashcard[] = await db.all(
-            "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction",
-            [entry.id]
+        for (const entry of skipped) {
+          console.warn(
+            `Skipping corrupted entry "${entry.word}" (${entry.entryId}): ${entry.field} - ${entry.reason}`
           );
-
-          const result = transformForExport({
-            entry,
-            flashcards,
-            includeFlashcards,
-          });
-
-          if (!result.ok) {
-            console.warn(
-              `Skipping corrupted entry "${result.error.word}" (${result.error.entryId}): ${result.error.field} - ${result.error.reason}`
-            );
-            skippedCount++;
-            continue;
-          }
-
-          exportData.push(result.value);
         }
+
+        const skippedCount = skipped.length;
 
         if (skippedCount > 0) {
           console.warn(
@@ -415,37 +396,24 @@ const Settings = () => {
                   const { version, entries: validatedDictionary } =
                     parsedImport;
 
-                  const BATCH_SIZE = 100;
-                  const batches = [
-                    ...batchArray(validatedDictionary, BATCH_SIZE),
-                  ];
-                  const totalBatches = batches.length;
-
-                  setImportProgress({ current: 0, total: totalBatches });
+                  // Entries exported without flashcards carry no reverse
+                  // information, so they follow the account default the same
+                  // way a freshly added word does.
+                  const importSettings =
+                    await settingsTable.getSettings.query();
+                  const createReverseByDefault =
+                    importSettings.create_reverse_by_default ?? false;
 
                   await enqueueDbOperation(async () => {
                     const db = await ensureDb();
 
-                    const insertBatch = db.transaction(
-                      async (batch: typeof validatedDictionary) => {
-                        for (const word of batch) {
-                          const { dictEntry, flashcards } =
-                            createImportStatements(word, version);
-
-                          await db.run(dictEntry.sql, dictEntry.args);
-                          await db.run(flashcards[0].sql, flashcards[0].args);
-                          await db.run(flashcards[1].sql, flashcards[1].args);
-                        }
-                      }
-                    );
-
-                    for (let i = 0; i < batches.length; i++) {
-                      await insertBatch(batches[i]);
-                      setImportProgress({
-                        current: i + 1,
-                        total: totalBatches,
-                      });
-                    }
+                    await importEntries({
+                      db,
+                      entries: validatedDictionary,
+                      version,
+                      createReverseByDefault,
+                      onProgress: setImportProgress,
+                    });
                   });
 
                   await enqueueSyncOperation(async () => {
@@ -572,8 +540,9 @@ const Settings = () => {
                       share your dictionary.
                       <br />
                       <br />
-                      <strong>Warning</strong>: Importing your file without
-                      flashcards will reset all of your flashcards.
+                      <strong>Warning</strong>: Importing a file without
+                      flashcards resets the progress on every card of every word
+                      it contains.
                     </Trans>
                   </DialogDescription>
                 </DialogHeader>
