@@ -5,12 +5,9 @@ import {
   createTestDb,
   type TestDb,
 } from "@bahar/db-operations/src/test/create-test-db";
-import type {
-  RawDictionaryEntry,
-  SelectFlashcard,
-} from "@bahar/drizzle-user-db-schemas";
+import type { RawDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { transformForExport } from "../export";
+import { exportEntries } from "../export";
 import { importEntries, parseImportData } from "./index";
 import type { ImportWordV1 } from "./v1/schema";
 
@@ -20,8 +17,9 @@ const readFixture = (name: string): unknown =>
   JSON.parse(readFileSync(join(FIXTURES_DIR, name), "utf8"));
 
 /**
- * Mirrors the export loop in the settings route: read every entry with its
- * flashcards ordered by direction, and transform each one.
+ * The route's own export path, plus the serialization step it performs when it
+ * writes the file. JSON drops keys whose value is undefined, so skipping this
+ * would feed the importer a shape no real file has.
  */
 const exportAll = async ({
   db,
@@ -30,33 +28,17 @@ const exportAll = async ({
   db: TestDb["db"];
   includeFlashcards: boolean;
 }): Promise<ImportWordV1[]> => {
-  const entries: RawDictionaryEntry[] = await db.all(
-    "SELECT * FROM dictionary_entries"
-  );
+  const { entries, skipped } = await exportEntries({ db, includeFlashcards });
 
-  const exported: ImportWordV1[] = [];
-
-  for (const entry of entries) {
-    const flashcards: SelectFlashcard[] = await db.all(
-      "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction",
-      [entry.id]
+  if (skipped.length > 0) {
+    throw new Error(
+      `Export skipped ${skipped.length} entries: ${skipped
+        .map((entry) => `${entry.entryId} ${entry.field}`)
+        .join(", ")}`
     );
-
-    const result = transformForExport({ entry, flashcards, includeFlashcards });
-
-    if (!result.ok) {
-      throw new Error(
-        `Export failed for ${entry.id}: ${result.error.field} ${result.error.reason}`
-      );
-    }
-
-    exported.push(result.value);
   }
 
-  // The route writes these to a file, so the importer never sees the in-memory
-  // objects. Serializing here keeps the two sides honest: JSON drops keys whose
-  // value is undefined, and rewrites anything that is not JSON-stable.
-  const serialized: ImportWordV1[] = JSON.parse(JSON.stringify(exported));
+  const serialized: ImportWordV1[] = JSON.parse(JSON.stringify(entries));
 
   return serialized;
 };

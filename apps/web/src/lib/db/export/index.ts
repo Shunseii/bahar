@@ -9,6 +9,8 @@ import type {
 import { err, ok, type Result } from "@bahar/result";
 import type { ImportWordV1 } from "../import/v1/schema";
 
+export { exportEntries } from "./export-entries";
+
 /**
  * Transforms a dictionary entry with its flashcards into export format.
  * Always exports in the latest format.

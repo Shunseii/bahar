@@ -3,8 +3,6 @@ import {
   decks,
   dictionaryEntries,
   flashcards,
-  type RawDictionaryEntry,
-  type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import {
@@ -42,7 +40,7 @@ import { useSearch } from "@/hooks/search/useSearch";
 import { api } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { deleteLocalDatabase, ensureDb, getDrizzleDb } from "@/lib/db";
-import { transformForExport } from "@/lib/db/export";
+import { exportEntries } from "@/lib/db/export";
 import {
   importEntries,
   parseImportData,
@@ -152,35 +150,18 @@ const Settings = () => {
 
         const db = await ensureDb();
 
-        const entries: RawDictionaryEntry[] = await db.all(
-          "SELECT * FROM dictionary_entries"
-        );
+        const { entries: exportData, skipped } = await exportEntries({
+          db,
+          includeFlashcards,
+        });
 
-        const exportData: unknown[] = [];
-
-        let skippedCount = 0;
-        for (const entry of entries) {
-          const flashcards: SelectFlashcard[] = await db.all(
-            "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction",
-            [entry.id]
+        for (const entry of skipped) {
+          console.warn(
+            `Skipping corrupted entry "${entry.word}" (${entry.entryId}): ${entry.field} - ${entry.reason}`
           );
-
-          const result = transformForExport({
-            entry,
-            flashcards,
-            includeFlashcards,
-          });
-
-          if (!result.ok) {
-            console.warn(
-              `Skipping corrupted entry "${result.error.word}" (${result.error.entryId}): ${result.error.field} - ${result.error.reason}`
-            );
-            skippedCount++;
-            continue;
-          }
-
-          exportData.push(result.value);
         }
+
+        const skippedCount = skipped.length;
 
         if (skippedCount > 0) {
           console.warn(
