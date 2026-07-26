@@ -9,11 +9,30 @@ interface SqlStatement {
 }
 
 /**
- * Creates SQL statements for inserting a dictionary entry and its flashcards
+ * Creates SQL statements for inserting a dictionary entry and its flashcards.
+ *
+ * The file governs scheduling state, not which cards exist. Forward is always
+ * upserted. Reverse is only created when the entry says it should have one:
+ * - the entry carries reverse flashcard data -> upsert it with that state
+ * - the entry carries forward-only flashcard data -> reverse was off, so do not
+ *   create one
+ * - the entry carries no flashcard data at all (export without flashcards)
+ *   -> fall back to `createReverseByDefault`, matching a fresh word add
+ *
+ * When no reverse card is to be created, an existing one is still reset, so an
+ * import does not leave one card's progress wiped and its pair's intact.
+ * Resetting rather than deleting keeps reverse switched on for words that have
+ * it -- which card exists stays the user's choice.
  */
-export function createImportStatements(word: ImportWordV1): {
+export function createImportStatements({
+  word,
+  createReverseByDefault = false,
+}: {
+  word: ImportWordV1;
+  createReverseByDefault?: boolean;
+}): {
   dictEntry: SqlStatement;
-  flashcards: [SqlStatement, SqlStatement];
+  flashcards: SqlStatement[];
 } {
   const now = new Date();
 
@@ -47,7 +66,7 @@ export function createImportStatements(word: ImportWordV1): {
       word.word,
       word.translation,
       word.definition ?? null,
-      word.type ?? null,
+      word.type,
       word.root ? JSON.stringify(word.root) : null,
       word.tags ? JSON.stringify(word.tags) : null,
       word.antonyms ? JSON.stringify(word.antonyms) : null,
@@ -60,17 +79,27 @@ export function createImportStatements(word: ImportWordV1): {
     ],
   };
 
-  const flashcards: [SqlStatement, SqlStatement] = [
+  const hasFlashcardData = Boolean(word.flashcard || word.flashcard_reverse);
+  const shouldCreateReverse = hasFlashcardData
+    ? Boolean(word.flashcard_reverse)
+    : createReverseByDefault;
+
+  const flashcards: SqlStatement[] = [
     createFlashcardStatement({
       dictionaryEntryId: word.id,
       direction: "forward",
       flashcardData: word.flashcard,
     }),
-    createFlashcardStatement({
-      dictionaryEntryId: word.id,
-      direction: "reverse",
-      flashcardData: word.flashcard_reverse,
-    }),
+    shouldCreateReverse
+      ? createFlashcardStatement({
+          dictionaryEntryId: word.id,
+          direction: "reverse",
+          flashcardData: word.flashcard_reverse,
+        })
+      : createFlashcardResetStatement({
+          dictionaryEntryId: word.id,
+          direction: "reverse",
+        }),
   ];
 
   return { dictEntry, flashcards };
@@ -101,8 +130,9 @@ function createFlashcardStatement({
   return {
     sql: `INSERT INTO flashcards (
       id, dictionary_entry_id, difficulty, due, due_timestamp_ms, elapsed_days,
-      lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state, direction, is_hidden
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      lapses, last_review, last_review_timestamp_ms, reps, scheduled_days, stability, state,
+      learning_steps, direction, is_hidden
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(dictionary_entry_id, direction) DO UPDATE SET
       difficulty = excluded.difficulty,
       due = excluded.due,
@@ -114,7 +144,8 @@ function createFlashcardStatement({
       reps = excluded.reps,
       scheduled_days = excluded.scheduled_days,
       stability = excluded.stability,
-      state = excluded.state`,
+      state = excluded.state,
+      learning_steps = excluded.learning_steps`,
     args: [
       nanoid(),
       dictionaryEntryId,
@@ -129,8 +160,56 @@ function createFlashcardStatement({
       flashcardData?.scheduled_days ?? emptyCard.scheduled_days,
       flashcardData?.stability ?? emptyCard.stability,
       flashcardData?.state ?? emptyCard.state,
+      flashcardData?.learning_steps ?? emptyCard.learning_steps,
       direction,
       0, // is_hidden
+    ],
+  };
+}
+
+/**
+ * Creates a statement that resets a card's scheduling state without creating
+ * one. An UPDATE rather than an upsert precisely because the row must stay
+ * absent when it is absent: the file decides scheduling, the user decides which
+ * cards exist.
+ */
+function createFlashcardResetStatement({
+  dictionaryEntryId,
+  direction,
+}: {
+  dictionaryEntryId: string;
+  direction: "forward" | "reverse";
+}): SqlStatement {
+  const emptyCard = createEmptyCard(new Date());
+
+  return {
+    sql: `UPDATE flashcards SET
+      difficulty = ?,
+      due = ?,
+      due_timestamp_ms = ?,
+      elapsed_days = ?,
+      lapses = ?,
+      last_review = NULL,
+      last_review_timestamp_ms = NULL,
+      reps = ?,
+      scheduled_days = ?,
+      stability = ?,
+      state = ?,
+      learning_steps = ?
+    WHERE dictionary_entry_id = ? AND direction = ?`,
+    args: [
+      emptyCard.difficulty,
+      emptyCard.due.toISOString(),
+      new Date(emptyCard.due).getTime(),
+      emptyCard.elapsed_days,
+      emptyCard.lapses,
+      emptyCard.reps,
+      emptyCard.scheduled_days,
+      emptyCard.stability,
+      emptyCard.state,
+      emptyCard.learning_steps,
+      dictionaryEntryId,
+      direction,
     ],
   };
 }

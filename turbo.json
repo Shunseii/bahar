@@ -18,6 +18,7 @@
       "cache": false
     },
     "type-check": {},
+    "test": {},
     "messages:extract": {
       "cache": false
     },

@@ -9,6 +9,8 @@ import type {
 import { err, ok, type Result } from "@bahar/result";
 import type { ImportWordV1 } from "../import/v1/schema";
 
+export { exportEntries } from "./export-entries";
+
 /**
  * Transforms a dictionary entry with its flashcards into export format.
  * Always exports in the latest format.
@@ -33,7 +35,7 @@ export function transformForExport({
     word: converted.word,
     translation: converted.translation,
     definition: converted.definition ?? undefined,
-    type: converted.type ?? undefined,
+    type: converted.type,
     root: converted.root ?? undefined,
     tags: converted.tags ?? undefined,
     antonyms: converted.antonyms ?? undefined,
@@ -62,6 +64,7 @@ export function transformForExport({
         last_review_timestamp: fc.last_review_timestamp_ms
           ? Math.floor(fc.last_review_timestamp_ms / 1000)
           : null,
+        learning_steps: fc.learning_steps ?? 0,
         reps: fc.reps ?? 0,
         scheduled_days: fc.scheduled_days ?? 0,
         stability: fc.stability ?? 0,
