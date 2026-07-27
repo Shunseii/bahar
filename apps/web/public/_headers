@@ -1,3 +1,18 @@
 /*
   Cross-Origin-Opener-Policy: same-origin
   Cross-Origin-Embedder-Policy: require-corp
+
+# Pages defaults sw.js to max-age=14400 like any other asset. Browsers bypass
+# their own HTTP cache when checking for a new worker, so that mostly doesn't
+# matter -- but an intermediary proxy honouring it can stall a deploy from
+# reaching a client for hours. The service worker is what pulls clients onto new
+# code, so it should never be served stale.
+/sw.js
+  Cache-Control: no-cache
+
+# Everything under /assets is content-hashed, so a changed file is a changed
+# URL and the old one is never requested again. Pages defaults these to four
+# hours, which makes repeat visitors revalidate every chunk several times a day
+# for nothing -- including the 11 MB wasm.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
