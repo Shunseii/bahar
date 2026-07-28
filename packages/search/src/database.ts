@@ -101,7 +101,7 @@ export const removeDocument = (db: DictionaryOrama, id: string) => {
 };
 
 /**
- * Reads a single document from the Orama database by id.
+ * Reads a single indexed document by id, without going through search.
  * Returns undefined when the document is not indexed.
  */
 export const getDocument = (db: DictionaryOrama, id: string) => {

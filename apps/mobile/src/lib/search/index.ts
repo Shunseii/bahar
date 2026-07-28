@@ -436,6 +436,14 @@ export const search = async (
   return searchDictionary(orama, term, options);
 };
 
+/**
+ * Reads an indexed document straight out of the search index by id.
+ */
+export const getIndexedEntry = async (id: string) => {
+  const orama = getOramaDb();
+  return getDocument(orama, id);
+};
+
 export {
   findHighlightPositions,
   highlightWithDiacritics,

@@ -459,6 +459,52 @@ export const makeFlashcardsTable = (
         queryKey: ["turso.flashcards.reset"],
       },
     },
+    /**
+     * Resets every flashcard a word actually has. Reverse cards are optional
+     * per word (see `createFlashcardPair` / `setReverse`), so callers cannot
+     * assume a forward/reverse pair -- asking for a direction that has no row
+     * throws, which would abandon the reset half-done.
+     */
+    resetEntry: {
+      mutation: ({
+        dictionary_entry_id,
+      }: {
+        dictionary_entry_id: string;
+      }): Promise<{ flashcard: SelectFlashcard; log: ReviewLog }[]> =>
+        enqueueDbOperation(async () => {
+          const drizzleDb = await getDb();
+          const now = new Date();
+          const scheduler = createScheduler();
+
+          const existing = await drizzleDb
+            .select()
+            .from(flashcards)
+            .where(eq(flashcards.dictionary_entry_id, dictionary_entry_id));
+
+          const results: { flashcard: SelectFlashcard; log: ReviewLog }[] = [];
+
+          for (const current of existing) {
+            const { card, log } = forgetFlashcard(scheduler, current, now);
+
+            const [res] = await drizzleDb
+              .update(flashcards)
+              .set(card)
+              .where(eq(flashcards.id, current.id))
+              .returning();
+
+            if (!res) {
+              throw new Error(`Flashcard not found: ${current.id}`);
+            }
+
+            results.push({ flashcard: res, log });
+          }
+
+          return results;
+        }),
+      cacheOptions: {
+        queryKey: ["turso.flashcards.resetEntry"],
+      },
+    },
     findByEntryId: {
       query: async (entryId: string): Promise<SelectFlashcard[]> => {
         const drizzleDb = await getDb();
