@@ -19,7 +19,6 @@ export default defineConfig({
     target: "es2022",
 
     rollupOptions: {
-      external: ["workbox-window"],
       output: {
         // Keep sync-wasm in its own chunk. It self-spawns a worker via
         // `new Worker(import.meta.url, { type: "module" })`; if its code is

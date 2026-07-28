@@ -40,6 +40,71 @@ const describeError = (error: unknown) => ({
 });
 
 /**
+ * A stale bundle running an older sync-wasm writes change-log entries using the
+ * older column layout. Every value lands one column off, so `table_name` (text)
+ * ends up in `change_type` -- and SQLite stores it as text regardless of the
+ * column's declared INTEGER type, so the write succeeds silently. The current
+ * engine then can't parse the entry, and since it can never be drained, every
+ * later push fails on it too. Sync stays broken across releases until the entry
+ * is removed.
+ *
+ * The class covers more than that corruption (a malformed payload reports the
+ * same way), so a match only means "worth attempting a repair", not "repairable".
+ */
+const POISONED_CHANGE_LOG_ERROR = "database tape error";
+
+const isPoisonedChangeLogError = (reason: string) =>
+  reason.includes(POISONED_CHANGE_LOG_ERROR);
+
+/**
+ * Removes only the malformed entries, so well-formed pending changes queued
+ * behind them still push. `typeof()` reports a value's real storage class rather
+ * than the column's declared type, which identifies exactly the rows written
+ * under the wrong layout.
+ *
+ * Writes made during the stale-bundle session go with those entries, and
+ * deletions from it reappear on the next pull. Both are bounded to that one
+ * session. No user table is touched.
+ *
+ * Returns whether anything was removed, so the caller only retries a sync that
+ * has a reason to now succeed.
+ */
+const repairPoisonedChangeLog = async () => {
+  if (!db) return false;
+
+  const result = await tryCatch(
+    async () => {
+      const before: { n: number } | undefined = await db!.get(
+        "SELECT COUNT(*) AS n FROM turso_cdc WHERE typeof(change_type) != 'integer';"
+      );
+      const poisoned = before?.n ?? 0;
+      if (poisoned === 0) return 0;
+
+      await db!.run(
+        "DELETE FROM turso_cdc WHERE typeof(change_type) != 'integer';"
+      );
+      return poisoned;
+    },
+    (error) => ({
+      type: "change_log_repair_failed",
+      ...describeError(error),
+    })
+  );
+
+  if (!result.ok) {
+    Sentry.captureException(
+      new Error(result.error.type, { cause: result.error }),
+      { fingerprint: ["db-init-error", result.error.type] }
+    );
+    return false;
+  }
+
+  Sentry.logger.info("Repaired poisoned change log", { removed: result.value });
+
+  return result.value > 0;
+};
+
+/**
  * Records the browser storage/runtime environment as Sentry context. This is the
  * layer with the least visibility for local-DB failures -- OPFS support, storage
  * quota/pressure, install mode (PWA standalone vs browser tab), cross-origin
@@ -52,9 +117,18 @@ const setStorageEnvContext = async () => {
     window.matchMedia("(display-mode: standalone)").matches ||
     (navigator as { standalone?: boolean }).standalone === true;
 
+  // Without this the origin is "best-effort" storage, which the browser may
+  // evict wholesale under device storage pressure -- taking the OPFS db with
+  // it. Writes that haven't synced yet exist nowhere else, so that loss is
+  // permanent. Chrome grants this silently for installed PWAs and high
+  // engagement rather than prompting; a denial just leaves us where we were.
+  const persistGranted =
+    (await navigator.storage?.persist?.().catch(() => null)) ?? null;
+
   Sentry.setContext("storage_env", {
     displayMode: standalone ? "standalone" : "browser",
     opfsSupported: typeof navigator.storage?.getDirectory === "function",
+    persistGranted,
     persisted:
       (await navigator.storage?.persisted?.().catch(() => null)) ?? null,
     quota: estimate?.quota ?? null,
@@ -418,7 +492,7 @@ const _initDbInternal = async () => {
     return migrationResult;
   }
 
-  const syncResult = await tryCatch(
+  let syncResult = await tryCatch(
     async () => {
       await db!.pull();
       await db!.push();
@@ -428,6 +502,27 @@ const _initDbInternal = async () => {
       ...describeError(error),
     })
   );
+
+  if (!syncResult.ok && isPoisonedChangeLogError(syncResult.error.reason)) {
+    const repaired = await repairPoisonedChangeLog();
+
+    if (repaired) {
+      syncResult = await tryCatch(
+        async () => {
+          await db!.pull();
+          await db!.push();
+        },
+        (error) => ({
+          type: "turso_remote_sync_failed",
+          ...describeError(error),
+        })
+      );
+      Sentry.logger.info("initDb: sync retried after change-log repair", {
+        ok: syncResult.ok,
+      });
+    }
+  }
+
   Sentry.logger.info("initDb: post-migration sync complete", {
     ok: syncResult.ok,
   });
