@@ -288,13 +288,19 @@ const CreatedKeyDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center gap-x-2">
-          <code className="min-w-0 flex-1 overflow-x-auto rounded-md bg-muted px-3 py-2 font-mono text-sm">
+        {/* The key is one long unbreakable token. It has to wrap rather than
+            scroll or the user can only ever see part of it, and `min-w-0` is
+            needed on the row too: DialogContent lays its children out in a
+            grid, whose items refuse to shrink below their content by default
+            and so push the whole dialog wider than its max-width. */}
+        <div className="flex min-w-0 items-start gap-x-2">
+          <code className="min-w-0 flex-1 break-all rounded-md bg-muted px-3 py-2 font-mono text-sm">
             {apiKey}
           </code>
 
           <Button
             aria-label={t`Copy API key`}
+            className="shrink-0"
             onClick={copyKey}
             size="icon"
             variant="outline"
