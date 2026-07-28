@@ -9,7 +9,10 @@ import { ChevronLeft, ChevronRight, Info } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import {
+  KeyboardAwareScrollView,
+  KeyboardStickyView,
+} from "react-native-keyboard-controller";
 import { toast } from "sonner-native";
 import { z } from "zod";
 import {
@@ -224,70 +227,78 @@ export default function AddWordScreen() {
 
   return (
     <FormProvider {...methods}>
-      <KeyboardAwareScrollView
-        bottomOffset={20}
-        className="flex-1 bg-background"
-        contentContainerClassName="pb-safe-offset-6"
-        keyboardShouldPersistTaps="handled"
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-      >
-        <View className="flex-1 px-4 pt-4">
-          <Breadcrumbs />
+      <View className="flex-1 bg-background">
+        <KeyboardAwareScrollView
+          bottomOffset={90}
+          className="flex-1"
+          contentContainerClassName="pb-6"
+          keyboardShouldPersistTaps="handled"
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+        >
+          <View className="flex-1 px-4 pt-4">
+            <Breadcrumbs />
 
-          <View className="gap-y-4">
-            <View className="flex-row items-center gap-4">
-              <BackButton />
-              <Text className="flex-1 font-semibold text-foreground text-xl tracking-tight">
-                <Trans>Add a new word</Trans>
-              </Text>
-            </View>
-
-            <AutofillButton />
-
-            <BasicDetailsSection />
-
-            {showMorphology && wordType === "ism" && <IsmMorphologySection />}
-
-            {showMorphology && wordType === "fi'l" && <VerbMorphologySection />}
-
-            <ExamplesSection />
-
-            {showAntonyms && <AntonymsSection />}
-
-            <CollapsibleCard title={t`Tags`}>
-              <Controller
-                control={control}
-                name="tags"
-                render={({ field: { onChange, value } }) => (
-                  <TagsInput onChange={onChange} value={value} />
-                )}
-              />
-            </CollapsibleCard>
-
-            <CollapsibleCard title={t`Flashcards`}>
-              <View className="flex-row items-center justify-between gap-3">
-                <View className="flex-1 gap-0.5">
-                  <Text className="font-medium text-foreground text-sm">
-                    <Trans>Create a reverse card</Trans>
-                  </Text>
-                  <Text className="text-muted-foreground text-xs">
-                    <Trans>English to Arabic, for this word.</Trans>
-                  </Text>
-                </View>
-
-                <SegmentedControl
-                  onValueChange={(v) => setCreateReverseOverride(v === "on")}
-                  options={[
-                    { value: "off", label: t`Off` },
-                    { value: "on", label: t`On` },
-                  ]}
-                  value={createReverse ? "on" : "off"}
-                />
+            <View className="gap-y-4">
+              <View className="flex-row items-center gap-4">
+                <BackButton />
+                <Text className="flex-1 font-semibold text-foreground text-xl tracking-tight">
+                  <Trans>Add a new word</Trans>
+                </Text>
               </View>
-            </CollapsibleCard>
 
-            <View className="flex-row items-center gap-2 self-center pt-2">
+              <AutofillButton />
+
+              <BasicDetailsSection />
+
+              {showMorphology && wordType === "ism" && <IsmMorphologySection />}
+
+              {showMorphology && wordType === "fi'l" && (
+                <VerbMorphologySection />
+              )}
+
+              <ExamplesSection />
+
+              {showAntonyms && <AntonymsSection />}
+
+              <CollapsibleCard title={t`Tags`}>
+                <Controller
+                  control={control}
+                  name="tags"
+                  render={({ field: { onChange, value } }) => (
+                    <TagsInput onChange={onChange} value={value} />
+                  )}
+                />
+              </CollapsibleCard>
+
+              <CollapsibleCard title={t`Flashcards`}>
+                <View className="flex-row items-center justify-between gap-3">
+                  <View className="flex-1 gap-0.5">
+                    <Text className="font-medium text-foreground text-sm">
+                      <Trans>Create a reverse card</Trans>
+                    </Text>
+                    <Text className="text-muted-foreground text-xs">
+                      <Trans>English to Arabic, for this word.</Trans>
+                    </Text>
+                  </View>
+
+                  <SegmentedControl
+                    onValueChange={(v) => setCreateReverseOverride(v === "on")}
+                    options={[
+                      { value: "off", label: t`Off` },
+                      { value: "on", label: t`On` },
+                    ]}
+                    value={createReverse ? "on" : "off"}
+                  />
+                </View>
+              </CollapsibleCard>
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
+
+        <KeyboardStickyView>
+          <View className="gap-3 border-border border-t bg-background px-4 pt-3 pb-safe-offset-3">
+            <View className="flex-row items-center gap-2 self-center">
               <Pressable
                 className="flex-row items-center gap-2"
                 onPress={() => setCreateMultiple(!createMultiple)}
@@ -313,7 +324,7 @@ export default function AddWordScreen() {
               </Pressable>
             </View>
 
-            <View className="flex-row items-center justify-center gap-3 pt-2">
+            <View className="flex-row items-center justify-center gap-3">
               <Button onPress={() => router.back()} variant="outline">
                 <Trans>Cancel</Trans>
               </Button>
@@ -330,8 +341,8 @@ export default function AddWordScreen() {
               </Button>
             </View>
           </View>
-        </View>
-      </KeyboardAwareScrollView>
+        </KeyboardStickyView>
+      </View>
     </FormProvider>
   );
 }
