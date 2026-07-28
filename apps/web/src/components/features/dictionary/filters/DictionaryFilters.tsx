@@ -28,7 +28,12 @@ import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 
-type SortOption = "relevance" | "updatedAt" | "createdAt" | "difficulty";
+type SortOption =
+  | "relevance"
+  | "updatedAt"
+  | "createdAt"
+  | "difficulty"
+  | "lastReviewed";
 
 const SortOptionLabel = ({ option }: { option: SortOption }) => {
   switch (option) {
@@ -40,6 +45,8 @@ const SortOptionLabel = ({ option }: { option: SortOption }) => {
       return <Trans>Recently added</Trans>;
     case "difficulty":
       return <Trans>Most difficult</Trans>;
+    case "lastReviewed":
+      return <Trans>Recently reviewed</Trans>;
   }
 };
 
@@ -48,7 +55,10 @@ const sortOptions: SortOption[] = [
   "updatedAt",
   "createdAt",
   "difficulty",
+  "lastReviewed",
 ];
+
+const PRO_ONLY_SORTS: SortOption[] = ["difficulty", "lastReviewed"];
 
 const useWordTypeLabels = (): Record<WordType, string> => {
   const { t } = useLingui();
@@ -261,7 +271,7 @@ export const DictionaryFilters = () => {
                 <SelectContent>
                   <SelectGroup>
                     {sortOptions.map((option) => {
-                      const isProOnly = option === "difficulty";
+                      const isProOnly = PRO_ONLY_SORTS.includes(option);
                       const isDisabled = isProOnly && isFreeUser;
 
                       return (

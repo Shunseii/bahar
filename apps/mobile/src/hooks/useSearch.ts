@@ -25,6 +25,7 @@ export const SORT_OPTIONS = [
   "updatedAt",
   "createdAt",
   "difficulty",
+  "lastReviewed",
 ] as const;
 
 export type SortOption = (typeof SORT_OPTIONS)[number];
@@ -40,6 +41,7 @@ const SORT_MAP: Record<string, { property: string; order: "ASC" | "DESC" }> = {
   createdAt: { property: "created_at_timestamp_ms", order: "DESC" },
   updatedAt: { property: "updated_at_timestamp_ms", order: "DESC" },
   difficulty: { property: "max_difficulty", order: "DESC" },
+  lastReviewed: { property: "last_review_timestamp_ms", order: "DESC" },
 };
 
 const hitsAtom = atom<SearchHit[] | null>(null);

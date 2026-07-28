@@ -21,6 +21,8 @@ import { type LayoutChangeEvent, Pressable, Text, View } from "react-native";
 import ReAnimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { type Grade, Rating } from "ts-fsrs";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
+import { useSearch } from "@/hooks/useSearch";
+import { markEntryReviewedInIndex } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -166,6 +168,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
 }) => {
   const colors = useThemeColors();
   const { formatNumber } = useFormatNumber();
+  const { reset: resetSearch } = useSearch();
   const [showAnswer, setShowAnswer] = useState(false);
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
   const [cards, setCards] = useState<FlashcardWithDictionaryEntry[]>([]);
@@ -371,6 +374,19 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       updates,
     });
 
+    // Keep the "recently reviewed" sort fresh without a full reindex. The grade
+    // just set this card's last_review to now, which is the most recent across
+    // the entry's cards in either direction.
+    if (updates.last_review_timestamp_ms !== null) {
+      await markEntryReviewedInIndex(
+        currentCard.dictionary_entry_id,
+        updates.last_review_timestamp_ms
+      );
+      // Drop the cached search results so the dictionary list re-sorts with the
+      // refreshed review timestamp next time it renders.
+      resetSearch();
+    }
+
     await progressTable.recordReview.mutation();
     queryClient.invalidateQueries({
       queryKey: progressTable.streak.cacheOptions.queryKey,
@@ -394,7 +410,14 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
           error: String(err),
         });
       });
-  }, [fsrsInput, scheduler, currentCard, pendingGrade, updateFlashcardLocal]);
+  }, [
+    fsrsInput,
+    scheduler,
+    currentCard,
+    pendingGrade,
+    updateFlashcardLocal,
+    resetSearch,
+  ]);
 
   if (status === "pending") {
     return (

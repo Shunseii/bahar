@@ -72,7 +72,8 @@ export const Route = createFileRoute("/_authorized-layout/_search-layout")({
       data.user.plan !== "pro" ||
       !activeStatuses.includes(data.user.subscriptionStatus ?? "");
 
-    if (isFreeUser && search.sort === "difficulty") {
+    const proOnlySorts = ["difficulty", "lastReviewed"];
+    if (isFreeUser && search.sort && proOnlySorts.includes(search.sort)) {
       throw redirect({
         to: location.pathname,
         search: { ...search, sort: undefined },

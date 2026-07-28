@@ -47,7 +47,10 @@ const SORT_OPTIONS: SortOption[] = [
   "updatedAt",
   "createdAt",
   "difficulty",
+  "lastReviewed",
 ];
+
+const PRO_ONLY_SORTS: SortOption[] = ["difficulty", "lastReviewed"];
 
 const useSortLabels = (): Record<SortOption, string> => {
   const { t } = useLingui();
@@ -56,6 +59,7 @@ const useSortLabels = (): Record<SortOption, string> => {
     updatedAt: t`Recently updated`,
     createdAt: t`Recently added`,
     difficulty: t`Most difficult`,
+    lastReviewed: t`Recently reviewed`,
   };
 };
 
@@ -371,7 +375,7 @@ const FiltersModal: FC<{
           >
             {SORT_OPTIONS.map((option) => {
               const isActive = draftSort === option;
-              const isProOnly = option === "difficulty";
+              const isProOnly = PRO_ONLY_SORTS.includes(option);
               const isDisabled = isProOnly && isFreeUser;
 
               return (
