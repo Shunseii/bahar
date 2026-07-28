@@ -218,6 +218,9 @@ function ThemeColorsInner({
                 options={{
                   headerShown: false,
                   animation: "slide_from_bottom",
+                  // Snappier than the platform default so the review screen
+                  // opens and closes quickly. Applies to both push and pop.
+                  animationDuration: 220,
                   // Disabled on iOS for parity with Android (no swipe-to-
                   // dismiss). Closing happens via the X button. Keeping the
                   // native gesture caused stuck-state bugs with horizontal
