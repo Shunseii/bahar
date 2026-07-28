@@ -65,18 +65,17 @@ const apiKeysQueryOptions = {
 } as const;
 
 /**
- * Expiry choices offered when creating a key. better-auth clamps custom
- * expiries to its `minExpiresIn`/`maxExpiresIn` window (1 to 365 days), so
- * these are the widest span the plugin accepts. There is deliberately no
- * "never expires" option -- the plugin only reaches a null `expiresAt` when
- * `keyExpiration.defaultExpiresIn` is unset, which would also uncap keys minted
- * by `bahar login`.
+ * Expiry choices offered when creating a key. better-auth clamps a custom
+ * expiry to its `minExpiresIn`/`maxExpiresIn` window (1 to 365 days), so a year
+ * is the longest finite option it accepts. "never" is the absence of an
+ * expiry rather than a longer one: the plugin leaves `expiresAt` null only when
+ * `expiresIn` is omitted entirely.
  */
-const EXPIRY_DAY_OPTIONS = ["7", "30", "90", "365"] as const;
+const EXPIRY_OPTIONS = ["7", "30", "90", "365", "never"] as const;
 
 const FormSchema = z.object({
   name: z.string().min(1),
-  expiryDays: z.enum(EXPIRY_DAY_OPTIONS),
+  expiry: z.enum(EXPIRY_OPTIONS),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
@@ -95,14 +94,19 @@ const CreateKeyDialog = ({
 
   const form = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
-    defaultValues: { name: "", expiryDays: "30" },
+    defaultValues: { name: "", expiry: "30" },
   });
 
   const { mutateAsync: createKey } = useMutation({
-    mutationFn: async ({ name, expiryDays }: FormValues) => {
+    mutationFn: async ({ name, expiry }: FormValues) => {
       const { data, error } = await authClient.apiKey.create({
         name,
-        expiresIn: Number(expiryDays) * SECONDS_IN_DAY,
+        // Omitted, not null: better-auth reads any falsy `expiresIn` as "use
+        // the configured default", and only a missing one leaves the key
+        // without an expiry.
+        ...(expiry === "never"
+          ? {}
+          : { expiresIn: Number(expiry) * SECONDS_IN_DAY }),
       });
 
       if (error || !data) {
@@ -179,7 +183,7 @@ const CreateKeyDialog = ({
 
             <FormField
               control={form.control}
-              name="expiryDays"
+              name="expiry"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
@@ -213,8 +217,21 @@ const CreateKeyDialog = ({
                       <SelectItem value="365">
                         <Trans>1 year</Trans>
                       </SelectItem>
+
+                      <SelectItem value="never">
+                        <Trans>Never</Trans>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
+
+                  {field.value === "never" && (
+                    <FormDescription>
+                      <Trans>
+                        This key stays valid until you revoke it. Use it only
+                        where a key can be stored securely.
+                      </Trans>
+                    </FormDescription>
+                  )}
 
                   <FormMessage />
                 </FormItem>
@@ -361,22 +378,22 @@ const ApiKeyRow = ({ apiKey }: { apiKey: ApiKey }) => {
             <Trans>Never used</Trans>
           )}
 
-          {expiresAt && (
-            <>
-              {" · "}
-              {isExpired ? (
-                <Trans>Expired</Trans>
-              ) : (
-                <Trans>
-                  Expires{" "}
-                  {
-                    intlFormatDistance(expiresAt, now, {
-                      locale: i18n.locale,
-                    }).label
-                  }
-                </Trans>
-              )}
-            </>
+          {" · "}
+          {expiresAt ? (
+            isExpired ? (
+              <Trans>Expired</Trans>
+            ) : (
+              <Trans>
+                Expires{" "}
+                {
+                  intlFormatDistance(expiresAt, now, {
+                    locale: i18n.locale,
+                  }).label
+                }
+              </Trans>
+            )
+          ) : (
+            <Trans>Never expires</Trans>
           )}
         </p>
       </div>
