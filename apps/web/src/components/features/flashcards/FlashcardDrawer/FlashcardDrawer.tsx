@@ -36,6 +36,7 @@ import {
   useState,
 } from "react";
 import { type Grade, Rating } from "ts-fsrs";
+import { useSearch } from "@/hooks/search/useSearch";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { api } from "@/lib/api";
@@ -45,6 +46,7 @@ import {
   progressTable,
 } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
+import { markEntryReviewedInIndex } from "@/lib/search";
 import { AnswerSide } from "../AnswerSide";
 import { QuestionSide } from "../QuestionSide";
 import { ReverseAnswerSide } from "../ReverseAnswerSide";
@@ -113,6 +115,8 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       selectedQueue,
     ],
   });
+
+  const { reset: resetSearch } = useSearch();
 
   const { mutateAsync: updateFlashcard } = useMutation({
     mutationFn: flashcardsTable.update.mutation,
@@ -226,8 +230,21 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         id: currentCard.id,
         updates: localUpdates,
       });
+
+      // Keep the "recently reviewed" sort fresh without a full reindex. The
+      // grade just set this card's last_review to now, which is the most recent
+      // across the entry's cards in either direction.
+      if (lastReviewTimestampMs !== null) {
+        markEntryReviewedInIndex(
+          currentCard.dictionary_entry_id,
+          lastReviewTimestampMs
+        );
+        // Drop the cached search results so the dictionary list re-sorts with
+        // the refreshed review timestamp next time it renders.
+        resetSearch();
+      }
     },
-    [currentCard, schedulingCards, updateFlashcard]
+    [currentCard, schedulingCards, updateFlashcard, resetSearch]
   );
 
   const gradeCard = useCallback(

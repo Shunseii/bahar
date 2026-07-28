@@ -14,7 +14,10 @@ import {
 import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import {
+  KeyboardAwareScrollView,
+  KeyboardStickyView,
+} from "react-native-keyboard-controller";
 import { toast } from "sonner-native";
 import { z } from "zod";
 import {
@@ -355,87 +358,93 @@ export default function EditWordScreen() {
 
   return (
     <FormProvider {...methods}>
-      <KeyboardAwareScrollView
-        bottomOffset={20}
-        className="flex-1 bg-background"
-        contentContainerClassName="pb-safe-offset-6"
-        keyboardShouldPersistTaps="handled"
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-      >
-        <View className="flex-1 px-4 pt-4">
-          <Breadcrumbs />
+      <View className="flex-1 bg-background">
+        <KeyboardAwareScrollView
+          bottomOffset={90}
+          className="flex-1"
+          contentContainerClassName="pb-6"
+          keyboardShouldPersistTaps="handled"
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+        >
+          <View className="flex-1 px-4 pt-4">
+            <Breadcrumbs />
 
-          <View className="gap-y-4">
-            <View className="flex-row items-center gap-4">
-              <BackButton />
-              <Text className="flex-1 font-semibold text-foreground text-xl tracking-tight">
-                <Trans>Edit word</Trans>
-              </Text>
-              <View className="flex-row items-center gap-1">
-                <Button
-                  disabled={resetFlashcardMutation.isPending}
-                  Icon={RotateCcw}
-                  onPress={handleResetFlashcard}
-                  size="icon"
-                  variant="ghost"
-                />
-                <Button
-                  disabled={deleteMutation.isPending}
-                  onPress={handleDelete}
-                  size="icon"
-                  variant="ghost"
-                >
-                  <Trash2 color={colors.destructive} size={20} />
-                </Button>
+            <View className="gap-y-4">
+              <View className="flex-row items-center gap-4">
+                <BackButton />
+                <Text className="flex-1 font-semibold text-foreground text-xl tracking-tight">
+                  <Trans>Edit word</Trans>
+                </Text>
+                <View className="flex-row items-center gap-1">
+                  <Button
+                    disabled={resetFlashcardMutation.isPending}
+                    Icon={RotateCcw}
+                    onPress={handleResetFlashcard}
+                    size="icon"
+                    variant="ghost"
+                  />
+                  <Button
+                    disabled={deleteMutation.isPending}
+                    onPress={handleDelete}
+                    size="icon"
+                    variant="ghost"
+                  >
+                    <Trash2 color={colors.destructive} size={20} />
+                  </Button>
+                </View>
               </View>
-            </View>
 
-            <AutofillButton />
+              <AutofillButton />
 
-            <BasicDetailsSection />
+              <BasicDetailsSection />
 
-            {showMorphology && wordType === "ism" && <IsmMorphologySection />}
+              {showMorphology && wordType === "ism" && <IsmMorphologySection />}
 
-            {showMorphology && wordType === "fi'l" && <VerbMorphologySection />}
+              {showMorphology && wordType === "fi'l" && (
+                <VerbMorphologySection />
+              )}
 
-            <ExamplesSection />
+              <ExamplesSection />
 
-            {showAntonyms && <AntonymsSection />}
+              {showAntonyms && <AntonymsSection />}
 
-            <CollapsibleCard title={t`Tags`}>
-              <Controller
-                control={control}
-                name="tags"
-                render={({ field: { onChange, value } }) => (
-                  <TagsInput onChange={onChange} value={value} />
-                )}
-              />
-            </CollapsibleCard>
+              <CollapsibleCard title={t`Tags`}>
+                <Controller
+                  control={control}
+                  name="tags"
+                  render={({ field: { onChange, value } }) => (
+                    <TagsInput onChange={onChange} value={value} />
+                  )}
+                />
+              </CollapsibleCard>
 
-            <CollapsibleCard title={t`Flashcards`}>
-              <ReverseToggle entryId={entry.id} />
-            </CollapsibleCard>
-
-            <View className="flex-row items-center justify-center gap-3 pt-2">
-              <Button onPress={() => router.back()} variant="outline">
-                <Trans>Cancel</Trans>
-              </Button>
-              <Button
-                disabled={isSubmitting || editMutation.isPending || !isDirty}
-                onPress={() => handleSubmit(onSubmit)()}
-                variant="default"
-              >
-                {editMutation.isPending ? (
-                  <ActivityIndicator color="white" size="small" />
-                ) : (
-                  <Trans>Save changes</Trans>
-                )}
-              </Button>
+              <CollapsibleCard title={t`Flashcards`}>
+                <ReverseToggle entryId={entry.id} />
+              </CollapsibleCard>
             </View>
           </View>
-        </View>
-      </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
+
+        <KeyboardStickyView>
+          <View className="flex-row items-center justify-center gap-3 border-border border-t bg-background px-4 pt-3 pb-safe-offset-3">
+            <Button onPress={() => router.back()} variant="outline">
+              <Trans>Cancel</Trans>
+            </Button>
+            <Button
+              disabled={isSubmitting || editMutation.isPending || !isDirty}
+              onPress={() => handleSubmit(onSubmit)()}
+              variant="default"
+            >
+              {editMutation.isPending ? (
+                <ActivityIndicator color="white" size="small" />
+              ) : (
+                <Trans>Save changes</Trans>
+              )}
+            </Button>
+          </View>
+        </KeyboardStickyView>
+      </View>
     </FormProvider>
   );
 }

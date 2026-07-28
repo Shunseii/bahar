@@ -12,7 +12,9 @@ import {
 import { err, ok } from "@bahar/result";
 import {
   createDictionaryDatabase,
+  getDocument,
   insertDocuments,
+  updateDocument,
 } from "@bahar/search/database";
 import type { DictionaryDocument, DictionaryOrama } from "@bahar/search/schema";
 import * as Sentry from "@sentry/react";
@@ -23,6 +25,54 @@ import { ensureDb, getDrizzleDb } from "../db";
 let oramaDb = createDictionaryDatabase();
 
 export const getOramaDb = () => oramaDb;
+
+/**
+ * Aggregates per-entry flashcard data that is folded into the search index:
+ * the hardest card's difficulty and the most recent review timestamp across
+ * either direction. Hidden cards are excluded.
+ */
+const buildFlashcardMaps = async () => {
+  const drizzleDb = getDrizzleDb();
+
+  const rows = await drizzleDb
+    .select({
+      entryId: flashcards.dictionary_entry_id,
+      maxDifficulty: max(flashcards.difficulty).mapWith(Number),
+      lastReviewed: max(flashcards.last_review_timestamp_ms).mapWith(Number),
+    })
+    .from(flashcards)
+    .where(eq(flashcards.is_hidden, false))
+    .groupBy(flashcards.dictionary_entry_id);
+
+  const difficultyMap = new Map(
+    rows.map((r) => [r.entryId, r.maxDifficulty ?? 0])
+  );
+  const lastReviewedMap = new Map(
+    rows.map((r) => [r.entryId, r.lastReviewed ?? 0])
+  );
+
+  return { difficultyMap, lastReviewedMap };
+};
+
+/**
+ * Reflects a flashcard grade in the search index so the "recently reviewed"
+ * sort stays fresh without a full reindex. The just-graded review timestamp is
+ * always the entry's most recent one (either direction), so it can be written
+ * directly. Reads the current document first to avoid dropping other fields,
+ * since Orama's update replaces the whole document.
+ */
+export const markEntryReviewedInIndex = (
+  entryId: string,
+  lastReviewTimestampMs: number
+) => {
+  const current = getDocument(oramaDb, entryId);
+  if (!current) return;
+
+  updateDocument(oramaDb, entryId, {
+    ...current,
+    last_review_timestamp_ms: lastReviewTimestampMs,
+  });
+};
 
 /**
  * Transforms a SelectDictionaryEntry into a DictionaryDocument for Orama.
@@ -85,20 +135,7 @@ export const hydrateOramaDb = async () => {
   const BATCH_SIZE = 100;
   const db = await ensureDb();
 
-  const drizzleDb = getDrizzleDb();
-
-  const difficultyRows = await drizzleDb
-    .select({
-      entryId: flashcards.dictionary_entry_id,
-      maxDifficulty: max(flashcards.difficulty).mapWith(Number),
-    })
-    .from(flashcards)
-    .where(eq(flashcards.is_hidden, false))
-    .groupBy(flashcards.dictionary_entry_id);
-
-  const difficultyMap = new Map(
-    difficultyRows.map((r) => [r.entryId, r.maxDifficulty ?? 0])
-  );
+  const { difficultyMap, lastReviewedMap } = await buildFlashcardMaps();
 
   let offset = 0;
   let skippedCount = 0;
@@ -201,6 +238,7 @@ export const hydrateOramaDb = async () => {
             created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
             updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
             max_difficulty: difficultyMap.get(entry.id) ?? 0,
+            last_review_timestamp_ms: lastReviewedMap.get(entry.id) ?? 0,
             definition: entry.definition ?? undefined,
             type: entry.type ?? undefined,
             root: rootResult.value ?? undefined,
@@ -280,20 +318,7 @@ export const rehydrateOramaDb = async () => {
   const db = await ensureDb();
   const newOramaDb = createDictionaryDatabase();
 
-  const drizzleDb = getDrizzleDb();
-
-  const difficultyRows = await drizzleDb
-    .select({
-      entryId: flashcards.dictionary_entry_id,
-      maxDifficulty: max(flashcards.difficulty).mapWith(Number),
-    })
-    .from(flashcards)
-    .where(eq(flashcards.is_hidden, false))
-    .groupBy(flashcards.dictionary_entry_id);
-
-  const difficultyMap = new Map(
-    difficultyRows.map((r) => [r.entryId, r.maxDifficulty ?? 0])
-  );
+  const { difficultyMap, lastReviewedMap } = await buildFlashcardMaps();
 
   let offset = 0;
 
@@ -332,6 +357,7 @@ export const rehydrateOramaDb = async () => {
             created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
             updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
             max_difficulty: difficultyMap.get(entry.id) ?? 0,
+            last_review_timestamp_ms: lastReviewedMap.get(entry.id) ?? 0,
             definition: entry.definition ?? undefined,
             type: entry.type ?? undefined,
             root: rootResult.value ?? undefined,

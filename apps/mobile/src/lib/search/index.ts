@@ -17,6 +17,7 @@ import {
 import { err, ok, type Result } from "@bahar/result";
 import {
   createDictionaryDatabase,
+  getDocument,
   insertDocument,
   insertDocuments,
   removeDocument,
@@ -30,18 +31,30 @@ import { z } from "zod";
 import { ensureDb } from "../db";
 import { getDrizzleDb } from "../db/adapter";
 
-const buildDifficultyMap = async (): Promise<Map<string, number>> => {
+/**
+ * Aggregates per-entry flashcard data folded into the search index: the
+ * hardest card's difficulty and the most recent review timestamp across either
+ * direction. Hidden cards are excluded.
+ */
+const buildFlashcardMaps = async (): Promise<{
+  difficultyMap: Map<string, number>;
+  lastReviewedMap: Map<string, number>;
+}> => {
   const drizzleDb = getDrizzleDb();
   const rows = await drizzleDb
     .select({
       entryId: flashcards.dictionary_entry_id,
       maxDifficulty: max(flashcards.difficulty).mapWith(Number),
+      lastReviewed: max(flashcards.last_review_timestamp_ms).mapWith(Number),
     })
     .from(flashcards)
     .where(eq(flashcards.is_hidden, false))
     .groupBy(flashcards.dictionary_entry_id);
 
-  return new Map(rows.map((r) => [r.entryId, r.maxDifficulty ?? 0]));
+  return {
+    difficultyMap: new Map(rows.map((r) => [r.entryId, r.maxDifficulty ?? 0])),
+    lastReviewedMap: new Map(rows.map((r) => [r.entryId, r.lastReviewed ?? 0])),
+  };
 };
 
 const BATCH_SIZE = 500;
@@ -75,7 +88,7 @@ export const rehydrateOramaDb = async (): Promise<void> => {
   const db = await ensureDb();
   const newOramaDb = createDictionaryDatabase();
 
-  const difficultyMap = await buildDifficultyMap();
+  const { difficultyMap, lastReviewedMap } = await buildFlashcardMaps();
 
   let offset = 0;
 
@@ -132,6 +145,7 @@ export const rehydrateOramaDb = async (): Promise<void> => {
           updated_at: entry.updated_at ?? undefined,
           updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
           max_difficulty: difficultyMap.get(entry.id) ?? 0,
+          last_review_timestamp_ms: lastReviewedMap.get(entry.id) ?? 0,
           definition: entry.definition ?? undefined,
           type: entry.type ?? undefined,
           root: rootResult.value ?? undefined,
@@ -191,7 +205,7 @@ export const hydrateOramaDb = async (): Promise<
   const db = await ensureDb();
   const orama = getOramaDb();
 
-  const difficultyMap = await buildDifficultyMap();
+  const { difficultyMap, lastReviewedMap } = await buildFlashcardMaps();
 
   let offset = 0;
   let skippedCount = 0;
@@ -302,6 +316,7 @@ export const hydrateOramaDb = async (): Promise<
           updated_at: entry.updated_at ?? undefined,
           updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
           max_difficulty: difficultyMap.get(entry.id) ?? 0,
+          last_review_timestamp_ms: lastReviewedMap.get(entry.id) ?? 0,
           definition: entry.definition ?? undefined,
           type: entry.type ?? undefined,
           root: rootResult.value ?? undefined,
@@ -370,13 +385,36 @@ export const addToSearchIndex = async (
 
 /**
  * Updates a document in the Orama index.
+ *
+ * Orama's update replaces the whole document, so a partial update is merged
+ * over the current one. This keeps index-only fields (morphology, timestamps,
+ * max_difficulty, last_review_timestamp_ms) that callers don't pass from being
+ * dropped on edit. No-ops when the document isn't indexed.
  */
 export const updateSearchIndex = async (
   id: string,
   entry: Partial<DictionaryDocument>
 ): Promise<void> => {
   const orama = getOramaDb();
-  await updateDocument(orama, id, entry);
+  const current = getDocument(orama, id);
+  if (!current) return;
+
+  await updateDocument(orama, id, { ...current, ...entry });
+};
+
+/**
+ * Reflects a flashcard grade in the search index so the "recently reviewed"
+ * sort stays fresh without a full reindex. The just-graded review timestamp is
+ * always the entry's most recent one (either direction), so it can be written
+ * directly.
+ */
+export const markEntryReviewedInIndex = async (
+  entryId: string,
+  lastReviewTimestampMs: number
+): Promise<void> => {
+  await updateSearchIndex(entryId, {
+    last_review_timestamp_ms: lastReviewTimestampMs,
+  });
 };
 
 /**
