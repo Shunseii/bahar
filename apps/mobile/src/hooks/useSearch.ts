@@ -15,7 +15,7 @@ import type { DictionaryDocument } from "@bahar/search/schema";
 import type { InternalTypedDocument, Result, Results } from "@orama/orama";
 import * as Sentry from "@sentry/react-native";
 import { atom, useAtom, useSetAtom } from "jotai";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getOramaDb } from "@/lib/search";
 
 const SEARCH_RESULTS_PER_PAGE = 20;
@@ -136,6 +136,11 @@ export const useInfiniteSearch = (
 
   const paramsKey = JSON.stringify(params);
 
+  // Guards the reset effect below from double-firing on mount: the params
+  // effect already runs the first search, so the hits-reset effect should only
+  // re-search when hits are nulled AFTER a search has run (an external reset).
+  const hasSearchedRef = useRef(false);
+
   const whereFilter = useMemo<SearchDictionaryOptions["where"]>(() => {
     const tags = params.filters?.tags;
     const types = params.filters?.types;
@@ -157,6 +162,7 @@ export const useInfiniteSearch = (
   }, [params.term]);
 
   const performSearch = useCallback(() => {
+    hasSearchedRef.current = true;
     setIsLoading(true);
     try {
       const { hits: newHits, ...metadata } = search(
@@ -187,9 +193,10 @@ export const useInfiniteSearch = (
     return () => cancelAnimationFrame(id);
   }, [paramsKey, performSearch]);
 
-  // Re-search when hits are reset (e.g. after adding/editing/deleting a word)
+  // Re-search when hits are reset (e.g. after adding/editing/deleting a word).
+  // Skips the initial mount, where the params effect above owns the first search.
   useEffect(() => {
-    if (hits === null) {
+    if (hits === null && hasSearchedRef.current) {
       performSearch();
     }
   }, [hits, performSearch]);
