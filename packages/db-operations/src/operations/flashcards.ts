@@ -379,48 +379,6 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
         queryKey: ["turso.flashcards.counts"],
       },
     },
-    upcomingDue: {
-      /**
-       * Future due timestamps (unix ms) for non-hidden cards, within an optional
-       * horizon, sorted ascending -- one entry per card. Unlike `today`/`counts`
-       * (which hard-filter to `due <= now`), this reads the *upcoming* schedule.
-       * Used by mobile review-reminder notifications to know when cards next
-       * become due; callers bucket/aggregate the timestamps.
-       */
-      query: async ({
-        filters,
-        horizonMs,
-      }: {
-        filters?: SelectDeck["filters"];
-        horizonMs?: number;
-      } = {}): Promise<number[]> => {
-        const drizzleDb = await getDb();
-        const now = Date.now();
-
-        const conditions = [
-          gt(flashcards.due_timestamp_ms, now),
-          ...(horizonMs != null
-            ? [lte(flashcards.due_timestamp_ms, now + horizonMs)]
-            : []),
-          ...buildFilterConditions({ filters }),
-        ];
-
-        const rows = await drizzleDb
-          .select({ due_timestamp_ms: flashcards.due_timestamp_ms })
-          .from(flashcards)
-          .innerJoin(
-            dictionaryEntries,
-            eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
-          )
-          .where(and(...conditions))
-          .orderBy(flashcards.due_timestamp_ms);
-
-        return rows.map((row) => row.due_timestamp_ms);
-      },
-      cacheOptions: {
-        queryKey: ["turso.flashcards.upcomingDue"],
-      },
-    },
     create: {
       mutation: ({
         flashcard,
@@ -597,6 +555,52 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
         }),
       cacheOptions: {
         queryKey: ["turso.flashcards.reset"],
+      },
+    },
+    /**
+     * Resets every flashcard a word actually has. Reverse cards are optional
+     * per word (see `createFlashcardPair` / `setReverse`), so callers cannot
+     * assume a forward/reverse pair -- asking for a direction that has no row
+     * throws, which would abandon the reset half-done.
+     */
+    resetEntry: {
+      mutation: ({
+        dictionary_entry_id,
+      }: {
+        dictionary_entry_id: string;
+      }): Promise<{ flashcard: SelectFlashcard; log: ReviewLog }[]> =>
+        enqueueDbOperation(async () => {
+          const drizzleDb = await getDb();
+          const now = new Date();
+          const scheduler = createScheduler();
+
+          const existing = await drizzleDb
+            .select()
+            .from(flashcards)
+            .where(eq(flashcards.dictionary_entry_id, dictionary_entry_id));
+
+          const results: { flashcard: SelectFlashcard; log: ReviewLog }[] = [];
+
+          for (const current of existing) {
+            const { card, log } = forgetFlashcard(scheduler, current, now);
+
+            const [res] = await drizzleDb
+              .update(flashcards)
+              .set(card)
+              .where(eq(flashcards.id, current.id))
+              .returning();
+
+            if (!res) {
+              throw new Error(`Flashcard not found: ${current.id}`);
+            }
+
+            results.push({ flashcard: res, log });
+          }
+
+          return results;
+        }),
+      cacheOptions: {
+        queryKey: ["turso.flashcards.resetEntry"],
       },
     },
     findByEntryId: {

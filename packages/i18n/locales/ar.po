@@ -20,7 +20,7 @@ msgstr "{0, plural, one {علامة واحدة محددة} two {علامتان �
 
 #. placeholder {0}: cards.length
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:361
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:498
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:534
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {بطاقة متبقية} two {بطاقتان متبقيتان} few {بطاقات متبقية} many {بطاقة متبقية} other {بطاقة متبقية}}"
 
@@ -31,7 +31,7 @@ msgstr "{0, plural, one {بطاقة متبقية} two {بطاقتان متبقي
 #. placeholder {0}: postponeProgress.postponed
 #. placeholder {1}: postponeProgress.total
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:454
-#: ../../apps/mobile/src/app/(search)/settings.tsx:823
+#: ../../apps/mobile/src/app/(search)/settings.tsx:769
 msgid "{0} / {1} cards"
 msgstr "{0} / {1} بطاقات"
 
@@ -40,13 +40,13 @@ msgstr "{0} / {1} بطاقات"
 #~ msgstr "{0} بطاقات مستحقة"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:91
-#: ../../apps/mobile/src/app/(search)/settings.tsx:381
+#: ../../apps/mobile/src/app/(search)/settings.tsx:327
 #~ msgid "{0} cards have been rescheduled."
 #~ msgstr "تمت إعادة جدولة {0} بطاقات."
 
 #. placeholder {0}: lastProgress.postponed
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:176
-#: ../../apps/mobile/src/app/(search)/settings.tsx:466
+#: ../../apps/mobile/src/app/(search)/settings.tsx:412
 msgid "{0} cards have been spread over the next {windowDays} days."
 msgstr "تم توزيع {0} بطاقة على الأيام {windowDays} القادمة."
 
@@ -68,7 +68,7 @@ msgstr "{0} علامات محددة"
 #~ msgstr ""
 
 #. placeholder {0}: formatNumber(FLASHCARD_LIMIT)
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:494
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:530
 msgid "{0}+ cards"
 msgstr "{0}+ بطاقة"
 
@@ -223,7 +223,7 @@ msgstr "فعل."
 
 #. placeholder {0}: formatNumber(cardsPerDay)
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:405
-#: ../../apps/mobile/src/app/(search)/settings.tsx:807
+#: ../../apps/mobile/src/app/(search)/settings.tsx:753
 msgid "about {0} cards per day"
 msgstr "حوالي {0} بطاقة في اليوم"
 
@@ -356,7 +356,7 @@ msgid "All done for today!"
 msgstr "انتهيت لليوم!"
 
 #. placeholder {0}: formatNumber(counts?.total ?? 0)
-#: ../../apps/mobile/src/app/(search)/settings.tsx:586
+#: ../../apps/mobile/src/app/(search)/settings.tsx:532
 msgid "All overdue ({0})"
 msgstr "كل المتأخرة ({0})"
 
@@ -399,7 +399,7 @@ msgstr "سنوي — $٧/شهر"
 
 #: ../../apps/web/src/components/features/flashcards/ReverseAnswerSide.tsx:73
 #: ../../apps/web/src/components/features/flashcards/AnswerSide.tsx:45
-#: ../../apps/mobile/src/app/(search)/settings.tsx:580
+#: ../../apps/mobile/src/app/(search)/settings.tsx:526
 msgid "Answer"
 msgstr "الجواب"
 
@@ -430,12 +430,12 @@ msgstr "أية صيغ جمع للكلمة."
 msgid "Any words that have the same ID will be overwritten."
 msgstr "سيستبدل كل كلمات التي لديها نفس المعرف."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:647
+#: ../../apps/mobile/src/app/(search)/settings.tsx:593
 msgid "App language"
 msgstr "لغة التطبيق"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:307
-#: ../../apps/mobile/src/app/(search)/settings.tsx:618
+#: ../../apps/mobile/src/app/(search)/settings.tsx:564
 msgid "Appearance"
 msgstr "المظهر"
 
@@ -484,11 +484,11 @@ msgstr "الكلمة بالعربية"
 #~ msgid "Are you sure you want to delete \"{0}\"?"
 #~ msgstr "هل أنت متأكد من حذف \"{0}\"؟"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:172
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:169
 msgid "Are you sure you want to delete this word? It will be removed from your dictionary and its flashcards will be deleted.<0/><1/><2>This action cannot be undone.</2>"
 msgstr "هل أنت متأكد أنك تريد حذف هذه الكلمة؟ سيتم إزالتها من معجمك وسيتم حذف البطاقات بها.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
 
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:302
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:295
 msgid "Are you sure you want to delete this word? This action cannot be undone."
 msgstr "هل أنت متأكد من حذف هذه الكلمة؟ لا يمكن التراجع عن هذا الإجراء."
 
@@ -496,28 +496,28 @@ msgstr "هل أنت متأكد من حذف هذه الكلمة؟ لا يمكن �
 msgid "Are you sure you want to delete your dictionary? All your words will be deleted permanently. This action cannot be undone. Please make sure to export your dictionary before deleting it."
 msgstr "هل أنت متأكد من رغبتك في حذف معجمك؟ سيحذف جميع كلماتك بشكل دائم. لا يمكن التراجع عن هذا الإجراء. صدر معجمك قبل حذفه من فضلك."
 
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:322
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:315
 msgid "Are you sure you want to reset the flashcard for this word? This will reset all spaced repetition progress."
 msgstr "هل أنت متأكد من إعادة تعيين البطاقة لهذه الكلمة؟ سيتم إعادة تعيين كل تقدم التكرار المتباعد."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:120
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:117
 msgid "Are you sure you want to reset this flashcard's progress? The word entry in the dictionary will not be modified, but its corresponding flashcards will be treated as new ones.<0/><1/><2>This action cannot be undone.</2>"
 msgstr "هل أنت متأكد أنك تريد إعادة تعيين تقدم بطاقة هذه؟ لن يتم تعديل إدخال الكلمة في المعجم، ولكن سيتم التعامل مع بطاقات بها على أنها بطاقات جديدة.<0/><1/><2>لا يمكن التراجع عن هذا الإجراء.</2>"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:510
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:561
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:515
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:570
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:370
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:425
-#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:138
+#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:144
 msgid "Autofill"
 msgstr "تعبئة تلقائية"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:392
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:389
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:254
 msgid "Autofill failed"
 msgstr "فشلت التعبئة التلقائية"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:248
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:245
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:98
 msgid "Back"
 msgstr "رجوع"
@@ -536,23 +536,23 @@ msgstr "متأخرة"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:110
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:325
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:127
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:128
 msgid "Backlog"
 msgstr "المتراكمة"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:379
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:447
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:483
 msgid "Backlog cleared!"
 msgstr "تم مسح المتراكمات!"
 
 #. placeholder {0}: formatNumber(counts?.backlog ?? 0)
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:373
-#: ../../apps/mobile/src/app/(search)/settings.tsx:590
+#: ../../apps/mobile/src/app/(search)/settings.tsx:536
 msgid "Backlog only ({0})"
 msgstr "المتراكمة فقط ({0})"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:175
-#: ../../apps/mobile/src/app/(search)/settings.tsx:465
+#: ../../apps/mobile/src/app/(search)/settings.tsx:411
 msgid "Backlog rescheduled!"
 msgstr "تمت إعادة جدولة المتراكمات!"
 
@@ -581,7 +581,7 @@ msgid "Billed monthly"
 msgstr "يُدفع شهريًا"
 
 #: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:38
-#: ../../apps/mobile/src/app/(search)/settings.tsx:157
+#: ../../apps/mobile/src/app/(search)/settings.tsx:149
 msgid "Billing"
 msgstr "الفوترة"
 
@@ -599,27 +599,27 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:129
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:417
-#: ../../apps/mobile/src/app/(search)/settings.tsx:488
-#: ../../apps/mobile/src/app/(search)/settings.tsx:525
+#: ../../apps/mobile/src/app/(search)/settings.tsx:434
+#: ../../apps/mobile/src/app/(search)/settings.tsx:471
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:87
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:97
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:169
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:117
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:252
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:318
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:304
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:324
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:429
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:297
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:317
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:422
 msgid "Cancel"
 msgstr "ألغ"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:344
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:154
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:155
 msgid "Cards due today or recently"
 msgstr "بطاقات مستحقة اليوم أو مؤخرًا"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:346
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:152
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:153
 msgid "Cards overdue by more than 7 days"
 msgstr "بطاقات متأخرة أكثر من ٧ أيام"
 
@@ -660,8 +660,8 @@ msgid "Clear all filters"
 msgstr "مسح كل المرشّحات"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:242
-#: ../../apps/mobile/src/app/(search)/settings.tsx:659
-#: ../../apps/mobile/src/app/(search)/settings.tsx:684
+#: ../../apps/mobile/src/app/(search)/settings.tsx:605
+#: ../../apps/mobile/src/app/(search)/settings.tsx:630
 #~ msgid "Clear backlog"
 #~ msgstr "امسح المتراكمات"
 
@@ -677,7 +677,7 @@ msgstr "سمة الألوان"
 #~ msgid "Coming soon on mobile"
 #~ msgstr "قريبًا على الهاتف"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:600
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:609
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:464
 msgid "Configure the flashcards for this entry."
 msgstr "خصّص البطاقات التعليمية لهذا الإدخال."
@@ -720,7 +720,7 @@ msgstr "استمرّ مع بريد الإلكتروني"
 msgid "Continue with GitHub"
 msgstr "الاستمرار باستخدام GitHub"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:733
+#: ../../apps/mobile/src/app/(search)/settings.tsx:679
 msgid "Control where antonyms appear during review"
 msgstr "تحكم في مكان ظهور الأضداد أثناء المراجعة"
 
@@ -789,7 +789,7 @@ msgid "Create multiple"
 msgstr "إضافة متعددة"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:295
-#: ../../apps/mobile/src/app/(search)/settings.tsx:705
+#: ../../apps/mobile/src/app/(search)/settings.tsx:651
 msgid "Create reverse cards by default"
 msgstr "إنشاء البطاقات العكسية افتراضيًا"
 
@@ -806,7 +806,7 @@ msgid "Create your first deck to organize your flashcards with custom filters."
 msgstr "أنشئ مجموعتك الأولى لتنظيم بطاقاتك التعليمية باستخدام فلاتر مخصصة."
 
 #: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:50
-#: ../../apps/mobile/src/app/(search)/settings.tsx:165
+#: ../../apps/mobile/src/app/(search)/settings.tsx:157
 msgid "Current plan"
 msgstr "الخطة الحالية"
 
@@ -818,13 +818,13 @@ msgstr "خصص كيفيّة ظهور البطاقات."
 msgid "Customize how the application looks for you."
 msgstr "قم بتخصيص كيف يظهر التطبيق بالنسبة لك."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:868
+#: ../../apps/mobile/src/app/(search)/settings.tsx:814
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:225
 msgid "Danger Zone"
 msgstr "منطقة الخطر"
 
 #: ../../apps/web/src/components/ThemeMenu.tsx:41
-#: ../../apps/mobile/src/app/(search)/settings.tsx:628
+#: ../../apps/mobile/src/app/(search)/settings.tsx:574
 msgid "Dark"
 msgstr "غامق"
 
@@ -833,7 +833,7 @@ msgstr "غامق"
 #~ msgstr "أيام متتالية"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:397
-#: ../../apps/mobile/src/app/(search)/settings.tsx:799
+#: ../../apps/mobile/src/app/(search)/settings.tsx:745
 msgid "days"
 msgstr "يوم"
 
@@ -874,7 +874,7 @@ msgstr "تم تحديث المجموعة"
 #: ../../apps/web/src/components/MobileHeader.tsx:166
 #: ../../apps/web/src/components/DesktopNavigation.tsx:69
 #: ../../apps/web/src/components/DesktopNavigation.tsx:75
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:324
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:283
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:32
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:133
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:198
@@ -899,13 +899,13 @@ msgstr "التعريف"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:577
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:600
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:161
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:193
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:158
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:190
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:191
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:80
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:89
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:119
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:306
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:299
 msgid "Delete"
 msgstr "احذف"
 
@@ -923,13 +923,13 @@ msgstr "حذف \"{name}\"؟"
 msgid "Delete account"
 msgstr "حذف الحساب"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:485
-#: ../../apps/mobile/src/app/(search)/settings.tsx:490
-#: ../../apps/mobile/src/app/(search)/settings.tsx:896
+#: ../../apps/mobile/src/app/(search)/settings.tsx:431
+#: ../../apps/mobile/src/app/(search)/settings.tsx:436
+#: ../../apps/mobile/src/app/(search)/settings.tsx:842
 msgid "Delete Account"
 msgstr "حذف الحساب"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:882
+#: ../../apps/mobile/src/app/(search)/settings.tsx:828
 msgid "Delete All Data"
 msgstr "حذف جميع البيانات"
 
@@ -937,19 +937,19 @@ msgstr "حذف جميع البيانات"
 msgid "Delete Deck"
 msgstr "حذف المجموعة"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:522
+#: ../../apps/mobile/src/app/(search)/settings.tsx:468
 msgid "Delete Dictionary"
 msgstr "حذف المعجم"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:527
+#: ../../apps/mobile/src/app/(search)/settings.tsx:473
 msgid "Delete Everything"
 msgstr "حذف كل شيء"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:168
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:165
 msgid "Delete this word?"
 msgstr "حذف هذه الكلمة؟"
 
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:301
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:294
 msgid "Delete word"
 msgstr "حذف الكلمة"
 
@@ -986,7 +986,7 @@ msgstr "التفاصيل:"
 msgid "Dictionary"
 msgstr "معجم"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:566
+#: ../../apps/mobile/src/app/(search)/settings.tsx:512
 msgid "Dictionary deleted"
 msgstr "تم حذف المعجم"
 
@@ -1060,7 +1060,7 @@ msgstr "سهل"
 msgid "Edit"
 msgstr "عدَل"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:220
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:217
 msgid "Edit {word}"
 msgstr "حرّر {word}"
 
@@ -1076,7 +1076,7 @@ msgstr "تعديل المجموعة"
 
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:59
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:86
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:380
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:373
 msgid "Edit word"
 msgstr "تعديل الكلمة"
 
@@ -1094,9 +1094,9 @@ msgstr "عدّل مجموعتك من خلال اختيار الفلاتر. ست�
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:211
-msgid "Enable notifications for Bahar in your device settings"
-msgstr "فعّل إشعارات بحار من إعدادات جهازك"
+#: ../../apps/mobile/src/app/(search)/settings.tsx:197
+#~ msgid "Enable notifications for Bahar in your device settings"
+#~ msgstr "فعّل إشعارات بحار من إعدادات جهازك"
 
 #: ../../apps/web/src/components/LanguageMenu.tsx:23
 msgid "English"
@@ -1207,7 +1207,7 @@ msgstr "تصدير المعجم مع البطاقات سيحفظ تقدم الب
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:59
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:136
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:69
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:368
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:424
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:15
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:68
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:42
@@ -1230,13 +1230,13 @@ msgstr "فشل إضافة الكلمة!"
 msgid "Failed to apply migration to local database."
 msgstr "فشل تطبيق الترحيل على قاعدة البيانات المحلية."
 
-#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:43
-#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:118
+#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:49
+#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:124
 msgid "Failed to autofill"
 msgstr "فشل الملء التلقائي"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:95
-#: ../../apps/mobile/src/app/(search)/settings.tsx:385
+#: ../../apps/mobile/src/app/(search)/settings.tsx:331
 #~ msgid "Failed to clear backlog"
 #~ msgstr "فشل مسح المتراكمات"
 
@@ -1246,7 +1246,7 @@ msgstr "فشل إنشاء المجموعة"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:221
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:237
-#: ../../apps/mobile/src/app/(search)/settings.tsx:501
+#: ../../apps/mobile/src/app/(search)/settings.tsx:447
 msgid "Failed to delete account"
 msgstr "فشل حذف الحساب"
 
@@ -1254,7 +1254,7 @@ msgstr "فشل حذف الحساب"
 #~ msgid "Failed to delete deck"
 #~ msgstr "فشل حذف المجموعة"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:569
+#: ../../apps/mobile/src/app/(search)/settings.tsx:515
 msgid "Failed to delete dictionary"
 msgstr "فشل حذف المعجم"
 
@@ -1279,11 +1279,11 @@ msgstr "فشل توليد المثال"
 #~ msgstr "فشل طلب حذف الحساب"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:185
-#: ../../apps/mobile/src/app/(search)/settings.tsx:475
+#: ../../apps/mobile/src/app/(search)/settings.tsx:421
 msgid "Failed to reschedule backlog"
 msgstr "فشل في إعادة جدولة المتراكمات"
 
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:191
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:184
 msgid "Failed to reset flashcard"
 msgstr "فشل إعادة تعيين البطاقة"
 
@@ -1307,7 +1307,7 @@ msgstr "فشل تحديث المجموعة"
 msgid "Failed to update flashcard settings."
 msgstr "فشل في تحديث إعدادات البطاقة."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:243
+#: ../../apps/mobile/src/app/(search)/settings.tsx:207
 msgid "Failed to update preference"
 msgstr "فشل تحديث التفضيل"
 
@@ -1315,11 +1315,11 @@ msgstr "فشل تحديث التفضيل"
 msgid "Failed to update preference. Please try again."
 msgstr "فشل تحديث التفضيل. يرجى المحاولة مرة أخرى."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:339
+#: ../../apps/mobile/src/app/(search)/settings.tsx:285
 msgid "Failed to update settings"
 msgstr "فشل تحديث الإعدادات"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:363
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:360
 msgid "Failed to update the word!"
 msgstr "فشل في تحديث الكلمة!"
 
@@ -1345,7 +1345,7 @@ msgstr "مؤنّث"
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:90
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:130
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:65
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:364
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:420
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:13
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:66
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:40
@@ -1360,12 +1360,12 @@ msgstr "فعل"
 #~ msgid "Fi'l (Verb)"
 #~ msgstr "فعل"
 
-#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:116
+#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:122
 msgid "Fields filled successfully"
 msgstr "تم ملء الحقول بنجاح"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:523
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:574
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:528
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:583
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:383
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:438
 msgid "Fill in the word, translation, and type first."
@@ -1381,7 +1381,7 @@ msgstr "رشّح حسب العلامات..."
 msgid "Filters"
 msgstr "الترشيح"
 
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:188
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:181
 msgid "Flashcard reset successfully"
 msgstr "تم إعادة تعيين البطاقة بنجاح"
 
@@ -1389,20 +1389,20 @@ msgstr "تم إعادة تعيين البطاقة بنجاح"
 msgid "Flashcard settings updated!"
 msgstr "تم تحديث إعدادات البطاقة!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:597
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:606
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:461
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:224
-#: ../../apps/mobile/src/app/(search)/settings.tsx:697
+#: ../../apps/mobile/src/app/(search)/settings.tsx:643
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:268
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:423
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:416
 msgid "Flashcards"
 msgstr "بطاقات"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:646
+#: ../../apps/mobile/src/app/(search)/settings.tsx:592
 msgid "Follows your device language"
 msgstr "يتبع لغة جهازك"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:624
+#: ../../apps/mobile/src/app/(search)/settings.tsx:570
 msgid "Follows your system settings"
 msgstr "يتبع إعدادات النظام"
 
@@ -1426,7 +1426,7 @@ msgid "Form {0}"
 msgstr "صيغة {0}"
 
 #: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:27
-#: ../../apps/mobile/src/app/(search)/settings.tsx:149
+#: ../../apps/mobile/src/app/(search)/settings.tsx:141
 msgid "Free"
 msgstr "مجاني"
 
@@ -1445,18 +1445,18 @@ msgstr "إنشاء"
 msgid "Generate example"
 msgstr "توليد مثال"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:508
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:559
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:513
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:568
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:368
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:423
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:350
-#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:138
+#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:144
 msgid "Generating..."
 msgstr "جارٍ التوليد..."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:266
-msgid "Get a notification when your flashcards are due for review."
-msgstr "احصل على إشعار عند حلول موعد مراجعة بطاقاتك."
+#: ../../apps/mobile/src/app/(search)/settings.tsx:252
+#~ msgid "Get a notification when your flashcards are due for review."
+#~ msgstr "احصل على إشعار عند حلول موعد مراجعة بطاقاتك."
 
 #: ../../apps/mobile/src/app/(auth)/welcome.tsx:46
 msgid "Get Started"
@@ -1468,7 +1468,7 @@ msgstr "ابدأ"
 #~ msgstr "GitHub"
 
 #: ../../apps/web/src/components/OTPForm.tsx:129
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:357
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:350
 msgid "Go back"
 msgstr "ارجع"
 
@@ -1496,7 +1496,7 @@ msgid "Great work on the backlog! You still have {0} regular reviews."
 msgstr "أحسنت في المتراكمات! لا يزال لديك {0} مراجعات عادية."
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:396
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:463
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:499
 msgid "Great work! Come back later for more reviews."
 msgstr "عمل رائع! عد لاحقًا لمزيد من المراجعات."
 
@@ -1516,7 +1516,7 @@ msgstr "صعب"
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:101
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:133
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:67
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:366
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:422
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:14
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:67
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:41
@@ -1537,7 +1537,7 @@ msgstr "حرف"
 msgid "Harf {0}"
 msgstr "الحرف {0}"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:578
+#: ../../apps/mobile/src/app/(search)/settings.tsx:524
 msgid "Hidden"
 msgstr "مخفي"
 
@@ -1549,16 +1549,16 @@ msgstr "إخفاء التفاصيل"
 msgid "Hide filters"
 msgstr "إخفاء المرشحات"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:579
+#: ../../apps/mobile/src/app/(search)/settings.tsx:525
 msgid "Hint"
 msgstr "تلميح"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:211
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:208
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:63
 #: ../../apps/web/src/components/MobileHeader.tsx:154
 #: ../../apps/web/src/components/DesktopNavigation.tsx:53
 #: ../../apps/web/src/components/DesktopNavigation.tsx:59
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:313
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:272
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:55
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:54
 msgid "Home"
@@ -1603,7 +1603,7 @@ msgstr "الأمر"
 msgid "Import"
 msgstr "استورد"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:662
+#: ../../apps/mobile/src/app/(search)/settings.tsx:608
 msgid "Import / Export"
 msgstr "استيراد / تصدير"
 
@@ -1612,7 +1612,7 @@ msgstr "استيراد / تصدير"
 msgid "Import failed!"
 msgstr "فشل الاستيراد!"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:668
+#: ../../apps/mobile/src/app/(search)/settings.tsx:614
 msgid "Importing and exporting your dictionary is not available on mobile. Please use the web app to manage your data."
 msgstr "استيراد وتصدير القاموس غير متاح على الهاتف. يرجى استخدام تطبيق الويب لإدارة بياناتك."
 
@@ -1672,7 +1672,7 @@ msgstr "قيمة غير صالحة. يجب أن تكون إحدى القيم ا�
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:76
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:127
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:63
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:362
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:418
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:12
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:65
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:39
@@ -1694,7 +1694,7 @@ msgid "Keep adding words after saving instead of going back to the homepage."
 msgstr "استمر في إضافة كلمات بعد الحفظ بدلاً من العودة إلى الصفحة الرئيسية."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:332
-#: ../../apps/mobile/src/app/(search)/settings.tsx:640
+#: ../../apps/mobile/src/app/(search)/settings.tsx:586
 msgid "Language"
 msgstr "اللغة"
 
@@ -1708,7 +1708,7 @@ msgid "Latest"
 msgstr "الأحدث"
 
 #: ../../apps/web/src/components/ThemeMenu.tsx:44
-#: ../../apps/mobile/src/app/(search)/settings.tsx:628
+#: ../../apps/mobile/src/app/(search)/settings.tsx:574
 msgid "Light"
 msgstr "فاتح"
 
@@ -1736,7 +1736,7 @@ msgstr "قم بتسجيل الدخول إلى حسابك الحالي أو قم 
 
 #: ../../apps/web/src/components/MobileHeader.tsx:203
 #: ../../apps/web/src/components/DesktopNavigation.tsx:135
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:187
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:180
 msgid "Logout"
 msgstr "تسجيل الخروج"
 
@@ -1748,7 +1748,7 @@ msgstr "تسجيل الخروج"
 #~ msgid "Longest: {longestStreak} days"
 #~ msgstr "الأطول: {longestStreak} أيام"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:178
+#: ../../apps/mobile/src/app/(search)/settings.tsx:170
 msgid "Manage Account"
 msgstr "إدارة الحساب"
 
@@ -1773,7 +1773,7 @@ msgid "Manage your subscription."
 msgstr "إدارة اشتراكك."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:103
-#: ../../apps/mobile/src/app/(search)/settings.tsx:281
+#: ../../apps/mobile/src/app/(search)/settings.tsx:227
 msgid "Marketing emails"
 msgstr "رسائل البريد التسويقية"
 
@@ -1877,7 +1877,7 @@ msgstr "مجموعة جديدة"
 msgid "New words get an English → Arabic reverse card. You can still turn reverse on or off per word."
 msgstr "تحصل الكلمات الجديدة على بطاقة عكسية إنجليزي → عربي. لا يزال بإمكانك تفعيل أو إيقاف العكس لكل كلمة."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:704
+#: ../../apps/mobile/src/app/(search)/settings.tsx:650
 msgid "New words get an English to Arabic reverse card. You can still turn reverse on or off per word."
 msgstr "تحصل الكلمات الجديدة على بطاقة عكسية من الإنجليزية إلى العربية. لا يزال بإمكانك تفعيل أو إيقاف العكس لكل كلمة."
 
@@ -1897,7 +1897,7 @@ msgid "Next Review"
 msgstr "المراجعة القادمة"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:88
-#: ../../apps/mobile/src/app/(search)/settings.tsx:378
+#: ../../apps/mobile/src/app/(search)/settings.tsx:324
 #~ msgid "No backlog cards to clear."
 #~ msgstr "لا توجد بطاقات متراكمة للمسح."
 
@@ -1919,7 +1919,7 @@ msgid "No file chosen"
 msgstr "لم يتم اختيار ملف"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:173
-#: ../../apps/mobile/src/app/(search)/settings.tsx:463
+#: ../../apps/mobile/src/app/(search)/settings.tsx:409
 msgid "No overdue cards to reschedule."
 msgstr "لا توجد بطاقات متأخرة لإعادة جدولتها."
 
@@ -1949,7 +1949,7 @@ msgstr "لا شكرًا"
 msgid "Nord"
 msgstr "نورد"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:255
+#: ../../apps/mobile/src/app/(search)/settings.tsx:219
 msgid "Notifications"
 msgstr "الإشعارات"
 
@@ -1989,7 +1989,7 @@ msgstr "تشغيل"
 #~ msgid "Open web app"
 #~ msgstr "فتح تطبيق الويب"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:680
+#: ../../apps/mobile/src/app/(search)/settings.tsx:626
 msgid "Open Web App"
 msgstr "فتح تطبيق الويب"
 
@@ -2040,7 +2040,7 @@ msgstr "الماضي"
 msgid "Percentage of mature card reviews not rated \"Again\" over the last 7 days."
 msgstr "نسبة مراجعات البطاقات الناضجة التي لم يتم تقييمها بـ\"مرة أخرى\" خلال آخر ٧ أيام."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:876
+#: ../../apps/mobile/src/app/(search)/settings.tsx:822
 msgid "Permanently delete all your data including words, flashcards, and decks."
 msgstr "حذف جميع بياناتك نهائيًا بما في ذلك الكلمات والبطاقات والمجموعات."
 
@@ -2052,7 +2052,7 @@ msgstr "حذف هذه المجموعة نهائياً. لن تتأثر كلما�
 msgid "Permanently delete your Bahar account and all associated data."
 msgstr "حذف حسابك في بهار وجميع البيانات المرتبطة به نهائياً."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:890
+#: ../../apps/mobile/src/app/(search)/settings.tsx:836
 msgid "Permanently delete your Bahar account, including your subscription and all data."
 msgstr "حذف حسابك في بهار نهائياً، بما في ذلك اشتراكك وجميع البيانات."
 
@@ -2073,7 +2073,7 @@ msgid "Please select a JSON file with your dictionary."
 msgstr "اختر ملف JSON لمعجمك من فضلك."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:216
-#: ../../apps/mobile/src/app/(search)/settings.tsx:498
+#: ../../apps/mobile/src/app/(search)/settings.tsx:444
 msgid "Please sign in again to delete your account"
 msgstr "يرجى تسجيل الدخول مرة أخرى لحذف حسابك"
 
@@ -2095,7 +2095,7 @@ msgstr "حاول مرة أخرى أو أعد تحميل الصفحة."
 msgid "Please try again."
 msgstr "حاول مرّة أخرى."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:389
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:386
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:251
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:84
 msgid "Please wait before trying again."
@@ -2166,7 +2166,7 @@ msgstr "سياسة الخصوصية"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/ProPlaceholder.tsx:59
 #: ../../apps/web/src/components/features/settings/BillingSettingsCard.tsx:24
 #: ../../apps/mobile/src/app/(search)/stats.tsx:303
-#: ../../apps/mobile/src/app/(search)/settings.tsx:149
+#: ../../apps/mobile/src/app/(search)/settings.tsx:141
 msgid "Pro"
 msgstr "برو"
 
@@ -2176,27 +2176,27 @@ msgstr "برو"
 #: ../../apps/web/src/components/DesktopNavigation.tsx:91
 #: ../../apps/mobile/src/app/(search)/stats.tsx:31
 #: ../../apps/mobile/src/app/(search)/stats.tsx:272
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:335
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:294
 msgid "Progress"
 msgstr "التقدّم"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:388
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:385
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:250
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:83
 msgid "Rate limit reached"
 msgstr "تم الوصول إلى الحد الأقصى"
 
 #: ../../apps/mobile/src/components/dictionary/form/ExamplesSection.tsx:55
-#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:41
+#: ../../apps/mobile/src/components/dictionary/form/AutofillButton.tsx:47
 msgid "Rate limit reached. Please wait a moment."
 msgstr "تم الوصول للحد الأقصى. يرجى الانتظار لحظة."
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:270
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:274
 msgid "Recall the Arabic word"
 msgstr "تذكر الكلمة العربية"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:107
-#: ../../apps/mobile/src/app/(search)/settings.tsx:284
+#: ../../apps/mobile/src/app/(search)/settings.tsx:230
 msgid "Receive product updates, tips, and new feature announcements."
 msgstr "تلقّي تحديثات المنتج والنصائح وإعلانات الميزات الجديدة."
 
@@ -2220,7 +2220,7 @@ msgstr "المحدّثة حديثًا"
 msgid "Recently used"
 msgstr "المستخدمة مؤخرًا"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:445
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:481
 msgid "Regular reviews done!"
 msgstr "انتهت المراجعات العادية!"
 
@@ -2254,23 +2254,23 @@ msgstr "حقل مطلوب"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:417
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:436
-#: ../../apps/mobile/src/app/(search)/settings.tsx:836
+#: ../../apps/mobile/src/app/(search)/settings.tsx:782
 msgid "Reschedule"
 msgstr "أعد الجدولة"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:245
-#: ../../apps/mobile/src/app/(search)/settings.tsx:662
+#: ../../apps/mobile/src/app/(search)/settings.tsx:608
 #~ msgid "Reschedule all backlog cards by grading them as \"Hard\"."
 #~ msgstr "أعد جدولة جميع البطاقات المتراكمة بتقييمها كـ \"صعب\"."
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:331
-#: ../../apps/mobile/src/app/(search)/settings.tsx:760
+#: ../../apps/mobile/src/app/(search)/settings.tsx:706
 msgid "Reschedule backlog"
 msgstr "أعد جدولة المتراكمات"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:468
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:89
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:326
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:319
 msgid "Reset"
 msgstr "إعادة تعيين"
 
@@ -2278,13 +2278,13 @@ msgstr "إعادة تعيين"
 msgid "Reset and re-sync"
 msgstr "إعادة التعيين والمزامنة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:109
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:143
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:321
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:106
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:140
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:314
 msgid "Reset flashcard"
 msgstr "أعد البطاقة"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:116
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:113
 msgid "Reset flashcard progress?"
 msgstr "إعادة تعيين تقدم البطاقة؟"
 
@@ -2324,7 +2324,7 @@ msgstr "بطاقة عكسية"
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:128
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:300
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:86
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:87
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:166
 msgid "Review"
 msgstr "مراجعة"
@@ -2349,9 +2349,9 @@ msgstr "راجع البطاقات بالتكرار المتباعد"
 msgid "Review History"
 msgstr "سجل المراجعات"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:263
-msgid "Review reminders"
-msgstr "تذكيرات المراجعة"
+#: ../../apps/mobile/src/app/(search)/settings.tsx:249
+#~ msgid "Review reminders"
+#~ msgstr "تذكيرات المراجعة"
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:404
 msgid "Review your Arabic flashcards and grade your understanding with Again, Hard, Good, or Easy options to adjust scheduling."
@@ -2373,8 +2373,8 @@ msgstr "الجذر"
 msgid "Root Letters"
 msgstr "الحروف الأصلية"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:534
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:621
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:543
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:630
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:398
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:558
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:322
@@ -2390,7 +2390,7 @@ msgid "Save 30%"
 msgstr "وفّر ٣٠٪"
 
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:334
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:439
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:432
 msgid "Save changes"
 msgstr "حفظ التغييرات"
 
@@ -2418,7 +2418,7 @@ msgid "Search tags..."
 msgstr "البحث في العلامات..."
 
 #: ../../apps/web/src/components/search/SearchInput.tsx:63
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:135
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:128
 msgid "Search..."
 msgstr "ابحث..."
 
@@ -2475,9 +2475,9 @@ msgstr "افصل الحروف بمسافات أو فواصل"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:301
 #: ../../apps/web/src/components/MobileHeader.tsx:190
 #: ../../apps/web/src/components/DesktopNavigation.tsx:123
-#: ../../apps/mobile/src/app/(search)/settings.tsx:307
-#: ../../apps/mobile/src/app/(search)/settings.tsx:609
-#: ../../apps/mobile/src/app/(search)/_layout.tsx:346
+#: ../../apps/mobile/src/app/(search)/settings.tsx:253
+#: ../../apps/mobile/src/app/(search)/settings.tsx:555
+#: ../../apps/mobile/src/app/(search)/_layout.tsx:305
 msgid "Settings"
 msgstr "الإعدادات"
 
@@ -2493,7 +2493,7 @@ msgstr "اعرض الجواب"
 msgid "Show Answer"
 msgstr "أظهر الإجابة"
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:730
+#: ../../apps/mobile/src/app/(search)/settings.tsx:676
 msgid "Show antonyms"
 msgstr "إظهار الأضداد"
 
@@ -2542,7 +2542,7 @@ msgid "Something went wrong"
 msgstr "حدث خطأ ما"
 
 #: ../../apps/web/src/routes/_authorized-layout/route.tsx:93
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:393
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:390
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:255
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:88
 msgid "Something went wrong. Please try again."
@@ -2554,17 +2554,17 @@ msgid "Sort by"
 msgstr "ترتيب حسب"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:383
-#: ../../apps/mobile/src/app/(search)/settings.tsx:789
+#: ../../apps/mobile/src/app/(search)/settings.tsx:735
 msgid "Spread over"
 msgstr "وزّع على"
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:340
-#: ../../apps/mobile/src/app/(search)/settings.tsx:769
+#: ../../apps/mobile/src/app/(search)/settings.tsx:715
 msgid "Spread your backlog cards evenly across the days ahead. Cards overdue by less than {DEFAULT_BACKLOG_THRESHOLD_DAYS} days stay due today. Your progress on each card is untouched."
 msgstr "وزّع بطاقاتك المتراكمة بالتساوي على الأيام القادمة. البطاقات المتأخرة أقل من {DEFAULT_BACKLOG_THRESHOLD_DAYS} أيام تبقى مستحقة اليوم. لن يتأثر تقدمك في أي بطاقة."
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:335
-#: ../../apps/mobile/src/app/(search)/settings.tsx:764
+#: ../../apps/mobile/src/app/(search)/settings.tsx:710
 msgid "Spread your overdue cards evenly across the days ahead. Your progress on each card is untouched."
 msgstr "وزّع بطاقاتك المتأخرة بالتساوي على الأيام القادمة. لن يتأثر تقدمك في أي بطاقة."
 
@@ -2598,7 +2598,7 @@ msgid "Subscribe"
 msgstr "اشتراك"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:77
-#: ../../apps/mobile/src/app/(search)/settings.tsx:239
+#: ../../apps/mobile/src/app/(search)/settings.tsx:203
 msgid "Subscribed to marketing emails"
 msgstr "تم الاشتراك في رسائل البريد التسويقية"
 
@@ -2618,15 +2618,15 @@ msgstr "تم التصدير بنجاح!"
 msgid "Successfully imported!"
 msgstr "تم الاستيراد بنجاح!"
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:138
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:135
 msgid "Successfully reset the flashcard."
 msgstr "تمت إعادة تعيين البطاقة بنجاح."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:355
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:352
 msgid "Successfully updated the word!"
 msgstr "حدثت الكلمة بنجاح!"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:458
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:494
 msgid "Switch to the Review tab if you have regular cards due."
 msgstr "انتقل إلى تبويب المراجعة إذا كانت لديك بطاقات عادية مستحقة."
 
@@ -2636,7 +2636,7 @@ msgstr "انتقل إلى تبويب المراجعة إذا كانت لديك �
 #~ msgstr "خطأ في المزامنة"
 
 #: ../../apps/web/src/components/ThemeMenu.tsx:48
-#: ../../apps/mobile/src/app/(search)/settings.tsx:650
+#: ../../apps/mobile/src/app/(search)/settings.tsx:596
 msgid "System"
 msgstr "نظام"
 
@@ -2649,11 +2649,11 @@ msgstr "نظام"
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:151
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:206
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:258
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:413
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:406
 msgid "Tags"
 msgstr "علامات"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:272
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:276
 msgid "Tap to reveal answer"
 msgstr "اضغط لكشف الإجابة"
 
@@ -2723,12 +2723,12 @@ msgstr "الحروف الجذرية للكلمة. يمكن فصل المدخلا
 msgid "The word has been added to your dictionary."
 msgstr "تمت إضافة الكلمة إلى معجمك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:356
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:353
 msgid "The word has been updated."
 msgstr "حدثت الكلمة."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:318
-#: ../../apps/mobile/src/app/(search)/settings.tsx:625
+#: ../../apps/mobile/src/app/(search)/settings.tsx:571
 msgid "Theme"
 msgstr "المظهر"
 
@@ -2737,7 +2737,7 @@ msgid "There was an error adding your word. Please try again."
 msgstr "حدث خطأ أثناء إضافة كلمتك. حاول مرة اخرى."
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:96
-#: ../../apps/mobile/src/app/(search)/settings.tsx:386
+#: ../../apps/mobile/src/app/(search)/settings.tsx:332
 #~ msgid "There was an error clearing your backlog."
 #~ msgstr "حدث خطأ أثناء مسح المتراكمات."
 
@@ -2758,7 +2758,7 @@ msgid "There was an error importing your dictionary. Please try again later."
 msgstr "حدث خطأ أثناء استيراد لمعجمك. حاول مرة أخرى لاحقا."
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:186
-#: ../../apps/mobile/src/app/(search)/settings.tsx:476
+#: ../../apps/mobile/src/app/(search)/settings.tsx:422
 msgid "There was an error rescheduling your backlog."
 msgstr "حدث خطأ أثناء إعادة جدولة المتراكمات."
 
@@ -2782,7 +2782,7 @@ msgstr "حدث خطأ أثناء تحديث المجموعة"
 msgid "There was an error updating your flashcard settings."
 msgstr "حدث خطأ أثناء تحديث إعدادات بطاقاتك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:364
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:361
 msgid "There was an error updating your word. Please try again."
 msgstr "حدث خطأ أثناء تحديث كلمتك. حاول مرة أخرى."
 
@@ -2854,11 +2854,11 @@ msgstr "سيؤدي هذا إلى حذف النسخة المحلية من بيا�
 #~ msgid "This will permanently delete all your words and flashcards. This action cannot be undone."
 #~ msgstr "سيؤدي هذا إلى حذف جميع كلماتك وبطاقاتك نهائياً. لا يمكن التراجع عن هذا الإجراء."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:523
+#: ../../apps/mobile/src/app/(search)/settings.tsx:469
 msgid "This will permanently delete all your words, flashcards, and decks. This action cannot be undone."
 msgstr "سيؤدي هذا إلى حذف جميع كلماتك وبطاقاتك ومجموعاتك نهائيًا. لا يمكن التراجع عن هذا الإجراء."
 
-#: ../../apps/mobile/src/app/(search)/settings.tsx:486
+#: ../../apps/mobile/src/app/(search)/settings.tsx:432
 msgid "This will permanently delete your account, all your dictionary entries, flashcards, decks, and any active subscription. This action cannot be undone."
 msgstr "سيؤدي هذا إلى حذف حسابك نهائياً، بما في ذلك جميع كلمات القاموس والبطاقات والمجموعات وأي اشتراك نشط. لا يمكن التراجع عن هذا الإجراء."
 
@@ -2965,7 +2965,7 @@ msgid "Unlock Insights"
 msgstr "فتح الإحصائيات"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:78
-#: ../../apps/mobile/src/app/(search)/settings.tsx:240
+#: ../../apps/mobile/src/app/(search)/settings.tsx:204
 msgid "Unsubscribed from marketing emails"
 msgstr "تم إلغاء الاشتراك من رسائل البريد التسويقية"
 
@@ -2996,8 +2996,8 @@ msgstr "قم بالترقية إلى برو لتوليد الأمثلة."
 msgid "Upgrade to Pro to see your review history for this word."
 msgstr "قم بالترقية إلى Pro لمشاهدة سجل مراجعات هذه الكلمة."
 
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:518
-#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:569
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:523
+#: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:578
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:378
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:433
 msgid "Upgrade to Pro to use AI autofill."
@@ -3094,7 +3094,7 @@ msgstr "تمت إضافة الكلمة بنجاح"
 msgid "Word deleted successfully"
 msgstr "تم حذف الكلمة بنجاح"
 
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:354
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:347
 msgid "Word not found"
 msgstr "الكلمة غير موجودة"
 
@@ -3172,7 +3172,7 @@ msgid "You have {0} cards in your backlog when you're ready."
 msgstr "لديك {0} بطاقات متراكمة عندما تكون جاهزًا."
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:425
-#: ../../apps/mobile/src/app/(search)/settings.tsx:849
+#: ../../apps/mobile/src/app/(search)/settings.tsx:795
 msgid "You have no backlog cards to reschedule."
 msgstr "ليس لديك بطاقات متراكمة لإعادة جدولتها."
 
@@ -3181,7 +3181,7 @@ msgid "You have no decks yet."
 msgstr "ليس لديك أي مجموعات بعد."
 
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:423
-#: ../../apps/mobile/src/app/(search)/settings.tsx:845
+#: ../../apps/mobile/src/app/(search)/settings.tsx:791
 msgid "You have no overdue cards to reschedule."
 msgstr "ليس لديك بطاقات متأخرة لإعادة جدولتها."
 
@@ -3189,7 +3189,7 @@ msgstr "ليس لديك بطاقات متأخرة لإعادة جدولتها."
 msgid "You have no words in your dictionary yet."
 msgstr "ليس لديك أي كلمات في معجمك بعد."
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:453
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:489
 msgid "You still have backlog cards to review. Switch to the Backlog tab to tackle them."
 msgstr "لا تزال لديك بطاقات متراكمة للمراجعة. انتقل إلى تبويب المتراكم لمعالجتها."
 

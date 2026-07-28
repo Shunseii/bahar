@@ -194,6 +194,138 @@ describe("flashcardsTable", () => {
     });
   });
 
+  describe("resetEntry", () => {
+    it("resets both cards when the word has a forward and a reverse card", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+        direction: "forward",
+        state: FlashcardState.REVIEW,
+        stability: 10,
+        reps: 5,
+      });
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+        direction: "reverse",
+        state: FlashcardState.REVIEW,
+        stability: 8,
+        reps: 3,
+      });
+
+      const results = await flashcardsTable.resetEntry.mutation({
+        dictionary_entry_id: entry.id,
+      });
+
+      expect(results).toHaveLength(2);
+      expect(
+        results.map(({ flashcard }) => flashcard.direction).sort()
+      ).toEqual(["forward", "reverse"]);
+
+      for (const { flashcard } of results) {
+        expect(flashcard).toMatchObject({
+          state: FlashcardState.NEW,
+          stability: 0,
+          difficulty: 0,
+          reps: 0,
+          lapses: 0,
+          elapsed_days: 0,
+          scheduled_days: 0,
+          last_review: null,
+        });
+      }
+    });
+
+    // Regression: a word with no reverse row used to throw
+    // "Flashcard not found ... direction: reverse" after the forward card had
+    // already been written, leaving the reset half-done.
+    it("resets the forward card of a word that has no reverse card", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+      const forward = await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+        direction: "forward",
+        state: FlashcardState.REVIEW,
+        stability: 10,
+        reps: 5,
+      });
+
+      const results = await flashcardsTable.resetEntry.mutation({
+        dictionary_entry_id: entry.id,
+      });
+
+      expect(results).toHaveLength(1);
+      expect(results[0]?.flashcard).toMatchObject({
+        id: forward.id,
+        direction: "forward",
+        state: FlashcardState.NEW,
+        stability: 0,
+        reps: 0,
+      });
+
+      const stored = await flashcardsTable.findByEntryId.query(entry.id);
+
+      expect(stored).toHaveLength(1);
+      expect(stored[0]).toMatchObject({
+        id: forward.id,
+        state: FlashcardState.NEW,
+        stability: 0,
+        reps: 0,
+        last_review: null,
+      });
+    });
+
+    it("returns a manual review log per reset card capturing its pre-reset state", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+        direction: "forward",
+        state: FlashcardState.REVIEW,
+        stability: 10,
+      });
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+        direction: "reverse",
+        state: FlashcardState.LEARNING,
+        stability: 4,
+      });
+
+      const results = await flashcardsTable.resetEntry.mutation({
+        dictionary_entry_id: entry.id,
+      });
+
+      // Callers post these logs to the revlog API, which is what puts a "reset"
+      // entry in the review history. Each log is rated Manual and carries its
+      // own card's pre-reset values, not the reset-to-NEW ones and not the
+      // other direction's.
+      const forwardLog = results.find(
+        ({ flashcard }) => flashcard.direction === "forward"
+      )?.log;
+      const reverseLog = results.find(
+        ({ flashcard }) => flashcard.direction === "reverse"
+      )?.log;
+
+      expect(forwardLog).toMatchObject({
+        rating: Rating.Manual,
+        state: FlashcardState.REVIEW,
+        stability: 10,
+      });
+      expect(reverseLog).toMatchObject({
+        rating: Rating.Manual,
+        state: FlashcardState.LEARNING,
+        stability: 4,
+      });
+    });
+
+    it("returns an empty list for an entry with no flashcards at all", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+
+      // Nothing to reset is not an error -- callers skip the revlog posts
+      // instead of failing the whole reset.
+      await expect(
+        flashcardsTable.resetEntry.mutation({ dictionary_entry_id: entry.id })
+      ).resolves.toEqual([]);
+    });
+  });
+
   describe("findByEntryId", () => {
     it("returns all flashcards for a dictionary entry", async () => {
       const entry = await insertDictionaryEntry(testDb);

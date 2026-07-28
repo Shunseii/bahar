@@ -145,16 +145,9 @@ export default function EditWordScreen() {
     }: {
       dictionary_entry_id: string;
     }) => {
-      const results = await Promise.all([
-        flashcardsTable.reset.mutation({
-          dictionary_entry_id,
-          direction: "forward",
-        }),
-        flashcardsTable.reset.mutation({
-          dictionary_entry_id,
-          direction: "reverse",
-        }),
-      ]);
+      const results = await flashcardsTable.resetEntry.mutation({
+        dictionary_entry_id,
+      });
 
       // Post the manual reset revlogs to the server (fire-and-forget).
       for (const { flashcard, log } of results) {
