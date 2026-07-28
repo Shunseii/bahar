@@ -16,6 +16,7 @@ export const SORT_OPTIONS = [
   "updatedAt",
   "createdAt",
   "difficulty",
+  "lastReviewed",
 ] as const;
 const SEARCH_RESULTS_PER_PAGE = 20;
 
@@ -166,6 +167,10 @@ export const useInfiniteScroll = (
         createdAt: { property: "created_at_timestamp_ms", order: "DESC" },
         updatedAt: { property: "updated_at_timestamp_ms", order: "DESC" },
         difficulty: { property: "max_difficulty", order: "DESC" },
+        lastReviewed: {
+          property: "last_review_timestamp_ms",
+          order: "DESC",
+        },
       };
 
     return sortMap[params.sort];

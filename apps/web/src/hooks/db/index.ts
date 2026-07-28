@@ -1,4 +1,4 @@
-import { insert, remove, update } from "@orama/orama";
+import { getByID, insert, remove, update } from "@orama/orama";
 import { useMutation } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { suggestedTagsAtom } from "@/atoms/suggested-tags";
@@ -108,7 +108,18 @@ export const useEditDictionaryEntry = () => {
     ) => {
       const updatedWord = await mutateAsync(params, opts);
 
-      update(getOramaDb(), updatedWord.id, toOramaDocument(updatedWord));
+      // toOramaDocument omits the flashcard-derived fields (they come from the
+      // flashcards table, not the dictionary entry), so carry them over from the
+      // existing indexed document -- otherwise an edit would reset the
+      // difficulty and recently-reviewed sort positions until the next reindex.
+      const orama = getOramaDb();
+      const current = getByID(orama, updatedWord.id);
+
+      update(orama, updatedWord.id, {
+        ...toOramaDocument(updatedWord),
+        max_difficulty: current?.max_difficulty ?? 0,
+        last_review_timestamp_ms: current?.last_review_timestamp_ms ?? 0,
+      });
       reset();
     },
   };

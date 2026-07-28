@@ -16,6 +16,7 @@ export const dictionarySchema = {
   created_at_timestamp_ms: "number",
   updated_at_timestamp_ms: "number",
   max_difficulty: "number",
+  last_review_timestamp_ms: "number",
 
   word: "string",
   translation: "string",
@@ -65,6 +66,7 @@ export interface DictionaryDocument {
   updated_at?: string;
   updated_at_timestamp_ms?: number;
   max_difficulty?: number;
+  last_review_timestamp_ms?: number;
   definition?: string;
   type?: string;
   root?: string[];
