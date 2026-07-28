@@ -159,3 +159,58 @@ export type ShowAntonymsMode = (typeof ANTONYMS_MODES)[number];
 export const MIGRATION_STATUSES = ["applied", "pending", "failed"] as const;
 
 export type MigrationStatus = (typeof MIGRATION_STATUSES)[number];
+
+/**
+ * A dictionary entry as accepted from outside the app: the CLI's `add` payload
+ * and the API's create-entry body validate against this, so a word one accepts
+ * is a word the other accepts. Built from the field schemas above, so it stays
+ * in step with what the columns actually hold. Server-managed fields (id,
+ * timestamps) and flashcards aren't part of the input.
+ */
+export const WordInputSchema = z.object({
+  word: z.string().min(1),
+  translation: z.string().min(1),
+  type: WordTypeSchema,
+  definition: z.string().nullish(),
+  root: RootLettersSchema.nullish(),
+  tags: TagsSchema.nullish(),
+  antonyms: z.array(AntonymSchema).nullish(),
+  examples: z.array(ExampleSchema).nullish(),
+  morphology: MorphologySchema.nullish(),
+});
+
+export type WordInput = z.infer<typeof WordInputSchema>;
+
+/**
+ * The set of dictionary-entry fields an edit may change.
+ */
+export const EDITABLE_FIELDS = [
+  "word",
+  "translation",
+  "definition",
+  "type",
+  "root",
+  "tags",
+  "antonyms",
+  "examples",
+  "morphology",
+] as const;
+
+/**
+ * Fields an edit may change, each reusing the canonical field schema above.
+ * `nullable` because a nullable column can be cleared by passing `null`; a
+ * field left out of the payload is untouched.
+ */
+export const WordUpdatesSchema = z.object({
+  word: z.string().min(1).optional(),
+  translation: z.string().min(1).optional(),
+  definition: z.string().nullable().optional(),
+  type: WordTypeSchema.optional(),
+  root: RootLettersSchema.nullable().optional(),
+  tags: TagsSchema.nullable().optional(),
+  antonyms: z.array(AntonymSchema).nullable().optional(),
+  examples: z.array(ExampleSchema).nullable().optional(),
+  morphology: MorphologySchema.nullable().optional(),
+});
+
+export type WordUpdates = z.infer<typeof WordUpdatesSchema>;

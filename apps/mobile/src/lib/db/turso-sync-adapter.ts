@@ -34,7 +34,42 @@ export interface SyncAdapterStatement {
 
 export interface SyncAdapterDb {
   prepare(sql: string): SyncAdapterStatement;
+  transaction<T>(fn: () => Promise<T>): Promise<T>;
 }
+
+const execute = async (
+  db: SyncAdapterDb,
+  sql: string,
+  params: unknown[],
+  method: string
+) => {
+  // A fresh statement is prepared per call and never reused. run/all/get
+  // already reset the statement and release the exec lock internally, but
+  // they don't finalize it -- so without this the native statement handles
+  // accumulate (a leak) over a session. Finalize in a finally so it happens
+  // even if the query throws.
+  const stmt = db.prepare(sql);
+  try {
+    if (method === "run") {
+      await stmt.run(params as BindParams);
+      return { rows: [] };
+    }
+
+    if (method === "all" || method === "values") {
+      const rows = await stmt.all(params as BindParams);
+      return { rows: rows.map((row) => Object.values(row)) };
+    }
+
+    if (method === "get") {
+      const row = await stmt.get(params as BindParams);
+      return { rows: row ? Object.values(row) : [] };
+    }
+
+    return { rows: [] };
+  } finally {
+    await stmt.finalize();
+  }
+};
 
 export const buildDrizzleDb = (getDb: () => SyncAdapterDb | null) =>
   drizzle(
@@ -42,32 +77,26 @@ export const buildDrizzleDb = (getDb: () => SyncAdapterDb | null) =>
       const db = getDb();
       if (!db) return { rows: [] };
 
-      // A fresh statement is prepared per call and never reused. run/all/get
-      // already reset the statement and release the exec lock internally, but
-      // they don't finalize it -- so without this the native statement handles
-      // accumulate (a leak) over a session. Finalize in a finally so it happens
-      // even if the query throws.
-      const stmt = db.prepare(sql);
-      try {
-        if (method === "run") {
-          await stmt.run(params as BindParams);
-          return { rows: [] };
+      return execute(db, sql, params, method);
+    },
+    // Routes drizzle's `.batch()` through sync-react-native's own transaction,
+    // so a multi-statement operation either lands whole or not at all --
+    // including on the sync log, which splits pushes on transaction
+    // boundaries. Statements run in order; the engine rolls back if any of
+    // them throws.
+    async (queries) => {
+      const db = getDb();
+      if (!db) return queries.map(() => ({ rows: [] }));
+
+      return db.transaction(async () => {
+        const results: { rows: unknown[] }[] = [];
+
+        for (const { sql, params, method } of queries) {
+          results.push(await execute(db, sql, params, method));
         }
 
-        if (method === "all" || method === "values") {
-          const rows = await stmt.all(params as BindParams);
-          return { rows: rows.map((row) => Object.values(row)) };
-        }
-
-        if (method === "get") {
-          const row = await stmt.get(params as BindParams);
-          return { rows: row ? Object.values(row) : [] };
-        }
-
-        return { rows: [] };
-      } finally {
-        await stmt.finalize();
-      }
+        return results;
+      });
     },
     { schema }
   );

@@ -30,6 +30,7 @@ import { Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
+import { ApiKeysCardSection } from "@/components/features/settings/ApiKeysCardSection";
 import { BillingSettingsCard } from "@/components/features/settings/BillingSettingsCard";
 import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
 import { InputFile } from "@/components/InputFile";
@@ -617,6 +618,8 @@ const Settings = () => {
         <PreferencesSettingsCard />
 
         <FlashcardSettingsCardSection />
+
+        <ApiKeysCardSection />
 
         <Card>
           <CardHeader id="debugging">

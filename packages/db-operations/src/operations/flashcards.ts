@@ -13,11 +13,12 @@ import {
   createNewFlashcard,
   createScheduler,
   forgetFlashcard,
+  gradeFlashcard,
 } from "@bahar/fsrs";
 import { addDays, startOfDay } from "date-fns";
 import { and, countDistinct, eq, gt, inArray, lte, sql } from "drizzle-orm";
 import { nanoid } from "nanoid/non-secure";
-import type { ReviewLog } from "ts-fsrs";
+import type { Grade, ReviewLog } from "ts-fsrs";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   DEFAULT_POSTPONE_WINDOW_DAYS,
@@ -27,6 +28,7 @@ import {
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
 import type { OperationDeps } from "./deps";
+import { makeProgressTable } from "./progress";
 
 /**
  * Converts days to milliseconds.
@@ -241,7 +243,10 @@ const buildFilterConditions = ({
   ];
 };
 
-export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
+export const makeFlashcardsTable = ({
+  enqueue = enqueueDbOperation,
+  getDb,
+}: OperationDeps) =>
   ({
     today: {
       query: async ({
@@ -388,7 +393,7 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
           "id" | "last_review_timestamp_ms" | "due_timestamp_ms"
         >;
       }): Promise<SelectFlashcard> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
 
           const [res] = await drizzleDb
@@ -432,7 +437,7 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
         id: string;
         updates: Partial<Omit<SelectFlashcard, "id" | "dictionary_entry_id">>;
       }): Promise<SelectFlashcard> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
 
           const setValues: Partial<InsertFlashcard> = {};
@@ -510,6 +515,99 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
         queryKey: ["turso.flashcards.update"],
       },
     },
+    grade: {
+      /**
+       * Grades one or more cards in a single pass: every target card is read
+       * in one query, scheduled by FSRS, and persisted in one atomic batch,
+       * after which the review streak is advanced once for the whole set.
+       *
+       * Ids with no matching card come back in `missing` rather than throwing,
+       * so grading a stale set of ids partially succeeds instead of failing
+       * outright. Review logs are returned, not written -- revlogs live in the
+       * central database, which this package has no access to, so the caller
+       * persists them.
+       */
+      mutation: ({
+        grades,
+        now = new Date(),
+        timezone,
+      }: {
+        grades: { id: string; grade: Grade }[];
+        now?: Date;
+        /** Falls back to the host's own timezone; see progress.recordReview. */
+        timezone?: string;
+      }): Promise<{
+        graded: {
+          id: string;
+          due: string;
+          direction: SelectFlashcard["direction"];
+          dictionary_entry_id: string;
+          log: ReviewLog;
+        }[];
+        missing: string[];
+      }> =>
+        enqueue(async () => {
+          const drizzleDb = await getDb();
+
+          const ids = grades.map(({ id }) => id);
+          const cards = (await drizzleDb
+            .select()
+            .from(flashcards)
+            .where(inArray(flashcards.id, ids))) as SelectFlashcard[];
+
+          const cardById = new Map(cards.map((card) => [card.id, card]));
+          const missing = ids.filter((id) => !cardById.has(id));
+
+          const scheduler = createScheduler();
+          const updates = [];
+          const graded = [];
+
+          for (const { id, grade } of grades) {
+            const current = cardById.get(id);
+            if (!current) continue;
+
+            const { card, log } = gradeFlashcard(
+              scheduler,
+              current,
+              grade,
+              now
+            );
+
+            updates.push(
+              drizzleDb
+                .update(flashcards)
+                .set(card)
+                .where(eq(flashcards.id, id))
+            );
+
+            graded.push({
+              id,
+              due: card.due,
+              direction: current.direction,
+              dictionary_entry_id: current.dictionary_entry_id,
+              log,
+            });
+          }
+
+          if (updates.length > 0) {
+            await drizzleDb.batch(
+              updates as [
+                (typeof updates)[number],
+                ...(typeof updates)[number][],
+              ]
+            );
+
+            await makeProgressTable({ enqueue, getDb }).recordReview.mutation({
+              timezone,
+            });
+          }
+
+          return { graded, missing };
+        }),
+      cacheOptions: {
+        queryKey: ["turso.flashcards.grade"],
+      },
+    },
     reset: {
       mutation: ({
         dictionary_entry_id,
@@ -518,7 +616,7 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
         dictionary_entry_id: string;
         direction: SelectFlashcard["direction"];
       }): Promise<{ flashcard: SelectFlashcard; log: ReviewLog }> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
           const now = new Date();
 
@@ -641,7 +739,7 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
         forward: SelectFlashcard;
         reverse: SelectFlashcard | null;
       }> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
 
           let shouldCreateReverse = createReverse;
@@ -698,7 +796,7 @@ export const makeFlashcardsTable = ({ getDb }: OperationDeps) =>
         dictionary_entry_id: string;
         enabled: boolean;
       }): Promise<{ reverse: SelectFlashcard | null }> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
 
           const [existing] = await drizzleDb

@@ -132,6 +132,114 @@ describe("flashcardsTable", () => {
     });
   });
 
+  describe("grade", () => {
+    const readUserStats = async () =>
+      (await (
+        await testDb.db.prepare("SELECT * FROM user_stats")
+      ).all([])) as Record<string, unknown>[];
+
+    it("schedules a card forward and persists the new due date", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+      const now = new Date("2026-07-27T12:00:00.000Z");
+      const flashcard = await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+        state: FlashcardState.NEW,
+        due: now.toISOString(),
+        due_timestamp_ms: now.getTime(),
+      });
+
+      const { graded, missing } = await flashcardsTable.grade.mutation({
+        grades: [{ id: flashcard.id, grade: Rating.Good }],
+        now,
+      });
+
+      expect(missing).toEqual([]);
+      expect(graded).toHaveLength(1);
+      expect(graded[0]).toMatchObject({
+        id: flashcard.id,
+        direction: "forward",
+        dictionary_entry_id: entry.id,
+      });
+      expect(graded[0].log.rating).toBe(Rating.Good);
+
+      const [stored] = (await flashcardsTable.findByEntryId.query(
+        entry.id
+      )) as SelectFlashcard[];
+
+      expect(stored.due).toBe(graded[0].due);
+      expect(new Date(stored.due).getTime()).toBeGreaterThan(now.getTime());
+      expect(stored.reps).toBe(1);
+    });
+
+    it("grades every card in the batch and reports unknown ids as missing", async () => {
+      const first = await insertFlashcard(testDb);
+      const second = await insertFlashcard(testDb);
+
+      const { graded, missing } = await flashcardsTable.grade.mutation({
+        grades: [
+          { id: first.id, grade: Rating.Again },
+          { id: "not-a-real-id", grade: Rating.Good },
+          { id: second.id, grade: Rating.Easy },
+        ],
+      });
+
+      expect(missing).toEqual(["not-a-real-id"]);
+      expect(graded.map((g) => g.id)).toEqual([first.id, second.id]);
+
+      const [storedFirst] = (await flashcardsTable.findByEntryId.query(
+        first.dictionary_entry_id
+      )) as SelectFlashcard[];
+      const [storedSecond] = (await flashcardsTable.findByEntryId.query(
+        second.dictionary_entry_id
+      )) as SelectFlashcard[];
+
+      expect(storedFirst.reps).toBe(1);
+      expect(storedSecond.reps).toBe(1);
+    });
+
+    it("advances the review streak once for the whole batch", async () => {
+      const first = await insertFlashcard(testDb);
+      const second = await insertFlashcard(testDb);
+
+      await flashcardsTable.grade.mutation({
+        grades: [
+          { id: first.id, grade: Rating.Good },
+          { id: second.id, grade: Rating.Good },
+        ],
+      });
+
+      const stats = await readUserStats();
+
+      expect(stats).toHaveLength(1);
+      expect(stats[0].streak_count).toBe(1);
+    });
+
+    it("does not touch the streak when no id matches a card", async () => {
+      const { graded, missing } = await flashcardsTable.grade.mutation({
+        grades: [{ id: "not-a-real-id", grade: Rating.Good }],
+      });
+
+      expect(graded).toEqual([]);
+      expect(missing).toEqual(["not-a-real-id"]);
+      expect(await readUserStats()).toHaveLength(0);
+    });
+
+    it("seeds the stats row with the caller's timezone", async () => {
+      // The API grades on behalf of a client elsewhere in the world, so the
+      // host's own timezone would be the wrong day boundary to record.
+      const flashcard = await insertFlashcard(testDb);
+
+      await flashcardsTable.grade.mutation({
+        grades: [{ id: flashcard.id, grade: Rating.Good }],
+        timezone: "Asia/Tokyo",
+      });
+
+      const [stats] = await readUserStats();
+
+      expect(stats.timezone).toBe("Asia/Tokyo");
+    });
+  });
+
   describe("reset", () => {
     it("resets a flashcard's progress back to the NEW state", async () => {
       const entry = await insertDictionaryEntry(testDb);

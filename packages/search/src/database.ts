@@ -102,9 +102,10 @@ export const removeDocument = (db: DictionaryOrama, id: string) => {
 
 /**
  * Reads a single indexed document by id, without going through search.
+ * Returns undefined when the document is not indexed.
  */
 export const getDocument = (db: DictionaryOrama, id: string) => {
-  return getByID(db, id);
+  return getByID(db, id) as DictionaryDocument | undefined;
 };
 
 type SearchableProperties = keyof typeof dictionarySchema;

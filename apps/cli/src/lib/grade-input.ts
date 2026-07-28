@@ -1,20 +1,24 @@
-import type { Grade } from "ts-fsrs";
-import { GRADE_LABELS, parseGradeLabel } from "./grade";
+import { GRADE_LABELS, type GradeLabel, parseGradeLabel } from "./grade";
 
 export type GradeItem = {
   id: string;
-  gradeLabel: string;
-  grade: Grade;
+  grade: GradeLabel;
 };
 
-const resolve = ({ id, gradeLabel }: { id: string; gradeLabel: string }) => {
+const resolve = ({
+  id,
+  gradeLabel,
+}: {
+  id: string;
+  gradeLabel: string;
+}): GradeItem => {
   const grade = parseGradeLabel(gradeLabel);
   if (grade === undefined) {
     throw new Error(
       `Invalid grade "${gradeLabel}" for card "${id}". Use one of: ${GRADE_LABELS}.`
     );
   }
-  return { id, gradeLabel: gradeLabel.toLowerCase(), grade };
+  return { id, grade };
 };
 
 const parseStdin = (stdin: string): { id: string; gradeLabel: string }[] => {

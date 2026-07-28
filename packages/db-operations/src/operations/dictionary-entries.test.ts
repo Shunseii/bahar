@@ -1,7 +1,11 @@
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createTestDb, type TestDb } from "../test/create-test-db";
-import { insertDictionaryEntry, insertFlashcard } from "../test/factories";
+import {
+  insertDictionaryEntry,
+  insertFlashcard,
+  insertSettings,
+} from "../test/factories";
 import { makeDictionaryEntriesTable } from "./dictionary-entries";
 
 describe("dictionaryEntriesTable", () => {
@@ -102,6 +106,104 @@ describe("dictionaryEntriesTable", () => {
 
       expect(row.root).toBeNull();
       expect(row.tags).toBeNull();
+    });
+  });
+
+  describe("addWordWithFlashcards", () => {
+    const readFlashcards = async (entryId: string) =>
+      (await (
+        await testDb.db.prepare(
+          "SELECT * FROM flashcards WHERE dictionary_entry_id = ? ORDER BY direction"
+        )
+      ).all([entryId])) as Record<string, unknown>[];
+
+    it("inserts the entry and a forward card in one call", async () => {
+      const result =
+        await dictionaryEntriesTable.addWordWithFlashcards.mutation({
+          word: { word: "كتاب", translation: "book", type: "ism" },
+        });
+
+      expect(result.entry).toMatchObject({
+        id: expect.any(String),
+        word: "كتاب",
+        translation: "book",
+        type: "ism",
+      });
+      expect(result.forward).toMatchObject({
+        dictionary_entry_id: result.entry.id,
+        direction: "forward",
+      });
+      expect(result.reverse).toBeNull();
+
+      const rows = await readFlashcards(result.entry.id);
+      expect(rows).toHaveLength(1);
+    });
+
+    it("creates a reverse card when create_reverse_by_default is on", async () => {
+      await insertSettings(testDb, { create_reverse_by_default: true });
+
+      const result =
+        await dictionaryEntriesTable.addWordWithFlashcards.mutation({
+          word: { word: "كتاب", translation: "book", type: "ism" },
+        });
+
+      expect(result.reverse).toMatchObject({
+        dictionary_entry_id: result.entry.id,
+        direction: "reverse",
+      });
+
+      const rows = await readFlashcards(result.entry.id);
+      expect(rows.map((r) => r.direction)).toEqual(["forward", "reverse"]);
+    });
+
+    it("lets an explicit createReverse override the setting in both directions", async () => {
+      await insertSettings(testDb, { create_reverse_by_default: true });
+
+      const optedOut =
+        await dictionaryEntriesTable.addWordWithFlashcards.mutation({
+          word: { word: "قلم", translation: "pen", type: "ism" },
+          createReverse: false,
+        });
+
+      expect(optedOut.reverse).toBeNull();
+      expect(await readFlashcards(optedOut.entry.id)).toHaveLength(1);
+
+      // Flip the stored default the other way and opt back in. The column is
+      // still named `show_reverse_flashcards` in SQL -- drizzle aliases it,
+      // because renaming a synced column breaks Turso sync's push.
+      await testDb.db.exec("UPDATE settings SET show_reverse_flashcards = 0");
+
+      const optedIn =
+        await dictionaryEntriesTable.addWordWithFlashcards.mutation({
+          word: { word: "باب", translation: "door", type: "ism" },
+          createReverse: true,
+        });
+
+      expect(optedIn.reverse).not.toBeNull();
+      expect(await readFlashcards(optedIn.entry.id)).toHaveLength(2);
+    });
+
+    it("rolls the entry back when the flashcard insert fails", async () => {
+      // The batch runs inside the engine's transaction, so a failure on the
+      // second statement must undo the first. Without that, the entry would
+      // survive with no cards and never surface for review -- the orphan state
+      // this operation exists to prevent.
+      await testDb.db.exec(`
+        CREATE TRIGGER reject_flashcards BEFORE INSERT ON flashcards
+        BEGIN SELECT RAISE(ABORT, 'flashcard insert rejected'); END;
+      `);
+
+      await expect(
+        dictionaryEntriesTable.addWordWithFlashcards.mutation({
+          word: { word: "كتاب", translation: "book", type: "ism" },
+        })
+      ).rejects.toThrow();
+
+      const entries = (await (
+        await testDb.db.prepare("SELECT * FROM dictionary_entries")
+      ).all([])) as Record<string, unknown>[];
+
+      expect(entries).toHaveLength(0);
     });
   });
 

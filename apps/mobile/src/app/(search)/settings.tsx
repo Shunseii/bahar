@@ -16,6 +16,7 @@ import {
   CreditCard,
   ExternalLink,
   FolderSync,
+  Key,
   Languages,
   Palette,
   Settings,
@@ -620,6 +621,35 @@ export default function SettingsScreen() {
               Icon={ExternalLink}
               onPress={() =>
                 Linking.openURL("https://bahar.dev/settings#dictionary")
+              }
+              variant="outline"
+            >
+              <Trans>Open Web App</Trans>
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* API keys */}
+        <Card>
+          <CardHeader>
+            <View className="flex-row items-center gap-2">
+              <Key color={colors.mutedForeground} size={18} />
+              <CardTitle>
+                <Trans>API keys</Trans>
+              </CardTitle>
+            </View>
+          </CardHeader>
+          <CardContent>
+            <Text className="mb-4 text-muted-foreground text-sm">
+              <Trans>
+                API keys let the Bahar CLI and other tools read and write your
+                dictionary. Manage them in the web app.
+              </Trans>
+            </Text>
+            <Button
+              Icon={ExternalLink}
+              onPress={() =>
+                Linking.openURL("https://bahar.dev/settings#api-keys")
               }
               variant="outline"
             >
