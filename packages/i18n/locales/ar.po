@@ -2320,7 +2320,7 @@ msgstr "المضافة حديثًا"
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:49
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:62
 msgid "Recently reviewed"
-msgstr ""
+msgstr "المراجَعة حديثًا"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:43
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:59
