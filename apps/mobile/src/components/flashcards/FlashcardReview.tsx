@@ -14,6 +14,7 @@ import { createScheduler, getSchedulingOptions } from "@bahar/fsrs";
 import { Plural, Trans } from "@lingui/react/macro";
 import * as Sentry from "@sentry/react-native";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { Archive, Brain, PartyPopper, X } from "lucide-react-native";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -21,8 +22,8 @@ import { Pressable, Text, View } from "react-native";
 import ReAnimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { type Grade, Rating } from "ts-fsrs";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { useSearch } from "@/hooks/useSearch";
 import { markEntryReviewedInIndex } from "@/lib/search";
+import { reviewsPendingRefreshAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -165,7 +166,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
 }) => {
   const colors = useThemeColors();
   const { formatNumber } = useFormatNumber();
-  const { reset: resetSearch } = useSearch();
+  const setReviewsPending = useSetAtom(reviewsPendingRefreshAtom);
   const [showAnswer, setShowAnswer] = useState(false);
   const [pendingGrade, setPendingGrade] = useState<Grade | null>(null);
   const [cards, setCards] = useState<FlashcardWithDictionaryEntry[]>([]);
@@ -366,9 +367,11 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
         currentCard.dictionary_entry_id,
         updates.last_review_timestamp_ms
       );
-      // Drop the cached search results so the dictionary list re-sorts with the
-      // refreshed review timestamp next time it renders.
-      resetSearch();
+      // Defer the list re-sort to when the dictionary list regains focus. Doing
+      // it here would re-run a full sorted Orama search on the still-mounted,
+      // off-screen list on every grade -- the source of the review-session
+      // freezes (BAHAR-MOBILE-5).
+      setReviewsPending(true);
     }
 
     await progressTable.recordReview.mutation();
@@ -400,7 +403,7 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
     currentCard,
     pendingGrade,
     updateFlashcardLocal,
-    resetSearch,
+    setReviewsPending,
   ]);
 
   if (status === "pending") {

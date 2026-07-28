@@ -83,6 +83,9 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const [selectedQueue, setSelectedQueue] =
     useState<FlashcardQueue>(initialQueue);
   const gradeCallbackRef = useRef<(() => void) | null>(null);
+  // Set when any card is graded so the dictionary list re-sorts once the drawer
+  // closes, rather than re-searching the still-mounted list on every grade.
+  const reviewedRef = useRef(false);
 
   useEffect(() => {
     setShowAnswer(false);
@@ -239,12 +242,12 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
           currentCard.dictionary_entry_id,
           lastReviewTimestampMs
         );
-        // Drop the cached search results so the dictionary list re-sorts with
-        // the refreshed review timestamp next time it renders.
-        resetSearch();
+        // Defer the list re-sort to drawer close (see onClose) so a review
+        // session doesn't re-search the mounted list on every grade.
+        reviewedRef.current = true;
       }
     },
-    [currentCard, schedulingCards, updateFlashcard, resetSearch]
+    [currentCard, schedulingCards, updateFlashcard]
   );
 
   const gradeCard = useCallback(
@@ -270,7 +273,15 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   }, []);
 
   return (
-    <Drawer onClose={() => setShowAnswer(false)}>
+    <Drawer
+      onClose={() => {
+        setShowAnswer(false);
+        if (reviewedRef.current) {
+          resetSearch();
+          reviewedRef.current = false;
+        }
+      }}
+    >
       <Tooltip>
         <TooltipTrigger asChild>
           <DrawerTrigger asChild>{children}</DrawerTrigger>
