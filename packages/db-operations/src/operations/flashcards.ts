@@ -667,7 +667,7 @@ export const makeFlashcardsTable = ({
       }: {
         dictionary_entry_id: string;
       }): Promise<{ flashcard: SelectFlashcard; log: ReviewLog }[]> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
           const now = new Date();
           const scheduler = createScheduler();
