@@ -73,16 +73,15 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
     }: {
       dictionary_entry_id: string;
     }) => {
-      const results = await Promise.all([
-        flashcardsTable.reset.mutation({
-          dictionary_entry_id,
-          direction: "forward",
-        }),
-        flashcardsTable.reset.mutation({
-          dictionary_entry_id,
-          direction: "reverse",
-        }),
-      ]);
+      // Reverse cards are optional per word, so only reset the ones that exist.
+      const existing =
+        await flashcardsTable.findByEntryId.query(dictionary_entry_id);
+
+      const results = await Promise.all(
+        existing.map(({ direction }) =>
+          flashcardsTable.reset.mutation({ dictionary_entry_id, direction })
+        )
+      );
 
       await Promise.all(
         results.map(({ flashcard, log }) =>
