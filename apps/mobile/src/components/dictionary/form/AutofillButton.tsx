@@ -2,7 +2,7 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { Sparkles } from "lucide-react-native";
 import { useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { type UseFormSetValue, useFormContext } from "react-hook-form";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { toast } from "sonner-native";
 import type { z } from "zod";
@@ -17,7 +17,13 @@ export const AutofillButton = () => {
   const colors = useThemeColors();
   const { isProUser } = useUserPlan();
   const [isLoading, setIsLoading] = useState(false);
-  const { setValue, watch } = useFormContext<FormData>();
+  const { setValue: setFieldValue, watch } = useFormContext<FormData>();
+
+  // Mark autofilled fields dirty so the Save button (gated on isDirty) enables.
+  // setValue defaults to shouldDirty: false, which left autofill-only edits
+  // unsaveable.
+  const setValue: UseFormSetValue<FormData> = (name, value, options) =>
+    setFieldValue(name, value, { shouldDirty: true, ...options });
 
   const word = watch("word");
   const translation = watch("translation");
