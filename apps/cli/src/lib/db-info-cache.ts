@@ -6,10 +6,15 @@ import { configDir } from "./credentials";
  * Connection info for the user's personal Turso database, as returned by the
  * API's `/databases/user` endpoint. `hostname` + `access_token` are all
  * `connectUserDb` needs; the rest is passed through for the `db-info` command.
+ *
+ * The token is read-only: the API hands API-key callers a token that can query
+ * but not write, because writes belong in the `add`/`edit`/`delete`/`grade`
+ * commands, which the API validates and applies.
  */
 export interface UserDatabaseInfo {
   hostname: string;
   access_token: string;
+  access_level?: "read_only" | "full";
   [key: string]: unknown;
 }
 

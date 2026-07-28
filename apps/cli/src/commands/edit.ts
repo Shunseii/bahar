@@ -1,7 +1,6 @@
 import { defineCommand } from "@bunli/core";
-import { applyEdits } from "../lib/apply-edits";
 import { loadCredentials } from "../lib/credentials";
-import { connectUserDb } from "../lib/db";
+import { editWords } from "../lib/dictionary-api";
 import { type EditItem, parseEditInput } from "../lib/edit-input";
 
 const printHelp = () => {
@@ -21,7 +20,8 @@ Example:
 
 Every edit bumps the entry's updated_at so it syncs correctly. Ids with no
 matching entry are reported and skipped. Prefer this over hand-written SQL, which
-can forget the updated_at bump and lose the edit to a sync race.`);
+can forget the updated_at bump and lose the edit to a sync race -- and which
+your database token has no permission to run.`);
 };
 
 export const editCommand = defineCommand({
@@ -59,10 +59,11 @@ export const editCommand = defineCommand({
       return;
     }
 
-    const { db, client } = await connectUserDb(credentials.token);
-
     try {
-      const { edited, missing } = await applyEdits({ db, items });
+      const { edited, missing } = await editWords({
+        token: credentials.token,
+        edits: items,
+      });
 
       for (const id of missing) {
         console.warn(colors.yellow(`Skipped: no entry found with id "${id}".`));
@@ -84,8 +85,11 @@ export const editCommand = defineCommand({
       if (missing.length > 0) {
         process.exitCode = 1;
       }
-    } finally {
-      client.close();
+    } catch (error) {
+      console.error(
+        colors.red(error instanceof Error ? error.message : String(error))
+      );
+      process.exitCode = 1;
     }
   },
 });

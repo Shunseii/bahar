@@ -103,9 +103,12 @@ export default function AddWordScreen() {
   const createReverse =
     createReverseOverride ?? settingsData?.create_reverse_by_default ?? false;
 
+  // The entry and its flashcards are written in one atomic operation, so a
+  // flashcard failure now fails the whole add instead of leaving the word
+  // behind with no review schedule.
   const addWordMutation = useMutation({
-    mutationFn: dictionaryEntriesTable.addWord.mutation,
-    onSuccess: async (newEntry) => {
+    mutationFn: dictionaryEntriesTable.addWordWithFlashcards.mutation,
+    onSuccess: async ({ entry: newEntry }) => {
       await addToSearchIndex({
         id: newEntry.id,
         word: newEntry.word,
@@ -116,15 +119,6 @@ export default function AddWordScreen() {
         tags: newEntry.tags ?? undefined,
       });
       reset();
-
-      try {
-        await flashcardsTable.createFlashcardPair.mutation({
-          dictionary_entry_id: newEntry.id,
-          createReverse,
-        });
-      } catch (error) {
-        console.warn("Failed to create flashcards:", error);
-      }
 
       await Promise.all([
         queryClient.invalidateQueries({
@@ -201,6 +195,7 @@ export default function AddWordScreen() {
 
   const onSubmit = async (data: FormData) => {
     await addWordMutation.mutateAsync({
+      createReverse,
       word: {
         word: data.word,
         translation: data.translation,

@@ -1,10 +1,8 @@
 import { defineCommand } from "@bunli/core";
-import { applyGrades } from "../lib/apply-grades";
 import { loadCredentials } from "../lib/credentials";
-import { connectUserDb } from "../lib/db";
+import { gradeFlashcards } from "../lib/dictionary-api";
 import { GRADE_LABELS } from "../lib/grade";
 import { type GradeItem, parseGradeInput } from "../lib/grade-input";
-import { postRevlogsBatch } from "../lib/revlog";
 
 const printHelp = () => {
   console.log(`Grade one or more flashcards, running the real FSRS scheduler.
@@ -19,11 +17,11 @@ Usage:
 
   <grade>   one of: ${GRADE_LABELS}
 
-However many cards are graded, this opens one connection, persists every
-flashcard update in a single batch, advances the streak once, and posts all
-review logs in one request. Find a card's id by querying the user's database
-directly (see the bahar-data-access skill). Never hand-write FSRS fields —
-always grade here.`);
+However many cards are graded, this sends one request; the server runs FSRS,
+persists every flashcard update in a single batch, advances the streak once, and
+records all review logs. Find a card's id by querying the user's database
+directly (see the bahar-data-access skill). Never hand-write FSRS fields --
+always grade here; your database token can't write them anyway.`);
 };
 
 export const gradeCommand = defineCommand({
@@ -61,23 +59,11 @@ export const gradeCommand = defineCommand({
       return;
     }
 
-    const { db, client } = await connectUserDb(credentials.token);
-
     try {
-      const { results, missing, revlogEntries } = await applyGrades({
-        db,
-        items,
+      const { graded, missing } = await gradeFlashcards({
+        token: credentials.token,
+        grades: items,
       });
-
-      if (revlogEntries.length > 0) {
-        // Fire-and-forget like the app — a failed revlog must not fail grades.
-        await postRevlogsBatch({
-          token: credentials.token,
-          entries: revlogEntries,
-        }).catch((err) => {
-          console.warn(`Failed to post review logs: ${err}`);
-        });
-      }
 
       for (const id of missing) {
         console.warn(
@@ -87,7 +73,12 @@ export const gradeCommand = defineCommand({
 
       console.log(
         JSON.stringify(
-          { graded: results.length, skipped: missing.length, results, missing },
+          {
+            graded: graded.length,
+            skipped: missing.length,
+            results: graded,
+            missing,
+          },
           null,
           2
         )
@@ -96,8 +87,11 @@ export const gradeCommand = defineCommand({
       if (missing.length > 0) {
         process.exitCode = 1;
       }
-    } finally {
-      client.close();
+    } catch (error) {
+      console.error(
+        colors.red(error instanceof Error ? error.message : String(error))
+      );
+      process.exitCode = 1;
     }
   },
 });
