@@ -20,7 +20,6 @@ import {
 } from "lucide-react-native";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import {
-  AppState,
   Text as RNText,
   TextInput,
   TouchableOpacity,
@@ -44,12 +43,6 @@ import { HeaderScrollContext } from "@/contexts/header-scroll";
 import { useSearch } from "@/hooks/useSearch";
 import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
 import { performSync } from "@/lib/db/sync";
-import {
-  configureNotifications,
-  dismissReviewNotifications,
-  recomputeReviewNotifications,
-  reconcileNotificationPermission,
-} from "@/lib/notifications";
 import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
 import {
   dictionaryChangedAtom,
@@ -211,36 +204,6 @@ export default function Layout() {
     return () => clearInterval(interval);
   }, []);
 
-  // Set up notifications and schedule an initial pass. The schedule is kept
-  // fresh by foreground recomputes only (this mount + the post-sync effect
-  // below).
-  //
-  // Deliberately NOT recomputing on "background": recompute cancels the pending
-  // reminders before it reschedules, but the OS suspends JS on backgrounding
-  // before the async reschedule can finish -- so doing it there wipes the very
-  // reminders meant to fire while the app is closed. Leaving them untouched lets
-  // the OS deliver them when due.
-  useEffect(() => {
-    configureNotifications()
-      .then(() => reconcileNotificationPermission())
-      .then(() => recomputeReviewNotifications());
-    // Clear any delivered reminders left in the tray from while the app was closed.
-    dismissReviewNotifications();
-
-    const subscription = AppState.addEventListener("change", (nextState) => {
-      if (nextState === "active") {
-        // In the app now -- clear delivered reminders from the tray.
-        dismissReviewNotifications();
-        // Permission may have been revoked in OS settings while backgrounded.
-        reconcileNotificationPermission().then(() =>
-          recomputeReviewNotifications()
-        );
-      }
-    });
-
-    return () => subscription.remove();
-  }, []);
-
   useEffect(() => {
     if (syncCompletedCount === 0) return;
 
@@ -257,10 +220,6 @@ export default function Layout() {
       }
 
       await queryClient.invalidateQueries();
-
-      // Due data may have changed (e.g. reviewed on another device) -- keep the
-      // scheduled reminders in step.
-      recomputeReviewNotifications();
     };
 
     refreshAfterSync();
