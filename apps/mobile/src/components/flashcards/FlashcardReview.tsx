@@ -21,7 +21,6 @@ import { Pressable, Text, View } from "react-native";
 import ReAnimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { type Grade, Rating } from "ts-fsrs";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { getIndexedEntry } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -249,41 +248,6 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   useEffect(() => {
     setShowAnswer(false);
   }, [currentCard?.id]);
-
-  // TEMPORARY DIAGNOSTIC (translation truncation on the answer side). The card
-  // renders the translation off the Turso row, while every other surface that
-  // shows translations renders the Orama search document -- two separate
-  // pipelines for the same field. Logs both for the card on screen so they can
-  // be compared against what was actually displayed.
-  useEffect(() => {
-    if (!currentCard) return;
-
-    const entry = currentCard.dictionary_entry;
-
-    getIndexedEntry(entry.id)
-      .then((indexed) => {
-        const indexedTranslation = indexed?.translation ?? null;
-
-        Sentry.logger.info("flashcard.answer.translationSources", {
-          operation: "flashcard.translationTruncation",
-          entryId: entry.id,
-          word: entry.word,
-          tursoText: JSON.stringify(entry.translation),
-          tursoLength: entry.translation.length,
-          indexedText: JSON.stringify(indexedTranslation),
-          indexedLength: indexedTranslation?.length ?? null,
-          sourcesMatch: indexedTranslation === entry.translation,
-          indexedDocumentFound: Boolean(indexed),
-        });
-      })
-      .catch((err) => {
-        Sentry.logger.warn("flashcard.answer.translationSources failed", {
-          operation: "flashcard.translationTruncation",
-          entryId: entry.id,
-          error: String(err),
-        });
-      });
-  }, [currentCard]);
 
   const fsrsInput = useMemo(
     () =>

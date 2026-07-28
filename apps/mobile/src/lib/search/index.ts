@@ -17,7 +17,6 @@ import {
 import { err, ok, type Result } from "@bahar/result";
 import {
   createDictionaryDatabase,
-  getDocument,
   insertDocument,
   insertDocuments,
   removeDocument,
@@ -397,14 +396,6 @@ export const search = async (
 ) => {
   const orama = getOramaDb();
   return searchDictionary(orama, term, options);
-};
-
-/**
- * Reads an indexed document straight out of the search index by id.
- */
-export const getIndexedEntry = async (id: string) => {
-  const orama = getOramaDb();
-  return getDocument(orama, id);
 };
 
 export {

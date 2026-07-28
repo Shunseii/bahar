@@ -4,7 +4,6 @@
  */
 
 import { Trans } from "@lingui/react/macro";
-import * as Sentry from "@sentry/react-native";
 import * as Haptics from "expo-haptics";
 import { ChevronDown } from "lucide-react-native";
 import type React from "react";
@@ -12,12 +11,9 @@ import { useCallback, useEffect } from "react";
 import {
   Dimensions,
   I18nManager,
-  type LayoutChangeEvent,
-  type NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
-  type TextLayoutEventData,
   View,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -283,55 +279,6 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
   </View>
 );
 
-/**
- * TEMPORARY DIAGNOSTIC (translation truncation on the answer side).
- *
- * onTextLayout reports the lines RN actually laid out, so joining their text
- * back together and comparing it to the source string says whether the
- * truncation happens at layout time or before the string ever reaches here.
- * `laidOutText` shorter than `sourceText` means RN dropped content while laying
- * it out; equal means the glyphs exist and something clips them afterwards.
- *
- * JSON.stringify is deliberate on both strings -- it makes newlines, trailing
- * whitespace and any zero-width characters visible in Sentry instead of
- * silently rendering as nothing.
- */
-const logTranslationTextLayout = ({
-  entry,
-  event,
-}: {
-  entry: FlashcardWithDictionaryEntry["dictionary_entry"];
-  event: NativeSyntheticEvent<TextLayoutEventData>;
-}) => {
-  const { lines } = event.nativeEvent;
-  const laidOutText = lines.map((line) => line.text).join("");
-
-  Sentry.logger.info("flashcard.answer.translationTextLayout", {
-    operation: "flashcard.translationTruncation",
-    entryId: entry.id,
-    word: entry.word,
-    sourceText: JSON.stringify(entry.translation),
-    sourceLength: entry.translation.length,
-    laidOutText: JSON.stringify(laidOutText),
-    laidOutLength: laidOutText.length,
-    droppedCharacters: entry.translation.length - laidOutText.length,
-    lineCount: lines.length,
-    lineWidths: lines.map((line) => Math.round(line.width)),
-    lineHeights: lines.map((line) => Math.round(line.height)),
-  });
-};
-
-/** TEMPORARY DIAGNOSTIC: width the translation actually got to wrap within. */
-const logTranslationBoxLayout = (event: LayoutChangeEvent) => {
-  const { width, height } = event.nativeEvent.layout;
-
-  Sentry.logger.info("flashcard.answer.translationBoxLayout", {
-    operation: "flashcard.translationTruncation",
-    width: Math.round(width),
-    height: Math.round(height),
-  });
-};
-
 interface AnswerContentProps {
   entry: FlashcardWithDictionaryEntry["dictionary_entry"];
   isReverse: boolean;
@@ -369,20 +316,14 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
         already committed one line short -- the overflow is clipped by the card's
         overflow-hidden, silently dropping part of the translation. A definite
         width means the measure and layout passes agree. */}
-    <View
-      className="w-full items-center gap-1"
-      onLayout={logTranslationBoxLayout}
-    >
+    <View className="w-full items-center gap-1">
       <Text
         className="text-center font-bold text-3xl text-foreground leading-relaxed"
         style={{ writingDirection: "rtl" }}
       >
         {entry.word}
       </Text>
-      <Text
-        className="text-center font-medium text-foreground text-xl"
-        onTextLayout={(event) => logTranslationTextLayout({ entry, event })}
-      >
+      <Text className="text-center font-medium text-foreground text-xl">
         {entry.translation}
       </Text>
     </View>
