@@ -359,7 +359,15 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
   >
     {tags.length > 0 && <TagsRow tags={tags} />}
 
-    <View className="items-center gap-1" onLayout={logTranslationBoxLayout}>
+    {/* w-full is load-bearing, not cosmetic. The parent centers its children
+        (items-center), so without an explicit width this box is content-sized:
+        its height gets measured from the text at its *unconstrained* width,
+        which never wraps and so reports a single line. The box then lays out at
+        the card's narrower width, the text wraps to two lines, and the height is
+        already committed one line short -- the overflow is clipped by the card's
+        overflow-hidden, silently dropping part of the translation. A definite
+        width means the measure and layout passes agree. */}
+    <View className="w-full items-center gap-1" onLayout={logTranslationBoxLayout}>
       <Text
         className="text-center font-bold text-3xl text-foreground leading-relaxed"
         style={{ writingDirection: "rtl" }}
@@ -377,7 +385,7 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
     <PropertiesRow morphology={entry.morphology} type={entry.type} />
 
     {entry.definition && (
-      <Text className="text-center text-[13px] text-muted-foreground">
+      <Text className="w-full text-center text-[13px] text-muted-foreground">
         {entry.definition}
       </Text>
     )}
