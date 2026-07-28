@@ -107,7 +107,7 @@ export const Button: FC<ButtonProps> = ({
             className={cn(textVariants({ variant, className }), "text-center")}
           >
             {typeof children === "function"
-              ? children({ pressed: false, hovered: false })
+              ? children({ pressed: false })
               : children}
           </Text>
         )}

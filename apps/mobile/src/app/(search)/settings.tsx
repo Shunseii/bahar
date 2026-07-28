@@ -1,3 +1,4 @@
+import { enqueueDbOperation } from "@bahar/db-operations";
 import {
   decks,
   dictionaryEntries,
@@ -5,6 +6,7 @@ import {
   type ShowAntonymsMode,
 } from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react-native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { sql } from "drizzle-orm";
 import { reloadAppAsync } from "expo";
@@ -41,13 +43,25 @@ import Animated, {
 import { toast } from "sonner-native";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { ScreenHeader } from "@/components/ui/screen-header";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
+import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useSearch } from "@/hooks/useSearch";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { deleteLocalDb, ensureDb, resetDb } from "@/lib/db";
 import { getDrizzleDb } from "@/lib/db/adapter";
-import { flashcardsTable, settingsTable } from "@/lib/db/operations";
+import {
+  clampPostponeWindow,
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  DEFAULT_POSTPONE_WINDOW_DAYS,
+  flashcardsTable,
+  MIN_POSTPONE_WINDOW_DAYS,
+  type PostponeScope,
+  postponeCardsPerDay,
+  settingsTable,
+} from "@/lib/db/operations";
+import { performSync } from "@/lib/db/sync";
 import { resetOramaDb } from "@/lib/search";
 import { useThemeColors } from "@/lib/theme";
 import { api, queryClient } from "@/utils/api";
@@ -236,6 +250,7 @@ export default function SettingsScreen() {
   const colors = useThemeColors();
   const colorScheme = useColorScheme();
   const { t } = useLingui();
+  const { formatNumber } = useFormatNumber();
   const { scrollHandler } = useCollapsibleHeader(t`Settings`);
   const { reset: resetSearch } = useSearch();
 
@@ -271,47 +286,117 @@ export default function SettingsScreen() {
     onError: () => toast.error(t`Failed to update settings`),
   });
 
-  const [clearingProgress, setClearingProgress] = useState<{
+  const [postponeProgress, setPostponeProgress] = useState<{
     total: number;
-    cleared: number;
+    postponed: number;
   } | null>(null);
+  const [postponeScope, setPostponeScope] = useState<PostponeScope>("all");
+  // Held as the raw string so the field can be empty mid-edit instead of
+  // snapping back to a number the moment the user clears it.
+  const [windowInput, setWindowInput] = useState(
+    String(DEFAULT_POSTPONE_WINDOW_DAYS)
+  );
+
+  const { data: counts } = useQuery({
+    queryFn: () => flashcardsTable.counts.query(),
+    ...flashcardsTable.counts.cacheOptions,
+  });
+
+  const scopeCount =
+    (postponeScope === "all" ? counts?.total : counts?.backlog) ?? 0;
+  const hasNothingToPostpone = scopeCount === 0;
+
+  const parsedWindow = Number(windowInput);
+  const isWindowValid =
+    windowInput.trim() !== "" &&
+    Number.isInteger(parsedWindow) &&
+    parsedWindow >= MIN_POSTPONE_WINDOW_DAYS &&
+    parsedWindow ===
+      clampPostponeWindow({ windowDays: parsedWindow, cardCount: scopeCount });
+
+  const windowDays = clampPostponeWindow({
+    windowDays: parsedWindow,
+    cardCount: scopeCount,
+  });
+  const cardsPerDay = postponeCardsPerDay({
+    cardCount: scopeCount,
+    windowDays,
+  });
+
+  // Switching scope changes the count, which can drop the ceiling below what's
+  // currently typed -- re-clamp rather than silently postponing out of range.
+  const handleScopeChange = (value: string) => {
+    const nextScope = value as PostponeScope;
+    const nextCount =
+      (nextScope === "all" ? counts?.total : counts?.backlog) ?? 0;
+
+    setPostponeScope(nextScope);
+    setWindowInput((current) =>
+      String(
+        clampPostponeWindow({
+          windowDays: Number(current),
+          cardCount: nextCount,
+        })
+      )
+    );
+  };
 
   // Animate the bar width so each batch jump (up to CHUNK_SIZE cards at once)
   // eases to its new position instead of snapping.
-  const clearProgressWidth = useSharedValue(0);
-  const clearProgressBarStyle = useAnimatedStyle(() => ({
-    width: `${clearProgressWidth.value}%`,
+  const postponeProgressWidth = useSharedValue(0);
+  const postponeProgressBarStyle = useAnimatedStyle(() => ({
+    width: `${postponeProgressWidth.value}%`,
   }));
 
   useEffect(() => {
-    if (!clearingProgress || clearingProgress.total === 0) {
-      clearProgressWidth.value = 0;
+    if (!postponeProgress || postponeProgress.total === 0) {
+      postponeProgressWidth.value = 0;
       return;
     }
-    clearProgressWidth.value = withTiming(
-      (clearingProgress.cleared / clearingProgress.total) * 100,
+    postponeProgressWidth.value = withTiming(
+      (postponeProgress.postponed / postponeProgress.total) * 100,
       { duration: 250 }
     );
-  }, [clearingProgress, clearProgressWidth]);
+  }, [postponeProgress, postponeProgressWidth]);
 
-  const handleClearBacklog = async () => {
+  const handlePostpone = async () => {
     try {
-      let lastProgress = { cleared: 0, total: 0 };
+      let lastProgress = { postponed: 0, total: 0 };
       let lastPaintAt = 0;
 
-      for await (const progress of flashcardsTable.clearBacklog.generator()) {
-        lastProgress = progress;
+      // The whole drain has to sit inside one queue slot. postpone holds its
+      // transaction open across every yield, and the repaint yield below hands
+      // control back to the event loop between chunks -- long enough for the
+      // periodic sync (which shares this single-slot queue) to start a
+      // pull/push against a connection with an open transaction.
+      await enqueueDbOperation(async () => {
+        for await (const progress of flashcardsTable.postpone.generator({
+          scope: postponeScope,
+          windowDays,
+        })) {
+          lastProgress = progress;
 
-        // The generator drains as a tight chain of awaited DB writes, which
-        // only yields microtasks -- RN never gets a frame to repaint, so the
-        // progress bar would stay invisible until the loop ends. Hand control
-        // back to the event loop (throttled to ~20fps) so it actually renders.
-        const now = Date.now();
-        if (now - lastPaintAt > 200 || progress.cleared === progress.total) {
-          setClearingProgress(progress);
-          lastPaintAt = now;
-          await new Promise((resolve) => setTimeout(resolve, 0));
+          // The generator drains as a tight chain of awaited DB writes, which
+          // only yields microtasks -- RN never gets a frame to repaint, so the
+          // progress bar would stay invisible until the loop ends. Hand control
+          // back to the event loop (throttled to ~20fps) so it actually renders.
+          const now = Date.now();
+          if (
+            now - lastPaintAt > 200 ||
+            progress.postponed === progress.total
+          ) {
+            setPostponeProgress(progress);
+            lastPaintAt = now;
+            await new Promise((resolve) => setTimeout(resolve, 0));
+          }
         }
+      });
+
+      // Rescheduling touches every overdue card, so push it now rather than
+      // leaving the change set to sit until the next periodic sync -- web
+      // pushes immediately and the two shouldn't disagree for a minute.
+      if (lastProgress.total > 0) {
+        await performSync();
       }
 
       queryClient.invalidateQueries({
@@ -322,18 +407,23 @@ export default function SettingsScreen() {
       });
 
       if (lastProgress.total === 0) {
-        toast.info(t`No backlog cards to clear.`);
+        toast.info(t`No overdue cards to reschedule.`);
       } else {
-        toast.success(t`Backlog cleared!`, {
-          description: t`${lastProgress.cleared} cards have been rescheduled.`,
+        toast.success(t`Backlog rescheduled!`, {
+          description: t`${lastProgress.postponed} cards have been spread over the next ${windowDays} days.`,
         });
       }
-    } catch (_err) {
-      toast.error(t`Failed to clear backlog`, {
-        description: t`There was an error clearing your backlog.`,
+    } catch (err) {
+      // A failed postpone rolls back, so without this the only trace is a
+      // toast the user dismisses.
+      Sentry.captureException(err, {
+        tags: { operation: "postpone" },
+      });
+      toast.error(t`Failed to reschedule backlog`, {
+        description: t`There was an error rescheduling your backlog.`,
       });
     } finally {
-      setClearingProgress(null);
+      setPostponeProgress(null);
     }
   };
 
@@ -390,7 +480,7 @@ export default function SettingsScreen() {
 
               // Delete flashcards before dictionary entries (flashcards
               // reference entries). Manual BEGIN/COMMIT mirrors the shared
-              // clearBacklog op -- the mobile adapter's drizzle instance is
+              // postpone op -- the mobile adapter's drizzle instance is
               // driven through raw run() rather than .transaction().
               await drizzleDb.run(sql`BEGIN TRANSACTION`);
               try {
@@ -435,6 +525,17 @@ export default function SettingsScreen() {
     { value: "hidden", label: t`Hidden` },
     { value: "hint", label: t`Hint` },
     { value: "answer", label: t`Answer` },
+  ];
+
+  const postponeScopeOptions = [
+    {
+      value: "all",
+      label: t`All overdue (${formatNumber(counts?.total ?? 0)})`,
+    },
+    {
+      value: "backlog",
+      label: t`Backlog only (${formatNumber(counts?.backlog ?? 0)})`,
+    },
   ];
 
   if (isLoading) {
@@ -632,33 +733,102 @@ export default function SettingsScreen() {
 
               <View className="py-2">
                 <Text className="mb-1 font-medium text-base text-foreground">
-                  <Trans>Clear backlog</Trans>
+                  <Trans>Reschedule backlog</Trans>
                 </Text>
                 <Text className="mb-3 text-muted-foreground text-sm">
-                  <Trans>
-                    Reschedule all backlog cards by grading them as "Hard".
-                  </Trans>
+                  {postponeScope === "all" ? (
+                    <Trans>
+                      Spread your overdue cards evenly across the days ahead.
+                      Your progress on each card is untouched.
+                    </Trans>
+                  ) : (
+                    <Trans>
+                      Spread your backlog cards evenly across the days ahead.
+                      Cards overdue by less than{" "}
+                      {DEFAULT_BACKLOG_THRESHOLD_DAYS} days stay due today. Your
+                      progress on each card is untouched.
+                    </Trans>
+                  )}
                 </Text>
 
-                {clearingProgress ? (
+                <View className="mb-3">
+                  <SelectOptions
+                    onChange={handleScopeChange}
+                    options={postponeScopeOptions}
+                    value={postponeScope}
+                  />
+                </View>
+
+                <View className="mb-3">
+                  <View className="flex-row items-center gap-2">
+                    <Text className="text-foreground text-sm">
+                      <Trans>Spread over</Trans>
+                    </Text>
+                    <Input
+                      className="w-20"
+                      editable={!hasNothingToPostpone}
+                      keyboardType="number-pad"
+                      onChangeText={setWindowInput}
+                      value={windowInput}
+                    />
+                    <Text className="text-muted-foreground text-sm">
+                      <Trans>days</Trans>
+                    </Text>
+                  </View>
+
+                  {/* "14 days" means nothing to someone deciding; "53 cards a
+                      day" is the number they can actually say yes or no to. */}
+                  {!hasNothingToPostpone && isWindowValid && (
+                    <Text className="mt-1.5 text-muted-foreground text-xs">
+                      <Trans>
+                        about {formatNumber(cardsPerDay)} cards per day
+                      </Trans>
+                    </Text>
+                  )}
+                </View>
+
+                {postponeProgress ? (
                   <View className="gap-2">
                     <View className="h-2 w-full overflow-hidden rounded-full bg-muted">
                       <Animated.View
                         className="h-full rounded-full bg-primary"
-                        style={clearProgressBarStyle}
+                        style={postponeProgressBarStyle}
                       />
                     </View>
                     <Text className="text-center text-muted-foreground text-xs">
                       <Trans>
-                        {clearingProgress.cleared} / {clearingProgress.total}{" "}
+                        {postponeProgress.postponed} / {postponeProgress.total}{" "}
                         cards
                       </Trans>
                     </Text>
                   </View>
                 ) : (
-                  <Button onPress={handleClearBacklog} variant="outline">
-                    <Trans>Clear backlog</Trans>
-                  </Button>
+                  <View className="gap-1.5">
+                    <Button
+                      disabled={hasNothingToPostpone || !isWindowValid}
+                      onPress={handlePostpone}
+                      variant="outline"
+                    >
+                      <Trans>Reschedule</Trans>
+                    </Button>
+
+                    {/* No hover on touch, so the reason a disabled button is
+                        disabled has to be stated inline rather than in a
+                        tooltip like web. */}
+                    {hasNothingToPostpone && (
+                      <Text className="text-center text-muted-foreground text-xs">
+                        {postponeScope === "all" ? (
+                          <Trans>
+                            You have no overdue cards to reschedule.
+                          </Trans>
+                        ) : (
+                          <Trans>
+                            You have no backlog cards to reschedule.
+                          </Trans>
+                        )}
+                      </Text>
+                    )}
+                  </View>
                 )}
               </View>
             </View>
