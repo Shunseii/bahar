@@ -18,17 +18,36 @@ export const tursoPlatformClient: ReturnType<typeof createPlatformClient> =
   }) as ReturnType<typeof createPlatformClient>;
 
 /**
- * Creates a new access token for a user database with full access and
- * 2 week expiration.
+ * Creates a new access token for a user database. Defaults to full access with
+ * a 2 week expiration -- what the apps hold, since they sync writes from a
+ * local replica.
+ *
+ * Pass `authorization: "read-only"` for a caller that must not write directly,
+ * i.e. the CLI and the agents driving it: their writes go through the API's
+ * dictionary endpoints, which validate the payload and apply it with the same
+ * operations the apps use. Read-only tokens are minted per request rather than
+ * stored, so they're kept shorter-lived -- but still comfortably longer than
+ * the CLI's 24h cache refresh buffer, or every command would re-fetch one.
  */
-export const createUserAccessToken = async ({ dbName }: { dbName: string }) => {
+export const createUserAccessToken = async ({
+  dbName,
+  authorization = "full-access",
+  expiration = "2w",
+}: {
+  dbName: string;
+  authorization?: "full-access" | "read-only";
+  expiration?: string;
+}) => {
   const accessToken = await tursoPlatformClient.databases.createToken(dbName, {
-    authorization: "full-access",
-    expiration: "2w",
+    authorization,
+    expiration,
   });
 
   return accessToken;
 };
+
+/** See {@link createUserAccessToken}. */
+export const READ_ONLY_TOKEN_EXPIRATION = "7d";
 
 /**
  * Creates a new database for a user in Turso.
