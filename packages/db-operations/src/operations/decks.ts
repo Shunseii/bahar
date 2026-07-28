@@ -25,7 +25,10 @@ export type DeckWithCounts = SelectDeck & {
   total_hits: number;
 };
 
-export const makeDecksTable = ({ getDb }: OperationDeps) =>
+export const makeDecksTable = ({
+  enqueue = enqueueDbOperation,
+  getDb,
+}: OperationDeps) =>
   ({
     list: {
       query: async ({
@@ -121,7 +124,7 @@ export const makeDecksTable = ({ getDb }: OperationDeps) =>
       }: {
         deck: Omit<SelectDeck, "id">;
       }): Promise<SelectDeck> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
 
           const [res] = await drizzleDb
@@ -151,7 +154,7 @@ export const makeDecksTable = ({ getDb }: OperationDeps) =>
         id: string;
         updates: Partial<Omit<SelectDeck, "id">>;
       }): Promise<SelectDeck> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
 
           const setValues: Partial<InsertDeck> = {};
@@ -185,7 +188,7 @@ export const makeDecksTable = ({ getDb }: OperationDeps) =>
     },
     delete: {
       mutation: ({ id }: { id: string }): Promise<{ success: boolean }> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
 
           await drizzleDb.delete(decks).where(eq(decks.id, id));

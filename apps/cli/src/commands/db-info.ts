@@ -6,7 +6,7 @@ import { getUserDbInfo } from "../lib/db";
 export const dbInfoCommand = defineCommand({
   name: "db-info",
   description:
-    "Print connection info (hostname, db name, access token) for your personal database",
+    "Print connection info (hostname, db name, read-only access token) for your personal database",
   options: {
     refresh: option(z.coerce.boolean().optional().default(false), {
       short: "r",
@@ -29,6 +29,14 @@ export const dbInfoCommand = defineCommand({
         forceRefresh: flags.refresh,
       });
       console.log(JSON.stringify(info, null, 2));
+
+      if (info.access_level === "read_only") {
+        console.warn(
+          colors.yellow(
+            "This token is read-only. Query the database with it; make changes with `bahar add|edit|delete|grade`."
+          )
+        );
+      }
     } catch (error) {
       console.error(
         colors.red(error instanceof Error ? error.message : String(error))

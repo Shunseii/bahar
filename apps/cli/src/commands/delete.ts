@@ -2,10 +2,10 @@ import { dictionaryEntries } from "@bahar/drizzle-user-db-schemas";
 import { defineCommand, option } from "@bunli/core";
 import { inArray } from "drizzle-orm";
 import { z } from "zod";
-import { applyDeletes } from "../lib/apply-deletes";
 import { loadCredentials } from "../lib/credentials";
 import { connectUserDb } from "../lib/db";
 import { parseDeleteInput } from "../lib/delete-input";
+import { deleteWords } from "../lib/dictionary-api";
 
 const printHelp = () => {
   console.log(`Delete one or more words and their flashcards.
@@ -64,28 +64,37 @@ export const deleteCommand = defineCommand({
       return;
     }
 
-    const { db, client } = await connectUserDb(credentials.token);
-
     try {
       if (!flags.yes) {
-        // Dry run: show what would be deleted, delete nothing.
-        const preview = await previewEntries({ db, ids });
-        console.warn(
-          colors.yellow(
-            "Dry run -- nothing deleted. Re-run with --yes to confirm. This is irreversible."
-          )
-        );
-        console.log(
-          JSON.stringify(
-            { wouldDelete: preview.found, notFound: preview.missing },
-            null,
-            2
-          )
-        );
+        // Dry run: show what would be deleted, delete nothing. This is a read,
+        // so it goes straight to the database rather than through the API.
+        const { db, client } = await connectUserDb(credentials.token);
+
+        try {
+          const preview = await previewEntries({ db, ids });
+          console.warn(
+            colors.yellow(
+              "Dry run -- nothing deleted. Re-run with --yes to confirm. This is irreversible."
+            )
+          );
+          console.log(
+            JSON.stringify(
+              { wouldDelete: preview.found, notFound: preview.missing },
+              null,
+              2
+            )
+          );
+        } finally {
+          client.close();
+        }
+
         return;
       }
 
-      const { deleted, missing } = await applyDeletes({ db, ids });
+      const { deleted, missing } = await deleteWords({
+        token: credentials.token,
+        ids,
+      });
 
       for (const id of missing) {
         console.warn(colors.yellow(`Skipped: no entry found with id "${id}".`));
@@ -107,8 +116,11 @@ export const deleteCommand = defineCommand({
       if (missing.length > 0) {
         process.exitCode = 1;
       }
-    } finally {
-      client.close();
+    } catch (error) {
+      console.error(
+        colors.red(error instanceof Error ? error.message : String(error))
+      );
+      process.exitCode = 1;
     }
   },
 });

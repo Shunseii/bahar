@@ -6,17 +6,17 @@ Bahar is an Arabic language learning app: personal dictionary, flashcards with s
 
 ## Architecture
 
-| Layer    | Stack                                                                              |
-| -------- | ---------------------------------------------------------------------------------- |
-| Web      | React 19, Vite, Tanstack Router, Shadcn/UI, Tailwind CSS v4                        |
-| Mobile   | React Native 0.81, Expo SDK 54, UniWind, file-based routing                        |
-| API      | Bun, Elysia, Eden Treaty (type-safe client), Better Auth                           |
-| Database | Turso (central + per-user SQLite DBs), Drizzle ORM                                 |
+| Layer    | Stack                                                                                       |
+| -------- | ------------------------------------------------------------------------------------------- |
+| Web      | React 19, Vite, Tanstack Router, Shadcn/UI, Tailwind CSS v4                                 |
+| Mobile   | React Native 0.81, Expo SDK 54, UniWind, file-based routing                                 |
+| API      | Bun, Elysia, Eden Treaty (type-safe client), Better Auth                                    |
+| Database | Turso (central + per-user SQLite DBs), Drizzle ORM                                          |
 | Local DB | Turso sync: sync-wasm (web), sync-react-native (mobile) — offline-first, 60s bi-directional |
-| Search   | Orama (client-side WASM, Arabic + English)                                         |
-| State    | Tanstack Query (server), Jotai (client)                                            |
-| i18n     | Lingui v5                                                                          |
-| Deploy   | Cloudflare Pages (web + marketing), Fly.io (API), EAS (mobile), Sentry             |
+| Search   | Orama (client-side WASM, Arabic + English)                                                  |
+| State    | Tanstack Query (server), Jotai (client)                                                     |
+| i18n     | Lingui v5                                                                                   |
+| Deploy   | Cloudflare Pages (web + marketing), Fly.io (API), EAS (mobile), Sentry                      |
 
 Shared packages live in `/packages`: `db-operations`, `design-system`, `drizzle-user-db-schemas`, `fsrs`, `i18n`, `result`, `search`.
 
@@ -105,4 +105,3 @@ make delete-local-data               # Delete local databases
 - Small, scoped code changes are fine when the user asks for them directly.
 - Any code written must strictly follow existing patterns in the surrounding codebase — no new abstractions, libraries, or conventions introduced on your own initiative.
 - Prioritize testing. If you notice meaningful missing test coverage, flag it or write it.
-- When writing tests, don't fully implement them. Write the boilerplate/setup, then a high-level comment per step describing what it should do (pseudocode), rather than the full assertions/logic.

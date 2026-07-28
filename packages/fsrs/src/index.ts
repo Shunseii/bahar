@@ -109,48 +109,53 @@ export const getSchedulingOptions = (
 };
 
 /**
- * Grades a flashcard and returns the updated database fields
+ * Grades a flashcard and returns the updated database fields alongside the
+ * FSRS review log for the review, so a caller can persist both the card and
+ * its revlog entry from a single scheduling run. Mirrors
+ * {@link forgetFlashcard}'s shape.
  */
 export const gradeFlashcard = (
   scheduler: FSRS,
   flashcard: SelectFlashcard,
   grade: Grade,
   now: Date = new Date()
-): Pick<
-  SelectFlashcard,
-  | "due"
-  | "due_timestamp_ms"
-  | "last_review"
-  | "last_review_timestamp_ms"
-  | "state"
-  | "stability"
-  | "difficulty"
-  | "reps"
-  | "lapses"
-  | "elapsed_days"
-  | "scheduled_days"
-  | "learning_steps"
-> => {
+): {
+  card: Pick<
+    SelectFlashcard,
+    | "due"
+    | "due_timestamp_ms"
+    | "last_review"
+    | "last_review_timestamp_ms"
+    | "state"
+    | "stability"
+    | "difficulty"
+    | "reps"
+    | "lapses"
+    | "elapsed_days"
+    | "scheduled_days"
+    | "learning_steps"
+  >;
+  log: ReviewLog;
+} => {
   const fsrsCard = toFsrsCard(flashcard);
-  const scheduling = scheduler.repeat(fsrsCard, now);
-  const selectedCard = scheduling[grade].card;
-
-  const dueTimestampMs = selectedCard.due.getTime();
-  const lastReviewTimestampMs = selectedCard.last_review?.getTime() ?? null;
+  const { card, log } = scheduler.repeat(fsrsCard, now)[grade];
 
   return {
-    due: selectedCard.due.toISOString(),
-    due_timestamp_ms: dueTimestampMs,
-    last_review: selectedCard.last_review?.toISOString() ?? null,
-    last_review_timestamp_ms: lastReviewTimestampMs,
-    state: selectedCard.state,
-    stability: selectedCard.stability,
-    difficulty: selectedCard.difficulty,
-    reps: selectedCard.reps,
-    lapses: selectedCard.lapses,
-    elapsed_days: selectedCard.elapsed_days,
-    scheduled_days: selectedCard.scheduled_days,
-    learning_steps: selectedCard.learning_steps,
+    card: {
+      due: card.due.toISOString(),
+      due_timestamp_ms: card.due.getTime(),
+      last_review: card.last_review?.toISOString() ?? null,
+      last_review_timestamp_ms: card.last_review?.getTime() ?? null,
+      state: card.state,
+      stability: card.stability,
+      difficulty: card.difficulty,
+      reps: card.reps,
+      lapses: card.lapses,
+      elapsed_days: card.elapsed_days,
+      scheduled_days: card.scheduled_days,
+      learning_steps: card.learning_steps,
+    },
+    log,
   };
 };
 

@@ -53,15 +53,14 @@ const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
 const MOBILE_DEEP_LINK_SCHEME = "bahar://";
-const CLI_API_KEY_PREFIX = "bahar_cli_";
-const CLI_API_KEY_EXPIRY_SECS = 60 * 60 * 24 * 7; // 7 days
+const API_KEY_PREFIX = "bahar_cli_";
 
 // Per-key rate limit. better-auth's defaults (10 requests / 24h) are far too
 // low for a CLI that spends a request per command to mint a DB token; a single
 // batch session blows through them. The CLI now caches the token, so real usage
 // is a handful of fetches a day -- this ceiling just bounds abuse.
-const CLI_API_KEY_RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
-const CLI_API_KEY_RATE_LIMIT_MAX = 1000;
+const API_KEY_RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const API_KEY_RATE_LIMIT_MAX = 1000;
 
 const allowedDomains = getAllowedDomains([config.WEB_CLIENT_DOMAIN]);
 
@@ -463,15 +462,26 @@ export const auth = betterAuth({
     expo(),
     admin(),
     apiKey({
-      defaultPrefix: CLI_API_KEY_PREFIX,
+      defaultPrefix: API_KEY_PREFIX,
       enableSessionForAPIKeys: true,
-      keyExpiration: {
-        defaultExpiresIn: CLI_API_KEY_EXPIRY_SECS,
+      // Stored so the settings page can show a masked identifier for a key it
+      // can never display in full again. better-auth's default (6) would only
+      // cover part of the shared prefix, making every key look identical; this
+      // is the prefix plus four characters of the key itself.
+      startingCharactersConfig: {
+        shouldStore: true,
+        charactersLength: API_KEY_PREFIX.length + 4,
       },
+      // No `keyExpiration.defaultExpiresIn`: the plugin only ever leaves
+      // `expiresAt` null -- a key that never expires -- when the caller omits
+      // `expiresIn` AND no default is configured. Setting one would silently
+      // cap every key, so both callers pass their own expiry instead: the
+      // settings page from the user's choice, and the `bahar login` flow (see
+      // apps/web/src/routes/cli-auth) from its own constant.
       rateLimit: {
         enabled: true,
-        timeWindow: CLI_API_KEY_RATE_LIMIT_WINDOW_MS,
-        maxRequests: CLI_API_KEY_RATE_LIMIT_MAX,
+        timeWindow: API_KEY_RATE_LIMIT_WINDOW_MS,
+        maxRequests: API_KEY_RATE_LIMIT_MAX,
       },
     }),
     consentEventsPlugin(),

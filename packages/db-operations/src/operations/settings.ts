@@ -8,7 +8,10 @@ import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
 import type { OperationDeps } from "./deps";
 
-export const makeSettingsTable = ({ getDb }: OperationDeps) =>
+export const makeSettingsTable = ({
+  enqueue = enqueueDbOperation,
+  getDb,
+}: OperationDeps) =>
   ({
     getSettings: {
       query: async (): Promise<Omit<SelectSetting, "id">> => {
@@ -17,7 +20,7 @@ export const makeSettingsTable = ({ getDb }: OperationDeps) =>
         const [res] = await drizzleDb.select().from(settings).limit(1);
 
         if (!res) {
-          await enqueueDbOperation(() =>
+          await enqueue(() =>
             drizzleDb.insert(settings).values({
               id: nanoid(),
               show_antonyms_in_flashcard: "hidden",
@@ -45,7 +48,7 @@ export const makeSettingsTable = ({ getDb }: OperationDeps) =>
       }: {
         updates: Partial<Omit<SelectSetting, "id">>;
       }): Promise<Omit<SelectSetting, "id">> =>
-        enqueueDbOperation(async () => {
+        enqueue(async () => {
           const drizzleDb = await getDb();
 
           const setValues: Partial<InsertSetting> = {};
