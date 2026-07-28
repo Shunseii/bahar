@@ -2,6 +2,7 @@ import type { WordType } from "@bahar/drizzle-user-db-schemas";
 import {
   type SearchDictionaryOptions,
   type SearchLanguage,
+  type SortableProperty,
   searchDictionary,
 } from "@bahar/search/database";
 import type { DictionaryDocument } from "@bahar/search/schema";
@@ -18,6 +19,9 @@ export const SORT_OPTIONS = [
   "difficulty",
   "lastReviewed",
 ] as const;
+
+type SortOption = (typeof SORT_OPTIONS)[number];
+
 const SEARCH_RESULTS_PER_PAGE = 20;
 
 const searchResultsMetadataAtom = atom<
@@ -133,7 +137,7 @@ export const useInfiniteScroll = (
       tags?: string[];
       types?: WordType[];
     };
-    sort?: (typeof SORT_OPTIONS)[number];
+    sort?: SortOption;
   } = {}
 ) => {
   const { search } = useSearch();
@@ -162,16 +166,20 @@ export const useInfiniteScroll = (
   const sortBy = useMemo<SearchDictionaryOptions["sortBy"]>(() => {
     if (!params.sort || params.sort === "relevance") return undefined;
 
-    const sortMap: Record<string, { property: string; order: "ASC" | "DESC" }> =
-      {
-        createdAt: { property: "created_at_timestamp_ms", order: "DESC" },
-        updatedAt: { property: "updated_at_timestamp_ms", order: "DESC" },
-        difficulty: { property: "max_difficulty", order: "DESC" },
-        lastReviewed: {
-          property: "last_review_timestamp_ms",
-          order: "DESC",
-        },
-      };
+    // Typed against SortableProperty because Orama only builds sort indexes for
+    // those properties and throws on anything else at query time.
+    const sortMap: Record<
+      Exclude<SortOption, "relevance">,
+      { property: SortableProperty; order: "ASC" | "DESC" }
+    > = {
+      createdAt: { property: "created_at_timestamp_ms", order: "DESC" },
+      updatedAt: { property: "updated_at_timestamp_ms", order: "DESC" },
+      difficulty: { property: "max_difficulty", order: "DESC" },
+      lastReviewed: {
+        property: "last_review_timestamp_ms",
+        order: "DESC",
+      },
+    };
 
     return sortMap[params.sort];
   }, [paramsKey]);

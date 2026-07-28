@@ -9,6 +9,7 @@ import type { WordType } from "@bahar/drizzle-user-db-schemas";
 import { detectLanguage } from "@bahar/search/arabic";
 import {
   type SearchDictionaryOptions,
+  type SortableProperty,
   searchDictionary,
 } from "@bahar/search/database";
 import type { DictionaryDocument } from "@bahar/search/schema";
@@ -37,7 +38,12 @@ type SearchResultsMetadata = Omit<SearchResults, "hits"> & {
   searchTerm?: string;
 };
 
-const SORT_MAP: Record<string, { property: string; order: "ASC" | "DESC" }> = {
+// Typed against SortableProperty because Orama only builds sort indexes for
+// those properties and throws on anything else at query time.
+const SORT_MAP: Record<
+  Exclude<SortOption, "relevance">,
+  { property: SortableProperty; order: "ASC" | "DESC" }
+> = {
   createdAt: { property: "created_at_timestamp_ms", order: "DESC" },
   updatedAt: { property: "updated_at_timestamp_ms", order: "DESC" },
   difficulty: { property: "max_difficulty", order: "DESC" },
