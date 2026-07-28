@@ -42,7 +42,11 @@ import {
 } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { type FC, useEffect } from "react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import {
+  type SubmitHandler,
+  type UseFormSetValue,
+  useForm,
+} from "react-hook-form";
 import { toast } from "sonner";
 import {
   AdditionalDetailsFormSection,
@@ -69,16 +73,9 @@ const ResetFlashcardButton: FC<{ id: string }> = ({ id }) => {
     }: {
       dictionary_entry_id: string;
     }) => {
-      const results = await Promise.all([
-        flashcardsTable.reset.mutation({
-          dictionary_entry_id,
-          direction: "forward",
-        }),
-        flashcardsTable.reset.mutation({
-          dictionary_entry_id,
-          direction: "reverse",
-        }),
-      ]);
+      const results = await flashcardsTable.resetEntry.mutation({
+        dictionary_entry_id,
+      });
 
       await Promise.all(
         results.map(({ flashcard, log }) =>
@@ -397,11 +394,20 @@ const Edit = () => {
     onSuccess: (data) => {
       if (!data) return;
 
+      // Autofill is a user-intended edit, but form.setValue defaults to
+      // shouldDirty: false. Mark dirty so the Save button (gated on isDirty)
+      // enables.
+      const setValue: UseFormSetValue<z.infer<typeof FormSchema>> = (
+        name,
+        value,
+        options
+      ) => form.setValue(name, value, { shouldDirty: true, ...options });
+
       if (data.definition) {
-        form.setValue("definition", data.definition);
+        setValue("definition", data.definition);
       }
       if (data.root && data.root.length > 0) {
-        form.setValue("root", data.root.join(" "));
+        setValue("root", data.root.join(" "));
       }
 
       if ("morphology" in data && data.morphology) {
@@ -416,14 +422,13 @@ const Edit = () => {
             gender?: "masculine" | "feminine";
             inflection?: "indeclinable" | "diptote" | "triptote";
           };
-          if (ism.singular)
-            form.setValue("morphology.ism.singular", ism.singular);
-          if (ism.dual) form.setValue("morphology.ism.dual", ism.dual);
+          if (ism.singular) setValue("morphology.ism.singular", ism.singular);
+          if (ism.dual) setValue("morphology.ism.dual", ism.dual);
           if (ism.plurals?.length)
-            form.setValue("morphology.ism.plurals", ism.plurals);
-          if (ism.gender) form.setValue("morphology.ism.gender", ism.gender);
+            setValue("morphology.ism.plurals", ism.plurals);
+          if (ism.gender) setValue("morphology.ism.gender", ism.gender);
           if (ism.inflection)
-            form.setValue("morphology.ism.inflection", ism.inflection);
+            setValue("morphology.ism.inflection", ism.inflection);
         }
 
         if (type === "fi'l") {
@@ -439,28 +444,28 @@ const Edit = () => {
             huroof?: { harf: string; meaning?: string }[];
           };
           if (verb.past_tense)
-            form.setValue("morphology.verb.past_tense", verb.past_tense);
+            setValue("morphology.verb.past_tense", verb.past_tense);
           if (verb.present_tense)
-            form.setValue("morphology.verb.present_tense", verb.present_tense);
+            setValue("morphology.verb.present_tense", verb.present_tense);
           if (verb.active_participle)
-            form.setValue(
+            setValue(
               "morphology.verb.active_participle",
               verb.active_participle
             );
           if (verb.passive_participle)
-            form.setValue(
+            setValue(
               "morphology.verb.passive_participle",
               verb.passive_participle
             );
           if (verb.imperative)
-            form.setValue("morphology.verb.imperative", verb.imperative);
+            setValue("morphology.verb.imperative", verb.imperative);
           if (verb.masadir?.length)
-            form.setValue("morphology.verb.masadir", verb.masadir);
-          if (verb.form) form.setValue("morphology.verb.form", verb.form);
+            setValue("morphology.verb.masadir", verb.masadir);
+          if (verb.form) setValue("morphology.verb.form", verb.form);
           if (verb.form_arabic)
-            form.setValue("morphology.verb.form_arabic", verb.form_arabic);
+            setValue("morphology.verb.form_arabic", verb.form_arabic);
           if (verb.huroof?.length)
-            form.setValue("morphology.verb.huroof", verb.huroof);
+            setValue("morphology.verb.huroof", verb.huroof);
         }
       }
     },
@@ -530,7 +535,11 @@ const Edit = () => {
 
                 <DeleteWordButton id={data!.id} />
 
-                <Button size="sm" type="submit">
+                <Button
+                  disabled={!form.formState.isDirty}
+                  size="sm"
+                  type="submit"
+                >
                   <Trans>Save</Trans>
                 </Button>
               </div>

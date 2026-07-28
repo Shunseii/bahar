@@ -8,7 +8,6 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { sql } from "drizzle-orm";
 import { reloadAppAsync } from "expo";
-import { useAtom } from "jotai";
 import {
   Bell,
   Brain,
@@ -49,14 +48,7 @@ import { useUserPlan } from "@/hooks/useUserPlan";
 import { deleteLocalDb, ensureDb, resetDb } from "@/lib/db";
 import { getDrizzleDb } from "@/lib/db/adapter";
 import { flashcardsTable, settingsTable } from "@/lib/db/operations";
-import {
-  cancelReviewNotifications,
-  recomputeReviewNotifications,
-  reconcileNotificationPermission,
-  requestNotificationPermission,
-} from "@/lib/notifications";
 import { resetOramaDb } from "@/lib/search";
-import { notificationsEnabledAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 import { api, queryClient } from "@/utils/api";
 import { authClient } from "@/utils/auth-client";
@@ -174,34 +166,6 @@ const NotificationsCard = () => {
   const colors = useThemeColors();
   const { t } = useLingui();
   const [isUpdating, setIsUpdating] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useAtom(
-    notificationsEnabledAtom
-  );
-
-  // Catch the case where reminders were enabled but OS permission was later
-  // revoked -- keeps the toggle honest when the user opens settings.
-  useEffect(() => {
-    reconcileNotificationPermission();
-  }, []);
-
-  const handleNotificationsToggle = async (checked: boolean) => {
-    if (!checked) {
-      setNotificationsEnabled(false);
-      await cancelReviewNotifications();
-      return;
-    }
-
-    const granted = await requestNotificationPermission();
-    if (!granted) {
-      // Permission denied at the OS level -- keep the toggle off and point the
-      // user at system settings, since we can't re-prompt.
-      toast.error(t`Enable notifications for Bahar in your device settings`);
-      return;
-    }
-
-    setNotificationsEnabled(true);
-    await recomputeReviewNotifications();
-  };
 
   const { data: consent } = useQuery({
     queryKey: ["marketing", "consent"] as const,
@@ -245,24 +209,6 @@ const NotificationsCard = () => {
       </CardHeader>
       <CardContent>
         <View className="flex-row items-center justify-between">
-          <View className="mr-4 flex-1">
-            <Text className="font-medium text-base text-foreground">
-              <Trans>Review reminders</Trans>
-            </Text>
-            <Text className="mt-0.5 text-muted-foreground text-sm">
-              <Trans>
-                Get a notification when your flashcards are due for review.
-              </Trans>
-            </Text>
-          </View>
-          <Switch
-            onValueChange={handleNotificationsToggle}
-            thumbColor="white"
-            trackColor={{ false: colors.muted, true: colors.primary }}
-            value={notificationsEnabled}
-          />
-        </View>
-        <View className="mt-4 flex-row items-center justify-between">
           <View className="mr-4 flex-1">
             <Text className="font-medium text-base text-foreground">
               <Trans>Marketing emails</Trans>
