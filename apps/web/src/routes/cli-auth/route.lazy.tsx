@@ -8,6 +8,13 @@ import { authClient } from "@/lib/auth-client";
 
 type MintStatus = "minting" | "done" | "error";
 
+/**
+ * Lifetime of the key `bahar login` mints. Passed explicitly because the
+ * apiKey plugin has no default expiry -- configuring one there would stop the
+ * settings page from ever creating a non-expiring key (see apps/api/src/auth).
+ */
+const CLI_KEY_EXPIRY_SECS = 60 * 60 * 24 * 7; // 7 days
+
 const CliAuth = () => {
   const { port, state } = Route.useSearch();
   const [status, setStatus] = useState<MintStatus>("minting");
@@ -16,6 +23,7 @@ const CliAuth = () => {
     const mintAndRedirect = async () => {
       const { data, error } = await authClient.apiKey.create({
         name: "CLI",
+        expiresIn: CLI_KEY_EXPIRY_SECS,
       });
 
       if (error || !data) {

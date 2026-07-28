@@ -12,6 +12,8 @@ import {
   type FlashListProps,
   type FlashListRef,
 } from "@shopify/flash-list";
+import { useFocusEffect } from "expo-router";
+import { useAtom } from "jotai";
 import { ArrowUp, BookOpen, SearchX } from "lucide-react-native";
 import type { ReactElement } from "react";
 import { type FC, useCallback, useEffect, useRef, useState } from "react";
@@ -33,6 +35,7 @@ import Animated, {
 import { type SortOption, useInfiniteSearch } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { performSync } from "@/lib/db/sync";
+import { reviewsPendingRefreshAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { DictionaryEntryCard } from "./DictionaryEntryCard";
@@ -124,6 +127,22 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     filters,
     sort,
   });
+
+  const [reviewsPending, setReviewsPending] = useAtom(
+    reviewsPendingRefreshAtom
+  );
+
+  // Grading a flashcard marks the results stale rather than re-searching
+  // off-screen. Re-sort once, here, when the list is actually focused again.
+  useFocusEffect(
+    useCallback(() => {
+      if (reviewsPending) {
+        refresh();
+        setReviewsPending(false);
+      }
+    }, [reviewsPending, refresh, setReviewsPending])
+  );
+
   const [refreshing, setRefreshing] = useState(false);
   const expandedIdsRef = useRef(new Set<string>());
   const [expandedVersion, setExpandedVersion] = useState(0);

@@ -10,6 +10,14 @@ export const isSyncingAtom = atom(false);
 
 export const dictionaryChangedAtom = atom(false);
 
+/**
+ * Set when a flashcard is graded so the dictionary list refreshes its Orama
+ * results the next time it regains focus. Grading updates the search index doc
+ * directly; this defers the (sorted, full-index) re-search to when the list is
+ * actually visible instead of running it off-screen on every grade.
+ */
+export const reviewsPendingRefreshAtom = atom(false);
+
 export const recentTagsAtom = atomWithStorage(
   "bahar:recentTags",
   [] as string[],

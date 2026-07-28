@@ -19,8 +19,8 @@ msgid "{0, plural, one {# tag selected} other {# tags selected}}"
 msgstr "{0, plural, one {علامة واحدة محددة} two {علامتان محددتان} few {# علامات محددة} many {# علامة محددة} other {# علامة محددة}}"
 
 #. placeholder {0}: cards.length
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:378
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:505
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:389
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:543
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {بطاقة متبقية} two {بطاقتان متبقيتان} few {بطاقات متبقية} many {بطاقة متبقية} other {بطاقة متبقية}}"
 
@@ -68,7 +68,7 @@ msgstr "{0} علامات محددة"
 #~ msgstr ""
 
 #. placeholder {0}: formatNumber(FLASHCARD_LIMIT)
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:501
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:539
 msgid "{0}+ cards"
 msgstr "{0}+ بطاقة"
 
@@ -200,15 +200,15 @@ msgstr "+{0} هذا الأسبوع"
 #~ msgid "+{thisWeek} this week"
 #~ msgstr "+{thisWeek} هذا الأسبوع"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:214
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:218
 msgid "1 year"
 msgstr "سنة واحدة"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:206
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:210
 msgid "30 days"
 msgstr "٣٠ يومًا"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:202
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:206
 msgid "7 days"
 msgstr "٧ أيام"
 
@@ -217,7 +217,7 @@ msgstr "٧ أيام"
 msgid "7-day average"
 msgstr "متوسط ٧ أيام"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:210
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:214
 msgid "90 days"
 msgstr "٩٠ يومًا"
 
@@ -327,7 +327,7 @@ msgstr "أضف جمع"
 msgid "Add some to get started!"
 msgstr "أضف شيئًا لتبدأ!"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:65
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:68
 msgid "Add some words to get started!"
 msgstr "أضف بعض الكلمات للبدء!"
 
@@ -367,7 +367,7 @@ msgstr "مرة أخرى"
 msgid "All caught up"
 msgstr "لا توجد بطاقات للمراجعة"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:398
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:409
 msgid "All done for today!"
 msgstr "انتهيت لليوم!"
 
@@ -446,15 +446,15 @@ msgstr "أية صيغ جمع للكلمة."
 msgid "Any words that have the same ID will be overwritten."
 msgstr "سيستبدل كل كلمات التي لديها نفس المعرف."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:404
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:421
 msgid "Anything using this key stops working immediately. This can't be undone."
 msgstr "سيتوقف فورًا كل ما يستخدم هذا المفتاح. لا يمكن التراجع عن هذا الإجراء."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:325
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:342
 msgid "API key revoked"
 msgstr "تم إبطال مفتاح الواجهة البرمجية"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:444
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:461
 #: ../../apps/mobile/src/app/(search)/settings.tsx:638
 msgid "API keys"
 msgstr "مفاتيح الواجهة البرمجية"
@@ -568,13 +568,13 @@ msgid "backlog"
 msgstr "متأخرة"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:110
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:342
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:126
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:353
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:127
 msgid "Backlog"
 msgstr "المتراكمة"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:396
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:454
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:407
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:492
 msgid "Backlog cleared!"
 msgstr "تم مسح المتراكمات!"
 
@@ -629,8 +629,8 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:607
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:691
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:748
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:231
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:420
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:248
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:437
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:129
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:421
@@ -648,13 +648,13 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 msgid "Cancel"
 msgstr "ألغ"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:361
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:153
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:372
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:154
 msgid "Cards due today or recently"
 msgstr "بطاقات مستحقة اليوم أو مؤخرًا"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:363
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:151
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:374
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:152
 msgid "Cards overdue by more than 7 days"
 msgstr "بطاقات متأخرة أكثر من ٧ أيام"
 
@@ -759,7 +759,7 @@ msgstr "الاستمرار باستخدام GitHub"
 msgid "Control where antonyms appear during review"
 msgstr "تحكم في مكان ظهور الأضداد أثناء المراجعة"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:255
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:272
 msgid "Copied to clipboard"
 msgstr "تم النسخ إلى الحافظة"
 
@@ -771,15 +771,15 @@ msgstr "تم النسخ!"
 msgid "Copy"
 msgstr "انسخ"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:280
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:297
 msgid "Copy API key"
 msgstr "نسخ مفتاح الواجهة البرمجية"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:267
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:284
 msgid "Copy it now — you won't be able to see it again. Anyone with this key can read and write your dictionary."
 msgstr "انسخه الآن — لن تتمكن من رؤيته مرة أخرى. يمكن لأي شخص يملك هذا المفتاح قراءة قاموسك والكتابة فيه."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:458
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:475
 msgid "Couldn't load your API keys. Please try again later."
 msgstr "تعذّر تحميل مفاتيح الواجهة البرمجية. يُرجى المحاولة لاحقًا."
 
@@ -819,7 +819,7 @@ msgstr "إنشاء حساب"
 msgid "Create an account to sync your words across devices and keep your progress safe."
 msgstr "أنشئ حسابًا لمزامنة كلماتك عبر الأجهزة والحفاظ على تقدمك."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:142
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:146
 msgid "Create an API key"
 msgstr "إنشاء مفتاح واجهة برمجية"
 
@@ -836,8 +836,8 @@ msgstr "أنشئ مجموعة"
 #~ msgid "Create Deck"
 #~ msgstr "إنشاء مجموعة"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:226
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:487
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:243
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:504
 msgid "Create key"
 msgstr "إنشاء مفتاح"
 
@@ -1073,7 +1073,7 @@ msgstr "اغلق"
 msgid "Don't show"
 msgstr "لا تعرض"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:292
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:309
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:190
 msgid "Done"
 msgstr "تم"
@@ -1234,16 +1234,16 @@ msgstr "استخدامات مثالية للكلمة في سياقات مختل�
 msgid "Examples"
 msgstr "أمثلة"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:368
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:384
 msgid "Expired"
 msgstr "منتهي الصلاحية"
 
 #. placeholder {0}: intlFormatDistance(expiresAt, now, { locale: i18n.locale, }).label
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:370
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:386
 msgid "Expires {0}"
 msgstr "تنتهي صلاحيته {0}"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:186
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:190
 msgid "Expires in"
 msgstr "مدة الصلاحية"
 
@@ -1281,7 +1281,7 @@ msgstr "تصدير المعجم مع البطاقات سيحفظ تقدم الب
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:69
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:136
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:69
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:378
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:468
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:15
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:72
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:42
@@ -1314,7 +1314,7 @@ msgstr "فشل الملء التلقائي"
 #~ msgid "Failed to clear backlog"
 #~ msgstr "فشل مسح المتراكمات"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:129
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:133
 msgid "Failed to create API key"
 msgstr "فشل إنشاء مفتاح الواجهة البرمجية"
 
@@ -1377,7 +1377,7 @@ msgstr "فشل في استرجاع البيانات من قاعدة البيان
 msgid "Failed to retrieve database information."
 msgstr "فشل استرجاع معلومات قاعدة البيانات."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:327
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:344
 msgid "Failed to revoke API key"
 msgstr "فشل إبطال مفتاح الواجهة البرمجية"
 
@@ -1427,7 +1427,7 @@ msgstr "مؤنّث"
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:90
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:130
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:65
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:374
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:464
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:13
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:70
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:40
@@ -1573,12 +1573,12 @@ msgid "Good"
 msgstr "حسن"
 
 #. placeholder {0}: formatNumber(counts.regular)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:403
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:414
 msgid "Great work on the backlog! You still have {0} regular reviews."
 msgstr "أحسنت في المتراكمات! لا يزال لديك {0} مراجعات عادية."
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:413
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:470
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:424
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:508
 msgid "Great work! Come back later for more reviews."
 msgstr "عمل رائع! عد لاحقًا لمزيد من المراجعات."
 
@@ -1598,7 +1598,7 @@ msgstr "صعب"
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:101
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:133
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:67
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:376
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:466
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:14
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:71
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:41
@@ -1754,7 +1754,7 @@ msgstr "قيمة غير صالحة. يجب أن تكون إحدى القيم ا�
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:76
 #: ../../apps/web/src/components/features/dictionary/add/CategoryFormSection.tsx:127
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:63
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:372
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:462
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:12
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:69
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:39
@@ -1775,7 +1775,7 @@ msgstr "اسم"
 msgid "Keep adding words after saving instead of going back to the homepage."
 msgstr "استمر في إضافة كلمات بعد الحفظ بدلاً من العودة إلى الصفحة الرئيسية."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:448
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:465
 msgid "Keys let the Bahar CLI and other tools read and write your dictionary on your behalf."
 msgstr "تتيح المفاتيح لأداة بهار الطرفية وغيرها من الأدوات قراءة قاموسك والكتابة فيه نيابة عنك."
 
@@ -1785,7 +1785,7 @@ msgid "Language"
 msgstr "اللغة"
 
 #. placeholder {0}: intlFormatDistance(lastRequest, now, { locale: i18n.locale, }).label
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:352
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:369
 msgid "Last used {0}"
 msgstr "آخر استخدام {0}"
 
@@ -1816,7 +1816,7 @@ msgstr "جارٍ تحميل معجمك..."
 msgid "Loading..."
 msgstr "جارٍ التحميل..."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:464
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:481
 msgid "Loading…"
 msgstr "جارٍ التحميل…"
 
@@ -1946,12 +1946,12 @@ msgstr "الأصعب"
 msgid "My Account"
 msgstr "حسابي"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:168
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:172
 msgid "My agent"
 msgstr "وكيلي"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:102
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:164
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:168
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:203
 msgid "Name"
 msgstr "اسم"
@@ -1960,7 +1960,15 @@ msgstr "اسم"
 msgid "Navigation menu"
 msgstr "قائمة التنقل"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:361
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:222
+msgid "Never"
+msgstr "أبدًا"
+
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:396
+msgid "Never expires"
+msgstr "لا تنتهي صلاحيته"
+
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:378
 msgid "Never used"
 msgstr "لم يُستخدم بعد"
 
@@ -2028,7 +2036,7 @@ msgid "No overdue cards to reschedule."
 msgstr "لا توجد بطاقات متأخرة لإعادة جدولتها."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:839
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:82
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:85
 msgid "No results found"
 msgstr "لم يتم العثور على نتائج"
 
@@ -2169,7 +2177,7 @@ msgstr "يرجى الاتصال <0>بالدعم</0> مع التفاصيل الت
 #~ msgid "Please enter a deck name"
 #~ msgstr "الرجاء إدخال اسم المجموعة"
 
-#: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:51
+#: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:59
 msgid "Please return to your terminal and run `bahar login` again."
 msgstr "يرجى العودة إلى الطرفية وتشغيل `bahar login` مرة أخرى."
 
@@ -2184,8 +2192,8 @@ msgstr "يرجى تسجيل الدخول مرة أخرى لحذف حسابك"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:223
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:239
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:130
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:328
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:134
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:345
 msgid "Please try again later."
 msgstr "يرجى المحاولة لاحقاً."
 
@@ -2298,7 +2306,7 @@ msgstr "تم الوصول إلى الحد الأقصى"
 msgid "Rate limit reached. Please wait a moment."
 msgstr "تم الوصول للحد الأقصى. يرجى الانتظار لحظة."
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:272
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:285
 msgid "Recall the Arabic word"
 msgstr "تذكر الكلمة العربية"
 
@@ -2332,7 +2340,7 @@ msgstr "المحدّثة حديثًا"
 msgid "Recently used"
 msgstr "المستخدمة مؤخرًا"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:452
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:490
 msgid "Regular reviews done!"
 msgstr "انتهت المراجعات العادية!"
 
@@ -2435,8 +2443,8 @@ msgstr "بطاقة عكسية"
 #~ msgstr "بطاقات العكسية"
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:128
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:317
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:85
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:328
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:86
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:166
 msgid "Review"
 msgstr "مراجعة"
@@ -2446,11 +2454,11 @@ msgid "Review flashcards"
 msgstr "ادرس البطاقات"
 
 #. placeholder {0}: formatNumber(counts.backlog)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:281
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:292
 msgid "Review flashcards ({0} in backlog)"
 msgstr "راجع البطاقات ({0} متراكمة)"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:285
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:296
 msgid "Review flashcards with spaced repetition"
 msgstr "راجع البطاقات بالتكرار المتباعد"
 
@@ -2465,7 +2473,7 @@ msgstr "سجل المراجعات"
 #~ msgid "Review reminders"
 #~ msgstr "تذكيرات المراجعة"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:421
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:432
 msgid "Review your Arabic flashcards and grade your understanding with Again, Hard, Good, or Easy options to adjust scheduling."
 msgstr "راجع بطاقاتك العربية وقيم فهمك باستخدام خيارات مرة أخرى أو صعب أو جيد أو سهل لتعديل الجدولة."
 
@@ -2473,16 +2481,16 @@ msgstr "راجع بطاقاتك العربية وقيم فهمك باستخدا�
 msgid "Reviews"
 msgstr "مراجعات"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:393
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:414
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:410
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:431
 msgid "Revoke"
 msgstr "إبطال"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:389
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:406
 msgid "Revoke {label}"
 msgstr "إبطال {label}"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:400
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:417
 msgid "Revoke this API key?"
 msgstr "إبطال مفتاح الواجهة البرمجية هذا؟"
 
@@ -2610,7 +2618,7 @@ msgstr "الإعدادات"
 msgid "Show after revealing the answer"
 msgstr "عرض بعد كشف الإجابة"
 
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:529
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:540
 msgid "Show answer"
 msgstr "اعرض الجواب"
 
@@ -2646,7 +2654,7 @@ msgstr "عرض المرشحات"
 msgid "Sign up to save your dictionary and sync across devices"
 msgstr "سجّل لحفظ قاموسك ومزامنته عبر الأجهزة"
 
-#: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:45
+#: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:53
 msgid "Signing in the Bahar CLI..."
 msgstr "جارٍ تسجيل الدخول إلى واجهة بهار الطرفية..."
 
@@ -2657,7 +2665,7 @@ msgstr "جارٍ تسجيل الدخول إلى واجهة بهار الطرفي
 msgid "Singular"
 msgstr "مفرد"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:172
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:176
 msgid "So you can tell your keys apart later."
 msgstr "لتتمكن من التمييز بين مفاتيحك لاحقًا."
 
@@ -2665,7 +2673,7 @@ msgstr "لتتمكن من التمييز بين مفاتيحك لاحقًا."
 msgid "Some dictionary entries couldn't be loaded"
 msgstr "تعذر تحميل بعض إدخالات المعجم"
 
-#: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:43
+#: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:51
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:292
 msgid "Something went wrong"
 msgstr "حدث خطأ ما"
@@ -2755,7 +2763,7 @@ msgstr "تمت إعادة تعيين البطاقة بنجاح."
 msgid "Successfully updated the word!"
 msgstr "حدثت الكلمة بنجاح!"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:465
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:503
 msgid "Switch to the Review tab if you have regular cards due."
 msgstr "انتقل إلى تبويب المراجعة إذا كانت لديك بطاقات عادية مستحقة."
 
@@ -2782,7 +2790,7 @@ msgstr "نظام"
 msgid "Tags"
 msgstr "علامات"
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:274
+#: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:287
 msgid "Tap to reveal answer"
 msgstr "اضغط لكشف الإجابة"
 
@@ -2832,7 +2840,7 @@ msgstr "صيغة الفعل مثلا I, II, III, IV, هكذا و هكذا..."
 msgid "The form of the verb in Arabic ex. فعل, أفعل, استفعل, etc..."
 msgstr "صيغة الفعل بالعربية مثلا فعل, أفعل, استفعل, هكذا و هكذا..."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:146
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:150
 msgid "The key is shown once, right after it's created. Store it somewhere safe."
 msgstr "يظهر المفتاح مرة واحدة فقط بعد إنشائه مباشرة. احفظه في مكان آمن."
 
@@ -2970,6 +2978,10 @@ msgstr "هذا حالة غير حساسة."
 msgid "This is the name of your deck."
 msgstr "هذا هو اسم مجموعتك."
 
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:229
+msgid "This key stays valid until you revoke it. Use it only where a key can be stored securely."
+msgstr "يبقى هذا المفتاح صالحًا حتى تقوم بإبطاله. استخدمه فقط حيث يمكن حفظ المفتاح بأمان."
+
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:257
 msgid "This refers to how many case endings the word can take."
 msgstr "هذا هو إعراب الكلمة."
@@ -3056,7 +3068,7 @@ msgstr "معرب"
 #~ msgstr "استكشاف الأخطاء"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:842
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:85
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:88
 msgid "Try a different search term"
 msgstr "جرب مصطلح بحث مختلف"
 
@@ -3097,7 +3109,7 @@ msgstr "خطأ غير معروف."
 msgid "Unlock Insights"
 msgstr "فتح الإحصائيات"
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:339
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:356
 msgid "Unnamed key"
 msgstr "مفتاح بلا اسم"
 
@@ -3295,7 +3307,7 @@ msgstr "توقعات المراجعة"
 msgid "Would you like to receive product updates, tips, and new feature announcements? You can unsubscribe at any time. You can always change this in Settings > Preferences."
 msgstr "هل ترغب في تلقّي تحديثات المنتج والنصائح وإعلانات الميزات الجديدة؟ يمكنك إلغاء الاشتراك في أي وقت. يمكنك تغيير هذا دائمًا من الإعدادات > التفضيلات."
 
-#: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:52
+#: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:60
 msgid "You can close this tab once your terminal shows you're signed in."
 msgstr "يمكنك إغلاق علامة التبويب هذه بمجرد أن تُظهر الطرفية أنه تم تسجيل دخولك."
 
@@ -3303,12 +3315,12 @@ msgstr "يمكنك إغلاق علامة التبويب هذه بمجرد أن �
 msgid "You do not have access to upload schema migrations."
 msgstr "ليس لديك إذن لتحميل ترحيلات المخطط."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:470
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:487
 msgid "You don't have any API keys yet. Signing in with `bahar login` creates one for you."
 msgstr "ليس لديك أي مفاتيح واجهة برمجية بعد. تسجيل الدخول عبر `bahar login` يُنشئ لك مفتاحًا."
 
 #. placeholder {0}: formatNumber(counts.backlog)
-#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:408
+#: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:419
 msgid "You have {0} cards in your backlog when you're ready."
 msgstr "لديك {0} بطاقات متراكمة عندما تكون جاهزًا."
 
@@ -3330,7 +3342,7 @@ msgstr "ليس لديك بطاقات متأخرة لإعادة جدولتها."
 msgid "You have no words in your dictionary yet."
 msgstr "ليس لديك أي كلمات في معجمك بعد."
 
-#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:460
+#: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:498
 msgid "You still have backlog cards to review. Switch to the Backlog tab to tackle them."
 msgstr "لا تزال لديك بطاقات متراكمة للمراجعة. انتقل إلى تبويب المتراكم لمعالجتها."
 
@@ -3383,7 +3395,7 @@ msgstr "تم تحميل معجمك."
 msgid "Your dictionary has been updated!"
 msgstr "تم تحديث معجمك!"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:62
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:65
 msgid "Your dictionary is empty"
 msgstr "معجمك فارغ"
 
@@ -3400,7 +3412,7 @@ msgstr "سيتم الاحتفاظ بكلماتك وتقدمك الحالي."
 msgid "Your most recent flashcard reviews. You can undo a review to restore the card to its previous state."
 msgstr "أحدث مراجعات البطاقات. يمكنك التراجع عن مراجعة لاستعادة البطاقة إلى حالتها السابقة."
 
-#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:263
+#: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:280
 msgid "Your new API key"
 msgstr "مفتاح الواجهة البرمجية الجديد"
 
