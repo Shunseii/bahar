@@ -52,14 +52,6 @@ interface FlashcardCardProps {
   onFlip: () => void;
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
-  /**
-   * Height of the area the card is centered in, measured by the parent. Caps
-   * the answer scroll view: the card is content-sized (its container centers
-   * rather than stretches it), so without a ceiling the scroll view grows to
-   * fit its content, spills out of an unclipped parent, and gets painted over
-   * by the grade buttons below it.
-   */
-  availableHeight?: number;
 }
 
 const TagsRow: React.FC<{ tags: string[] }> = ({ tags }) => {
@@ -81,7 +73,6 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
   onFlip,
   onSwipeLeft,
   onSwipeRight,
-  availableHeight,
 }) => {
   const translateX = useSharedValue(0);
   const rotation = useSharedValue(0);
@@ -199,8 +190,13 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
   return (
     <GestureDetector gesture={composedGesture}>
+      {/* shrink lets the flex chain bound the card's height. RN defaults
+          flexShrink to 0 (web defaults to 1), so without it the card refuses to
+          shrink below its content height and overflows the card area instead --
+          which is what previously forced the scroll view to be capped with a
+          measured pixel value. */}
       <Animated.View
-        className="overflow-hidden rounded-3xl border border-border/50 bg-card shadow-xl"
+        className="shrink overflow-hidden rounded-3xl border border-border/50 bg-card shadow-xl"
         style={[cardStyle]}
       >
         <Animated.View
@@ -214,11 +210,17 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
           style={[goodOverlayStyle, StyleSheet.absoluteFill]}
         />
 
-        {showAnswer ? (
-          <ScrollView
-            showsVerticalScrollIndicator
-            style={[styles.scroll, { maxHeight: availableHeight }]}
-          >
+        {/* One scroll container for both sides rather than a scrollable answer
+            and an unbounded question. Its height comes from the shrinking flex
+            chain above, so whichever side overflows becomes scrollable on its
+            own -- no measured ceiling to keep in sync with the device, the
+            orientation or the OS font scale. */}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator
+          style={styles.scroll}
+        >
+          {showAnswer ? (
             <AnswerContent
               entry={entry}
               examples={examples}
@@ -227,10 +229,10 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
               tags={tags}
               verb={verb}
             />
-          </ScrollView>
-        ) : (
-          <QuestionContent entry={entry} isReverse={isReverse} tags={tags} />
-        )}
+          ) : (
+            <QuestionContent entry={entry} isReverse={isReverse} tags={tags} />
+          )}
+        </ScrollView>
       </Animated.View>
     </GestureDetector>
   );
@@ -367,7 +369,10 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
         already committed one line short -- the overflow is clipped by the card's
         overflow-hidden, silently dropping part of the translation. A definite
         width means the measure and layout passes agree. */}
-    <View className="w-full items-center gap-1" onLayout={logTranslationBoxLayout}>
+    <View
+      className="w-full items-center gap-1"
+      onLayout={logTranslationBoxLayout}
+    >
       <Text
         className="text-center font-bold text-3xl text-foreground leading-relaxed"
         style={{ writingDirection: "rtl" }}
@@ -455,5 +460,12 @@ const hasMorphology = (ism: Ism, verb: Verb) =>
 const styles = StyleSheet.create({
   scroll: {
     width: "100%",
+    flexShrink: 1,
+  },
+  // Lets the question side keep filling the card (its min height plus
+  // justify-between spacing) while still allowing the content to grow taller
+  // than the scroll view and scroll.
+  scrollContent: {
+    flexGrow: 1,
   },
 });
