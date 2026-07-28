@@ -192,7 +192,15 @@ function ThemeColorsInner({
     <ThemeColorsProvider value={themeColors}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <I18nProvider defaultComponent={DefaultComponent} i18n={i18n}>
-          <Stack>
+          <Stack
+            screenOptions={{
+              // Paint the native screen card with the app background so screen
+              // transitions (e.g. the review screen's slide_from_bottom) don't
+              // flash the stock navigation-theme background (near-black) before
+              // the screen's own bg-background view paints.
+              contentStyle: { backgroundColor: themeColors.background },
+            }}
+          >
             <Stack.Protected guard={!authData}>
               <Stack.Screen
                 name="(auth)"
