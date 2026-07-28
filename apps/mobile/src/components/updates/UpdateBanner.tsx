@@ -9,6 +9,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useThemeColors } from "@/lib/theme";
 
@@ -24,9 +25,16 @@ export const UpdateBanner: FC<UpdateBannerProps> = ({
   onUpdate,
 }) => {
   const { primary } = useThemeColors();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View className="absolute inset-x-4 bottom-10 z-50" role="alert">
+    <View
+      className="absolute inset-x-4 z-50"
+      role="alert"
+      // Offset by the real bottom inset so the banner floats above the home
+      // indicator instead of bleeding into the safe area on devices with one.
+      style={{ bottom: insets.bottom + 16 }}
+    >
       <View className="flex-row items-center gap-3 rounded-xl border border-border bg-card p-3.5 shadow-lg">
         <View className="size-10 items-center justify-center rounded-lg border border-primary/20 bg-primary/10">
           {status === "available" ? (
