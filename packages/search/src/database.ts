@@ -43,12 +43,36 @@ const formatElapsedTime = (number: bigint): string | number | object => {
 };
 
 /**
+ * The only properties the app ever sorts by. Everything else in the schema is
+ * declared unsortable below.
+ */
+export const SORTABLE_PROPERTIES = [
+  "created_at_timestamp_ms",
+  "updated_at_timestamp_ms",
+  "max_difficulty",
+  "last_review_timestamp_ms",
+] as const satisfies readonly (keyof typeof dictionarySchema)[];
+
+// Orama builds a sort index per sortable property and re-sorts ALL of them
+// lazily on the first sorted query after any insert. String properties sort via
+// localeCompare, which on Hermes bridges to the platform collator once per
+// comparison -- that turned a ~20ms re-sort on web into ~7s on mobile. Sorting
+// is never offered on these fields, so the indexes are pure cost.
+const UNSORTABLE_PROPERTIES = Object.keys(dictionarySchema).filter(
+  (property) =>
+    !SORTABLE_PROPERTIES.includes(
+      property as (typeof SORTABLE_PROPERTIES)[number]
+    )
+);
+
+/**
  * Creates a new Orama database instance for dictionary search
  */
 export const createDictionaryDatabase = (): DictionaryOrama => {
   return create({
     schema: dictionarySchema,
     plugins: [pluginQPS()],
+    sort: { unsortableProperties: UNSORTABLE_PROPERTIES },
     components: {
       tokenizer: multiLanguageTokenizer,
       formatElapsedTime,
