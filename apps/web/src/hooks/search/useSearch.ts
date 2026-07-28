@@ -7,7 +7,7 @@ import {
 import type { DictionaryDocument } from "@bahar/search/schema";
 import type { InternalTypedDocument, Result, Results } from "@orama/orama";
 import { atom, useAtom, useSetAtom } from "jotai";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getOramaDb } from "@/lib/search";
 import { detectLanguage } from "@/lib/utils";
 
@@ -212,10 +212,10 @@ export const useInfiniteScroll = (
     );
   }, [offset, setHits, search]);
 
-  // Triggers when search params change,
-  // resetting the pagination
-  useEffect(() => {
-    const { hits, ...metadata } = search(
+  const lastSearchedKeyRef = useRef<string | null>(null);
+
+  const runSearch = useCallback(() => {
+    const { hits: newHits, ...metadata } = search(
       {
         sortBy,
         term: params.term,
@@ -226,10 +226,33 @@ export const useInfiniteScroll = (
     );
 
     setOffset(0);
-    setHits(hits);
+    setHits(newHits);
     setSearchResultsMetadata({ ...metadata, searchTerm: params.term });
-    setHasMore(hits.length < metadata.count);
-  }, [paramsKey, setOffset, setHits, setSearchResultsMetadata, search]);
+    setHasMore(newHits.length < metadata.count);
+  }, [
+    search,
+    sortBy,
+    params.term,
+    whereFilter,
+    searchQueryLanguage,
+    setOffset,
+    setHits,
+    setSearchResultsMetadata,
+  ]);
+
+  // Search when the params change, or when the shared results cache is reset to
+  // null from elsewhere (e.g. grading a card closes the flashcard drawer and
+  // calls reset()). Without the null case the list would sit empty forever,
+  // since nothing else re-runs the search on the same route. An empty result is
+  // stored as [] (not null), so a genuinely empty dictionary doesn't re-loop.
+  useEffect(() => {
+    const paramsChanged = lastSearchedKeyRef.current !== paramsKey;
+    const wasReset = hits === null;
+    if (!(paramsChanged || wasReset)) return;
+
+    lastSearchedKeyRef.current = paramsKey;
+    runSearch();
+  }, [paramsKey, hits, runSearch]);
 
   useEffect(() => {
     if (!(hits && searchResultsMetadata)) return;
