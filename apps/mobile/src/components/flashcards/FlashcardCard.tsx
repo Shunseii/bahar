@@ -404,14 +404,21 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
       className="w-full items-center gap-1"
       onLayout={(event) => logCardLayout({ event, node: "translationBox" })}
     >
+      {/* w-full on the Text itself, not just on the box. The box centers its
+          children, so without it each Text is content-sized and wraps against
+          its own intrinsic width rather than the box's. Widening the box from
+          119pt to 286pt changed nothing for the text: it still laid out "to grow
+          weak" across two lines of 72pt and 47pt, while the box sized itself for
+          one line and clipped the second. Stretching the Text makes the width it
+          wraps against the same one the box measured. */}
       <Text
-        className="text-center font-bold text-3xl text-foreground leading-relaxed"
+        className="w-full text-center font-bold text-3xl text-foreground leading-relaxed"
         style={{ writingDirection: "rtl" }}
       >
         {entry.word}
       </Text>
       <Text
-        className="text-center font-medium text-foreground text-xl"
+        className="w-full text-center font-medium text-foreground text-xl"
         onTextLayout={(event) => logTranslationTextLayout({ entry, event })}
       >
         {entry.translation}
