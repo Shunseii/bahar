@@ -53,16 +53,19 @@ export const SORTABLE_PROPERTIES = [
   "last_review_timestamp_ms",
 ] as const satisfies readonly (keyof typeof dictionarySchema)[];
 
+/**
+ * Sorting by anything outside this union throws at query time, so callers
+ * mapping a UI sort option to an Orama property should type against it.
+ */
+export type SortableProperty = (typeof SORTABLE_PROPERTIES)[number];
+
 // Orama builds a sort index per sortable property and re-sorts ALL of them
 // lazily on the first sorted query after any insert. String properties sort via
 // localeCompare, which on Hermes bridges to the platform collator once per
 // comparison -- that turned a ~20ms re-sort on web into ~7s on mobile. Sorting
 // is never offered on these fields, so the indexes are pure cost.
 const UNSORTABLE_PROPERTIES = Object.keys(dictionarySchema).filter(
-  (property) =>
-    !SORTABLE_PROPERTIES.includes(
-      property as (typeof SORTABLE_PROPERTIES)[number]
-    )
+  (property) => !SORTABLE_PROPERTIES.includes(property as SortableProperty)
 );
 
 /**
