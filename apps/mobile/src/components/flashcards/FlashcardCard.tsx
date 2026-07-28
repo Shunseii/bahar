@@ -4,16 +4,21 @@
  */
 
 import { Trans } from "@lingui/react/macro";
+import * as Sentry from "@sentry/react-native";
 import * as Haptics from "expo-haptics";
+import * as Updates from "expo-updates";
 import { ChevronDown } from "lucide-react-native";
 import type React from "react";
 import { useCallback, useEffect } from "react";
 import {
   Dimensions,
   I18nManager,
+  type LayoutChangeEvent,
+  type NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
+  type TextLayoutEventData,
   View,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -200,6 +205,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
           keeps its full content height and overflows the card area. */}
       <Animated.View
         className="w-full shrink overflow-hidden rounded-3xl border border-border/50 bg-card shadow-xl"
+        onLayout={(event) => logCardLayout({ event, node: "card" })}
         style={[cardStyle]}
       >
         <Animated.View
@@ -286,6 +292,76 @@ const QuestionContent: React.FC<QuestionContentProps> = ({
   </View>
 );
 
+/**
+ * TEMPORARY DIAGNOSTIC (translation truncation on the answer side).
+ *
+ * onTextLayout reports the lines RN actually laid out, so joining their text
+ * back together and comparing it to the source string says whether the
+ * truncation happens at layout time or before the string ever reaches here.
+ * `laidOutText` shorter than `sourceText` means RN dropped content while laying
+ * it out; equal means the glyphs exist and something clips them afterwards.
+ *
+ * JSON.stringify is deliberate on both strings -- it makes newlines, trailing
+ * whitespace and any zero-width characters visible in Sentry instead of
+ * silently rendering as nothing.
+ */
+const logTranslationTextLayout = ({
+  entry,
+  event,
+}: {
+  entry: FlashcardWithDictionaryEntry["dictionary_entry"];
+  event: NativeSyntheticEvent<TextLayoutEventData>;
+}) => {
+  const { lines } = event.nativeEvent;
+  const laidOutText = lines.map((line) => line.text).join("");
+
+  Sentry.logger.info("flashcard.answer.translationTextLayout", {
+    operation: "flashcard.translationTruncation",
+    entryId: entry.id,
+    word: entry.word,
+    sourceText: JSON.stringify(entry.translation),
+    sourceLength: entry.translation.length,
+    laidOutText: JSON.stringify(laidOutText),
+    laidOutLength: laidOutText.length,
+    droppedCharacters: entry.translation.length - laidOutText.length,
+    lineCount: lines.length,
+    lineWidths: lines.map((line) => Math.round(line.width)),
+    lineHeights: lines.map((line) => Math.round(line.height)),
+  });
+};
+
+/**
+ * TEMPORARY DIAGNOSTIC: the resolved width at each level of the chain.
+ *
+ * A single width was not enough to reason about: one card's translation fit
+ * 233pt on one line while another wrapped at around 124pt, and there was no way
+ * to tell which node was responsible. Logging card, content and box separately
+ * shows where the width actually comes from, and whether they now agree.
+ *
+ * `buildId` matters because this ships over OTA, where an update applies on the
+ * second cold launch by default -- without it a stale bundle is indistinguishable
+ * from a fix that did not work.
+ */
+const logCardLayout = ({
+  event,
+  node,
+}: {
+  event: LayoutChangeEvent;
+  node: "card" | "answerContent" | "translationBox";
+}) => {
+  const { width, height } = event.nativeEvent.layout;
+
+  Sentry.logger.info("flashcard.answer.layout", {
+    operation: "flashcard.translationTruncation",
+    node,
+    width: Math.round(width),
+    height: Math.round(height),
+    buildId: Updates.updateId ?? "embedded",
+    runtimeVersion: Updates.runtimeVersion ?? "unknown",
+    isEmbeddedLaunch: Updates.isEmbeddedLaunch,
+  });
+};
+
 interface AnswerContentProps {
   entry: FlashcardWithDictionaryEntry["dictionary_entry"];
   isReverse: boolean;
@@ -312,6 +388,7 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
   <Animated.View
     className="w-full items-center gap-3.5 px-5 py-5"
     entering={FadeIn.duration(200)}
+    onLayout={(event) => logCardLayout({ event, node: "answerContent" })}
   >
     {tags.length > 0 && <TagsRow tags={tags} />}
 
@@ -323,14 +400,20 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
         already committed one line short -- the overflow is clipped by the card's
         overflow-hidden, silently dropping part of the translation. A definite
         width means the measure and layout passes agree. */}
-    <View className="w-full items-center gap-1">
+    <View
+      className="w-full items-center gap-1"
+      onLayout={(event) => logCardLayout({ event, node: "translationBox" })}
+    >
       <Text
         className="text-center font-bold text-3xl text-foreground leading-relaxed"
         style={{ writingDirection: "rtl" }}
       >
         {entry.word}
       </Text>
-      <Text className="text-center font-medium text-foreground text-xl">
+      <Text
+        className="text-center font-medium text-foreground text-xl"
+        onTextLayout={(event) => logTranslationTextLayout({ entry, event })}
+      >
         {entry.translation}
       </Text>
     </View>
