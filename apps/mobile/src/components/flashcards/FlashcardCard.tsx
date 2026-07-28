@@ -186,13 +186,20 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
   return (
     <GestureDetector gesture={composedGesture}>
-      {/* shrink lets the flex chain bound the card's height. RN defaults
-          flexShrink to 0 (web defaults to 1), so without it the card refuses to
-          shrink below its content height and overflows the card area instead --
-          which is what previously forced the scroll view to be capped with a
-          measured pixel value. */}
+      {/* w-full makes the card's width definite, taken from the card area
+          (which gets its width from the screen). Without it the card is sized by
+          whatever its widest content happens to be, so every percentage width
+          inside it resolves against an indefinite parent -- which in Yoga means
+          it does not resolve at all. Wrapping text then gets measured at an
+          unconstrained width, reports one line, and has its height committed too
+          short. It also made card width vary wildly between cards: one word's
+          translation fit 233pt on a single line while another wrapped at ~124pt.
+
+          shrink bounds the card's height instead of a measured pixel value. RN
+          defaults flexShrink to 0 (web defaults to 1), so without it the card
+          keeps its full content height and overflows the card area. */}
       <Animated.View
-        className="shrink overflow-hidden rounded-3xl border border-border/50 bg-card shadow-xl"
+        className="w-full shrink overflow-hidden rounded-3xl border border-border/50 bg-card shadow-xl"
         style={[cardStyle]}
       >
         <Animated.View
