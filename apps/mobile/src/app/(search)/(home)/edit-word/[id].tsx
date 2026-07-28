@@ -145,15 +145,9 @@ export default function EditWordScreen() {
     }: {
       dictionary_entry_id: string;
     }) => {
-      // Reverse cards are optional per word, so only reset the ones that exist.
-      const existing =
-        await flashcardsTable.findByEntryId.query(dictionary_entry_id);
-
-      const results = await Promise.all(
-        existing.map(({ direction }) =>
-          flashcardsTable.reset.mutation({ dictionary_entry_id, direction })
-        )
-      );
+      const results = await flashcardsTable.resetEntry.mutation({
+        dictionary_entry_id,
+      });
 
       // Post the manual reset revlogs to the server (fire-and-forget).
       for (const { flashcard, log } of results) {
