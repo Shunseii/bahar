@@ -53,11 +53,7 @@ const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
 const MOBILE_DEEP_LINK_SCHEME = "bahar://";
-// Defaults for every API key, whether minted by `bahar login` or created by
-// hand from the settings page. Keys created from settings pass their own
-// `expiresIn`; the default only applies when the caller omits one.
 const API_KEY_PREFIX = "bahar_cli_";
-const API_KEY_EXPIRY_SECS = 60 * 60 * 24 * 7; // 7 days
 
 // Per-key rate limit. better-auth's defaults (10 requests / 24h) are far too
 // low for a CLI that spends a request per command to mint a DB token; a single
@@ -476,9 +472,12 @@ export const auth = betterAuth({
         shouldStore: true,
         charactersLength: API_KEY_PREFIX.length + 4,
       },
-      keyExpiration: {
-        defaultExpiresIn: API_KEY_EXPIRY_SECS,
-      },
+      // No `keyExpiration.defaultExpiresIn`: the plugin only ever leaves
+      // `expiresAt` null -- a key that never expires -- when the caller omits
+      // `expiresIn` AND no default is configured. Setting one would silently
+      // cap every key, so both callers pass their own expiry instead: the
+      // settings page from the user's choice, and the `bahar login` flow (see
+      // apps/web/src/routes/cli-auth) from its own constant.
       rateLimit: {
         enabled: true,
         timeWindow: API_KEY_RATE_LIMIT_WINDOW_MS,
