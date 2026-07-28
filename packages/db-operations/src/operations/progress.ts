@@ -34,8 +34,10 @@ const isValidTimezone = (tz: string): boolean => {
   }
 };
 
-const resolveTimezone = (stored: string | null | undefined): string =>
-  stored && isValidTimezone(stored) ? stored : getDeviceTimezone();
+const resolveTimezone = (
+  stored: string | null | undefined,
+  fallback: string = getDeviceTimezone()
+): string => (stored && isValidTimezone(stored) ? stored : fallback);
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -341,8 +343,22 @@ export const makeProgressTable = ({ getDb }: OperationDeps) =>
       },
     },
     recordReview: {
-      mutation: async (): Promise<void> => {
+      /**
+       * `timezone` is the caller's timezone, used only when the stats row has
+       * no valid one stored. Web and mobile omit it -- the device timezone is
+       * the user's. The API can't rely on that (its own timezone is the
+       * server's), so it passes the client's through.
+       */
+      mutation: async ({
+        timezone: callerTimezone,
+      }: {
+        timezone?: string;
+      } = {}): Promise<void> => {
         const drizzleDb = await getDb();
+        const fallbackTimezone =
+          callerTimezone && isValidTimezone(callerTimezone)
+            ? callerTimezone
+            : getDeviceTimezone();
 
         const [row] = (await drizzleDb
           .select()
@@ -350,7 +366,7 @@ export const makeProgressTable = ({ getDb }: OperationDeps) =>
           .limit(1)) as SelectUserStats[];
 
         if (!row) {
-          const timezone = getDeviceTimezone();
+          const timezone = fallbackTimezone;
           await drizzleDb.insert(userStats).values({
             id: nanoid(),
             streak_count: 1,
@@ -361,7 +377,7 @@ export const makeProgressTable = ({ getDb }: OperationDeps) =>
           return;
         }
 
-        const timezone = resolveTimezone(row.timezone);
+        const timezone = resolveTimezone(row.timezone, fallbackTimezone);
         const today = getToday(timezone);
         const yesterday = getYesterday(timezone);
         const lastReview = isValidDateString(row.last_review_date)

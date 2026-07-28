@@ -1,7 +1,6 @@
 import { defineCommand } from "@bunli/core";
-import { applyAdds } from "../lib/apply-adds";
 import { loadCredentials } from "../lib/credentials";
-import { connectUserDb } from "../lib/db";
+import { addWords } from "../lib/dictionary-api";
 import { parseWordInput, type WordInput } from "../lib/word-input";
 
 const printHelp = () => {
@@ -25,9 +24,11 @@ Each word object accepts:
 Example:
   echo '[{"word":"نور","translation":"light","type":"ism","tags":["nature"]}]' | bahar add
 
-Each word is written with its flashcard pair in one atomic step, so an entry is
-never created without its cards. Prefer this over hand-written SQL INSERTs, which
-skip the flashcards and leave the word with no review schedule.`);
+Each word is written with its flashcards in one atomic step, so an entry is
+never created without its cards. A reverse card is created when your
+"create reverse cards by default" setting is on. Prefer this over hand-written
+SQL INSERTs, which skip the flashcards and leave the word with no review
+schedule -- and which your database token has no permission to run.`);
 };
 
 export const addCommand = defineCommand({
@@ -65,16 +66,20 @@ export const addCommand = defineCommand({
       return;
     }
 
-    const { db, client } = await connectUserDb(credentials.token);
-
     try {
-      const { added } = await applyAdds({ db, items });
+      const { added } = await addWords({
+        token: credentials.token,
+        words: items,
+      });
 
       console.log(
         JSON.stringify({ added: added.length, results: added }, null, 2)
       );
-    } finally {
-      client.close();
+    } catch (error) {
+      console.error(
+        colors.red(error instanceof Error ? error.message : String(error))
+      );
+      process.exitCode = 1;
     }
   },
 });
