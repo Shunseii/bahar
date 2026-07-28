@@ -4,6 +4,7 @@
 
 import {
   create,
+  getByID,
   type InternalTypedDocument,
   insert,
   insertMultiple,
@@ -97,6 +98,13 @@ export const updateDocument = (
  */
 export const removeDocument = (db: DictionaryOrama, id: string) => {
   return remove(db, id);
+};
+
+/**
+ * Reads a single indexed document by id, without going through search.
+ */
+export const getDocument = (db: DictionaryOrama, id: string) => {
+  return getByID(db, id);
 };
 
 type SearchableProperties = keyof typeof dictionarySchema;
