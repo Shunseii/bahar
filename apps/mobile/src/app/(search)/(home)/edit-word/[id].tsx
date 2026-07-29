@@ -17,7 +17,10 @@ import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
+  useReanimatedKeyboardAnimation,
 } from "react-native-keyboard-controller";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { z } from "zod";
 import {
@@ -44,6 +47,8 @@ import { errorMap } from "@/utils/zod";
 z.config({ customError: errorMap });
 
 type FormData = z.infer<typeof FormSchema>;
+
+const FOOTER_BOTTOM_PADDING = 12;
 
 const Breadcrumbs = () => {
   const router = useRouter();
@@ -88,6 +93,16 @@ export default function EditWordScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { scrollHandler } = useCollapsibleHeader(t`Edit word`);
   const { reset: resetSearch } = useSearch();
+  const insets = useSafeAreaInsets();
+  const { progress: keyboardProgress } = useReanimatedKeyboardAnimation();
+
+  // The keyboard covers the home indicator, so the safe area inset is dead
+  // space while it is open. Collapse it on the same clock the sticky view
+  // uses so the footer shrinks in step with the keyboard.
+  const footerStyle = useAnimatedStyle(() => ({
+    paddingBottom:
+      FOOTER_BOTTOM_PADDING + insets.bottom * (1 - keyboardProgress.value),
+  }));
 
   const {
     data: entry,
@@ -427,7 +442,10 @@ export default function EditWordScreen() {
         </KeyboardAwareScrollView>
 
         <KeyboardStickyView>
-          <View className="flex-row items-center justify-center gap-3 border-border border-t bg-background px-4 pt-3 pb-safe-offset-3">
+          <Animated.View
+            className="flex-row items-center justify-center gap-3 border-border border-t bg-background px-4 pt-3"
+            style={footerStyle}
+          >
             <Button onPress={() => router.back()} variant="outline">
               <Trans>Cancel</Trans>
             </Button>
@@ -442,7 +460,7 @@ export default function EditWordScreen() {
                 <Trans>Save changes</Trans>
               )}
             </Button>
-          </View>
+          </Animated.View>
         </KeyboardStickyView>
       </View>
     </FormProvider>
