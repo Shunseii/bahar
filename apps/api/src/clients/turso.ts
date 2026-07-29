@@ -1,6 +1,7 @@
 import { createClient as createDbClient } from "@libsql/client";
 import { createClient as createPlatformClient } from "@tursodatabase/api";
 import { asc, eq, gt } from "drizzle-orm";
+import { decodeJwt } from "jose";
 import { customAlphabet } from "nanoid";
 import { db as centralDb } from "../db";
 import { databases } from "../db/schema/databases";
@@ -17,6 +18,79 @@ export const tursoPlatformClient: ReturnType<typeof createPlatformClient> =
     token: config.TURSO_PLATFORM_API_KEY,
   }) as ReturnType<typeof createPlatformClient>;
 
+type TokenAuthorization = "full-access" | "read-only";
+
+/**
+ * Value of the `a` claim Turso puts on a database token for each authorization
+ * level. This claim is what the database enforces writes against.
+ */
+const TOKEN_AUTHORIZATION_CLAIM = {
+  "full-access": "rw",
+  "read-only": "ro",
+} as const;
+
+/**
+ * Mints a database token with a direct platform API call rather than through
+ * `@tursodatabase/api`.
+ *
+ * The SDK always sends a `permissions.read_attach` body, even when the caller
+ * asks for no permissions (its `createToken` defaults the database list to
+ * `[]`). A token minted with that body comes back carrying a `p` (permissions)
+ * claim and no `a` claim at all -- so `authorization=read-only` is silently
+ * dropped and the token can write. Sending no body, as the platform API docs
+ * do, yields `a: "ro"` and a token the database rejects writes on with
+ * "SQL write operations are forbidden".
+ */
+const mintDatabaseToken = async ({
+  dbName,
+  authorization,
+  expiration,
+}: {
+  dbName: string;
+  authorization: TokenAuthorization;
+  expiration: string;
+}): Promise<{ jwt: string }> => {
+  const url = new URL(
+    `/v1/organizations/${config.TURSO_ORG_SLUG}/databases/${dbName}/auth/tokens`,
+    "https://api.turso.tech"
+  );
+
+  url.searchParams.set("expiration", expiration);
+  url.searchParams.set("authorization", authorization);
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${config.TURSO_PLATFORM_API_KEY}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to mint ${authorization} token for ${dbName}: ${response.status} ${await response.text()}`
+    );
+  }
+
+  const { jwt } = (await response.json()) as { jwt?: string };
+
+  if (!jwt) {
+    throw new Error(
+      `Turso returned no jwt for the ${authorization} token for ${dbName}`
+    );
+  }
+
+  const expectedClaim = TOKEN_AUTHORIZATION_CLAIM[authorization];
+  const { a: actualClaim } = decodeJwt(jwt);
+
+  // A token whose `a` claim doesn't match what we asked for isn't restricted
+  // the way callers are told it is, so refuse to hand it out at all.
+  if (actualClaim !== expectedClaim) {
+    throw new Error(
+      `Expected a "${expectedClaim}" token for ${dbName}, but Turso returned a token with a: ${JSON.stringify(actualClaim)}`
+    );
+  }
+
+  return { jwt };
+};
+
 /**
  * Creates a new access token for a user database. Defaults to full access with
  * a 2 week expiration -- what the apps hold, since they sync writes from a
@@ -28,6 +102,9 @@ export const tursoPlatformClient: ReturnType<typeof createPlatformClient> =
  * operations the apps use. Read-only tokens are minted per request rather than
  * stored, so they're kept shorter-lived -- but still comfortably longer than
  * the CLI's 24h cache refresh buffer, or every command would re-fetch one.
+ *
+ * Read-only tokens bypass `@tursodatabase/api`, which cannot mint one -- see
+ * {@link mintDatabaseToken}.
  */
 export const createUserAccessToken = async ({
   dbName,
@@ -35,9 +112,13 @@ export const createUserAccessToken = async ({
   expiration = "2w",
 }: {
   dbName: string;
-  authorization?: "full-access" | "read-only";
+  authorization?: TokenAuthorization;
   expiration?: string;
-}) => {
+}): Promise<{ jwt: string }> => {
+  if (authorization === "read-only") {
+    return mintDatabaseToken({ dbName, authorization, expiration });
+  }
+
   const accessToken = await tursoPlatformClient.databases.createToken(dbName, {
     authorization,
     expiration,
