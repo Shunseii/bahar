@@ -17,6 +17,7 @@ import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
+  useKeyboardState,
 } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -45,6 +46,8 @@ import { errorMap } from "@/utils/zod";
 z.config({ customError: errorMap });
 
 type FormData = z.infer<typeof FormSchema>;
+
+const CONTENT_BOTTOM_PADDING = 24;
 
 const Breadcrumbs = () => {
   const router = useRouter();
@@ -90,6 +93,7 @@ export default function EditWordScreen() {
   const { scrollHandler } = useCollapsibleHeader(t`Edit word`);
   const { reset: resetSearch } = useSearch();
   const insets = useSafeAreaInsets();
+  const keyboardHeight = useKeyboardState((state) => state.height);
 
   const {
     data: entry,
@@ -364,7 +368,15 @@ export default function EditWordScreen() {
         <KeyboardAwareScrollView
           bottomOffset={90}
           className="flex-1"
-          contentContainerClassName="pb-6"
+          // KeyboardAwareScrollView already appends a keyboard-height spacer to
+          // make the tail of the form reachable, but it applies it through
+          // `useAnimatedStyle({ paddingBottom })`, which is a no-op in this app
+          // (see the same failure in #84). Without it the last sections can't be
+          // scrolled out from behind the keyboard, so pad by the real keyboard
+          // height here instead. Remove once the library's own spacer works.
+          contentContainerStyle={{
+            paddingBottom: CONTENT_BOTTOM_PADDING + keyboardHeight,
+          }}
           keyboardShouldPersistTaps="handled"
           onScroll={scrollHandler}
           scrollEventThrottle={16}
