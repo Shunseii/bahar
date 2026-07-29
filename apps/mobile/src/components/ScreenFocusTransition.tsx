@@ -9,13 +9,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-// Tuned to be perceptible on its own. Most drawer switches happen with the
-// drawer panel sliding closed over the top, which supplies plenty of motion and
-// hides this transition — but some navigations are programmatic (e.g. "View all
-// in dictionary" on the progress screen jumping to the sorted list) and this is
-// the only motion they get.
-const DURATION_MS = 240;
-const TRANSLATE_PX = 20;
+const DURATION_MS = 180;
+const TRANSLATE_PX = 8;
 
 /**
  * Plays a short fade + upward slide whenever the wrapped screen gains focus.
