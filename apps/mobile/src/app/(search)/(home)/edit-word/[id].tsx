@@ -17,9 +17,7 @@ import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
-  useReanimatedKeyboardAnimation,
 } from "react-native-keyboard-controller";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { z } from "zod";
@@ -47,8 +45,6 @@ import { errorMap } from "@/utils/zod";
 z.config({ customError: errorMap });
 
 type FormData = z.infer<typeof FormSchema>;
-
-const FOOTER_BOTTOM_PADDING = 12;
 
 const Breadcrumbs = () => {
   const router = useRouter();
@@ -94,15 +90,6 @@ export default function EditWordScreen() {
   const { scrollHandler } = useCollapsibleHeader(t`Edit word`);
   const { reset: resetSearch } = useSearch();
   const insets = useSafeAreaInsets();
-  const { progress: keyboardProgress } = useReanimatedKeyboardAnimation();
-
-  // The keyboard covers the home indicator, so the safe area inset is dead
-  // space while it is open. Collapse it on the same clock the sticky view
-  // uses so the footer shrinks in step with the keyboard.
-  const footerStyle = useAnimatedStyle(() => ({
-    paddingBottom:
-      FOOTER_BOTTOM_PADDING + insets.bottom * (1 - keyboardProgress.value),
-  }));
 
   const {
     data: entry,
@@ -441,11 +428,12 @@ export default function EditWordScreen() {
           </View>
         </KeyboardAwareScrollView>
 
-        <KeyboardStickyView>
-          <Animated.View
-            className="flex-row items-center justify-center gap-3 border-border border-t bg-background px-4 pt-3"
-            style={footerStyle}
-          >
+        {/* The keyboard covers the home indicator, so the bottom safe area
+            inset is dead space while it is open. Offsetting the sticky view
+            back down by the inset slides that padding under the keyboard
+            instead of leaving it as a visible gap above it. */}
+        <KeyboardStickyView offset={{ opened: insets.bottom }}>
+          <View className="flex-row items-center justify-center gap-3 border-border border-t bg-background px-4 pt-3 pb-safe-offset-3">
             <Button onPress={() => router.back()} variant="outline">
               <Trans>Cancel</Trans>
             </Button>
@@ -460,7 +448,7 @@ export default function EditWordScreen() {
                 <Trans>Save changes</Trans>
               )}
             </Button>
-          </Animated.View>
+          </View>
         </KeyboardStickyView>
       </View>
     </FormProvider>
