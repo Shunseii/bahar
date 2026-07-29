@@ -18,7 +18,14 @@ import {
   PanelRight,
   Settings,
 } from "lucide-react-native";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Text as RNText,
   TextInput,
@@ -46,6 +53,7 @@ import { performSync } from "@/lib/db/sync";
 import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
 import {
   dictionaryChangedAtom,
+  headerTitleAtom,
   isSyncingAtom,
   store,
   syncCompletedCountAtom,
@@ -75,13 +83,11 @@ function SearchBarHeader({
   searchQuery,
   onSearchChange,
   scrollY,
-  headerTitle,
 }: {
   navigation: DrawerNavigationProp<ParamListBase, string, undefined>;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   scrollY: SharedValue<number>;
-  headerTitle: string;
 }) {
   const pathname = usePathname();
   const { t } = useLingui();
@@ -89,6 +95,7 @@ function SearchBarHeader({
   const inputRef = useRef<TextInput>(null);
   const locales = useLocales();
   const insets = useSafeAreaInsets();
+  const headerTitle = useAtomValue(headerTitleAtom);
 
   const dir = locales[0].textDirection;
   const isAddWordPage = pathname.includes("add-word");
@@ -189,7 +196,6 @@ export default function Layout() {
   const locales = useLocales();
   const { t } = useLingui();
   const [searchQuery, setSearchQuery] = useState("");
-  const [headerTitle, setHeaderTitle] = useState("");
   const scrollY = useSharedValue(0);
   const syncCompletedCount = useAtomValue(syncCompletedCountAtom);
   const { refresh } = useSearch();
@@ -226,11 +232,10 @@ export default function Layout() {
   }, [syncCompletedCount, refresh]);
 
   const dir = locales[0].textDirection;
+  const headerScrollValue = useMemo(() => ({ scrollY }), [scrollY]);
 
   return (
-    <HeaderScrollContext.Provider
-      value={{ scrollY, headerTitle, setHeaderTitle }}
-    >
+    <HeaderScrollContext.Provider value={headerScrollValue}>
       <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
         <Drawer
           backBehavior="history"
@@ -250,10 +255,14 @@ export default function Layout() {
             // usePreloadDrawerScreens) and kept fully live — no freezeOnBlur —
             // so refocusing an already-visited screen doesn't pay an unfreeze
             // re-render. See also detachInactiveScreens on the navigator below.
+            //
+            // Because every screen stays live, anything that re-renders this
+            // layout re-renders all of them. Keep per-navigation state (like
+            // the header title) in atoms the consumer subscribes to directly,
+            // not in state here.
             drawerPosition: dir === "rtl" ? "right" : "left",
             header: ({ navigation }) => (
               <SearchBarHeader
-                headerTitle={headerTitle}
                 navigation={navigation}
                 onSearchChange={setSearchQuery}
                 scrollY={scrollY}

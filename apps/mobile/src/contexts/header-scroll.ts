@@ -3,8 +3,6 @@ import type { SharedValue } from "react-native-reanimated";
 
 interface HeaderScrollContextValue {
   scrollY: SharedValue<number>;
-  headerTitle: string;
-  setHeaderTitle: (title: string) => void;
 }
 
 export const HeaderScrollContext =
