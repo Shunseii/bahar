@@ -1,4 +1,9 @@
-import { WORD_TYPES, type WordType } from "@bahar/drizzle-user-db-schemas";
+import {
+  TAG_MODES,
+  type TagMode,
+  WORD_TYPES,
+  type WordType,
+} from "@bahar/drizzle-user-db-schemas";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -38,6 +43,7 @@ import {
   selectedTagsAtom,
   selectedTypesAtom,
   sortOptionAtom,
+  tagModeAtom,
 } from "@/lib/store/filters";
 import { useThemeColors } from "@/lib/theme";
 import { Button } from "../ui/button";
@@ -70,6 +76,14 @@ const useWordTypeLabels = (): Record<WordType, string> => {
     "fi'l": t`Fi'l`,
     harf: t`Harf`,
     expression: t`Expression`,
+  };
+};
+
+const useTagModeLabels = (): Record<TagMode, string> => {
+  const { t } = useLingui();
+  return {
+    all: t`Match all`,
+    any: t`Match any`,
   };
 };
 
@@ -134,17 +148,21 @@ const FiltersModal: FC<{
   const { formatNumber } = useFormatNumber();
   const sortLabels = useSortLabels();
   const wordTypeLabels = useWordTypeLabels();
+  const tagModeLabels = useTagModeLabels();
 
   const appliedTags = useAtomValue(selectedTagsAtom);
   const appliedTypes = useAtomValue(selectedTypesAtom);
   const appliedSort = useAtomValue(sortOptionAtom);
+  const appliedTagMode = useAtomValue(tagModeAtom);
   const setAppliedTags = useSetAtom(selectedTagsAtom);
   const setAppliedTypes = useSetAtom(selectedTypesAtom);
   const setAppliedSort = useSetAtom(sortOptionAtom);
+  const setAppliedTagMode = useSetAtom(tagModeAtom);
 
   const [draftTags, setDraftTags] = useState<string[]>([]);
   const [draftTypes, setDraftTypes] = useState<WordType[]>([]);
   const [draftSort, setDraftSort] = useState<SortOption>("relevance");
+  const [draftTagMode, setDraftTagMode] = useState<TagMode>("all");
   const [tagSearch, setTagSearch] = useState("");
   const [expandedSection, setExpandedSection] = useState<
     "tags" | "types" | "sort" | null
@@ -156,6 +174,7 @@ const FiltersModal: FC<{
       setDraftTags(appliedTags);
       setDraftTypes(appliedTypes);
       setDraftSort(appliedSort);
+      setDraftTagMode(appliedTagMode);
       setTagSearch("");
       setExpandedSection("sort");
     }
@@ -188,27 +207,32 @@ const FiltersModal: FC<{
     setAppliedTags([]);
     setAppliedTypes([]);
     setAppliedSort("relevance");
+    setAppliedTagMode("all");
     setDraftTags([]);
     setDraftTypes([]);
     setDraftSort("relevance");
+    setDraftTagMode("all");
   };
 
   const handleApply = () => {
     setAppliedTags(draftTags);
     setAppliedTypes(draftTypes);
     setAppliedSort(draftSort);
+    setAppliedTagMode(draftTagMode);
     onClose();
   };
 
   const hasAppliedFilters =
     appliedTags.length > 0 ||
     appliedTypes.length > 0 ||
-    appliedSort !== "relevance";
+    appliedSort !== "relevance" ||
+    appliedTagMode !== "all";
 
   const hasDraftChanges =
     JSON.stringify(draftTags) !== JSON.stringify(appliedTags) ||
     JSON.stringify(draftTypes) !== JSON.stringify(appliedTypes) ||
-    draftSort !== appliedSort;
+    draftSort !== appliedSort ||
+    draftTagMode !== appliedTagMode;
 
   const tagsSummary =
     draftTags.length > 0
@@ -265,6 +289,43 @@ const FiltersModal: FC<{
             }
             summary={tagsSummary}
           >
+            {/* Above the picker so it reads as "match any of [these tags]",
+                and so the picker stays next to the list it drives. */}
+            <View className="gap-2 px-4 pb-3">
+              <View className="flex-row gap-1 rounded-lg bg-muted/40 p-1">
+                {TAG_MODES.map((mode) => {
+                  const isSelected = draftTagMode === mode;
+                  return (
+                    <Pressable
+                      className={`flex-1 items-center rounded-md py-2 ${
+                        isSelected ? "bg-background" : ""
+                      }`}
+                      key={mode}
+                      onPress={() => setDraftTagMode(mode)}
+                    >
+                      <Text
+                        className={`text-sm ${
+                          isSelected
+                            ? "font-semibold text-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {tagModeLabels[mode]}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              <Text className="text-muted-foreground text-xs">
+                {draftTagMode === "all" ? (
+                  <Trans>Words must have every selected tag.</Trans>
+                ) : (
+                  <Trans>Words need only one of the selected tags.</Trans>
+                )}
+              </Text>
+            </View>
+
             <View className="px-4 pb-3">
               <TextInput
                 className="rounded-lg bg-muted/40 px-3 py-2.5 text-foreground text-sm"

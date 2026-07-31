@@ -1,4 +1,4 @@
-import type { WordType } from "@bahar/drizzle-user-db-schemas";
+import type { TagMode, WordType } from "@bahar/drizzle-user-db-schemas";
 import {
   type SearchDictionaryOptions,
   type SearchLanguage,
@@ -135,6 +135,7 @@ export const useInfiniteScroll = (
     term?: string;
     filters?: {
       tags?: string[];
+      tagMode?: TagMode;
       types?: WordType[];
     };
     sort?: SortOption;
@@ -157,8 +158,14 @@ export const useInfiniteScroll = (
     const tags = params.filters?.tags;
     const types = params.filters?.types;
     if (!tags?.length && !types?.length) return undefined;
+
+    const tagFilter =
+      params.filters?.tagMode === "any"
+        ? { containsAny: tags }
+        : { containsAll: tags };
+
     return {
-      ...(tags?.length ? { tags: { containsAll: tags } } : {}),
+      ...(tags?.length ? { tags: tagFilter } : {}),
       ...(types?.length ? { type: { in: types } } : {}),
     };
   }, [paramsKey]);

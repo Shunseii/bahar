@@ -773,7 +773,7 @@ const PIXEL_HEIGHT_OFFSET = 800;
 export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   searchQuery,
 }) => {
-  const { tags, types, sort } = useSearch({
+  const { tags, tagMode, types, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
   const { isFreeUser } = useUserPlan();
@@ -784,7 +784,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
     hasMore,
   } = useInfiniteScroll({
     term: searchQuery,
-    filters: { tags, types },
+    filters: { tags, tagMode, types },
     sort: sort === "difficulty" && isFreeUser ? undefined : sort,
   });
   const [ref, { height }] = useMeasure();

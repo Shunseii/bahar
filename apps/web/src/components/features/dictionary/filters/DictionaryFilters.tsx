@@ -1,5 +1,10 @@
 import { cn } from "@bahar/design-system";
-import { WORD_TYPES, type WordType } from "@bahar/drizzle-user-db-schemas";
+import {
+  TAG_MODES,
+  type TagMode,
+  WORD_TYPES,
+  type WordType,
+} from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import {
   Select,
@@ -70,24 +75,36 @@ const useWordTypeLabels = (): Record<WordType, string> => {
   };
 };
 
+const useTagModeLabels = (): Record<TagMode, string> => {
+  const { t } = useLingui();
+  return {
+    all: t`Match all`,
+    any: t`Match any`,
+  };
+};
+
 export const DictionaryFilters = () => {
   const navigate = useNavigate();
   const dir = useDir();
   const { formatNumber } = useFormatNumber();
   const { isFreeUser } = useUserPlan();
   const wordTypeLabels = useWordTypeLabels();
+  const tagModeLabels = useTagModeLabels();
   const {
     tags: filteredTags,
+    tagMode,
     types: filteredTypes,
     sort,
   } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
+  const activeTagMode: TagMode = tagMode ?? "all";
   const [isExpanded, setIsExpanded] = useSessionStorage(
     "isFiltersExpanded",
     !!(
       filteredTags?.length ||
       filteredTypes?.length ||
+      activeTagMode !== "all" ||
       (sort && sort !== "relevance")
     )
   );
@@ -96,9 +113,10 @@ export const DictionaryFilters = () => {
     let count = 0;
     if (filteredTags?.length) count += filteredTags.length;
     if (filteredTypes?.length) count += filteredTypes.length;
+    if (activeTagMode !== "all") count += 1;
     if (sort && sort !== "relevance") count += 1;
     return count;
-  }, [filteredTags, filteredTypes, sort]);
+  }, [filteredTags, filteredTypes, activeTagMode, sort]);
 
   const hasActiveFilters = activeFilterCount > 0;
 
@@ -153,6 +171,46 @@ export const DictionaryFilters = () => {
             <section className="flex flex-col gap-y-2">
               <p className="font-medium text-muted-foreground text-sm">
                 <Trans>Tags</Trans>
+              </p>
+
+              {/* Above the tag picker, not below it: the picker and the pills
+                  it produces have to stay adjacent, and putting the mode
+                  between them makes it ambiguous which one it applies to. */}
+              <div className="flex flex-wrap gap-2">
+                {TAG_MODES.map((mode) => {
+                  const isSelected = activeTagMode === mode;
+                  return (
+                    <button
+                      className={cn(
+                        "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
+                        isSelected
+                          ? "border-primary bg-primary/10 font-medium text-primary"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                      )}
+                      key={mode}
+                      onClick={() => {
+                        navigate({
+                          to: "/",
+                          search: (prev) => ({
+                            ...prev,
+                            tagMode: mode === "all" ? undefined : mode,
+                          }),
+                        });
+                      }}
+                      type="button"
+                    >
+                      {tagModeLabels[mode]}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="text-muted-foreground text-xs">
+                {activeTagMode === "all" ? (
+                  <Trans>Words must have every selected tag.</Trans>
+                ) : (
+                  <Trans>Words need only one of the selected tags.</Trans>
+                )}
               </p>
 
               <TagsFilter />

@@ -1,3 +1,5 @@
+import { cn } from "@bahar/design-system";
+import { TAG_MODES, type TagMode } from "@bahar/drizzle-user-db-schemas";
 import { Badge } from "@bahar/web-ui/components/badge";
 import { Button } from "@bahar/web-ui/components/button";
 import { Checkbox } from "@bahar/web-ui/components/checkbox";
@@ -37,6 +39,7 @@ const DeckSchema = z.object({
   filters: z
     .object({
       tags: z.array(z.string()).optional(),
+      tagMode: z.enum(TAG_MODES).optional(),
       state: z
         .array(
           z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)])
@@ -52,6 +55,7 @@ const DeckSchema = z.object({
 const DeckFormSchema = z.object({
   name: z.string().min(1),
   tags: z.array(z.object({ word: z.string() })).optional(),
+  tagMode: z.enum(TAG_MODES),
   types: z.array(z.enum(["ism", "fi'l", "harf", "expression"])).optional(),
 });
 
@@ -135,6 +139,10 @@ export const DeckDialogContent = ({
     values: {
       name: deck?.name ?? "",
       tags: deck?.filters?.tags?.map((tag) => ({ word: tag })) ?? [],
+      // Decks saved before tagMode existed were matched with "any", so an
+      // existing deck opens on what it has actually been doing. New decks
+      // start on "all", which is what people expect a multi-tag deck to mean.
+      tagMode: deck ? (deck.filters?.tagMode ?? "any") : "all",
       types: deck?.filters?.types ?? allTypes,
     },
   });
@@ -148,11 +156,17 @@ export const DeckDialogContent = ({
     control: form.control,
   });
 
+  const selectedTagMode = form.watch("tagMode");
+  const tagModeLabels: Record<TagMode, string> = {
+    all: t`Match all`,
+    any: t`Match any`,
+  };
+
   const isEditing = !!deck;
 
   const onSubmit = async (values: z.infer<typeof DeckFormSchema>) => {
-    const { name, tags, types } = values;
-    const filters = { tags: tags?.map((tag) => tag.word), types };
+    const { name, tags, tagMode, types } = values;
+    const filters = { tags: tags?.map((tag) => tag.word), tagMode, types };
 
     try {
       if (isEditing) {
@@ -224,26 +238,58 @@ export const DeckDialogContent = ({
           </div>
 
           <div className="mb-2 flex flex-col gap-y-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ltr:text-sm rtl:text-base">
+            <div className="grid grid-cols-4 items-start gap-4">
+              <Label className="pt-1.5 font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ltr:text-sm rtl:text-base">
                 <Trans>Tags</Trans>
               </Label>
 
-              <Autocomplete
-                allowAdd={false}
-                className="col-span-3"
-                filter={tagFields.map((field) => field.word)}
-                onClick={(val) => {
-                  appendTag({ word: val });
-                }}
-              />
-            </div>
+              {/* Mode and its explanation sit above the picker so the picker
+                  stays adjacent to the tag pills it produces. */}
+              <div className="col-span-3 flex flex-col gap-y-2">
+                <div className="flex flex-wrap gap-2">
+                  {TAG_MODES.map((mode) => {
+                    const isSelected = selectedTagMode === mode;
+                    return (
+                      <button
+                        className={cn(
+                          "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
+                          isSelected
+                            ? "border-primary bg-primary/10 font-medium text-primary"
+                            : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                        )}
+                        key={mode}
+                        onClick={() => form.setValue("tagMode", mode)}
+                        type="button"
+                      >
+                        {tagModeLabels[mode]}
+                      </button>
+                    );
+                  })}
+                </div>
 
-            <p className="text-muted-foreground ltr:text-sm rtl:text-base">
-              <Trans>
-                Words that have any of these tags will be included in the deck.
-              </Trans>
-            </p>
+                <p className="text-muted-foreground text-xs">
+                  {selectedTagMode === "all" ? (
+                    <Trans>
+                      Only words that have every one of these tags will be
+                      included in the deck.
+                    </Trans>
+                  ) : (
+                    <Trans>
+                      Words that have any of these tags will be included in the
+                      deck.
+                    </Trans>
+                  )}
+                </p>
+
+                <Autocomplete
+                  allowAdd={false}
+                  filter={tagFields.map((field) => field.word)}
+                  onClick={(val) => {
+                    appendTag({ word: val });
+                  }}
+                />
+              </div>
+            </div>
           </div>
 
           <ul className="mb-3 flex flex-wrap gap-2">

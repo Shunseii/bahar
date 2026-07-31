@@ -297,11 +297,89 @@ describe("decksTable", () => {
         expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(1);
       });
 
-      it("matches an entry that has ANY of several specified tags (OR)", async () => {
-        // Multi-tag filters are what surfaced the json_each perf bug; this
-        // pins down the OR semantics of the tag subquery.
+      it("treats an absent tagMode as OR, so decks saved before it keep their contents", async () => {
         const deck = await insertDeck(testDb, {
           filters: { tags: ["foo", "bar"] },
+        });
+
+        const fooEntry = await insertDictionaryEntry(testDb, { tags: ["foo"] });
+        await insertFlashcard(testDb, { dictionary_entry_id: fooEntry.id });
+
+        const bothEntry = await insertDictionaryEntry(testDb, {
+          tags: ["foo", "bar"],
+        });
+        await insertFlashcard(testDb, { dictionary_entry_id: bothEntry.id });
+
+        const decks = await decksTable.list.query({});
+        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(2);
+      });
+
+      it("requires every tag when tagMode is 'all'", async () => {
+        const deck = await insertDeck(testDb, {
+          filters: { tags: ["foo", "bar"], tagMode: "all" },
+        });
+
+        const bothEntry = await insertDictionaryEntry(testDb, {
+          tags: ["foo", "bar"],
+        });
+        await insertFlashcard(testDb, { dictionary_entry_id: bothEntry.id });
+
+        // Carries one of the two, so it must not match under "all".
+        const fooEntry = await insertDictionaryEntry(testDb, { tags: ["foo"] });
+        await insertFlashcard(testDb, { dictionary_entry_id: fooEntry.id });
+
+        const decks = await decksTable.list.query({});
+        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(1);
+      });
+
+      it("still matches under 'all' when the entry carries extra tags", async () => {
+        const deck = await insertDeck(testDb, {
+          filters: { tags: ["foo", "bar"], tagMode: "all" },
+        });
+
+        const entry = await insertDictionaryEntry(testDb, {
+          tags: ["foo", "bar", "baz"],
+        });
+        await insertFlashcard(testDb, { dictionary_entry_id: entry.id });
+
+        const decks = await decksTable.list.query({});
+        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(1);
+      });
+
+      it("returns nothing under 'all' for sibling tags no entry shares", async () => {
+        // The case BAH-187 is about: two tags at the same level of the
+        // hierarchy, where no single entry carries both.
+        const deck = await insertDeck(testDb, {
+          filters: { tags: ["foo", "bar"], tagMode: "all" },
+        });
+
+        const fooEntry = await insertDictionaryEntry(testDb, { tags: ["foo"] });
+        await insertFlashcard(testDb, { dictionary_entry_id: fooEntry.id });
+
+        const barEntry = await insertDictionaryEntry(testDb, { tags: ["bar"] });
+        await insertFlashcard(testDb, { dictionary_entry_id: barEntry.id });
+
+        const decks = await decksTable.list.query({});
+        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(0);
+      });
+
+      it("ignores a repeated filter tag under 'all'", async () => {
+        // The required-match count is built from DISTINCT filter tags, so a
+        // duplicate must not push the threshold past what any entry can reach.
+        const deck = await insertDeck(testDb, {
+          filters: { tags: ["foo", "foo"], tagMode: "all" },
+        });
+
+        const fooEntry = await insertDictionaryEntry(testDb, { tags: ["foo"] });
+        await insertFlashcard(testDb, { dictionary_entry_id: fooEntry.id });
+
+        const decks = await decksTable.list.query({});
+        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(1);
+      });
+
+      it("matches ANY of the tags when tagMode is explicitly 'any'", async () => {
+        const deck = await insertDeck(testDb, {
+          filters: { tags: ["foo", "bar"], tagMode: "any" },
         });
 
         const fooEntry = await insertDictionaryEntry(testDb, { tags: ["foo"] });
@@ -314,30 +392,7 @@ describe("decksTable", () => {
         await insertFlashcard(testDb, { dictionary_entry_id: bazEntry.id });
 
         const decks = await decksTable.list.query({});
-        const result = decks.find((d) => d.id === deck.id);
-
-        // foo + bar match, baz does not.
-        expect(result?.total_hits).toBe(2);
-      });
-
-      it("counts an entry with several matching tags only once", async () => {
-        // Regression guard for the tag filter rewrite: the subquery joins
-        // json_each(tags), so an entry matching multiple filter tags yields
-        // its id more than once inside the IN (...) set. total_hits is
-        // COUNT(DISTINCT flashcards.id), so the flashcard must still count once.
-        const deck = await insertDeck(testDb, {
-          filters: { tags: ["foo", "bar"] },
-        });
-
-        const bothEntry = await insertDictionaryEntry(testDb, {
-          tags: ["foo", "bar"],
-        });
-        await insertFlashcard(testDb, { dictionary_entry_id: bothEntry.id });
-
-        const decks = await decksTable.list.query({});
-        const result = decks.find((d) => d.id === deck.id);
-
-        expect(result?.total_hits).toBe(1);
+        expect(decks.find((d) => d.id === deck.id)?.total_hits).toBe(2);
       });
     });
 

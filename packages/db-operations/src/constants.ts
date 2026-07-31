@@ -2,7 +2,10 @@
  * Shared constants for database operations.
  */
 
-import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import type {
+  SelectDictionaryEntry,
+  TagMode,
+} from "@bahar/drizzle-user-db-schemas";
 
 /**
  * All columns in the dictionary_entries table.
@@ -56,3 +59,15 @@ export const MAX_POSTPONE_WINDOW_DAYS = 30;
  * Batch size for bulk operations.
  */
 export const BATCH_SIZE = 500;
+
+/**
+ * Tag combination used by deck and flashcard queries when a deck's filters
+ * don't specify one.
+ *
+ * `"any"` because that is what these queries have always done -- the tag
+ * subquery matches an entry carrying any one of the deck's tags. Defaulting to
+ * `"all"` here would silently shrink every existing multi-tag deck, so decks
+ * saved before `tagMode` existed keep their current contents and only an
+ * explicit user choice changes them.
+ */
+export const DEFAULT_DECK_TAG_MODE: TagMode = "any";

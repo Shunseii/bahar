@@ -1,4 +1,4 @@
-import { WORD_TYPES } from "@bahar/drizzle-user-db-schemas";
+import { TAG_MODES, WORD_TYPES } from "@bahar/drizzle-user-db-schemas";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
@@ -12,6 +12,9 @@ import { queryClient } from "@/lib/query";
 
 const filtersSchema = z.object({
   tags: z.array(z.string()).optional(),
+  // Absent means "all", so a shared or bookmarked URL without it filters the
+  // way the dictionary search always has.
+  tagMode: z.enum(TAG_MODES).optional(),
   types: z.array(z.enum(WORD_TYPES)).optional(),
   sort: z.enum(SORT_OPTIONS).optional(),
 });

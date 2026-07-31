@@ -4,6 +4,7 @@
 
 import type {
   SelectDictionaryEntry,
+  TagMode,
   WordType,
 } from "@bahar/drizzle-user-db-schemas";
 import { Trans } from "@lingui/react/macro";
@@ -43,6 +44,7 @@ import { DictionaryEntryCard } from "./DictionaryEntryCard";
 interface DictionaryListProps {
   searchQuery: string;
   tags?: string[];
+  tagMode?: TagMode;
   types?: WordType[];
   sort?: SortOption;
   bottomInset?: number;
@@ -100,6 +102,7 @@ const LoadingIndicator: FC = () => (
 export const DictionaryList: FC<DictionaryListProps> = ({
   searchQuery,
   tags,
+  tagMode,
   types,
   sort,
   bottomInset = 0,
@@ -111,6 +114,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     tags?.length || types?.length
       ? {
           tags: tags?.length ? tags : undefined,
+          tagMode,
           types: types?.length ? types : undefined,
         }
       : undefined;

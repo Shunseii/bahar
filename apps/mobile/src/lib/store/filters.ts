@@ -1,4 +1,4 @@
-import type { WordType } from "@bahar/drizzle-user-db-schemas";
+import type { TagMode, WordType } from "@bahar/drizzle-user-db-schemas";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { atom } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
@@ -24,6 +24,13 @@ const sortOptionStorageAtom = atomWithStorage(
   `${FILTERS_STORAGE_KEY_PREFIX}:sortOption`,
   "relevance",
   createJSONStorage<SortOption>(() => AsyncStorage),
+  { getOnInit: true }
+);
+
+const tagModeStorageAtom = atomWithStorage<TagMode>(
+  `${FILTERS_STORAGE_KEY_PREFIX}:tagMode`,
+  "all",
+  createJSONStorage<TagMode>(() => AsyncStorage),
   { getOnInit: true }
 );
 
@@ -63,13 +70,27 @@ export const sortOptionAtom = atom(
   }
 );
 
+export const tagModeAtom = atom(
+  (get) => {
+    const val = get(tagModeStorageAtom);
+    return val === "any" ? "any" : ("all" as TagMode);
+  },
+  (_get, set, update: TagMode) => {
+    set(tagModeStorageAtom, update);
+  }
+);
+
 export const activeFilterCountAtom = atom((get) => {
   const tags = get(selectedTagsAtom);
   const types = get(selectedTypesAtom);
   const sort = get(sortOptionAtom);
+  const tagMode = get(tagModeAtom);
   let count = 0;
   if (tags.length > 0) count++;
   if (types.length > 0) count++;
   if (sort !== "relevance") count++;
+  // Filters persist across launches here, so a non-default mode has to show up
+  // in the badge -- otherwise it silently narrows results weeks later.
+  if (tagMode !== "all") count++;
   return count;
 });
