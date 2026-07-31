@@ -1,4 +1,5 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import type { CardLayout } from "./card-layout";
 import { ANTONYMS_MODES } from "./types";
 
 /**
@@ -17,11 +18,18 @@ export const settings = sqliteTable("settings", {
   create_reverse_by_default: integer("show_reverse_flashcards", {
     mode: "boolean",
   }).default(false),
+  // Null means "use the defaults", so default tweaks still reach users who
+  // never opened the editor and no backfill has to run against synced DBs.
+  card_layout: text("card_layout", { mode: "json" }).$type<CardLayout>(),
 });
 
 export type SelectSetting = typeof settings.$inferSelect;
 export type InsertSetting = typeof settings.$inferInsert;
 
-export type RawSetting = Omit<SelectSetting, "create_reverse_by_default"> & {
+export type RawSetting = Omit<
+  SelectSetting,
+  "create_reverse_by_default" | "card_layout"
+> & {
   create_reverse_by_default: number;
+  card_layout: string | null;
 };

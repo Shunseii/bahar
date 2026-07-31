@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import { AdminSettingsCardSection } from "@/components/features/settings/AdminSettingsCardSection";
 import { ApiKeysCardSection } from "@/components/features/settings/ApiKeysCardSection";
 import { BillingSettingsCard } from "@/components/features/settings/BillingSettingsCard";
+import { CardAppearanceCardSection } from "@/components/features/settings/CardAppearanceCardSection";
 import { FlashcardSettingsCardSection } from "@/components/features/settings/FlashcardSettingsCardSection";
 import { InputFile } from "@/components/InputFile";
 import { LanguageMenu } from "@/components/LanguageMenu";
@@ -618,6 +619,8 @@ const Settings = () => {
         <PreferencesSettingsCard />
 
         <FlashcardSettingsCardSection />
+
+        <CardAppearanceCardSection />
 
         <ApiKeysCardSection />
 

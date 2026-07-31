@@ -3,6 +3,8 @@
  * scrollable answer side that surfaces the full morphology data model.
  */
 
+import type { CardFieldId, CardLayout } from "@bahar/drizzle-user-db-schemas";
+import { REQUIRED_FIELD_BY_FACE } from "@bahar/drizzle-user-db-schemas";
 import { Trans } from "@lingui/react/macro";
 import * as Sentry from "@sentry/react-native";
 import * as Haptics from "expo-haptics";
@@ -14,11 +16,9 @@ import {
   Dimensions,
   I18nManager,
   type LayoutChangeEvent,
-  type NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   Text,
-  type TextLayoutEventData,
   View,
 } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -32,15 +32,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useCardFace } from "@/hooks/useCardFace";
 import type { FlashcardWithDictionaryEntry } from "../../lib/db/operations";
-import {
-  ExamplesSection,
-  HuroofSection,
-  MorphologySection,
-  PropertiesRow,
-  RootRow,
-} from "./card";
-import { Divider } from "./card/shared";
+import { CardFields, TagsRow } from "./card/CardFields";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
@@ -53,20 +47,9 @@ interface FlashcardCardProps {
   onFlip: () => void;
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
+  /** Set by the settings preview to render an unsaved layout draft. */
+  layoutOverride?: CardLayout | null;
 }
-
-const TagsRow: React.FC<{ tags: string[] }> = ({ tags }) => {
-  if (tags.length === 0) return null;
-  return (
-    <View className="w-full flex-row flex-wrap justify-center gap-1.5">
-      {tags.map((tag) => (
-        <View className="rounded-full bg-muted px-2.5 py-0.5" key={tag}>
-          <Text className="text-[11px] text-muted-foreground">{tag}</Text>
-        </View>
-      ))}
-    </View>
-  );
-};
 
 export const FlashcardCard: React.FC<FlashcardCardProps> = ({
   flashcard,
@@ -74,6 +57,7 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
   onFlip,
   onSwipeLeft,
   onSwipeRight,
+  layoutOverride,
 }) => {
   const translateX = useSharedValue(0);
   const rotation = useSharedValue(0);
@@ -178,10 +162,12 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
   const isReverse = flashcard.direction === "reverse";
   const entry = flashcard.dictionary_entry;
-  const tags = entry.tags ?? [];
-  const examples = entry.examples ?? [];
-  const ism = entry.morphology?.ism;
-  const verb = entry.morphology?.verb;
+
+  const direction = isReverse ? "reverse" : "forward";
+  const questionFace = `${direction}_question` as const;
+  const answerFace = `${direction}_answer` as const;
+  const questionFields = useCardFace(questionFace, layoutOverride);
+  const answerFields = useCardFace(answerFace, layoutOverride);
 
   // Q-side gesture: just tap (swipe disabled until answer shown)
   // A-side gesture: pan composes with native scroll via offset thresholds
@@ -232,14 +218,16 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
           {showAnswer ? (
             <AnswerContent
               entry={entry}
-              examples={examples}
-              ism={ism}
-              isReverse={isReverse}
-              tags={tags}
-              verb={verb}
+              fields={answerFields}
+              promptField={REQUIRED_FIELD_BY_FACE[answerFace]}
             />
           ) : (
-            <QuestionContent entry={entry} isReverse={isReverse} tags={tags} />
+            <QuestionContent
+              entry={entry}
+              fields={questionFields}
+              isReverse={isReverse}
+              promptField={REQUIRED_FIELD_BY_FACE[questionFace]}
+            />
           )}
         </ScrollView>
       </Animated.View>
@@ -249,85 +237,44 @@ export const FlashcardCard: React.FC<FlashcardCardProps> = ({
 
 interface QuestionContentProps {
   entry: FlashcardWithDictionaryEntry["dictionary_entry"];
+  fields: CardFieldId[];
   isReverse: boolean;
-  tags: string[];
+  promptField: CardFieldId;
 }
 
 const QuestionContent: React.FC<QuestionContentProps> = ({
   entry,
+  fields,
   isReverse,
-  tags,
-}) => (
-  <View className="min-h-[320px] justify-between gap-6 p-6">
-    <TagsRow tags={tags} />
-    <View className="flex-1 items-center justify-center gap-4">
-      {isReverse ? (
-        <Text className="text-center font-bold text-3xl text-foreground leading-relaxed">
-          {entry.translation}
+  promptField,
+}) => {
+  // Tags stay pinned to the top of the question side, above the centred prompt,
+  // so the reveal hint keeps its place at the bottom of the card.
+  const showsTags = fields.includes("tags");
+  const centredFields = fields.filter((field) => field !== "tags");
+
+  return (
+    <View className="min-h-[320px] justify-between gap-6 p-6">
+      {showsTags ? <TagsRow tags={entry.tags ?? []} /> : <View />}
+      <View className="w-full flex-1 items-center justify-center gap-4">
+        <CardFields
+          entry={entry}
+          fields={centredFields}
+          promptField={promptField}
+        />
+      </View>
+      <View className="items-center gap-1">
+        <Text className="text-muted-foreground/60 text-xs">
+          {isReverse ? (
+            <Trans>Recall the Arabic word</Trans>
+          ) : (
+            <Trans>Tap to reveal answer</Trans>
+          )}
         </Text>
-      ) : (
-        <Text
-          className="text-center font-bold text-4xl text-foreground leading-relaxed"
-          style={{ writingDirection: "rtl" }}
-        >
-          {entry.word}
-        </Text>
-      )}
-      <View className="rounded-full bg-muted px-3 py-1">
-        <Text className="font-medium text-foreground text-sm">
-          <TypeLabel type={entry.type} />
-        </Text>
+        <ChevronDown color="#A4A6BB" size={16} />
       </View>
     </View>
-    <View className="items-center gap-1">
-      <Text className="text-muted-foreground/60 text-xs">
-        {isReverse ? (
-          <Trans>Recall the Arabic word</Trans>
-        ) : (
-          <Trans>Tap to reveal answer</Trans>
-        )}
-      </Text>
-      <ChevronDown color="#A4A6BB" size={16} />
-    </View>
-  </View>
-);
-
-/**
- * TEMPORARY DIAGNOSTIC (translation truncation on the answer side).
- *
- * onTextLayout reports the lines RN actually laid out, so joining their text
- * back together and comparing it to the source string says whether the
- * truncation happens at layout time or before the string ever reaches here.
- * `laidOutText` shorter than `sourceText` means RN dropped content while laying
- * it out; equal means the glyphs exist and something clips them afterwards.
- *
- * JSON.stringify is deliberate on both strings -- it makes newlines, trailing
- * whitespace and any zero-width characters visible in Sentry instead of
- * silently rendering as nothing.
- */
-const logTranslationTextLayout = ({
-  entry,
-  event,
-}: {
-  entry: FlashcardWithDictionaryEntry["dictionary_entry"];
-  event: NativeSyntheticEvent<TextLayoutEventData>;
-}) => {
-  const { lines } = event.nativeEvent;
-  const laidOutText = lines.map((line) => line.text).join("");
-
-  Sentry.logger.info("flashcard.answer.translationTextLayout", {
-    operation: "flashcard.translationTruncation",
-    entryId: entry.id,
-    word: entry.word,
-    sourceText: JSON.stringify(entry.translation),
-    sourceLength: entry.translation.length,
-    laidOutText: JSON.stringify(laidOutText),
-    laidOutLength: laidOutText.length,
-    droppedCharacters: entry.translation.length - laidOutText.length,
-    lineCount: lines.length,
-    lineWidths: lines.map((line) => Math.round(line.width)),
-    lineHeights: lines.map((line) => Math.round(line.height)),
-  });
+  );
 };
 
 /**
@@ -364,34 +311,20 @@ const logCardLayout = ({
 
 interface AnswerContentProps {
   entry: FlashcardWithDictionaryEntry["dictionary_entry"];
-  isReverse: boolean;
-  tags: string[];
-  examples: NonNullable<
-    FlashcardWithDictionaryEntry["dictionary_entry"]["examples"]
-  >;
-  ism: NonNullable<
-    FlashcardWithDictionaryEntry["dictionary_entry"]["morphology"]
-  >["ism"];
-  verb: NonNullable<
-    FlashcardWithDictionaryEntry["dictionary_entry"]["morphology"]
-  >["verb"];
+  fields: CardFieldId[];
+  promptField: CardFieldId;
 }
 
 const AnswerContent: React.FC<AnswerContentProps> = ({
   entry,
-  isReverse: _isReverse,
-  tags,
-  examples,
-  ism,
-  verb,
+  fields,
+  promptField,
 }) => (
   <Animated.View
     className="w-full items-center gap-3.5 px-5 py-5"
     entering={FadeIn.duration(200)}
     onLayout={(event) => logCardLayout({ event, node: "answerContent" })}
   >
-    {tags.length > 0 && <TagsRow tags={tags} />}
-
     {/* w-full is load-bearing, not cosmetic. The parent centers its children
         (items-center), so without an explicit width this box is content-sized:
         its height gets measured from the text at its *unconstrained* width,
@@ -401,99 +334,13 @@ const AnswerContent: React.FC<AnswerContentProps> = ({
         overflow-hidden, silently dropping part of the translation. A definite
         width means the measure and layout passes agree. */}
     <View
-      className="w-full items-center gap-1"
+      className="w-full items-center gap-3.5"
       onLayout={(event) => logCardLayout({ event, node: "translationBox" })}
     >
-      {/* w-full on the Text itself, not just on the box. The box centers its
-          children, so without it each Text is content-sized and wraps against
-          its own intrinsic width rather than the box's. Widening the box from
-          119pt to 286pt changed nothing for the text: it still laid out "to grow
-          weak" across two lines of 72pt and 47pt, while the box sized itself for
-          one line and clipped the second. Stretching the Text makes the width it
-          wraps against the same one the box measured. */}
-      <Text
-        className="w-full text-center font-bold text-3xl text-foreground leading-relaxed"
-        style={{ writingDirection: "rtl" }}
-      >
-        {entry.word}
-      </Text>
-      <Text
-        className="w-full text-center font-medium text-foreground text-xl"
-        onTextLayout={(event) => logTranslationTextLayout({ entry, event })}
-      >
-        {entry.translation}
-      </Text>
+      <CardFields entry={entry} fields={fields} promptField={promptField} />
     </View>
-
-    <PropertiesRow morphology={entry.morphology} type={entry.type} />
-
-    {entry.definition && (
-      <Text className="w-full text-center text-[13px] text-muted-foreground">
-        {entry.definition}
-      </Text>
-    )}
-
-    {entry.root && entry.root.length > 0 && (
-      <>
-        <Divider />
-        <RootRow root={entry.root} />
-      </>
-    )}
-
-    {examples.length > 0 && (
-      <>
-        <Divider />
-        <ExamplesSection examples={examples} />
-      </>
-    )}
-
-    {hasMorphology(ism, verb) && (
-      <>
-        <Divider />
-        <MorphologySection morphology={entry.morphology} />
-      </>
-    )}
-
-    {verb?.huroof && verb.huroof.length > 0 && (
-      <>
-        <Divider />
-        <HuroofSection baseWord={entry.word} verb={verb} />
-      </>
-    )}
   </Animated.View>
 );
-
-const TypeLabel: React.FC<{ type: string }> = ({ type }) => {
-  switch (type) {
-    case "ism":
-      return <Trans>Ism</Trans>;
-    case "fi'l":
-      return <Trans>Fi'l</Trans>;
-    case "harf":
-      return <Trans>Harf</Trans>;
-    case "expression":
-      return <Trans>Expression</Trans>;
-    default:
-      return <>{type}</>;
-  }
-};
-
-type Morph = FlashcardWithDictionaryEntry["dictionary_entry"]["morphology"];
-type Ism = NonNullable<Morph>["ism"];
-type Verb = NonNullable<Morph>["verb"];
-
-const hasMorphology = (ism: Ism, verb: Verb) =>
-  Boolean(
-    ism?.singular ||
-      ism?.dual ||
-      (ism?.plurals?.length ?? 0) > 0 ||
-      verb?.past_tense ||
-      verb?.present_tense ||
-      verb?.imperative ||
-      verb?.active_participle ||
-      verb?.passive_participle ||
-      (verb?.masadir?.length ?? 0) > 0
-  );
 
 const styles = StyleSheet.create({
   scroll: {

@@ -37,6 +37,7 @@ import {
 } from "react";
 import { type Grade, Rating } from "ts-fsrs";
 import { useSearch } from "@/hooks/search/useSearch";
+import { useCardFace } from "@/hooks/useCardFace";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { api } from "@/lib/api";
@@ -152,6 +153,15 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   useEffect(() => {
     setShowAnswer(false);
   }, [currentCard?.id]);
+
+  // Tags sit above the card rather than inside a face, so the drawer decides
+  // whether to show them from whichever face is currently facing the user.
+  const cardDirection =
+    currentCard?.direction === "reverse" ? "reverse" : "forward";
+  const visibleFace = showAnswer
+    ? (`${cardDirection}_answer` as const)
+    : (`${cardDirection}_question` as const);
+  const showsTags = useCardFace(visibleFace).includes("tags");
 
   const f = useMemo(() => {
     return createScheduler();
@@ -448,7 +458,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
               transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
             >
               <div className="mx-auto flex w-full max-w-2xl flex-col gap-y-4 px-4 py-4 sm:gap-y-6 sm:px-8 sm:py-6">
-                <TagBadgesList currentCard={currentCard} />
+                {showsTags && <TagBadgesList currentCard={currentCard} />}
 
                 {/* Flashcard content area */}
                 <div className="relative rounded-2xl border border-border/50 bg-linear-to-br from-card to-card/50 p-4 shadow-lg sm:p-8">

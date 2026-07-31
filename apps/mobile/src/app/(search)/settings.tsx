@@ -41,6 +41,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { toast } from "sonner-native";
+import { CardAppearanceSection } from "@/components/settings/CardAppearanceSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -556,6 +557,8 @@ export default function SettingsScreen() {
       <ScreenHeader icon={Settings} title={t`Settings`} />
 
       <View className="gap-4 px-4 pt-4">
+        <CardAppearanceSection />
+
         {/* Appearance */}
         <Card>
           <CardHeader>
