@@ -1,3 +1,14 @@
+/**
+ * Date constants used by the vendored `intlFormatDistance`.
+ *
+ * These mirror `date-fns/constants`, which isn't part of the package's public
+ * entry points.
+ */
+
+/**
+ * One year equals 365.2425 days: a leap year occurs every 4 years, except for
+ * years divisible by 100 and not by 400.
+ */
 export const DAYS_IN_YEAR = 365.2425;
 
 export const SECONDS_IN_HOUR = 3600;

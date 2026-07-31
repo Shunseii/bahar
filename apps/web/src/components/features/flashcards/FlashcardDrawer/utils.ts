@@ -1,45 +1,17 @@
-import { type IntlFormatDistanceUnit, isSameMinute } from "date-fns";
+import { formatDistinctIntervals } from "@bahar/date/intervals";
 import { Rating } from "ts-fsrs";
-import { intlFormatDistance } from "@/lib/date";
 
 type ReviewRating = Rating.Again | Rating.Hard | Rating.Good | Rating.Easy;
 
-export const formatInterval = ({
-  due,
-  now,
-  locale,
-  unit,
-}: {
-  due: Date;
-  now: Date;
-  locale: string;
-  unit?: IntlFormatDistanceUnit;
-}) => {
-  return intlFormatDistance(due, now, { style: "narrow", locale, unit });
-};
-
-const getSmallerUnit = (
-  unit: IntlFormatDistanceUnit
-): IntlFormatDistanceUnit => {
-  switch (unit) {
-    case "year":
-      return "month";
-    case "month":
-      return "week";
-    case "week":
-      return "day";
-    case "day":
-      return "hour";
-    case "hour":
-      return "minute";
-    case "minute":
-      return "second";
-    default:
-      return "second";
-  }
-};
-
 type SchedulingDates = Record<ReviewRating, Date>;
+
+/** Ordered shortest-interval-first, which is what the dedup pass expects. */
+const GRADES: ReviewRating[] = [
+  Rating.Again,
+  Rating.Hard,
+  Rating.Good,
+  Rating.Easy,
+];
 
 export const formatScheduleOptions = ({
   dates,
@@ -50,59 +22,16 @@ export const formatScheduleOptions = ({
   now: Date;
   locale: string;
 }): Record<ReviewRating, string> => {
-  const grades: ReviewRating[] = [
-    Rating.Again,
-    Rating.Hard,
-    Rating.Good,
-    Rating.Easy,
-  ];
-
-  const results = grades.reduce(
-    (prev, grade) => {
-      prev[grade] = formatInterval({ due: dates[grade], now, locale });
-
-      return prev;
-    },
-    {} as Record<ReviewRating, ReturnType<typeof formatInterval>>
-  );
-
-  for (let i = 0; i < grades.length - 1; i++) {
-    const current = grades[i];
-    const next = grades[i + 1];
-
-    const currentResult = results[current];
-    const currentDate = dates[current];
-    const nextResult = results[next];
-    const nextDate = dates[next];
-
-    const shouldUseSmallerUnits =
-      currentResult.label === nextResult.label &&
-      currentResult.unit !== "second" &&
-      !isSameMinute(currentDate, nextDate);
-
-    if (shouldUseSmallerUnits) {
-      const smallerUnit = getSmallerUnit(results[current].unit);
-
-      results[current] = formatInterval({
-        due: dates[current],
-        now,
-        locale,
-        unit: smallerUnit,
-      });
-
-      results[next] = formatInterval({
-        due: dates[next],
-        now,
-        locale,
-        unit: smallerUnit,
-      });
-    }
-  }
+  const labels = formatDistinctIntervals({
+    dates: GRADES.map((grade) => dates[grade]),
+    now,
+    locale,
+  });
 
   return {
-    [Rating.Again]: results[Rating.Again].label,
-    [Rating.Hard]: results[Rating.Hard].label,
-    [Rating.Good]: results[Rating.Good].label,
-    [Rating.Easy]: results[Rating.Easy].label,
+    [Rating.Again]: labels[0],
+    [Rating.Hard]: labels[1],
+    [Rating.Good]: labels[2],
+    [Rating.Easy]: labels[3],
   } as Record<ReviewRating, string>;
 };

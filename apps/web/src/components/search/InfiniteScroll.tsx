@@ -1,3 +1,4 @@
+import { intlFormatDistance } from "@bahar/date";
 import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
@@ -37,7 +38,6 @@ import { useInfiniteScroll } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { api } from "@/lib/api";
-import { intlFormatDistance } from "@/lib/date";
 import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
 import { Highlight } from "./Highlight";
 

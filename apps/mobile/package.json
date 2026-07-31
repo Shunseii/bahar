@@ -91,6 +91,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@bahar/date": "workspace:*",
     "@bahar/db-operations": "workspace:*",
     "@bahar/design-system": "workspace:*",
     "@bahar/drizzle-user-db-schemas": "workspace:*",
