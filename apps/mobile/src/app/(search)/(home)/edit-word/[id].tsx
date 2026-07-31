@@ -1,3 +1,4 @@
+import { toOramaDocument } from "@bahar/search/document";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -108,14 +109,13 @@ export default function EditWordScreen() {
   const editMutation = useMutation({
     mutationFn: dictionaryEntriesTable.editWord.mutation,
     onSuccess: async (updatedEntry) => {
-      await updateSearchIndex(updatedEntry.id, {
-        word: updatedEntry.word,
-        translation: updatedEntry.translation,
-        definition: updatedEntry.definition ?? undefined,
-        type: updatedEntry.type ?? undefined,
-        root: updatedEntry.root ?? undefined,
-        tags: updatedEntry.tags ?? undefined,
-      });
+      // toOramaDocument omits the flashcard-derived fields, so merging it over
+      // the indexed document keeps the difficulty and recently-reviewed sort
+      // positions intact.
+      await updateSearchIndex(
+        updatedEntry.id,
+        toOramaDocument({ entry: updatedEntry })
+      );
       resetSearch();
 
       await queryClient.invalidateQueries({

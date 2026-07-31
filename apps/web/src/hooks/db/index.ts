@@ -1,10 +1,11 @@
+import { toOramaDocument } from "@bahar/search/document";
 import { getByID, insert, remove, update } from "@orama/orama";
 import { useMutation } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { suggestedTagsAtom } from "@/atoms/suggested-tags";
 import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
-import { getOramaDb, toOramaDocument } from "@/lib/search";
+import { getOramaDb } from "@/lib/search";
 import { useSearch } from "../search/useSearch";
 
 /**
@@ -43,7 +44,7 @@ export const useAddDictionaryEntry = () => {
         setSuggestedTags(params.word.tags);
       }
 
-      insert(getOramaDb(), toOramaDocument(entry));
+      insert(getOramaDb(), toOramaDocument({ entry }));
       reset();
     },
   };
@@ -114,7 +115,7 @@ export const useEditDictionaryEntry = () => {
       const current = getByID(orama, updatedWord.id);
 
       update(orama, updatedWord.id, {
-        ...toOramaDocument(updatedWord),
+        ...toOramaDocument({ entry: updatedWord }),
         max_difficulty: current?.max_difficulty ?? 0,
         last_review_timestamp_ms: current?.last_review_timestamp_ms ?? 0,
       });

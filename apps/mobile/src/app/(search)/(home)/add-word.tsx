@@ -1,3 +1,4 @@
+import { toOramaDocument } from "@bahar/search/document";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
@@ -115,15 +116,7 @@ export default function AddWordScreen() {
   const addWordMutation = useMutation({
     mutationFn: dictionaryEntriesTable.addWordWithFlashcards.mutation,
     onSuccess: async ({ entry: newEntry }) => {
-      await addToSearchIndex({
-        id: newEntry.id,
-        word: newEntry.word,
-        translation: newEntry.translation,
-        definition: newEntry.definition ?? undefined,
-        type: newEntry.type ?? undefined,
-        root: newEntry.root ?? undefined,
-        tags: newEntry.tags ?? undefined,
-      });
+      await addToSearchIndex(toOramaDocument({ entry: newEntry }));
       reset();
 
       await Promise.all([

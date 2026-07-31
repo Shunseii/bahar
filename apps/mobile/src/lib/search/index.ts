@@ -24,6 +24,7 @@ import {
   searchDictionary,
   updateDocument,
 } from "@bahar/search/database";
+import { toOramaDocument } from "@bahar/search/document";
 import type { DictionaryDocument, DictionaryOrama } from "@bahar/search/schema";
 import * as Sentry from "@sentry/react-native";
 import { eq, max } from "drizzle-orm";
@@ -131,50 +132,20 @@ export const rehydrateOramaDb = async (): Promise<void> => {
           continue;
         }
 
-        const morphology = morphologyResult.ok
-          ? morphologyResult.value
-          : undefined;
-
-        documents.push({
-          id: entry.id,
-          word: entry.word,
-          word_exact: entry.word,
-          translation: entry.translation,
-          created_at: entry.created_at ?? undefined,
-          created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
-          updated_at: entry.updated_at ?? undefined,
-          updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
-          max_difficulty: difficultyMap.get(entry.id) ?? 0,
-          last_review_timestamp_ms: lastReviewedMap.get(entry.id) ?? 0,
-          definition: entry.definition ?? undefined,
-          type: entry.type ?? undefined,
-          root: rootResult.value ?? undefined,
-          tags: tagsResult.value ?? undefined,
-          morphology: morphology
-            ? {
-                ism: morphology.ism
-                  ? {
-                      singular: morphology.ism.singular,
-                      plurals: morphology.ism.plurals?.map((p) => p.word),
-                      singular_exact: morphology.ism.singular,
-                      plurals_exact: morphology.ism.plurals?.map((p) => p.word),
-                    }
-                  : undefined,
-                verb: morphology.verb
-                  ? {
-                      past_tense: morphology.verb.past_tense,
-                      present_tense: morphology.verb.present_tense,
-                      masadir: morphology.verb.masadir?.map((m) => m.word),
-                      past_tense_exact: morphology.verb.past_tense,
-                      present_tense_exact: morphology.verb.present_tense,
-                      masadir_exact: morphology.verb.masadir?.map(
-                        (m) => m.word
-                      ),
-                    }
-                  : undefined,
-              }
-            : undefined,
-        });
+        documents.push(
+          toOramaDocument({
+            entry: {
+              ...entry,
+              root: rootResult.value,
+              tags: tagsResult.value,
+              antonyms: antonymsResult.value,
+              examples: examplesResult.value,
+              morphology: morphologyResult.ok ? morphologyResult.value : null,
+            },
+            maxDifficulty: difficultyMap.get(entry.id) ?? 0,
+            lastReviewTimestampMs: lastReviewedMap.get(entry.id) ?? 0,
+          })
+        );
       }
 
       if (documents.length > 0) {
@@ -302,50 +273,20 @@ export const hydrateOramaDb = async (): Promise<
           continue;
         }
 
-        const morphology = morphologyResult.ok
-          ? morphologyResult.value
-          : undefined;
-
-        documents.push({
-          id: entry.id,
-          word: entry.word,
-          word_exact: entry.word,
-          translation: entry.translation,
-          created_at: entry.created_at ?? undefined,
-          created_at_timestamp_ms: entry.created_at_timestamp_ms ?? undefined,
-          updated_at: entry.updated_at ?? undefined,
-          updated_at_timestamp_ms: entry.updated_at_timestamp_ms ?? undefined,
-          max_difficulty: difficultyMap.get(entry.id) ?? 0,
-          last_review_timestamp_ms: lastReviewedMap.get(entry.id) ?? 0,
-          definition: entry.definition ?? undefined,
-          type: entry.type ?? undefined,
-          root: rootResult.value ?? undefined,
-          tags: tagsResult.value ?? undefined,
-          morphology: morphology
-            ? {
-                ism: morphology.ism
-                  ? {
-                      singular: morphology.ism.singular,
-                      plurals: morphology.ism.plurals?.map((p) => p.word),
-                      singular_exact: morphology.ism.singular,
-                      plurals_exact: morphology.ism.plurals?.map((p) => p.word),
-                    }
-                  : undefined,
-                verb: morphology.verb
-                  ? {
-                      past_tense: morphology.verb.past_tense,
-                      present_tense: morphology.verb.present_tense,
-                      masadir: morphology.verb.masadir?.map((m) => m.word),
-                      past_tense_exact: morphology.verb.past_tense,
-                      present_tense_exact: morphology.verb.present_tense,
-                      masadir_exact: morphology.verb.masadir?.map(
-                        (m) => m.word
-                      ),
-                    }
-                  : undefined,
-              }
-            : undefined,
-        });
+        documents.push(
+          toOramaDocument({
+            entry: {
+              ...entry,
+              root: rootResult.value,
+              tags: tagsResult.value,
+              antonyms: antonymsResult.value,
+              examples: examplesResult.value,
+              morphology: morphologyResult.ok ? morphologyResult.value : null,
+            },
+            maxDifficulty: difficultyMap.get(entry.id) ?? 0,
+            lastReviewTimestampMs: lastReviewedMap.get(entry.id) ?? 0,
+          })
+        );
       }
 
       if (documents.length > 0) {

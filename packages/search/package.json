@@ -6,9 +6,13 @@
   "exports": {
     "./arabic": "./src/arabic.ts",
     "./database": "./src/database.ts",
+    "./document": "./src/document.ts",
     "./highlight": "./src/highlight.ts",
     "./schema": "./src/schema.ts",
     "./tokenizer": "./src/tokenizer.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
   },
   "dependencies": {
     "@bahar/drizzle-user-db-schemas": "workspace:*"
@@ -22,6 +26,7 @@
     "@bahar/typescript-config": "workspace:*",
     "@orama/orama": "^3.1.16",
     "@orama/plugin-qps": "^3.1.16",
-    "@orama/stemmers": "^3.1.16"
+    "@orama/stemmers": "^3.1.16",
+    "vitest": "^4.1.9"
   }
 }
