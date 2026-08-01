@@ -99,6 +99,7 @@ export const DictionaryFilters = () => {
     from: "/_authorized-layout/_search-layout",
   });
   const activeTagMode: TagMode = tagMode ?? "all";
+  const isTagModeRelevant = (filteredTags?.length ?? 0) >= 2;
   const [isExpanded, setIsExpanded] = useSessionStorage(
     "isFiltersExpanded",
     !!(
@@ -170,49 +171,47 @@ export const DictionaryFilters = () => {
             </section>
 
             <section className="flex flex-col gap-y-2">
-              <p className="font-medium text-muted-foreground text-sm">
-                <Trans>Tags</Trans>
-              </p>
+              {/* On the label row, and only once a second tag makes the choice
+                  meaningful -- below two tags "all" and "any" select the same
+                  entries, so the control would be inert. Deliberately quieter
+                  than the word-type pills: this modifies the filter below it
+                  rather than being a filter value of its own. */}
+              <div className="flex items-center justify-between gap-4">
+                <p className="font-medium text-muted-foreground text-sm">
+                  <Trans>Tags</Trans>
+                </p>
 
-              {/* Above the tag picker, not below it: the picker and the pills
-                  it produces have to stay adjacent, and putting the mode
-                  between them makes it ambiguous which one it applies to. */}
-              <div className="flex flex-wrap gap-2">
-                {TAG_MODES.map((mode) => {
-                  const isSelected = activeTagMode === mode;
-                  return (
-                    <button
-                      className={cn(
-                        "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
-                        isSelected
-                          ? "border-primary bg-primary/10 font-medium text-primary"
-                          : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                      )}
-                      key={mode}
-                      onClick={() => {
-                        navigate({
-                          to: "/",
-                          search: (prev) => ({
-                            ...prev,
-                            tagMode: mode === "all" ? undefined : mode,
-                          }),
-                        });
-                      }}
-                      type="button"
-                    >
-                      {tagModeLabels[mode]}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <p className="text-muted-foreground text-xs">
-                {activeTagMode === "all" ? (
-                  <Trans>Words must have every selected tag.</Trans>
-                ) : (
-                  <Trans>Words need only one of the selected tags.</Trans>
+                {isTagModeRelevant && (
+                  <div className="flex items-center gap-0.5 rounded-full bg-muted p-0.5">
+                    {TAG_MODES.map((mode) => {
+                      const isSelected = activeTagMode === mode;
+                      return (
+                        <button
+                          className={cn(
+                            "rounded-full px-2.5 py-1 text-xs transition-colors",
+                            isSelected
+                              ? "bg-background font-medium text-foreground shadow-sm"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                          key={mode}
+                          onClick={() => {
+                            navigate({
+                              to: "/",
+                              search: (prev) => ({
+                                ...prev,
+                                tagMode: mode === "all" ? undefined : mode,
+                              }),
+                            });
+                          }}
+                          type="button"
+                        >
+                          {tagModeLabels[mode]}
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
-              </p>
+              </div>
 
               <TagsFilter />
 

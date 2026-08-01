@@ -243,29 +243,35 @@ export const DeckDialogContent = ({
                 <Trans>Tags</Trans>
               </Label>
 
-              {/* Mode and its explanation sit above the picker so the picker
-                  stays adjacent to the tag pills it produces. */}
+              {/* Mode sits above the picker so the picker stays adjacent to
+                  the tag pills it produces, and only appears once a second tag
+                  makes the choice meaningful. The description below stays put
+                  either way -- this form has always had one, and unlike the
+                  home filters it shows no result count, so nothing else here
+                  tells you what the current mode does. */}
               <div className="col-span-3 flex flex-col gap-y-2">
-                <div className="flex flex-wrap gap-2">
-                  {TAG_MODES.map((mode) => {
-                    const isSelected = selectedTagMode === mode;
-                    return (
-                      <button
-                        className={cn(
-                          "rounded-full border px-3.5 py-1.5 text-sm transition-colors",
-                          isSelected
-                            ? "border-primary bg-primary/10 font-medium text-primary"
-                            : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                        )}
-                        key={mode}
-                        onClick={() => form.setValue("tagMode", mode)}
-                        type="button"
-                      >
-                        {tagModeLabels[mode]}
-                      </button>
-                    );
-                  })}
-                </div>
+                {tagFields.length >= 2 && (
+                  <div className="flex items-center gap-0.5 self-start rounded-full bg-muted p-0.5">
+                    {TAG_MODES.map((mode) => {
+                      const isSelected = selectedTagMode === mode;
+                      return (
+                        <button
+                          className={cn(
+                            "rounded-full px-2.5 py-1 text-xs transition-colors",
+                            isSelected
+                              ? "bg-background font-medium text-foreground shadow-sm"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                          key={mode}
+                          onClick={() => form.setValue("tagMode", mode)}
+                          type="button"
+                        >
+                          {tagModeLabels[mode]}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
 
                 <p className="text-muted-foreground text-xs">
                   {selectedTagMode === "all" ? (

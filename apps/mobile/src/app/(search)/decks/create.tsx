@@ -170,30 +170,32 @@ export default function CreateDeckScreen() {
               </Text>
             </View>
             <View className="gap-2 px-4 pb-1">
-              <View className="flex-row gap-1 rounded-lg bg-muted/40 p-1">
-                {TAG_MODES.map((mode) => {
-                  const isSelected = tagMode === mode;
-                  return (
-                    <Pressable
-                      className={`flex-1 items-center rounded-md py-2 ${
-                        isSelected ? "bg-background" : ""
-                      }`}
-                      key={mode}
-                      onPress={() => setTagMode(mode)}
-                    >
-                      <Text
-                        className={`text-sm ${
-                          isSelected
-                            ? "font-semibold text-foreground"
-                            : "text-muted-foreground"
+              {tags.length >= 2 && (
+                <View className="flex-row gap-1 rounded-lg bg-muted/40 p-1">
+                  {TAG_MODES.map((mode) => {
+                    const isSelected = tagMode === mode;
+                    return (
+                      <Pressable
+                        className={`flex-1 items-center rounded-md py-2 ${
+                          isSelected ? "bg-background" : ""
                         }`}
+                        key={mode}
+                        onPress={() => setTagMode(mode)}
                       >
-                        {tagModeLabels[mode]}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
+                        <Text
+                          className={`text-sm ${
+                            isSelected
+                              ? "font-semibold text-foreground"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {tagModeLabels[mode]}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              )}
               <Text className="text-muted-foreground text-sm">
                 {tagMode === "all" ? (
                   <Trans>

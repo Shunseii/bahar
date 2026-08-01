@@ -290,42 +290,48 @@ const FiltersModal: FC<{
             }
             summary={tagsSummary}
           >
-            {/* Above the picker so it reads as "match any of [these tags]",
-                and so the picker stays next to the list it drives. */}
-            <View className="gap-2 px-4 pb-3">
-              <View className="flex-row gap-1 rounded-lg bg-muted/40 p-1">
-                {TAG_MODES.map((mode) => {
-                  const isSelected = draftTagMode === mode;
-                  return (
-                    <Pressable
-                      className={`flex-1 items-center rounded-md py-2 ${
-                        isSelected ? "bg-background" : ""
-                      }`}
-                      key={mode}
-                      onPress={() => setDraftTagMode(mode)}
-                    >
-                      <Text
-                        className={`text-sm ${
-                          isSelected
-                            ? "font-semibold text-foreground"
-                            : "text-muted-foreground"
+            {/* Only once a second tag makes the choice meaningful -- below two
+                tags "all" and "any" select the same entries. Stays full-width
+                here rather than moving onto the section header like web: at
+                393pt it would be squeezed against the collapse chevron, and
+                the helper text stays because this modal covers the results, so
+                toggling gives no visible feedback until Apply dismisses it. */}
+            {draftTags.length >= 2 && (
+              <View className="gap-2 px-4 pb-3">
+                <View className="flex-row gap-1 rounded-lg bg-muted/40 p-1">
+                  {TAG_MODES.map((mode) => {
+                    const isSelected = draftTagMode === mode;
+                    return (
+                      <Pressable
+                        className={`flex-1 items-center rounded-md py-2 ${
+                          isSelected ? "bg-background" : ""
                         }`}
+                        key={mode}
+                        onPress={() => setDraftTagMode(mode)}
                       >
-                        {tagModeLabels[mode]}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
+                        <Text
+                          className={`text-sm ${
+                            isSelected
+                              ? "font-semibold text-foreground"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {tagModeLabels[mode]}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
 
-              <Text className="text-muted-foreground text-xs">
-                {draftTagMode === "all" ? (
-                  <Trans>Words must have every selected tag.</Trans>
-                ) : (
-                  <Trans>Words need only one of the selected tags.</Trans>
-                )}
-              </Text>
-            </View>
+                <Text className="text-muted-foreground text-xs">
+                  {draftTagMode === "all" ? (
+                    <Trans>Words must have every selected tag.</Trans>
+                  ) : (
+                    <Trans>Words need only one of the selected tags.</Trans>
+                  )}
+                </Text>
+              </View>
+            )}
 
             <View className="px-4 pb-3">
               <TextInput
