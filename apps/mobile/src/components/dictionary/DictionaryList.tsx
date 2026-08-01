@@ -16,7 +16,14 @@ import { useFocusEffect } from "expo-router";
 import { useAtom } from "jotai";
 import { ArrowUp, BookOpen, SearchX } from "lucide-react-native";
 import type { ReactElement } from "react";
-import { type FC, useCallback, useEffect, useRef, useState } from "react";
+import {
+  type FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -25,6 +32,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -32,10 +40,12 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useDragSelect } from "@/hooks/useDragSelect";
 import { type SortOption, useInfiniteSearch } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { performSync } from "@/lib/db/sync";
 import { reviewsPendingRefreshAtom } from "@/lib/store";
+import { useBulkSelection } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { DictionaryEntryCard } from "./DictionaryEntryCard";
@@ -48,6 +58,8 @@ interface DictionaryListProps {
   bottomInset?: number;
   onTotalCountChange?: (count: number) => void;
   onElapsedTimeChange?: (elapsedNs: number | null) => void;
+  /** Ids currently loaded, so bulk selection can offer "select all". */
+  onLoadedIdsChange?: (ids: string[]) => void;
   ListHeaderComponent?: ReactElement;
 }
 
@@ -105,6 +117,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   bottomInset = 0,
   onTotalCountChange,
   onElapsedTimeChange,
+  onLoadedIdsChange,
   ListHeaderComponent,
 }) => {
   const filters =
@@ -142,6 +155,13 @@ export const DictionaryList: FC<DictionaryListProps> = ({
       }
     }, [reviewsPending, refresh, setReviewsPending])
   );
+
+  const { selectionMode, selectedIds, startSelection, toggle, add } =
+    useBulkSelection();
+  const { gesture, registerRow } = useDragSelect({
+    onSelectionStart: startSelection,
+    onCross: add,
+  });
 
   const [refreshing, setRefreshing] = useState(false);
   const expandedIdsRef = useRef(new Set<string>());
@@ -215,6 +235,10 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     onElapsedTimeChange?.(elapsedTimeNs);
   }, [elapsedTimeNs, onElapsedTimeChange]);
 
+  useEffect(() => {
+    onLoadedIdsChange?.(hits.map((hit) => hit.id));
+  }, [hits, onLoadedIdsChange]);
+
   // Prefetch full entries from SQLite for the current batch of hits
   // so ExpandedDetails can read from a warm cache on expand
   const prefetchedIdsRef = useRef(new Set<string>());
@@ -240,25 +264,47 @@ export const DictionaryList: FC<DictionaryListProps> = ({
 
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof hits)[0]; index: number }) => (
-      <Animated.View
-        entering={FadeInDown.delay(Math.min(index * 50, 300))
-          .duration(400)
-          .springify()
-          .damping(15)
-          .stiffness(120)}
-      >
-        <DictionaryEntryCard
-          entry={item.document as SelectDictionaryEntry}
-          isExpanded={expandedIdsRef.current.has(item.id)}
-          onToggleExpand={toggleExpanded}
-          searchQuery={searchQuery}
-        />
-      </Animated.View>
+      // The plain wrapper is what drag-select measures: it exposes the native
+      // measure methods (Animated.View's ref doesn't) and collapsable={false}
+      // keeps Android from flattening it away.
+      <View collapsable={false} ref={(node) => registerRow(item.id, node)}>
+        <Animated.View
+          entering={FadeInDown.delay(Math.min(index * 50, 300))
+            .duration(400)
+            .springify()
+            .damping(15)
+            .stiffness(120)}
+        >
+          <DictionaryEntryCard
+            entry={item.document as SelectDictionaryEntry}
+            isExpanded={expandedIdsRef.current.has(item.id)}
+            isSelected={selectedIds.has(item.id)}
+            onToggleExpand={toggleExpanded}
+            onToggleSelect={toggle}
+            searchQuery={searchQuery}
+            selectionMode={selectionMode}
+          />
+        </Animated.View>
+      </View>
     ),
-    [toggleExpanded]
+    [
+      toggleExpanded,
+      registerRow,
+      selectedIds,
+      selectionMode,
+      toggle,
+      searchQuery,
+    ]
   );
 
   const keyExtractor = useCallback((item: (typeof hits)[0]) => item.id, []);
+
+  // FlashList only re-renders rows when extraData's identity changes, and both
+  // expansion and selection live outside the row data.
+  const extraData = useMemo(
+    () => ({ expandedVersion, selectionMode, selectedIds }),
+    [expandedVersion, selectionMode, selectedIds]
+  );
 
   const onEndReached = useCallback(() => {
     if (!isLoading && hasMore) {
@@ -273,33 +319,35 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   })();
   return (
     <View className="flex-1">
-      <FlashList
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: bottomInset + 16,
-        }}
-        data={hits}
-        extraData={expandedVersion}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-        keyExtractor={keyExtractor}
-        ListEmptyComponent={emptyComponent}
-        ListFooterComponent={hasMore ? <LoadingIndicator /> : null}
-        ListHeaderComponent={
-          ListHeaderComponent as FlashListProps<
-            (typeof hits)[0]
-          >["ListHeaderComponent"]
-        }
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.3}
-        onScroll={handleScroll}
-        ref={listRef}
-        refreshControl={
-          <RefreshControl onRefresh={handleRefresh} refreshing={refreshing} />
-        }
-        renderItem={renderItem}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-      />
+      <GestureDetector gesture={gesture}>
+        <FlashList
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: bottomInset + 16,
+          }}
+          data={hits}
+          extraData={extraData}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          keyExtractor={keyExtractor}
+          ListEmptyComponent={emptyComponent}
+          ListFooterComponent={hasMore ? <LoadingIndicator /> : null}
+          ListHeaderComponent={
+            ListHeaderComponent as FlashListProps<
+              (typeof hits)[0]
+            >["ListHeaderComponent"]
+          }
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.3}
+          onScroll={handleScroll}
+          ref={listRef}
+          refreshControl={
+            <RefreshControl onRefresh={handleRefresh} refreshing={refreshing} />
+          }
+          renderItem={renderItem}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+        />
+      </GestureDetector>
       <Animated.View
         className="absolute right-6"
         style={[{ bottom: bottomInset + 24 }, scrollButtonStyle]}

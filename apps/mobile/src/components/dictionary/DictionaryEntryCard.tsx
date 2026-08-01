@@ -21,6 +21,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { Checkbox } from "@/components/ui/checkbox";
 import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { HighlightText } from "./HighlightText";
@@ -31,6 +32,9 @@ interface DictionaryEntryCardProps {
   isExpanded: boolean;
   onToggleExpand: (id: string) => void;
   searchQuery?: string;
+  selectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: (id: string) => void;
 }
 
 const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {
@@ -321,7 +325,15 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = ({ id, document }) => {
 };
 
 export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
-  ({ entry, isExpanded, onToggleExpand, searchQuery = "" }) => {
+  ({
+    entry,
+    isExpanded,
+    onToggleExpand,
+    searchQuery = "",
+    selectionMode = false,
+    isSelected = false,
+    onToggleSelect,
+  }) => {
     const router = useRouter();
     const colors = useThemeColors();
     const rotation = useSharedValue(isExpanded ? 180 : 0);
@@ -332,7 +344,14 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
 
     const hasExpandableContent = true;
 
-    const toggleExpanded = () => {
+    // While selecting, a tap picks the word instead of expanding it -- the
+    // expanded body would push the rows the user is aiming at off-screen.
+    const handlePress = () => {
+      if (selectionMode) {
+        onToggleSelect?.(entry.id);
+        return;
+      }
+
       onToggleExpand(entry.id);
     };
 
@@ -341,14 +360,24 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
     }));
 
     return (
-      <Pressable onPress={toggleExpanded}>
+      <Pressable onPress={handlePress}>
         <View
           className={cn(
             "rounded-xl border border-border/50 bg-card p-4",
-            isExpanded && "border-primary/30"
+            isExpanded && "border-primary/30",
+            isSelected && "border-primary bg-primary/5"
           )}
         >
           <View className="flex-row items-start justify-between">
+            {selectionMode && (
+              <View className="mt-1 mr-3">
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={() => onToggleSelect?.(entry.id)}
+                />
+              </View>
+            )}
+
             <View className="mr-2 flex-1">
               <HighlightText
                 className="font-semibold text-2xl text-foreground"
@@ -364,7 +393,10 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
             </View>
 
             {/* Actions */}
-            <View className="flex-row items-center">
+            <View
+              className="flex-row items-center"
+              style={{ display: selectionMode ? "none" : "flex" }}
+            >
               <ShareButton translation={entry.translation} word={entry.word} />
               <Pressable
                 className="rounded-md p-2 active:bg-primary/10"

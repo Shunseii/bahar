@@ -14,6 +14,8 @@ import {
 import { ActivityIndicator, Animated, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DictionaryList } from "@/components/dictionary";
+import { BulkActionBar } from "@/components/dictionary/bulk/BulkActionBar";
+import { BulkSelectionHeader } from "@/components/dictionary/bulk/BulkSelectionHeader";
 import { DictionaryFilters } from "@/components/dictionary/DictionaryFilters";
 import { GuestBanner } from "@/components/GuestBanner";
 import { Button } from "@/components/ui/button";
@@ -30,6 +32,7 @@ import {
   selectedTypesAtom,
   sortOptionAtom,
 } from "@/lib/store/filters";
+import { useSelectionMode } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
 
@@ -209,6 +212,8 @@ export default function HomeScreen() {
   usePreloadDrawerScreens(state === "ready");
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
+  const [loadedIds, setLoadedIds] = useState<string[]>([]);
+  const selectionMode = useSelectionMode();
 
   const { data: counts, isPending } = useQuery({
     queryFn: () =>
@@ -233,6 +238,10 @@ export default function HomeScreen() {
 
   const handleElapsedTimeChange = useCallback((elapsed: number | null) => {
     setElapsedTimeNs(elapsed);
+  }, []);
+
+  const handleLoadedIdsChange = useCallback((ids: string[]) => {
+    setLoadedIds(ids);
   }, []);
 
   const handleReviewPress = useCallback(() => {
@@ -298,16 +307,21 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-background">
+      {selectionMode && <BulkSelectionHeader loadedIds={loadedIds} />}
+
       <DictionaryList
-        bottomInset={insets.bottom}
+        bottomInset={selectionMode ? insets.bottom + 86 : insets.bottom}
         ListHeaderComponent={listHeader}
         onElapsedTimeChange={handleElapsedTimeChange}
+        onLoadedIdsChange={handleLoadedIdsChange}
         onTotalCountChange={handleTotalCountChange}
         searchQuery={deferredSearchQuery}
         sort={sortOption}
         tags={selectedTags}
         types={selectedTypes}
       />
+
+      {selectionMode && <BulkActionBar bottomInset={insets.bottom} />}
     </View>
   );
 }
