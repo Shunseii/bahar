@@ -50,8 +50,13 @@ msgstr "{0} / {1} cards"
 msgid "{0} cards have been spread over the next {windowDays} days."
 msgstr "{0} cards have been spread over the next {windowDays} days."
 
+#. placeholder {0}: formatNumber(selectedTags.length)
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:214
+msgid "{0} selected"
+msgstr "{0} selected"
+
 #. placeholder {0}: formatNumber(draftTags.length)
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:240
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:410
 msgid "{0} tags selected"
 msgstr "{0} tags selected"
 
@@ -331,7 +336,7 @@ msgstr "Add some to get started!"
 msgid "Add some words to get started!"
 msgstr "Add some words to get started!"
 
-#: ../../apps/web/src/components/Autocomplete.tsx:158
+#: ../../apps/web/src/components/Autocomplete.tsx:161
 msgid "Add tag {inputValue}"
 msgstr "Add tag {inputValue}"
 
@@ -477,7 +482,7 @@ msgstr "Appearance"
 msgid "Apple sign-in failed. Please try again."
 msgstr "Apple sign-in failed. Please try again."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:494
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:570
 msgid "Apply"
 msgstr "Apply"
 
@@ -633,7 +638,7 @@ msgstr "By signing in, you agree to our <0>Privacy Policy</0>"
 #: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:443
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:129
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:489
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:565
 #: ../../apps/mobile/src/app/(search)/settings.tsx:435
 #: ../../apps/mobile/src/app/(search)/settings.tsx:472
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:87
@@ -682,11 +687,11 @@ msgstr "Cause:"
 msgid "Choose file"
 msgstr "Choose file"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:545
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:630
 msgid "Clear"
 msgstr "Clear"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:274
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:444
 msgid "Clear all"
 msgstr "Clear all"
 
@@ -1283,7 +1288,7 @@ msgstr "Exporting dictionary with flashcards will save your flashcard progress a
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:73
 #: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:475
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:15
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:78
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:80
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:42
 #: ../../apps/mobile/src/components/dictionary/form/constants.ts:9
 #: ../../apps/mobile/src/components/decks/DeckCard.tsx:19
@@ -1429,7 +1434,7 @@ msgstr "Feminine"
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:69
 #: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:471
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:13
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:76
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:78
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:40
 #: ../../apps/mobile/src/components/dictionary/form/constants.ts:7
 #: ../../apps/mobile/src/components/decks/DeckCard.tsx:17
@@ -1458,8 +1463,8 @@ msgid "Filter by tags..."
 msgstr "Filter by tags..."
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:166
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:265
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:527
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:435
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:612
 msgid "Filters"
 msgstr "Filters"
 
@@ -1600,7 +1605,7 @@ msgstr "Hard"
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:71
 #: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:473
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:14
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:77
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:79
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:41
 #: ../../apps/mobile/src/components/dictionary/form/constants.ts:8
 #: ../../apps/mobile/src/components/decks/DeckCard.tsx:18
@@ -1756,7 +1761,7 @@ msgstr "Invalid value. Expected one of: {0}"
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:67
 #: ../../apps/mobile/src/components/flashcards/FlashcardCard.tsx:469
 #: ../../apps/mobile/src/components/flashcards/card/PropertiesRow.tsx:12
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:75
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:77
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:39
 #: ../../apps/mobile/src/components/dictionary/form/constants.ts:6
 #: ../../apps/mobile/src/components/decks/DeckCard.tsx:16
@@ -1899,7 +1904,7 @@ msgstr "Masdar {0}"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:81
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:161
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:85
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:87
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:51
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:52
 msgid "Match all"
@@ -1907,7 +1912,7 @@ msgstr "Match all"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:82
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:162
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:86
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:88
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:52
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:53
 msgid "Match any"
@@ -1958,7 +1963,7 @@ msgid "Morphology only applies to isms and fi'ls. This section will be hidden if
 msgstr "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:52
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:67
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:69
 msgid "Most difficult"
 msgstr "Most difficult"
 
@@ -2065,7 +2070,7 @@ msgstr "No results found"
 msgid "No reviews yet today."
 msgstr "No reviews yet today."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:389
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:311
 msgid "No tags found"
 msgstr "No tags found"
 
@@ -2117,7 +2122,7 @@ msgstr "Oldest"
 msgid "On"
 msgstr "On"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:278
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:285
 msgid "Only words that have every one of these tags will be included in the deck."
 msgstr "Only words that have every one of these tags will be included in the deck."
 
@@ -2350,17 +2355,17 @@ msgid "Recent Reviews"
 msgstr "Recent Reviews"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:50
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:66
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:68
 msgid "Recently added"
 msgstr "Recently added"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:54
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:68
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:70
 msgid "Recently reviewed"
 msgstr "Recently reviewed"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:48
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:65
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:67
 msgid "Recently updated"
 msgstr "Recently updated"
 
@@ -2374,7 +2379,7 @@ msgid "Regular reviews done!"
 msgstr "Regular reviews done!"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:46
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:64
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:66
 msgid "Relevance"
 msgstr "Relevance"
 
@@ -2551,7 +2556,7 @@ msgstr "Save"
 msgid "Save 30%"
 msgstr "Save 30%"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:386
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:385
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:460
 msgid "Save changes"
 msgstr "Save changes"
@@ -2573,7 +2578,7 @@ msgstr "Search for a tag..."
 msgid "Search tag..."
 msgstr "Search tag..."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:340
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:265
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:105
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:217
 msgid "Search tags..."
@@ -2584,7 +2589,7 @@ msgstr "Search tags..."
 msgid "Search..."
 msgstr "Search..."
 
-#: ../../apps/web/src/components/Autocomplete.tsx:111
+#: ../../apps/web/src/components/Autocomplete.tsx:114
 msgid "Searching..."
 msgstr "Searching..."
 
@@ -2607,7 +2612,7 @@ msgstr "Select inflection"
 msgid "Select Tags"
 msgstr "Select Tags"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:329
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:328
 msgid "Select the types of words that you want to include in the deck."
 msgstr "Select the types of words that you want to include in the deck."
 
@@ -2715,7 +2720,7 @@ msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:304
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:438
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:514
 msgid "Sort by"
 msgstr "Sort by"
 
@@ -2810,7 +2815,8 @@ msgstr "System"
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:181
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:243
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:287
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:210
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:461
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:306
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:169
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:227
@@ -3116,7 +3122,7 @@ msgstr "Turning this off deletes the reverse flashcard."
 msgid "Type"
 msgstr "Type"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:325
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:324
 msgid "Types"
 msgstr "Types"
 
@@ -3282,7 +3288,7 @@ msgid "Word not found"
 msgstr "Word not found"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:261
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:400
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:476
 msgid "Word types"
 msgstr "Word types"
 
@@ -3309,15 +3315,15 @@ msgstr "Words Added"
 msgid "Words Learned"
 msgstr "Words Learned"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:328
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:252
 msgid "Words must have every selected tag."
 msgstr "Words must have every selected tag."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:330
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:254
 msgid "Words need only one of the selected tags."
 msgstr "Words need only one of the selected tags."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:283
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:290
 msgid "Words that have any of these tags will be included in the deck."
 msgstr "Words that have any of these tags will be included in the deck."
 
