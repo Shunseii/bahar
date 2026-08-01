@@ -166,7 +166,14 @@ export const DeckDialogContent = ({
 
   const onSubmit = async (values: z.infer<typeof DeckFormSchema>) => {
     const { name, tags, tagMode, types } = values;
-    const filters = { tags: tags?.map((tag) => tag.word), tagMode, types };
+    const tagWords = tags?.map((tag) => tag.word);
+    // Matches the mobile deck forms: tagMode only means something alongside
+    // tags, so a deck with none doesn't carry one.
+    const filters = {
+      tags: tagWords,
+      ...(tagWords?.length ? { tagMode } : {}),
+      types,
+    };
 
     try {
       if (isEditing) {
