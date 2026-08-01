@@ -144,8 +144,22 @@ export enum FlashcardState {
 }
 
 // Deck types
+export const TAG_MODES = ["all", "any"] as const;
+
+export type TagMode = (typeof TAG_MODES)[number];
+
 export type DeckFilters = {
   tags?: string[];
+  /**
+   * How multiple tags combine. `"all"` requires every tag, `"any"` requires at
+   * least one.
+   *
+   * Absent means `"any"` everywhere -- deck and flashcard queries have always
+   * behaved that way, and the dictionary search was moved onto the same
+   * default so a missing value means one thing rather than depending on which
+   * surface is asking.
+   */
+  tagMode?: TagMode;
   state?: FlashcardState[];
   types?: WordType[];
 };

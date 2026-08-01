@@ -1,4 +1,9 @@
-import type { DeckFilters, WordType } from "@bahar/drizzle-user-db-schemas";
+import {
+  type DeckFilters,
+  TAG_MODES,
+  type TagMode,
+  type WordType,
+} from "@bahar/drizzle-user-db-schemas";
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -41,12 +46,21 @@ const useWordTypeLabels = (): Record<WordType, string> => {
   };
 };
 
+const useTagModeLabels = (): Record<TagMode, string> => {
+  const { t } = useLingui();
+  return {
+    all: t`Match all`,
+    any: t`Match any`,
+  };
+};
+
 export default function EditDeckScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { scrollHandler } = useCollapsibleHeader(t`Edit deck`);
   const wordTypeLabels = useWordTypeLabels();
+  const tagModeLabels = useTagModeLabels();
 
   const { data: deck, status } = useQuery({
     queryFn: () => decksTable.get.query({ id }),
@@ -57,12 +71,16 @@ export default function EditDeckScreen() {
   const [name, setName] = useState("");
   const [selectedTypes, setSelectedTypes] = useState<WordType[]>([]);
   const [tags, setTags] = useState<{ name: string }[]>([]);
+  const [tagMode, setTagMode] = useState<TagMode>("any");
 
   useEffect(() => {
     if (deck) {
       setName(deck.name);
       setSelectedTypes(deck.filters?.types ?? []);
       setTags((deck.filters?.tags ?? []).map((t) => ({ name: t })));
+      // Decks saved before tagMode existed were matched with "any", so the
+      // form opens on what the deck has actually been doing.
+      setTagMode(deck.filters?.tagMode ?? "any");
     }
   }, [deck]);
 
@@ -104,7 +122,10 @@ export default function EditDeckScreen() {
 
     const filters: DeckFilters = {};
     if (selectedTypes.length > 0) filters.types = selectedTypes;
-    if (tags.length > 0) filters.tags = tags.map((t) => t.name);
+    if (tags.length > 0) {
+      filters.tags = tags.map((t) => t.name);
+      filters.tagMode = tagMode;
+    }
 
     await updateDeck({ id, updates: { name: name.trim(), filters } });
   };
@@ -205,8 +226,42 @@ export default function EditDeckScreen() {
               <Text className="font-semibold text-base text-foreground">
                 <Trans>Tags</Trans>
               </Text>
+            </View>
+            <View className="gap-2 px-4 pb-1">
+              {tags.length >= 2 && (
+                <View className="flex-row gap-1 rounded-lg bg-muted/40 p-1">
+                  {TAG_MODES.map((mode) => {
+                    const isSelected = tagMode === mode;
+                    return (
+                      <Pressable
+                        className={`flex-1 items-center rounded-md py-2 ${
+                          isSelected ? "bg-background" : ""
+                        }`}
+                        key={mode}
+                        onPress={() => setTagMode(mode)}
+                      >
+                        <Text
+                          className={`text-sm ${
+                            isSelected
+                              ? "font-semibold text-foreground"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {tagModeLabels[mode]}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              )}
               <Text className="text-muted-foreground text-sm">
-                <Trans>Words with any of these tags will be included</Trans>
+                {tagMode === "all" ? (
+                  <Trans>
+                    Only words with every one of these tags will be included
+                  </Trans>
+                ) : (
+                  <Trans>Words with any of these tags will be included</Trans>
+                )}
               </Text>
             </View>
             <View className="px-4 pt-2 pb-4">

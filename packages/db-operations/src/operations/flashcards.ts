@@ -22,11 +22,13 @@ import type { Grade, ReviewLog } from "ts-fsrs";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   DEFAULT_POSTPONE_WINDOW_DAYS,
+  DEFAULT_TAG_MODE,
   MAX_POSTPONE_WINDOW_DAYS,
   MIN_POSTPONE_WINDOW_DAYS,
 } from "../constants";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
+import { buildTagCondition } from "../utils";
 import type { OperationDeps } from "./deps";
 import { makeProgressTable } from "./progress";
 
@@ -211,7 +213,12 @@ const buildFilterConditions = ({
 }: {
   filters?: SelectDeck["filters"];
 }) => {
-  const { tags = [], types: rawTypes, state: rawState } = filters ?? {};
+  const {
+    tags = [],
+    tagMode = DEFAULT_TAG_MODE,
+    types: rawTypes,
+    state: rawState,
+  } = filters ?? {};
 
   const types = rawTypes?.length ? rawTypes : [...WORD_TYPES];
   const state = rawState?.length
@@ -227,19 +234,7 @@ const buildFilterConditions = ({
     inArray(flashcards.state, state),
     inArray(dictionaryEntries.type, types),
     eq(flashcards.is_hidden, false),
-    ...(tags.length > 0
-      ? [
-          // Non-correlated subquery, not `EXISTS (json_each(...))`. The
-          // correlated form re-runs json_each per candidate row, which the WASM
-          // SQLite build evaluates pathologically slowly for filters matching
-          // many rows (effectively hangs, wedging the single connection).
-          // Materializing the matching entry ids once keeps it in the tens of ms.
-          sql`${dictionaryEntries.id} IN (SELECT de_t.id FROM dictionary_entries de_t, json_each(de_t.tags) jt WHERE jt.value IN (${sql.join(
-            tags.map((t) => sql`${t}`),
-            sql`, `
-          )}))`,
-        ]
-      : []),
+    ...(tags.length > 0 ? [buildTagCondition({ tags, mode: tagMode })] : []),
   ];
 };
 

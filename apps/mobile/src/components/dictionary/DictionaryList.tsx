@@ -4,6 +4,7 @@
 
 import type {
   SelectDictionaryEntry,
+  TagMode,
   WordType,
 } from "@bahar/drizzle-user-db-schemas";
 import { Trans } from "@lingui/react/macro";
@@ -43,6 +44,7 @@ import { DictionaryEntryCard } from "./DictionaryEntryCard";
 interface DictionaryListProps {
   searchQuery: string;
   tags?: string[];
+  tagMode?: TagMode;
   types?: WordType[];
   sort?: SortOption;
   bottomInset?: number;
@@ -71,7 +73,7 @@ const EmptyDictionary: FC = () => {
   );
 };
 
-const NoResults: FC = () => {
+const NoResults: FC<{ hasSearchQuery: boolean }> = ({ hasSearchQuery }) => {
   const colors = useThemeColors();
   return (
     <Animated.View
@@ -85,7 +87,11 @@ const NoResults: FC = () => {
         <Trans>No results found</Trans>
       </Text>
       <Text className="px-8 text-center text-muted-foreground">
-        <Trans>Try a different search term</Trans>
+        {hasSearchQuery ? (
+          <Trans>Try a different search term</Trans>
+        ) : (
+          <Trans>Try adjusting your filters</Trans>
+        )}
       </Text>
     </Animated.View>
   );
@@ -100,6 +106,7 @@ const LoadingIndicator: FC = () => (
 export const DictionaryList: FC<DictionaryListProps> = ({
   searchQuery,
   tags,
+  tagMode,
   types,
   sort,
   bottomInset = 0,
@@ -111,6 +118,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     tags?.length || types?.length
       ? {
           tags: tags?.length ? tags : undefined,
+          tagMode,
           types: types?.length ? types : undefined,
         }
       : undefined;
@@ -268,7 +276,13 @@ export const DictionaryList: FC<DictionaryListProps> = ({
 
   const emptyComponent = (() => {
     if (isLoading) return <LoadingIndicator />;
-    if (searchQuery.trim()) return <NoResults />;
+    // Filters count the same as a search term: narrowing to zero with no
+    // search term would otherwise claim the dictionary itself is empty.
+    const hasSearchQuery = searchQuery.trim().length > 0;
+    const hasActiveFilters = !!(tags?.length || types?.length);
+    if (hasSearchQuery || hasActiveFilters) {
+      return <NoResults hasSearchQuery={hasSearchQuery} />;
+    }
     return <EmptyDictionary />;
   })();
   return (

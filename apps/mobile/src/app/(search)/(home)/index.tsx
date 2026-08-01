@@ -29,6 +29,7 @@ import {
   selectedTagsAtom,
   selectedTypesAtom,
   sortOptionAtom,
+  tagModeAtom,
 } from "@/lib/store/filters";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
@@ -203,6 +204,7 @@ export default function HomeScreen() {
   const selectedTags = useAtomValue(selectedTagsAtom);
   const selectedTypes = useAtomValue(selectedTypesAtom);
   const sortOption = useAtomValue(sortOptionAtom);
+  const tagMode = useAtomValue(tagModeAtom);
   const { isAnonymous } = useUserPlan();
   const { state, error } = useAppInit();
 
@@ -305,6 +307,7 @@ export default function HomeScreen() {
         onTotalCountChange={handleTotalCountChange}
         searchQuery={deferredSearchQuery}
         sort={sortOption}
+        tagMode={tagMode}
         tags={selectedTags}
         types={selectedTypes}
       />
