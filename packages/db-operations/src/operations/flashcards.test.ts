@@ -1407,6 +1407,112 @@ describe("flashcardsTable", () => {
       expect(reverse).toBeNull();
     });
   });
+
+  describe("bulkSetReverse", () => {
+    it("only creates reverse cards for entries that lack one", async () => {
+      const withReverse = await insertDictionaryEntry(testDb);
+      const withoutA = await insertDictionaryEntry(testDb);
+      const withoutB = await insertDictionaryEntry(testDb);
+      const existing = await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: withReverse.id,
+        enabled: true,
+      });
+
+      const result = await flashcardsTable.bulkSetReverse.mutation({
+        dictionary_entry_ids: [withReverse.id, withoutA.id, withoutB.id],
+        enabled: true,
+      });
+
+      expect(result).toEqual({ changed: 2, unchanged: 1 });
+      for (const id of [withoutA.id, withoutB.id]) {
+        const cards = await flashcardsTable.findByEntryId.query(id);
+        expect(cards.filter((c) => c.direction === "reverse")).toHaveLength(1);
+      }
+      // The pre-existing card keeps its identity (and so its FSRS progress).
+      const untouched = await flashcardsTable.findByEntryId.query(
+        withReverse.id
+      );
+      expect(untouched.find((c) => c.direction === "reverse")?.id).toBe(
+        existing.reverse?.id
+      );
+    });
+
+    it("deletes existing reverse cards when disabling and leaves forward cards", async () => {
+      const a = await insertDictionaryEntry(testDb);
+      const b = await insertDictionaryEntry(testDb);
+      await insertFlashcard(testDb, { dictionary_entry_id: a.id });
+      await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: a.id,
+        enabled: true,
+      });
+
+      const result = await flashcardsTable.bulkSetReverse.mutation({
+        dictionary_entry_ids: [a.id, b.id],
+        enabled: false,
+      });
+
+      expect(result).toEqual({ changed: 1, unchanged: 1 });
+      const cards = await flashcardsTable.findByEntryId.query(a.id);
+      expect(cards.map((c) => c.direction)).toEqual(["forward"]);
+    });
+
+    it("does nothing for an empty selection", async () => {
+      expect(
+        await flashcardsTable.bulkSetReverse.mutation({
+          dictionary_entry_ids: [],
+          enabled: true,
+        })
+      ).toEqual({ changed: 0, unchanged: 0 });
+    });
+  });
+
+  describe("reverseCountForEntries", () => {
+    it("counts entries that have a reverse card", async () => {
+      const a = await insertDictionaryEntry(testDb);
+      const b = await insertDictionaryEntry(testDb);
+      const c = await insertDictionaryEntry(testDb);
+      await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: a.id,
+        enabled: true,
+      });
+      await flashcardsTable.setReverse.mutation({
+        dictionary_entry_id: c.id,
+        enabled: true,
+      });
+
+      expect(
+        await flashcardsTable.reverseCountForEntries.query({
+          dictionary_entry_ids: [a.id, b.id],
+        })
+      ).toBe(1);
+      expect(
+        await flashcardsTable.reverseCountForEntries.query({
+          dictionary_entry_ids: [],
+        })
+      ).toBe(0);
+    });
+  });
+
+  describe("countForEntries", () => {
+    it("counts every flashcard across the given entries", async () => {
+      const a = await insertDictionaryEntry(testDb);
+      const b = await insertDictionaryEntry(testDb);
+      const unselected = await insertDictionaryEntry(testDb);
+      await insertFlashcard(testDb, { dictionary_entry_id: a.id });
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: a.id,
+        direction: "reverse",
+      });
+      await insertFlashcard(testDb, { dictionary_entry_id: b.id });
+      await insertFlashcard(testDb, { dictionary_entry_id: unselected.id });
+
+      expect(
+        await flashcardsTable.countForEntries.query({
+          dictionary_entry_ids: [a.id, b.id],
+        })
+      ).toBe(3);
+    });
+  });
 });
 
 describe("keepCurrentCardFirst", () => {

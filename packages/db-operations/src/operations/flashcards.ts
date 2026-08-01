@@ -35,6 +35,22 @@ import { makeProgressTable } from "./progress";
  */
 const daysToMs = (days: number) => days * 24 * 60 * 60 * 1000;
 
+/**
+ * SQLite caps bound parameters per statement, so bulk operations over an
+ * unbounded selection are split into fixed-size `IN (...)` chunks.
+ */
+const ID_CHUNK_SIZE = 100;
+
+const chunkFlashcardIds = (ids: string[]): string[][] => {
+  const chunks: string[][] = [];
+
+  for (let i = 0; i < ids.length; i += ID_CHUNK_SIZE) {
+    chunks.push(ids.slice(i, i + ID_CHUNK_SIZE));
+  }
+
+  return chunks;
+};
+
 export type FlashcardWithDictionaryEntry = SelectFlashcard & {
   dictionary_entry: SelectDictionaryEntry;
 };
@@ -843,6 +859,154 @@ export const makeFlashcardsTable = ({
         }),
       cacheOptions: {
         queryKey: ["turso.flashcards.setReverse"],
+      },
+    },
+    /**
+     * `setReverse` across several entries at once, for the dictionary's bulk
+     * actions. Same semantics per entry -- enabling is idempotent (entries that
+     * already have a reverse card are left alone, keeping their FSRS progress)
+     * and disabling deletes the row along with its progress -- so the counts
+     * come back describing what actually changed rather than how many entries
+     * were passed in.
+     */
+    bulkSetReverse: {
+      mutation: ({
+        dictionary_entry_ids,
+        enabled,
+      }: {
+        dictionary_entry_ids: string[];
+        enabled: boolean;
+      }): Promise<{ changed: number; unchanged: number }> =>
+        enqueue(async () => {
+          if (dictionary_entry_ids.length === 0) {
+            return { changed: 0, unchanged: 0 };
+          }
+
+          const drizzleDb = await getDb();
+
+          const existing: SelectFlashcard[] = [];
+          for (const chunk of chunkFlashcardIds(dictionary_entry_ids)) {
+            existing.push(
+              ...(await drizzleDb
+                .select()
+                .from(flashcards)
+                .where(
+                  and(
+                    inArray(flashcards.dictionary_entry_id, chunk),
+                    eq(flashcards.direction, "reverse")
+                  )
+                ))
+            );
+          }
+
+          const withReverse = new Set(
+            existing.map((row) => row.dictionary_entry_id)
+          );
+
+          if (enabled) {
+            const missing = dictionary_entry_ids.filter(
+              (id) => !withReverse.has(id)
+            );
+
+            for (const chunk of chunkFlashcardIds(missing)) {
+              await drizzleDb.insert(flashcards).values(
+                chunk.map((id) => ({
+                  id: nanoid(),
+                  is_hidden: false,
+                  ...createNewFlashcard(id, "reverse" as const),
+                }))
+              );
+            }
+
+            return {
+              changed: missing.length,
+              unchanged: dictionary_entry_ids.length - missing.length,
+            };
+          }
+
+          const idsToDelete = existing.map((row) => row.id);
+
+          for (const chunk of chunkFlashcardIds(idsToDelete)) {
+            await drizzleDb
+              .delete(flashcards)
+              .where(inArray(flashcards.id, chunk));
+          }
+
+          return {
+            changed: idsToDelete.length,
+            unchanged: dictionary_entry_ids.length - withReverse.size,
+          };
+        }),
+      cacheOptions: {
+        queryKey: ["turso.flashcards.bulkSetReverse"],
+      },
+    },
+    /**
+     * How many of the given entries currently have a reverse card. Lets the
+     * bulk reverse dialog say what enabling or disabling would actually change
+     * before the user commits.
+     */
+    reverseCountForEntries: {
+      query: async ({
+        dictionary_entry_ids,
+      }: {
+        dictionary_entry_ids: string[];
+      }): Promise<number> => {
+        if (dictionary_entry_ids.length === 0) return 0;
+
+        const drizzleDb = await getDb();
+        const ids = new Set<string>();
+
+        for (const chunk of chunkFlashcardIds(dictionary_entry_ids)) {
+          const rows = await drizzleDb
+            .select({ entryId: flashcards.dictionary_entry_id })
+            .from(flashcards)
+            .where(
+              and(
+                inArray(flashcards.dictionary_entry_id, chunk),
+                eq(flashcards.direction, "reverse")
+              )
+            );
+
+          for (const row of rows) {
+            ids.add(row.entryId);
+          }
+        }
+
+        return ids.size;
+      },
+      cacheOptions: {
+        queryKey: ["turso.flashcards.reverseCountForEntries"],
+      },
+    },
+    /**
+     * Total flashcard count across the given entries, used to spell out what a
+     * bulk delete removes alongside the words themselves.
+     */
+    countForEntries: {
+      query: async ({
+        dictionary_entry_ids,
+      }: {
+        dictionary_entry_ids: string[];
+      }): Promise<number> => {
+        if (dictionary_entry_ids.length === 0) return 0;
+
+        const drizzleDb = await getDb();
+        let total = 0;
+
+        for (const chunk of chunkFlashcardIds(dictionary_entry_ids)) {
+          const rows = await drizzleDb
+            .select({ id: flashcards.id })
+            .from(flashcards)
+            .where(inArray(flashcards.dictionary_entry_id, chunk));
+
+          total += rows.length;
+        }
+
+        return total;
+      },
+      cacheOptions: {
+        queryKey: ["turso.flashcards.countForEntries"],
       },
     },
     findByEntryAndDirection: {

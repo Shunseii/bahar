@@ -374,6 +374,171 @@ describe("dictionaryEntriesTable", () => {
     });
   });
 
+  describe("bulkDelete", () => {
+    it("deletes the requested entries and their flashcards", async () => {
+      const a = await insertDictionaryEntry(testDb, { word: "أ" });
+      const b = await insertDictionaryEntry(testDb, { word: "ب" });
+      const kept = await insertDictionaryEntry(testDb, { word: "ج" });
+      await insertFlashcard(testDb, { dictionary_entry_id: a.id });
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: a.id,
+        direction: "reverse",
+      });
+      await insertFlashcard(testDb, { dictionary_entry_id: kept.id });
+
+      const deleted = await dictionaryEntriesTable.bulkDelete.mutation({
+        ids: [a.id, b.id],
+      });
+
+      expect(deleted.map((entry) => entry.id).sort()).toEqual(
+        [a.id, b.id].sort()
+      );
+      expect(
+        (await dictionaryEntriesTable.list.query()).map((entry) => entry.id)
+      ).toEqual([kept.id]);
+
+      const remainingFlashcards = await (
+        await testDb.db.prepare("SELECT dictionary_entry_id FROM flashcards")
+      ).all([]);
+
+      expect(remainingFlashcards).toEqual([{ dictionary_entry_id: kept.id }]);
+    });
+
+    it("skips ids that no longer exist instead of failing", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+
+      const deleted = await dictionaryEntriesTable.bulkDelete.mutation({
+        ids: [entry.id, "gone"],
+      });
+
+      expect(deleted.map((e) => e.id)).toEqual([entry.id]);
+      expect(await dictionaryEntriesTable.list.query()).toEqual([]);
+    });
+
+    it("returns an empty list for an empty selection", async () => {
+      await insertDictionaryEntry(testDb);
+
+      expect(
+        await dictionaryEntriesTable.bulkDelete.mutation({ ids: [] })
+      ).toEqual([]);
+      expect(await dictionaryEntriesTable.list.query()).toHaveLength(1);
+    });
+  });
+
+  describe("bulkUpdateTags", () => {
+    it("adds tags without duplicating existing ones", async () => {
+      const a = await insertDictionaryEntry(testDb, { tags: ["daily"] });
+      const b = await insertDictionaryEntry(testDb, { tags: null });
+
+      const updated = await dictionaryEntriesTable.bulkUpdateTags.mutation({
+        ids: [a.id, b.id],
+        tags: ["daily", "MSA"],
+        action: "add",
+      });
+
+      expect(updated).toHaveLength(2);
+      expect((await dictionaryEntriesTable.entry.query(a.id)).tags).toEqual([
+        "daily",
+        "MSA",
+      ]);
+      expect((await dictionaryEntriesTable.entry.query(b.id)).tags).toEqual([
+        "daily",
+        "MSA",
+      ]);
+    });
+
+    it("removes tags and leaves entries without them untouched", async () => {
+      const a = await insertDictionaryEntry(testDb, {
+        tags: ["daily", "MSA"],
+        updated_at_timestamp_ms: 1000,
+      });
+      const b = await insertDictionaryEntry(testDb, {
+        tags: ["vocabulary"],
+        updated_at_timestamp_ms: 1000,
+      });
+
+      const updated = await dictionaryEntriesTable.bulkUpdateTags.mutation({
+        ids: [a.id, b.id],
+        tags: ["daily"],
+        action: "remove",
+      });
+
+      expect(updated.map((entry) => entry.id)).toEqual([a.id]);
+      expect((await dictionaryEntriesTable.entry.query(a.id)).tags).toEqual([
+        "MSA",
+      ]);
+
+      // b had none of the removed tags, so it keeps its original updated_at.
+      const untouched = await dictionaryEntriesTable.entry.query(b.id);
+      expect(untouched.tags).toEqual(["vocabulary"]);
+      expect(untouched.updated_at_timestamp_ms).toBe(1000);
+    });
+
+    it("clears the column when the last tag is removed", async () => {
+      const entry = await insertDictionaryEntry(testDb, { tags: ["daily"] });
+
+      await dictionaryEntriesTable.bulkUpdateTags.mutation({
+        ids: [entry.id],
+        tags: ["daily"],
+        action: "remove",
+      });
+
+      expect((await dictionaryEntriesTable.entry.query(entry.id)).tags).toBe(
+        null
+      );
+    });
+
+    it("does nothing when no tags are passed", async () => {
+      const entry = await insertDictionaryEntry(testDb, { tags: ["daily"] });
+
+      expect(
+        await dictionaryEntriesTable.bulkUpdateTags.mutation({
+          ids: [entry.id],
+          tags: [],
+          action: "add",
+        })
+      ).toEqual([]);
+      expect((await dictionaryEntriesTable.entry.query(entry.id)).tags).toEqual(
+        ["daily"]
+      );
+    });
+  });
+
+  describe("tagsForEntries", () => {
+    it("counts how many of the selected entries carry each tag", async () => {
+      const a = await insertDictionaryEntry(testDb, {
+        tags: ["daily", "MSA"],
+      });
+      const b = await insertDictionaryEntry(testDb, { tags: ["daily"] });
+      await insertDictionaryEntry(testDb, { tags: ["unselected"] });
+
+      const result = await dictionaryEntriesTable.tagsForEntries.query({
+        ids: [a.id, b.id],
+      });
+
+      expect(result).toEqual([
+        { tag: "daily", count: 2 },
+        { tag: "MSA", count: 1 },
+      ]);
+    });
+
+    it("counts a tag repeated within one entry once", async () => {
+      const entry = await insertDictionaryEntry(testDb, {
+        tags: ["daily", "daily"],
+      });
+
+      expect(
+        await dictionaryEntriesTable.tagsForEntries.query({ ids: [entry.id] })
+      ).toEqual([{ tag: "daily", count: 1 }]);
+    });
+
+    it("returns an empty list for an empty selection", async () => {
+      expect(
+        await dictionaryEntriesTable.tagsForEntries.query({ ids: [] })
+      ).toEqual([]);
+    });
+  });
+
   describe("list", () => {
     it("returns entries newest-first, paginated", async () => {
       await insertDictionaryEntry(testDb, { created_at_timestamp_ms: 1000 });
