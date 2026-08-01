@@ -139,10 +139,10 @@ export const DeckDialogContent = ({
     values: {
       name: deck?.name ?? "",
       tags: deck?.filters?.tags?.map((tag) => ({ word: tag })) ?? [],
-      // Decks saved before tagMode existed were matched with "any", so an
-      // existing deck opens on what it has actually been doing. New decks
-      // start on "all", which is what people expect a multi-tag deck to mean.
-      tagMode: deck ? (deck.filters?.tagMode ?? "any") : "all",
+      // "any" is the default everywhere, and it's also what decks saved before
+      // tagMode existed have always done, so an existing deck opens on what it
+      // has actually been doing.
+      tagMode: deck?.filters?.tagMode ?? "any",
       types: deck?.filters?.types ?? allTypes,
     },
   });
@@ -243,12 +243,11 @@ export const DeckDialogContent = ({
                 <Trans>Tags</Trans>
               </Label>
 
-              {/* Mode sits above the picker so the picker stays adjacent to
-                  the tag pills it produces, and only appears once a second tag
-                  makes the choice meaningful. The description below stays put
-                  either way -- this form has always had one, and unlike the
-                  home filters it shows no result count, so nothing else here
-                  tells you what the current mode does. */}
+              {/* Mode sits above the picker, and only appears once a second tag
+                  makes the choice meaningful. The description stays put either
+                  way -- this form has always had one, and unlike the home
+                  filters it shows no result count, so nothing else here tells
+                  you what the current mode does. */}
               <div className="col-span-3 flex flex-col gap-y-2">
                 {tagFields.length >= 2 && (
                   <div className="flex items-center gap-0.5 self-start rounded-full bg-muted p-0.5">
@@ -273,6 +272,14 @@ export const DeckDialogContent = ({
                   </div>
                 )}
 
+                <Autocomplete
+                  allowAdd={false}
+                  filter={tagFields.map((field) => field.word)}
+                  onClick={(val) => {
+                    appendTag({ word: val });
+                  }}
+                />
+
                 <p className="text-muted-foreground text-xs">
                   {selectedTagMode === "all" ? (
                     <Trans>
@@ -286,14 +293,6 @@ export const DeckDialogContent = ({
                     </Trans>
                   )}
                 </p>
-
-                <Autocomplete
-                  allowAdd={false}
-                  filter={tagFields.map((field) => field.word)}
-                  onClick={(val) => {
-                    appendTag({ word: val });
-                  }}
-                />
               </div>
             </div>
           </div>
