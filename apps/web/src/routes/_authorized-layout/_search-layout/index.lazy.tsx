@@ -7,9 +7,17 @@ import { useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { useWindowScroll, useWindowSize } from "@uidotdev/usehooks";
 import { useAtomValue } from "jotai";
-import { ArrowUp, BookOpen, GraduationCap, PlusIcon } from "lucide-react";
+import {
+  ArrowUp,
+  BookOpen,
+  GraduationCap,
+  ListChecks,
+  PlusIcon,
+} from "lucide-react";
 import { motion } from "motion/react";
 import { useDeferredValue } from "react";
+import { BulkSelectionToolbar } from "@/components/features/dictionary/bulk/BulkSelectionToolbar";
+import { useBulkSelection } from "@/components/features/dictionary/bulk/state";
 import { DictionaryFilters } from "@/components/features/dictionary/filters/DictionaryFilters";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import StreakChip from "@/components/features/progress/StreakChip";
@@ -26,6 +34,7 @@ const Index = () => {
   const searchQuery = useAtomValue(searchQueryAtom);
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const { results } = useSearch();
+  const { selectionMode, enterSelectionMode } = useBulkSelection();
   const { height } = useWindowSize();
   const { data: counts, isPending } = useQuery({
     queryFn: () =>
@@ -52,7 +61,14 @@ const Index = () => {
         <motion.div variants={itemVariants}>
           <Card className="relative overflow-hidden">
             <div className="relative px-4 pt-5 pb-4 sm:px-6 sm:pt-6">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              {selectionMode && <BulkSelectionToolbar />}
+
+              <div
+                className={cn(
+                  "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between",
+                  selectionMode && "hidden"
+                )}
+              >
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20">
                     <BookOpen className="h-5 w-5 text-primary" />
@@ -93,6 +109,18 @@ const Index = () => {
 
                 {/* Actions */}
                 <div className="flex items-center justify-between gap-2">
+                  <Button
+                    className="h-9 px-3"
+                    onClick={enterSelectionMode}
+                    size="sm"
+                    variant="outline"
+                  >
+                    <ListChecks className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
+                    <span className="text-sm">
+                      <Trans>Select</Trans>
+                    </span>
+                  </Button>
+
                   <Button
                     asChild
                     className="h-9 px-3"

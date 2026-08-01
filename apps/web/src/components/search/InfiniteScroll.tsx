@@ -2,6 +2,7 @@ import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import { Card, CardContent } from "@bahar/web-ui/components/card";
+import { Checkbox } from "@bahar/web-ui/components/checkbox";
 import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -27,12 +28,14 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import {
   type FC,
+  type KeyboardEvent,
   memo,
   type ReactNode,
   useCallback,
   useEffect,
   useState,
 } from "react";
+import { useBulkSelection } from "@/components/features/dictionary/bulk/state";
 import { useInfiniteScroll } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
@@ -686,10 +689,21 @@ interface WordCardContentProps {
   isExpanded: boolean;
   onToggleExpanded: (id: string) => void;
   onNavigateEdit: (id: string) => void;
+  selectionMode: boolean;
+  isSelected: boolean;
+  onToggleSelected: (id: string) => void;
 }
 
 const WordCardContent: FC<WordCardContentProps> = memo(
-  ({ hit, isExpanded, onToggleExpanded, onNavigateEdit }) => {
+  ({
+    hit,
+    isExpanded,
+    onToggleExpanded,
+    onNavigateEdit,
+    selectionMode,
+    isSelected,
+    onToggleSelected,
+  }) => {
     const handleToggle = useCallback(() => {
       onToggleExpanded(hit.id!);
     }, [hit.id, onToggleExpanded]);
@@ -697,7 +711,29 @@ const WordCardContent: FC<WordCardContentProps> = memo(
     const handleEdit = useCallback(() => {
       onNavigateEdit(hit.id!);
     }, [hit.id, onNavigateEdit]);
+
+    const handleToggleSelected = useCallback(() => {
+      onToggleSelected(hit.id!);
+    }, [hit.id, onToggleSelected]);
+
     const document = hit.document;
+
+    // In selection mode the whole card is the select target, so the per-card
+    // actions are hidden rather than competing with it for clicks.
+    const selectionProps = selectionMode
+      ? {
+          "aria-pressed": isSelected,
+          onClick: handleToggleSelected,
+          onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              handleToggleSelected();
+            }
+          },
+          role: "button" as const,
+          tabIndex: 0,
+        }
+      : {};
 
     return (
       <Card
@@ -707,31 +743,50 @@ const WordCardContent: FC<WordCardContentProps> = memo(
           "transition-colors duration-200 ease-out",
           "hover:shadow-black/5 hover:shadow-md",
           isExpanded &&
-            "from-muted/50 to-muted/30 dark:from-muted/60 dark:to-muted/40"
+            "from-muted/50 to-muted/30 dark:from-muted/60 dark:to-muted/40",
+          selectionMode && "cursor-pointer select-none",
+          isSelected && "border-primary bg-primary/5"
         )}
+        {...selectionProps}
       >
         <CardContent className="flex flex-col gap-y-2">
           <div className="flex items-start justify-between">
-            <h2 className="font-semibold text-3xl transition-colors duration-200 sm:text-3xl">
-              <Highlight text={document.word} />
-            </h2>
+            <div className="flex items-start gap-3">
+              {selectionMode && (
+                // Presentational only: the card owns the click and announces the
+                // state through aria-pressed, so the checkbox is controlled with
+                // no handler of its own and stays out of the tab order.
+                <Checkbox
+                  aria-hidden
+                  checked={isSelected}
+                  className="mt-3"
+                  tabIndex={-1}
+                />
+              )}
 
-            <div className="flex items-center gap-1">
-              <CopyButton text={document.word} />
-
-              <SecondaryIconButton onClick={handleEdit}>
-                <Edit className="h-4 w-4" />
-              </SecondaryIconButton>
-
-              <SecondaryIconButton onClick={handleToggle}>
-                <motion.div
-                  animate={{ rotate: isExpanded ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </motion.div>
-              </SecondaryIconButton>
+              <h2 className="font-semibold text-3xl transition-colors duration-200 sm:text-3xl">
+                <Highlight text={document.word} />
+              </h2>
             </div>
+
+            {!selectionMode && (
+              <div className="flex items-center gap-1">
+                <CopyButton text={document.word} />
+
+                <SecondaryIconButton onClick={handleEdit}>
+                  <Edit className="h-4 w-4" />
+                </SecondaryIconButton>
+
+                <SecondaryIconButton onClick={handleToggle}>
+                  <motion.div
+                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </motion.div>
+                </SecondaryIconButton>
+              </div>
+            )}
           </div>
 
           <p className="text-muted-foreground">
@@ -790,6 +845,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
   const expandedIds = useSet<string>();
+  const { selectionMode, selectedIds, toggle } = useBulkSelection();
 
   const toggleExpanded = useCallback((id: string) => {
     if (expandedIds.has(id)) {
@@ -878,8 +934,11 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
                 hit as { id: string | null; document: SelectDictionaryEntry }
               }
               isExpanded={expandedIds.has(hit.id!)}
+              isSelected={selectedIds.has(hit.id!)}
               onNavigateEdit={handleNavigateEdit}
               onToggleExpanded={toggleExpanded}
+              onToggleSelected={toggle}
+              selectionMode={selectionMode}
             />
           </li>
         ))}
