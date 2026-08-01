@@ -919,7 +919,7 @@ msgstr "تم حذف المجموعة"
 msgid "Deck Name"
 msgstr "اسم المجموعة"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:182
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:189
 msgid "Deck successfully created!"
 msgstr "تم إنشاء المجموعة بنجاح!"
 
@@ -927,7 +927,7 @@ msgstr "تم إنشاء المجموعة بنجاح!"
 msgid "Deck successfully deleted!"
 msgstr "تم حذف المجموعة بنجاح!"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:178
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:185
 msgid "Deck successfully updated!"
 msgstr "تم تحديث المجموعة بنجاح!"
 
@@ -1188,7 +1188,7 @@ msgstr "من الإنجليزية إلى العربية، لهذه الكلمة.
 msgid "English translation"
 msgstr "الترجمة بالإنجليزية"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:224
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:231
 msgid "Enter a deck name"
 msgstr "أدخل اسم المجموعة"
 
@@ -1973,7 +1973,7 @@ msgstr "وكيلي"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:102
 #: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:168
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:217
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:224
 msgid "Name"
 msgstr "اسم"
 
@@ -2118,7 +2118,7 @@ msgstr "الأقدم"
 msgid "On"
 msgstr "تشغيل"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:285
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:292
 msgid "Only words that have every one of these tags will be included in the deck."
 msgstr ""
 
@@ -2552,7 +2552,7 @@ msgstr "احفظ"
 msgid "Save 30%"
 msgstr "وفّر ٣٠٪"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:385
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:392
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:460
 msgid "Save changes"
 msgstr "حفظ التغييرات"
@@ -2608,7 +2608,7 @@ msgstr "اختر إعرابا"
 msgid "Select Tags"
 msgstr "اختيار العلامات"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:328
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:335
 msgid "Select the types of words that you want to include in the deck."
 msgstr "حدد أنواع الكلمات التي تريد تضمينها في المجموعة."
 
@@ -2810,7 +2810,7 @@ msgstr "نظام"
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:328
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:181
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:243
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:250
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:210
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:461
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:306
@@ -2913,7 +2913,7 @@ msgstr "حدث خطأ أثناء إضافة كلمتك. حاول مرة اخرى
 #~ msgid "There was an error clearing your backlog."
 #~ msgstr "حدث خطأ أثناء مسح المتراكمات."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:194
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:201
 msgid "There was an error creating the deck"
 msgstr "حدث خطأ أثناء إنشاء المجموعة"
 
@@ -2946,7 +2946,7 @@ msgstr "حدث خطأ أثناء إعادة جدولة المتراكمات."
 #~ msgid "There was an error syncing your data. Your local data is still available."
 #~ msgstr "حدث خطأ في مزامنة بياناتك. بياناتك المحلية لا تزال متاحة."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:190
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:197
 msgid "There was an error updating the deck"
 msgstr "حدث خطأ أثناء تحديث المجموعة"
 
@@ -3005,7 +3005,7 @@ msgstr "هذه الخانة لازم."
 msgid "This is case insensitive."
 msgstr "هذا حالة غير حساسة."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:231
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:238
 msgid "This is the name of your deck."
 msgstr "هذا هو اسم مجموعتك."
 
@@ -3118,7 +3118,7 @@ msgstr "إيقاف هذا يحذف البطاقة العكسية."
 msgid "Type"
 msgstr "الجنس"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:324
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:331
 msgid "Types"
 msgstr "أقسام"
 
@@ -3319,7 +3319,7 @@ msgstr ""
 msgid "Words need only one of the selected tags."
 msgstr ""
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:290
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:297
 msgid "Words that have any of these tags will be included in the deck."
 msgstr "الكلمات التي تحتوي على أي من هذه العلامات ستُدرج في المجموعة."
 
@@ -3414,11 +3414,11 @@ msgstr "رفيقك لتعلم اللغة العربية"
 #~ msgid "Your data has been re-synced from the server."
 #~ msgstr "تمت إعادة مزامنة بياناتك من الخادم."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:195
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:202
 msgid "Your deck was not created. Please try again."
 msgstr "لم يتم إنشاء مجموعتك. يرجى المحاولة مرة أخرى."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:191
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:198
 msgid "Your deck was not updated. Please try again."
 msgstr "لم يتم تحديث مجموعتك. يرجى المحاولة مرة أخرى."
 

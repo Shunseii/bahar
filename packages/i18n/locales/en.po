@@ -919,7 +919,7 @@ msgstr "Deck deleted"
 msgid "Deck Name"
 msgstr "Deck Name"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:182
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:189
 msgid "Deck successfully created!"
 msgstr "Deck successfully created!"
 
@@ -927,7 +927,7 @@ msgstr "Deck successfully created!"
 msgid "Deck successfully deleted!"
 msgstr "Deck successfully deleted!"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:178
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:185
 msgid "Deck successfully updated!"
 msgstr "Deck successfully updated!"
 
@@ -1188,7 +1188,7 @@ msgstr "English to Arabic, for this word."
 msgid "English translation"
 msgstr "English translation"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:224
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:231
 msgid "Enter a deck name"
 msgstr "Enter a deck name"
 
@@ -1977,7 +1977,7 @@ msgstr "My agent"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:102
 #: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:168
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:217
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:224
 msgid "Name"
 msgstr "Name"
 
@@ -2122,7 +2122,7 @@ msgstr "Oldest"
 msgid "On"
 msgstr "On"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:285
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:292
 msgid "Only words that have every one of these tags will be included in the deck."
 msgstr "Only words that have every one of these tags will be included in the deck."
 
@@ -2556,7 +2556,7 @@ msgstr "Save"
 msgid "Save 30%"
 msgstr "Save 30%"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:385
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:392
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:460
 msgid "Save changes"
 msgstr "Save changes"
@@ -2612,7 +2612,7 @@ msgstr "Select inflection"
 msgid "Select Tags"
 msgstr "Select Tags"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:328
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:335
 msgid "Select the types of words that you want to include in the deck."
 msgstr "Select the types of words that you want to include in the deck."
 
@@ -2814,7 +2814,7 @@ msgstr "System"
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:328
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:181
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:243
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:250
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:210
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:461
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:306
@@ -2917,7 +2917,7 @@ msgstr "There was an error adding your word. Please try again."
 #~ msgid "There was an error clearing your backlog."
 #~ msgstr "There was an error clearing your backlog."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:194
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:201
 msgid "There was an error creating the deck"
 msgstr "There was an error creating the deck"
 
@@ -2950,7 +2950,7 @@ msgstr "There was an error rescheduling your backlog."
 #~ msgid "There was an error syncing your data. Your local data is still available."
 #~ msgstr "There was an error syncing your data. Your local data is still available."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:190
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:197
 msgid "There was an error updating the deck"
 msgstr "There was an error updating the deck"
 
@@ -3009,7 +3009,7 @@ msgstr "This field is required."
 msgid "This is case insensitive."
 msgstr "This is case insensitive."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:231
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:238
 msgid "This is the name of your deck."
 msgstr "This is the name of your deck."
 
@@ -3122,7 +3122,7 @@ msgstr "Turning this off deletes the reverse flashcard."
 msgid "Type"
 msgstr "Type"
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:324
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:331
 msgid "Types"
 msgstr "Types"
 
@@ -3323,7 +3323,7 @@ msgstr "Words must have every selected tag."
 msgid "Words need only one of the selected tags."
 msgstr "Words need only one of the selected tags."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:290
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:297
 msgid "Words that have any of these tags will be included in the deck."
 msgstr "Words that have any of these tags will be included in the deck."
 
@@ -3418,11 +3418,11 @@ msgstr "Your Arabic learning companion"
 #~ msgid "Your data has been re-synced from the server."
 #~ msgstr "Your data has been re-synced from the server."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:195
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:202
 msgid "Your deck was not created. Please try again."
 msgstr "Your deck was not created. Please try again."
 
-#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:191
+#: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:198
 msgid "Your deck was not updated. Please try again."
 msgstr "Your deck was not updated. Please try again."
 
