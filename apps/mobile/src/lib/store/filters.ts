@@ -29,7 +29,7 @@ const sortOptionStorageAtom = atomWithStorage(
 
 const tagModeStorageAtom = atomWithStorage<TagMode>(
   `${FILTERS_STORAGE_KEY_PREFIX}:tagMode`,
-  "all",
+  "any",
   createJSONStorage<TagMode>(() => AsyncStorage),
   { getOnInit: true }
 );
@@ -73,7 +73,7 @@ export const sortOptionAtom = atom(
 export const tagModeAtom = atom(
   (get) => {
     const val = get(tagModeStorageAtom);
-    return val === "any" ? "any" : ("all" as TagMode);
+    return val === "all" ? "all" : ("any" as TagMode);
   },
   (_get, set, update: TagMode) => {
     set(tagModeStorageAtom, update);

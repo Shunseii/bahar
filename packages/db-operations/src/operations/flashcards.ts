@@ -21,8 +21,8 @@ import { nanoid } from "nanoid/non-secure";
 import type { Grade, ReviewLog } from "ts-fsrs";
 import {
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
-  DEFAULT_DECK_TAG_MODE,
   DEFAULT_POSTPONE_WINDOW_DAYS,
+  DEFAULT_TAG_MODE,
   MAX_POSTPONE_WINDOW_DAYS,
   MIN_POSTPONE_WINDOW_DAYS,
 } from "../constants";
@@ -215,7 +215,7 @@ const buildFilterConditions = ({
 }) => {
   const {
     tags = [],
-    tagMode = DEFAULT_DECK_TAG_MODE,
+    tagMode = DEFAULT_TAG_MODE,
     types: rawTypes,
     state: rawState,
   } = filters ?? {};

@@ -63,7 +63,7 @@ export default function CreateDeckScreen() {
   const [name, setName] = useState("");
   const [selectedTypes, setSelectedTypes] = useState<WordType[]>([]);
   const [tags, setTags] = useState<{ name: string }[]>([]);
-  const [tagMode, setTagMode] = useState<TagMode>("all");
+  const [tagMode, setTagMode] = useState<TagMode>("any");
 
   const { mutateAsync: createDeck, isPending } = useMutation({
     mutationFn: decksTable.create.mutation,

@@ -98,7 +98,7 @@ export const DictionaryFilters = () => {
   } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
-  const activeTagMode: TagMode = tagMode ?? "all";
+  const activeTagMode: TagMode = tagMode ?? "any";
   const isTagModeRelevant = (filteredTags?.length ?? 0) >= 2;
   const [isExpanded, setIsExpanded] = useSessionStorage(
     "isFiltersExpanded",
@@ -199,7 +199,7 @@ export const DictionaryFilters = () => {
                               to: "/",
                               search: (prev) => ({
                                 ...prev,
-                                tagMode: mode === "all" ? undefined : mode,
+                                tagMode: mode === "any" ? undefined : mode,
                               }),
                             });
                           }}

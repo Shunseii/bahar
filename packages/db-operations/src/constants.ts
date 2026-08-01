@@ -61,13 +61,12 @@ export const MAX_POSTPONE_WINDOW_DAYS = 30;
 export const BATCH_SIZE = 500;
 
 /**
- * Tag combination used by deck and flashcard queries when a deck's filters
- * don't specify one.
+ * Tag combination used when filters don't specify one.
  *
- * `"any"` because that is what these queries have always done -- the tag
- * subquery matches an entry carrying any one of the deck's tags. Defaulting to
- * `"all"` here would silently shrink every existing multi-tag deck, so decks
- * saved before `tagMode` existed keep their current contents and only an
- * explicit user choice changes them.
+ * `"any"` because that is what the deck and flashcard tag subquery has always
+ * done -- it matches an entry carrying any one of the tags. Defaulting to
+ * `"all"` would silently shrink every existing multi-tag deck, so decks saved
+ * before `tagMode` existed keep their current contents and only an explicit
+ * user choice changes them.
  */
-export const DEFAULT_DECK_TAG_MODE: TagMode = "any";
+export const DEFAULT_TAG_MODE: TagMode = "any";

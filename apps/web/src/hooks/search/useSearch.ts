@@ -160,9 +160,9 @@ export const useInfiniteScroll = (
     if (!tags?.length && !types?.length) return undefined;
 
     const tagFilter =
-      params.filters?.tagMode === "any"
-        ? { containsAny: tags }
-        : { containsAll: tags };
+      params.filters?.tagMode === "all"
+        ? { containsAll: tags }
+        : { containsAny: tags };
 
     return {
       ...(tags?.length ? { tags: tagFilter } : {}),

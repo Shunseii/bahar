@@ -9,10 +9,7 @@ import {
 } from "@bahar/drizzle-user-db-schemas";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid/non-secure";
-import {
-  DEFAULT_BACKLOG_THRESHOLD_DAYS,
-  DEFAULT_DECK_TAG_MODE,
-} from "../constants";
+import { DEFAULT_BACKLOG_THRESHOLD_DAYS, DEFAULT_TAG_MODE } from "../constants";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
 import { buildTagCondition } from "../utils";
@@ -58,7 +55,7 @@ export const makeDecksTable = ({
           decksList.map(async (deck) => {
             const {
               tags = [],
-              tagMode = DEFAULT_DECK_TAG_MODE,
+              tagMode = DEFAULT_TAG_MODE,
               types: rawTypes,
               state: rawState,
             } = deck.filters ?? {};

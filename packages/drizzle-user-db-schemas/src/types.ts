@@ -154,10 +154,10 @@ export type DeckFilters = {
    * How multiple tags combine. `"all"` requires every tag, `"any"` requires at
    * least one.
    *
-   * Absent means "keep what this surface already did", which differs by
-   * surface: deck and flashcard queries have always been `"any"`, while the
-   * dictionary search on the home screen has always been `"all"`. Resolve it
-   * against the caller's own default rather than assuming one here.
+   * Absent means `"any"` everywhere -- deck and flashcard queries have always
+   * behaved that way, and the dictionary search was moved onto the same
+   * default so a missing value means one thing rather than depending on which
+   * surface is asking.
    */
   tagMode?: TagMode;
   state?: FlashcardState[];
