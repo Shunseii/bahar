@@ -222,11 +222,12 @@ const FiltersModal: FC<{
     onClose();
   };
 
+  // Matches activeFilterCountAtom: tagMode on its own isn't an active filter,
+  // so it shouldn't be what makes "Clear all" appear.
   const hasAppliedFilters =
     appliedTags.length > 0 ||
     appliedTypes.length > 0 ||
-    appliedSort !== "relevance" ||
-    appliedTagMode !== "all";
+    appliedSort !== "relevance";
 
   const hasDraftChanges =
     JSON.stringify(draftTags) !== JSON.stringify(appliedTags) ||

@@ -104,19 +104,20 @@ export const DictionaryFilters = () => {
     !!(
       filteredTags?.length ||
       filteredTypes?.length ||
-      activeTagMode !== "all" ||
       (sort && sort !== "relevance")
     )
   );
 
+  // tagMode is deliberately absent here: it modifies how the selected tags
+  // combine rather than narrowing anything on its own, so counting it would
+  // claim a filter is active when nothing has been filtered.
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filteredTags?.length) count += filteredTags.length;
     if (filteredTypes?.length) count += filteredTypes.length;
-    if (activeTagMode !== "all") count += 1;
     if (sort && sort !== "relevance") count += 1;
     return count;
-  }, [filteredTags, filteredTypes, activeTagMode, sort]);
+  }, [filteredTags, filteredTypes, sort]);
 
   const hasActiveFilters = activeFilterCount > 0;
 

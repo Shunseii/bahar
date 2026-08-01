@@ -80,17 +80,16 @@ export const tagModeAtom = atom(
   }
 );
 
+// tagMode is deliberately not counted: it modifies how the selected tags
+// combine rather than narrowing anything on its own, so counting it would
+// claim a filter is active when nothing has been filtered.
 export const activeFilterCountAtom = atom((get) => {
   const tags = get(selectedTagsAtom);
   const types = get(selectedTypesAtom);
   const sort = get(sortOptionAtom);
-  const tagMode = get(tagModeAtom);
   let count = 0;
   if (tags.length > 0) count++;
   if (types.length > 0) count++;
   if (sort !== "relevance") count++;
-  // Filters persist across launches here, so a non-default mode has to show up
-  // in the badge -- otherwise it silently narrows results weeks later.
-  if (tagMode !== "all") count++;
   return count;
 });
