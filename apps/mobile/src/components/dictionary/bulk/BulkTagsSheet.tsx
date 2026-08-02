@@ -54,13 +54,22 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [filter, setFilter] = useState("");
     const [isOpen, setIsOpen] = useState(false);
+    const [inputKey, setInputKey] = useState(0);
     const { updateTags, isPending } = useBulkDictionaryActions();
+
+    // The input is uncontrolled, so emptying the state doesn't empty the box:
+    // remounting it is what clears the text. Only used where focus doesn't
+    // matter -- opening the sheet and switching mode.
+    const clearFilter = useCallback(() => {
+      setFilter("");
+      setInputKey((key) => key + 1);
+    }, []);
 
     const reset = useCallback(() => {
       setAction("add");
       setSelectedTags([]);
-      setFilter("");
-    }, []);
+      clearFilter();
+    }, [clearFilter]);
 
     const handleDismiss = useCallback(() => {
       setIsOpen(false);
@@ -114,10 +123,6 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
       setSelectedTags((prev) =>
         prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
       );
-      // The box is a search field, not part of the selection: leaving the term
-      // behind left the list filtered to the row just picked, which looked like
-      // every other tag had disappeared.
-      setFilter("");
     };
 
     const handleModeChange = (next: string) => {
@@ -125,10 +130,10 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
       // The two modes list different tags, so a pending pick from the other
       // mode would be meaningless here.
       setSelectedTags([]);
-      setFilter("");
+      clearFilter();
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = useCallback(async () => {
       try {
         const changed = await updateTags({ ids, tags: selectedTags, action });
 
@@ -144,7 +149,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
           action === "add" ? t`Failed to add tags` : t`Failed to remove tags`
         );
       }
-    };
+    }, [action, ids, onDone, selectedTags, updateTags]);
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
@@ -227,12 +232,17 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
         enableDynamicSizing={false}
         footerComponent={renderFooter}
         handleIndicatorStyle={{ backgroundColor: colors.border }}
-        keyboardBehavior="interactive"
+        // "extend" takes the sheet to its tallest snap point when the keyboard
+        // opens. "interactive" only lifts it within the current one, so with a
+        // single snap point there was nowhere to go and the keyboard covered the
+        // list.
+        keyboardBehavior="extend"
         keyboardBlurBehavior="restore"
         onChange={(index) => setIsOpen(index >= 0)}
         onDismiss={handleDismiss}
         ref={sheetRef}
-        snapPoints={["70%"]}
+        // Opens at the first, can be dragged to the second.
+        snapPoints={["70%", "90%"]}
         topInset={insets.top}
       >
         <BottomSheetScrollView
@@ -286,6 +296,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
               <BottomSheetTextInput
                 autoCapitalize="none"
                 className="flex-1 py-2.5 text-foreground"
+                key={inputKey}
                 onChangeText={setFilter}
                 placeholder={
                   action === "add"
@@ -293,7 +304,6 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
                     : t`Filter tags on these entries`
                 }
                 placeholderTextColor={colors.mutedForeground}
-                value={filter}
               />
             </View>
 

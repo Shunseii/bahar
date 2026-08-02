@@ -113,7 +113,7 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
               <X color={colors.foreground} size={20} />
             </Pressable>
 
-            <View className="flex-1">
+            <View className="flex-1 justify-center">
               <Text className="font-semibold text-foreground text-sm">
                 <Plural
                   one="# selected"
