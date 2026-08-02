@@ -27,9 +27,19 @@ const AUTO_SCROLL_EDGE = 120;
  */
 const AUTO_SCROLL_MIN_VELOCITY = 120;
 
-/** Pixels per tick while auto-scrolling, and how often a tick runs. */
-const AUTO_SCROLL_STEP = 12;
-const AUTO_SCROLL_INTERVAL_MS = 16;
+/**
+ * Auto-scroll speed in points per second, at the near and far side of the edge
+ * zone. Ramped between the two by how deep the finger is.
+ */
+const AUTO_SCROLL_MIN_SPEED = 320;
+const AUTO_SCROLL_MAX_SPEED = 1600;
+
+/**
+ * How far the target offset may run ahead of where the list actually is. Without
+ * a cap it keeps accumulating once the list has hit its end, and the drag then
+ * has to unwind all of it before scrolling back the other way.
+ */
+const AUTO_SCROLL_MAX_LEAD = 240;
 
 /**
  * How often row positions are re-measured while auto-scrolling. Rows move under
@@ -116,9 +126,10 @@ export const applyDragRange = ({
  * Which way a drag should auto-scroll, if at all: -1 up, 1 down, 0 not at all.
  *
  * Entering an edge zone is necessary but not sufficient -- the finger also has
- * to be moving that way. A drag already scrolling keeps its direction as long as
- * it stays in the zone, so the user can park there and let the list come to
- * them.
+ * to be moving that way. A drag already scrolling keeps going while the finger
+ * rests in the zone, so the user can park there and let the list come to them,
+ * but pulling back against the scroll stops it: that is how you ask it to stop
+ * without lifting your finger and losing the drag.
  */
 export const nextAutoScrollDirection = ({
   absoluteY,
@@ -142,13 +153,17 @@ export const nextAutoScrollDirection = ({
   const direction = inBottomZone ? 1 : inTopZone ? -1 : 0;
 
   if (direction === 0) return 0;
-  if (isScrolling) return direction;
 
-  const hasMomentum =
-    Math.abs(velocityY) >= AUTO_SCROLL_MIN_VELOCITY &&
-    Math.sign(velocityY) === direction;
+  const isDeliberate = Math.abs(velocityY) >= AUTO_SCROLL_MIN_VELOCITY;
+  const movingWithEdge = Math.sign(velocityY) === direction;
 
-  return hasMomentum ? direction : 0;
+  // Already scrolling: carry on unless the finger is pulling the other way.
+  // Small jitter from a resting finger is below the threshold and ignored.
+  if (isScrolling) {
+    return isDeliberate && !movingWithEdge ? 0 : direction;
+  }
+
+  return isDeliberate && movingWithEdge ? direction : 0;
 };
 
 interface UseDragSelectOptions {
@@ -206,7 +221,9 @@ export const useDragSelect = ({
     lastRowId: string;
     lastY: number;
   } | null>(null);
-  const autoScrollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoScrollFrameRef = useRef<number | null>(null);
+  const autoScrollDirectionRef = useRef<-1 | 0 | 1>(0);
+  const autoScrollTargetRef = useRef(0);
   const orderedIdsRef = useRef(orderedIds);
   orderedIdsRef.current = orderedIds;
 
@@ -284,11 +301,100 @@ export const useDragSelect = ({
   );
 
   const stopAutoScroll = useCallback(() => {
-    if (autoScrollRef.current) {
-      clearInterval(autoScrollRef.current);
-      autoScrollRef.current = null;
+    if (autoScrollFrameRef.current !== null) {
+      cancelAnimationFrame(autoScrollFrameRef.current);
+      autoScrollFrameRef.current = null;
     }
+    autoScrollDirectionRef.current = 0;
   }, []);
+
+  /**
+   * Distance travelled per second, ramped by how far past the edge the finger
+   * is. Scrolling at full speed the moment the zone is entered overshoots the
+   * row the user was aiming for; ramping makes the edge feel like a dial.
+   */
+  const currentSpeed = useCallback(() => {
+    const listRect = listRectRef.current;
+    const drag = dragRef.current;
+    if (!(listRect && drag)) return AUTO_SCROLL_MIN_SPEED;
+
+    const direction = autoScrollDirectionRef.current;
+    const distanceIntoZone =
+      direction > 0
+        ? drag.lastY - (listRect.bottom - bottomInset - AUTO_SCROLL_EDGE)
+        : listRect.top + AUTO_SCROLL_EDGE - drag.lastY;
+    const depth = Math.min(1, Math.max(0, distanceIntoZone / AUTO_SCROLL_EDGE));
+
+    return (
+      AUTO_SCROLL_MIN_SPEED +
+      depth * (AUTO_SCROLL_MAX_SPEED - AUTO_SCROLL_MIN_SPEED)
+    );
+  }, [bottomInset]);
+
+  /**
+   * One rAF loop for the whole drag, driving a target offset it owns.
+   *
+   * Stepping a fixed distance on a timer, from an offset read back out of the
+   * throttled scroll events, made the list stutter: the read lagged the writes,
+   * so each tick started from a stale place. This advances by elapsed time and
+   * keeps its own target, only consulting the real offset to avoid running away
+   * past the end of the list.
+   */
+  const runAutoScroll = useCallback(() => {
+    let lastTimestamp: number | null = null;
+    let sinceMeasure = 0;
+
+    const frame = (timestamp: number) => {
+      const drag = dragRef.current;
+      const direction = autoScrollDirectionRef.current;
+
+      if (!drag || direction === 0) {
+        stopAutoScroll();
+        return;
+      }
+
+      const elapsed =
+        lastTimestamp === null ? 0 : (timestamp - lastTimestamp) / 1000;
+      lastTimestamp = timestamp;
+
+      const actual = getScrollOffset();
+      const target = Math.max(
+        0,
+        autoScrollTargetRef.current + direction * currentSpeed() * elapsed
+      );
+
+      // The list clamps at its ends, so the target has to stay near the real
+      // offset -- otherwise it keeps accumulating against a list that can't move
+      // and takes just as long to unwind when the drag reverses.
+      autoScrollTargetRef.current =
+        direction > 0
+          ? Math.min(target, actual + AUTO_SCROLL_MAX_LEAD)
+          : Math.max(target, actual - AUTO_SCROLL_MAX_LEAD);
+
+      scrollToOffset(autoScrollTargetRef.current);
+
+      sinceMeasure += elapsed * 1000;
+
+      if (sinceMeasure >= REMEASURE_INTERVAL_MS) {
+        sinceMeasure = 0;
+        measureRows().then((rects) => {
+          rectsRef.current = rects;
+          applyAt(drag.lastY);
+        });
+      }
+
+      autoScrollFrameRef.current = requestAnimationFrame(frame);
+    };
+
+    autoScrollFrameRef.current = requestAnimationFrame(frame);
+  }, [
+    applyAt,
+    currentSpeed,
+    getScrollOffset,
+    measureRows,
+    scrollToOffset,
+    stopAutoScroll,
+  ]);
 
   const updateAutoScroll = useCallback(
     (absoluteY: number, velocityY: number) => {
@@ -302,7 +408,7 @@ export const useDragSelect = ({
         listBottom: listRect.bottom,
         bottomInset,
         edge: AUTO_SCROLL_EDGE,
-        isScrolling: autoScrollRef.current !== null,
+        isScrolling: autoScrollFrameRef.current !== null,
       });
 
       if (direction === 0) {
@@ -310,40 +416,14 @@ export const useDragSelect = ({
         return;
       }
 
-      if (autoScrollRef.current) return;
+      autoScrollDirectionRef.current = direction;
 
-      let sinceMeasure = 0;
+      if (autoScrollFrameRef.current !== null) return;
 
-      autoScrollRef.current = setInterval(() => {
-        const drag = dragRef.current;
-        if (!drag) {
-          stopAutoScroll();
-          return;
-        }
-
-        scrollToOffset(
-          Math.max(0, getScrollOffset() + direction * AUTO_SCROLL_STEP)
-        );
-
-        sinceMeasure += AUTO_SCROLL_INTERVAL_MS;
-
-        if (sinceMeasure >= REMEASURE_INTERVAL_MS) {
-          sinceMeasure = 0;
-          measureRows().then((rects) => {
-            rectsRef.current = rects;
-            applyAt(drag.lastY);
-          });
-        }
-      }, AUTO_SCROLL_INTERVAL_MS);
+      autoScrollTargetRef.current = getScrollOffset();
+      runAutoScroll();
     },
-    [
-      applyAt,
-      bottomInset,
-      getScrollOffset,
-      measureRows,
-      scrollToOffset,
-      stopAutoScroll,
-    ]
+    [bottomInset, getScrollOffset, runAutoScroll, stopAutoScroll]
   );
 
   const handleDragStart = useCallback(

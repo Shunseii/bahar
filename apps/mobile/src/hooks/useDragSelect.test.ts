@@ -183,6 +183,23 @@ describe("nextAutoScrollDirection", () => {
     );
   });
 
+  it("stops when the finger pulls back against the scroll", () => {
+    // Dragging down starts it; pulling up is how the user asks it to stop
+    // without lifting the finger and ending the drag.
+    expect(
+      direction({ absoluteY: 580, velocityY: -400, isScrolling: true })
+    ).toBe(0);
+    expect(
+      direction({ absoluteY: 150, velocityY: 400, isScrolling: true })
+    ).toBe(0);
+  });
+
+  it("ignores jitter from a resting finger while scrolling", () => {
+    expect(
+      direction({ absoluteY: 580, velocityY: -30, isScrolling: true })
+    ).toBe(1);
+  });
+
   it("stops as soon as the finger leaves the zone", () => {
     expect(direction({ absoluteY: 400, velocityY: 0, isScrolling: true })).toBe(
       0
