@@ -49,6 +49,13 @@ import { useBulkSelection } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
 
+/**
+ * Space the floating bulk action bar needs at the bottom of the list: its
+ * summary row, its action row, and the gap below it. Also what drag-select uses
+ * to keep its auto-scroll zone above the bar.
+ */
+const BULK_BAR_CLEARANCE = 132;
+
 const formatElapsedTime = ({
   nanoseconds,
   format,
@@ -342,7 +349,9 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-background">
       <DictionaryList
-        bottomInset={selectionMode ? insets.bottom + 86 : insets.bottom}
+        bottomInset={
+          selectionMode ? insets.bottom + BULK_BAR_CLEARANCE : insets.bottom
+        }
         ListHeaderComponent={listHeader}
         onElapsedTimeChange={handleElapsedTimeChange}
         onTotalCountChange={handleTotalCountChange}

@@ -1,13 +1,13 @@
 import { t } from "@lingui/core/macro";
-import { Trans } from "@lingui/react/macro";
+import { Plural, Trans } from "@lingui/react/macro";
 import * as Haptics from "expo-haptics";
-import { Repeat, TagIcon, Trash2 } from "lucide-react-native";
+import { Repeat, TagIcon, Trash2, X } from "lucide-react-native";
 import { type FC, useRef } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { toast } from "sonner-native";
 import { useBulkDictionaryActions } from "@/hooks/useBulkDictionaryActions";
-import { useBulkSelection } from "@/lib/store/selection";
+import { useBulkSelection, useSelectionScope } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { BulkReverseSheet, type BulkReverseSheetRef } from "./BulkReverseSheet";
 import { BulkTagsSheet, type BulkTagsSheetRef } from "./BulkTagsSheet";
@@ -26,8 +26,10 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
   const colors = useThemeColors();
   const tagsSheetRef = useRef<BulkTagsSheetRef>(null);
   const reverseSheetRef = useRef<BulkReverseSheetRef>(null);
-  const { selectedIds, selectedCount, clear, exitSelectionMode } =
+  const { selectedIds, selectedCount, selectAll, clear, exitSelectionMode } =
     useBulkSelection();
+  const { matchingCount, outsideResultsCount, allSelected } =
+    useSelectionScope();
   const { deleteEntries, isPending } = useBulkDictionaryActions();
 
   const ids = [...selectedIds];
@@ -93,7 +95,7 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
         style={{ bottom: bottomInset + 12 }}
       >
         <View
-          className="flex-row items-center rounded-2xl border border-border bg-card px-1.5"
+          className="overflow-hidden rounded-2xl border border-border bg-card"
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 4 },
@@ -102,20 +104,72 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
             elevation: 8,
           }}
         >
-          {actions.map(({ key, label, icon: Icon, color, onPress }) => (
+          {/* The count, select-all and exit live here rather than in the app
+              header: the header keeps its search field, so a selection can be
+              built across several searches -- which is the whole reason it
+              survives a query change. */}
+          <View className="flex-row items-center gap-3 border-border/60 border-b px-3 py-2">
+            <Pressable hitSlop={8} onPress={exitSelectionMode}>
+              <X color={colors.foreground} size={20} />
+            </Pressable>
+
+            <View className="flex-1">
+              <Text className="font-semibold text-foreground text-sm">
+                <Plural
+                  one="# selected"
+                  other="# selected"
+                  value={selectedCount}
+                />
+              </Text>
+
+              {outsideResultsCount > 0 && (
+                <Text
+                  className="text-muted-foreground text-xs"
+                  numberOfLines={1}
+                >
+                  <Plural
+                    one="# not in these results"
+                    other="# not in these results"
+                    value={outsideResultsCount}
+                  />
+                </Text>
+              )}
+            </View>
+
             <Pressable
-              className="flex-1 items-center gap-1 py-2.5"
-              disabled={disabled}
-              key={key}
-              onPress={onPress}
-              style={{ opacity: disabled ? 0.4 : 1 }}
+              hitSlop={8}
+              onPress={() => (allSelected ? clear() : selectAll())}
             >
-              <Icon color={color} size={20} />
-              <Text className="font-medium text-xs" style={{ color }}>
-                {label}
+              <Text className="font-semibold text-primary text-sm">
+                {allSelected ? (
+                  <Trans>Clear</Trans>
+                ) : (
+                  <Plural
+                    one="Select all #"
+                    other="Select all #"
+                    value={matchingCount}
+                  />
+                )}
               </Text>
             </Pressable>
-          ))}
+          </View>
+
+          <View className="flex-row items-center px-1.5">
+            {actions.map(({ key, label, icon: Icon, color, onPress }) => (
+              <Pressable
+                className="flex-1 items-center gap-1 py-2.5"
+                disabled={disabled}
+                key={key}
+                onPress={onPress}
+                style={{ opacity: disabled ? 0.4 : 1 }}
+              >
+                <Icon color={color} size={20} />
+                <Text className="font-medium text-xs" style={{ color }}>
+                  {label}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
         </View>
 
         {selectedCount === 0 && (
