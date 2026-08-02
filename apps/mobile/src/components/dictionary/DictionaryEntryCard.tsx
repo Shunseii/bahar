@@ -350,11 +350,18 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
 
     const hasExpandableContent = true;
 
+    // Matches the tick a drag gives for each row it crosses, so picking by tap
+    // and picking by drag feel like the same action.
+    const toggleSelection = () => {
+      Haptics.selectionAsync();
+      onToggleSelect?.(entry.id);
+    };
+
     // While selecting, a tap picks the word instead of expanding it -- the
     // expanded body would push the rows the user is aiming at off-screen.
     const handlePress = () => {
       if (selectionMode) {
-        onToggleSelect?.(entry.id);
+        toggleSelection();
         return;
       }
 
@@ -401,7 +408,7 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
               >
                 <Checkbox
                   checked={isSelected}
-                  onCheckedChange={() => onToggleSelect?.(entry.id)}
+                  onCheckedChange={toggleSelection}
                 />
               </Animated.View>
             )}
