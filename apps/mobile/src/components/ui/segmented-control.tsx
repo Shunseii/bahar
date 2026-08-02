@@ -15,7 +15,7 @@ export const SegmentedControl: FC<{
   options: SegmentedOption[];
   disabled?: boolean;
 }> = ({ value, onValueChange, options, disabled }) => (
-  <View className="flex-row rounded-lg bg-muted p-0.5">
+  <View className="w-max flex-row rounded-lg bg-muted p-0.5">
     {options.map((opt) => {
       const active = opt.value === value;
       return (
