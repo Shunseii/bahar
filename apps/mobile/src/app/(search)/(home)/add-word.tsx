@@ -5,10 +5,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
-import { ChevronLeft, ChevronRight } from "lucide-react-native";
+import { ChevronLeft, ChevronRight, Info } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
@@ -28,6 +28,7 @@ import {
   VerbMorphologySection,
 } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
@@ -91,6 +92,7 @@ export default function AddWordScreen() {
   const { scrollHandler } = useCollapsibleHeader(t`Add a new word`);
   const { reset } = useSearch();
   const [createMultiple, setCreateMultiple] = useAtom(createMultipleAtom);
+  const colors = useThemeColors();
   const shouldResetFormRef = useRef(false);
   const insets = useSafeAreaInsets();
   const keyboardHeight = useKeyboardState((state) => state.height);
@@ -300,27 +302,30 @@ export default function AddWordScreen() {
                 </View>
               </CollapsibleCard>
 
-              <View className="flex-row items-center justify-between gap-3 px-1">
-                <View className="flex-1 gap-0.5">
-                  <Text className="font-medium text-foreground text-sm">
+              <View className="flex-row items-center gap-2 self-center">
+                <Pressable
+                  className="flex-row items-center gap-2"
+                  onPress={() => setCreateMultiple(!createMultiple)}
+                >
+                  <Checkbox
+                    checked={createMultiple}
+                    onCheckedChange={setCreateMultiple}
+                  />
+                  <Text className="text-muted-foreground text-sm">
                     <Trans>Create multiple</Trans>
                   </Text>
-                  <Text className="text-muted-foreground text-xs">
-                    <Trans>
-                      Keep adding words after saving instead of going back to
-                      the homepage.
-                    </Trans>
-                  </Text>
-                </View>
-
-                <SegmentedControl
-                  onValueChange={(v) => setCreateMultiple(v === "on")}
-                  options={[
-                    { value: "off", label: t`Off` },
-                    { value: "on", label: t`On` },
-                  ]}
-                  value={createMultiple ? "on" : "off"}
-                />
+                </Pressable>
+                <Pressable
+                  hitSlop={8}
+                  onPress={() =>
+                    Alert.alert(
+                      t`Create multiple`,
+                      t`Keep adding words after saving instead of going back to the homepage.`
+                    )
+                  }
+                >
+                  <Info color={colors.mutedForeground} size={14} />
+                </Pressable>
               </View>
             </View>
           </View>

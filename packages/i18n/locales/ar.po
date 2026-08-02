@@ -287,8 +287,8 @@ msgstr "اسم فاعل"
 msgid "Add a new SQL migration."
 msgstr "أضف ترحيل SQL جديد."
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:91
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:253
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:92
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:255
 msgid "Add a new word"
 msgstr "أضف كلمة جديدة"
 
@@ -365,7 +365,7 @@ msgstr "أضف علامات إلى كلمتك."
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:105
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:72
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:151
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:66
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:67
 msgid "Add word"
 msgstr "أضف كلمة"
 
@@ -660,7 +660,7 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:221
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:138
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:307
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:337
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:342
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:306
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:326
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:450
@@ -826,7 +826,7 @@ msgid "Create a new deck by choosing filters. The deck will be composed of the c
 msgstr "أنشئ مجموعة جديدة باختيار الفلاتر. ستكون المجموعة مكونة من البطاقات التي تطابق هذه الفلاتر."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:472
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:285
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:287
 msgid "Create a reverse card"
 msgstr "إنشاء بطاقة عكسية"
 
@@ -862,7 +862,8 @@ msgstr "إنشاء مفتاح"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:512
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:539
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:306
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:315
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:322
 msgid "Create multiple"
 msgstr "إضافة متعددة"
 
@@ -1193,7 +1194,7 @@ msgstr "إنجليزي → عربي"
 msgid "English → Arabic, for this word."
 msgstr "إنجليزي → عربي، لهذه الكلمة."
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:288
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:290
 msgid "English to Arabic, for this word."
 msgstr "من الإنجليزية إلى العربية، لهذه الكلمة."
 
@@ -1311,7 +1312,7 @@ msgstr "تصدير المعجم مع البطاقات سيحفظ تقدم الب
 msgid "Expression"
 msgstr "عبارة"
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:149
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:151
 msgid "Failed to add word"
 msgstr "فشل إضافة الكلمة"
 
@@ -1494,7 +1495,7 @@ msgstr "تم تحديث إعدادات البطاقة!"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:461
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:224
 #: ../../apps/mobile/src/app/(search)/settings.tsx:673
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:281
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:283
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:436
 msgid "Flashcards"
 msgstr "بطاقات"
@@ -1660,7 +1661,7 @@ msgstr "تلميح"
 #: ../../apps/web/src/components/DesktopNavigation.tsx:53
 #: ../../apps/web/src/components/DesktopNavigation.tsx:59
 #: ../../apps/mobile/src/app/(search)/_layout.tsx:281
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:61
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:62
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:61
 msgid "Home"
 msgstr "منزل"
@@ -1791,7 +1792,7 @@ msgstr "اسم"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:516
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:543
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:309
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:323
 msgid "Keep adding words after saving instead of going back to the homepage."
 msgstr "استمر في إضافة كلمات بعد الحفظ بدلاً من العودة إلى الصفحة الرئيسية."
 
@@ -2122,8 +2123,7 @@ msgstr "الآن"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:489
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:94
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:337
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:295
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:319
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:297
 msgid "Off"
 msgstr "إيقاف"
 
@@ -2135,8 +2135,7 @@ msgstr "الأقدم"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:492
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:97
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:338
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:296
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:320
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:298
 msgid "On"
 msgstr "تشغيل"
 
@@ -2577,11 +2576,11 @@ msgstr "الحروف الأصلية"
 #: ../../apps/web/src/components/features/settings/AdminSettingsCardSection.tsx:146
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:231
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:317
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:349
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:354
 msgid "Save"
 msgstr "احفظ"
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:347
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:352
 msgid "Save & add another"
 msgstr "احفظ وأضف كلمة أخرى"
 
@@ -2854,7 +2853,7 @@ msgstr "نظام"
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:306
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:169
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:227
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:271
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:273
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:426
 msgid "Tags"
 msgstr "علامات"
@@ -3309,7 +3308,7 @@ msgstr "مرحباً بكم في بحر!"
 msgid "Word"
 msgstr "الكلمة"
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:140
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:142
 msgid "Word added successfully"
 msgstr "تمت إضافة الكلمة بنجاح"
 
