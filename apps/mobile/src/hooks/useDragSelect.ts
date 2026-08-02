@@ -18,6 +18,15 @@ const LONG_PRESS_DURATION_MS = 300;
  */
 const AUTO_SCROLL_EDGE = 120;
 
+/**
+ * How fast the finger has to be moving toward an edge to start auto-scrolling,
+ * in points per second. Position alone isn't enough: a thumb resting near the
+ * bottom of the screen is a normal way to hold the phone, and creeping the list
+ * from under it is not what the user asked for. Once scrolling has started,
+ * staying in the zone keeps it going.
+ */
+const AUTO_SCROLL_MIN_VELOCITY = 120;
+
 /** Pixels per tick while auto-scrolling, and how often a tick runs. */
 const AUTO_SCROLL_STEP = 12;
 const AUTO_SCROLL_INTERVAL_MS = 16;
@@ -103,6 +112,45 @@ export const applyDragRange = ({
   return next;
 };
 
+/**
+ * Which way a drag should auto-scroll, if at all: -1 up, 1 down, 0 not at all.
+ *
+ * Entering an edge zone is necessary but not sufficient -- the finger also has
+ * to be moving that way. A drag already scrolling keeps its direction as long as
+ * it stays in the zone, so the user can park there and let the list come to
+ * them.
+ */
+export const nextAutoScrollDirection = ({
+  absoluteY,
+  velocityY,
+  listTop,
+  listBottom,
+  bottomInset,
+  edge,
+  isScrolling,
+}: {
+  absoluteY: number;
+  velocityY: number;
+  listTop: number;
+  listBottom: number;
+  bottomInset: number;
+  edge: number;
+  isScrolling: boolean;
+}): -1 | 0 | 1 => {
+  const inBottomZone = absoluteY > listBottom - bottomInset - edge;
+  const inTopZone = absoluteY < listTop + edge;
+  const direction = inBottomZone ? 1 : inTopZone ? -1 : 0;
+
+  if (direction === 0) return 0;
+  if (isScrolling) return direction;
+
+  const hasMomentum =
+    Math.abs(velocityY) >= AUTO_SCROLL_MIN_VELOCITY &&
+    Math.sign(velocityY) === direction;
+
+  return hasMomentum ? direction : 0;
+};
+
 interface UseDragSelectOptions {
   /** Ids in list order, used to turn an anchor + current row into a range. */
   orderedIds: string[];
@@ -128,7 +176,9 @@ interface UseDragSelectOptions {
  *   means it deselects;
  * - the affected set is always the range between anchor and finger, so dragging
  *   back over rows unwinds them;
- * - dragging into the top or bottom edge auto-scrolls and keeps extending.
+ * - dragging into the top or bottom edge auto-scrolls and keeps extending, but
+ *   only once the finger is actually moving that way, so a resting thumb near an
+ *   edge doesn't drag the list along with it.
  *
  * Rows are hit-tested against window coordinates measured when the gesture
  * activates, re-measured while auto-scrolling (when rows move under the
@@ -241,16 +291,19 @@ export const useDragSelect = ({
   }, []);
 
   const updateAutoScroll = useCallback(
-    (absoluteY: number) => {
+    (absoluteY: number, velocityY: number) => {
       const listRect = listRectRef.current;
       if (!listRect) return;
 
-      const direction =
-        absoluteY > listRect.bottom - bottomInset - AUTO_SCROLL_EDGE
-          ? 1
-          : absoluteY < listRect.top + AUTO_SCROLL_EDGE
-            ? -1
-            : 0;
+      const direction = nextAutoScrollDirection({
+        absoluteY,
+        velocityY,
+        listTop: listRect.top,
+        listBottom: listRect.bottom,
+        bottomInset,
+        edge: AUTO_SCROLL_EDGE,
+        isScrolling: autoScrollRef.current !== null,
+      });
 
       if (direction === 0) {
         stopAutoScroll();
@@ -326,13 +379,13 @@ export const useDragSelect = ({
   );
 
   const handleDragMove = useCallback(
-    (absoluteY: number) => {
+    (absoluteY: number, velocityY: number) => {
       const drag = dragRef.current;
       if (!drag) return;
 
       drag.lastY = absoluteY;
       applyAt(absoluteY);
-      updateAutoScroll(absoluteY);
+      updateAutoScroll(absoluteY, velocityY);
     },
     [applyAt, updateAutoScroll]
   );
@@ -352,7 +405,7 @@ export const useDragSelect = ({
       runOnJS(handleDragStart)(event.absoluteY);
     })
     .onUpdate((event) => {
-      runOnJS(handleDragMove)(event.absoluteY);
+      runOnJS(handleDragMove)(event.absoluteY, event.velocityY);
     })
     .onFinalize(() => {
       runOnJS(handleDragEnd)();

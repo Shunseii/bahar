@@ -1,6 +1,7 @@
 import {
   applyDragRange,
   idsInRange,
+  nextAutoScrollDirection,
   type RowRect,
   rowAtPosition,
 } from "./useDragSelect";
@@ -128,5 +129,68 @@ describe("applyDragRange", () => {
     applyDragRange({ snapshot, rangeIds: ["b"], mode: "select" });
 
     expect([...snapshot]).toEqual(["a"]);
+  });
+});
+
+describe("nextAutoScrollDirection", () => {
+  /** A list filling a 800pt screen, with a 124pt action bar over its bottom. */
+  const direction = ({
+    absoluteY,
+    velocityY,
+    isScrolling = false,
+  }: {
+    absoluteY: number;
+    velocityY: number;
+    isScrolling?: boolean;
+  }) =>
+    nextAutoScrollDirection({
+      absoluteY,
+      velocityY,
+      listTop: 100,
+      listBottom: 800,
+      bottomInset: 124,
+      edge: 120,
+      isScrolling,
+    });
+
+  it("doesn't scroll while the finger is away from the edges", () => {
+    expect(direction({ absoluteY: 400, velocityY: 900 })).toBe(0);
+  });
+
+  it("scrolls down when the finger drives into the bottom zone", () => {
+    expect(direction({ absoluteY: 580, velocityY: 400 })).toBe(1);
+  });
+
+  it("scrolls up when the finger drives into the top zone", () => {
+    expect(direction({ absoluteY: 150, velocityY: -400 })).toBe(-1);
+  });
+
+  it("stays put for a finger resting in a zone", () => {
+    // The reason the momentum gate exists: holding the phone puts a thumb near
+    // the bottom, and the list crept out from under it.
+    expect(direction({ absoluteY: 580, velocityY: 0 })).toBe(0);
+    expect(direction({ absoluteY: 580, velocityY: 40 })).toBe(0);
+  });
+
+  it("ignores momentum pointing away from the zone's edge", () => {
+    expect(direction({ absoluteY: 580, velocityY: -400 })).toBe(0);
+    expect(direction({ absoluteY: 150, velocityY: 400 })).toBe(0);
+  });
+
+  it("keeps scrolling once started, even if the finger stops", () => {
+    expect(direction({ absoluteY: 580, velocityY: 0, isScrolling: true })).toBe(
+      1
+    );
+  });
+
+  it("stops as soon as the finger leaves the zone", () => {
+    expect(direction({ absoluteY: 400, velocityY: 0, isScrolling: true })).toBe(
+      0
+    );
+  });
+
+  it("treats the space under the action bar as part of the bottom zone", () => {
+    // 700 is inside the bar's 124pt, so it counts as past the edge.
+    expect(direction({ absoluteY: 700, velocityY: 400 })).toBe(1);
   });
 });
