@@ -149,6 +149,19 @@ export const useInfiniteSearch = (
   // re-search when hits are nulled AFTER a search has run (an external reset).
   const hasSearchedRef = useRef(false);
 
+  // How many rows were loaded before a refresh or reset. Re-searching just the
+  // first page would shrink the list from however far the user had paged down to
+  // 20 rows; the native list then clamps to the shorter content and the scroll
+  // position is gone before anything could restore it. Rebuilding the same
+  // window in one set keeps the offset valid, so returning to the screen lands
+  // where the user left it.
+  // Only tracked while there are hits: a reset nulls them before the effect that
+  // re-searches runs, and reading 0 there would defeat the whole point.
+  const loadedWindowRef = useRef(SEARCH_RESULTS_PER_PAGE);
+  if (hits?.length) {
+    loadedWindowRef.current = Math.max(hits.length, SEARCH_RESULTS_PER_PAGE);
+  }
+
   const whereFilter = useMemo<SearchDictionaryOptions["where"]>(() => {
     const tags = params.filters?.tags;
     const types = params.filters?.types;
@@ -169,35 +182,44 @@ export const useInfiniteSearch = (
     return detected === "ar" ? "arabic" : ("english" as const);
   }, [params.term]);
 
-  const performSearch = useCallback(() => {
-    hasSearchedRef.current = true;
-    setIsLoading(true);
-    try {
-      const { hits: newHits, ...metadata } = search(
-        {
-          sortBy,
-          term: params.term,
-          where: whereFilter,
-          offset: 0,
-        },
-        searchQueryLanguage
-      );
+  const performSearch = useCallback(
+    ({ preserveWindow = false }: { preserveWindow?: boolean } = {}) => {
+      hasSearchedRef.current = true;
+      setIsLoading(true);
+      try {
+        const windowSize = preserveWindow
+          ? loadedWindowRef.current
+          : SEARCH_RESULTS_PER_PAGE;
 
-      setOffset(0);
-      setHits(newHits);
-      setSearchResultsMetadata({ ...metadata, searchTerm: params.term });
-      setHasMore(newHits.length < metadata.count);
-    } catch (error) {
-      Sentry.captureException(error, { tags: { operation: "search" } });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [search, params.term, whereFilter, sortBy, searchQueryLanguage]);
+        const { hits: newHits, ...metadata } = search(
+          {
+            sortBy,
+            term: params.term,
+            where: whereFilter,
+            offset: 0,
+            limit: windowSize,
+          },
+          searchQueryLanguage
+        );
 
-  // Re-search when params change
+        setOffset(Math.max(0, newHits.length - SEARCH_RESULTS_PER_PAGE));
+        setHits(newHits);
+        setSearchResultsMetadata({ ...metadata, searchTerm: params.term });
+        setHasMore(newHits.length < metadata.count);
+      } catch (error) {
+        Sentry.captureException(error, { tags: { operation: "search" } });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [search, params.term, whereFilter, sortBy, searchQueryLanguage]
+  );
+
+  // Re-search when params change. A new query is a different result set, so it
+  // starts from the first page rather than rebuilding the previous window.
   useEffect(() => {
     setIsLoading(true);
-    const id = requestAnimationFrame(performSearch);
+    const id = requestAnimationFrame(() => performSearch());
     return () => cancelAnimationFrame(id);
   }, [paramsKey, performSearch]);
 
@@ -205,7 +227,9 @@ export const useInfiniteSearch = (
   // Skips the initial mount, where the params effect above owns the first search.
   useEffect(() => {
     if (hits === null && hasSearchedRef.current) {
-      performSearch();
+      // An external reset (a word was added, edited, or deleted elsewhere) is
+      // the same result set, so keep the window the user had paged to.
+      performSearch({ preserveWindow: true });
     }
   }, [hits, performSearch]);
 
@@ -249,11 +273,12 @@ export const useInfiniteSearch = (
           term: params.term,
           where: whereFilter,
           offset: 0,
+          limit: loadedWindowRef.current,
         },
         searchQueryLanguage
       );
 
-      setOffset(0);
+      setOffset(Math.max(0, newHits.length - SEARCH_RESULTS_PER_PAGE));
       setHits(newHits);
       setSearchResultsMetadata({ ...metadata, searchTerm: params.term });
       setHasMore(newHits.length < metadata.count);
