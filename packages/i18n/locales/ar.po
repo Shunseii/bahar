@@ -153,12 +153,12 @@ msgid "{longestStreak, plural, one {Previous: {0} day} other {Previous: {1} days
 msgstr "{longestStreak, plural, one {السابق: {0} يوم} two {السابق: {1} يومان} few {السابق: {1} أيام} many {السابق: {1} يومًا} other {السابق: {1} يوم}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:79
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:147
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:160
 msgid "{matchingCount, plural, one {Select all #} other {Select all #}}"
 msgstr "{matchingCount, plural, one {حدد الكل (#)} two {حدد الكل (#)} few {حدد الكل (#)} many {حدد الكل (#)} other {حدد الكل (#)}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:62
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:130
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:135
 msgid "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
 msgstr "{outsideResultsCount, plural, one {واحد غير موجود في هذه النتائج} two {اثنان غير موجودان في هذه النتائج} few {# غير موجودة في هذه النتائج} many {# غير موجود في هذه النتائج} other {# غير موجود في هذه النتائج}}"
 
@@ -194,7 +194,7 @@ msgstr "{totalHits, plural, one {نتيجة} two {نتيجتان} few {نتائ�
 
 #. placeholder {0}: formatNumber(totalResults)
 #. placeholder {1}: formatNumber(totalResults)
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:153
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:154
 msgid "{totalResults, plural, one {{0} result} other {{1} results}}"
 msgstr "{totalResults, plural, one {{0} نتيجة} two {{0} نتيجتان} few {{0} نتائج} many {{0} نتيجة} other {{1} نتيجة}}"
 
@@ -362,7 +362,7 @@ msgstr "أضف علامات إلى كلمتك."
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:127
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:72
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:177
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:178
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:67
 msgid "Add word"
 msgstr "أضف كلمة"
@@ -684,7 +684,7 @@ msgstr "اختر ملف"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:77
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:477
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:145
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:158
 msgid "Clear"
 msgstr "امسح"
 
@@ -1784,12 +1784,12 @@ msgstr "جارٍ تحميل التفاصيل..."
 msgid "Loading tags..."
 msgstr "جارٍ تحميل العلامات..."
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:332
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:333
 msgid "Loading your dictionary..."
 msgstr "جارٍ تحميل معجمك..."
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:96
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:169
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:170
 msgid "Loading..."
 msgstr "جارٍ التحميل..."
 
@@ -2397,7 +2397,7 @@ msgstr "بطاقات العكسية"
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:150
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:328
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:86
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:191
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:192
 msgid "Review"
 msgstr "مراجعة"
 
@@ -2520,7 +2520,7 @@ msgstr "شاهد معدل الاحتفاظ، توقعات المراجعة، ا�
 msgid "Select"
 msgstr "حدد"
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:220
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:221
 msgid "Select entries"
 msgstr "حدد الإدخالات"
 
@@ -2626,7 +2626,7 @@ msgid "Some dictionary entries couldn't be loaded"
 msgstr "تعذر تحميل بعض إدخالات المعجم"
 
 #: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:51
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:342
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:343
 msgid "Something went wrong"
 msgstr "حدث خطأ ما"
 
@@ -2758,7 +2758,7 @@ msgstr "العلامات على الإدخالات المحددة"
 msgid "Tags removed from {changed} entries"
 msgstr "تمت إزالة العلامات من {changed} إدخال"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:177
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:146
 msgid "Tap entries to select them"
 msgstr "اضغط على الإدخالات لتحديدها"
 
@@ -3309,7 +3309,7 @@ msgid "Your deck was not updated. Please try again."
 msgstr "لم يتم تحديث مجموعتك. يرجى المحاولة مرة أخرى."
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:72
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:148
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:149
 msgid "Your Dictionary"
 msgstr "معجمك"
 

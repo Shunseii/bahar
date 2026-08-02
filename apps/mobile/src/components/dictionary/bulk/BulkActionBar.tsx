@@ -122,18 +122,31 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
                 />
               </Text>
 
-              {outsideResultsCount > 0 && (
-                <Text
-                  className="text-muted-foreground text-xs"
-                  numberOfLines={1}
-                >
-                  <Plural
-                    one="# not in these results"
-                    other="# not in these results"
-                    value={outsideResultsCount}
-                  />
-                </Text>
-              )}
+              {/* One fixed-height slot for whichever secondary line applies.
+                  The bar is anchored to the bottom and grows upward, so letting
+                  this line come and go moved the whole bar under the user's
+                  thumb. */}
+              <View className="h-4 justify-center">
+                {outsideResultsCount > 0 ? (
+                  <Text
+                    className="text-muted-foreground text-xs"
+                    numberOfLines={1}
+                  >
+                    <Plural
+                      one="# not in these results"
+                      other="# not in these results"
+                      value={outsideResultsCount}
+                    />
+                  </Text>
+                ) : selectedCount === 0 ? (
+                  <Text
+                    className="text-muted-foreground text-xs"
+                    numberOfLines={1}
+                  >
+                    <Trans>Tap entries to select them</Trans>
+                  </Text>
+                ) : null}
+              </View>
             </View>
 
             <Pressable
@@ -171,12 +184,6 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
             ))}
           </View>
         </View>
-
-        {selectedCount === 0 && (
-          <Text className="mt-2 text-center text-muted-foreground text-xs">
-            <Trans>Tap entries to select them</Trans>
-          </Text>
-        )}
       </Animated.View>
 
       <BulkTagsSheet ids={ids} onDone={clear} ref={tagsSheetRef} />

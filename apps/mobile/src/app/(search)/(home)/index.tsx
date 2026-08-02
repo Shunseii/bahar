@@ -51,10 +51,11 @@ import { useSearchQuery } from "../_layout";
 
 /**
  * Space the floating bulk action bar needs at the bottom of the list: its
- * summary row, its action row, and the gap below it. Also what drag-select uses
- * to keep its auto-scroll zone above the bar.
+ * summary row, its action row, and the gap below it. Fixed, because the bar's
+ * own height is fixed -- see the reserved secondary line in BulkActionBar. Also
+ * what drag-select uses to keep its auto-scroll zone above the bar.
  */
-const BULK_BAR_CLEARANCE = 132;
+const BULK_BAR_CLEARANCE = 124;
 
 const formatElapsedTime = ({
   nanoseconds,
