@@ -212,7 +212,6 @@ export default function HomeScreen() {
   usePreloadDrawerScreens(state === "ready");
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
-  const allMatchingIdsRef = useRef<(() => string[]) | null>(null);
   const selectionMode = useSelectionMode();
 
   const { data: counts, isPending } = useQuery({
@@ -303,15 +302,9 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {selectionMode && (
-        <BulkSelectionHeader
-          allMatchingIdsRef={allMatchingIdsRef}
-          totalCount={totalResults ?? 0}
-        />
-      )}
+      {selectionMode && <BulkSelectionHeader />}
 
       <DictionaryList
-        allMatchingIdsRef={allMatchingIdsRef}
         bottomInset={selectionMode ? insets.bottom + 86 : insets.bottom}
         ListHeaderComponent={listHeader}
         onElapsedTimeChange={handleElapsedTimeChange}

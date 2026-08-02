@@ -205,6 +205,16 @@ msgstr "{longestStreak, plural, one {Previous: {0} day} other {Previous: {1} day
 #~ msgid "{longestStreak, plural, one {Previous: {longestStreak} day} other {Previous: {longestStreak} days}}"
 #~ msgstr "{longestStreak, plural, one {Previous: {longestStreak} day} other {Previous: {longestStreak} days}}"
 
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:79
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:57
+msgid "{matchingCount, plural, one {Select all #} other {Select all #}}"
+msgstr "{matchingCount, plural, one {Select all #} other {Select all #}}"
+
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:62
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:39
+msgid "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
+msgstr "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
+
 #. placeholder {0}: formatNumber(reviewCount)
 #. placeholder {1}: formatNumber(reviewCount)
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:615
@@ -220,8 +230,8 @@ msgstr "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 #~ msgid "{reviewCount, plural, one {# review} other {# reviews}}"
 #~ msgstr "{reviewCount, plural, one {# review} other {# reviews}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:55
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:45
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:53
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:34
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr "{selectedCount, plural, one {# selected} other {# selected}}"
 
@@ -241,8 +251,8 @@ msgstr "{tomorrowCount, plural, one {review tomorrow} other {reviews tomorrow}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:71
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:59
-msgid "{totalCount, plural, one {Select all #} other {Select all #}}"
-msgstr "{totalCount, plural, one {Select all #} other {Select all #}}"
+#~ msgid "{totalCount, plural, one {Select all #} other {Select all #}}"
+#~ msgstr "{totalCount, plural, one {Select all #} other {Select all #}}"
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:82
 msgid "{totalHits, plural, one {result} other {results}}"
@@ -414,7 +424,7 @@ msgstr "Add Plural"
 msgid "Add some to get started!"
 msgstr "Add some to get started!"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:84
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:82
 msgid "Add some words to get started!"
 msgstr "Add some words to get started!"
 
@@ -426,7 +436,7 @@ msgstr "Add tag {inputValue}"
 msgid "Add tag {value}"
 msgstr "Add tag {value}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:97
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:105
 msgid "Add tags"
 msgstr "Add tags"
 
@@ -777,9 +787,9 @@ msgstr "Cause:"
 msgid "Choose file"
 msgstr "Choose file"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:69
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:77
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:477
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:57
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:55
 msgid "Clear"
 msgstr "Clear"
 
@@ -1070,7 +1080,7 @@ msgstr "Definition"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:158
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:190
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:191
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:127
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:135
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:43
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:80
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:80
@@ -1983,7 +1993,7 @@ msgstr "Loading details..."
 msgid "Loading tags..."
 msgstr "Loading tags..."
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:287
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:286
 msgid "Loading your dictionary..."
 msgstr "Loading your dictionary..."
 
@@ -2212,7 +2222,7 @@ msgid "No overdue cards to reschedule."
 msgstr "No overdue cards to reschedule."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:934
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:101
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:99
 msgid "No results found"
 msgstr "No results found"
 
@@ -2560,7 +2570,7 @@ msgstr "Remove"
 msgid "Remove reverse card?"
 msgstr "Remove reverse card?"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:103
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:111
 msgid "Remove tags"
 msgstr "Remove tags"
 
@@ -2629,7 +2639,7 @@ msgstr "Restart now"
 msgid "Retention Rate"
 msgstr "Retention Rate"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:116
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:124
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:73
 msgid "Reverse"
 msgstr "Reverse"
@@ -2906,7 +2916,7 @@ msgid "Some dictionary entries couldn't be loaded"
 msgstr "Some dictionary entries couldn't be loaded"
 
 #: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:51
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:297
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:296
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
@@ -3011,7 +3021,7 @@ msgstr "System"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:336
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:155
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:90
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:98
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:262
@@ -3338,7 +3348,7 @@ msgstr "Triptote"
 #~ msgstr "Troubleshooting"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:937
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:104
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:102
 msgid "Try a different search term"
 msgstr "Try a different search term"
 
@@ -3665,7 +3675,7 @@ msgstr "Your dictionary has been downloaded."
 msgid "Your dictionary has been updated!"
 msgstr "Your dictionary has been updated!"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:81
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:79
 msgid "Your dictionary is empty"
 msgstr "Your dictionary is empty"
 

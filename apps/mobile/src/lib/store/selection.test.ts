@@ -1,4 +1,4 @@
-import { addId, toggleId } from "./selection";
+import { addId, describeSelectionScope, toggleId } from "./selection";
 
 describe("toggleId", () => {
   it("adds an id that isn't selected", () => {
@@ -15,6 +15,47 @@ describe("toggleId", () => {
     toggleId(original, "b");
 
     expect([...original]).toEqual(["a"]);
+  });
+});
+
+describe("describeSelectionScope", () => {
+  const scope = (selected: string[], matching: string[]) =>
+    describeSelectionScope({
+      selectedIds: new Set(selected),
+      matchingIds: new Set(matching),
+    });
+
+  it("reports everything selected when the results are covered", () => {
+    expect(scope(["a", "b"], ["a", "b"])).toEqual({
+      matchingCount: 2,
+      outsideResultsCount: 0,
+      allSelected: true,
+    });
+  });
+
+  it("counts selected words the search doesn't return", () => {
+    // Picked 3 words, then searched something that only matches one of them.
+    expect(scope(["a", "b", "c"], ["c", "d"])).toMatchObject({
+      outsideResultsCount: 2,
+      allSelected: false,
+    });
+  });
+
+  it("is not 'all selected' just because the selection is bigger than the results", () => {
+    // The old bug: 50 selected against 3 results read as everything selected.
+    expect(scope(["x", "y", "z", "w"], ["a", "b"]).allSelected).toBe(false);
+  });
+
+  it("is not 'all selected' when the search matches nothing", () => {
+    expect(scope(["a"], [])).toEqual({
+      matchingCount: 0,
+      outsideResultsCount: 1,
+      allSelected: false,
+    });
+  });
+
+  it("is not 'all selected' with an empty selection", () => {
+    expect(scope([], ["a", "b"]).allSelected).toBe(false);
   });
 });
 

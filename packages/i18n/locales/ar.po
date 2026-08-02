@@ -205,6 +205,16 @@ msgstr "{longestStreak, plural, one {السابق: {0} يوم} two {السابق
 #~ msgid "{longestStreak, plural, one {Previous: {longestStreak} day} other {Previous: {longestStreak} days}}"
 #~ msgstr "{longestStreak, plural, one {السابق: يوم {longestStreak}} two {السابق: يومان {longestStreak}} few {السابق: {longestStreak} أيام} many {السابق: {longestStreak} يوماً} other {السابق: {longestStreak} يوم}}"
 
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:79
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:57
+msgid "{matchingCount, plural, one {Select all #} other {Select all #}}"
+msgstr ""
+
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:62
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:39
+msgid "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
+msgstr ""
+
 #. placeholder {0}: formatNumber(reviewCount)
 #. placeholder {1}: formatNumber(reviewCount)
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:615
@@ -220,8 +230,8 @@ msgstr "{reviewCount, plural, one {{0} مراجعة} two {{1} مراجعتان} 
 #~ msgid "{reviewCount, plural, one {# review} other {# reviews}}"
 #~ msgstr "{reviewCount, plural, one {مراجعة واحدة} two {مراجعتان} few {# مراجعات} many {# مراجعة} other {# مراجعة}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:55
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:45
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:53
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:34
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr ""
 
@@ -241,8 +251,8 @@ msgstr "{tomorrowCount, plural, one {مراجعة غدًا} two {مراجعتا�
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:71
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:59
-msgid "{totalCount, plural, one {Select all #} other {Select all #}}"
-msgstr ""
+#~ msgid "{totalCount, plural, one {Select all #} other {Select all #}}"
+#~ msgstr ""
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:82
 msgid "{totalHits, plural, one {result} other {results}}"
@@ -414,7 +424,7 @@ msgstr "أضف جمع"
 msgid "Add some to get started!"
 msgstr "أضف شيئًا لتبدأ!"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:84
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:82
 msgid "Add some words to get started!"
 msgstr "أضف بعض الكلمات للبدء!"
 
@@ -426,7 +436,7 @@ msgstr "أضف علامة {inputValue}"
 msgid "Add tag {value}"
 msgstr "إضافة العلامة {value}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:97
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:105
 msgid "Add tags"
 msgstr ""
 
@@ -777,9 +787,9 @@ msgstr "السبب:"
 msgid "Choose file"
 msgstr "اختر ملف"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:69
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:77
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:477
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:57
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkSelectionHeader.tsx:55
 msgid "Clear"
 msgstr "امسح"
 
@@ -1070,7 +1080,7 @@ msgstr "التعريف"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:158
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:190
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:191
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:127
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:135
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:43
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:80
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:80
@@ -1979,7 +1989,7 @@ msgstr "جارٍ تحميل التفاصيل..."
 msgid "Loading tags..."
 msgstr ""
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:287
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:286
 msgid "Loading your dictionary..."
 msgstr "جارٍ تحميل معجمك..."
 
@@ -2208,7 +2218,7 @@ msgid "No overdue cards to reschedule."
 msgstr "لا توجد بطاقات متأخرة لإعادة جدولتها."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:934
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:101
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:99
 msgid "No results found"
 msgstr "لم يتم العثور على نتائج"
 
@@ -2556,7 +2566,7 @@ msgstr "احذف"
 msgid "Remove reverse card?"
 msgstr "إزالة البطاقة العكسية؟"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:103
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:111
 msgid "Remove tags"
 msgstr ""
 
@@ -2625,7 +2635,7 @@ msgstr "أعد التشغيل الآن"
 msgid "Retention Rate"
 msgstr "معدل الاحتفاظ"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:116
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:124
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:73
 msgid "Reverse"
 msgstr ""
@@ -2902,7 +2912,7 @@ msgid "Some dictionary entries couldn't be loaded"
 msgstr "تعذر تحميل بعض إدخالات المعجم"
 
 #: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:51
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:297
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:296
 msgid "Something went wrong"
 msgstr "حدث خطأ ما"
 
@@ -3007,7 +3017,7 @@ msgstr "نظام"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:336
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:155
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:90
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:98
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:262
@@ -3334,7 +3344,7 @@ msgstr "معرب"
 #~ msgstr "استكشاف الأخطاء"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:937
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:104
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:102
 msgid "Try a different search term"
 msgstr "جرب مصطلح بحث مختلف"
 
@@ -3661,7 +3671,7 @@ msgstr "تم تحميل معجمك."
 msgid "Your dictionary has been updated!"
 msgstr "تم تحديث معجمك!"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:81
+#: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:79
 msgid "Your dictionary is empty"
 msgstr "معجمك فارغ"
 

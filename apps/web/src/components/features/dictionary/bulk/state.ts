@@ -1,5 +1,5 @@
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 /**
  * Whether the dictionary list is in bulk-selection mode. Entering it swaps the
@@ -30,6 +30,59 @@ export const usePublishAllMatchingIds = (resolver: () => string[]) => {
 
     return () => setResolver(null);
   }, [resolver, setResolver]);
+};
+
+/**
+ * How a selection lines up with the ids the current search returns.
+ *
+ * Split out from the hooks because this is the part that was wrong before: a
+ * selection outlives the search that produced it, so comparing its size against
+ * the result count claimed "everything is selected" whenever the selection was
+ * merely larger than the result set.
+ */
+export const describeSelectionScope = ({
+  selectedIds,
+  matchingIds,
+}: {
+  selectedIds: ReadonlySet<string>;
+  matchingIds: ReadonlySet<string>;
+}) => {
+  let selectedInResults = 0;
+
+  for (const id of selectedIds) {
+    if (matchingIds.has(id)) selectedInResults++;
+  }
+
+  return {
+    matchingCount: matchingIds.size,
+    /** Selected words the current search doesn't return. */
+    outsideResultsCount: selectedIds.size - selectedInResults,
+    allSelected: matchingIds.size > 0 && selectedInResults === matchingIds.size,
+  };
+};
+
+/**
+ * How the selection lines up with the results currently on screen.
+ *
+ * A selection outlives the search that produced it -- picking words under one
+ * query, narrowing to another, and picking more before tagging the lot is a
+ * real way to work -- so the two can drift apart. That makes the raw selected
+ * count a poor answer to "is everything selected?" (50 selected against 3
+ * results is not "all"), and it makes an action's reach worth stating outright,
+ * since the words it will touch may not be the ones being looked at.
+ */
+export const useSelectionScope = () => {
+  const selectedIds = useAtomValue(selectedIdsAtom);
+  const resolveAllMatchingIds = useAtomValue(allMatchingIdsAtom);
+
+  // The resolver's identity changes with the query, so the matching set is
+  // recomputed per search rather than per render.
+  const matchingIds = useMemo(
+    () => new Set(resolveAllMatchingIds?.() ?? []),
+    [resolveAllMatchingIds]
+  );
+
+  return describeSelectionScope({ selectedIds, matchingIds });
 };
 
 export const useBulkSelection = () => {

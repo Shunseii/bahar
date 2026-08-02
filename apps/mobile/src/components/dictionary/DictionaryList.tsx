@@ -15,7 +15,7 @@ import {
 import { useFocusEffect } from "expo-router";
 import { useAtom } from "jotai";
 import { ArrowUp, BookOpen, SearchX } from "lucide-react-native";
-import type { MutableRefObject, ReactElement } from "react";
+import type { ReactElement } from "react";
 import {
   type FC,
   useCallback,
@@ -46,7 +46,10 @@ import { type SortOption, useInfiniteSearch } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { performSync } from "@/lib/db/sync";
 import { reviewsPendingRefreshAtom } from "@/lib/store";
-import { useBulkSelection } from "@/lib/store/selection";
+import {
+  useBulkSelection,
+  usePublishAllMatchingIds,
+} from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { DictionaryEntryCard } from "./DictionaryEntryCard";
@@ -59,11 +62,6 @@ interface DictionaryListProps {
   bottomInset?: number;
   onTotalCountChange?: (count: number) => void;
   onElapsedTimeChange?: (elapsedNs: number | null) => void;
-  /**
-   * Filled in with a resolver for every id matching the current search, so the
-   * selection header can offer "select all" without owning the query.
-   */
-  allMatchingIdsRef?: MutableRefObject<(() => string[]) | null>;
   ListHeaderComponent?: ReactElement;
 }
 
@@ -121,7 +119,6 @@ export const DictionaryList: FC<DictionaryListProps> = ({
   bottomInset = 0,
   onTotalCountChange,
   onElapsedTimeChange,
-  allMatchingIdsRef,
   ListHeaderComponent,
 }) => {
   const filters =
@@ -260,11 +257,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     onElapsedTimeChange?.(elapsedTimeNs);
   }, [elapsedTimeNs, onElapsedTimeChange]);
 
-  // Handed over rather than pushed up as state: "select all" needs every
-  // matching id, which is only worth computing when the user actually asks.
-  if (allMatchingIdsRef) {
-    allMatchingIdsRef.current = allMatchingIds;
-  }
+  usePublishAllMatchingIds(allMatchingIds);
 
   // Prefetch full entries from SQLite for the current batch of hits
   // so ExpandedDetails can read from a warm cache on expand

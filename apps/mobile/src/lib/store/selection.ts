@@ -1,5 +1,5 @@
-import { atom, useAtom, useAtomValue } from "jotai";
-import { useCallback } from "react";
+import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useEffect, useMemo } from "react";
 
 /**
  * Whether the dictionary list is in bulk-selection mode. Entered by long-pressing
@@ -46,9 +46,80 @@ export const addId = (
   return next;
 };
 
+/**
+ * Resolver for every id matching the current search, published by the list
+ * (which owns the query) for the selection header (which doesn't). "Select all"
+ * has to mean all results, not just the pages loaded so far.
+ */
+const allMatchingIdsAtom = atom<(() => string[]) | null>(null);
+
+export const usePublishAllMatchingIds = (resolver: () => string[]) => {
+  const setResolver = useSetAtom(allMatchingIdsAtom);
+
+  useEffect(() => {
+    setResolver(() => resolver);
+
+    return () => setResolver(null);
+  }, [resolver, setResolver]);
+};
+
+/**
+ * How a selection lines up with the ids the current search returns.
+ *
+ * Split out from the hooks because this is the part that was wrong before: a
+ * selection outlives the search that produced it, so comparing its size against
+ * the result count claimed "everything is selected" whenever the selection was
+ * merely larger than the result set.
+ */
+export const describeSelectionScope = ({
+  selectedIds,
+  matchingIds,
+}: {
+  selectedIds: ReadonlySet<string>;
+  matchingIds: ReadonlySet<string>;
+}) => {
+  let selectedInResults = 0;
+
+  for (const id of selectedIds) {
+    if (matchingIds.has(id)) selectedInResults++;
+  }
+
+  return {
+    matchingCount: matchingIds.size,
+    /** Selected words the current search doesn't return. */
+    outsideResultsCount: selectedIds.size - selectedInResults,
+    allSelected: matchingIds.size > 0 && selectedInResults === matchingIds.size,
+  };
+};
+
+/**
+ * How the selection lines up with the results currently on screen.
+ *
+ * A selection outlives the search that produced it -- picking words under one
+ * query, narrowing to another, and picking more before tagging the lot is a
+ * real way to work -- so the two can drift apart. That makes the raw selected
+ * count a poor answer to "is everything selected?" (50 selected against 3
+ * results is not "all"), and it makes an action's reach worth stating outright,
+ * since the words it will touch may not be the ones being looked at.
+ */
+export const useSelectionScope = () => {
+  const selectedIds = useAtomValue(selectedIdsAtom);
+  const resolveAllMatchingIds = useAtomValue(allMatchingIdsAtom);
+
+  // The resolver's identity changes with the query, so the matching set is
+  // recomputed per search rather than per render.
+  const matchingIds = useMemo(
+    () => new Set(resolveAllMatchingIds?.() ?? []),
+    [resolveAllMatchingIds]
+  );
+
+  return describeSelectionScope({ selectedIds, matchingIds });
+};
+
 export const useBulkSelection = () => {
   const [selectionMode, setSelectionMode] = useAtom(selectionModeAtom);
   const [selectedIds, setSelectedIds] = useAtom(selectedIdsAtom);
+  const resolveAllMatchingIds = useAtomValue(allMatchingIdsAtom);
 
   const exitSelectionMode = useCallback(() => {
     setSelectionMode(false);
@@ -78,12 +149,14 @@ export const useBulkSelection = () => {
     setSelectionMode(true);
   }, [setSelectionMode]);
 
-  const selectAll = useCallback(
-    (ids: string[]) => {
-      setSelectedIds(new Set(ids));
-    },
-    [setSelectedIds]
-  );
+  /**
+   * Takes every word matching the current search and filters, not just the ones
+   * loaded so far -- the count on screen is what the user is reading, so that is
+   * what "select all" has to mean.
+   */
+  const selectAll = useCallback(() => {
+    setSelectedIds(new Set(resolveAllMatchingIds?.() ?? []));
+  }, [resolveAllMatchingIds, setSelectedIds]);
 
   const clear = useCallback(() => {
     setSelectedIds(new Set());

@@ -9,11 +9,10 @@ import { Plural, Trans } from "@lingui/react/macro";
 import { ChevronUp, Repeat, TagIcon, Trash2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type FC, useState } from "react";
-import { useSearch } from "@/hooks/search/useSearch";
 import { BulkDeleteDialog } from "./BulkDeleteDialog";
 import { BulkReverseDialog } from "./BulkReverseDialog";
 import { BulkTagsDialog } from "./BulkTagsDialog";
-import { useBulkSelection } from "./state";
+import { useBulkSelection, useSelectionScope } from "./state";
 
 type OpenDialog = "add-tags" | "remove-tags" | "reverse" | "delete" | null;
 
@@ -24,7 +23,8 @@ type OpenDialog = "add-tags" | "remove-tags" | "reverse" | "delete" | null;
  */
 export const BulkSelectionBar: FC = () => {
   const [openDialog, setOpenDialog] = useState<OpenDialog>(null);
-  const { results } = useSearch();
+  const { matchingCount, outsideResultsCount, allSelected } =
+    useSelectionScope();
   const {
     selectionMode,
     selectedIds,
@@ -34,8 +34,6 @@ export const BulkSelectionBar: FC = () => {
     clear,
   } = useBulkSelection();
 
-  const totalCount = results?.count ?? 0;
-  const allSelected = totalCount > 0 && selectedCount >= totalCount;
   const ids = [...selectedIds];
   const hasSelection = selectedCount > 0;
 
@@ -59,6 +57,16 @@ export const BulkSelectionBar: FC = () => {
                 />
               </span>
 
+              {outsideResultsCount > 0 && (
+                <span className="whitespace-nowrap text-muted-foreground text-xs">
+                  <Plural
+                    one="# not in these results"
+                    other="# not in these results"
+                    value={outsideResultsCount}
+                  />
+                </span>
+              )}
+
               <Button
                 className="h-8 whitespace-nowrap rounded-full px-2 text-primary text-xs"
                 onClick={() => (allSelected ? clear() : selectAll())}
@@ -71,7 +79,7 @@ export const BulkSelectionBar: FC = () => {
                   <Plural
                     one="Select all #"
                     other="Select all #"
-                    value={totalCount}
+                    value={matchingCount}
                   />
                 )}
               </Button>
