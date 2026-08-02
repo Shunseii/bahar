@@ -5,10 +5,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useLocales } from "expo-localization";
 import { useRouter } from "expo-router";
 import { useAtom } from "jotai";
-import { ChevronLeft, ChevronRight, Info } from "lucide-react-native";
+import { ChevronLeft, ChevronRight } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import {
   KeyboardAwareScrollView,
   KeyboardStickyView,
@@ -28,7 +28,6 @@ import {
   VerbMorphologySection,
 } from "@/components/dictionary/form";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { useSearch } from "@/hooks/useSearch";
@@ -92,7 +91,6 @@ export default function AddWordScreen() {
   const { scrollHandler } = useCollapsibleHeader(t`Add a new word`);
   const { reset } = useSearch();
   const [createMultiple, setCreateMultiple] = useAtom(createMultipleAtom);
-  const colors = useThemeColors();
   const shouldResetFormRef = useRef(false);
   const insets = useSafeAreaInsets();
   const keyboardHeight = useKeyboardState((state) => state.height);
@@ -301,6 +299,29 @@ export default function AddWordScreen() {
                   />
                 </View>
               </CollapsibleCard>
+
+              <View className="flex-row items-center justify-between gap-3 px-1">
+                <View className="flex-1 gap-0.5">
+                  <Text className="font-medium text-foreground text-sm">
+                    <Trans>Create multiple</Trans>
+                  </Text>
+                  <Text className="text-muted-foreground text-xs">
+                    <Trans>
+                      Keep adding words after saving instead of going back to
+                      the homepage.
+                    </Trans>
+                  </Text>
+                </View>
+
+                <SegmentedControl
+                  onValueChange={(v) => setCreateMultiple(v === "on")}
+                  options={[
+                    { value: "off", label: t`Off` },
+                    { value: "on", label: t`On` },
+                  ]}
+                  value={createMultiple ? "on" : "off"}
+                />
+              </View>
             </View>
           </View>
         </KeyboardAwareScrollView>
@@ -310,33 +331,7 @@ export default function AddWordScreen() {
             back down by the inset slides that padding under the keyboard
             instead of leaving it as a visible gap above it. */}
         <KeyboardStickyView offset={{ opened: insets.bottom }}>
-          <View className="gap-3 border-border border-t bg-background px-4 pt-3 pb-safe-offset-3">
-            <View className="flex-row items-center gap-2 self-center">
-              <Pressable
-                className="flex-row items-center gap-2"
-                onPress={() => setCreateMultiple(!createMultiple)}
-              >
-                <Checkbox
-                  checked={createMultiple}
-                  onCheckedChange={setCreateMultiple}
-                />
-                <Text className="text-muted-foreground text-sm">
-                  <Trans>Create multiple</Trans>
-                </Text>
-              </Pressable>
-              <Pressable
-                hitSlop={8}
-                onPress={() =>
-                  Alert.alert(
-                    t`Create multiple`,
-                    t`Keep adding words after saving instead of going back to the homepage.`
-                  )
-                }
-              >
-                <Info color={colors.mutedForeground} size={14} />
-              </Pressable>
-            </View>
-
+          <View className="border-border border-t bg-background px-4 pt-3 pb-safe-offset-3">
             <View className="flex-row items-center justify-center gap-3">
               <Button onPress={() => router.back()} variant="outline">
                 <Trans>Cancel</Trans>
@@ -348,6 +343,8 @@ export default function AddWordScreen() {
               >
                 {addWordMutation.isPending ? (
                   <ActivityIndicator color="white" size="small" />
+                ) : createMultiple ? (
+                  <Trans>Save & add another</Trans>
                 ) : (
                   <Trans>Save</Trans>
                 )}
