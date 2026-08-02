@@ -35,8 +35,8 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
 
   const confirmDelete = () => {
     Alert.alert(
-      t`Delete ${selectedCount} words?`,
-      t`This removes the words along with their flashcards and review history. This can't be undone.`,
+      t`Delete ${selectedCount} entries?`,
+      t`This removes the entries along with their flashcards and review history. This can't be undone.`,
       [
         { text: t`Cancel`, style: "cancel" },
         {
@@ -49,10 +49,10 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
               Haptics.notificationAsync(
                 Haptics.NotificationFeedbackType.Success
               );
-              toast.success(t`${deletedIds.length} words deleted`);
+              toast.success(t`${deletedIds.length} entries deleted`);
               exitSelectionMode();
             } catch {
-              toast.error(t`Failed to delete words`);
+              toast.error(t`Failed to delete entries`);
             }
           },
         },
@@ -120,7 +120,7 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
 
         {selectedCount === 0 && (
           <Text className="mt-2 text-center text-muted-foreground text-xs">
-            <Trans>Tap words to select them</Trans>
+            <Trans>Tap entries to select them</Trans>
           </Text>
         )}
       </Animated.View>

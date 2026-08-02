@@ -103,7 +103,7 @@ const Index = () => {
                 {/* Actions */}
                 <div className="flex items-center justify-between gap-2">
                   <Button
-                    className={cn("h-9 px-3", selectionMode && "text-primary")}
+                    className="h-9 px-3"
                     disabled={selectionMode}
                     onClick={enterSelectionMode}
                     size="sm"

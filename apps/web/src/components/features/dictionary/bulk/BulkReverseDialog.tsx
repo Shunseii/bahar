@@ -64,8 +64,8 @@ export const BulkReverseDialog: FC<BulkReverseDialogProps> = ({
 
       toast.success(
         mode === "enable"
-          ? t`Reverse cards enabled for ${changed} words`
-          : t`Reverse cards removed from ${changed} words`
+          ? t`Reverse cards enabled for ${changed} entries`
+          : t`Reverse cards removed from ${changed} entries`
       );
       close();
       onDone();
@@ -80,16 +80,16 @@ export const BulkReverseDialog: FC<BulkReverseDialogProps> = ({
       label: t`Enable for all`,
       description:
         withoutReverse === undefined
-          ? t`Creates a reverse card for the selected words that don't have one.`
-          : t`Creates a reverse card for the ${withoutReverse} selected words that don't have one. Words that already have one are untouched.`,
+          ? t`Creates a reverse card for the selected entries that don't have one.`
+          : t`Creates a reverse card for the ${withoutReverse} selected entries that don't have one. Entries that already have one are untouched.`,
     },
     {
       value: "disable" as const,
       label: t`Disable for all`,
       description:
         withReverse === undefined
-          ? t`Deletes the reverse card of the selected words that have one, along with its review history.`
-          : t`Deletes the reverse card of the ${withReverse} selected words that have one, along with its review history.`,
+          ? t`Deletes the reverse card of the selected entries that have one, along with its review history.`
+          : t`Deletes the reverse card of the ${withReverse} selected entries that have one, along with its review history.`,
     },
   ];
 
@@ -103,15 +103,15 @@ export const BulkReverseDialog: FC<BulkReverseDialogProps> = ({
           <DialogTitle className="flex items-center gap-2">
             <Repeat className="h-4 w-4 text-primary" />
             <Plural
-              one="Reverse cards for # word"
-              other="Reverse cards for # words"
+              one="Reverse cards for # entry"
+              other="Reverse cards for # entries"
               value={ids.length}
             />
           </DialogTitle>
           <DialogDescription>
             <Trans>
               A reverse card asks English → Arabic. Reverse cards exist per
-              word, so this only changes the words that need it.
+              entry, so this only changes the entries that need it.
             </Trans>
           </DialogDescription>
         </DialogHeader>
@@ -173,8 +173,8 @@ export const BulkReverseDialog: FC<BulkReverseDialogProps> = ({
           >
             {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
             <Plural
-              one="Apply to # word"
-              other="Apply to # words"
+              one="Apply to # entry"
+              other="Apply to # entries"
               value={ids.length}
             />
           </Button>

@@ -76,8 +76,8 @@ export const BulkReverseSheet = forwardRef<
 
       toast.success(
         mode === "enable"
-          ? t`Reverse cards enabled for ${changed} words`
-          : t`Reverse cards removed from ${changed} words`
+          ? t`Reverse cards enabled for ${changed} entries`
+          : t`Reverse cards removed from ${changed} entries`
       );
       sheetRef.current?.dismiss();
       onDone();
@@ -104,16 +104,16 @@ export const BulkReverseSheet = forwardRef<
       label: t`Enable for all`,
       description:
         withoutReverse === undefined
-          ? t`Creates a reverse card for the selected words that don't have one.`
-          : t`Creates a reverse card for the ${withoutReverse} selected words that don't have one. Words that already have one are untouched.`,
+          ? t`Creates a reverse card for the selected entries that don't have one.`
+          : t`Creates a reverse card for the ${withoutReverse} selected entries that don't have one. Entries that already have one are untouched.`,
     },
     {
       value: "disable" as const,
       label: t`Disable for all`,
       description:
         withReverse === undefined
-          ? t`Deletes the reverse card of the selected words that have one, along with its review history.`
-          : t`Deletes the reverse card of the ${withReverse} selected words that have one, along with its review history.`,
+          ? t`Deletes the reverse card of the selected entries that have one, along with its review history.`
+          : t`Deletes the reverse card of the ${withReverse} selected entries that have one, along with its review history.`,
     },
   ];
 
@@ -137,8 +137,8 @@ export const BulkReverseSheet = forwardRef<
             </Text>
             <Text className="text-muted-foreground text-sm">
               <Plural
-                one="# word selected"
-                other="# words selected"
+                one="# entry selected"
+                other="# entries selected"
                 value={ids.length}
               />
             </Text>
@@ -208,8 +208,8 @@ export const BulkReverseSheet = forwardRef<
               )}
             >
               <Plural
-                one="Apply to # word"
-                other="Apply to # words"
+                one="Apply to # entry"
+                other="Apply to # entries"
                 value={ids.length}
               />
             </Text>

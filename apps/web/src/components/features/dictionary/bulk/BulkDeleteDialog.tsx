@@ -42,11 +42,11 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
     try {
       const deletedIds = await deleteEntries(ids);
 
-      toast.success(t`${deletedIds.length} words deleted`);
+      toast.success(t`${deletedIds.length} entries deleted`);
       onOpenChange(false);
       onDone();
     } catch {
-      toast.error(t`Failed to delete words`);
+      toast.error(t`Failed to delete entries`);
     }
   };
 
@@ -57,14 +57,14 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
           <DialogTitle className="flex items-center gap-2">
             <Trash2 className="h-4 w-4 text-destructive" />
             <Plural
-              one="Delete # word?"
-              other="Delete # words?"
+              one="Delete # entry?"
+              other="Delete # entries?"
               value={ids.length}
             />
           </DialogTitle>
           <DialogDescription>
             <Trans>
-              This removes the words from your dictionary along with their
+              This removes the entries from your dictionary along with their
               flashcards and review history. This can't be undone.
             </Trans>
           </DialogDescription>
@@ -73,7 +73,7 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-muted-foreground text-xs">
             <BookOpen className="h-3.5 w-3.5" />
-            <Plural one="# word" other="# words" value={ids.length} />
+            <Plural one="# entry" other="# entries" value={ids.length} />
           </span>
           {flashcardCount !== undefined && (
             <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-muted-foreground text-xs">
@@ -98,8 +98,8 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
           >
             {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
             <Plural
-              one="Delete # word"
-              other="Delete # words"
+              one="Delete # entry"
+              other="Delete # entries"
               value={ids.length}
             />
           </Button>

@@ -88,8 +88,8 @@ export const BulkTagsDialog: FC<BulkTagsDialogProps> = ({
 
       toast.success(
         action === "add"
-          ? t`Tags added to ${changed} words`
-          : t`Tags removed from ${changed} words`
+          ? t`Tags added to ${changed} entries`
+          : t`Tags removed from ${changed} entries`
       );
       close();
       onDone();
@@ -116,14 +116,14 @@ export const BulkTagsDialog: FC<BulkTagsDialogProps> = ({
             />
             {action === "add" ? (
               <Plural
-                one="Add tags to # word"
-                other="Add tags to # words"
+                one="Add tags to # entry"
+                other="Add tags to # entries"
                 value={ids.length}
               />
             ) : (
               <Plural
-                one="Remove tags from # word"
-                other="Remove tags from # words"
+                one="Remove tags from # entry"
+                other="Remove tags from # entries"
                 value={ids.length}
               />
             )}
@@ -131,13 +131,13 @@ export const BulkTagsDialog: FC<BulkTagsDialogProps> = ({
           <DialogDescription>
             {action === "add" ? (
               <Trans>
-                Tags are added to every selected word. Tags they already have
+                Tags are added to every selected entry. Tags they already have
                 are left alone.
               </Trans>
             ) : (
               <Trans>
-                Only tags found on the selected words are listed. Words without
-                a tag are left unchanged.
+                Only tags found on the selected entries are listed. Entries
+                without a tag are left unchanged.
               </Trans>
             )}
           </DialogDescription>
@@ -188,7 +188,7 @@ export const BulkTagsDialog: FC<BulkTagsDialogProps> = ({
                 {action === "add" ? (
                   <Trans>No tags yet. Type to create one.</Trans>
                 ) : (
-                  <Trans>The selected words have no tags.</Trans>
+                  <Trans>The selected entries have no tags.</Trans>
                 )}
               </p>
             )}
@@ -235,7 +235,11 @@ export const BulkTagsDialog: FC<BulkTagsDialogProps> = ({
                       <span className="flex-1">{tag}</span>
                       <span className="text-muted-foreground text-xs">
                         {action === "add" ? (
-                          <Plural one="# word" other="# words" value={count} />
+                          <Plural
+                            one="# entry"
+                            other="# entries"
+                            value={count}
+                          />
                         ) : (
                           <Trans>
                             on {count} of {ids.length}

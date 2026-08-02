@@ -119,8 +119,8 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
 
         toast.success(
           action === "add"
-            ? t`Tags added to ${changed} words`
-            : t`Tags removed from ${changed} words`
+            ? t`Tags added to ${changed} entries`
+            : t`Tags removed from ${changed} entries`
         );
         sheetRef.current?.dismiss();
         onDone();
@@ -222,8 +222,8 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
               </Text>
               <Text className="text-muted-foreground text-sm">
                 <Plural
-                  one="# word selected"
-                  other="# words selected"
+                  one="# entry selected"
+                  other="# entries selected"
                   value={ids.length}
                 />
               </Text>
@@ -277,7 +277,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
                 placeholder={
                   action === "add"
                     ? t`Search or create a tag`
-                    : t`Filter tags on these words`
+                    : t`Filter tags on these entries`
                 }
                 placeholderTextColor={colors.mutedForeground}
                 value={filter}
@@ -288,7 +288,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
               {action === "add" ? (
                 <Trans>Your tags</Trans>
               ) : (
-                <Trans>Tags on selected words</Trans>
+                <Trans>Tags on selected entries</Trans>
               )}
             </Text>
 
@@ -315,7 +315,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
                 {action === "add" ? (
                   <Trans>No tags yet. Type to create one.</Trans>
                 ) : (
-                  <Trans>The selected words have no tags.</Trans>
+                  <Trans>The selected entries have no tags.</Trans>
                 )}
               </Text>
             )}
@@ -338,7 +338,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
                 <Text className="flex-1 text-foreground">{tag}</Text>
                 <Text className="text-muted-foreground text-xs">
                   {action === "add" ? (
-                    <Plural one="# word" other="# words" value={count} />
+                    <Plural one="# entry" other="# entries" value={count} />
                   ) : (
                     <Trans>
                       on {count} of {ids.length}
