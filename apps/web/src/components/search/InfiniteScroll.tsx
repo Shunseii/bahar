@@ -29,13 +29,18 @@ import { AnimatePresence, motion } from "motion/react";
 import {
   type FC,
   type KeyboardEvent,
+  type MouseEvent,
   memo,
   type ReactNode,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
-import { useBulkSelection } from "@/components/features/dictionary/bulk/state";
+import {
+  useBulkSelection,
+  usePublishAllMatchingIds,
+} from "@/components/features/dictionary/bulk/state";
 import { useInfiniteScroll } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
@@ -691,7 +696,7 @@ interface WordCardContentProps {
   onNavigateEdit: (id: string) => void;
   selectionMode: boolean;
   isSelected: boolean;
-  onToggleSelected: (id: string) => void;
+  onToggleSelected: (options: { id: string; extendRange: boolean }) => void;
 }
 
 const WordCardContent: FC<WordCardContentProps> = memo(
@@ -712,9 +717,12 @@ const WordCardContent: FC<WordCardContentProps> = memo(
       onNavigateEdit(hit.id!);
     }, [hit.id, onNavigateEdit]);
 
-    const handleToggleSelected = useCallback(() => {
-      onToggleSelected(hit.id!);
-    }, [hit.id, onToggleSelected]);
+    const handleToggleSelected = useCallback(
+      (extendRange: boolean) => {
+        onToggleSelected({ id: hit.id!, extendRange });
+      },
+      [hit.id, onToggleSelected]
+    );
 
     const document = hit.document;
 
@@ -723,11 +731,13 @@ const WordCardContent: FC<WordCardContentProps> = memo(
     const selectionProps = selectionMode
       ? {
           "aria-pressed": isSelected,
-          onClick: handleToggleSelected,
+          onClick: (event: MouseEvent<HTMLDivElement>) => {
+            handleToggleSelected(event.shiftKey);
+          },
           onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
-              handleToggleSelected();
+              handleToggleSelected(event.shiftKey);
             }
           },
           role: "button" as const,
@@ -749,25 +759,27 @@ const WordCardContent: FC<WordCardContentProps> = memo(
         )}
         {...selectionProps}
       >
-        <CardContent className="flex flex-col gap-y-2">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start gap-3">
-              {selectionMode && (
-                // Presentational only: the card owns the click and announces the
-                // state through aria-pressed, so the checkbox is controlled with
-                // no handler of its own and stays out of the tab order.
-                <Checkbox
-                  aria-hidden
-                  checked={isSelected}
-                  className="mt-3"
-                  tabIndex={-1}
-                />
-              )}
+        {selectionMode && (
+          // Its own gutter rather than inline with the word: an inline checkbox
+          // shifts the word but not the translation underneath it, so the two
+          // stop lining up.
+          <div className="absolute top-6 ltr:left-4 rtl:right-4">
+            {/* Presentational only -- the card owns the click and announces the
+                state through aria-pressed. */}
+            <Checkbox aria-hidden checked={isSelected} tabIndex={-1} />
+          </div>
+        )}
 
-              <h2 className="font-semibold text-3xl transition-colors duration-200 sm:text-3xl">
-                <Highlight text={document.word} />
-              </h2>
-            </div>
+        <CardContent
+          className={cn(
+            "flex flex-col gap-y-2",
+            selectionMode && "ltr:pl-12 rtl:pr-12"
+          )}
+        >
+          <div className="flex items-start justify-between">
+            <h2 className="font-semibold text-3xl transition-colors duration-200 sm:text-3xl">
+              <Highlight text={document.word} />
+            </h2>
 
             {!selectionMode && (
               <div className="flex items-center gap-1">
@@ -837,15 +849,42 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
     results: { hits } = {},
     showMore,
     hasMore,
+    allMatchingIds,
   } = useInfiniteScroll({
     term: searchQuery,
     filters: { tags, types },
     sort: sort === "difficulty" && isFreeUser ? undefined : sort,
   });
+  usePublishAllMatchingIds(allMatchingIds);
+
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
   const expandedIds = useSet<string>();
-  const { selectionMode, selectedIds, toggle } = useBulkSelection();
+  const { selectionMode, selectedIds, toggle, addRange } = useBulkSelection();
+  const rangeAnchorRef = useRef<string | null>(null);
+
+  const handleToggleSelected = useCallback(
+    ({ id, extendRange }: { id: string; extendRange: boolean }) => {
+      const anchor = rangeAnchorRef.current;
+      const ids = (hits ?? [])
+        .map((h) => h.id)
+        .filter((hitId): hitId is string => Boolean(hitId));
+      const anchorIndex = anchor ? ids.indexOf(anchor) : -1;
+      const targetIndex = ids.indexOf(id);
+
+      // Shift-click fills in from the last card the user picked, the way a
+      // desktop list is expected to behave.
+      if (extendRange && anchorIndex !== -1 && targetIndex !== -1) {
+        const [start, end] = [anchorIndex, targetIndex].sort((a, b) => a - b);
+        addRange(ids.slice(start, end + 1));
+      } else {
+        toggle(id);
+      }
+
+      rangeAnchorRef.current = id;
+    },
+    [hits, toggle, addRange]
+  );
 
   const toggleExpanded = useCallback((id: string) => {
     if (expandedIds.has(id)) {
@@ -937,7 +976,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
               isSelected={selectedIds.has(hit.id!)}
               onNavigateEdit={handleNavigateEdit}
               onToggleExpanded={toggleExpanded}
-              onToggleSelected={toggle}
+              onToggleSelected={handleToggleSelected}
               selectionMode={selectionMode}
             />
           </li>

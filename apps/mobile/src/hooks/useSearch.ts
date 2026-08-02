@@ -66,13 +66,14 @@ export const useSearch = () => {
       params: {
         term?: string;
         offset?: number;
+        limit?: number;
         where?: SearchDictionaryOptions["where"];
         sortBy?: SearchDictionaryOptions["sortBy"];
       } = {},
       language: SearchDictionaryOptions["language"] = "english"
     ) => {
       return searchDictionary(getOramaDb(), params.term ?? "", {
-        limit: SEARCH_RESULTS_PER_PAGE,
+        limit: params.limit ?? SEARCH_RESULTS_PER_PAGE,
         offset: params.offset,
         language,
         where: params.where,
@@ -122,6 +123,7 @@ interface UseInfiniteSearchResult {
   isLoading: boolean;
   totalCount: number;
   elapsedTimeNs: number | null;
+  allMatchingIds: () => string[];
   loadMore: () => void;
   refresh: () => void;
 }
@@ -260,10 +262,48 @@ export const useInfiniteSearch = (
     }
   }, [search, params.term, whereFilter, sortBy, searchQueryLanguage]);
 
+  /**
+   * Every id matching the current term and filters, not just the loaded page --
+   * what "select all" acts on. Run on demand rather than kept in state: the
+   * full id list is only needed the moment the user asks for it.
+   */
+  const allMatchingIds = useCallback(() => {
+    const total = searchResultsMetadata?.count ?? 0;
+    if (total === 0) return [];
+
+    try {
+      const { hits: allHits } = search(
+        {
+          sortBy,
+          term: params.term,
+          where: whereFilter,
+          offset: 0,
+          limit: total,
+        },
+        searchQueryLanguage
+      );
+
+      return allHits.map((hit) => hit.id);
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: { operation: "search.allMatchingIds" },
+      });
+      return [];
+    }
+  }, [
+    search,
+    params.term,
+    whereFilter,
+    sortBy,
+    searchQueryLanguage,
+    searchResultsMetadata?.count,
+  ]);
+
   return {
     hits: hits ?? [],
     hasMore,
     isLoading,
+    allMatchingIds,
     totalCount: searchResultsMetadata?.count ?? 0,
     elapsedTimeNs:
       searchResultsMetadata?.elapsed?.raw !== undefined

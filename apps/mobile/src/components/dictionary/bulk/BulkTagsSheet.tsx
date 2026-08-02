@@ -2,6 +2,8 @@ import { cn } from "@bahar/design-system";
 import {
   BottomSheetBackdrop,
   type BottomSheetBackdropProps,
+  BottomSheetFooter,
+  type BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
@@ -18,6 +20,7 @@ import {
   useState,
 } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -44,6 +47,7 @@ interface BulkTagsSheetProps {
 export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
   ({ ids, onDone }, ref) => {
     const colors = useThemeColors();
+    const insets = useSafeAreaInsets();
     const sheetRef = useRef<BottomSheetModal>(null);
     const [action, setAction] = useState<"add" | "remove">("add");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -141,17 +145,76 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
 
     const isDestructive = action === "remove";
 
+    // Pinned with BottomSheetFooter so the action stays reachable without
+    // scrolling past the whole tag list.
+    const renderFooter = useCallback(
+      (props: BottomSheetFooterProps) => (
+        <BottomSheetFooter {...props}>
+          <View
+            className="border-border border-t bg-card px-5 pt-3"
+            style={{ paddingBottom: insets.bottom + 12 }}
+          >
+            <Pressable
+              className={cn(
+                "h-12 flex-row items-center justify-center gap-2 rounded-xl",
+                isDestructive ? "bg-destructive" : "bg-primary",
+                (selectedTags.length === 0 || isPending) && "opacity-50"
+              )}
+              disabled={selectedTags.length === 0 || isPending}
+              onPress={handleSubmit}
+            >
+              <Text
+                className={cn(
+                  "font-semibold",
+                  isDestructive
+                    ? "text-destructive-foreground"
+                    : "text-primary-foreground"
+                )}
+              >
+                {action === "add" ? (
+                  <Plural
+                    one="Add # tag"
+                    other="Add # tags"
+                    value={selectedTags.length}
+                  />
+                ) : (
+                  <Plural
+                    one="Remove # tag"
+                    other="Remove # tags"
+                    value={selectedTags.length}
+                  />
+                )}
+              </Text>
+            </Pressable>
+          </View>
+        </BottomSheetFooter>
+      ),
+      [
+        action,
+        handleSubmit,
+        insets.bottom,
+        isDestructive,
+        isPending,
+        selectedTags,
+      ]
+    );
+
     return (
       <BottomSheetModal
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: colors.card }}
         enableDynamicSizing={false}
+        footerComponent={renderFooter}
         handleIndicatorStyle={{ backgroundColor: colors.border }}
         onDismiss={reset}
         ref={sheetRef}
         snapPoints={["70%"]}
+        topInset={insets.top}
       >
-        <BottomSheetScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+        <BottomSheetScrollView
+          // Clears the pinned footer so the last tag row isn't stuck behind it.
+          contentContainerStyle={{ paddingBottom: insets.bottom + 96 }}
+        >
           <View className="gap-3 px-5">
             <View>
               <Text className="font-semibold text-foreground text-lg">
@@ -284,41 +347,6 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
                 </Text>
               </Pressable>
             ))}
-          </View>
-
-          <View className="mt-4 px-5">
-            <Pressable
-              className={cn(
-                "h-12 flex-row items-center justify-center gap-2 rounded-xl",
-                isDestructive ? "bg-destructive" : "bg-primary",
-                (selectedTags.length === 0 || isPending) && "opacity-50"
-              )}
-              disabled={selectedTags.length === 0 || isPending}
-              onPress={handleSubmit}
-            >
-              <Text
-                className={cn(
-                  "font-semibold",
-                  isDestructive
-                    ? "text-destructive-foreground"
-                    : "text-primary-foreground"
-                )}
-              >
-                {action === "add" ? (
-                  <Plural
-                    one="Add # tag"
-                    other="Add # tags"
-                    value={selectedTags.length}
-                  />
-                ) : (
-                  <Plural
-                    one="Remove # tag"
-                    other="Remove # tags"
-                    value={selectedTags.length}
-                  />
-                )}
-              </Text>
-            </Pressable>
           </View>
         </BottomSheetScrollView>
       </BottomSheetModal>

@@ -4,6 +4,7 @@ import * as Haptics from "expo-haptics";
 import { Repeat, TagIcon, Trash2 } from "lucide-react-native";
 import { type FC, useRef } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
+import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { toast } from "sonner-native";
 import { useBulkDictionaryActions } from "@/hooks/useBulkDictionaryActions";
 import { useBulkSelection } from "@/lib/store/selection";
@@ -85,8 +86,10 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
 
   return (
     <>
-      <View
+      <Animated.View
         className="absolute right-4 left-4"
+        entering={FadeInDown.duration(200)}
+        exiting={FadeOutDown.duration(150)}
         style={{ bottom: bottomInset + 12 }}
       >
         <View
@@ -120,7 +123,7 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
             <Trans>Tap words to select them</Trans>
           </Text>
         )}
-      </View>
+      </Animated.View>
 
       <BulkTagsSheet ids={ids} onDone={clear} ref={tagsSheetRef} />
       <BulkReverseSheet ids={ids} onDone={clear} ref={reverseSheetRef} />

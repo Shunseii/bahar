@@ -1,5 +1,5 @@
-import { atom, useAtom, useAtomValue } from "jotai";
-import { useCallback } from "react";
+import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useCallback, useEffect } from "react";
 
 /**
  * Whether the dictionary list is in bulk-selection mode. Entering it swaps the
@@ -14,9 +14,28 @@ const selectionModeAtom = atom(false);
  */
 const selectedIdsAtom = atom<ReadonlySet<string>>(new Set<string>());
 
+/**
+ * Resolver for every id matching the current search, published by the list
+ * (which owns the query) for the selection bar (which doesn't). "Select all"
+ * has to mean all results, not just the pages infinite scroll happens to have
+ * loaded, and the two components sit in different subtrees.
+ */
+const allMatchingIdsAtom = atom<(() => string[]) | null>(null);
+
+export const usePublishAllMatchingIds = (resolver: () => string[]) => {
+  const setResolver = useSetAtom(allMatchingIdsAtom);
+
+  useEffect(() => {
+    setResolver(() => resolver);
+
+    return () => setResolver(null);
+  }, [resolver, setResolver]);
+};
+
 export const useBulkSelection = () => {
   const [selectionMode, setSelectionMode] = useAtom(selectionModeAtom);
   const [selectedIds, setSelectedIds] = useAtom(selectedIdsAtom);
+  const resolveAllMatchingIds = useAtomValue(allMatchingIdsAtom);
 
   const exitSelectionMode = useCallback(() => {
     setSelectionMode(false);
@@ -42,9 +61,30 @@ export const useBulkSelection = () => {
     [setSelectedIds]
   );
 
-  const selectAll = useCallback(
+  /**
+   * Takes every word matching the current search and filters, not just the ones
+   * infinite scroll has loaded -- the count on screen is what the user is
+   * reading, so that is what "select all" has to mean.
+   */
+  const selectAll = useCallback(() => {
+    setSelectedIds(new Set(resolveAllMatchingIds?.() ?? []));
+  }, [resolveAllMatchingIds, setSelectedIds]);
+
+  /**
+   * Adds a run of ids without unselecting anything, for shift-click range
+   * selection: extending a range shouldn't drop what's already picked.
+   */
+  const addRange = useCallback(
     (ids: string[]) => {
-      setSelectedIds(new Set(ids));
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+
+        for (const id of ids) {
+          next.add(id);
+        }
+
+        return next;
+      });
     },
     [setSelectedIds]
   );
@@ -60,6 +100,7 @@ export const useBulkSelection = () => {
     enterSelectionMode,
     exitSelectionMode,
     toggle,
+    addRange,
     selectAll,
     clear,
   };

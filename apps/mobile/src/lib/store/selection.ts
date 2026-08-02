@@ -63,26 +63,20 @@ export const useBulkSelection = () => {
   );
 
   /**
-   * Selects an id without unselecting it if it's already in the selection --
-   * what a drag across the list needs, where crossing a row twice (or wobbling
-   * over its edge) must not flip it back off. Reports whether it added anything
-   * so the caller can tie feedback to real changes.
+   * Replaces the whole selection. Drag-select computes each frame's selection
+   * from the snapshot it took when the drag began, so it needs to set the
+   * result outright rather than nudge the current one.
    */
-  const add = useCallback(
-    (id: string) => {
-      let added = false;
-
-      setSelectedIds((prev) => {
-        const next = addId(prev, id);
-        added = next !== prev;
-
-        return next;
-      });
-
-      return added;
+  const setSelection = useCallback(
+    (ids: ReadonlySet<string>) => {
+      setSelectedIds(ids);
     },
     [setSelectedIds]
   );
+
+  const enterSelectionMode = useCallback(() => {
+    setSelectionMode(true);
+  }, [setSelectionMode]);
 
   const selectAll = useCallback(
     (ids: string[]) => {
@@ -95,22 +89,14 @@ export const useBulkSelection = () => {
     setSelectedIds(new Set());
   }, [setSelectedIds]);
 
-  const startSelection = useCallback(
-    (id: string) => {
-      setSelectionMode(true);
-      setSelectedIds((prev) => addId(prev, id));
-    },
-    [setSelectionMode, setSelectedIds]
-  );
-
   return {
     selectionMode,
     selectedIds,
     selectedCount: selectedIds.size,
-    startSelection,
+    enterSelectionMode,
     exitSelectionMode,
     toggle,
-    add,
+    setSelection,
     selectAll,
     clear,
   };

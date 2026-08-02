@@ -370,12 +370,16 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
         >
           <View className="flex-row items-start justify-between">
             {selectionMode && (
-              <View className="mt-1 mr-3">
+              <Animated.View
+                className="mt-1 mr-3"
+                entering={FadeIn.duration(160)}
+                exiting={FadeOut.duration(120)}
+              >
                 <Checkbox
                   checked={isSelected}
                   onCheckedChange={() => onToggleSelect?.(entry.id)}
                 />
-              </View>
+              </Animated.View>
             )}
 
             <View className="mr-2 flex-1">

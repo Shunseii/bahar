@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useDeferredValue } from "react";
-import { BulkSelectionToolbar } from "@/components/features/dictionary/bulk/BulkSelectionToolbar";
+import { BulkSelectionBar } from "@/components/features/dictionary/bulk/BulkSelectionBar";
 import { useBulkSelection } from "@/components/features/dictionary/bulk/state";
 import { DictionaryFilters } from "@/components/features/dictionary/filters/DictionaryFilters";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
@@ -61,14 +61,7 @@ const Index = () => {
         <motion.div variants={itemVariants}>
           <Card className="relative overflow-hidden">
             <div className="relative px-4 pt-5 pb-4 sm:px-6 sm:pt-6">
-              {selectionMode && <BulkSelectionToolbar />}
-
-              <div
-                className={cn(
-                  "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between",
-                  selectionMode && "hidden"
-                )}
-              >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/20">
                     <BookOpen className="h-5 w-5 text-primary" />
@@ -110,7 +103,8 @@ const Index = () => {
                 {/* Actions */}
                 <div className="flex items-center justify-between gap-2">
                   <Button
-                    className="h-9 px-3"
+                    className={cn("h-9 px-3", selectionMode && "text-primary")}
+                    disabled={selectionMode}
                     onClick={enterSelectionMode}
                     size="sm"
                     variant="outline"
@@ -177,6 +171,8 @@ const Index = () => {
       </div>
 
       <InfiniteScroll searchQuery={deferredSearchQuery} />
+
+      <BulkSelectionBar />
 
       {/* Scroll to top button */}
       <motion.div

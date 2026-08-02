@@ -17,6 +17,7 @@ import {
   useState,
 } from "react";
 import { Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { useBulkDictionaryActions } from "@/hooks/useBulkDictionaryActions";
 import { flashcardsTable } from "@/lib/db/operations";
@@ -42,6 +43,7 @@ export const BulkReverseSheet = forwardRef<
   BulkReverseSheetProps
 >(({ ids, onDone }, ref) => {
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
   const [mode, setMode] = useState<"enable" | "disable">("enable");
   const { setReverse, isPending } = useBulkDictionaryActions();
@@ -122,9 +124,13 @@ export const BulkReverseSheet = forwardRef<
       enableDynamicSizing
       handleIndicatorStyle={{ backgroundColor: colors.border }}
       ref={sheetRef}
+      topInset={insets.top}
     >
       <BottomSheetView>
-        <View className="gap-3 px-5 pb-8">
+        <View
+          className="gap-3 px-5"
+          style={{ paddingBottom: insets.bottom + 16 }}
+        >
           <View>
             <Text className="font-semibold text-foreground text-lg">
               <Trans>Reverse flashcards</Trans>

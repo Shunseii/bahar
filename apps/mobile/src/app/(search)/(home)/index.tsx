@@ -212,7 +212,7 @@ export default function HomeScreen() {
   usePreloadDrawerScreens(state === "ready");
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
-  const [loadedIds, setLoadedIds] = useState<string[]>([]);
+  const allMatchingIdsRef = useRef<(() => string[]) | null>(null);
   const selectionMode = useSelectionMode();
 
   const { data: counts, isPending } = useQuery({
@@ -238,16 +238,6 @@ export default function HomeScreen() {
 
   const handleElapsedTimeChange = useCallback((elapsed: number | null) => {
     setElapsedTimeNs(elapsed);
-  }, []);
-
-  const handleLoadedIdsChange = useCallback((ids: string[]) => {
-    // Keep the previous array when the ids match, so an equal-but-new list
-    // can't kick off another render pass.
-    setLoadedIds((prev) =>
-      prev.length === ids.length && prev.every((id, i) => id === ids[i])
-        ? prev
-        : ids
-    );
   }, []);
 
   const handleReviewPress = useCallback(() => {
@@ -313,13 +303,18 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {selectionMode && <BulkSelectionHeader loadedIds={loadedIds} />}
+      {selectionMode && (
+        <BulkSelectionHeader
+          allMatchingIdsRef={allMatchingIdsRef}
+          totalCount={totalResults ?? 0}
+        />
+      )}
 
       <DictionaryList
+        allMatchingIdsRef={allMatchingIdsRef}
         bottomInset={selectionMode ? insets.bottom + 86 : insets.bottom}
         ListHeaderComponent={listHeader}
         onElapsedTimeChange={handleElapsedTimeChange}
-        onLoadedIdsChange={handleLoadedIdsChange}
         onTotalCountChange={handleTotalCountChange}
         searchQuery={deferredSearchQuery}
         sort={sortOption}
