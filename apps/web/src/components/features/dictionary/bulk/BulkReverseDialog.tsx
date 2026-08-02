@@ -122,13 +122,17 @@ export const BulkReverseDialog: FC<BulkReverseDialogProps> = ({
           value={mode}
         >
           {options.map((option) => (
-            <div
+            // The whole card is the label, so clicking anywhere in it picks the
+            // option -- a 3-line card whose only hit target is the radio and its
+            // title reads as broken. Keyboard support still comes from the radio.
+            <Label
               className={cn(
-                "flex items-start gap-3 rounded-lg border p-3",
+                "flex cursor-pointer items-start gap-3 rounded-lg border p-3 font-normal",
                 mode === option.value
                   ? "border-primary bg-primary/5"
                   : "border-border"
               )}
+              htmlFor={`reverse-${option.value}`}
               key={option.value}
             >
               <RadioGroupItem
@@ -137,17 +141,12 @@ export const BulkReverseDialog: FC<BulkReverseDialogProps> = ({
                 value={option.value}
               />
               <div className="flex flex-col gap-1">
-                <Label
-                  className="font-medium"
-                  htmlFor={`reverse-${option.value}`}
-                >
-                  {option.label}
-                </Label>
+                <span className="font-medium">{option.label}</span>
                 <p className="text-muted-foreground text-sm">
                   {option.description}
                 </p>
               </div>
-            </div>
+            </Label>
           ))}
         </RadioGroup>
 
