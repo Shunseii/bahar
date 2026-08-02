@@ -241,7 +241,13 @@ export default function HomeScreen() {
   }, []);
 
   const handleLoadedIdsChange = useCallback((ids: string[]) => {
-    setLoadedIds(ids);
+    // Keep the previous array when the ids match, so an equal-but-new list
+    // can't kick off another render pass.
+    setLoadedIds((prev) =>
+      prev.length === ids.length && prev.every((id, i) => id === ids[i])
+        ? prev
+        : ids
+    );
   }, []);
 
   const handleReviewPress = useCallback(() => {

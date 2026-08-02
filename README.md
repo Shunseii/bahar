@@ -17,12 +17,12 @@ Bahar is an Arabic language learning application built as a monorepo using pnpm 
 ## Getting Started
 
 1. Get the environment variables from Infisical (see [Environment variables](#environment-variables-infisical) below)
-2. Run `pnpm run dev` and `make local-db`
+2. Run `make dev-backend` (local DB + Cloudflare Tunnel, in parallel — needs the `op` CLI signed in for the tunnel token) in one terminal, then `pnpm run dev` in another. The tunnel isn't optional: `APP_DOMAIN` (api), `VITE_API_BASE_URL` (web), and `EXPO_PUBLIC_API_BASE_URL` (mobile) point at the tunnel domain, so without it the apps have no reachable API. To run the pieces separately, use `make local-db` and `make tunnel`.
 3. Access the web app at `http://localhost:5173`
 4. Access the API at `http://localhost:3000`
 5. Access the marketing website at `http://localhost:4321`
 6. To run drizzle studio to access the local database, run `pnpm run --filter api drizzle:studio`.
-7. If you need to test payments or SSO providers (GitHub, Apple), set up a Cloudflare Tunnel by reading the instructions [here](./apps/api/README.md#local-development). SSO providers reject `http://localhost` callbacks, so the tunnel is required. When using the tunnel, you must also update `APP_DOMAIN` (api), `VITE_API_BASE_URL` (web), and `EXPO_PUBLIC_API_BASE_URL` (mobile) to the tunnel domain — all three must match or OAuth state cookies won't flow end-to-end.
+7. Tunnel setup (first time, or if `make dev-backend` fails): read the instructions [here](./apps/api/README.md#local-development). `APP_DOMAIN` (api), `VITE_API_BASE_URL` (web), and `EXPO_PUBLIC_API_BASE_URL` (mobile) must all name the same tunnel domain or OAuth state cookies won't flow end-to-end. Payments and SSO providers (GitHub, Apple) additionally depend on it, since they reject `http://localhost` callbacks.
 8. Before you can sign up as a real user, run `pnpm run --filter api drizzle:migrate` to apply the central schema, then register the per-user-db migrations with `apps/api/scripts/register-schema-migrations.ts`. To skip the sign-up flow entirely and get a working admin account, use `apps/api/scripts/create-admin-user.ts <your-email>` — see [`apps/api/scripts/README.md`](./apps/api/scripts/README.md) for exact commands.
 
 > **Tip:** if you're using Claude Code, the whole flow above (env vars, local DB/tunnel, running the app, migration registry, admin account) is automated by the `setup-local-env` skill in [`.claude/skills/setup-local-env`](./.claude/skills/setup-local-env/SKILL.md).
