@@ -27,6 +27,12 @@ import { useThemeColors } from "@/lib/theme";
 import { HighlightText } from "./HighlightText";
 import { ReviewHistory } from "./ReviewHistory";
 
+/**
+ * Width of the card's trailing slot: share + edit + chevron. Fixed so the
+ * checkbox that replaces them in selection mode occupies exactly the same space.
+ */
+const ACTIONS_SLOT_WIDTH = 86;
+
 interface DictionaryEntryCardProps {
   entry: SelectDictionaryEntry;
   isExpanded: boolean;
@@ -369,19 +375,6 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
           )}
         >
           <View className="flex-row items-start justify-between">
-            {selectionMode && (
-              <Animated.View
-                className="mt-1 mr-3"
-                entering={FadeIn.duration(160)}
-                exiting={FadeOut.duration(120)}
-              >
-                <Checkbox
-                  checked={isSelected}
-                  onCheckedChange={() => onToggleSelect?.(entry.id)}
-                />
-              </Animated.View>
-            )}
-
             <View className="mr-2 flex-1">
               <HighlightText
                 className="font-semibold text-2xl text-foreground"
@@ -396,10 +389,29 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
               />
             </View>
 
-            {/* Actions */}
+            {/* Selecting swaps the row actions for a checkbox in the same
+                slot, at the same width, so entering and leaving selection mode
+                doesn't shove the word and translation sideways. */}
+            {selectionMode && (
+              <Animated.View
+                className="mt-1 items-end"
+                entering={FadeIn.duration(160)}
+                exiting={FadeOut.duration(120)}
+                style={{ width: ACTIONS_SLOT_WIDTH }}
+              >
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={() => onToggleSelect?.(entry.id)}
+                />
+              </Animated.View>
+            )}
+
             <View
-              className="flex-row items-center"
-              style={{ display: selectionMode ? "none" : "flex" }}
+              className="flex-row items-center justify-end"
+              style={{
+                display: selectionMode ? "none" : "flex",
+                width: ACTIONS_SLOT_WIDTH,
+              }}
             >
               <ShareButton translation={entry.translation} word={entry.word} />
               <Pressable

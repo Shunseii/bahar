@@ -177,6 +177,9 @@ export const DictionaryList: FC<DictionaryListProps> = ({
 
   const { gesture, registerRow, registerList } = useDragSelect({
     orderedIds,
+    // The caller pads the list by the action bar's height while selecting; the
+    // same padding is what auto-scroll has to stay clear of.
+    bottomInset,
     getSelectedIds: () => selectedIdsRef.current,
     setSelection,
     enterSelectionMode,

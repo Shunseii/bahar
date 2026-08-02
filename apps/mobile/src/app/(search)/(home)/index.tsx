@@ -1,8 +1,14 @@
+import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useAtomValue } from "jotai";
-import { BookOpen, GraduationCap, PlusIcon } from "lucide-react-native";
+import {
+  BookOpen,
+  GraduationCap,
+  ListChecks,
+  PlusIcon,
+} from "lucide-react-native";
 import {
   useCallback,
   useDeferredValue,
@@ -11,7 +17,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, Animated, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Animated,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DictionaryList } from "@/components/dictionary";
 import { BulkActionBar } from "@/components/dictionary/bulk/BulkActionBar";
@@ -32,7 +44,7 @@ import {
   selectedTypesAtom,
   sortOptionAtom,
 } from "@/lib/store/filters";
-import { useSelectionMode } from "@/lib/store/selection";
+import { useBulkSelection, useSelectionMode } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
 
@@ -94,6 +106,7 @@ const HeaderCard = ({
   isPending,
   onReviewPress,
   onAddPress,
+  onSelectPress,
 }: {
   totalResults: number | null;
   elapsedTimeNs: number | null;
@@ -102,6 +115,7 @@ const HeaderCard = ({
   isPending: boolean;
   onReviewPress: () => void;
   onAddPress: () => void;
+  onSelectPress: () => void;
 }) => {
   const colors = useThemeColors();
   const { formatNumber } = useFormatNumber();
@@ -155,6 +169,17 @@ const HeaderCard = ({
 
           <View className="flex-1" />
 
+          {/* Long-pressing a card also starts a selection, but nothing on screen
+              says so -- this is the discoverable way in. */}
+          <Pressable
+            accessibilityLabel={t`Select entries`}
+            className="mr-2 rounded-md border border-input p-2 active:bg-primary/10"
+            hitSlop={6}
+            onPress={onSelectPress}
+          >
+            <ListChecks color={colors.mutedForeground} size={16} />
+          </Pressable>
+
           <View className="relative">
             <Button
               disabled={isPending}
@@ -206,6 +231,7 @@ export default function HomeScreen() {
   const selectedTags = useAtomValue(selectedTagsAtom);
   const selectedTypes = useAtomValue(selectedTypesAtom);
   const sortOption = useAtomValue(sortOptionAtom);
+  const { enterSelectionMode } = useBulkSelection();
   const { isAnonymous } = useUserPlan();
   const { state, error } = useAppInit();
 
@@ -263,6 +289,7 @@ export default function HomeScreen() {
           isPending={isPending}
           onAddPress={handleAddPress}
           onReviewPress={handleReviewPress}
+          onSelectPress={enterSelectionMode}
           regularCount={regularCount}
           totalResults={totalResults}
         />
@@ -275,6 +302,7 @@ export default function HomeScreen() {
       regularCount,
       backlogCount,
       isPending,
+      enterSelectionMode,
     ]
   );
 

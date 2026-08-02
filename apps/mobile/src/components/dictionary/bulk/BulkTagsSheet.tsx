@@ -143,6 +143,9 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
       []
     );
 
+    // Only the action itself is destructive-styled. Tinting the pills and
+    // checkboxes red as well made picking which tags to remove look like an
+    // error state rather than a choice.
     const isDestructive = action === "remove";
 
     // Pinned with BottomSheetFooter so the action stays reachable without
@@ -242,27 +245,12 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
               <View className="flex-row flex-wrap gap-2">
                 {selectedTags.map((tag) => (
                   <Pressable
-                    className={cn(
-                      "flex-row items-center gap-1.5 rounded-full px-3 py-1.5",
-                      isDestructive ? "bg-destructive/10" : "bg-primary/10"
-                    )}
+                    className="flex-row items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5"
                     key={tag}
                     onPress={() => toggleTag(tag)}
                   >
-                    <Text
-                      className={cn(
-                        "text-sm",
-                        isDestructive ? "text-destructive" : "text-primary"
-                      )}
-                    >
-                      {tag}
-                    </Text>
-                    <X
-                      color={
-                        isDestructive ? colors.destructive : colors.primary
-                      }
-                      size={14}
-                    />
+                    <Text className="text-primary text-sm">{tag}</Text>
+                    <X color={colors.primary} size={14} />
                   </Pressable>
                 ))}
               </View>
@@ -328,11 +316,6 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
               >
                 <Checkbox
                   checked={selectedTags.includes(tag)}
-                  className={cn(
-                    isDestructive &&
-                      selectedTags.includes(tag) &&
-                      "border-destructive bg-destructive"
-                  )}
                   onCheckedChange={() => toggleTag(tag)}
                 />
                 <Text className="flex-1 text-foreground">{tag}</Text>

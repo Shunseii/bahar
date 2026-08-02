@@ -11,8 +11,12 @@ import { runOnJS } from "react-native-reanimated";
  */
 const LONG_PRESS_DURATION_MS = 300;
 
-/** Distance from the list's edge at which a drag starts auto-scrolling. */
-const AUTO_SCROLL_EDGE = 90;
+/**
+ * How far from the usable edge of the list a drag starts auto-scrolling. Applied
+ * above the floating action bar at the bottom (see bottomInset), so the zone is
+ * somewhere the finger can actually sit.
+ */
+const AUTO_SCROLL_EDGE = 120;
 
 /** Pixels per tick while auto-scrolling, and how often a tick runs. */
 const AUTO_SCROLL_STEP = 12;
@@ -102,6 +106,12 @@ export const applyDragRange = ({
 interface UseDragSelectOptions {
   /** Ids in list order, used to turn an anchor + current row into a range. */
   orderedIds: string[];
+  /**
+   * Space at the bottom of the list covered by something else -- the floating
+   * action bar. Auto-scroll has to start above it, or the trigger zone sits
+   * under the panel where the finger can't usefully reach.
+   */
+  bottomInset?: number;
   getSelectedIds: () => ReadonlySet<string>;
   setSelection: (ids: ReadonlySet<string>) => void;
   enterSelectionMode: () => void;
@@ -127,6 +137,7 @@ interface UseDragSelectOptions {
  */
 export const useDragSelect = ({
   orderedIds,
+  bottomInset = 0,
   getSelectedIds,
   setSelection,
   enterSelectionMode,
@@ -235,7 +246,7 @@ export const useDragSelect = ({
       if (!listRect) return;
 
       const direction =
-        absoluteY > listRect.bottom - AUTO_SCROLL_EDGE
+        absoluteY > listRect.bottom - bottomInset - AUTO_SCROLL_EDGE
           ? 1
           : absoluteY < listRect.top + AUTO_SCROLL_EDGE
             ? -1
@@ -272,7 +283,14 @@ export const useDragSelect = ({
         }
       }, AUTO_SCROLL_INTERVAL_MS);
     },
-    [applyAt, getScrollOffset, measureRows, scrollToOffset, stopAutoScroll]
+    [
+      applyAt,
+      bottomInset,
+      getScrollOffset,
+      measureRows,
+      scrollToOffset,
+      stopAutoScroll,
+    ]
   );
 
   const handleDragStart = useCallback(
