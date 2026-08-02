@@ -1,3 +1,4 @@
+import { cn } from "@bahar/design-system";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -27,8 +28,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DictionaryList } from "@/components/dictionary";
 import { BulkActionBar } from "@/components/dictionary/bulk/BulkActionBar";
-import { BulkSelectionHeader } from "@/components/dictionary/bulk/BulkSelectionHeader";
 import { DictionaryFilters } from "@/components/dictionary/DictionaryFilters";
+import { Divider } from "@/components/flashcards/card";
 import { GuestBanner } from "@/components/GuestBanner";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
@@ -44,7 +45,7 @@ import {
   selectedTypesAtom,
   sortOptionAtom,
 } from "@/lib/store/filters";
-import { useBulkSelection, useSelectionMode } from "@/lib/store/selection";
+import { useBulkSelection } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
 
@@ -107,6 +108,7 @@ const HeaderCard = ({
   onReviewPress,
   onAddPress,
   onSelectPress,
+  isSelecting,
 }: {
   totalResults: number | null;
   elapsedTimeNs: number | null;
@@ -116,6 +118,7 @@ const HeaderCard = ({
   onReviewPress: () => void;
   onAddPress: () => void;
   onSelectPress: () => void;
+  isSelecting: boolean;
 }) => {
   const colors = useThemeColors();
   const { formatNumber } = useFormatNumber();
@@ -162,23 +165,10 @@ const HeaderCard = ({
           </View>
         </View>
 
-        <View className="flex-row items-center gap-2">
+        <View className="flex-row items-center justify-between gap-2">
           <Button Icon={PlusIcon} onPress={onAddPress} variant="outline">
             <Trans>Add word</Trans>
           </Button>
-
-          <View className="flex-1" />
-
-          {/* Long-pressing a card also starts a selection, but nothing on screen
-              says so -- this is the discoverable way in. */}
-          <Pressable
-            accessibilityLabel={t`Select entries`}
-            className="mr-2 rounded-md border border-input p-2 active:bg-primary/10"
-            hitSlop={6}
-            onPress={onSelectPress}
-          >
-            <ListChecks color={colors.mutedForeground} size={16} />
-          </Pressable>
 
           <View className="relative">
             <Button
@@ -214,9 +204,27 @@ const HeaderCard = ({
         </View>
       </View>
 
-      {/* Filters section inside card */}
-      <View className="border-border/30 border-t px-4 pt-3 pb-3">
+      <Divider />
+
+      <View className="flex-row justify-between px-4 py-2">
         <DictionaryFilters />
+
+        <Pressable
+          accessibilityLabel={t`Select entries`}
+          accessibilityRole="button"
+          accessibilityState={{ selected: isSelecting }}
+          className={cn(
+            "rounded-md border p-2 active:bg-primary/10",
+            isSelecting ? "border-primary bg-primary/10" : "border-input"
+          )}
+          hitSlop={6}
+          onPress={onSelectPress}
+        >
+          <ListChecks
+            color={isSelecting ? colors.primary : colors.mutedForeground}
+            size={16}
+          />
+        </Pressable>
       </View>
     </View>
   );
@@ -231,14 +239,14 @@ export default function HomeScreen() {
   const selectedTags = useAtomValue(selectedTagsAtom);
   const selectedTypes = useAtomValue(selectedTypesAtom);
   const sortOption = useAtomValue(sortOptionAtom);
-  const { enterSelectionMode } = useBulkSelection();
+  const { selectionMode, enterSelectionMode, exitSelectionMode } =
+    useBulkSelection();
   const { isAnonymous } = useUserPlan();
   const { state, error } = useAppInit();
 
   usePreloadDrawerScreens(state === "ready");
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
-  const selectionMode = useSelectionMode();
 
   const { data: counts, isPending } = useQuery({
     queryFn: () =>
@@ -287,9 +295,10 @@ export default function HomeScreen() {
           backlogCount={backlogCount}
           elapsedTimeNs={elapsedTimeNs}
           isPending={isPending}
+          isSelecting={selectionMode}
           onAddPress={handleAddPress}
           onReviewPress={handleReviewPress}
-          onSelectPress={enterSelectionMode}
+          onSelectPress={selectionMode ? exitSelectionMode : enterSelectionMode}
           regularCount={regularCount}
           totalResults={totalResults}
         />
@@ -302,7 +311,9 @@ export default function HomeScreen() {
       regularCount,
       backlogCount,
       isPending,
+      selectionMode,
       enterSelectionMode,
+      exitSelectionMode,
     ]
   );
 
@@ -330,8 +341,6 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {selectionMode && <BulkSelectionHeader />}
-
       <DictionaryList
         bottomInset={selectionMode ? insets.bottom + 86 : insets.bottom}
         ListHeaderComponent={listHeader}

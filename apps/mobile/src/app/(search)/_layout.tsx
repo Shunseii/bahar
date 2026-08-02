@@ -41,6 +41,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BulkSelectionHeader } from "@/components/dictionary/bulk/BulkSelectionHeader";
 import StreakChip from "@/components/progress/StreakChip";
 import { ScreenFocusTransition } from "@/components/ScreenFocusTransition";
 import { SyncIndicator } from "@/components/SyncIndicator";
@@ -58,6 +59,7 @@ import {
   store,
   syncCompletedCountAtom,
 } from "@/lib/store";
+import { useSelectionMode } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { authClient } from "@/utils/auth-client";
@@ -100,6 +102,10 @@ function SearchBarHeader({
   const dir = locales[0].textDirection;
   const isAddWordPage = pathname.includes("add-word");
   const showSearchBar = pathname === "/" && !isAddWordPage;
+  // Only the boolean is read here. The count lives inside
+  // BulkSelectionHeader, so selecting an entry re-renders that component alone
+  // instead of this layout -- which would re-render every live screen.
+  const isSelecting = useSelectionMode() && showSearchBar;
 
   const titleAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY.value, [30, 70], [0, 1], Extrapolation.CLAMP),
@@ -111,42 +117,50 @@ function SearchBarHeader({
       style={{ paddingTop: insets.top }}
     >
       <View className="h-14 flex-row items-center px-4">
-        <TouchableOpacity
-          className="-ml-2 p-2"
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          onPress={() => navigation.openDrawer()}
-        >
-          {dir === "rtl" ? (
-            <PanelRight color={colors.foreground} size={24} />
-          ) : (
-            <PanelLeft color={colors.foreground} size={24} />
-          )}
-        </TouchableOpacity>
-
-        {showSearchBar ? (
+        {/* Selection replaces the row's contents at the same height, so entering
+            it doesn't shift the list down. */}
+        {isSelecting ? (
+          <BulkSelectionHeader />
+        ) : (
           <>
-            <TextInput
-              autoCapitalize="none"
-              autoComplete="off"
-              autoCorrect={false}
-              className="ml-2 h-10 flex-1 rounded-md border border-border px-3 text-foreground"
-              clearButtonMode="while-editing"
-              onChangeText={onSearchChange}
-              placeholder={t`Search...`}
-              placeholderTextColor={colors.mutedForeground}
-              ref={inputRef}
-              spellCheck={false}
-              value={searchQuery}
-            />
-            <StreakChip className="ml-2" />
+            <TouchableOpacity
+              className="-ml-2 p-2"
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={() => navigation.openDrawer()}
+            >
+              {dir === "rtl" ? (
+                <PanelRight color={colors.foreground} size={24} />
+              ) : (
+                <PanelLeft color={colors.foreground} size={24} />
+              )}
+            </TouchableOpacity>
+
+            {showSearchBar ? (
+              <>
+                <TextInput
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect={false}
+                  className="ml-2 h-10 flex-1 rounded-md border border-border px-3 text-foreground"
+                  clearButtonMode="while-editing"
+                  onChangeText={onSearchChange}
+                  placeholder={t`Search...`}
+                  placeholderTextColor={colors.mutedForeground}
+                  ref={inputRef}
+                  spellCheck={false}
+                  value={searchQuery}
+                />
+                <StreakChip className="ml-2" />
+              </>
+            ) : headerTitle ? (
+              <Animated.View className="ml-3" style={titleAnimatedStyle}>
+                <RNText className="font-semibold text-foreground text-lg">
+                  {headerTitle}
+                </RNText>
+              </Animated.View>
+            ) : null}
           </>
-        ) : headerTitle ? (
-          <Animated.View className="ml-3" style={titleAnimatedStyle}>
-            <RNText className="font-semibold text-foreground text-lg">
-              {headerTitle}
-            </RNText>
-          </Animated.View>
-        ) : null}
+        )}
       </View>
     </View>
   );
