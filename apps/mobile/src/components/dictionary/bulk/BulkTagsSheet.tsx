@@ -6,6 +6,7 @@ import {
   type BottomSheetFooterProps,
   BottomSheetModal,
   BottomSheetScrollView,
+  BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
@@ -19,7 +20,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -52,6 +53,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
     const [action, setAction] = useState<"add" | "remove">("add");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [filter, setFilter] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
     const { updateTags, isPending } = useBulkDictionaryActions();
 
     const reset = useCallback(() => {
@@ -60,9 +62,15 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
       setFilter("");
     }, []);
 
+    const handleDismiss = useCallback(() => {
+      setIsOpen(false);
+      reset();
+    }, [reset]);
+
     useImperativeHandle(ref, () => ({
       present: () => {
         reset();
+        setIsOpen(true);
         sheetRef.current?.present();
       },
       dismiss: () => sheetRef.current?.dismiss(),
@@ -80,6 +88,9 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
               ...dictionaryEntriesTable.tagsForEntries.cacheOptions.queryKey,
               ids,
             ],
+      // Both sheets stay mounted with the action bar; querying while closed just
+      // burns work on a list nobody is looking at.
+      enabled: isOpen,
     });
 
     const trimmedFilter = filter.trim();
@@ -103,6 +114,10 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
       setSelectedTags((prev) =>
         prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
       );
+      // The box is a search field, not part of the selection: leaving the term
+      // behind left the list filtered to the row just picked, which looked like
+      // every other tag had disappeared.
+      setFilter("");
     };
 
     const handleModeChange = (next: string) => {
@@ -204,12 +219,18 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
 
     return (
       <BottomSheetModal
+        // The keyboard would otherwise cover the tag list and the action: the
+        // sheet grows with it instead, and returns to its snap point on blur.
+        android_keyboardInputMode="adjustResize"
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: colors.card }}
         enableDynamicSizing={false}
         footerComponent={renderFooter}
         handleIndicatorStyle={{ backgroundColor: colors.border }}
-        onDismiss={reset}
+        keyboardBehavior="interactive"
+        keyboardBlurBehavior="restore"
+        onChange={(index) => setIsOpen(index >= 0)}
+        onDismiss={handleDismiss}
         ref={sheetRef}
         snapPoints={["70%"]}
         topInset={insets.top}
@@ -232,14 +253,18 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
               </Text>
             </View>
 
-            <SegmentedControl
-              onValueChange={handleModeChange}
-              options={[
-                { value: "add", label: t`Add` },
-                { value: "remove", label: t`Remove` },
-              ]}
-              value={action}
-            />
+            {/* Row wrapper so the track is only as wide as its two segments,
+                rather than stretching across the sheet. */}
+            <View className="flex-row">
+              <SegmentedControl
+                onValueChange={handleModeChange}
+                options={[
+                  { value: "add", label: t`Add` },
+                  { value: "remove", label: t`Remove` },
+                ]}
+                value={action}
+              />
+            </View>
 
             {selectedTags.length > 0 && (
               <View className="flex-row flex-wrap gap-2">
@@ -258,7 +283,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
 
             <View className="flex-row items-center gap-2 rounded-lg border border-input bg-background px-3">
               <Search color={colors.mutedForeground} size={16} />
-              <TextInput
+              <BottomSheetTextInput
                 autoCapitalize="none"
                 className="flex-1 py-2.5 text-foreground"
                 onChangeText={setFilter}
@@ -283,10 +308,7 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
             {canCreateTag && (
               <Pressable
                 className="flex-row items-center gap-2 py-3"
-                onPress={() => {
-                  toggleTag(trimmedFilter);
-                  setFilter("");
-                }}
+                onPress={() => toggleTag(trimmedFilter)}
               >
                 <TagIcon color={colors.primary} size={16} />
                 <Text className="text-primary text-sm">
