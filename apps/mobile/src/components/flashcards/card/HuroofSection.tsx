@@ -1,4 +1,5 @@
 import type { Morphology } from "@bahar/drizzle-user-db-schemas";
+import { t } from "@lingui/core/macro";
 import type React from "react";
 import { Text, View } from "react-native";
 import { SectionHeader } from "./shared";
@@ -16,7 +17,7 @@ export const HuroofSection: React.FC<HuroofSectionProps> = ({
 
   return (
     <View className="w-full gap-2">
-      <SectionHeader label="PARTICLE PAIRINGS" />
+      <SectionHeader label={t`PARTICLE PAIRINGS`} />
       {verb.huroof.map((h, idx) => (
         <View
           className="flex-row items-center justify-between"

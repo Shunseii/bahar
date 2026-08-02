@@ -4,7 +4,7 @@ import {
   WORD_TYPES,
   type WordType,
 } from "@bahar/drizzle-user-db-schemas";
-import { Trans, useLingui } from "@lingui/react/macro";
+import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
@@ -211,7 +211,11 @@ const TagPickerModal: FC<{
           </Text>
           {selectedTags.length > 0 && (
             <Text className="text-muted-foreground text-sm">
-              {t`${formatNumber(selectedTags.length)} selected`}
+              <Plural
+                one="# selected"
+                other="# selected"
+                value={selectedTags.length}
+              />
             </Text>
           )}
         </View>
@@ -405,11 +409,6 @@ const FiltersModal: FC<{
     draftSort !== appliedSort ||
     draftTagMode !== appliedTagMode;
 
-  const tagsSummary =
-    draftTags.length > 0
-      ? t`${formatNumber(draftTags.length)} tags selected`
-      : undefined;
-
   const typesSummary =
     draftTypes.length > 0
       ? draftTypes.map((type) => wordTypeLabels[type]).join(", ")
@@ -461,9 +460,13 @@ const FiltersModal: FC<{
               <Trans>Tags</Trans>
             </Text>
             <View className="h-px flex-1 bg-border/50" />
-            {tagsSummary && (
+            {draftTags.length > 0 && (
               <Text className="text-muted-foreground text-sm">
-                {tagsSummary}
+                <Plural
+                  one="# tag selected"
+                  other="# tags selected"
+                  value={draftTags.length}
+                />
               </Text>
             )}
             <ChevronRight color={colors.mutedForeground} size={16} />

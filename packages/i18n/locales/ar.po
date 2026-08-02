@@ -13,8 +13,15 @@ msgstr ""
 "Plural-Forms: \n"
 "X-Generator: Poedit 3.4.4\n"
 
+#. placeholder {0}: selectedTags.length
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:214
+msgid "{0, plural, one {# selected} other {# selected}}"
+msgstr "{0, plural, zero {لا شيء محدد} one {واحدة محددة} two {اثنتان محددتان} few {# محددة} many {# محددة} other {# محددة}}"
+
 #. placeholder {0}: filteredTags.length
+#. placeholder {0}: draftTags.length
 #: ../../apps/web/src/components/features/dictionary/filters/TagsFilter.tsx:45
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:465
 msgid "{0, plural, one {# tag selected} other {# tags selected}}"
 msgstr "{0, plural, one {علامة واحدة محددة} two {علامتان محددتان} few {# علامات محددة} many {# علامة محددة} other {# علامة محددة}}"
 
@@ -23,6 +30,11 @@ msgstr "{0, plural, one {علامة واحدة محددة} two {علامتان �
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:543
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {بطاقة متبقية} two {بطاقتان متبقيتان} few {بطاقات متبقية} many {بطاقة متبقية} other {بطاقة متبقية}}"
+
+#. placeholder {0}: examples.length
+#: ../../apps/mobile/src/components/flashcards/card/ExamplesSection.tsx:18
+msgid "{0, plural, one {EXAMPLE} other {EXAMPLES}}"
+msgstr "{0, plural, zero {أمثلة} one {مثال} two {مثالان} few {أمثلة} many {أمثلة} other {أمثلة}}"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:414
 #~ msgid "{0} / {1} batches"
@@ -50,15 +62,13 @@ msgstr "{0} / {1} بطاقات"
 msgid "{0} cards have been spread over the next {windowDays} days."
 msgstr "تم توزيع {0} بطاقة على الأيام {windowDays} القادمة."
 
-#. placeholder {0}: formatNumber(selectedTags.length)
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:214
-msgid "{0} selected"
-msgstr ""
+#~ msgid "{0} selected"
+#~ msgstr ""
 
-#. placeholder {0}: formatNumber(draftTags.length)
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:410
-msgid "{0} tags selected"
-msgstr "{0} علامات محددة"
+#~ msgid "{0} tags selected"
+#~ msgstr "{0} علامات محددة"
 
 #: ../../apps/mobile/src/app/(search)/decks.tsx:67
 #~ msgid "{0} total"
@@ -260,6 +270,10 @@ msgstr "الحساب"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:172
 msgid "Actions"
 msgstr "أعمال"
+
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:52
+msgid "Active P."
+msgstr "اسم الفاعل"
 
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:127
 msgid "Active participle"
@@ -482,7 +496,7 @@ msgstr "المظهر"
 msgid "Apple sign-in failed. Please try again."
 msgstr "فشل تسجيل الدخول باستخدام Apple. يرجى المحاولة مرة أخرى."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:570
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:573
 msgid "Apply"
 msgstr "تطبيق"
 
@@ -638,7 +652,7 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 #: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:443
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:129
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:565
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:568
 #: ../../apps/mobile/src/app/(search)/settings.tsx:435
 #: ../../apps/mobile/src/app/(search)/settings.tsx:472
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:87
@@ -687,11 +701,11 @@ msgstr "السبب:"
 msgid "Choose file"
 msgstr "اختر ملف"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:630
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:633
 msgid "Clear"
 msgstr "امسح"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:444
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:443
 msgid "Clear all"
 msgstr "مسح الكل"
 
@@ -1089,6 +1103,7 @@ msgstr "جارٍ تنزيل التحديث"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:183
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:84
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:72
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:164
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:52
 msgid "Dual"
@@ -1463,8 +1478,8 @@ msgid "Filter by tags..."
 msgstr "رشّح حسب العلامات..."
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:166
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:435
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:612
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:434
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:615
 msgid "Filters"
 msgstr "الترشيح"
 
@@ -1681,6 +1696,7 @@ msgstr "إذا كنت تواجه مشاكل في المزامنة أو عدم ت
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:255
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:103
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:46
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:236
 #: ../../apps/mobile/src/components/dictionary/form/VerbMorphologySection.tsx:75
 msgid "Imperative"
@@ -1888,6 +1904,7 @@ msgstr "مصادر"
 msgid "Masculine"
 msgstr "مذكر"
 
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:115
 #: ../../apps/mobile/src/components/dictionary/form/VerbMorphologySection.tsx:200
 msgid "Masdar"
 msgstr "مصدر"
@@ -1904,7 +1921,7 @@ msgstr "المصدر {0}"
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:51
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:52
 msgid "Match all"
-msgstr ""
+msgstr "مطابقة الكل"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:82
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:162
@@ -1912,7 +1929,7 @@ msgstr ""
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:52
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:53
 msgid "Match any"
-msgstr ""
+msgstr "مطابقة أي"
 
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:251
 msgid "Matching tags"
@@ -1952,6 +1969,10 @@ msgstr "شهري — $١٠/شهر"
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:145
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:204
 msgid "Morphology"
+msgstr "الصرف"
+
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:64
+msgid "MORPHOLOGY"
 msgstr "الصرف"
 
 #: ../../apps/web/src/components/features/dictionary/add/MorphologyFormSection.tsx:62
@@ -2066,7 +2087,7 @@ msgstr "لم يتم العثور على نتائج"
 msgid "No reviews yet today."
 msgstr "لا توجد مراجعات اليوم بعد."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:311
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:315
 msgid "No tags found"
 msgstr "لم يتم العثور على علامات"
 
@@ -2120,12 +2141,12 @@ msgstr "تشغيل"
 
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:292
 msgid "Only words that have every one of these tags will be included in the deck."
-msgstr ""
+msgstr "لن تُضاف إلى المجموعة إلا الكلمات التي تحمل كل هذه العلامات."
 
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:201
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:259
 msgid "Only words with every one of these tags will be included"
-msgstr ""
+msgstr "لن تُضاف إلا الكلمات التي تحمل كل هذه العلامات"
 
 #: ../../apps/mobile/src/app/(search)/stats.tsx:37
 #~ msgid "Open web app"
@@ -2157,6 +2178,14 @@ msgstr "متأخرة"
 #~ msgid "Particle"
 #~ msgstr "حرف"
 
+#: ../../apps/mobile/src/components/flashcards/card/HuroofSection.tsx:20
+msgid "PARTICLE PAIRINGS"
+msgstr "الحروف المصاحبة"
+
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:58
+msgid "Passive P."
+msgstr "اسم المفعول"
+
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:151
 msgid "Passive participle"
 msgstr "اسم مفعول"
@@ -2166,6 +2195,7 @@ msgid "Passive Participle"
 msgstr "اسم مفعول"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:229
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:36
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:210
 msgid "Past"
 msgstr "الماضي"
@@ -2262,6 +2292,7 @@ msgid "Plural form"
 msgstr "صيغة الجمع"
 
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:103
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:77
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:71
 msgid "Plurals"
 msgstr "صيغ جمع"
@@ -2283,6 +2314,7 @@ msgid "Prepositions (huroof) that can be used with the verb to change its meanin
 msgstr "الحروف التي يمكن استخدامها مع الفعل لتغيير معناه."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:242
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:40
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:223
 msgid "Present"
 msgstr "المضارع"
@@ -2574,7 +2606,7 @@ msgstr "ابحث عن علامة..."
 msgid "Search tag..."
 msgstr "ابحث عن علامة..."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:265
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:269
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:105
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:217
 msgid "Search tags..."
@@ -2690,6 +2722,7 @@ msgstr "جارٍ تسجيل الدخول إلى واجهة بهار الطرفي
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:170
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:60
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:67
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:151
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:35
 msgid "Singular"
@@ -2716,7 +2749,7 @@ msgid "Something went wrong. Please try again."
 msgstr "حدث خطأ ما. يرجى المحاولة مرة أخرى."
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:304
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:514
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:517
 msgid "Sort by"
 msgstr "ترتيب حسب"
 
@@ -2812,7 +2845,7 @@ msgstr "نظام"
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:250
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:210
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:461
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:460
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:306
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:169
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:227
@@ -3106,7 +3139,7 @@ msgstr "جرب مصطلح بحث مختلف"
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:853
 #: ../../apps/mobile/src/components/dictionary/DictionaryList.tsx:93
 msgid "Try adjusting your filters"
-msgstr ""
+msgstr "جرب تعديل المرشّحات"
 
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:104
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:346
@@ -3284,7 +3317,7 @@ msgid "Word not found"
 msgstr "الكلمة غير موجودة"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:261
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:476
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:479
 msgid "Word types"
 msgstr "أنواع الكلمات"
 
@@ -3311,13 +3344,13 @@ msgstr "الكلمات المضافة"
 msgid "Words Learned"
 msgstr "الكلمات المتعلّمة"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:252
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:256
 msgid "Words must have every selected tag."
-msgstr ""
+msgstr "يجب أن تحمل الكلمة كل العلامات المحددة."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:254
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:258
 msgid "Words need only one of the selected tags."
-msgstr ""
+msgstr "يكفي أن تحمل الكلمة إحدى العلامات المحددة."
 
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:297
 msgid "Words that have any of these tags will be included in the deck."

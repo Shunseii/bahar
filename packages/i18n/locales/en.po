@@ -13,8 +13,15 @@ msgstr ""
 "Plural-Forms: \n"
 "X-Generator: Poedit 3.4.4\n"
 
+#. placeholder {0}: selectedTags.length
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:214
+msgid "{0, plural, one {# selected} other {# selected}}"
+msgstr "{0, plural, one {# selected} other {# selected}}"
+
 #. placeholder {0}: filteredTags.length
+#. placeholder {0}: draftTags.length
 #: ../../apps/web/src/components/features/dictionary/filters/TagsFilter.tsx:45
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:465
 msgid "{0, plural, one {# tag selected} other {# tags selected}}"
 msgstr "{0, plural, one {# tag selected} other {# tags selected}}"
 
@@ -23,6 +30,11 @@ msgstr "{0, plural, one {# tag selected} other {# tags selected}}"
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:543
 msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {card left} other {cards left}}"
+
+#. placeholder {0}: examples.length
+#: ../../apps/mobile/src/components/flashcards/card/ExamplesSection.tsx:18
+msgid "{0, plural, one {EXAMPLE} other {EXAMPLES}}"
+msgstr "{0, plural, one {EXAMPLE} other {EXAMPLES}}"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:414
 #~ msgid "{0} / {1} batches"
@@ -50,15 +62,13 @@ msgstr "{0} / {1} cards"
 msgid "{0} cards have been spread over the next {windowDays} days."
 msgstr "{0} cards have been spread over the next {windowDays} days."
 
-#. placeholder {0}: formatNumber(selectedTags.length)
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:214
-msgid "{0} selected"
-msgstr "{0} selected"
+#~ msgid "{0} selected"
+#~ msgstr "{0} selected"
 
-#. placeholder {0}: formatNumber(draftTags.length)
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:410
-msgid "{0} tags selected"
-msgstr "{0} tags selected"
+#~ msgid "{0} tags selected"
+#~ msgstr "{0} tags selected"
 
 #: ../../apps/mobile/src/app/(search)/decks.tsx:67
 #~ msgid "{0} total"
@@ -260,6 +270,10 @@ msgstr "Account"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:172
 msgid "Actions"
 msgstr "Actions"
+
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:52
+msgid "Active P."
+msgstr "Active P."
 
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:127
 msgid "Active participle"
@@ -482,7 +496,7 @@ msgstr "Appearance"
 msgid "Apple sign-in failed. Please try again."
 msgstr "Apple sign-in failed. Please try again."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:570
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:573
 msgid "Apply"
 msgstr "Apply"
 
@@ -638,7 +652,7 @@ msgstr "By signing in, you agree to our <0>Privacy Policy</0>"
 #: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:443
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:129
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:565
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:568
 #: ../../apps/mobile/src/app/(search)/settings.tsx:435
 #: ../../apps/mobile/src/app/(search)/settings.tsx:472
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:87
@@ -687,11 +701,11 @@ msgstr "Cause:"
 msgid "Choose file"
 msgstr "Choose file"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:630
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:633
 msgid "Clear"
 msgstr "Clear"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:444
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:443
 msgid "Clear all"
 msgstr "Clear all"
 
@@ -1089,6 +1103,7 @@ msgstr "Downloading update"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:183
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:84
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:72
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:164
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:52
 msgid "Dual"
@@ -1463,8 +1478,8 @@ msgid "Filter by tags..."
 msgstr "Filter by tags..."
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:166
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:435
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:612
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:434
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:615
 msgid "Filters"
 msgstr "Filters"
 
@@ -1681,6 +1696,7 @@ msgstr "If you're experiencing sync issues or data not loading correctly, you ca
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:255
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:103
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:46
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:236
 #: ../../apps/mobile/src/components/dictionary/form/VerbMorphologySection.tsx:75
 msgid "Imperative"
@@ -1892,6 +1908,7 @@ msgstr "Masadir"
 msgid "Masculine"
 msgstr "Masculine"
 
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:115
 #: ../../apps/mobile/src/components/dictionary/form/VerbMorphologySection.tsx:200
 msgid "Masdar"
 msgstr "Masdar"
@@ -1957,6 +1974,10 @@ msgstr "Monthly — $10/mo"
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:204
 msgid "Morphology"
 msgstr "Morphology"
+
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:64
+msgid "MORPHOLOGY"
+msgstr "MORPHOLOGY"
 
 #: ../../apps/web/src/components/features/dictionary/add/MorphologyFormSection.tsx:62
 msgid "Morphology only applies to isms and fi'ls. This section will be hidden if the type of the word is set to anything else."
@@ -2070,7 +2091,7 @@ msgstr "No results found"
 msgid "No reviews yet today."
 msgstr "No reviews yet today."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:311
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:315
 msgid "No tags found"
 msgstr "No tags found"
 
@@ -2161,6 +2182,14 @@ msgstr "overdue"
 #~ msgid "Particle"
 #~ msgstr "Particle"
 
+#: ../../apps/mobile/src/components/flashcards/card/HuroofSection.tsx:20
+msgid "PARTICLE PAIRINGS"
+msgstr "PARTICLE PAIRINGS"
+
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:58
+msgid "Passive P."
+msgstr "Passive P."
+
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:151
 msgid "Passive participle"
 msgstr "Passive participle"
@@ -2170,6 +2199,7 @@ msgid "Passive Participle"
 msgstr "Passive Participle"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:229
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:36
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:210
 msgid "Past"
 msgstr "Past"
@@ -2266,6 +2296,7 @@ msgid "Plural form"
 msgstr "Plural form"
 
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:103
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:77
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:71
 msgid "Plurals"
 msgstr "Plurals"
@@ -2287,6 +2318,7 @@ msgid "Prepositions (huroof) that can be used with the verb to change its meanin
 msgstr "Prepositions (huroof) that can be used with the verb to change its meaning."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:242
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:40
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:223
 msgid "Present"
 msgstr "Present"
@@ -2578,7 +2610,7 @@ msgstr "Search for a tag..."
 msgid "Search tag..."
 msgstr "Search tag..."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:265
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:269
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:105
 #: ../../apps/mobile/src/components/dictionary/form/TagsInput.tsx:217
 msgid "Search tags..."
@@ -2694,6 +2726,7 @@ msgstr "Signing in the Bahar CLI..."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:170
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:60
+#: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:67
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:151
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:35
 msgid "Singular"
@@ -2720,7 +2753,7 @@ msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:304
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:514
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:517
 msgid "Sort by"
 msgstr "Sort by"
 
@@ -2816,7 +2849,7 @@ msgstr "System"
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:250
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:210
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:461
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:460
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:306
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:169
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:227
@@ -3288,7 +3321,7 @@ msgid "Word not found"
 msgstr "Word not found"
 
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:261
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:476
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:479
 msgid "Word types"
 msgstr "Word types"
 
@@ -3315,11 +3348,11 @@ msgstr "Words Added"
 msgid "Words Learned"
 msgstr "Words Learned"
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:252
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:256
 msgid "Words must have every selected tag."
 msgstr "Words must have every selected tag."
 
-#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:254
+#: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:258
 msgid "Words need only one of the selected tags."
 msgstr "Words need only one of the selected tags."
 
