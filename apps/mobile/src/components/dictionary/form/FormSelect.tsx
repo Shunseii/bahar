@@ -8,6 +8,7 @@ import {
 import { Check, ChevronDown } from "lucide-react-native";
 import { useCallback, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
+import { KeyboardController } from "react-native-keyboard-controller";
 import { useThemeColors } from "@/lib/theme";
 
 interface FormSelectProps {
@@ -28,7 +29,14 @@ export const FormSelect = ({
 
   const selectedLabel = options.find((o) => o.value === value)?.label;
 
-  const handleOpen = useCallback(() => {
+  // Presenting the sheet while the keyboard is still up leaves it positioned
+  // behind the keyboard, so it never becomes visible. Nothing in the sheet is
+  // typed into, so close the keyboard and wait for it to finish hiding first.
+  const handleOpen = useCallback(async () => {
+    if (KeyboardController.isVisible()) {
+      await KeyboardController.dismiss();
+    }
+
     bottomSheetRef.current?.present();
   }, []);
 
