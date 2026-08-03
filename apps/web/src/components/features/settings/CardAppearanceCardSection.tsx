@@ -4,6 +4,7 @@ import {
   type CardFace,
   type CardFieldId,
   type CardLayout,
+  FlashcardState,
   hiddenCardFields,
   REQUIRED_FIELD_BY_FACE,
   resolveCardFace,
@@ -21,7 +22,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import * as Sentry from "@sentry/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUp, Eye, EyeOff, Lock, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { dictionaryEntriesTable, settingsTable } from "@/lib/db/operations";
@@ -35,20 +36,39 @@ const FACE_LABELS: Record<CardFace, { direction: string; side: string }> = {
 };
 
 /**
- * A flashcard shaped from a real entry purely for previewing. Scheduling fields
- * are never read by the card faces, and the drawer's preview mode writes
- * nothing back.
+ * A flashcard shaped from a real entry purely for previewing, scheduled as a
+ * brand new card. The drawer runs it through FSRS to label its grade buttons,
+ * so every scheduling field has to hold a real value -- an absent `due` reaches
+ * `new Date(undefined)` and the interval formatting throws on the invalid date.
+ * Nothing here is written back: the drawer's preview mode grades nothing.
  */
-const toPreviewCard = (
-  entry: SelectDictionaryEntry,
-  direction: "forward" | "reverse"
-): FlashcardWithDictionaryEntry =>
-  ({
-    id: `preview-${direction}`,
-    dictionary_entry_id: entry.id,
-    direction,
-    dictionary_entry: entry,
-  }) as FlashcardWithDictionaryEntry;
+const toPreviewCard = ({
+  entry,
+  direction,
+  now,
+}: {
+  entry: SelectDictionaryEntry;
+  direction: "forward" | "reverse";
+  now: Date;
+}): FlashcardWithDictionaryEntry => ({
+  id: `preview-${direction}`,
+  dictionary_entry_id: entry.id,
+  difficulty: 0,
+  due: now.toISOString(),
+  due_timestamp_ms: now.getTime(),
+  elapsed_days: 0,
+  lapses: 0,
+  last_review: null,
+  last_review_timestamp_ms: null,
+  learning_steps: 0,
+  reps: 0,
+  scheduled_days: 0,
+  stability: 0,
+  state: FlashcardState.NEW,
+  direction,
+  is_hidden: false,
+  dictionary_entry: entry,
+});
 
 export const CardAppearanceCardSection = () => {
   const { t } = useLingui();
@@ -64,6 +84,27 @@ export const CardAppearanceCardSection = () => {
   });
 
   const previewEntry = entries?.[0];
+
+  // Memoised so the card keeps one identity: the drawer recomputes its FSRS
+  // scheduling whenever the card object changes.
+  const previewCards = useMemo(() => {
+    if (!previewEntry) return null;
+
+    const now = new Date();
+
+    return {
+      forward: toPreviewCard({
+        entry: previewEntry,
+        direction: "forward",
+        now,
+      }),
+      reverse: toPreviewCard({
+        entry: previewEntry,
+        direction: "reverse",
+        now,
+      }),
+    };
+  }, [previewEntry]);
 
   const { data: settings } = useQuery({
     queryFn: () => settingsTable.getSettings.query(),
@@ -293,11 +334,11 @@ export const CardAppearanceCardSection = () => {
           </Button>
 
           <div className="flex flex-1 flex-wrap justify-end gap-2">
-            {previewEntry ? (
+            {previewCards ? (
               <>
                 <FlashcardDrawer
                   preview={{
-                    card: toPreviewCard(previewEntry, "forward"),
+                    card: previewCards.forward,
                     layoutOverride: layout,
                   }}
                 >
@@ -307,7 +348,7 @@ export const CardAppearanceCardSection = () => {
                 </FlashcardDrawer>
                 <FlashcardDrawer
                   preview={{
-                    card: toPreviewCard(previewEntry, "reverse"),
+                    card: previewCards.reverse,
                     layoutOverride: layout,
                   }}
                 >
