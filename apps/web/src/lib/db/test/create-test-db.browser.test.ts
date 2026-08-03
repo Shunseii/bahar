@@ -68,6 +68,7 @@ describe("createTestDb", () => {
         id: "settings-1",
         show_antonyms_in_flashcard: "hidden",
         show_reverse_flashcards: 0,
+        card_layout: null,
       },
     ]);
   });
