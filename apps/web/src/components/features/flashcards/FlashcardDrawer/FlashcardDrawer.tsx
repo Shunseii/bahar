@@ -161,7 +161,11 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     }
   }, [data]);
 
-  const currentCard = preview?.card ?? cards[0] ?? null;
+  // One list for everything the drawer shows, so preview mode can't leave the
+  // header reading off an empty queue -- that's what rendered the "All done for
+  // today!" celebration over a preview.
+  const visibleCards = preview ? [preview.card] : cards;
+  const currentCard = visibleCards[0] ?? null;
 
   // Every card starts on its question side. Grading resets this too, but that
   // path isn't the only way the displayed card changes -- a refetch can swap it
@@ -414,18 +418,18 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
           )}
 
           <div className="flex items-center justify-center gap-3">
-            {cards?.length ? (
+            {visibleCards.length ? (
               <motion.div
                 animate={{ scale: 1, opacity: 1 }}
                 className="flex items-center gap-2"
                 initial={{ scale: 0.8, opacity: 0 }}
               >
                 <DrawerTitle className="text-md">
-                  {formatNumber(cards.length)}{" "}
+                  {formatNumber(visibleCards.length)}{" "}
                   <Plural
                     one="card left"
                     other="cards left"
-                    value={cards.length}
+                    value={visibleCards.length}
                   />
                 </DrawerTitle>
               </motion.div>

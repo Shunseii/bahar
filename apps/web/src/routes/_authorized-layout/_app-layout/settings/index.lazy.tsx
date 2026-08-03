@@ -761,7 +761,7 @@ const Settings = () => {
 };
 
 export const Route = createLazyFileRoute(
-  "/_authorized-layout/_app-layout/settings"
+  "/_authorized-layout/_app-layout/settings/"
 )({
   component: Settings,
 });
