@@ -21,16 +21,26 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { Checkbox } from "@/components/ui/checkbox";
 import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { HighlightText } from "./HighlightText";
 import { ReviewHistory } from "./ReviewHistory";
+
+/**
+ * Width of the card's trailing slot: share + edit + chevron. Fixed so the
+ * checkbox that replaces them in selection mode occupies exactly the same space.
+ */
+const ACTIONS_SLOT_WIDTH = 86;
 
 interface DictionaryEntryCardProps {
   entry: SelectDictionaryEntry;
   isExpanded: boolean;
   onToggleExpand: (id: string) => void;
   searchQuery?: string;
+  selectionMode?: boolean;
+  isSelected?: boolean;
+  onToggleSelect?: (id: string) => void;
 }
 
 const useWordTypeLabels = (): Record<SelectDictionaryEntry["type"], string> => {
@@ -321,7 +331,15 @@ const ExpandedDetails: FC<ExpandedDetailsProps> = ({ id, document }) => {
 };
 
 export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
-  ({ entry, isExpanded, onToggleExpand, searchQuery = "" }) => {
+  ({
+    entry,
+    isExpanded,
+    onToggleExpand,
+    searchQuery = "",
+    selectionMode = false,
+    isSelected = false,
+    onToggleSelect,
+  }) => {
     const router = useRouter();
     const colors = useThemeColors();
     const rotation = useSharedValue(isExpanded ? 180 : 0);
@@ -332,7 +350,26 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
 
     const hasExpandableContent = true;
 
-    const toggleExpanded = () => {
+    // Matches the tick a drag gives for each row it crosses, so picking by tap
+    // and picking by drag feel like the same action.
+    const toggleSelection = () => {
+      // Entries without an id do reach this component (see the edit handler's
+      // BAH-180 guard below); selecting one would put undefined into the bulk
+      // operations.
+      if (!entry.id) return;
+
+      Haptics.selectionAsync();
+      onToggleSelect?.(entry.id);
+    };
+
+    // While selecting, a tap picks the word instead of expanding it -- the
+    // expanded body would push the rows the user is aiming at off-screen.
+    const handlePress = () => {
+      if (selectionMode) {
+        toggleSelection();
+        return;
+      }
+
       onToggleExpand(entry.id);
     };
 
@@ -341,11 +378,12 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
     }));
 
     return (
-      <Pressable onPress={toggleExpanded}>
+      <Pressable onPress={handlePress}>
         <View
           className={cn(
             "rounded-xl border border-border/50 bg-card p-4",
-            isExpanded && "border-primary/30"
+            isExpanded && "border-primary/30",
+            isSelected && "border-primary bg-primary/5"
           )}
         >
           <View className="flex-row items-start justify-between">
@@ -363,8 +401,30 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
               />
             </View>
 
-            {/* Actions */}
-            <View className="flex-row items-center">
+            {/* Selecting swaps the row actions for a checkbox in the same
+                slot, at the same width, so entering and leaving selection mode
+                doesn't shove the word and translation sideways. */}
+            {selectionMode && (
+              <Animated.View
+                className="mt-1 items-end"
+                entering={FadeIn.duration(160)}
+                exiting={FadeOut.duration(120)}
+                style={{ width: ACTIONS_SLOT_WIDTH }}
+              >
+                <Checkbox
+                  checked={isSelected}
+                  onCheckedChange={toggleSelection}
+                />
+              </Animated.View>
+            )}
+
+            <View
+              className="flex-row items-center justify-end"
+              style={{
+                display: selectionMode ? "none" : "flex",
+                width: ACTIONS_SLOT_WIDTH,
+              }}
+            >
               <ShareButton translation={entry.translation} word={entry.word} />
               <Pressable
                 className="rounded-md p-2 active:bg-primary/10"

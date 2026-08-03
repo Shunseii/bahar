@@ -1,8 +1,15 @@
+import { cn } from "@bahar/design-system";
+import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useAtomValue } from "jotai";
-import { BookOpen, GraduationCap, PlusIcon } from "lucide-react-native";
+import {
+  BookOpen,
+  GraduationCap,
+  ListChecks,
+  PlusIcon,
+} from "lucide-react-native";
 import {
   useCallback,
   useDeferredValue,
@@ -11,10 +18,18 @@ import {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, Animated, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Animated,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DictionaryList } from "@/components/dictionary";
+import { BulkActionBar } from "@/components/dictionary/bulk/BulkActionBar";
 import { DictionaryFilters } from "@/components/dictionary/DictionaryFilters";
+import { Divider } from "@/components/flashcards/card";
 import { GuestBanner } from "@/components/GuestBanner";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
@@ -31,8 +46,17 @@ import {
   sortOptionAtom,
   tagModeAtom,
 } from "@/lib/store/filters";
+import { useBulkSelection } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { useSearchQuery } from "../_layout";
+
+/**
+ * Space the floating bulk action bar needs at the bottom of the list: its
+ * summary row, its action row, and the gap below it. Fixed, because the bar's
+ * own height is fixed -- see the reserved secondary line in BulkActionBar. Also
+ * what drag-select uses to keep its auto-scroll zone above the bar.
+ */
+const BULK_BAR_CLEARANCE = 124;
 
 const formatElapsedTime = ({
   nanoseconds,
@@ -92,6 +116,8 @@ const HeaderCard = ({
   isPending,
   onReviewPress,
   onAddPress,
+  onSelectPress,
+  isSelecting,
 }: {
   totalResults: number | null;
   elapsedTimeNs: number | null;
@@ -100,6 +126,8 @@ const HeaderCard = ({
   isPending: boolean;
   onReviewPress: () => void;
   onAddPress: () => void;
+  onSelectPress: () => void;
+  isSelecting: boolean;
 }) => {
   const colors = useThemeColors();
   const { formatNumber } = useFormatNumber();
@@ -146,12 +174,10 @@ const HeaderCard = ({
           </View>
         </View>
 
-        <View className="flex-row items-center gap-2">
+        <View className="flex-row items-center justify-between gap-2">
           <Button Icon={PlusIcon} onPress={onAddPress} variant="outline">
             <Trans>Add word</Trans>
           </Button>
-
-          <View className="flex-1" />
 
           <View className="relative">
             <Button
@@ -187,9 +213,29 @@ const HeaderCard = ({
         </View>
       </View>
 
-      {/* Filters section inside card */}
-      <View className="border-border/30 border-t px-4 pt-3 pb-3">
+      <Divider />
+
+      <View className="flex-row justify-between px-4 py-2">
         <DictionaryFilters />
+
+        <Pressable
+          accessibilityLabel={
+            isSelecting ? t`Exit selection mode` : t`Select entries`
+          }
+          accessibilityRole="button"
+          accessibilityState={{ selected: isSelecting }}
+          className={cn(
+            "rounded-md border p-2 active:bg-primary/10",
+            isSelecting ? "border-primary bg-primary/10" : "border-input"
+          )}
+          hitSlop={6}
+          onPress={onSelectPress}
+        >
+          <ListChecks
+            color={isSelecting ? colors.primary : colors.mutedForeground}
+            size={16}
+          />
+        </Pressable>
       </View>
     </View>
   );
@@ -204,6 +250,8 @@ export default function HomeScreen() {
   const selectedTags = useAtomValue(selectedTagsAtom);
   const selectedTypes = useAtomValue(selectedTypesAtom);
   const sortOption = useAtomValue(sortOptionAtom);
+  const { selectionMode, enterSelectionMode, exitSelectionMode } =
+    useBulkSelection();
   const tagMode = useAtomValue(tagModeAtom);
   const { isAnonymous } = useUserPlan();
   const { state, error } = useAppInit();
@@ -259,8 +307,10 @@ export default function HomeScreen() {
           backlogCount={backlogCount}
           elapsedTimeNs={elapsedTimeNs}
           isPending={isPending}
+          isSelecting={selectionMode}
           onAddPress={handleAddPress}
           onReviewPress={handleReviewPress}
+          onSelectPress={selectionMode ? exitSelectionMode : enterSelectionMode}
           regularCount={regularCount}
           totalResults={totalResults}
         />
@@ -273,6 +323,9 @@ export default function HomeScreen() {
       regularCount,
       backlogCount,
       isPending,
+      selectionMode,
+      enterSelectionMode,
+      exitSelectionMode,
     ]
   );
 
@@ -301,7 +354,9 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-background">
       <DictionaryList
-        bottomInset={insets.bottom}
+        bottomInset={
+          selectionMode ? insets.bottom + BULK_BAR_CLEARANCE : insets.bottom
+        }
         ListHeaderComponent={listHeader}
         onElapsedTimeChange={handleElapsedTimeChange}
         onTotalCountChange={handleTotalCountChange}
@@ -311,6 +366,8 @@ export default function HomeScreen() {
         tags={selectedTags}
         types={selectedTypes}
       />
+
+      {selectionMode && <BulkActionBar bottomInset={insets.bottom} />}
     </View>
   );
 }

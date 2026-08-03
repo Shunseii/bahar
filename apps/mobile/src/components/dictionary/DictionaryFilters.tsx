@@ -605,7 +605,7 @@ export const DictionaryFilters: FC = () => {
   };
 
   return (
-    <View className="flex-row items-center justify-between">
+    <View className="flex-row items-center gap-x-4">
       <Pressable
         className="flex-row items-center gap-1.5 py-1 active:opacity-70"
         onPress={() => setShowModal(true)}

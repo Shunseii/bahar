@@ -54,13 +54,14 @@ export const useSearch = () => {
       params: {
         term?: string;
         offset?: number;
+        limit?: number;
         where?: SearchDictionaryOptions["where"];
         sortBy?: SearchDictionaryOptions["sortBy"];
       } = {},
       language: SearchLanguage = "english"
     ) => {
       return searchDictionary(getOramaDb(), params.term ?? "", {
-        limit: SEARCH_RESULTS_PER_PAGE,
+        limit: params.limit ?? SEARCH_RESULTS_PER_PAGE,
         offset: params.offset,
         language,
         where: params.where,
@@ -277,10 +278,49 @@ export const useInfiniteScroll = (
     }
   }, [hits, searchResultsMetadata]);
 
+  /**
+   * Every id matching the current term and filters, not just the pages loaded
+   * so far -- what "select all" acts on. Run on demand rather than kept in
+   * state: the full id list is only needed the moment the user asks for it.
+   */
+  const allMatchingIds = useCallback(() => {
+    const total = searchResultsMetadata?.count ?? 0;
+    if (total === 0) return [];
+
+    const { hits: allHits } = search(
+      {
+        sortBy,
+        term: params.term,
+        where: whereFilter,
+        offset: 0,
+        // searchDictionary reports count as max(exact, fuzzy) but returns their
+        // union, so a limit of count truncates whenever the two passes match
+        // different entries. The union can't exceed the two passes added together,
+        // which is bounded by twice the estimate.
+        limit: total * 2,
+      },
+      searchQueryLanguage
+    );
+
+    return [
+      ...new Set(
+        allHits.map((hit) => hit.id).filter((id): id is string => Boolean(id))
+      ),
+    ];
+  }, [
+    search,
+    params.term,
+    whereFilter,
+    sortBy,
+    searchQueryLanguage,
+    searchResultsMetadata?.count,
+  ]);
+
   return {
     showMore: () => {
       setOffset((prevOffset) => prevOffset + SEARCH_RESULTS_PER_PAGE);
     },
+    allMatchingIds,
     hasMore,
     results:
       hits && searchResultsMetadata
