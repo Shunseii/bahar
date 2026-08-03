@@ -1,4 +1,4 @@
-import type { WordType } from "@bahar/drizzle-user-db-schemas";
+import type { TagMode, WordType } from "@bahar/drizzle-user-db-schemas";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { atom } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
@@ -24,6 +24,13 @@ const sortOptionStorageAtom = atomWithStorage(
   `${FILTERS_STORAGE_KEY_PREFIX}:sortOption`,
   "relevance",
   createJSONStorage<SortOption>(() => AsyncStorage),
+  { getOnInit: true }
+);
+
+const tagModeStorageAtom = atomWithStorage<TagMode>(
+  `${FILTERS_STORAGE_KEY_PREFIX}:tagMode`,
+  "any",
+  createJSONStorage<TagMode>(() => AsyncStorage),
   { getOnInit: true }
 );
 
@@ -63,6 +70,19 @@ export const sortOptionAtom = atom(
   }
 );
 
+export const tagModeAtom = atom(
+  (get) => {
+    const val = get(tagModeStorageAtom);
+    return val === "all" ? "all" : ("any" as TagMode);
+  },
+  (_get, set, update: TagMode) => {
+    set(tagModeStorageAtom, update);
+  }
+);
+
+// tagMode is deliberately not counted: it modifies how the selected tags
+// combine rather than narrowing anything on its own, so counting it would
+// claim a filter is active when nothing has been filtered.
 export const activeFilterCountAtom = atom((get) => {
   const tags = get(selectedTagsAtom);
   const types = get(selectedTypesAtom);

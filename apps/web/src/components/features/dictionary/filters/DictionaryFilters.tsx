@@ -1,5 +1,10 @@
 import { cn } from "@bahar/design-system";
-import { WORD_TYPES, type WordType } from "@bahar/drizzle-user-db-schemas";
+import {
+  TAG_MODES,
+  type TagMode,
+  WORD_TYPES,
+  type WordType,
+} from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import {
   Select,
@@ -70,19 +75,31 @@ const useWordTypeLabels = (): Record<WordType, string> => {
   };
 };
 
+const useTagModeLabels = (): Record<TagMode, string> => {
+  const { t } = useLingui();
+  return {
+    all: t`Match all`,
+    any: t`Match any`,
+  };
+};
+
 export const DictionaryFilters = () => {
   const navigate = useNavigate();
   const dir = useDir();
   const { formatNumber } = useFormatNumber();
   const { isFreeUser } = useUserPlan();
   const wordTypeLabels = useWordTypeLabels();
+  const tagModeLabels = useTagModeLabels();
   const {
     tags: filteredTags,
+    tagMode,
     types: filteredTypes,
     sort,
   } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
+  const activeTagMode: TagMode = tagMode ?? "any";
+  const isTagModeRelevant = (filteredTags?.length ?? 0) >= 2;
   const [isExpanded, setIsExpanded] = useSessionStorage(
     "isFiltersExpanded",
     !!(
@@ -92,6 +109,9 @@ export const DictionaryFilters = () => {
     )
   );
 
+  // tagMode is deliberately absent here: it modifies how the selected tags
+  // combine rather than narrowing anything on its own, so counting it would
+  // claim a filter is active when nothing has been filtered.
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filteredTags?.length) count += filteredTags.length;
@@ -151,9 +171,47 @@ export const DictionaryFilters = () => {
             </section>
 
             <section className="flex flex-col gap-y-2">
-              <p className="font-medium text-muted-foreground text-sm">
-                <Trans>Tags</Trans>
-              </p>
+              {/* On the label row, and only once a second tag makes the choice
+                  meaningful -- below two tags "all" and "any" select the same
+                  entries, so the control would be inert. Deliberately quieter
+                  than the word-type pills: this modifies the filter below it
+                  rather than being a filter value of its own. */}
+              <div className="flex items-center justify-between gap-4">
+                <p className="font-medium text-muted-foreground text-sm">
+                  <Trans>Tags</Trans>
+                </p>
+
+                {isTagModeRelevant && (
+                  <div className="flex items-center gap-0.5 rounded-full bg-muted p-0.5">
+                    {TAG_MODES.map((mode) => {
+                      const isSelected = activeTagMode === mode;
+                      return (
+                        <button
+                          className={cn(
+                            "rounded-full px-2.5 py-1 text-xs transition-colors",
+                            isSelected
+                              ? "bg-background font-medium text-foreground shadow-sm"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                          key={mode}
+                          onClick={() => {
+                            navigate({
+                              to: "/",
+                              search: (prev) => ({
+                                ...prev,
+                                tagMode: mode === "any" ? undefined : mode,
+                              }),
+                            });
+                          }}
+                          type="button"
+                        >
+                          {tagModeLabels[mode]}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
 
               <TagsFilter />
 

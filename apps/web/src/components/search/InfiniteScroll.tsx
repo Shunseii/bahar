@@ -840,7 +840,7 @@ const PIXEL_HEIGHT_OFFSET = 800;
 export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   searchQuery,
 }) => {
-  const { tags, types, sort } = useSearch({
+  const { tags, tagMode, types, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
   const { isFreeUser } = useUserPlan();
@@ -852,7 +852,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
     allMatchingIds,
   } = useInfiniteScroll({
     term: searchQuery,
-    filters: { tags, types },
+    filters: { tags, tagMode, types },
     sort: sort === "difficulty" && isFreeUser ? undefined : sort,
   });
   usePublishAllMatchingIds(allMatchingIds);
@@ -916,11 +916,19 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   }, [shouldLoadMore]);
 
   const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
-  const showEmptyDictionary = !(hits?.length || hasSearchQuery);
+  // Filters count the same as a search term here: without this, narrowing to
+  // zero with no search term falls through to the empty-dictionary state and
+  // tells someone with thousands of entries that they have none.
+  const hasActiveFilters = !!(tags?.length || types?.length);
+  const showEmptyDictionary = !(
+    hits?.length ||
+    hasSearchQuery ||
+    hasActiveFilters
+  );
   const debouncedShowEmptyDictionary = useDebounce(showEmptyDictionary, 150);
 
   if (!hits?.length) {
-    if (hasSearchQuery) {
+    if (hasSearchQuery || hasActiveFilters) {
       return (
         <motion.div
           animate={{ opacity: 1, y: 0 }}
@@ -934,7 +942,11 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
             <Trans>No results found</Trans>
           </p>
           <p className="text-muted-foreground">
-            <Trans>Try a different search term</Trans>
+            {hasSearchQuery ? (
+              <Trans>Try a different search term</Trans>
+            ) : (
+              <Trans>Try adjusting your filters</Trans>
+            )}
           </p>
         </motion.div>
       );
