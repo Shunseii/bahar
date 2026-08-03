@@ -1,0 +1,22 @@
+{
+  "name": "@bahar/date",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./constants": "./src/constants.ts",
+    "./intervals": "./src/intervals.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "date-fns": "^3.6.0"
+  },
+  "devDependencies": {
+    "@bahar/typescript-config": "workspace:*",
+    "date-fns": "^3.6.0",
+    "vitest": "^4.1.9"
+  }
+}

@@ -1,3 +1,4 @@
+import { intlFormatDistance } from "@bahar/date";
 import { cn } from "@bahar/design-system";
 import {
   FlashcardState,
@@ -12,7 +13,6 @@ import { Alert, Text, View } from "react-native";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import { intlFormatDistance } from "@/lib/date";
 import { flashcardsTable } from "@/lib/db/operations";
 import { useThemeColors } from "@/lib/theme";
 import { api, queryClient } from "@/utils/api";

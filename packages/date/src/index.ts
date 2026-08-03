@@ -19,10 +19,20 @@ import {
 } from "./constants";
 
 /**
+ * Arabic is requested as plain `ar` throughout the apps, but the labels should
+ * render with Arabic-Indic digits, so the numbering system is pinned here.
+ */
+const AR_LOCALE_WITH_ARABIC_NUMERALS = "ar-u-nu-arab";
+
+/**
  * @name intlFormatDistance
  * @category Common Helpers
  * @summary Formats distance between two dates in a human-readable format
  * @description
+ * A fork of date-fns' `intlFormatDistance` that returns the unit and value it
+ * picked alongside the formatted label, so callers can re-format at a
+ * different unit without re-deriving the distance themselves.
+ *
  * The function calculates the difference between two dates and formats it as a human-readable string.
  *
  * The function will pick the most appropriate unit depending on the distance between dates. For example, if the distance is a few hours, it might return `x hours`. If the distance is a few months, it might return `x months`.
@@ -54,7 +64,7 @@ import {
  * See MDN for details [Locale identification and negotiation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locale_identification_and_negotiation)
  * The narrow one could be similar to the short one for some locales.
  *
- * @returns The distance in words according to language-sensitive relative time formatting.
+ * @returns The distance in words according to language-sensitive relative time formatting, plus the unit and value it was rendered at.
  *
  * @throws `date` must not be Invalid Date
  * @throws `baseDate` must not be Invalid Date
@@ -70,14 +80,7 @@ import {
  *   new Date(1986, 3, 4, 11, 30, 0),
  *   new Date(1986, 3, 4, 10, 30, 0)
  * )
- * //=> 'in 1 hour'
- *
- * // What is the distance between the dates when the fist date is before the second?
- * intlFormatDistance(
- *   new Date(1986, 3, 4, 10, 30, 0),
- *   new Date(1986, 3, 4, 11, 30, 0)
- * )
- * //=> '1 hour ago'
+ * //=> { label: 'in 1 hour', unit: 'hour', value: 1 }
  *
  * @example
  * // Use the unit option to force the function to output the result in quarters. Without setting it, the example would return "next year"
@@ -86,7 +89,7 @@ import {
  *   new Date(1986, 3, 4, 10, 30, 0),
  *   { unit: 'quarter' }
  * )
- * //=> 'in 5 quarters'
+ * //=> { label: 'in 5 quarters', unit: 'quarter', value: 5 }
  *
  * @example
  * // Use the locale option to get the result in Spanish. Without setting it, the example would return "in 1 hour".
@@ -95,25 +98,7 @@ import {
  *   new Date(1986, 3, 4, 10, 30, 0),
  *   { locale: 'es' }
  * )
- * //=> 'dentro de 1 hora'
- *
- * @example
- * // Use the numeric option to force the function to use numeric values. Without setting it, the example would return "tomorrow".
- * intlFormatDistance(
- *   new Date(1986, 3, 5, 11, 30, 0),
- *   new Date(1986, 3, 4, 11, 30, 0),
- *   { numeric: 'always' }
- * )
- * //=> 'in 1 day'
- *
- * @example
- * // Use the style option to force the function to use short values. Without setting it, the example would return "in 2 years".
- * intlFormatDistance(
- *   new Date(1988, 3, 4, 11, 30, 0),
- *   new Date(1986, 3, 4, 11, 30, 0),
- *   { style: 'short' }
- * )
- * //=> 'in 2 yr'
+ * //=> { label: 'dentro de 1 hora', unit: 'hour', value: 1 }
  */
 export function intlFormatDistance(
   laterDate: Date,
@@ -178,7 +163,8 @@ export function intlFormatDistance(
     }
   }
 
-  const locale = options?.locale === "ar" ? "ar-u-nu-arab" : options?.locale;
+  const locale =
+    options?.locale === "ar" ? AR_LOCALE_WITH_ARABIC_NUMERALS : options?.locale;
 
   const rtf = new Intl.RelativeTimeFormat(locale, {
     numeric: "auto",

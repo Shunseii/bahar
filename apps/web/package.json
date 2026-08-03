@@ -19,6 +19,7 @@
     "wrangler:dev": "wrangler pages dev --port 5173"
   },
   "dependencies": {
+    "@bahar/date": "workspace:*",
     "@bahar/db-operations": "workspace:*",
     "@bahar/fsrs": "workspace:*",
     "@bahar/result": "workspace:*",

@@ -4,6 +4,7 @@
  * Shows Again, Hard, Good, Easy buttons with interval previews.
  */
 
+import { formatDistinctIntervals } from "@bahar/date/intervals";
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import * as Haptics from "expo-haptics";
@@ -22,7 +23,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { type Grade, Rating, type RecordLog } from "ts-fsrs";
-import { intlFormatDistance } from "@/lib/date";
 import { useThemeColors } from "@/lib/theme";
 
 interface GradeButtonsProps {
@@ -84,15 +84,24 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
   now,
 }) => {
   const gradeConfig = useGradeConfig();
+  const { i18n } = useLingui();
+
+  // Formatted together rather than per button so adjacent grades that would
+  // round to the same preview get separated out.
+  const intervalTexts = formatDistinctIntervals({
+    dates: gradeConfig.map(({ grade }) => schedulingCards[grade].card.due),
+    now,
+    locale: i18n.locale,
+  });
+
   return (
     <View className="flex-row gap-2 px-4">
-      {gradeConfig.map((config) => (
+      {gradeConfig.map((config, index) => (
         <GradeButton
           config={config}
           disabled={disabled}
-          interval={schedulingCards[config.grade].card.due}
+          intervalText={intervalTexts[index]}
           key={config.grade}
-          now={now}
           onPress={() => onGrade(config.grade)}
         />
       ))}
@@ -102,21 +111,18 @@ export const GradeButtons: React.FC<GradeButtonsProps> = ({
 
 interface GradeButtonProps {
   config: GradeConfig;
-  interval: Date;
+  intervalText: string;
   onPress: () => void;
   disabled: boolean;
-  now: Date;
 }
 
 const GradeButton: React.FC<GradeButtonProps> = ({
   config,
-  interval,
+  intervalText,
   onPress,
   disabled,
-  now,
 }) => {
   const colors = useThemeColors();
-  const { i18n } = useLingui();
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -138,10 +144,6 @@ const GradeButton: React.FC<GradeButtonProps> = ({
 
   const { Icon, label, colorKey, borderColor } = config;
   const resolvedColor = colors[colorKey];
-  const intervalText = intlFormatDistance(interval, now, {
-    style: "narrow",
-    locale: i18n.locale,
-  }).label;
 
   return (
     <Pressable

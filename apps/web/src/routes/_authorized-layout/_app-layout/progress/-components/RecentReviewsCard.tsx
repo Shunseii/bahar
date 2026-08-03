@@ -1,3 +1,4 @@
+import { intlFormatDistance } from "@bahar/date";
 import { cn } from "@bahar/design-system";
 import type { FlashcardDirection } from "@bahar/drizzle-user-db-schemas";
 import { Card } from "@bahar/web-ui/components/card";
@@ -7,7 +8,6 @@ import { useLingui } from "@lingui/react";
 import { Trans } from "@lingui/react/macro";
 import { Clock, Undo2 } from "lucide-react";
 import type { FC } from "react";
-import { intlFormatDistance } from "@/lib/date";
 import { InfoTooltip } from "./InfoTooltip";
 
 const RATING_DOT_STYLES: Record<string, string> = {

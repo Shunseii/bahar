@@ -1,3 +1,4 @@
+import { intlFormatDistance } from "@bahar/date";
 import { cn } from "@bahar/design-system";
 import type { FlashcardDirection } from "@bahar/drizzle-user-db-schemas";
 import { t } from "@lingui/core/macro";
@@ -8,7 +9,6 @@ import { Pressable, Text, View } from "react-native";
 import { InfoTooltip } from "@/components/progress/InfoTooltip";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { intlFormatDistance } from "@/lib/date";
 import { useThemeColors } from "@/lib/theme";
 
 const RATING_DOT_STYLES: Record<string, string> = {
