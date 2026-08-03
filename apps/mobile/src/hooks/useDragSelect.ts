@@ -190,6 +190,7 @@ interface UseDragSelectOptions {
   getSelectedIds: () => ReadonlySet<string>;
   setSelection: (ids: ReadonlySet<string>) => void;
   enterSelectionMode: () => void;
+  exitSelectionMode: () => void;
   getScrollOffset: () => number;
   scrollToOffset: (offset: number) => void;
 }
@@ -218,6 +219,7 @@ export const useDragSelect = ({
   getSelectedIds,
   setSelection,
   enterSelectionMode,
+  exitSelectionMode,
   getScrollOffset,
   scrollToOffset,
 }: UseDragSelectOptions) => {
@@ -496,7 +498,13 @@ export const useDragSelect = ({
     dragRef.current = null;
     rectsRef.current = [];
     listRectRef.current = null;
-  }, [stopAutoScroll]);
+
+    // A drag that started on a selected row deselects; if it cleared the last
+    // one, the mode has nothing left to act on.
+    if (getSelectedIds().size === 0) {
+      exitSelectionMode();
+    }
+  }, [exitSelectionMode, getSelectedIds, stopAutoScroll]);
 
   useEffect(() => stopAutoScroll, [stopAutoScroll]);
 

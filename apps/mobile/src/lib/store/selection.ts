@@ -126,11 +126,28 @@ export const useBulkSelection = () => {
     setSelectedIds(new Set());
   }, [setSelectionMode, setSelectedIds]);
 
+  /**
+   * Flips one entry, and leaves selection mode when that empties the selection.
+   *
+   * A long press enters the mode and selects the entry in one gesture, so
+   * unpicking it should undo the whole thing rather than leave an empty mode
+   * running. Entering deliberately from the header button has nothing to unpick,
+   * so it stays -- one rule, no need to remember how the mode started.
+   *
+   * Clearing from the action bar deliberately does not exit: that button means
+   * "empty the selection", while the bar's ✕ means "leave".
+   */
   const toggle = useCallback(
     (id: string) => {
-      setSelectedIds((prev) => toggleId(prev, id));
+      const next = toggleId(selectedIds, id);
+
+      setSelectedIds(next);
+
+      if (next.size === 0) {
+        setSelectionMode(false);
+      }
     },
-    [setSelectedIds]
+    [selectedIds, setSelectedIds, setSelectionMode]
   );
 
   /**
