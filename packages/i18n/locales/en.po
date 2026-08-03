@@ -189,8 +189,8 @@ msgstr "{longestStreak, plural, one {Previous: {0} day} other {Previous: {1} day
 msgid "{matchingCount, plural, one {Select all #} other {Select all #}}"
 msgstr "{matchingCount, plural, one {Select all #} other {Select all #}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:73
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:191
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:82
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:200
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:43
 msgid "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
 msgstr "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
@@ -202,7 +202,7 @@ msgstr "{outsideResultsCount, plural, one {# not in these results} other {# not 
 msgid "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 msgstr "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:68
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:77
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:181
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr "{selectedCount, plural, one {# selected} other {# selected}}"
@@ -398,7 +398,7 @@ msgstr "Add tag {inputValue}"
 msgid "Add tag {value}"
 msgstr "Add tag {value}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:86
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:95
 msgid "Add tags"
 msgstr "Add tags"
 
@@ -406,7 +406,7 @@ msgstr "Add tags"
 msgid "Add tags to your word."
 msgstr "Add tags to your word."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:129
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:115
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:72
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:180
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:68
@@ -624,7 +624,7 @@ msgstr "Back"
 msgid "Back to sign in"
 msgstr "Back to sign in"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:200
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:202
 msgid "Back to top"
 msgstr "Back to top"
 
@@ -757,6 +757,7 @@ msgid "Choose file"
 msgstr "Choose file"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:62
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:71
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:633
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:204
 msgid "Clear"
@@ -766,11 +767,11 @@ msgstr "Clear"
 msgid "Clear all"
 msgstr "Clear all"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:368
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:380
 msgid "Clear all filters"
 msgstr "Clear all filters"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:79
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:88
 msgid "Click entries to select them"
 msgstr "Click entries to select them"
 
@@ -1332,8 +1333,8 @@ msgstr "Example usages of the word in different contexts."
 msgid "Examples"
 msgstr "Examples"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:113
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:249
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:122
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:258
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:166
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:224
 msgid "Exit selection mode"
@@ -1565,7 +1566,7 @@ msgstr "Filter tags on these entries"
 msgid "Filter tags..."
 msgstr "Filter tags..."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:166
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:178
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:434
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:615
 msgid "Filters"
@@ -1752,7 +1753,7 @@ msgstr "Hide details"
 msgid "Hide field"
 msgstr "Hide field"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:137
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:143
 msgid "Hide filters"
 msgstr "Hide filters"
 
@@ -2543,7 +2544,7 @@ msgstr "Remove"
 msgid "Remove reverse card?"
 msgstr "Remove reverse card?"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:90
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:99
 msgid "Remove tags"
 msgstr "Remove tags"
 
@@ -2640,7 +2641,7 @@ msgstr "Reverse card preview"
 msgid "Reverse flashcards"
 msgstr "Reverse flashcards"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:152
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:138
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:338
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:86
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:194
@@ -2773,9 +2774,13 @@ msgstr "Searching..."
 msgid "See your retention rate, workload forecast, difficult words, and more."
 msgstr "See your retention rate, workload forecast, difficult words, and more."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:116
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:167
 msgid "Select"
 msgstr "Select"
+
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:73
+msgid "Select all"
+msgstr "Select all"
 
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:224
 msgid "Select entries"
@@ -2866,7 +2871,7 @@ msgstr "Show details"
 msgid "Show field"
 msgstr "Show field"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:137
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:145
 msgid "Show filters"
 msgstr "Show filters"
 
@@ -2906,7 +2911,7 @@ msgstr "Something went wrong"
 msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:304
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:316
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:517
 msgid "Sort by"
 msgstr "Sort by"
@@ -2995,9 +3000,9 @@ msgstr "System"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:336
 #: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:68
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:181
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:156
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:219
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:193
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:165
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:228
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:250
 #: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:71
@@ -3467,7 +3472,7 @@ msgstr "Word deleted successfully"
 msgid "Word not found"
 msgstr "Word not found"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:261
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:273
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:479
 msgid "Word types"
 msgstr "Word types"

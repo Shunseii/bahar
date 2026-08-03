@@ -189,8 +189,8 @@ msgstr "{longestStreak, plural, one {السابق: {0} يوم} two {السابق
 msgid "{matchingCount, plural, one {Select all #} other {Select all #}}"
 msgstr "{matchingCount, plural, one {حدد الكل (#)} two {حدد الكل (#)} few {حدد الكل (#)} many {حدد الكل (#)} other {حدد الكل (#)}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:73
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:191
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:82
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:200
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:43
 msgid "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
 msgstr "{outsideResultsCount, plural, one {واحد غير موجود في هذه النتائج} two {اثنان غير موجودان في هذه النتائج} few {# غير موجودة في هذه النتائج} many {# غير موجود في هذه النتائج} other {# غير موجود في هذه النتائج}}"
@@ -202,7 +202,7 @@ msgstr "{outsideResultsCount, plural, one {واحد غير موجود في هذ�
 msgid "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 msgstr "{reviewCount, plural, one {{0} مراجعة} two {{1} مراجعتان} few {{1} مراجعات} many {{1} مراجعة} other {{1} مراجعة}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:68
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:77
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:181
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr "{selectedCount, plural, one {واحد محدد} two {اثنان محددان} few {# محددة} many {# محددًا} other {# محدد}}"
@@ -398,7 +398,7 @@ msgstr "أضف علامة {inputValue}"
 msgid "Add tag {value}"
 msgstr "إضافة العلامة {value}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:86
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:95
 msgid "Add tags"
 msgstr "أضف علامات"
 
@@ -406,7 +406,7 @@ msgstr "أضف علامات"
 msgid "Add tags to your word."
 msgstr "أضف علامات إلى كلمتك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:129
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:115
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:72
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:180
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:68
@@ -624,7 +624,7 @@ msgstr "رجوع"
 msgid "Back to sign in"
 msgstr "العودة إلى تسجيل الدخول"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:200
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:202
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
@@ -757,6 +757,7 @@ msgid "Choose file"
 msgstr "اختر ملف"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:62
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:71
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:633
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:204
 msgid "Clear"
@@ -766,11 +767,11 @@ msgstr "امسح"
 msgid "Clear all"
 msgstr "مسح الكل"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:368
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:380
 msgid "Clear all filters"
 msgstr "مسح كل المرشّحات"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:79
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:88
 msgid "Click entries to select them"
 msgstr ""
 
@@ -1332,8 +1333,8 @@ msgstr "استخدامات مثالية للكلمة في سياقات مختل�
 msgid "Examples"
 msgstr "أمثلة"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:113
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:249
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:122
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:258
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:166
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:224
 msgid "Exit selection mode"
@@ -1565,7 +1566,7 @@ msgstr "رشّح العلامات على هذه الإدخالات"
 msgid "Filter tags..."
 msgstr "رشّح العلامات..."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:166
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:178
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:434
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:615
 msgid "Filters"
@@ -1752,7 +1753,7 @@ msgstr "إخفاء التفاصيل"
 msgid "Hide field"
 msgstr ""
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:137
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:143
 msgid "Hide filters"
 msgstr "إخفاء المرشحات"
 
@@ -2543,7 +2544,7 @@ msgstr "احذف"
 msgid "Remove reverse card?"
 msgstr "إزالة البطاقة العكسية؟"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:90
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:99
 msgid "Remove tags"
 msgstr "أزل علامات"
 
@@ -2640,7 +2641,7 @@ msgstr ""
 msgid "Reverse flashcards"
 msgstr "بطاقات العكسية"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:152
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:138
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:338
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:86
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:194
@@ -2773,9 +2774,13 @@ msgstr "يبحث..."
 msgid "See your retention rate, workload forecast, difficult words, and more."
 msgstr "شاهد معدل الاحتفاظ، توقعات المراجعة، الكلمات الصعبة، والمزيد."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:116
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:167
 msgid "Select"
 msgstr "حدد"
+
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:73
+msgid "Select all"
+msgstr ""
 
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:224
 msgid "Select entries"
@@ -2866,7 +2871,7 @@ msgstr "عرض التفاصيل"
 msgid "Show field"
 msgstr ""
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:137
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:145
 msgid "Show filters"
 msgstr "عرض المرشحات"
 
@@ -2906,7 +2911,7 @@ msgstr "حدث خطأ ما"
 msgid "Something went wrong. Please try again."
 msgstr "حدث خطأ ما. يرجى المحاولة مرة أخرى."
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:304
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:316
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:517
 msgid "Sort by"
 msgstr "ترتيب حسب"
@@ -2995,9 +3000,9 @@ msgstr "نظام"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:336
 #: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:68
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:181
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:156
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:219
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:193
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:165
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:228
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:250
 #: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:71
@@ -3467,7 +3472,7 @@ msgstr "تم حذف الكلمة بنجاح"
 msgid "Word not found"
 msgstr "الكلمة غير موجودة"
 
-#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:261
+#: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:273
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:479
 msgid "Word types"
 msgstr "أنواع الكلمات"

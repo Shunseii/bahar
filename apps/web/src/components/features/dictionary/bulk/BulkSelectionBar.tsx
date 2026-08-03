@@ -64,6 +64,15 @@ export const BulkSelectionBar: FC = () => {
     <Plural one="Select all #" other="Select all #" value={matchingCount} />
   );
 
+  // The count goes unsaid on the narrow bar: it shares a row with the exit
+  // button and the selected count, and a five-digit dictionary pushed the row
+  // wider than the card.
+  const selectAllLabelShort = allSelected ? (
+    <Trans>Clear</Trans>
+  ) : (
+    <Trans>Select all</Trans>
+  );
+
   const countLabel = (
     <Plural one="# selected" other="# selected" value={selectedCount} />
   );
@@ -139,7 +148,7 @@ export const BulkSelectionBar: FC = () => {
                   size="sm"
                   variant="ghost"
                 >
-                  {selectAllLabel}
+                  {selectAllLabelShort}
                 </Button>
               </div>
 
