@@ -173,6 +173,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     toggle,
     setSelection,
     enterSelectionMode,
+    exitSelectionMode,
   } = useBulkSelection();
 
   // The gesture callbacks run outside React's render, so the live selection and
@@ -191,6 +192,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     getSelectedIds: () => selectedIdsRef.current,
     setSelection,
     enterSelectionMode,
+    exitSelectionMode,
     getScrollOffset: () => scrollOffsetRef.current,
     scrollToOffset: (offset) =>
       listRef.current?.scrollToOffset({ offset, animated: false }),

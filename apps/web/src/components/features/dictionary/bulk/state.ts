@@ -99,19 +99,26 @@ export const useBulkSelection = () => {
     setSelectionMode(true);
   }, [setSelectionMode]);
 
+  /**
+   * Flips one entry, and leaves selection mode when that empties the selection,
+   * matching mobile. Clearing from the bar deliberately does not exit: that
+   * button means "empty the selection", the ✕ means "leave".
+   */
   const toggle = useCallback(
     (id: string) => {
-      setSelectedIds((prev) => {
-        const next = new Set(prev);
+      const next = new Set(selectedIds);
 
-        if (!next.delete(id)) {
-          next.add(id);
-        }
+      if (!next.delete(id)) {
+        next.add(id);
+      }
 
-        return next;
-      });
+      setSelectedIds(next);
+
+      if (next.size === 0) {
+        setSelectionMode(false);
+      }
     },
-    [setSelectedIds]
+    [selectedIds, setSelectedIds, setSelectionMode]
   );
 
   /**
