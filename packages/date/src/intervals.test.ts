@@ -36,12 +36,28 @@ describe("formatDistinctIntervals", () => {
     expect(labels).toEqual(["in 10d", "in 11d"]);
   });
 
-  it("stops at minutes rather than falling through to seconds", () => {
+  it("puts a pair back when no unit can separate it", () => {
+    // 30 seconds apart is invisible at every unit down to the minute floor.
+    // Keeping the last attempt would render "in 4,320m" twice: still identical,
+    // and now unreadable too.
     const labels = format([dueIn(3 * DAY_MS), dueIn(3 * DAY_MS + 30 * 1000)]);
 
-    // 30 seconds apart is invisible at minute resolution, so the labels stay
-    // identical -- the point is that neither degrades into a second count.
-    expect(labels).toEqual(["in 4,320m", "in 4,320m"]);
+    expect(labels).toEqual(["in 3d", "in 3d"]);
+  });
+
+  it("puts a pair back when two grades fall on the same instant", () => {
+    const due = dueIn(3 * DAY_MS);
+    const labels = format([due, new Date(due.getTime())]);
+
+    expect(labels).toEqual(["in 3d", "in 3d"]);
+  });
+
+  it("never renders a collision as seconds", () => {
+    const labels = format([dueIn(3 * DAY_MS), dueIn(3 * DAY_MS + 30 * 1000)]);
+
+    for (const label of labels) {
+      expect(label).not.toMatch(/\ds$/);
+    }
   });
 
   it("leaves a month-scale collision alone instead of cascading", () => {
@@ -60,6 +76,18 @@ describe("formatDistinctIntervals", () => {
     ]);
 
     expect(labels).toEqual(["in 48h", "in 54h", "in 120h", "in 126h"]);
+  });
+
+  it("separates what it can and puts back only what it can't", () => {
+    const same = dueIn(5 * DAY_MS);
+    const labels = format([
+      dueIn(2 * DAY_MS),
+      dueIn(2 * DAY_MS + 6 * HOUR_MS),
+      same,
+      new Date(same.getTime()),
+    ]);
+
+    expect(labels).toEqual(["in 48h", "in 54h", "in 5d", "in 5d"]);
   });
 
   it("renders Arabic with Arabic-Indic digits and still dedupes", () => {

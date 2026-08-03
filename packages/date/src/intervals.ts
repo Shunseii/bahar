@@ -45,8 +45,11 @@ const DEDUPE_LADDERS: Partial<
  * The sweep runs left to right, one adjacent pair at a time, and compares
  * against labels an earlier pair may already have rewritten -- the goal is that
  * what ends up on screen is distinct, not that the first formatting pass was.
- * When a pair can't be separated (identical dues, or a unit with no ladder),
- * the labels are left as they are.
+ *
+ * A pair that no unit on the ladder can separate is put back the way it was.
+ * Two grades scheduled for the same instant stay equal at every unit, so
+ * without the rollback they would walk to the minute floor and render as
+ * "in 4,320m" twice -- still identical, and now unreadable as well.
  */
 export const formatDistinctIntervals = ({
   dates,
@@ -65,6 +68,9 @@ export const formatDistinctIntervals = ({
     const ladder = DEDUPE_LADDERS[formatted[i].unit];
     if (!ladder) continue;
 
+    const collided = [formatted[i], formatted[i + 1]] as const;
+    let separated = false;
+
     for (const unit of ladder) {
       formatted[i] = formatInterval({ due: dates[i], now, locale, unit });
       formatted[i + 1] = formatInterval({
@@ -74,7 +80,15 @@ export const formatDistinctIntervals = ({
         unit,
       });
 
-      if (formatted[i].label !== formatted[i + 1].label) break;
+      if (formatted[i].label !== formatted[i + 1].label) {
+        separated = true;
+        break;
+      }
+    }
+
+    if (!separated) {
+      formatted[i] = collided[0];
+      formatted[i + 1] = collided[1];
     }
   }
 
