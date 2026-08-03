@@ -115,6 +115,18 @@ msgstr "{0} / {1} cards"
 msgid "{0} cards have been spread over the next {windowDays} days."
 msgstr "{0} cards have been spread over the next {windowDays} days."
 
+#. placeholder {0}: fieldLabels[field]
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:187
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:153
+msgid "{0} hidden"
+msgstr "{0} hidden"
+
+#. placeholder {0}: fieldLabels[field]
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:193
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:160
+msgid "{0} shown"
+msgstr "{0} shown"
+
 #. placeholder {0}: formatNumber(FLASHCARD_LIMIT)
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:539
 msgid "{0}+ cards"
@@ -312,9 +324,9 @@ msgstr "Actions"
 msgid "Active P."
 msgstr "Active P."
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:137
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:141
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:127
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:77
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:102
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:329
 msgid "Active participle"
 msgstr "Active participle"
@@ -340,10 +352,14 @@ msgstr "Add a new word"
 msgid "Add a new word to your dictionary"
 msgstr "Add a new word to your dictionary"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:375
 #: ../../apps/mobile/src/components/settings/CardPreviewModal.tsx:138
 msgid "Add a word to your dictionary to preview a card."
 msgstr "Add a word to your dictionary to preview a card."
+
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:407
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:235
+msgid "Add a word to your dictionary to set up your cards."
+msgstr "Add a word to your dictionary to set up your cards."
 
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:82
 msgid "Add all"
@@ -456,10 +472,9 @@ msgstr "All tags"
 msgid "All time"
 msgstr "All time"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:288
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:236
-msgid "Always shown"
-msgstr "Always shown"
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:349
+msgid "Always shown on this side"
+msgstr "Always shown on this side"
 
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:134
 msgid "An Arabic definition of the word."
@@ -485,15 +500,13 @@ msgstr "An unexpected error occurred. You can try reloading the page to fix it."
 msgid "Annual — $7/mo"
 msgstr "Annual — $7/mo"
 
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:258
 #: ../../apps/web/src/components/features/flashcards/ReverseAnswerSide.tsx:27
 #: ../../apps/web/src/components/features/flashcards/AnswerSide.tsx:28
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:255
 #: ../../apps/mobile/src/app/(search)/settings/index.tsx:530
 msgid "Answer"
 msgstr "Answer"
-
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:244
-msgid "Answer side"
-msgstr "Answer side"
 
 #. placeholder {0}: index + 1
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:382
@@ -504,9 +517,9 @@ msgstr "Antonym {0}"
 msgid "Antonym word"
 msgstr "Antonym word"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:144
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:148
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:370
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:84
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:109
 #: ../../apps/mobile/src/components/dictionary/form/AntonymsSection.tsx:26
 msgid "Antonyms"
 msgstr "Antonyms"
@@ -705,6 +718,7 @@ msgstr "By signing in, you agree to our <0>Privacy Policy</0>"
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:173
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:112
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:174
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:188
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:568
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:86
@@ -725,23 +739,13 @@ msgstr "Cancel"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/card-appearance/route.lazy.tsx:34
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:336
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:208
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:156
+#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:15
+#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:18
 #: ../../apps/mobile/src/app/(search)/settings/index.tsx:691
 #: ../../apps/mobile/src/app/(search)/settings/card-appearance.tsx:18
 #: ../../apps/mobile/src/app/(search)/settings/card-appearance.tsx:38
 msgid "Card appearance"
 msgstr "Card appearance"
-
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:197
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:143
-msgid "Card layout reset to the defaults."
-msgstr "Card layout reset to the defaults."
-
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:186
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:132
-msgid "Card layout saved."
-msgstr "Card layout saved."
 
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:412
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:154
@@ -787,6 +791,10 @@ msgstr "Clear all"
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:380
 msgid "Clear all filters"
 msgstr "Clear all filters"
+
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:378
+msgid "Click a field to hide it, drag to reorder. Changes apply straight away."
+msgstr "Click a field to hide it, drag to reorder. Changes apply straight away."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:88
 msgid "Click entries to select them"
@@ -867,15 +875,10 @@ msgstr "Copy API key"
 msgid "Copy it now — you won't be able to see it again. Anyone with this key can read and write your dictionary."
 msgstr "Copy it now — you won't be able to see it again. Anyone with this key can read and write your dictionary."
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:200
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:146
-msgid "Could not reset the card layout."
-msgstr "Could not reset the card layout."
-
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:189
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:135
-msgid "Could not save the card layout."
-msgstr "Could not save the card layout."
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:180
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:141
+msgid "Could not update the card."
+msgstr "Could not update the card."
 
 #: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:481
 msgid "Couldn't load your API keys. Please try again later."
@@ -1039,9 +1042,9 @@ msgid "Default"
 msgstr "Default"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:154
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:127
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:131
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:120
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:67
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:92
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:144
 #: ../../apps/mobile/src/components/dictionary/form/BasicDetailsSection.tsx:103
 msgid "Definition"
@@ -1206,9 +1209,9 @@ msgid "Downloading update"
 msgstr "Downloading update"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:191
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:132
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:136
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:84
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:72
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:97
 #: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:72
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:312
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:174
@@ -1343,9 +1346,9 @@ msgid "Example usages of the word in different contexts."
 msgstr "Example usages of the word in different contexts."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:308
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:143
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:147
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:193
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:83
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:108
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:288
 #: ../../apps/mobile/src/components/dictionary/form/ExamplesSection.tsx:77
 msgid "Examples"
@@ -1637,17 +1640,10 @@ msgstr "Form"
 msgid "Form {0}"
 msgstr "Form {0}"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:235
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:249
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:246
 msgid "Forward"
 msgstr "Forward"
-
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:89
-msgid "Forward · answer"
-msgstr "Forward · answer"
-
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:88
-msgid "Forward · question"
-msgstr "Forward · question"
 
 #: ../../apps/mobile/src/components/settings/CardPreviewModal.tsx:98
 msgid "Forward card preview"
@@ -1659,9 +1655,9 @@ msgid "Free"
 msgstr "Free"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:217
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:129
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:133
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:211
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:69
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:94
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:200
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:128
 msgid "Gender"
@@ -1759,13 +1755,20 @@ msgstr "Harf {0}"
 msgid "Hidden"
 msgstr "Hidden"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:310
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:256
-msgid "Hidden on this side"
-msgstr "Hidden on this side"
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:278
+msgid "Hidden fields off"
+msgstr "Hidden fields off"
+
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:282
+msgid "Hidden off"
+msgstr "Hidden off"
+
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:280
+msgid "Hidden shown"
+msgstr "Hidden shown"
 
 #. placeholder {0}: fieldLabels[field]
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:292
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:358
 msgid "Hide {0}"
 msgstr "Hide {0}"
 
@@ -1773,13 +1776,13 @@ msgstr "Hide {0}"
 msgid "Hide details"
 msgstr "Hide details"
 
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:241
-msgid "Hide field"
-msgstr "Hide field"
-
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:143
 msgid "Hide filters"
 msgstr "Hide filters"
+
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:292
+msgid "Hide tags"
+msgstr "Hide tags"
 
 #: ../../apps/mobile/src/app/(search)/settings/index.tsx:529
 msgid "Hint"
@@ -1804,9 +1807,9 @@ msgstr "How should antonyms be shown in flashcards?"
 msgid "How the word is categorized based on its type or context."
 msgstr "How the word is categorized based on its type or context."
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:141
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:145
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:325
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:81
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:106
 msgid "Huroof"
 msgstr "Huroof"
 
@@ -1831,9 +1834,9 @@ msgid "If you're experiencing sync issues or data not loading correctly, you can
 msgstr "If you're experiencing sync issues or data not loading correctly, you can reset your local data and re-sync from the server."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:263
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:136
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:140
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:103
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:76
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:101
 #: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:46
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:325
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:246
@@ -1868,9 +1871,9 @@ msgstr "Incorrect file type"
 msgid "Indeclinable"
 msgstr "Indeclinable"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:130
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:134
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:247
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:70
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:95
 #: ../../apps/mobile/src/components/dictionary/form/IsmMorphologySection.tsx:144
 msgid "Inflection"
 msgstr "Inflection"
@@ -2027,8 +2030,8 @@ msgstr "Masadir"
 msgid "Masculine"
 msgstr "Masculine"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:139
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:79
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:143
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:104
 #: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:115
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:178
 #: ../../apps/mobile/src/components/dictionary/form/VerbMorphologySection.tsx:200
@@ -2106,21 +2109,11 @@ msgstr "Morphology only applies to isms and fi'ls. This section will be hidden i
 msgid "Most difficult"
 msgstr "Most difficult"
 
-#. placeholder {0}: fieldLabels[field]
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:271
-msgid "Move {0} down"
-msgstr "Move {0} down"
-
-#. placeholder {0}: fieldLabels[field]
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:260
-msgid "Move {0} up"
-msgstr "Move {0} up"
-
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:213
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:183
 msgid "Move down"
 msgstr "Move down"
 
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:201
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:176
 msgid "Move up"
 msgstr "Move up"
 
@@ -2314,9 +2307,9 @@ msgstr "PARTICLE PAIRINGS"
 msgid "Passive P."
 msgstr "Passive P."
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:138
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:142
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:151
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:78
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:103
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:333
 msgid "Passive participle"
 msgstr "Passive participle"
@@ -2331,9 +2324,9 @@ msgstr "Passive Participle"
 msgid "Past"
 msgstr "Past"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:134
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:138
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:55
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:74
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:99
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:317
 msgid "Past tense"
 msgstr "Past tense"
@@ -2362,14 +2355,6 @@ msgstr "Permanently delete your Bahar account and all associated data."
 #: ../../apps/mobile/src/app/(search)/settings/index.tsx:891
 msgid "Permanently delete your Bahar account, including your subscription and all data."
 msgstr "Permanently delete your Bahar account, including your subscription and all data."
-
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:163
-msgid "Pick which fields show on each side of your cards, and in what order."
-msgstr "Pick which fields show on each side of your cards, and in what order."
-
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:211
-msgid "Pick which fields show on each side of your cards, and in what order. Every entry makes a forward card and a reverse card, so there are four sides to set up."
-msgstr "Pick which fields show on each side of your cards, and in what order. Every entry makes a forward card and a reverse card, so there are four sides to set up."
 
 #: ../../apps/web/src/components/errors/ErrorMessage.tsx:11
 msgid "Please contact <0>support</0> with the following details:"
@@ -2415,8 +2400,8 @@ msgid "Please wait before trying again."
 msgstr "Please wait before trying again."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:204
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:133
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:73
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:137
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:98
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:187
 msgid "Plural"
 msgstr "Plural"
@@ -2460,9 +2445,9 @@ msgstr "Prepositions (huroof) that can be used with the verb to change its meani
 msgid "Present"
 msgstr "Present"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:135
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:139
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:79
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:75
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:100
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:321
 msgid "Present tense"
 msgstr "Present tense"
@@ -2474,22 +2459,6 @@ msgstr "Present Tense"
 #: ../../apps/mobile/src/hooks/useBackToExit.ts:97
 msgid "Press back again to exit"
 msgstr "Press back again to exit"
-
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:301
-msgid "Preview forward"
-msgstr "Preview forward"
-
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:359
-msgid "Preview forward card"
-msgstr "Preview forward card"
-
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:311
-msgid "Preview reverse"
-msgstr "Preview reverse"
-
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:369
-msgid "Preview reverse card"
-msgstr "Preview reverse card"
 
 #: ../../apps/mobile/src/app/(auth)/welcome.tsx:63
 msgid "Privacy Policy"
@@ -2513,9 +2482,10 @@ msgstr "Pro"
 msgid "Progress"
 msgstr "Progress"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:242
-msgid "Question side"
-msgstr "Question side"
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:257
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:254
+msgid "Question"
+msgstr "Question"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:385
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:250
@@ -2638,10 +2608,13 @@ msgstr "Reset local data"
 msgid "Reset local data and re-sync?"
 msgstr "Reset local data and re-sync?"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:346
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:290
-msgid "Reset to defaults"
-msgstr "Reset to defaults"
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:401
+msgid "Reset this side"
+msgstr "Reset this side"
+
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:343
+msgid "Reset this side to defaults"
+msgstr "Reset this side to defaults"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/index.lazy.tsx:295
 msgid "Resetting local data..."
@@ -2660,19 +2633,12 @@ msgstr "Restart now"
 msgid "Retention Rate"
 msgstr "Retention Rate"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:237
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:250
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:47
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:247
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:128
 msgid "Reverse"
 msgstr "Reverse"
-
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:91
-msgid "Reverse · answer"
-msgstr "Reverse · answer"
-
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:90
-msgid "Reverse · question"
-msgstr "Reverse · question"
 
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:75
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:326
@@ -2739,8 +2705,8 @@ msgstr "Revoke this API key?"
 msgid "Roman numeral form (I, II, III...)"
 msgstr "Roman numeral form (I, II, III...)"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:142
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:82
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:146
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:107
 msgid "Root"
 msgstr "Root"
 
@@ -2772,9 +2738,7 @@ msgstr "Save & add another"
 msgid "Save 30%"
 msgstr "Save 30%"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:337
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:392
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:281
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:460
 msgid "Save changes"
 msgstr "Save changes"
@@ -2884,7 +2848,7 @@ msgid "Settings"
 msgstr "Settings"
 
 #. placeholder {0}: fieldLabels[field]
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:322
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:359
 msgid "Show {0}"
 msgstr "Show {0}"
 
@@ -2913,13 +2877,13 @@ msgstr "Show as a hint"
 msgid "Show details"
 msgstr "Show details"
 
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:268
-msgid "Show field"
-msgstr "Show field"
-
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:145
 msgid "Show filters"
 msgstr "Show filters"
+
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:273
+msgid "Showing hidden fields"
+msgstr "Showing hidden fields"
 
 #: ../../apps/mobile/src/app/link-account.tsx:74
 msgid "Sign up to save your dictionary and sync across devices"
@@ -2930,9 +2894,9 @@ msgid "Signing in the Bahar CLI..."
 msgstr "Signing in the Bahar CLI..."
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:178
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:131
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:135
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:60
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:71
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:96
 #: ../../apps/mobile/src/components/flashcards/card/MorphologySection.tsx:67
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:308
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:161
@@ -3048,13 +3012,13 @@ msgid "System"
 msgstr "System"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:336
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:124
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:128
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:193
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:165
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:228
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:250
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:64
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:89
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:210
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:460
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:316
@@ -3074,6 +3038,10 @@ msgstr "Tags are added to every selected entry. Tags they already have are left 
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:323
 msgid "Tags on selected entries"
 msgstr "Tags on selected entries"
+
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:261
+msgid "Tap a field to hide it · hold to reorder"
+msgstr "Tap a field to hide it · hold to reorder"
 
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:48
 msgid "Tap entries to select them"
@@ -3260,6 +3228,14 @@ msgstr "This is every entry you have. All of them, their flashcards, and all rev
 msgid "This is the name of your deck."
 msgstr "This is the name of your deck."
 
+#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:18
+msgid "This is your card. Click a field to hide it, drag to reorder. Every entry makes a forward and a reverse card, each with a question and an answer side."
+msgstr "This is your card. Click a field to hide it, drag to reorder. Every entry makes a forward and a reverse card, each with a question and an answer side."
+
+#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:25
+msgid "This is your card. Tap a field to hide it, hold to reorder. Every entry makes a forward and a reverse card, each with two sides."
+msgstr "This is your card. Tap a field to hide it, hold to reorder. Every entry makes a forward and a reverse card, each with two sides."
+
 #: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:229
 msgid "This key stays valid until you revoke it. Use it only where a key can be stored securely."
 msgstr "This key stays valid until you revoke it. Use it only where a key can be stored securely."
@@ -3275,6 +3251,11 @@ msgstr "This removes the entries along with their flashcards and review history.
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:148
 msgid "This removes the entries from your dictionary along with their flashcards and review history. This can't be undone."
 msgstr "This removes the entries from your dictionary along with their flashcards and review history. This can't be undone."
+
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:393
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:338
+msgid "This side reset to defaults"
+msgstr "This side reset to defaults"
 
 #: ../../apps/mobile/src/app/(search)/stats.tsx:284
 #: ../../apps/mobile/src/app/(search)/stats.tsx:320
@@ -3328,10 +3309,10 @@ msgstr "total"
 msgid "Total"
 msgstr "Total"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:126
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:130
 #: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:64
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:241
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:66
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:91
 #: ../../apps/mobile/src/components/dictionary/form/BasicDetailsSection.tsx:60
 msgid "Translation"
 msgstr "Translation"
@@ -3375,6 +3356,8 @@ msgid "Unable to connect to remote database."
 msgstr "Unable to connect to remote database."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/progress/-components/RecentReviewsCard.tsx:127
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:173
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:134
 #: ../../apps/mobile/src/components/progress/RecentReviewsCard.tsx:130
 msgid "Undo"
 msgstr "Undo"
@@ -3392,11 +3375,6 @@ msgstr "Unlock Insights"
 #: ../../apps/web/src/components/features/settings/ApiKeysCardSection.tsx:362
 msgid "Unnamed key"
 msgstr "Unnamed key"
-
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:383
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:320
-msgid "Unsaved changes. The preview already reflects them; your cards do not until you save."
-msgstr "Unsaved changes. The preview already reflects them; your cards do not until you save."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/index.lazy.tsx:79
 #: ../../apps/mobile/src/app/(search)/settings/index.tsx:207
@@ -3447,9 +3425,9 @@ msgstr "Value must be {0} or greater"
 msgid "Value must be {0} or less"
 msgstr "Value must be {0} or less"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:140
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:144
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:278
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:80
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:105
 #: ../../apps/mobile/src/components/flashcards/card/CardFields.tsx:198
 msgid "Verb form"
 msgstr "Verb form"
@@ -3499,12 +3477,12 @@ msgstr "We're sorry to see you go. All your data has been permanently removed."
 msgid "Welcome to Bahar!"
 msgstr "Welcome to Bahar!"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:125
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:129
 #: ../../apps/web/src/components/features/dictionary/add/VerbMorphologyCardSection.tsx:192
 #: ../../apps/web/src/components/features/dictionary/add/IsmMorphologyCardSection.tsx:125
 #: ../../apps/web/src/components/features/dictionary/add/BasicDetailsFormSection.tsx:40
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:392
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:65
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:90
 #: ../../apps/mobile/src/components/dictionary/form/BasicDetailsSection.tsx:36
 msgid "Word"
 msgstr "Word"
@@ -3521,8 +3499,8 @@ msgstr "Word deleted successfully"
 msgid "Word not found"
 msgstr "Word not found"
 
-#: ../../apps/web/src/components/features/settings/CardAppearanceCardSection.tsx:128
-#: ../../apps/mobile/src/components/settings/CardAppearanceSection.tsx:68
+#: ../../apps/web/src/components/features/settings/CardAppearanceEditor.tsx:132
+#: ../../apps/mobile/src/components/settings/CardAppearanceEditor.tsx:93
 msgid "Word type"
 msgstr "Word type"
 

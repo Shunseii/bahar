@@ -58,7 +58,7 @@ export const TagsRow: React.FC<{ tags: string[] }> = ({ tags }) => {
   );
 };
 
-type FieldProps = {
+export type FieldProps = {
   entry: Entry;
   /** The field the face leads with, which renders at prompt size. */
   isPrompt: boolean;
@@ -262,7 +262,7 @@ const TagsField: React.FC<FieldProps> = ({ entry }) => (
 const ism = (entry: Entry) => entry.morphology?.ism;
 const verb = (entry: Entry) => entry.morphology?.verb;
 
-const FIELD_RENDERERS: Record<CardFieldId, React.FC<FieldProps>> = {
+export const FIELD_RENDERERS: Record<CardFieldId, React.FC<FieldProps>> = {
   tags: TagsField,
   word: WordField,
   translation: TranslationField,

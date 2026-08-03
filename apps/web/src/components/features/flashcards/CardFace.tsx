@@ -12,7 +12,7 @@ import { useCardFace } from "@/hooks/useCardFace";
 
 type Entry = FlashcardWithDictionaryEntry["dictionary_entry"];
 
-type FieldProps = {
+export type FieldProps = {
   currentCard: FlashcardWithDictionaryEntry;
   delay: number;
   /** Set on the field the face leads with, which renders at prompt size. */
@@ -221,7 +221,7 @@ const TagsField: FC<FieldProps> = () => null;
 const ism = (entry: Entry) => entry.morphology?.ism;
 const verb = (entry: Entry) => entry.morphology?.verb;
 
-const FIELD_RENDERERS: Record<CardFieldId, FC<FieldProps>> = {
+export const FIELD_RENDERERS: Record<CardFieldId, FC<FieldProps>> = {
   tags: TagsField,
   word: WordField,
   translation: TranslationField,
@@ -284,7 +284,7 @@ const FIELD_RENDERERS: Record<CardFieldId, FC<FieldProps>> = {
   antonyms: AntonymsField,
 };
 
-const PROMPT_CLASS_BY_FACE: Record<CardFaceKey, string> = {
+export const PROMPT_CLASS_BY_FACE: Record<CardFaceKey, string> = {
   forward_question:
     "text-2xl text-foreground/90 leading-relaxed sm:text-3xl rtl:text-right",
   forward_answer: "text-foreground/90 text-xl sm:text-2xl ltr:text-left",
