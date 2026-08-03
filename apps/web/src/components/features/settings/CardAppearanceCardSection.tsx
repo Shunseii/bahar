@@ -121,14 +121,27 @@ export const CardAppearanceCardSection = () => {
   });
 
   const fieldLabels: Record<CardFieldId, string> = {
+    tags: t`Tags`,
     word: t`Word`,
     translation: t`Translation`,
     definition: t`Definition`,
-    morphology: t`Morphology`,
+    type: t`Word type`,
+    gender: t`Gender`,
+    inflection: t`Inflection`,
+    singular: t`Singular`,
+    dual: t`Dual`,
+    plurals: t`Plural`,
+    past_tense: t`Past tense`,
+    present_tense: t`Present tense`,
+    imperative: t`Imperative`,
+    active_participle: t`Active participle`,
+    passive_participle: t`Passive participle`,
+    masadir: t`Masdar`,
+    verb_form: t`Verb form`,
+    huroof: t`Huroof`,
     root: t`Root`,
-    examples: t`Example`,
+    examples: t`Examples`,
     antonyms: t`Antonyms`,
-    tags: t`Tags`,
   };
 
   // The editor always works on all four faces so a save writes every one of

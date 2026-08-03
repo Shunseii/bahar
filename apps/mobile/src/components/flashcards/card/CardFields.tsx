@@ -1,4 +1,5 @@
 import type { CardFieldId } from "@bahar/drizzle-user-db-schemas";
+import { t } from "@lingui/core/macro";
 import * as Sentry from "@sentry/react-native";
 import type React from "react";
 import type { NativeSyntheticEvent, TextLayoutEventData } from "react-native";
@@ -6,10 +7,8 @@ import { Text, View } from "react-native";
 import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations";
 import { ExamplesSection } from "./ExamplesSection";
 import { HuroofSection } from "./HuroofSection";
-import { MorphologySection } from "./MorphologySection";
-import { PropertiesRow } from "./PropertiesRow";
 import { RootRow } from "./RootRow";
-import { Divider } from "./shared";
+import { ArabicValue, Divider, FieldRow } from "./shared";
 
 type Entry = FlashcardWithDictionaryEntry["dictionary_entry"];
 
@@ -56,23 +55,6 @@ export const TagsRow: React.FC<{ tags: string[] }> = ({ tags }) => {
         </View>
       ))}
     </View>
-  );
-};
-
-const hasMorphology = (entry: Entry) => {
-  const ism = entry.morphology?.ism;
-  const verb = entry.morphology?.verb;
-
-  return Boolean(
-    ism?.singular ||
-      ism?.dual ||
-      (ism?.plurals?.length ?? 0) > 0 ||
-      verb?.past_tense ||
-      verb?.present_tense ||
-      verb?.imperative ||
-      verb?.active_participle ||
-      verb?.passive_participle ||
-      (verb?.masadir?.length ?? 0) > 0
   );
 };
 
@@ -125,28 +107,115 @@ const DefinitionField: React.FC<FieldProps> = ({ entry }) => {
   );
 };
 
-/**
- * Everything the entry knows about the word's form: its type and gender pills,
- * the singular/dual/plural table, and a verb's huroof.
- */
-const MorphologyField: React.FC<FieldProps> = ({ entry }) => {
+const Pill: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <View className="rounded-full bg-muted px-2.5 py-0.5">
+    <Text className="font-medium text-[12px] text-foreground">{children}</Text>
+  </View>
+);
+
+/** A translated property (type, gender, inflection) as its own pill. */
+const pillField =
+  (read: (entry: Entry) => string | null): React.FC<FieldProps> =>
+  ({ entry }) => {
+    const value = read(entry);
+
+    if (!value) return null;
+
+    return (
+      <View className="w-full flex-row flex-wrap justify-center gap-1.5">
+        <Pill>{value}</Pill>
+      </View>
+    );
+  };
+
+/** One labelled Arabic value, e.g. the dual or the imperative. */
+const rowField =
+  (
+    read: (entry: Entry) => string | null | undefined,
+    label: () => string
+  ): React.FC<FieldProps> =>
+  ({ entry }) => {
+    const value = read(entry);
+
+    if (!value) return null;
+
+    return (
+      <View className="w-full">
+        <FieldRow label={label()}>
+          <ArabicValue>{value}</ArabicValue>
+        </FieldRow>
+      </View>
+    );
+  };
+
+const PluralsField: React.FC<FieldProps> = ({ entry }) => {
+  const plurals = entry.morphology?.ism?.plurals;
+
+  if (!plurals?.length) return null;
+
+  return (
+    <View className="w-full">
+      <FieldRow label={t`Plurals`}>
+        <View className="flex-row items-center gap-2">
+          {plurals.map((plural, index) => (
+            <ArabicValue key={plural.word} primary={index === 0}>
+              {plural.word}
+            </ArabicValue>
+          ))}
+        </View>
+      </FieldRow>
+    </View>
+  );
+};
+
+const MasadirField: React.FC<FieldProps> = ({ entry }) => {
+  const masadir = entry.morphology?.verb?.masadir;
+
+  if (!masadir?.length) return null;
+
+  return (
+    <View className="w-full">
+      <FieldRow label={t`Masdar`}>
+        <View className="flex-row items-center gap-2">
+          {masadir.map((masdar, index) => (
+            <ArabicValue key={masdar.word} primary={index === 0}>
+              {masdar.word}
+            </ArabicValue>
+          ))}
+        </View>
+      </FieldRow>
+    </View>
+  );
+};
+
+const VerbFormField: React.FC<FieldProps> = ({ entry }) => {
   const verb = entry.morphology?.verb;
+
+  if (!verb?.form) return null;
+
+  return (
+    <View className="w-full">
+      <FieldRow label={t`Verb form`}>
+        <Text className="font-medium text-[14px] text-foreground">
+          {verb.form}
+        </Text>
+        {verb.form_arabic ? (
+          <ArabicValue primary={false}>{verb.form_arabic}</ArabicValue>
+        ) : null}
+      </FieldRow>
+    </View>
+  );
+};
+
+const HuroofField: React.FC<FieldProps> = ({ entry }) => {
+  const verb = entry.morphology?.verb;
+
+  if (!verb?.huroof?.length) return null;
 
   return (
     <>
-      <PropertiesRow morphology={entry.morphology} type={entry.type} />
-      {hasMorphology(entry) && (
-        <>
-          <Divider />
-          <MorphologySection morphology={entry.morphology} />
-        </>
-      )}
-      {!!verb?.huroof?.length && (
-        <>
-          <Divider />
-          <HuroofSection baseWord={entry.word} verb={verb} />
-        </>
-      )}
+      <Divider />
+      <HuroofSection baseWord={entry.word} verb={verb} />
     </>
   );
 };
@@ -190,15 +259,85 @@ const TagsField: React.FC<FieldProps> = ({ entry }) => (
   <TagsRow tags={entry.tags ?? []} />
 );
 
+const ism = (entry: Entry) => entry.morphology?.ism;
+const verb = (entry: Entry) => entry.morphology?.verb;
+
 const FIELD_RENDERERS: Record<CardFieldId, React.FC<FieldProps>> = {
+  tags: TagsField,
   word: WordField,
   translation: TranslationField,
   definition: DefinitionField,
-  morphology: MorphologyField,
+  type: pillField((entry) => {
+    switch (entry.type) {
+      case "ism":
+        return t`Ism`;
+      case "fi'l":
+        return t`Fi'l`;
+      case "harf":
+        return t`Harf`;
+      case "expression":
+        return t`Expression`;
+      default:
+        return null;
+    }
+  }),
+  gender: pillField((entry) => {
+    switch (ism(entry)?.gender) {
+      case "masculine":
+        return t`Masculine`;
+      case "feminine":
+        return t`Feminine`;
+      default:
+        return null;
+    }
+  }),
+  inflection: pillField((entry) => {
+    switch (ism(entry)?.inflection) {
+      case "triptote":
+        return t`Triptote`;
+      case "diptote":
+        return t`Diptote`;
+      case "indeclinable":
+        return t`Indeclinable`;
+      default:
+        return null;
+    }
+  }),
+  singular: rowField(
+    (entry) => ism(entry)?.singular,
+    () => t`Singular`
+  ),
+  dual: rowField(
+    (entry) => ism(entry)?.dual,
+    () => t`Dual`
+  ),
+  plurals: PluralsField,
+  past_tense: rowField(
+    (entry) => verb(entry)?.past_tense,
+    () => t`Past tense`
+  ),
+  present_tense: rowField(
+    (entry) => verb(entry)?.present_tense,
+    () => t`Present tense`
+  ),
+  imperative: rowField(
+    (entry) => verb(entry)?.imperative,
+    () => t`Imperative`
+  ),
+  active_participle: rowField(
+    (entry) => verb(entry)?.active_participle,
+    () => t`Active participle`
+  ),
+  passive_participle: rowField(
+    (entry) => verb(entry)?.passive_participle,
+    () => t`Passive participle`
+  ),
+  masadir: MasadirField,
+  verb_form: VerbFormField,
+  huroof: HuroofField,
   root: RootField,
   examples: ExamplesField,
   antonyms: AntonymsField,
-  tags: TagsField,
 };
 
 /**

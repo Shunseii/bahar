@@ -5,9 +5,12 @@ import type {
   CardLayout,
 } from "@bahar/drizzle-user-db-schemas";
 import { REQUIRED_FIELD_BY_FACE } from "@bahar/drizzle-user-db-schemas";
+import { useLingui } from "@lingui/react/macro";
 import { motion } from "motion/react";
 import type { FC } from "react";
 import { useCardFace } from "@/hooks/useCardFace";
+
+type Entry = FlashcardWithDictionaryEntry["dictionary_entry"];
 
 type FieldProps = {
   currentCard: FlashcardWithDictionaryEntry;
@@ -75,40 +78,78 @@ const DefinitionField: FC<FieldProps> = ({ currentCard, delay }) => {
   );
 };
 
-const MorphologyField: FC<FieldProps> = ({ currentCard, delay }) => {
-  const { type, morphology } = currentCard.dictionary_entry;
+const CHIP_CLASS =
+  "rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl";
 
-  const isIsm = type === "ism";
-  const isVerb = type === "fi'l";
+/** A single Arabic value shown as a chip, e.g. one plural or a past tense. */
+const chipField =
+  (read: (entry: Entry) => string | null | undefined, prefix?: string) =>
+  ({ currentCard, delay }: FieldProps) => {
+    const value = read(currentCard.dictionary_entry);
 
-  const chips = [
-    isIsm && morphology?.ism?.plurals?.[0]?.word
-      ? `(ج) ${morphology.ism.plurals[0].word}`
-      : null,
-    isIsm && morphology?.ism?.singular
-      ? `(م) ${morphology.ism.singular}`
-      : null,
-    isVerb ? (morphology?.verb?.masadir?.[0]?.word ?? null) : null,
-    isVerb ? (morphology?.verb?.present_tense ?? null) : null,
-    isVerb ? (morphology?.verb?.past_tense ?? null) : null,
-  ].filter((chip): chip is string => !!chip);
+    if (!value) return null;
 
-  if (chips.length === 0) return null;
+    return (
+      <motion.div
+        animate={{ opacity: 1 }}
+        className="flex flex-wrap items-center gap-2 ltr:self-end rtl:self-start"
+        initial={{ opacity: 0 }}
+        transition={{ delay }}
+      >
+        <span className={`${CHIP_CLASS} rtl:text-right`} dir="rtl">
+          {prefix ? `${prefix} ${value}` : value}
+        </span>
+      </motion.div>
+    );
+  };
+
+/**
+ * A translated word (the entry's type, gender or inflection) shown as a chip.
+ * The label is resolved per render rather than at module load, so switching
+ * language doesn't leave a stale string behind.
+ */
+const translatedChipField =
+  (
+    read: (entry: Entry, t: ReturnType<typeof useLingui>["t"]) => string | null
+  ) =>
+  ({ currentCard, delay }: FieldProps) => {
+    const { t } = useLingui();
+    const value = read(currentCard.dictionary_entry, t);
+
+    if (!value) return null;
+
+    return (
+      <motion.div
+        animate={{ opacity: 1 }}
+        className="flex flex-wrap items-center gap-2 ltr:self-end rtl:self-start"
+        initial={{ opacity: 0 }}
+        transition={{ delay }}
+      >
+        <span className="rounded-md bg-muted/50 px-2 py-0.5 text-muted-foreground text-sm sm:text-base">
+          {value}
+        </span>
+      </motion.div>
+    );
+  };
+
+const HuroofField: FC<FieldProps> = ({ currentCard, delay }) => {
+  const huroof = currentCard.dictionary_entry.morphology?.verb?.huroof;
+
+  if (!huroof?.length) return null;
 
   return (
     <motion.div
       animate={{ opacity: 1 }}
-      className="flex flex-wrap items-center gap-2 ltr:self-end rtl:flex-row-reverse rtl:self-start"
+      className="flex flex-wrap items-center gap-2 ltr:self-end rtl:self-start"
       initial={{ opacity: 0 }}
       transition={{ delay }}
     >
-      {chips.map((chip) => (
-        <span
-          className="rounded-md bg-muted/50 px-2 py-0.5 text-lg text-muted-foreground sm:text-xl rtl:text-right"
-          dir="rtl"
-          key={chip}
-        >
-          {chip}
+      {huroof.map(({ harf, meaning }) => (
+        <span className={CHIP_CLASS} dir="rtl" key={harf}>
+          {harf}
+          {meaning ? (
+            <span className="text-muted-foreground/70 text-sm"> {meaning}</span>
+          ) : null}
         </span>
       ))}
     </motion.div>
@@ -177,15 +218,70 @@ const AntonymsField: FC<FieldProps> = ({ currentCard, delay }) => {
  */
 const TagsField: FC<FieldProps> = () => null;
 
+const ism = (entry: Entry) => entry.morphology?.ism;
+const verb = (entry: Entry) => entry.morphology?.verb;
+
 const FIELD_RENDERERS: Record<CardFieldId, FC<FieldProps>> = {
+  tags: TagsField,
   word: WordField,
   translation: TranslationField,
   definition: DefinitionField,
-  morphology: MorphologyField,
+  type: translatedChipField((entry, t) => {
+    switch (entry.type) {
+      case "ism":
+        return t`Ism`;
+      case "fi'l":
+        return t`Fi'l`;
+      case "harf":
+        return t`Harf`;
+      case "expression":
+        return t`Expression`;
+      default:
+        return null;
+    }
+  }),
+  gender: translatedChipField((entry, t) => {
+    switch (ism(entry)?.gender) {
+      case "masculine":
+        return t`Masculine`;
+      case "feminine":
+        return t`Feminine`;
+      default:
+        return null;
+    }
+  }),
+  inflection: translatedChipField((entry, t) => {
+    switch (ism(entry)?.inflection) {
+      case "triptote":
+        return t`Triptote`;
+      case "diptote":
+        return t`Diptote`;
+      case "indeclinable":
+        return t`Indeclinable`;
+      default:
+        return null;
+    }
+  }),
+  singular: chipField((entry) => ism(entry)?.singular, "(م)"),
+  dual: chipField((entry) => ism(entry)?.dual, "(مث)"),
+  plurals: chipField((entry) => ism(entry)?.plurals?.[0]?.word, "(ج)"),
+  past_tense: chipField((entry) => verb(entry)?.past_tense),
+  present_tense: chipField((entry) => verb(entry)?.present_tense),
+  imperative: chipField((entry) => verb(entry)?.imperative),
+  active_participle: chipField((entry) => verb(entry)?.active_participle),
+  passive_participle: chipField((entry) => verb(entry)?.passive_participle),
+  masadir: chipField((entry) => verb(entry)?.masadir?.[0]?.word),
+  verb_form: chipField((entry) =>
+    verb(entry)?.form
+      ? [verb(entry)?.form, verb(entry)?.form_arabic]
+          .filter(Boolean)
+          .join(" · ")
+      : null
+  ),
+  huroof: HuroofField,
   root: RootField,
   examples: ExamplesField,
   antonyms: AntonymsField,
-  tags: TagsField,
 };
 
 const PROMPT_CLASS_BY_FACE: Record<CardFaceKey, string> = {

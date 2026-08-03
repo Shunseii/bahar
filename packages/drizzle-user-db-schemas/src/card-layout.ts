@@ -6,15 +6,33 @@ import type { ShowAntonymsMode } from "./types";
  * and in what order.
  */
 
+/**
+ * Morphology is spread across one id per property rather than a single
+ * "morphology" field: a user who wants the plural on the question side but not
+ * the gender has to be able to say so.
+ */
 export const CARD_FIELD_IDS = [
+  "tags",
   "word",
   "translation",
   "definition",
-  "morphology",
+  "type",
+  "gender",
+  "inflection",
+  "singular",
+  "dual",
+  "plurals",
+  "past_tense",
+  "present_tense",
+  "imperative",
+  "active_participle",
+  "passive_participle",
+  "masadir",
+  "verb_form",
+  "huroof",
   "root",
   "examples",
   "antonyms",
-  "tags",
 ] as const;
 
 export type CardFieldId = (typeof CARD_FIELD_IDS)[number];
@@ -68,20 +86,61 @@ export const buildDefaultCardLayout = (
   const onHintSide = showAntonyms === "hint" ? (["antonyms"] as const) : [];
   const onAnswerSide = showAntonyms === "answer" ? (["antonyms"] as const) : [];
 
+  // Everything the entry knows about the word's form, in the order the answer
+  // side has always listed it.
+  const morphology = [
+    "type",
+    "gender",
+    "inflection",
+    "singular",
+    "dual",
+    "plurals",
+    "past_tense",
+    "present_tense",
+    "imperative",
+    "active_participle",
+    "passive_participle",
+    "masadir",
+    "verb_form",
+    "huroof",
+  ] as const;
+
+  // A question side leads with the prompt and stays sparse: the forms that hint
+  // at the word without giving it away, and nothing else.
+  const questionHints = ["plurals", "singular", "masadir"] as const;
+
   return {
     version: 1,
     faces: {
       forward_question: [
         "tags",
         "word",
-        "morphology",
+        "type",
+        ...questionHints,
         "root",
         ...onHintSide,
         "examples",
       ],
-      forward_answer: ["tags", "definition", ...onAnswerSide, "translation"],
-      reverse_question: ["tags", "translation", "definition", ...onAnswerSide],
-      reverse_answer: ["tags", "word", "morphology", "root", ...onHintSide],
+      forward_answer: [
+        "tags",
+        "translation",
+        "definition",
+        ...morphology,
+        "root",
+        "examples",
+        ...onAnswerSide,
+      ],
+      reverse_question: ["tags", "translation", "type", ...onAnswerSide],
+      reverse_answer: [
+        "tags",
+        "word",
+        "translation",
+        "definition",
+        ...morphology,
+        "root",
+        "examples",
+        ...onHintSide,
+      ],
     },
   };
 };

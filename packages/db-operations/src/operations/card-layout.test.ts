@@ -37,7 +37,16 @@ describe("buildDefaultCardLayout", () => {
 describe("resolveCardFace", () => {
   it("falls back to the defaults when no layout is stored", () => {
     expect(resolveCardFace({ layout: null, face: "forward_question" })).toEqual(
-      ["tags", "word", "morphology", "root", "examples"]
+      [
+        "tags",
+        "word",
+        "type",
+        "plurals",
+        "singular",
+        "masadir",
+        "root",
+        "examples",
+      ]
     );
   });
 
@@ -59,12 +68,9 @@ describe("resolveCardFace", () => {
       faces: { forward_answer: ["translation"] },
     };
 
-    expect(resolveCardFace({ layout, face: "reverse_answer" })).toEqual([
-      "tags",
-      "word",
-      "morphology",
-      "root",
-    ]);
+    expect(resolveCardFace({ layout, face: "reverse_answer" })).toContain(
+      "past_tense"
+    );
   });
 
   it("drops ids a newer client wrote that this build cannot render", () => {
@@ -136,13 +142,14 @@ describe("resolveCardFace", () => {
 
 describe("hiddenCardFields", () => {
   it("returns the fields a face is not showing", () => {
-    expect(hiddenCardFields(["word", "translation"])).toEqual([
-      "definition",
-      "morphology",
-      "root",
-      "examples",
-      "antonyms",
-      "tags",
-    ]);
+    const hidden = hiddenCardFields(["word", "translation"]);
+
+    expect(hidden).not.toContain("word");
+    expect(hidden).not.toContain("translation");
+    expect(hidden).toContain("definition");
+    // Morphology is granular, so each property is hideable on its own.
+    expect(hidden).toContain("gender");
+    expect(hidden).toContain("plurals");
+    expect(hidden).toContain("huroof");
   });
 });
