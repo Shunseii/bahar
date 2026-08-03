@@ -4,6 +4,7 @@ import {
   nextAutoScrollDirection,
   type RowRect,
   rowAtPosition,
+  shouldExitAfterDrag,
 } from "./useDragSelect";
 
 /** Two 100pt rows with the list's 12pt gap between them. */
@@ -231,5 +232,29 @@ describe("rowAtPosition with a scrolled list", () => {
     expect(
       rowAtPosition({ rects: RECTS, absoluteY: 150, offsetDelta: 400 })
     ).toBeUndefined();
+  });
+});
+
+describe("shouldExitAfterDrag", () => {
+  it("leaves selection mode when a drag cleared the last entry", () => {
+    expect(shouldExitAfterDrag({ wasDragging: true, selectedCount: 0 })).toBe(
+      true
+    );
+  });
+
+  it("stays when the drag left something selected", () => {
+    expect(shouldExitAfterDrag({ wasDragging: true, selectedCount: 2 })).toBe(
+      false
+    );
+  });
+
+  it("stays for a gesture that never became a drag", () => {
+    // onFinalize fires for taps that never activated the pan, including the
+    // header's select button -- which scrolls with the list, so it sits inside
+    // the gesture detector. Acting on those exited selection mode on the very
+    // tap that entered it.
+    expect(shouldExitAfterDrag({ wasDragging: false, selectedCount: 0 })).toBe(
+      false
+    );
   });
 });

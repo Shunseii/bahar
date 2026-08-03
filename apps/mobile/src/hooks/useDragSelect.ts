@@ -178,6 +178,23 @@ export const nextAutoScrollDirection = ({
   return isDeliberate && movingWithEdge ? direction : 0;
 };
 
+/**
+ * Whether finishing a gesture should leave selection mode.
+ *
+ * Gated on a drag having actually started, because onFinalize also fires for
+ * gestures that never activated -- every ordinary tap inside the list, including
+ * the header's select button, which scrolls with the list and so sits inside the
+ * gesture detector. Without the guard, entering selection mode from that button
+ * exited it again on the same tap.
+ */
+export const shouldExitAfterDrag = ({
+  wasDragging,
+  selectedCount,
+}: {
+  wasDragging: boolean;
+  selectedCount: number;
+}): boolean => wasDragging && selectedCount === 0;
+
 interface UseDragSelectOptions {
   /** Ids in list order, used to turn an anchor + current row into a range. */
   orderedIds: string[];
@@ -495,13 +512,25 @@ export const useDragSelect = ({
 
   const handleDragEnd = useCallback(() => {
     stopAutoScroll();
+
+    // onFinalize also fires for a gesture that never activated, which is every
+    // ordinary tap inside the list -- including the header's own select button,
+    // since the header scrolls with the list and so sits inside the detector.
+    // Only a drag that actually started gets to act on an empty selection.
+    const wasDragging = dragRef.current !== null;
+
     dragRef.current = null;
     rectsRef.current = [];
     listRectRef.current = null;
 
     // A drag that started on a selected row deselects; if it cleared the last
     // one, the mode has nothing left to act on.
-    if (getSelectedIds().size === 0) {
+    if (
+      shouldExitAfterDrag({
+        wasDragging,
+        selectedCount: getSelectedIds().size,
+      })
+    ) {
       exitSelectionMode();
     }
   }, [exitSelectionMode, getSelectedIds, stopAutoScroll]);
