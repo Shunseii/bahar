@@ -340,6 +340,20 @@ describe("dictionaryEntriesTable", () => {
     });
   });
 
+  describe("count", () => {
+    it("counts every entry regardless of filters", async () => {
+      await insertDictionaryEntry(testDb, { tags: ["daily"] });
+      await insertDictionaryEntry(testDb, { tags: null });
+      await insertDictionaryEntry(testDb);
+
+      expect(await dictionaryEntriesTable.count.query()).toBe(3);
+    });
+
+    it("is zero for an empty dictionary", async () => {
+      expect(await dictionaryEntriesTable.count.query()).toBe(0);
+    });
+  });
+
   describe("maxUpdatedAt", () => {
     it("returns the most recent updated_at_timestamp_ms across all entries", async () => {
       await insertDictionaryEntry(testDb, { updated_at_timestamp_ms: 1000 });

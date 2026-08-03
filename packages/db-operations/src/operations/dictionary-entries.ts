@@ -7,7 +7,7 @@ import {
   settings,
 } from "@bahar/drizzle-user-db-schemas";
 import { createNewFlashcard } from "@bahar/fsrs";
-import { desc, eq, inArray, max, sql } from "drizzle-orm";
+import { count, desc, eq, inArray, max, sql } from "drizzle-orm";
 import { nanoid } from "nanoid/non-secure";
 import { enqueueDbOperation } from "../queue";
 import type { NullToUndefined, TableOperation } from "../types";
@@ -494,6 +494,26 @@ export const makeDictionaryEntriesTable = ({
       },
       cacheOptions: {
         queryKey: ["turso.dictionaryEntries.tagsForEntries"],
+      },
+    },
+    count: {
+      /**
+       * How many entries the dictionary holds, ignoring any search or filter.
+       * Bulk delete compares its selection against this to tell "delete these
+       * 40" from "delete everything you have", which is worth a second look
+       * before it happens.
+       */
+      query: async (): Promise<number> => {
+        const drizzleDb = await getDb();
+
+        const [res] = await drizzleDb
+          .select({ total: count() })
+          .from(dictionaryEntries);
+
+        return res?.total ?? 0;
+      },
+      cacheOptions: {
+        queryKey: ["turso.dictionaryEntries.count"],
       },
     },
     maxUpdatedAt: {

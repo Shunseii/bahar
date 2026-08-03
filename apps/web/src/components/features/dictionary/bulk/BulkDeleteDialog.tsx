@@ -10,11 +10,11 @@ import {
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Layers, Loader2, Trash2 } from "lucide-react";
-import type { FC } from "react";
+import { BookOpen, Layers, Loader2, Trash2, TriangleAlert } from "lucide-react";
+import { type FC, useState } from "react";
 import { toast } from "sonner";
 import { useBulkDictionaryActions } from "@/hooks/db";
-import { flashcardsTable } from "@/lib/db/operations";
+import { dictionaryEntriesTable, flashcardsTable } from "@/lib/db/operations";
 
 interface BulkDeleteDialogProps {
   ids: string[];
@@ -29,7 +29,21 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
   onOpenChange,
   onDone,
 }) => {
+  const [confirmingEverything, setConfirmingEverything] = useState(false);
   const { deleteEntries, isPending } = useBulkDictionaryActions();
+
+  const { data: dictionaryTotal } = useQuery({
+    queryFn: () => dictionaryEntriesTable.count.query(),
+    queryKey: [...dictionaryEntriesTable.count.cacheOptions.queryKey],
+    enabled: open,
+  });
+
+  // Deleting a selection is one thing; deleting the whole dictionary is another,
+  // and "select all" makes them a tap apart. This one gets its own confirmation.
+  const isEverything =
+    dictionaryTotal !== undefined &&
+    dictionaryTotal > 0 &&
+    ids.length >= dictionaryTotal;
 
   const { data: flashcardCount } = useQuery({
     queryFn: () =>
@@ -38,20 +52,83 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
     enabled: open,
   });
 
+  const close = () => {
+    setConfirmingEverything(false);
+    onOpenChange(false);
+  };
+
   const handleDelete = async () => {
+    if (isEverything && !confirmingEverything) {
+      setConfirmingEverything(true);
+      return;
+    }
+
     try {
       const deletedIds = await deleteEntries(ids);
 
       toast.success(t`${deletedIds.length} entries deleted`);
-      onOpenChange(false);
+      close();
       onDone();
     } catch {
       toast.error(t`Failed to delete entries`);
     }
   };
 
+  if (confirmingEverything) {
+    return (
+      <Dialog
+        onOpenChange={(next) => (next ? onOpenChange(true) : close())}
+        open={open}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <TriangleAlert className="h-4 w-4" />
+              <Trans>Delete your entire dictionary?</Trans>
+            </DialogTitle>
+            <DialogDescription>
+              <Trans>
+                This is every entry you have. All of them, their flashcards, and
+                all review history will be permanently deleted, on this device
+                and every device you sync with. This can't be undone.
+              </Trans>
+            </DialogDescription>
+          </DialogHeader>
+
+          <p className="text-muted-foreground text-sm">
+            <Trans>
+              If you want a copy first, cancel and export your dictionary from
+              Settings.
+            </Trans>
+          </p>
+
+          <DialogFooter>
+            <Button onClick={close} variant="outline">
+              <Trans>Cancel</Trans>
+            </Button>
+            <Button
+              disabled={isPending}
+              onClick={handleDelete}
+              variant="destructive"
+            >
+              {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+              <Plural
+                one="Yes, delete # entry"
+                other="Yes, delete all # entries"
+                value={ids.length}
+              />
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
+    <Dialog
+      onOpenChange={(next) => (next ? onOpenChange(true) : close())}
+      open={open}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -88,7 +165,7 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
         </div>
 
         <DialogFooter>
-          <Button onClick={() => onOpenChange(false)} variant="outline">
+          <Button onClick={close} variant="outline">
             <Trans>Cancel</Trans>
           </Button>
           <Button

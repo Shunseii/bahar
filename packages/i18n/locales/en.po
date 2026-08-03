@@ -14,13 +14,13 @@ msgstr ""
 "X-Generator: Poedit 3.4.4\n"
 
 #. placeholder {0}: ids.length
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:248
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:258
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:139
 msgid "{0, plural, one {# entry selected} other {# entries selected}}"
 msgstr "{0, plural, one {# entry selected} other {# entries selected}}"
 
 #. placeholder {0}: ids.length
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:76
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:153
 msgid "{0, plural, one {# entry} other {# entries}}"
 msgstr "{0, plural, one {# entry} other {# entries}}"
 
@@ -31,7 +31,7 @@ msgstr "{0, plural, one {# tag selected} other {# tags selected}}"
 
 #. placeholder {0}: selectedTags.length
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:268
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:193
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:198
 msgid "{0, plural, one {Add # tag} other {Add # tags}}"
 msgstr "{0, plural, one {Add # tag} other {Add # tags}}"
 
@@ -53,18 +53,18 @@ msgid "{0, plural, one {card left} other {cards left}}"
 msgstr "{0, plural, one {card left} other {cards left}}"
 
 #. placeholder {0}: ids.length
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:59
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:136
 msgid "{0, plural, one {Delete # entry?} other {Delete # entries?}}"
 msgstr "{0, plural, one {Delete # entry?} other {Delete # entries?}}"
 
 #. placeholder {0}: ids.length
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:100
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:177
 msgid "{0, plural, one {Delete # entry} other {Delete # entries}}"
 msgstr "{0, plural, one {Delete # entry} other {Delete # entries}}"
 
 #. placeholder {0}: selectedTags.length
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:274
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:199
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:204
 msgid "{0, plural, one {Remove # tag} other {Remove # tags}}"
 msgstr "{0, plural, one {Remove # tag} other {Remove # tags}}"
 
@@ -77,6 +77,11 @@ msgstr "{0, plural, one {Remove tags from # entry} other {Remove tags from # ent
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:105
 msgid "{0, plural, one {Reverse cards for # entry} other {Reverse cards for # entries}}"
 msgstr "{0, plural, one {Reverse cards for # entry} other {Reverse cards for # entries}}"
+
+#. placeholder {0}: ids.length
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:115
+msgid "{0, plural, one {Yes, delete # entry} other {Yes, delete all # entries}}"
+msgstr "{0, plural, one {Yes, delete # entry} other {Yes, delete all # entries}}"
 
 #. placeholder {0}: postponeProgress.postponed
 #. placeholder {1}: postponeProgress.total
@@ -92,8 +97,8 @@ msgid "{0} cards have been spread over the next {windowDays} days."
 msgstr "{0} cards have been spread over the next {windowDays} days."
 
 #. placeholder {0}: deletedIds.length
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:45
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:54
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:69
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:55
 msgid "{0} entries deleted"
 msgstr "{0} entries deleted"
 
@@ -113,11 +118,11 @@ msgid "{0}x"
 msgstr "{0}x"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:238
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:346
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:356
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {# entry} other {# entries}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:81
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:158
 msgid "{flashcardCount, plural, one {# flashcard} other {# flashcards}}"
 msgstr "{flashcardCount, plural, one {# flashcard} other {# flashcards}}"
 
@@ -153,12 +158,12 @@ msgid "{longestStreak, plural, one {Previous: {0} day} other {Previous: {1} days
 msgstr "{longestStreak, plural, one {Previous: {0} day} other {Previous: {1} days}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:79
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:160
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:189
 msgid "{matchingCount, plural, one {Select all #} other {Select all #}}"
 msgstr "{matchingCount, plural, one {Select all #} other {Select all #}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:62
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:135
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:164
 msgid "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
 msgstr "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
 
@@ -170,7 +175,7 @@ msgid "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 msgstr "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:53
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:118
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:147
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr "{selectedCount, plural, one {# selected} other {# selected}}"
 
@@ -278,7 +283,7 @@ msgstr "Active participle"
 msgid "Active Participle"
 msgstr "Active Participle"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:262
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:272
 msgid "Add"
 msgstr "Add"
 
@@ -642,10 +647,12 @@ msgstr "By signing in, you agree to our <0>Privacy Policy</0>"
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:129
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:259
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:167
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:92
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:107
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:169
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:421
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:43
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:69
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:84
 #: ../../apps/mobile/src/app/(search)/settings.tsx:435
 #: ../../apps/mobile/src/app/(search)/settings.tsx:472
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:87
@@ -684,7 +691,7 @@ msgstr "Choose file"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:77
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:477
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:158
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:187
 msgid "Clear"
 msgstr "Clear"
 
@@ -772,7 +779,7 @@ msgid "Couldn't load your API keys. Please try again later."
 msgstr "Couldn't load your API keys. Please try again later."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:208
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:315
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:325
 msgid "Create"
 msgstr "Create"
 
@@ -941,8 +948,8 @@ msgstr "Definition"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:190
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:191
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:135
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:45
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:82
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:86
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:111
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:80
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:89
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:119
@@ -959,7 +966,7 @@ msgstr "Delete \"{0}\"?"
 msgid "Delete \"{name}\"?"
 msgstr "Delete \"{name}\"?"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:40
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:81
 msgid "Delete {selectedCount} entries?"
 msgstr "Delete {selectedCount} entries?"
 
@@ -986,6 +993,10 @@ msgstr "Delete Deck"
 msgid "Delete Dictionary"
 msgstr "Delete Dictionary"
 
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:71
+msgid "Delete everything"
+msgstr "Delete everything"
+
 #: ../../apps/mobile/src/app/(search)/settings.tsx:474
 msgid "Delete Everything"
 msgstr "Delete Everything"
@@ -1005,6 +1016,11 @@ msgstr "Delete your account?"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:585
 msgid "Delete your dictionary?"
 msgstr "Delete your dictionary?"
+
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:87
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:66
+msgid "Delete your entire dictionary?"
+msgstr "Delete your entire dictionary?"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:92
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:116
@@ -1282,7 +1298,7 @@ msgid "Expression"
 msgstr "Expression"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:98
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:144
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:149
 msgid "Failed to add tags"
 msgstr "Failed to add tags"
 
@@ -1321,8 +1337,8 @@ msgstr "Failed to delete account"
 msgid "Failed to delete dictionary"
 msgstr "Failed to delete dictionary"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:49
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:57
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:73
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:58
 msgid "Failed to delete entries"
 msgstr "Failed to delete entries"
 
@@ -1341,7 +1357,7 @@ msgid "Failed to generate example"
 msgstr "Failed to generate example"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:98
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:144
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:149
 msgid "Failed to remove tags"
 msgstr "Failed to remove tags"
 
@@ -1447,7 +1463,7 @@ msgstr "Fill in the word, translation, and type first."
 msgid "Filter by tags..."
 msgstr "Filter by tags..."
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:293
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:304
 msgid "Filter tags on these entries"
 msgstr "Filter tags on these entries"
 
@@ -1654,6 +1670,10 @@ msgstr "ID:"
 #: ../../apps/web/src/components/SchemaOutdatedBanner.tsx:37
 msgid "if needed."
 msgstr "if needed."
+
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:99
+msgid "If you want a copy first, cancel and export your dictionary from Settings."
+msgstr "If you want a copy first, cancel and export your dictionary from Settings."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:631
 msgid "If you're experiencing sync issues or data not loading correctly, you can reset your local data and re-sync from the server."
@@ -2006,7 +2026,7 @@ msgid "No tags found."
 msgstr "No tags found."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:189
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:326
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:336
 msgid "No tags yet. Type to create one."
 msgstr "No tags yet. Type to create one."
 
@@ -2052,7 +2072,7 @@ msgstr "On"
 
 #. placeholder {0}: ids.length
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:244
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:348
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:358
 msgid "on {count} of {0}"
 msgstr "on {count} of {0}"
 
@@ -2297,7 +2317,7 @@ msgstr "Reload"
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:302
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:419
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:312
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:263
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:273
 msgid "Remove"
 msgstr "Remove"
 
@@ -2371,7 +2391,7 @@ msgid "Retention Rate"
 msgstr "Retention Rate"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:124
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:75
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:104
 msgid "Reverse"
 msgstr "Reverse"
 
@@ -2484,7 +2504,7 @@ msgstr "Schema Migrations"
 msgid "Search for a tag..."
 msgstr "Search for a tag..."
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:292
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:303
 msgid "Search or create a tag"
 msgstr "Search or create a tag"
 
@@ -2731,8 +2751,8 @@ msgstr "System"
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:229
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:262
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:316
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:245
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:68
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:255
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:97
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:151
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:206
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:273
@@ -2741,7 +2761,7 @@ msgid "Tags"
 msgstr "Tags"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:91
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:137
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:142
 msgid "Tags added to {changed} entries"
 msgstr "Tags added to {changed} entries"
 
@@ -2749,16 +2769,16 @@ msgstr "Tags added to {changed} entries"
 msgid "Tags are added to every selected entry. Tags they already have are left alone."
 msgstr "Tags are added to every selected entry. Tags they already have are left alone."
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:304
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:314
 msgid "Tags on selected entries"
 msgstr "Tags on selected entries"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:92
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:138
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:143
 msgid "Tags removed from {changed} entries"
 msgstr "Tags removed from {changed} entries"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:146
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:175
 msgid "Tap entries to select them"
 msgstr "Tap entries to select them"
 
@@ -2833,7 +2853,7 @@ msgid "The root letters of the word. The input can be separated by commas, space
 msgstr "The root letters of the word. The input can be separated by commas, spaces or have no delimeter ex. فعل or ف, ع, ل or ف ع ل."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:191
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:328
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:338
 msgid "The selected entries have no tags."
 msgstr "The selected entries have no tags."
 
@@ -2934,6 +2954,11 @@ msgstr "This field is required."
 msgid "This is case insensitive."
 msgstr "This is case insensitive."
 
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:90
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:67
+msgid "This is every entry you have. All of them, their flashcards, and all review history will be permanently deleted, on this device and every device you sync with. This can't be undone."
+msgstr "This is every entry you have. All of them, their flashcards, and all review history will be permanently deleted, on this device and every device you sync with. This can't be undone."
+
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:217
 msgid "This is the name of your deck."
 msgstr "This is the name of your deck."
@@ -2946,11 +2971,11 @@ msgstr "This key stays valid until you revoke it. Use it only where a key can be
 msgid "This refers to how many case endings the word can take."
 msgstr "This refers to how many case endings the word can take."
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:41
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:82
 msgid "This removes the entries along with their flashcards and review history. This can't be undone."
 msgstr "This removes the entries along with their flashcards and review history. This can't be undone."
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:66
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:143
 msgid "This removes the entries from your dictionary along with their flashcards and review history. This can't be undone."
 msgstr "This removes the entries from your dictionary along with their flashcards and review history. This can't be undone."
 
@@ -3346,7 +3371,7 @@ msgstr "Your most recent flashcard reviews. You can undo a review to restore the
 msgid "Your new API key"
 msgstr "Your new API key"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:302
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:312
 msgid "Your tags"
 msgstr "Your tags"
 

@@ -1,5 +1,6 @@
 import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
+import { useQuery } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
 import { Repeat, TagIcon, Trash2, X } from "lucide-react-native";
 import { type FC, useRef } from "react";
@@ -7,6 +8,7 @@ import { Alert, Pressable, Text, View } from "react-native";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
 import { toast } from "sonner-native";
 import { useBulkDictionaryActions } from "@/hooks/useBulkDictionaryActions";
+import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { useBulkSelection, useSelectionScope } from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { BulkReverseSheet, type BulkReverseSheetRef } from "./BulkReverseSheet";
@@ -35,6 +37,45 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
   const ids = [...selectedIds];
   const disabled = selectedCount === 0 || isPending;
 
+  const { data: dictionaryTotal } = useQuery({
+    queryFn: () => dictionaryEntriesTable.count.query(),
+    queryKey: [...dictionaryEntriesTable.count.cacheOptions.queryKey],
+  });
+
+  const isEverything =
+    dictionaryTotal !== undefined &&
+    dictionaryTotal > 0 &&
+    ids.length >= dictionaryTotal;
+
+  const runDelete = async () => {
+    try {
+      const deletedIds = await deleteEntries(ids);
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      toast.success(t`${deletedIds.length} entries deleted`);
+      exitSelectionMode();
+    } catch {
+      toast.error(t`Failed to delete entries`);
+    }
+  };
+
+  // Deleting a selection is one thing; deleting the whole dictionary is another,
+  // and "select all" makes them a tap apart. That one asks twice.
+  const confirmDeletingEverything = () => {
+    Alert.alert(
+      t`Delete your entire dictionary?`,
+      t`This is every entry you have. All of them, their flashcards, and all review history will be permanently deleted, on this device and every device you sync with. This can't be undone.`,
+      [
+        { text: t`Cancel`, style: "cancel" },
+        {
+          text: t`Delete everything`,
+          style: "destructive",
+          onPress: runDelete,
+        },
+      ]
+    );
+  };
+
   const confirmDelete = () => {
     Alert.alert(
       t`Delete ${selectedCount} entries?`,
@@ -44,19 +85,7 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
         {
           text: t`Delete`,
           style: "destructive",
-          onPress: async () => {
-            try {
-              const deletedIds = await deleteEntries(ids);
-
-              Haptics.notificationAsync(
-                Haptics.NotificationFeedbackType.Success
-              );
-              toast.success(t`${deletedIds.length} entries deleted`);
-              exitSelectionMode();
-            } catch {
-              toast.error(t`Failed to delete entries`);
-            }
-          },
+          onPress: isEverything ? confirmDeletingEverything : runDelete,
         },
       ]
     );
