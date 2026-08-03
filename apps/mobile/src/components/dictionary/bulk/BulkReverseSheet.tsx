@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 import { useBulkDictionaryActions } from "@/hooks/useBulkDictionaryActions";
 import { flashcardsTable } from "@/lib/db/operations";
+import { useTrackSheetOpen } from "@/lib/store/sheets";
 import { useThemeColors } from "@/lib/theme";
 
 export interface BulkReverseSheetRef {
@@ -48,6 +49,8 @@ export const BulkReverseSheet = forwardRef<
   const [mode, setMode] = useState<"enable" | "disable">("enable");
   const [isOpen, setIsOpen] = useState(false);
   const { setReverse, isPending } = useBulkDictionaryActions();
+
+  useTrackSheetOpen(isOpen);
 
   useImperativeHandle(ref, () => ({
     present: () => {

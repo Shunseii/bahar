@@ -35,6 +35,18 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
   const { deleteEntries, isPending } = useBulkDictionaryActions();
 
   const ids = [...selectedIds];
+
+  // One place decides what goes under the count, so the block above it stays a
+  // single fixed-height slot.
+  const secondaryLine =
+    outsideResultsCount > 0
+      ? plural(outsideResultsCount, {
+          one: "# not in these results",
+          other: "# not in these results",
+        })
+      : selectedCount === 0
+        ? t`Tap entries to select them`
+        : null;
   const disabled = selectedCount === 0 || isPending;
 
   const { data: dictionaryTotal } = useQuery({
@@ -159,7 +171,12 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
               <X color={colors.foreground} size={20} />
             </Pressable>
 
-            <View className="flex-1 justify-center">
+            {/* Fixed height, contents centred: the count on its own sits in the
+                middle, and with a second line the two stack. Either way the
+                block -- and so the bar -- keeps the same height, which matters
+                because the bar is anchored to the bottom and grows upward, so
+                any change moves it under the user's thumb. */}
+            <View className="h-9 flex-1 justify-center">
               <Text className="font-semibold text-foreground text-sm">
                 <Plural
                   one="# selected"
@@ -168,31 +185,14 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
                 />
               </Text>
 
-              {/* One fixed-height slot for whichever secondary line applies.
-                  The bar is anchored to the bottom and grows upward, so letting
-                  this line come and go moved the whole bar under the user's
-                  thumb. */}
-              <View className="h-4 justify-center">
-                {outsideResultsCount > 0 ? (
-                  <Text
-                    className="text-muted-foreground text-xs"
-                    numberOfLines={1}
-                  >
-                    <Plural
-                      one="# not in these results"
-                      other="# not in these results"
-                      value={outsideResultsCount}
-                    />
-                  </Text>
-                ) : selectedCount === 0 ? (
-                  <Text
-                    className="text-muted-foreground text-xs"
-                    numberOfLines={1}
-                  >
-                    <Trans>Tap entries to select them</Trans>
-                  </Text>
-                ) : null}
-              </View>
+              {secondaryLine && (
+                <Text
+                  className="text-muted-foreground text-xs"
+                  numberOfLines={1}
+                >
+                  {secondaryLine}
+                </Text>
+              )}
             </View>
 
             <Pressable
