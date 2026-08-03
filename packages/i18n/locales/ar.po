@@ -184,12 +184,13 @@ msgstr "{longestStreak, plural, one {الأطول: {0} يوم} two {الأطول
 msgid "{longestStreak, plural, one {Previous: {0} day} other {Previous: {1} days}}"
 msgstr "{longestStreak, plural, one {السابق: {0} يوم} two {السابق: {1} يومان} few {السابق: {1} أيام} many {السابق: {1} يومًا} other {السابق: {1} يوم}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:80
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:64
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:206
 msgid "{matchingCount, plural, one {Select all #} other {Select all #}}"
 msgstr "{matchingCount, plural, one {حدد الكل (#)} two {حدد الكل (#)} few {حدد الكل (#)} many {حدد الكل (#)} other {حدد الكل (#)}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:63
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:73
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:191
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:43
 msgid "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
 msgstr "{outsideResultsCount, plural, one {واحد غير موجود في هذه النتائج} two {اثنان غير موجودان في هذه النتائج} few {# غير موجودة في هذه النتائج} many {# غير موجود في هذه النتائج} other {# غير موجود في هذه النتائج}}"
@@ -201,7 +202,7 @@ msgstr "{outsideResultsCount, plural, one {واحد غير موجود في هذ�
 msgid "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 msgstr "{reviewCount, plural, one {{0} مراجعة} two {{1} مراجعتان} few {{1} مراجعات} many {{1} مراجعة} other {{1} مراجعة}}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:54
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:68
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:181
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr "{selectedCount, plural, one {واحد محدد} two {اثنان محددان} few {# محددة} many {# محددًا} other {# محدد}}"
@@ -224,7 +225,7 @@ msgstr "{streakCount, plural, one {يوم متتالي} two {يومان متتا
 msgid "{tomorrowCount, plural, one {review tomorrow} other {reviews tomorrow}}"
 msgstr "{tomorrowCount, plural, one {مراجعة غدًا} two {مراجعتان غدًا} few {مراجعات غدًا} many {مراجعة غدًا} other {مراجعة غدًا}}"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:82
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:83
 msgid "{totalHits, plural, one {result} other {results}}"
 msgstr "{totalHits, plural, one {نتيجة} two {نتيجتان} few {نتائج} many {نتيجة} other {نتيجة}}"
 
@@ -326,8 +327,8 @@ msgstr "أضف"
 msgid "Add a new SQL migration."
 msgstr "أضف ترحيل SQL جديد."
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:92
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:255
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:93
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:248
 msgid "Add a new word"
 msgstr "أضف كلمة جديدة"
 
@@ -392,7 +393,7 @@ msgstr "أضف علامة {inputValue}"
 msgid "Add tag {value}"
 msgstr "إضافة العلامة {value}"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:106
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:86
 msgid "Add tags"
 msgstr "أضف علامات"
 
@@ -400,10 +401,10 @@ msgstr "أضف علامات"
 msgid "Add tags to your word."
 msgstr "أضف علامات إلى كلمتك."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:127
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:129
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:72
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:180
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:67
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:68
 msgid "Add word"
 msgstr "أضف كلمة"
 
@@ -607,7 +608,7 @@ msgstr "رجوع"
 msgid "Back to sign in"
 msgstr "العودة إلى تسجيل الدخول"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:198
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:200
 msgid "Back to top"
 msgstr "العودة إلى الأعلى"
 
@@ -695,7 +696,7 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:221
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:138
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:307
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:342
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:335
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:306
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:326
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:450
@@ -724,7 +725,7 @@ msgstr "السبب:"
 msgid "Choose file"
 msgstr "اختر ملف"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:78
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:62
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:633
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:204
 msgid "Clear"
@@ -737,6 +738,10 @@ msgstr "مسح الكل"
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:368
 msgid "Clear all filters"
 msgstr "مسح كل المرشّحات"
+
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:79
+msgid "Click entries to select them"
+msgstr ""
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/settings/route.lazy.tsx:326
 msgid "Color theme"
@@ -834,7 +839,7 @@ msgid "Create a new deck by choosing filters. The deck will be composed of the c
 msgstr "أنشئ مجموعة جديدة باختيار الفلاتر. ستكون المجموعة مكونة من البطاقات التي تطابق هذه الفلاتر."
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:472
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:287
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:280
 msgid "Create a reverse card"
 msgstr "إنشاء بطاقة عكسية"
 
@@ -861,8 +866,8 @@ msgstr "إنشاء مفتاح"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:512
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:539
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:308
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:315
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:322
 msgid "Create multiple"
 msgstr "إضافة متعددة"
 
@@ -982,7 +987,7 @@ msgstr "التعريف"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:158
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:190
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:191
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:136
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:54
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:106
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:135
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:80
@@ -1179,8 +1184,8 @@ msgstr "حرّر {word}"
 msgid "Edit deck"
 msgstr "تعديل المجموعة"
 
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:66
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:93
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:67
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:94
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:391
 msgid "Edit word"
 msgstr "تعديل الكلمة"
@@ -1219,7 +1224,7 @@ msgstr "إنجليزي → عربي"
 msgid "English → Arabic, for this word."
 msgstr "إنجليزي → عربي، لهذه الكلمة."
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:290
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:283
 msgid "English to Arabic, for this word."
 msgstr "من الإنجليزية إلى العربية، لهذه الكلمة."
 
@@ -1275,7 +1280,8 @@ msgstr "استخدامات مثالية للكلمة في سياقات مختل�
 msgid "Examples"
 msgstr "أمثلة"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:142
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:113
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:249
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:166
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:224
 msgid "Exit selection mode"
@@ -1340,7 +1346,7 @@ msgstr "عبارة"
 msgid "Failed to add tags"
 msgstr "فشل إضافة العلامات"
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:151
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:144
 msgid "Failed to add word"
 msgstr "فشل إضافة الكلمة"
 
@@ -1527,7 +1533,7 @@ msgstr "تم تحديث إعدادات البطاقة!"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:461
 #: ../../apps/web/src/components/features/settings/FlashcardSettingsCardSection.tsx:224
 #: ../../apps/mobile/src/app/(search)/settings.tsx:673
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:283
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:276
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:436
 msgid "Flashcards"
 msgstr "بطاقات"
@@ -1680,8 +1686,8 @@ msgstr "تلميح"
 #: ../../apps/web/src/components/DesktopNavigation.tsx:53
 #: ../../apps/web/src/components/DesktopNavigation.tsx:59
 #: ../../apps/mobile/src/app/(search)/_layout.tsx:281
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:62
-#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:61
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:63
+#: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:62
 msgid "Home"
 msgstr "منزل"
 
@@ -1803,7 +1809,7 @@ msgstr "اسم"
 
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:516
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:543
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:323
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:316
 msgid "Keep adding words after saving instead of going back to the homepage."
 msgstr "استمر في إضافة كلمات بعد الحفظ بدلاً من العودة إلى الصفحة الرئيسية."
 
@@ -1847,7 +1853,7 @@ msgstr "جارٍ تحميل العلامات..."
 msgid "Loading your dictionary..."
 msgstr "جارٍ تحميل معجمك..."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:96
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:97
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:172
 msgid "Loading..."
 msgstr "جارٍ التحميل..."
@@ -2114,7 +2120,7 @@ msgstr "الآن"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:489
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:94
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:337
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:297
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:290
 msgid "Off"
 msgstr "إيقاف"
 
@@ -2126,7 +2132,7 @@ msgstr "الأقدم"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:492
 #: ../../apps/web/src/components/features/flashcards/ReverseToggle.tsx:97
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:338
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:298
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:291
 msgid "On"
 msgstr "تشغيل"
 
@@ -2410,7 +2416,7 @@ msgstr "احذف"
 msgid "Remove reverse card?"
 msgstr "إزالة البطاقة العكسية؟"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:112
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:90
 msgid "Remove tags"
 msgstr "أزل علامات"
 
@@ -2474,7 +2480,7 @@ msgstr "أعد التشغيل الآن"
 msgid "Retention Rate"
 msgstr "معدل الاحتفاظ"
 
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:125
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:47
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:128
 msgid "Reverse"
 msgstr "العكسية"
@@ -2488,7 +2494,7 @@ msgstr "بطاقة عكسية"
 msgid "Reverse flashcards"
 msgstr "بطاقات العكسية"
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:150
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:152
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:328
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:86
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:194
@@ -2556,11 +2562,11 @@ msgstr "الحروف الأصلية"
 #: ../../apps/web/src/components/features/settings/AdminSettingsCardSection.tsx:146
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:231
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:317
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:354
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:347
 msgid "Save"
 msgstr "احفظ"
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:352
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:345
 msgid "Save & add another"
 msgstr "احفظ وأضف كلمة أخرى"
 
@@ -2614,7 +2620,7 @@ msgstr "يبحث..."
 msgid "See your retention rate, workload forecast, difficult words, and more."
 msgstr "شاهد معدل الاحتفاظ، توقعات المراجعة، الكلمات الصعبة، والمزيد."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:114
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:116
 msgid "Select"
 msgstr "حدد"
 
@@ -2680,7 +2686,7 @@ msgstr "عرض بعد كشف الإجابة"
 msgid "Show answer"
 msgstr "اعرض الجواب"
 
-#: ../../apps/mobile/src/components/flashcards/GradeButtons.tsx:204
+#: ../../apps/mobile/src/components/flashcards/GradeButtons.tsx:206
 msgid "Show Answer"
 msgstr "أظهر الإجابة"
 
@@ -2825,7 +2831,8 @@ msgstr "نظام"
 
 #: ../../apps/web/src/components/search/InfiniteScroll.tsx:336
 #: ../../apps/web/src/components/features/dictionary/filters/DictionaryFilters.tsx:181
-#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:99
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:156
+#: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:219
 #: ../../apps/web/src/components/features/dictionary/add/TagsFormSection.tsx:44
 #: ../../apps/web/src/components/features/decks/DeckDialogContent.tsx:250
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:210
@@ -2835,7 +2842,7 @@ msgstr "نظام"
 #: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:121
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:169
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:227
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:273
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:266
 #: ../../apps/mobile/src/app/(search)/(home)/edit-word/[id].tsx:426
 msgid "Tags"
 msgstr "علامات"
@@ -3269,7 +3276,7 @@ msgstr "مرحباً بكم في بحر!"
 msgid "Word"
 msgstr "الكلمة"
 
-#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:142
+#: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:135
 msgid "Word added successfully"
 msgstr "تمت إضافة الكلمة بنجاح"
 
@@ -3416,7 +3423,7 @@ msgstr "لم يتم إنشاء مجموعتك. يرجى المحاولة مرة 
 msgid "Your deck was not updated. Please try again."
 msgstr "لم يتم تحديث مجموعتك. يرجى المحاولة مرة أخرى."
 
-#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:72
+#: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:73
 #: ../../apps/mobile/src/app/(search)/(home)/index.tsx:151
 msgid "Your Dictionary"
 msgstr "معجمك"

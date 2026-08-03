@@ -34,7 +34,8 @@ const Index = () => {
   const searchQuery = useAtomValue(searchQueryAtom);
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const { results } = useSearch();
-  const { selectionMode, enterSelectionMode } = useBulkSelection();
+  const { selectionMode, enterSelectionMode, exitSelectionMode } =
+    useBulkSelection();
   const { height } = useWindowSize();
   const { data: counts, isPending } = useQuery({
     queryFn: () =>
@@ -104,10 +105,11 @@ const Index = () => {
                 <div className="flex items-center justify-between gap-2">
                   <Button
                     className="h-9 px-3"
-                    disabled={selectionMode}
-                    onClick={enterSelectionMode}
+                    onClick={
+                      selectionMode ? exitSelectionMode : enterSelectionMode
+                    }
                     size="sm"
-                    variant="outline"
+                    variant={selectionMode ? "secondary" : "outline"}
                   >
                     <ListChecks className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
                     <span className="text-sm">
