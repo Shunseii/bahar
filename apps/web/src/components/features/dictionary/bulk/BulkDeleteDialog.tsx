@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@bahar/web-ui/components/dialog";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Layers, Loader2, Trash2, TriangleAlert } from "lucide-react";
@@ -66,7 +66,12 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
     try {
       const deletedIds = await deleteEntries(ids);
 
-      toast.success(t`${deletedIds.length} entries deleted`);
+      toast.success(
+        plural(deletedIds.length, {
+          one: "# entry deleted",
+          other: "# entries deleted",
+        })
+      );
       close();
       onDone();
     } catch {
@@ -169,7 +174,10 @@ export const BulkDeleteDialog: FC<BulkDeleteDialogProps> = ({
             <Trans>Cancel</Trans>
           </Button>
           <Button
-            disabled={isPending}
+            // Until the count resolves there's no way to tell whether this is
+            // the whole dictionary, and the second confirmation would be
+            // skipped.
+            disabled={isPending || dictionaryTotal === undefined}
             onClick={handleDelete}
             variant="destructive"
           >

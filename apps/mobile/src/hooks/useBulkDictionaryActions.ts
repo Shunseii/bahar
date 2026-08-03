@@ -56,9 +56,19 @@ export const useBulkDictionaryActions = () => {
         await removeFromSearchIndex(entry.id);
       }
 
-      await queryClient.invalidateQueries({
-        queryKey: dictionaryEntriesTable.entry.cacheOptions.queryKey,
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.entry.cacheOptions.queryKey,
+        }),
+        // The dictionary is smaller and may have lost tags entirely, and the
+        // whole-dictionary check in the delete confirmation reads the count.
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.count.cacheOptions.queryKey,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.tags.cacheOptions.queryKey,
+        }),
+      ]);
       await invalidateQueueCounts();
       resetSearch();
 
@@ -87,12 +97,18 @@ export const useBulkDictionaryActions = () => {
         });
       }
 
-      await queryClient.invalidateQueries({
-        queryKey: dictionaryEntriesTable.entry.cacheOptions.queryKey,
-      });
-      await queryClient.invalidateQueries({
-        queryKey: dictionaryEntriesTable.tags.cacheOptions.queryKey,
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.entry.cacheOptions.queryKey,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.tags.cacheOptions.queryKey,
+        }),
+        // What the remove-tags picker lists for this selection.
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.tagsForEntries.cacheOptions.queryKey,
+        }),
+      ]);
       resetSearch();
 
       return updated.length;
@@ -115,9 +131,16 @@ export const useBulkDictionaryActions = () => {
         enabled,
       });
 
-      await queryClient.invalidateQueries({
-        queryKey: flashcardsTable.findByEntryId.cacheOptions.queryKey,
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: flashcardsTable.findByEntryId.cacheOptions.queryKey,
+        }),
+        // What the reverse sheet reads to say how many entries would change.
+        queryClient.invalidateQueries({
+          queryKey:
+            flashcardsTable.reverseCountForEntries.cacheOptions.queryKey,
+        }),
+      ]);
       await invalidateQueueCounts();
 
       return changed;

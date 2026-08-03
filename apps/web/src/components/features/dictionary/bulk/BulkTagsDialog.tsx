@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@bahar/web-ui/components/dialog";
 import { Input } from "@bahar/web-ui/components/input";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { CheckIcon, Loader2, TagIcon, X } from "lucide-react";
@@ -88,8 +88,14 @@ export const BulkTagsDialog: FC<BulkTagsDialogProps> = ({
 
       toast.success(
         action === "add"
-          ? t`Tags added to ${changed} entries`
-          : t`Tags removed from ${changed} entries`
+          ? plural(changed, {
+              one: "Tags added to # entry",
+              other: "Tags added to # entries",
+            })
+          : plural(changed, {
+              one: "Tags removed from # entry",
+              other: "Tags removed from # entries",
+            })
       );
       close();
       onDone();

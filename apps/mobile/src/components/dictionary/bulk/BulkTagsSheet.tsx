@@ -8,7 +8,7 @@ import {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Search, TagIcon, X } from "lucide-react-native";
@@ -139,8 +139,14 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
 
         toast.success(
           action === "add"
-            ? t`Tags added to ${changed} entries`
-            : t`Tags removed from ${changed} entries`
+            ? plural(changed, {
+                one: "Tags added to # entry",
+                other: "Tags added to # entries",
+              })
+            : plural(changed, {
+                one: "Tags removed from # entry",
+                other: "Tags removed from # entries",
+              })
         );
         sheetRef.current?.dismiss();
         onDone();

@@ -879,8 +879,13 @@ export const makeFlashcardsTable = ({
 
           const drizzleDb = await getDb();
 
+          // A repeated id would otherwise be counted twice and, when enabling,
+          // insert two reverse rows for the same entry -- which the
+          // entry+direction unique index rejects, failing the whole call.
+          const entryIds = [...new Set(dictionary_entry_ids)];
+
           const existing: SelectFlashcard[] = [];
-          for (const chunk of chunkFlashcardIds(dictionary_entry_ids)) {
+          for (const chunk of chunkFlashcardIds(entryIds)) {
             existing.push(
               ...(await drizzleDb
                 .select()
@@ -899,9 +904,7 @@ export const makeFlashcardsTable = ({
           );
 
           if (enabled) {
-            const missing = dictionary_entry_ids.filter(
-              (id) => !withReverse.has(id)
-            );
+            const missing = entryIds.filter((id) => !withReverse.has(id));
 
             for (const chunk of chunkFlashcardIds(missing)) {
               await drizzleDb.insert(flashcards).values(
@@ -915,7 +918,7 @@ export const makeFlashcardsTable = ({
 
             return {
               changed: missing.length,
-              unchanged: dictionary_entry_ids.length - missing.length,
+              unchanged: entryIds.length - missing.length,
             };
           }
 
@@ -929,7 +932,7 @@ export const makeFlashcardsTable = ({
 
           return {
             changed: idsToDelete.length,
-            unchanged: dictionary_entry_ids.length - withReverse.size,
+            unchanged: entryIds.length - withReverse.size,
           };
         }),
       cacheOptions: {

@@ -5,7 +5,7 @@ import {
   BottomSheetModal,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { TriangleAlert } from "lucide-react-native";
@@ -46,11 +46,13 @@ export const BulkReverseSheet = forwardRef<
   const insets = useSafeAreaInsets();
   const sheetRef = useRef<BottomSheetModal>(null);
   const [mode, setMode] = useState<"enable" | "disable">("enable");
+  const [isOpen, setIsOpen] = useState(false);
   const { setReverse, isPending } = useBulkDictionaryActions();
 
   useImperativeHandle(ref, () => ({
     present: () => {
       setMode("enable");
+      setIsOpen(true);
       sheetRef.current?.present();
     },
     dismiss: () => sheetRef.current?.dismiss(),
@@ -65,6 +67,9 @@ export const BulkReverseSheet = forwardRef<
       ...flashcardsTable.reverseCountForEntries.cacheOptions.queryKey,
       ids,
     ],
+    // The sheet stays mounted with the action bar and `ids` is in the key, so
+    // without this the query re-runs for every row a drag selection crosses.
+    enabled: isOpen,
   });
 
   const withoutReverse =
@@ -76,8 +81,14 @@ export const BulkReverseSheet = forwardRef<
 
       toast.success(
         mode === "enable"
-          ? t`Reverse cards enabled for ${changed} entries`
-          : t`Reverse cards removed from ${changed} entries`
+          ? plural(changed, {
+              one: "Reverse card enabled for # entry",
+              other: "Reverse cards enabled for # entries",
+            })
+          : plural(changed, {
+              one: "Reverse card removed from # entry",
+              other: "Reverse cards removed from # entries",
+            })
       );
       sheetRef.current?.dismiss();
       onDone();
@@ -123,6 +134,8 @@ export const BulkReverseSheet = forwardRef<
       backgroundStyle={{ backgroundColor: colors.card }}
       enableDynamicSizing
       handleIndicatorStyle={{ backgroundColor: colors.border }}
+      onChange={(index) => setIsOpen(index >= 0)}
+      onDismiss={() => setIsOpen(false)}
       ref={sheetRef}
       topInset={insets.top}
     >

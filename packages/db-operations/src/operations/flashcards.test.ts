@@ -1464,6 +1464,22 @@ describe("flashcardsTable", () => {
         })
       ).toEqual({ changed: 0, unchanged: 0 });
     });
+
+    it("treats a repeated id as one entry", async () => {
+      // Two inserts for the same entry would violate the entry+direction unique
+      // index and fail the whole call.
+      const entry = await insertDictionaryEntry(testDb);
+
+      expect(
+        await flashcardsTable.bulkSetReverse.mutation({
+          dictionary_entry_ids: [entry.id, entry.id],
+          enabled: true,
+        })
+      ).toEqual({ changed: 1, unchanged: 0 });
+
+      const cards = await flashcardsTable.findByEntryId.query(entry.id);
+      expect(cards.filter((c) => c.direction === "reverse")).toHaveLength(1);
+    });
   });
 
   describe("reverseCountForEntries", () => {

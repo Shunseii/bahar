@@ -5,6 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@bahar/web-ui/components/dropdown-menu";
+import { t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { ChevronUp, Repeat, TagIcon, Trash2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -138,7 +139,7 @@ export const BulkSelectionBar: FC = () => {
               <span className="h-5 w-px bg-border" />
 
               <Button
-                aria-label="Exit selection mode"
+                aria-label={t`Exit selection mode`}
                 className="h-8 w-8 rounded-full"
                 onClick={exitSelectionMode}
                 size="icon"

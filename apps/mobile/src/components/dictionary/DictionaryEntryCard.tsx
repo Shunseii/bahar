@@ -353,6 +353,11 @@ export const DictionaryEntryCard: FC<DictionaryEntryCardProps> = memo(
     // Matches the tick a drag gives for each row it crosses, so picking by tap
     // and picking by drag feel like the same action.
     const toggleSelection = () => {
+      // Entries without an id do reach this component (see the edit handler's
+      // BAH-180 guard below); selecting one would put undefined into the bulk
+      // operations.
+      if (!entry.id) return;
+
       Haptics.selectionAsync();
       onToggleSelect?.(entry.id);
     };

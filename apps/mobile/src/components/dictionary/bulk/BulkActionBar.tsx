@@ -1,4 +1,4 @@
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import * as Haptics from "expo-haptics";
@@ -52,7 +52,12 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
       const deletedIds = await deleteEntries(ids);
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      toast.success(t`${deletedIds.length} entries deleted`);
+      toast.success(
+        plural(deletedIds.length, {
+          one: "# entry deleted",
+          other: "# entries deleted",
+        })
+      );
       exitSelectionMode();
     } catch {
       toast.error(t`Failed to delete entries`);
@@ -78,14 +83,21 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
 
   const confirmDelete = () => {
     Alert.alert(
-      t`Delete ${selectedCount} entries?`,
+      plural(selectedCount, {
+        one: "Delete # entry?",
+        other: "Delete # entries?",
+      }),
       t`This removes the entries along with their flashcards and review history. This can't be undone.`,
       [
         { text: t`Cancel`, style: "cancel" },
         {
           text: t`Delete`,
           style: "destructive",
-          onPress: isEverything ? confirmDeletingEverything : runDelete,
+          // Presenting an alert from inside another alert's handler is
+          // dropped on iOS, so let the first one finish closing first.
+          onPress: isEverything
+            ? () => setTimeout(confirmDeletingEverything, 0)
+            : runDelete,
         },
       ]
     );
@@ -138,7 +150,12 @@ export const BulkActionBar: FC<BulkActionBarProps> = ({ bottomInset = 0 }) => {
               built across several searches -- which is the whole reason it
               survives a query change. */}
           <View className="flex-row items-center gap-3 border-border/60 border-b px-3 py-2">
-            <Pressable hitSlop={8} onPress={exitSelectionMode}>
+            <Pressable
+              accessibilityLabel={t`Exit selection mode`}
+              accessibilityRole="button"
+              hitSlop={8}
+              onPress={exitSelectionMode}
+            >
               <X color={colors.foreground} size={20} />
             </Pressable>
 

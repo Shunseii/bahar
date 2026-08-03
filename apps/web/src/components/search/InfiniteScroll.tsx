@@ -807,7 +807,7 @@ const WordCardContent: FC<WordCardContentProps> = memo(
 
           {/* Expanded details */}
           <AnimatePresence>
-            {isExpanded && (
+            {isExpanded && !selectionMode && (
               <motion.div
                 animate={{ opacity: 1, height: "auto" }}
                 className="overflow-hidden"

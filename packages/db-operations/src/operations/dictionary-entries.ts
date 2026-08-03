@@ -382,14 +382,20 @@ export const makeDictionaryEntriesTable = ({
 
           // Flashcards are deleted explicitly because sync-wasm doesn't support
           // ON DELETE CASCADE -- same reason as the single-entry delete above.
+          //
+          // Both deletes go in one batch per chunk so they can't half-happen: a
+          // failure between them would leave entries in the dictionary with no
+          // flashcards, and a word with no cards never comes up for review
+          // again.
           for (const chunk of chunkIds(existingIds)) {
-            await drizzleDb
-              .delete(flashcards)
-              .where(inArray(flashcards.dictionary_entry_id, chunk));
-
-            await drizzleDb
-              .delete(dictionaryEntries)
-              .where(inArray(dictionaryEntries.id, chunk));
+            await drizzleDb.batch([
+              drizzleDb
+                .delete(flashcards)
+                .where(inArray(flashcards.dictionary_entry_id, chunk)),
+              drizzleDb
+                .delete(dictionaryEntries)
+                .where(inArray(dictionaryEntries.id, chunk)),
+            ]);
           }
 
           return rows;

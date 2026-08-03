@@ -13,7 +13,7 @@ import {
   RadioGroup,
   RadioGroupItem,
 } from "@bahar/web-ui/components/radio-group";
-import { t } from "@lingui/core/macro";
+import { plural, t } from "@lingui/core/macro";
 import { Plural, Trans } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Repeat, TriangleAlert } from "lucide-react";
@@ -64,8 +64,14 @@ export const BulkReverseDialog: FC<BulkReverseDialogProps> = ({
 
       toast.success(
         mode === "enable"
-          ? t`Reverse cards enabled for ${changed} entries`
-          : t`Reverse cards removed from ${changed} entries`
+          ? plural(changed, {
+              one: "Reverse card enabled for # entry",
+              other: "Reverse cards enabled for # entries",
+            })
+          : plural(changed, {
+              one: "Reverse card removed from # entry",
+              other: "Reverse cards removed from # entries",
+            })
       );
       close();
       onDone();

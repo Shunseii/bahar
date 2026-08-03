@@ -437,6 +437,25 @@ describe("dictionaryEntriesTable", () => {
       ).toEqual([]);
       expect(await dictionaryEntriesTable.list.query()).toHaveLength(1);
     });
+
+    it("leaves the entry in place when its flashcards can't be deleted", async () => {
+      // The two deletes share a batch, so a failure on the first must not let
+      // the second through -- an entry with no flashcards never comes up for
+      // review again.
+      const entry = await insertDictionaryEntry(testDb);
+      await insertFlashcard(testDb, { dictionary_entry_id: entry.id });
+
+      await testDb.db.exec(`
+        CREATE TRIGGER reject_flashcard_delete BEFORE DELETE ON flashcards
+        BEGIN SELECT RAISE(ABORT, 'flashcard delete rejected'); END;
+      `);
+
+      await expect(
+        dictionaryEntriesTable.bulkDelete.mutation({ ids: [entry.id] })
+      ).rejects.toThrow();
+
+      expect(await dictionaryEntriesTable.list.query()).toHaveLength(1);
+    });
   });
 
   describe("bulkUpdateTags", () => {

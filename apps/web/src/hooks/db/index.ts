@@ -176,6 +176,16 @@ export const useBulkDictionaryActions = () => {
         remove(orama, entry.id);
       }
 
+      // The dictionary is smaller and may have lost tags entirely, and the
+      // whole-dictionary check in the delete dialog reads the entry count.
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.count.cacheOptions.queryKey,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.tags.cacheOptions.queryKey,
+        }),
+      ]);
       await invalidateQueueCounts();
       reset();
 
@@ -216,9 +226,15 @@ export const useBulkDictionaryActions = () => {
         setSuggestedTags(tags);
       }
 
-      await queryClient.invalidateQueries({
-        queryKey: dictionaryEntriesTable.tags.cacheOptions.queryKey,
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.tags.cacheOptions.queryKey,
+        }),
+        // What the remove-tags picker lists for this selection.
+        queryClient.invalidateQueries({
+          queryKey: dictionaryEntriesTable.tagsForEntries.cacheOptions.queryKey,
+        }),
+      ]);
       reset();
 
       return updated.length;
@@ -241,6 +257,10 @@ export const useBulkDictionaryActions = () => {
         enabled,
       });
 
+      // What the reverse dialog reads to say how many entries would change.
+      await queryClient.invalidateQueries({
+        queryKey: flashcardsTable.reverseCountForEntries.cacheOptions.queryKey,
+      });
       await invalidateQueueCounts();
 
       return changed;

@@ -219,7 +219,9 @@ const HeaderCard = ({
         <DictionaryFilters />
 
         <Pressable
-          accessibilityLabel={t`Select entries`}
+          accessibilityLabel={
+            isSelecting ? t`Exit selection mode` : t`Select entries`
+          }
           accessibilityRole="button"
           accessibilityState={{ selected: isSelecting }}
           className={cn(
