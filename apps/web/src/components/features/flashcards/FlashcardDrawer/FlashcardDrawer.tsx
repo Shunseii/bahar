@@ -207,6 +207,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         lapses: selectedCard.lapses,
         elapsed_days: selectedCard.elapsed_days,
         scheduled_days: selectedCard.scheduled_days,
+        learning_steps: selectedCard.learning_steps,
       };
 
       setShowAnswer(false);
