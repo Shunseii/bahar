@@ -31,22 +31,23 @@ const AUTO_SCROLL_MIN_VELOCITY = 120;
  * Auto-scroll speed in points per second, at the near and far side of the edge
  * zone. Ramped between the two by how deep the finger is.
  */
-const AUTO_SCROLL_MIN_SPEED = 320;
-const AUTO_SCROLL_MAX_SPEED = 1600;
+const AUTO_SCROLL_MIN_SPEED = 120;
+const AUTO_SCROLL_MAX_SPEED = 600;
 
 /**
  * How far the target offset may run ahead of where the list actually is. Without
  * a cap it keeps accumulating once the list has hit its end, and the drag then
  * has to unwind all of it before scrolling back the other way.
  */
-const AUTO_SCROLL_MAX_LEAD = 240;
+const AUTO_SCROLL_MAX_LEAD = 120;
 
 /**
- * How often row positions are re-measured while auto-scrolling. Rows move under
- * a stationary finger, so the map from screen position to row goes stale; this
- * is a compromise between a stale hit-test and measuring every frame.
+ * How often rows are re-measured while auto-scrolling. Scrolling itself no
+ * longer invalidates the measurements -- they're corrected by how far the list
+ * has moved (see rowAtPosition's offsetDelta) -- so this only needs to be often
+ * enough to pick up rows that have newly mounted.
  */
-const REMEASURE_INTERVAL_MS = 100;
+const REMEASURE_INTERVAL_MS = 250;
 
 export interface RowRect {
   id: string;
@@ -58,15 +59,26 @@ export interface RowRect {
  * The row the finger is over, in window coordinates. Rows are laid out with a
  * gap between them, so a position in that gap belongs to no row and the drag
  * keeps whatever it last resolved.
+ *
+ * `offsetDelta` is how far the list has scrolled since the rects were measured.
+ * Auto-scrolling moves every row by exactly that much, so correcting the finger
+ * position by it keeps the hit-test exact between measurements -- re-measuring
+ * on a timer instead meant that at speed the resolved row lagged the finger and
+ * the selection stopped short of the rows that had already gone past.
  */
 export const rowAtPosition = ({
   rects,
   absoluteY,
+  offsetDelta = 0,
 }: {
   rects: RowRect[];
   absoluteY: number;
-}): RowRect | undefined =>
-  rects.find((rect) => absoluteY >= rect.top && absoluteY <= rect.bottom);
+  offsetDelta?: number;
+}): RowRect | undefined => {
+  const y = absoluteY + offsetDelta;
+
+  return rects.find((rect) => y >= rect.top && y <= rect.bottom);
+};
 
 /**
  * The ids a drag covers: everything between the row it started on and the row
@@ -212,6 +224,8 @@ export const useDragSelect = ({
   const rowRefs = useRef(new Map<string, View>());
   const listRef = useRef<View | null>(null);
   const rectsRef = useRef<RowRect[]>([]);
+  /** Scroll offset the rects were measured at, for correcting them since. */
+  const rectsOffsetRef = useRef(0);
   const listRectRef = useRef<{ top: number; bottom: number } | null>(null);
 
   const dragRef = useRef<{
@@ -257,6 +271,12 @@ export const useDragSelect = ({
     []
   );
 
+  const refreshRects = useCallback(async () => {
+    const offset = getScrollOffset();
+    rectsRef.current = await measureRows();
+    rectsOffsetRef.current = offset;
+  }, [getScrollOffset, measureRows]);
+
   const measureList = useCallback(
     () =>
       new Promise<{ top: number; bottom: number } | null>((resolve) => {
@@ -279,7 +299,11 @@ export const useDragSelect = ({
       const drag = dragRef.current;
       if (!drag) return;
 
-      const row = rowAtPosition({ rects: rectsRef.current, absoluteY });
+      const row = rowAtPosition({
+        rects: rectsRef.current,
+        absoluteY,
+        offsetDelta: getScrollOffset() - rectsOffsetRef.current,
+      });
       if (!row || row.id === drag.lastRowId) return;
 
       drag.lastRowId = row.id;
@@ -297,7 +321,7 @@ export const useDragSelect = ({
       );
       Haptics.selectionAsync();
     },
-    [setSelection]
+    [getScrollOffset, setSelection]
   );
 
   const stopAutoScroll = useCallback(() => {
@@ -373,14 +397,15 @@ export const useDragSelect = ({
 
       scrollToOffset(autoScrollTargetRef.current);
 
+      // Cheap now that it doesn't measure: the finger hasn't moved, but the rows
+      // under it have, so this is what picks up each row as it passes.
+      applyAt(drag.lastY);
+
       sinceMeasure += elapsed * 1000;
 
       if (sinceMeasure >= REMEASURE_INTERVAL_MS) {
         sinceMeasure = 0;
-        measureRows().then((rects) => {
-          rectsRef.current = rects;
-          applyAt(drag.lastY);
-        });
+        refreshRects();
       }
 
       autoScrollFrameRef.current = requestAnimationFrame(frame);
@@ -391,7 +416,7 @@ export const useDragSelect = ({
     applyAt,
     currentSpeed,
     getScrollOffset,
-    measureRows,
+    refreshRects,
     scrollToOffset,
     stopAutoScroll,
   ]);
@@ -428,15 +453,11 @@ export const useDragSelect = ({
 
   const handleDragStart = useCallback(
     async (absoluteY: number) => {
-      const [rects, listRect] = await Promise.all([
-        measureRows(),
-        measureList(),
-      ]);
+      const [, listRect] = await Promise.all([refreshRects(), measureList()]);
 
-      rectsRef.current = rects;
       listRectRef.current = listRect;
 
-      const row = rowAtPosition({ rects, absoluteY });
+      const row = rowAtPosition({ rects: rectsRef.current, absoluteY });
       if (!row) return;
 
       const snapshot = getSelectedIds();
@@ -455,7 +476,7 @@ export const useDragSelect = ({
       enterSelectionMode();
       applyAt(absoluteY);
     },
-    [applyAt, enterSelectionMode, getSelectedIds, measureList, measureRows]
+    [applyAt, enterSelectionMode, getSelectedIds, measureList, refreshRects]
   );
 
   const handleDragMove = useCallback(

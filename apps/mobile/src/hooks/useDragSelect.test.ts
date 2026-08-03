@@ -211,3 +211,25 @@ describe("nextAutoScrollDirection", () => {
     expect(direction({ absoluteY: 700, velocityY: 400 })).toBe(1);
   });
 });
+
+describe("rowAtPosition with a scrolled list", () => {
+  it("resolves the row that is now under the finger", () => {
+    // Rects measured before scrolling; the list has since moved 112pt, so the
+    // row that was 112pt lower is the one under a stationary finger.
+    expect(
+      rowAtPosition({ rects: RECTS, absoluteY: 150, offsetDelta: 112 })?.id
+    ).toBe("second");
+  });
+
+  it("is unchanged when the list hasn't moved", () => {
+    expect(
+      rowAtPosition({ rects: RECTS, absoluteY: 150, offsetDelta: 0 })?.id
+    ).toBe("first");
+  });
+
+  it("resolves nothing once the correction passes the last row", () => {
+    expect(
+      rowAtPosition({ rects: RECTS, absoluteY: 150, offsetDelta: 400 })
+    ).toBeUndefined();
+  });
+});
