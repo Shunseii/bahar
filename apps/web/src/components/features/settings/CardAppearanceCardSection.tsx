@@ -1,3 +1,4 @@
+import type { FlashcardWithDictionaryEntry } from "@bahar/db-operations";
 import {
   CARD_FACES,
   type CardFace,
@@ -6,6 +7,7 @@ import {
   hiddenCardFields,
   REQUIRED_FIELD_BY_FACE,
   resolveCardFace,
+  type SelectDictionaryEntry,
 } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import {
@@ -21,9 +23,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowDown, ArrowUp, Eye, EyeOff, Lock, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { settingsTable } from "@/lib/db/operations";
+import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
+import { dictionaryEntriesTable, settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
-import { CardPreviewDialog } from "./CardPreviewDialog";
 
 const FACE_LABELS: Record<CardFace, { direction: string; side: string }> = {
   forward_question: { direction: "forward", side: "question" },
@@ -32,6 +34,22 @@ const FACE_LABELS: Record<CardFace, { direction: string; side: string }> = {
   reverse_answer: { direction: "reverse", side: "answer" },
 };
 
+/**
+ * A flashcard shaped from a real entry purely for previewing. Scheduling fields
+ * are never read by the card faces, and the drawer's preview mode writes
+ * nothing back.
+ */
+const toPreviewCard = (
+  entry: SelectDictionaryEntry,
+  direction: "forward" | "reverse"
+): FlashcardWithDictionaryEntry =>
+  ({
+    id: `preview-${direction}`,
+    dictionary_entry_id: entry.id,
+    direction,
+    dictionary_entry: entry,
+  }) as FlashcardWithDictionaryEntry;
+
 export const CardAppearanceCardSection = () => {
   const { t } = useLingui();
   const [selectedFace, setSelectedFace] =
@@ -39,9 +57,13 @@ export const CardAppearanceCardSection = () => {
   const [draft, setDraft] = useState<Record<CardFace, CardFieldId[]> | null>(
     null
   );
-  const [previewDirection, setPreviewDirection] = useState<
-    "forward" | "reverse" | null
-  >(null);
+
+  const { data: entries } = useQuery({
+    queryFn: () => dictionaryEntriesTable.list.query({ limit: 1 }),
+    ...dictionaryEntriesTable.list.cacheOptions,
+  });
+
+  const previewEntry = entries?.[0];
 
   const { data: settings } = useQuery({
     queryFn: () => settingsTable.getSettings.query(),
@@ -271,20 +293,34 @@ export const CardAppearanceCardSection = () => {
           </Button>
 
           <div className="flex flex-1 flex-wrap justify-end gap-2">
-            <Button
-              onClick={() => setPreviewDirection("forward")}
-              type="button"
-              variant="outline"
-            >
-              <Trans>Preview forward card</Trans>
-            </Button>
-            <Button
-              onClick={() => setPreviewDirection("reverse")}
-              type="button"
-              variant="outline"
-            >
-              <Trans>Preview reverse card</Trans>
-            </Button>
+            {previewEntry ? (
+              <>
+                <FlashcardDrawer
+                  preview={{
+                    card: toPreviewCard(previewEntry, "forward"),
+                    layoutOverride: layout,
+                  }}
+                >
+                  <Button type="button" variant="outline">
+                    <Trans>Preview forward card</Trans>
+                  </Button>
+                </FlashcardDrawer>
+                <FlashcardDrawer
+                  preview={{
+                    card: toPreviewCard(previewEntry, "reverse"),
+                    layoutOverride: layout,
+                  }}
+                >
+                  <Button type="button" variant="outline">
+                    <Trans>Preview reverse card</Trans>
+                  </Button>
+                </FlashcardDrawer>
+              </>
+            ) : (
+              <p className="text-muted-foreground text-xs">
+                <Trans>Add a word to your dictionary to preview a card.</Trans>
+              </p>
+            )}
           </div>
         </div>
 
@@ -297,14 +333,6 @@ export const CardAppearanceCardSection = () => {
           </p>
         )}
       </CardContent>
-
-      <CardPreviewDialog
-        direction={previewDirection}
-        layoutOverride={layout}
-        onOpenChange={(open) => {
-          if (!open) setPreviewDirection(null);
-        }}
-      />
     </Card>
   );
 };
