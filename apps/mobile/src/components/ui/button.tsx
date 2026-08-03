@@ -106,8 +106,12 @@ export const Button: FC<ButtonProps> = ({
           <Text
             className={cn(textVariants({ variant, className }), "text-center")}
           >
+            {/* react-native's PressableStateCallbackType is `{ pressed }` and
+                nothing else. `hovered` belongs to react-native-web's version of
+                the type; if the compiler asks for it, node_modules is resolving
+                that one. This line has been flipped twice on that basis. */}
             {typeof children === "function"
-              ? children({ pressed: false, hovered: false })
+              ? children({ pressed: false })
               : children}
           </Text>
         )}
