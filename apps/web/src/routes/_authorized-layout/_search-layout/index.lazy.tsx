@@ -34,7 +34,8 @@ const Index = () => {
   const searchQuery = useAtomValue(searchQueryAtom);
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const { results } = useSearch();
-  const { selectionMode, enterSelectionMode } = useBulkSelection();
+  const { selectionMode, enterSelectionMode, exitSelectionMode } =
+    useBulkSelection();
   const { height } = useWindowSize();
   const { data: counts, isPending } = useQuery({
     queryFn: () =>
@@ -103,19 +104,6 @@ const Index = () => {
                 {/* Actions */}
                 <div className="flex items-center justify-between gap-2">
                   <Button
-                    className="h-9 px-3"
-                    disabled={selectionMode}
-                    onClick={enterSelectionMode}
-                    size="sm"
-                    variant="outline"
-                  >
-                    <ListChecks className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
-                    <span className="text-sm">
-                      <Trans>Select</Trans>
-                    </span>
-                  </Button>
-
-                  <Button
                     asChild
                     className="h-9 px-3"
                     size="sm"
@@ -164,7 +152,23 @@ const Index = () => {
             </div>
 
             <div className="px-4 pt-4 pb-4 sm:px-6">
-              <DictionaryFilters />
+              <DictionaryFilters
+                actions={
+                  <Button
+                    className="h-9 px-3"
+                    onClick={
+                      selectionMode ? exitSelectionMode : enterSelectionMode
+                    }
+                    size="sm"
+                    variant={selectionMode ? "secondary" : "outline"}
+                  >
+                    <ListChecks className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
+                    <span className="text-sm">
+                      <Trans>Select</Trans>
+                    </span>
+                  </Button>
+                }
+              />
             </div>
           </Card>
         </motion.div>

@@ -20,15 +20,13 @@ import { Route as UnauthorizedLayoutLoginRouteImport } from './routes/_unauthori
 import { Route as UnauthorizedLayoutGoodbyeRouteImport } from './routes/_unauthorized-layout/goodbye/route'
 import { Route as AuthorizedLayoutSearchLayoutRouteImport } from './routes/_authorized-layout/_search-layout/route'
 import { Route as AuthorizedLayoutAppLayoutRouteImport } from './routes/_authorized-layout/_app-layout/route'
+import { Route as AuthorizedLayoutAppLayoutSettingsRouteImport } from './routes/_authorized-layout/_app-layout/settings/route'
 import { Route as AuthorizedLayoutAppLayoutDictionaryEditWordIdImport } from './routes/_authorized-layout/_app-layout/dictionary/edit/$wordId'
 
 // Create Virtual Routes
 
 const AuthorizedLayoutSearchLayoutIndexLazyImport = createFileRoute(
   '/_authorized-layout/_search-layout/',
-)()
-const AuthorizedLayoutAppLayoutSettingsRouteLazyImport = createFileRoute(
-  '/_authorized-layout/_app-layout/settings',
 )()
 const AuthorizedLayoutAppLayoutProgressRouteLazyImport = createFileRoute(
   '/_authorized-layout/_app-layout/progress',
@@ -39,6 +37,11 @@ const AuthorizedLayoutAppLayoutDecksRouteLazyImport = createFileRoute(
 const AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyImport = createFileRoute(
   '/_authorized-layout/_app-layout/checkout-success',
 )()
+const AuthorizedLayoutAppLayoutSettingsIndexLazyImport = createFileRoute(
+  '/_authorized-layout/_app-layout/settings/',
+)()
+const AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyImport =
+  createFileRoute('/_authorized-layout/_app-layout/settings/card-appearance')()
 const AuthorizedLayoutAppLayoutDictionaryAddRouteLazyImport = createFileRoute(
   '/_authorized-layout/_app-layout/dictionary/add',
 )()
@@ -104,17 +107,6 @@ const AuthorizedLayoutSearchLayoutIndexLazyRoute =
     ),
   )
 
-const AuthorizedLayoutAppLayoutSettingsRouteLazyRoute =
-  AuthorizedLayoutAppLayoutSettingsRouteLazyImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthorizedLayoutAppLayoutRouteRoute,
-  } as any).lazy(() =>
-    import('./routes/_authorized-layout/_app-layout/settings/route.lazy').then(
-      (d) => d.Route,
-    ),
-  )
-
 const AuthorizedLayoutAppLayoutProgressRouteLazyRoute =
   AuthorizedLayoutAppLayoutProgressRouteLazyImport.update({
     id: '/progress',
@@ -145,6 +137,35 @@ const AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute =
   } as any).lazy(() =>
     import(
       './routes/_authorized-layout/_app-layout/checkout-success/route.lazy'
+    ).then((d) => d.Route),
+  )
+
+const AuthorizedLayoutAppLayoutSettingsRouteRoute =
+  AuthorizedLayoutAppLayoutSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthorizedLayoutAppLayoutRouteRoute,
+  } as any)
+
+const AuthorizedLayoutAppLayoutSettingsIndexLazyRoute =
+  AuthorizedLayoutAppLayoutSettingsIndexLazyImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthorizedLayoutAppLayoutSettingsRouteRoute,
+  } as any).lazy(() =>
+    import('./routes/_authorized-layout/_app-layout/settings/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyRoute =
+  AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyImport.update({
+    id: '/card-appearance',
+    path: '/card-appearance',
+    getParentRoute: () => AuthorizedLayoutAppLayoutSettingsRouteRoute,
+  } as any).lazy(() =>
+    import(
+      './routes/_authorized-layout/_app-layout/settings/card-appearance/route.lazy'
     ).then((d) => d.Route),
   )
 
@@ -219,6 +240,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnauthorizedLayoutLoginRouteImport
       parentRoute: typeof UnauthorizedLayoutRouteImport
     }
+    '/_authorized-layout/_app-layout/settings': {
+      id: '/_authorized-layout/_app-layout/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteImport
+      parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
+    }
     '/_authorized-layout/_app-layout/checkout-success': {
       id: '/_authorized-layout/_app-layout/checkout-success'
       path: '/checkout-success'
@@ -240,13 +268,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorizedLayoutAppLayoutProgressRouteLazyImport
       parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
     }
-    '/_authorized-layout/_app-layout/settings': {
-      id: '/_authorized-layout/_app-layout/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteLazyImport
-      parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
-    }
     '/_authorized-layout/_search-layout/': {
       id: '/_authorized-layout/_search-layout/'
       path: '/'
@@ -261,6 +282,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyImport
       parentRoute: typeof AuthorizedLayoutAppLayoutRouteImport
     }
+    '/_authorized-layout/_app-layout/settings/card-appearance': {
+      id: '/_authorized-layout/_app-layout/settings/card-appearance'
+      path: '/card-appearance'
+      fullPath: '/settings/card-appearance'
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyImport
+      parentRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteImport
+    }
+    '/_authorized-layout/_app-layout/settings/': {
+      id: '/_authorized-layout/_app-layout/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthorizedLayoutAppLayoutSettingsIndexLazyImport
+      parentRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteImport
+    }
     '/_authorized-layout/_app-layout/dictionary/edit/$wordId': {
       id: '/_authorized-layout/_app-layout/dictionary/edit/$wordId'
       path: '/dictionary/edit/$wordId'
@@ -273,25 +308,43 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface AuthorizedLayoutAppLayoutSettingsRouteRouteChildren {
+  AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyRoute: typeof AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyRoute
+  AuthorizedLayoutAppLayoutSettingsIndexLazyRoute: typeof AuthorizedLayoutAppLayoutSettingsIndexLazyRoute
+}
+
+const AuthorizedLayoutAppLayoutSettingsRouteRouteChildren: AuthorizedLayoutAppLayoutSettingsRouteRouteChildren =
+  {
+    AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyRoute:
+      AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyRoute,
+    AuthorizedLayoutAppLayoutSettingsIndexLazyRoute:
+      AuthorizedLayoutAppLayoutSettingsIndexLazyRoute,
+  }
+
+const AuthorizedLayoutAppLayoutSettingsRouteRouteWithChildren =
+  AuthorizedLayoutAppLayoutSettingsRouteRoute._addFileChildren(
+    AuthorizedLayoutAppLayoutSettingsRouteRouteChildren,
+  )
+
 interface AuthorizedLayoutAppLayoutRouteRouteChildren {
+  AuthorizedLayoutAppLayoutSettingsRouteRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteRouteWithChildren
   AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute: typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   AuthorizedLayoutAppLayoutDecksRouteLazyRoute: typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
   AuthorizedLayoutAppLayoutProgressRouteLazyRoute: typeof AuthorizedLayoutAppLayoutProgressRouteLazyRoute
-  AuthorizedLayoutAppLayoutSettingsRouteLazyRoute: typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
   AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute: typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
   AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute: typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute
 }
 
 const AuthorizedLayoutAppLayoutRouteRouteChildren: AuthorizedLayoutAppLayoutRouteRouteChildren =
   {
+    AuthorizedLayoutAppLayoutSettingsRouteRoute:
+      AuthorizedLayoutAppLayoutSettingsRouteRouteWithChildren,
     AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute:
       AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute,
     AuthorizedLayoutAppLayoutDecksRouteLazyRoute:
       AuthorizedLayoutAppLayoutDecksRouteLazyRoute,
     AuthorizedLayoutAppLayoutProgressRouteLazyRoute:
       AuthorizedLayoutAppLayoutProgressRouteLazyRoute,
-    AuthorizedLayoutAppLayoutSettingsRouteLazyRoute:
-      AuthorizedLayoutAppLayoutSettingsRouteLazyRoute,
     AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute:
       AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute,
     AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute:
@@ -356,12 +409,14 @@ export interface FileRoutesByFullPath {
   '/cli-auth': typeof CliAuthRouteRoute
   '/goodbye': typeof UnauthorizedLayoutGoodbyeRouteRoute
   '/login': typeof UnauthorizedLayoutLoginRouteRoute
+  '/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteRouteWithChildren
   '/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
   '/progress': typeof AuthorizedLayoutAppLayoutProgressRouteLazyRoute
-  '/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
   '/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
   '/dictionary/add': typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
+  '/settings/card-appearance': typeof AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyRoute
+  '/settings/': typeof AuthorizedLayoutAppLayoutSettingsIndexLazyRoute
   '/dictionary/edit/$wordId': typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute
 }
 
@@ -373,9 +428,10 @@ export interface FileRoutesByTo {
   '/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
   '/progress': typeof AuthorizedLayoutAppLayoutProgressRouteLazyRoute
-  '/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
   '/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
   '/dictionary/add': typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
+  '/settings/card-appearance': typeof AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyRoute
+  '/settings': typeof AuthorizedLayoutAppLayoutSettingsIndexLazyRoute
   '/dictionary/edit/$wordId': typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute
 }
 
@@ -388,12 +444,14 @@ export interface FileRoutesById {
   '/_authorized-layout/_search-layout': typeof AuthorizedLayoutSearchLayoutRouteRouteWithChildren
   '/_unauthorized-layout/goodbye': typeof UnauthorizedLayoutGoodbyeRouteRoute
   '/_unauthorized-layout/login': typeof UnauthorizedLayoutLoginRouteRoute
+  '/_authorized-layout/_app-layout/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteRouteWithChildren
   '/_authorized-layout/_app-layout/checkout-success': typeof AuthorizedLayoutAppLayoutCheckoutSuccessRouteLazyRoute
   '/_authorized-layout/_app-layout/decks': typeof AuthorizedLayoutAppLayoutDecksRouteLazyRoute
   '/_authorized-layout/_app-layout/progress': typeof AuthorizedLayoutAppLayoutProgressRouteLazyRoute
-  '/_authorized-layout/_app-layout/settings': typeof AuthorizedLayoutAppLayoutSettingsRouteLazyRoute
   '/_authorized-layout/_search-layout/': typeof AuthorizedLayoutSearchLayoutIndexLazyRoute
   '/_authorized-layout/_app-layout/dictionary/add': typeof AuthorizedLayoutAppLayoutDictionaryAddRouteLazyRoute
+  '/_authorized-layout/_app-layout/settings/card-appearance': typeof AuthorizedLayoutAppLayoutSettingsCardAppearanceRouteLazyRoute
+  '/_authorized-layout/_app-layout/settings/': typeof AuthorizedLayoutAppLayoutSettingsIndexLazyRoute
   '/_authorized-layout/_app-layout/dictionary/edit/$wordId': typeof AuthorizedLayoutAppLayoutDictionaryEditWordIdRoute
 }
 
@@ -404,12 +462,14 @@ export interface FileRouteTypes {
     | '/cli-auth'
     | '/goodbye'
     | '/login'
+    | '/settings'
     | '/checkout-success'
     | '/decks'
     | '/progress'
-    | '/settings'
     | '/'
     | '/dictionary/add'
+    | '/settings/card-appearance'
+    | '/settings/'
     | '/dictionary/edit/$wordId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -420,9 +480,10 @@ export interface FileRouteTypes {
     | '/checkout-success'
     | '/decks'
     | '/progress'
-    | '/settings'
     | '/'
     | '/dictionary/add'
+    | '/settings/card-appearance'
+    | '/settings'
     | '/dictionary/edit/$wordId'
   id:
     | '__root__'
@@ -433,12 +494,14 @@ export interface FileRouteTypes {
     | '/_authorized-layout/_search-layout'
     | '/_unauthorized-layout/goodbye'
     | '/_unauthorized-layout/login'
+    | '/_authorized-layout/_app-layout/settings'
     | '/_authorized-layout/_app-layout/checkout-success'
     | '/_authorized-layout/_app-layout/decks'
     | '/_authorized-layout/_app-layout/progress'
-    | '/_authorized-layout/_app-layout/settings'
     | '/_authorized-layout/_search-layout/'
     | '/_authorized-layout/_app-layout/dictionary/add'
+    | '/_authorized-layout/_app-layout/settings/card-appearance'
+    | '/_authorized-layout/_app-layout/settings/'
     | '/_authorized-layout/_app-layout/dictionary/edit/$wordId'
   fileRoutesById: FileRoutesById
 }
@@ -491,10 +554,10 @@ export const routeTree = rootRoute
       "filePath": "_authorized-layout/_app-layout/route.tsx",
       "parent": "/_authorized-layout",
       "children": [
+        "/_authorized-layout/_app-layout/settings",
         "/_authorized-layout/_app-layout/checkout-success",
         "/_authorized-layout/_app-layout/decks",
         "/_authorized-layout/_app-layout/progress",
-        "/_authorized-layout/_app-layout/settings",
         "/_authorized-layout/_app-layout/dictionary/add",
         "/_authorized-layout/_app-layout/dictionary/edit/$wordId"
       ]
@@ -514,6 +577,14 @@ export const routeTree = rootRoute
       "filePath": "_unauthorized-layout/login/route.tsx",
       "parent": "/_unauthorized-layout"
     },
+    "/_authorized-layout/_app-layout/settings": {
+      "filePath": "_authorized-layout/_app-layout/settings/route.tsx",
+      "parent": "/_authorized-layout/_app-layout",
+      "children": [
+        "/_authorized-layout/_app-layout/settings/card-appearance",
+        "/_authorized-layout/_app-layout/settings/"
+      ]
+    },
     "/_authorized-layout/_app-layout/checkout-success": {
       "filePath": "_authorized-layout/_app-layout/checkout-success/route.lazy.tsx",
       "parent": "/_authorized-layout/_app-layout"
@@ -526,10 +597,6 @@ export const routeTree = rootRoute
       "filePath": "_authorized-layout/_app-layout/progress/route.lazy.tsx",
       "parent": "/_authorized-layout/_app-layout"
     },
-    "/_authorized-layout/_app-layout/settings": {
-      "filePath": "_authorized-layout/_app-layout/settings/route.lazy.tsx",
-      "parent": "/_authorized-layout/_app-layout"
-    },
     "/_authorized-layout/_search-layout/": {
       "filePath": "_authorized-layout/_search-layout/index.lazy.tsx",
       "parent": "/_authorized-layout/_search-layout"
@@ -537,6 +604,14 @@ export const routeTree = rootRoute
     "/_authorized-layout/_app-layout/dictionary/add": {
       "filePath": "_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx",
       "parent": "/_authorized-layout/_app-layout"
+    },
+    "/_authorized-layout/_app-layout/settings/card-appearance": {
+      "filePath": "_authorized-layout/_app-layout/settings/card-appearance/route.lazy.tsx",
+      "parent": "/_authorized-layout/_app-layout/settings"
+    },
+    "/_authorized-layout/_app-layout/settings/": {
+      "filePath": "_authorized-layout/_app-layout/settings/index.lazy.tsx",
+      "parent": "/_authorized-layout/_app-layout/settings"
     },
     "/_authorized-layout/_app-layout/dictionary/edit/$wordId": {
       "filePath": "_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx",

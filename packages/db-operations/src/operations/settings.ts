@@ -1,4 +1,6 @@
 import {
+  type CardLayout,
+  CardLayoutSchema,
   type InsertSetting,
   type SelectSetting,
   settings,
@@ -7,6 +9,19 @@ import { nanoid } from "nanoid/non-secure";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
 import type { OperationDeps } from "./deps";
+
+/**
+ * A layout that fails to parse is treated as absent rather than thrown on: the
+ * column is synced between clients, so a malformed payload must degrade to the
+ * defaults instead of breaking review.
+ */
+const parseCardLayout = (value: CardLayout | null): CardLayout | null => {
+  if (!value) return null;
+
+  const parsed = CardLayoutSchema.safeParse(value);
+
+  return parsed.success ? parsed.data : null;
+};
 
 export const makeSettingsTable = ({
   enqueue = enqueueDbOperation,
@@ -25,17 +40,20 @@ export const makeSettingsTable = ({
               id: nanoid(),
               show_antonyms_in_flashcard: "hidden",
               create_reverse_by_default: false,
+              card_layout: null,
             })
           );
           return {
             show_antonyms_in_flashcard: "hidden",
             create_reverse_by_default: false,
+            card_layout: null,
           };
         }
 
         return {
           show_antonyms_in_flashcard: res.show_antonyms_in_flashcard,
           create_reverse_by_default: res.create_reverse_by_default,
+          card_layout: parseCardLayout(res.card_layout),
         };
       },
       cacheOptions: {
@@ -67,6 +85,11 @@ export const makeSettingsTable = ({
             setValues.create_reverse_by_default =
               updates.create_reverse_by_default;
           }
+          // Null is a meaningful value here -- it resets the card back to the
+          // default layout -- so it passes through where `undefined` does not.
+          if ("card_layout" in updates && updates.card_layout !== undefined) {
+            setValues.card_layout = updates.card_layout;
+          }
 
           if (Object.keys(setValues).length === 0) {
             throw new Error("No fields to update");
@@ -83,6 +106,7 @@ export const makeSettingsTable = ({
           return {
             show_antonyms_in_flashcard: res.show_antonyms_in_flashcard,
             create_reverse_by_default: res.create_reverse_by_default,
+            card_layout: parseCardLayout(res.card_layout),
           };
         }),
       cacheOptions: {

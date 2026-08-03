@@ -5,7 +5,7 @@ import {
   keepCurrentCardFirst,
 } from "@bahar/db-operations";
 import { cn } from "@bahar/design-system";
-import type { SelectDeck } from "@bahar/drizzle-user-db-schemas";
+import type { CardLayout, SelectDeck } from "@bahar/drizzle-user-db-schemas";
 import { createScheduler, toFsrsCard } from "@bahar/fsrs";
 import { Button } from "@bahar/web-ui/components/button";
 import {
@@ -37,6 +37,7 @@ import {
 } from "react";
 import { type Grade, Rating } from "ts-fsrs";
 import { useSearch } from "@/hooks/search/useSearch";
+import { useCardFace } from "@/hooks/useCardFace";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { api } from "@/lib/api";
@@ -61,6 +62,16 @@ interface FlashcardDrawerProps extends PropsWithChildren {
   initialQueue?: FlashcardQueue;
   /** If provided, shows queue counts and allows switching between queues */
   queueCounts?: { regular: number; backlog: number };
+  /**
+   * Shows one given card instead of the review queue, and grades nothing. Used
+   * by the card-appearance settings so previewing a layout goes through this
+   * drawer rather than a copy of it -- the grade buttons still animate, they
+   * just don't schedule.
+   */
+  preview?: {
+    card: FlashcardWithDictionaryEntry;
+    layoutOverride?: CardLayout | null;
+  };
 }
 
 const RATING_TO_LABEL = {
@@ -76,6 +87,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   filters = {},
   initialQueue = "regular",
   queueCounts,
+  preview,
 }) => {
   const { formatNumber } = useFormatNumber();
   const [showAnswer, setShowAnswer] = useState(false);
@@ -99,10 +111,14 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       }),
     ...flashcardsTable.counts.cacheOptions,
     queryKey: [...flashcardsTable.counts.cacheOptions.queryKey, filters],
-    enabled: !queueCounts,
+    enabled: !(queueCounts || preview),
   });
 
-  const counts = queueCounts ?? fetchedCounts ?? { regular: 0, backlog: 0 };
+  // A preview holds exactly the card it was given, so the header counts it as
+  // one rather than reporting the real queue.
+  const counts = preview
+    ? { regular: 1, backlog: 0 }
+    : (queueCounts ?? fetchedCounts ?? { regular: 0, backlog: 0 });
 
   const { data } = useQuery({
     queryFn: () =>
@@ -117,6 +133,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       filters,
       selectedQueue,
     ],
+    enabled: !preview,
   });
 
   const { reset: resetSearch } = useSearch();
@@ -144,7 +161,11 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     }
   }, [data]);
 
-  const currentCard = cards[0] ?? null;
+  // One list for everything the drawer shows, so preview mode can't leave the
+  // header reading off an empty queue -- that's what rendered the "All done for
+  // today!" celebration over a preview.
+  const visibleCards = preview ? [preview.card] : cards;
+  const currentCard = visibleCards[0] ?? null;
 
   // Every card starts on its question side. Grading resets this too, but that
   // path isn't the only way the displayed card changes -- a refetch can swap it
@@ -152,6 +173,17 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   useEffect(() => {
     setShowAnswer(false);
   }, [currentCard?.id]);
+
+  // Tags sit above the card rather than inside a face, so the drawer decides
+  // whether to show them from whichever face is currently facing the user.
+  const cardDirection =
+    currentCard?.direction === "reverse" ? "reverse" : "forward";
+  const visibleFace = showAnswer
+    ? (`${cardDirection}_answer` as const)
+    : (`${cardDirection}_question` as const);
+  const showsTags = useCardFace(visibleFace, preview?.layoutOverride).includes(
+    "tags"
+  );
 
   const f = useMemo(() => {
     return createScheduler();
@@ -188,6 +220,14 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
   const executeGrade = useCallback(
     async (grade: Grade) => {
       if (!(schedulingCards && currentCard)) return;
+
+      // A preview grades nothing: no revlog, no scheduling, no cache
+      // invalidation. It returns to the question side so the card can be
+      // previewed again.
+      if (preview) {
+        setShowAnswer(false);
+        return;
+      }
 
       const { card: selectedCard, log } = schedulingCards[grade];
       const dueTimestampMs = selectedCard.due.getTime();
@@ -247,7 +287,7 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
         reviewedRef.current = true;
       }
     },
-    [currentCard, schedulingCards, updateFlashcard]
+    [currentCard, schedulingCards, updateFlashcard, preview]
   );
 
   const gradeCard = useCallback(
@@ -378,18 +418,18 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
           )}
 
           <div className="flex items-center justify-center gap-3">
-            {cards?.length ? (
+            {visibleCards.length ? (
               <motion.div
                 animate={{ scale: 1, opacity: 1 }}
                 className="flex items-center gap-2"
                 initial={{ scale: 0.8, opacity: 0 }}
               >
                 <DrawerTitle className="text-md">
-                  {formatNumber(cards.length)}{" "}
+                  {formatNumber(visibleCards.length)}{" "}
                   <Plural
                     one="card left"
                     other="cards left"
-                    value={cards.length}
+                    value={visibleCards.length}
                   />
                 </DrawerTitle>
               </motion.div>
@@ -448,13 +488,16 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
               transition={{ duration: 0.3, ease: [0.25, 0.4, 0.25, 1] }}
             >
               <div className="mx-auto flex w-full max-w-2xl flex-col gap-y-4 px-4 py-4 sm:gap-y-6 sm:px-8 sm:py-6">
-                <TagBadgesList currentCard={currentCard} />
+                {showsTags && <TagBadgesList currentCard={currentCard} />}
 
                 {/* Flashcard content area */}
                 <div className="relative rounded-2xl border border-border/50 bg-linear-to-br from-card to-card/50 p-4 shadow-lg sm:p-8">
                   {currentCard.direction === "reverse" ? (
                     <>
-                      <ReverseQuestionSide currentCard={currentCard} />
+                      <ReverseQuestionSide
+                        currentCard={currentCard}
+                        layoutOverride={preview?.layoutOverride}
+                      />
                       <AnimatePresence>
                         {showAnswer && (
                           <motion.div
@@ -464,14 +507,20 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                             transition={{ duration: 0.3 }}
                           >
                             <div className="my-6 h-px bg-linear-to-r from-transparent via-border to-transparent" />
-                            <ReverseAnswerSide currentCard={currentCard} />
+                            <ReverseAnswerSide
+                              currentCard={currentCard}
+                              layoutOverride={preview?.layoutOverride}
+                            />
                           </motion.div>
                         )}
                       </AnimatePresence>
                     </>
                   ) : (
                     <>
-                      <QuestionSide currentCard={currentCard} />
+                      <QuestionSide
+                        currentCard={currentCard}
+                        layoutOverride={preview?.layoutOverride}
+                      />
                       <AnimatePresence>
                         {showAnswer && (
                           <motion.div
@@ -481,7 +530,10 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
                             transition={{ duration: 0.3 }}
                           >
                             <div className="my-6 h-px bg-linear-to-r from-transparent via-border to-transparent" />
-                            <AnswerSide currentCard={currentCard} />
+                            <AnswerSide
+                              currentCard={currentCard}
+                              layoutOverride={preview?.layoutOverride}
+                            />
                           </motion.div>
                         )}
                       </AnimatePresence>

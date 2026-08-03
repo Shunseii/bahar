@@ -10,9 +10,11 @@ import * as Sentry from "@sentry/react-native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { sql } from "drizzle-orm";
 import { reloadAppAsync } from "expo";
+import { useRouter } from "expo-router";
 import {
   Bell,
   Brain,
+  ChevronRight,
   CreditCard,
   ExternalLink,
   FolderSync,
@@ -247,6 +249,7 @@ const NotificationsCard = () => {
 };
 
 export default function SettingsScreen() {
+  const router = useRouter();
   const colors = useThemeColors();
   const colorScheme = useColorScheme();
   const { t } = useLingui();
@@ -676,6 +679,28 @@ export default function SettingsScreen() {
           </CardHeader>
           <CardContent>
             <View className="gap-1">
+              <Pressable
+                accessibilityRole="button"
+                className="flex-row items-center justify-between gap-4 py-2"
+                onPress={() =>
+                  router.push("/(search)/settings/card-appearance")
+                }
+              >
+                <View className="flex-1">
+                  <Text className="mb-1 font-medium text-base text-foreground">
+                    <Trans>Card appearance</Trans>
+                  </Text>
+                  <Text className="text-muted-foreground text-sm">
+                    <Trans>
+                      Choose which fields show on each side of your cards
+                    </Trans>
+                  </Text>
+                </View>
+                <ChevronRight color={colors.mutedForeground} size={18} />
+              </Pressable>
+
+              <View className="my-2 border-border/50 border-t" />
+
               <SettingRow
                 description={t`New words get an English to Arabic reverse card. You can still turn reverse on or off per word.`}
                 title={t`Create reverse cards by default`}
