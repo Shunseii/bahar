@@ -15,13 +15,13 @@ msgstr ""
 
 #. placeholder {0}: deletedIds.length
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:70
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:56
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:68
 msgid "{0, plural, one {# entry deleted} other {# entries deleted}}"
 msgstr "{0, plural, one {تم حذف إدخال واحد} two {تم حذف إدخالين} few {تم حذف # إدخالات} many {تم حذف # إدخالًا} other {تم حذف # إدخال}}"
 
 #. placeholder {0}: ids.length
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:264
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:152
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:267
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:155
 msgid "{0, plural, one {# entry selected} other {# entries selected}}"
 msgstr "{0, plural, one {إدخال واحد محدد} two {إدخالان محددان} few {# إدخالات محددة} many {# إدخالًا محددًا} other {# إدخال محدد}}"
 
@@ -44,7 +44,7 @@ msgstr "{0, plural, one {علامة واحدة محددة} two {علامتان �
 
 #. placeholder {0}: selectedTags.length
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:274
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:204
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:207
 msgid "{0, plural, one {Add # tag} other {Add # tags}}"
 msgstr "{0, plural, one {أضف علامة واحدة} two {أضف علامتين} few {أضف # علامات} many {أضف # علامة} other {أضف # علامة}}"
 
@@ -55,7 +55,7 @@ msgstr "{0, plural, one {أضف علامات إلى إدخال واحد} two {أ
 
 #. placeholder {0}: ids.length
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:181
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:223
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:226
 msgid "{0, plural, one {Apply to # entry} other {Apply to # entries}}"
 msgstr "{0, plural, one {طبّق على إدخال واحد} two {طبّق على إدخالين} few {طبّق على # إدخالات} many {طبّق على # إدخالًا} other {طبّق على # إدخال}}"
 
@@ -82,7 +82,7 @@ msgstr "{0, plural, zero {أمثلة} one {مثال} two {مثالان} few {أ�
 
 #. placeholder {0}: selectedTags.length
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:280
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:210
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:213
 msgid "{0, plural, one {Remove # tag} other {Remove # tags}}"
 msgstr "{0, plural, one {أزل علامة واحدة} two {أزل علامتين} few {أزل # علامات} many {أزل # علامة} other {أزل # علامة}}"
 
@@ -125,27 +125,27 @@ msgid "{0}x"
 msgstr "{0}×"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:67
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:84
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:87
 msgid "{changed, plural, one {Reverse card enabled for # entry} other {Reverse cards enabled for # entries}}"
 msgstr "{changed, plural, one {تم تفعيل البطاقة العكسية لإدخال واحد} two {تم تفعيل البطاقات العكسية لإدخالين} few {تم تفعيل البطاقات العكسية لـ# إدخالات} many {تم تفعيل البطاقات العكسية لـ# إدخالًا} other {تم تفعيل البطاقات العكسية لـ# إدخال}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:71
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:88
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:91
 msgid "{changed, plural, one {Reverse card removed from # entry} other {Reverse cards removed from # entries}}"
 msgstr "{changed, plural, one {تم حذف البطاقة العكسية من إدخال واحد} two {تم حذف البطاقات العكسية من إدخالين} few {تم حذف البطاقات العكسية من # إدخالات} many {تم حذف البطاقات العكسية من # إدخالًا} other {تم حذف البطاقات العكسية من # إدخال}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:91
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:142
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:145
 msgid "{changed, plural, one {Tags added to # entry} other {Tags added to # entries}}"
 msgstr "{changed, plural, one {تمت إضافة العلامات إلى إدخال واحد} two {تمت إضافة العلامات إلى إدخالين} few {تمت إضافة العلامات إلى # إدخالات} many {تمت إضافة العلامات إلى # إدخالًا} other {تمت إضافة العلامات إلى # إدخال}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:95
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:146
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:149
 msgid "{changed, plural, one {Tags removed from # entry} other {Tags removed from # entries}}"
 msgstr "{changed, plural, one {تمت إزالة العلامات من إدخال واحد} two {تمت إزالة العلامات من إدخالين} few {تمت إزالة العلامات من # إدخالات} many {تمت إزالة العلامات من # إدخالًا} other {تمت إزالة العلامات من # إدخال}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:244
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:362
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:365
 msgid "{count, plural, one {# entry} other {# entries}}"
 msgstr "{count, plural, one {إدخال واحد} two {إدخالان} few {# إدخالات} many {# إدخالًا} other {# إدخال}}"
 
@@ -190,7 +190,7 @@ msgid "{matchingCount, plural, one {Select all #} other {Select all #}}"
 msgstr "{matchingCount, plural, one {حدد الكل (#)} two {حدد الكل (#)} few {حدد الكل (#)} many {حدد الكل (#)} other {حدد الكل (#)}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:63
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:181
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:43
 msgid "{outsideResultsCount, plural, one {# not in these results} other {# not in these results}}"
 msgstr "{outsideResultsCount, plural, one {واحد غير موجود في هذه النتائج} two {اثنان غير موجودان في هذه النتائج} few {# غير موجودة في هذه النتائج} many {# غير موجود في هذه النتائج} other {# غير موجود في هذه النتائج}}"
 
@@ -202,11 +202,11 @@ msgid "{reviewCount, plural, one {{0} review} other {{1} reviews}}"
 msgstr "{reviewCount, plural, one {{0} مراجعة} two {{1} مراجعتان} few {{1} مراجعات} many {{1} مراجعة} other {{1} مراجعة}}"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:54
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:164
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:181
 msgid "{selectedCount, plural, one {# selected} other {# selected}}"
 msgstr "{selectedCount, plural, one {واحد محدد} two {اثنان محددان} few {# محددة} many {# محددًا} other {# محدد}}"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:86
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:98
 msgid "{selectedCount, plural, one {Delete # entry?} other {Delete # entries?}}"
 msgstr "{selectedCount, plural, one {حذف إدخال واحد؟} two {حذف إدخالين؟} few {حذف # إدخالات؟} many {حذف # إدخالًا؟} other {حذف # إدخال؟}}"
 
@@ -230,7 +230,7 @@ msgstr "{totalHits, plural, one {نتيجة} two {نتيجتان} few {نتائ�
 
 #. placeholder {0}: formatNumber(totalResults)
 #. placeholder {1}: formatNumber(totalResults)
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:155
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:156
 msgid "{totalResults, plural, one {{0} result} other {{1} results}}"
 msgstr "{totalResults, plural, one {{0} نتيجة} two {{0} نتيجتان} few {{0} نتائج} many {{0} نتيجة} other {{1} نتيجة}}"
 
@@ -318,7 +318,7 @@ msgstr "اسم فاعل"
 msgid "Active Participle"
 msgstr "اسم فاعل"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:278
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:281
 msgid "Add"
 msgstr "أضف"
 
@@ -402,7 +402,7 @@ msgstr "أضف علامات إلى كلمتك."
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:127
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/add/route.lazy.tsx:72
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:179
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:180
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:67
 msgid "Add word"
 msgstr "أضف كلمة"
@@ -686,8 +686,8 @@ msgstr "بتسجيل الدخول، فإنك توافق على <0>سياسة ا�
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:174
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:308
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:568
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:74
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:92
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:86
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:104
 #: ../../apps/mobile/src/app/(search)/settings.tsx:435
 #: ../../apps/mobile/src/app/(search)/settings.tsx:472
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:87
@@ -814,7 +814,7 @@ msgid "Couldn't load your API keys. Please try again later."
 msgstr "تعذّر تحميل مفاتيح الواجهة البرمجية. يُرجى المحاولة لاحقًا."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:214
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:331
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:334
 msgid "Create"
 msgstr "إنشاء"
 
@@ -880,12 +880,12 @@ msgid "Create your first deck to organize your flashcards with custom filters."
 msgstr "أنشئ مجموعتك الأولى لتنظيم بطاقاتك التعليمية باستخدام فلاتر مخصصة."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:90
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:119
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:122
 msgid "Creates a reverse card for the {withoutReverse} selected entries that don't have one. Entries that already have one are untouched."
 msgstr "ينشئ بطاقة عكسية لـ{withoutReverse} من الإدخالات المحددة التي لا تملك واحدة. الإدخالات التي تملك واحدة بالفعل لن تتأثر."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:89
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:118
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:121
 msgid "Creates a reverse card for the selected entries that don't have one."
 msgstr "ينشئ بطاقة عكسية للإدخالات المحددة التي لا تملك واحدة."
 
@@ -983,8 +983,8 @@ msgstr "التعريف"
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/dictionary/edit/$wordId.tsx:190
 #: ../../apps/web/src/routes/_authorized-layout/_app-layout/decks/route.lazy.tsx:191
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:136
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:94
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:123
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:106
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:135
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:80
 #: ../../apps/mobile/src/app/(search)/decks/index.tsx:89
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:140
@@ -1024,7 +1024,7 @@ msgstr "حذف المجموعة"
 msgid "Delete Dictionary"
 msgstr "حذف المعجم"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:76
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:88
 msgid "Delete everything"
 msgstr "احذف كل شيء"
 
@@ -1049,17 +1049,17 @@ msgid "Delete your dictionary?"
 msgstr "هل تريد أن تحذف معجمك؟"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:92
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:71
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:83
 msgid "Delete your entire dictionary?"
 msgstr "حذف معجمك بالكامل؟"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:98
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:127
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:130
 msgid "Deletes the reverse card of the {withReverse} selected entries that have one, along with its review history."
 msgstr "يحذف البطاقة العكسية لـ{withReverse} من الإدخالات المحددة التي تملك واحدة، مع سجل مراجعتها."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:97
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:126
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:129
 msgid "Deletes the reverse card of the selected entries that have one, along with its review history."
 msgstr "يحذف البطاقة العكسية للإدخالات المحددة التي تملك واحدة، مع سجل مراجعتها."
 
@@ -1103,12 +1103,12 @@ msgid "Diptote"
 msgstr "ممنوع من الصرف"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:94
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:123
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:126
 msgid "Disable for all"
 msgstr "أوقفها للكل"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:163
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:198
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:201
 msgid "Disabling deletes the reverse card and its review progress. This can't be undone."
 msgstr "الإيقاف يحذف البطاقة العكسية وتقدم مراجعتها. لا يمكن التراجع عن هذا الإجراء."
 
@@ -1200,7 +1200,7 @@ msgid "Email"
 msgstr "البريد الإلكتروني"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:86
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:115
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:118
 msgid "Enable for all"
 msgstr "فعّلها للكل"
 
@@ -1276,8 +1276,8 @@ msgid "Examples"
 msgstr "أمثلة"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:142
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:154
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:223
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:166
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:224
 msgid "Exit selection mode"
 msgstr "الخروج من وضع التحديد"
 
@@ -1336,7 +1336,7 @@ msgid "Expression"
 msgstr "عبارة"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:104
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:155
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:158
 msgid "Failed to add tags"
 msgstr "فشل إضافة العلامات"
 
@@ -1376,7 +1376,7 @@ msgid "Failed to delete dictionary"
 msgstr "فشل حذف المعجم"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:78
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:63
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:75
 msgid "Failed to delete entries"
 msgstr "فشل حذف الإدخالات"
 
@@ -1395,7 +1395,7 @@ msgid "Failed to generate example"
 msgstr "فشل توليد المثال"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:104
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:155
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:158
 msgid "Failed to remove tags"
 msgstr "فشل إزالة العلامات"
 
@@ -1441,7 +1441,7 @@ msgid "Failed to update preference. Please try again."
 msgstr "فشل تحديث التفضيل. يرجى المحاولة مرة أخرى."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkReverseDialog.tsx:79
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:96
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:99
 msgid "Failed to update reverse cards"
 msgstr "فشل تحديث البطاقات العكسية"
 
@@ -1501,7 +1501,7 @@ msgstr "أدخل الكلمة والترجمة والنوع أولاً."
 msgid "Filter by tags..."
 msgstr "رشّح حسب العلامات..."
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:310
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:313
 msgid "Filter tags on these entries"
 msgstr "رشّح العلامات على هذه الإدخالات"
 
@@ -1843,12 +1843,12 @@ msgstr "جارٍ تحميل التفاصيل..."
 msgid "Loading tags..."
 msgstr "جارٍ تحميل العلامات..."
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:337
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:339
 msgid "Loading your dictionary..."
 msgstr "جارٍ تحميل معجمك..."
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:96
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:171
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:172
 msgid "Loading..."
 msgstr "جارٍ التحميل..."
 
@@ -2086,7 +2086,7 @@ msgid "No tags found."
 msgstr "لم يتم العثور على علامات."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:195
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:342
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:345
 msgid "No tags yet. Type to create one."
 msgstr "لا توجد علامات بعد. اكتب لإنشاء واحدة."
 
@@ -2132,7 +2132,7 @@ msgstr "تشغيل"
 
 #. placeholder {0}: ids.length
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:250
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:364
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:367
 msgid "on {count} of {0}"
 msgstr "على {count} من {0}"
 
@@ -2310,6 +2310,10 @@ msgstr "المضارع"
 msgid "Present Tense"
 msgstr "المضارع"
 
+#: ../../apps/mobile/src/hooks/useBackToExit.ts:97
+msgid "Press back again to exit"
+msgstr "اضغط رجوع مرة أخرى للخروج"
+
 #: ../../apps/mobile/src/app/(auth)/welcome.tsx:63
 msgid "Privacy Policy"
 msgstr "سياسة الخصوصية"
@@ -2397,7 +2401,7 @@ msgstr "أعد التحميل"
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:302
 #: ../../apps/web/src/components/features/dictionary/add/AdditionalDetailsFormSection.tsx:419
 #: ../../apps/mobile/src/components/dictionary/ReviewHistory.tsx:312
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:279
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:282
 msgid "Remove"
 msgstr "احذف"
 
@@ -2471,7 +2475,7 @@ msgid "Retention Rate"
 msgstr "معدل الاحتفاظ"
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkSelectionBar.tsx:125
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:116
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:128
 msgid "Reverse"
 msgstr "العكسية"
 
@@ -2480,14 +2484,14 @@ msgstr "العكسية"
 msgid "Reverse card"
 msgstr "بطاقة عكسية"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:149
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkReverseSheet.tsx:152
 msgid "Reverse flashcards"
 msgstr "بطاقات العكسية"
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:150
 #: ../../apps/web/src/components/features/flashcards/FlashcardDrawer/FlashcardDrawer.tsx:328
 #: ../../apps/mobile/src/components/flashcards/FlashcardReview.tsx:86
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:193
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:194
 msgid "Review"
 msgstr "مراجعة"
 
@@ -2578,7 +2582,7 @@ msgstr "ترحيلات المخطط"
 msgid "Search for a tag..."
 msgstr "ابحث عن علامة..."
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:309
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:312
 msgid "Search or create a tag"
 msgstr "ابحث عن علامة أو أنشئ واحدة"
 
@@ -2614,7 +2618,7 @@ msgstr "شاهد معدل الاحتفاظ، توقعات المراجعة، ا�
 msgid "Select"
 msgstr "حدد"
 
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:223
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:224
 msgid "Select entries"
 msgstr "حدد الإدخالات"
 
@@ -2721,7 +2725,7 @@ msgid "Some dictionary entries couldn't be loaded"
 msgstr "تعذر تحميل بعض إدخالات المعجم"
 
 #: ../../apps/web/src/routes/cli-auth/route.lazy.tsx:51
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:347
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:349
 msgid "Something went wrong"
 msgstr "حدث خطأ ما"
 
@@ -2827,8 +2831,8 @@ msgstr "نظام"
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:210
 #: ../../apps/mobile/src/components/dictionary/DictionaryFilters.tsx:460
 #: ../../apps/mobile/src/components/dictionary/DictionaryEntryCard.tsx:316
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:261
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:109
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:264
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:121
 #: ../../apps/mobile/src/app/(search)/decks/create.tsx:169
 #: ../../apps/mobile/src/app/(search)/decks/edit/[id].tsx:227
 #: ../../apps/mobile/src/app/(search)/(home)/add-word.tsx:273
@@ -2840,11 +2844,11 @@ msgstr "علامات"
 msgid "Tags are added to every selected entry. Tags they already have are left alone."
 msgstr "تُضاف العلامات إلى كل إدخال محدد. العلامات الموجودة بالفعل تبقى كما هي."
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:320
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:323
 msgid "Tags on selected entries"
 msgstr "العلامات على الإدخالات المحددة"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:192
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:48
 msgid "Tap entries to select them"
 msgstr "اضغط على الإدخالات لتحديدها"
 
@@ -2919,7 +2923,7 @@ msgid "The root letters of the word. The input can be separated by commas, space
 msgstr "الحروف الجذرية للكلمة. يمكن فصل المدخلات بفواصل أو مسافات أو لا تحتوي على محدد مثلا فعل أو ف، ع، ل أو ف ع ل."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkTagsDialog.tsx:197
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:344
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:347
 msgid "The selected entries have no tags."
 msgstr "الإدخالات المحددة لا تحمل أي علامات."
 
@@ -3021,7 +3025,7 @@ msgid "This is case insensitive."
 msgstr "هذا حالة غير حساسة."
 
 #: ../../apps/web/src/components/features/dictionary/bulk/BulkDeleteDialog.tsx:95
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:72
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:84
 msgid "This is every entry you have. All of them, their flashcards, and all review history will be permanently deleted, on this device and every device you sync with. This can't be undone."
 msgstr "هذه كل الإدخالات التي لديك. ستُحذف جميعها مع بطاقاتها وكل سجل مراجعتها نهائيًا، على هذا الجهاز وعلى كل جهاز تتزامن معه. لا يمكن التراجع عن هذا الإجراء."
 
@@ -3037,7 +3041,7 @@ msgstr "يبقى هذا المفتاح صالحًا حتى تقوم بإبطال
 msgid "This refers to how many case endings the word can take."
 msgstr "هذا هو إعراب الكلمة."
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:90
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkActionBar.tsx:102
 msgid "This removes the entries along with their flashcards and review history. This can't be undone."
 msgstr "يؤدي هذا إلى إزالة الإدخالات مع بطاقاتها وسجل مراجعتها. لا يمكن التراجع عن هذا الإجراء."
 
@@ -3413,7 +3417,7 @@ msgid "Your deck was not updated. Please try again."
 msgstr "لم يتم تحديث مجموعتك. يرجى المحاولة مرة أخرى."
 
 #: ../../apps/web/src/routes/_authorized-layout/_search-layout/index.lazy.tsx:72
-#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:150
+#: ../../apps/mobile/src/app/(search)/(home)/index.tsx:151
 msgid "Your Dictionary"
 msgstr "معجمك"
 
@@ -3450,7 +3454,7 @@ msgstr "أحدث مراجعات البطاقات. يمكنك التراجع عن
 msgid "Your new API key"
 msgstr "مفتاح الواجهة البرمجية الجديد"
 
-#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:318
+#: ../../apps/mobile/src/components/dictionary/bulk/BulkTagsSheet.tsx:321
 msgid "Your tags"
 msgstr "علاماتك"
 

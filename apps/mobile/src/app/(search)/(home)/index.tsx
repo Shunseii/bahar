@@ -33,6 +33,7 @@ import { Divider } from "@/components/flashcards/card";
 import { GuestBanner } from "@/components/GuestBanner";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
+import { useBackToExit } from "@/hooks/useBackToExit";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { usePreloadDrawerScreens } from "@/hooks/usePreloadDrawerScreens";
 import { useUserPlan } from "@/hooks/useUserPlan";
@@ -257,6 +258,7 @@ export default function HomeScreen() {
   const { state, error } = useAppInit();
 
   usePreloadDrawerScreens(state === "ready");
+  useBackToExit();
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
 

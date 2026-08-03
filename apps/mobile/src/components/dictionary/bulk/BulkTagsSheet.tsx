@@ -27,6 +27,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useBulkDictionaryActions } from "@/hooks/useBulkDictionaryActions";
 import { dictionaryEntriesTable } from "@/lib/db/operations";
+import { useTrackSheetOpen } from "@/lib/store/sheets";
 import { useThemeColors } from "@/lib/theme";
 
 export interface BulkTagsSheetRef {
@@ -56,6 +57,8 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [inputKey, setInputKey] = useState(0);
     const { updateTags, isPending } = useBulkDictionaryActions();
+
+    useTrackSheetOpen(isOpen);
 
     // The input is uncontrolled, so emptying the state doesn't empty the box:
     // remounting it is what clears the text. Only used where focus doesn't
@@ -238,17 +241,17 @@ export const BulkTagsSheet = forwardRef<BulkTagsSheetRef, BulkTagsSheetProps>(
         enableDynamicSizing={false}
         footerComponent={renderFooter}
         handleIndicatorStyle={{ backgroundColor: colors.border }}
-        // "extend" takes the sheet to its tallest snap point when the keyboard
-        // opens. "interactive" only lifts it within the current one, so with a
-        // single snap point there was nowhere to go and the keyboard covered the
-        // list.
-        keyboardBehavior="extend"
+        // The sheet already occupies nearly the whole screen, so there's no
+        // taller stop to extend to: the keyboard shrinks the content area
+        // instead, which keeps the input and the pinned action visible.
+        keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
         onChange={(index) => setIsOpen(index >= 0)}
         onDismiss={handleDismiss}
         ref={sheetRef}
-        // Opens at the first, can be dragged to the second.
-        snapPoints={["70%", "90%"]}
+        // One stop, near full height: the tag list wants the room, and a second
+        // stop only added a drag the user had to discover.
+        snapPoints={["92%"]}
         topInset={insets.top}
       >
         <BottomSheetScrollView
