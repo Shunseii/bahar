@@ -1,4 +1,5 @@
 import type { Morphology } from "@bahar/drizzle-user-db-schemas";
+import { t } from "@lingui/core/macro";
 import type React from "react";
 import { Text, View } from "react-native";
 import { ArabicValue, FieldRow, SectionHeader } from "./shared";
@@ -29,34 +30,51 @@ export const MorphologySection: React.FC<MorphologySectionProps> = ({
 
   if (!hasIsmContent(ism) && !hasVerbRowContent(verb)) return null;
 
-  const verbRows: { label: string; value: string }[] = [];
+  // `key` stays untranslated so the list identity doesn't change with locale.
+  const verbRows: { key: string; label: string; value: string }[] = [];
   if (verb?.past_tense)
-    verbRows.push({ label: "Past", value: verb.past_tense });
+    verbRows.push({ key: "past", label: t`Past`, value: verb.past_tense });
   if (verb?.present_tense)
-    verbRows.push({ label: "Present", value: verb.present_tense });
+    verbRows.push({
+      key: "present",
+      label: t`Present`,
+      value: verb.present_tense,
+    });
   if (verb?.imperative)
-    verbRows.push({ label: "Imperative", value: verb.imperative });
+    verbRows.push({
+      key: "imperative",
+      label: t`Imperative`,
+      value: verb.imperative,
+    });
   if (verb?.active_participle)
-    verbRows.push({ label: "Active P.", value: verb.active_participle });
+    verbRows.push({
+      key: "active-participle",
+      label: t`Active P.`,
+      value: verb.active_participle,
+    });
   if (verb?.passive_participle)
-    verbRows.push({ label: "Passive P.", value: verb.passive_participle });
+    verbRows.push({
+      key: "passive-participle",
+      label: t`Passive P.`,
+      value: verb.passive_participle,
+    });
 
   return (
     <View className="w-full gap-2">
-      <SectionHeader label="MORPHOLOGY" />
+      <SectionHeader label={t`MORPHOLOGY`} />
 
       {ism?.singular && (
-        <FieldRow label="Singular">
+        <FieldRow label={t`Singular`}>
           <ArabicValue>{ism.singular}</ArabicValue>
         </FieldRow>
       )}
       {ism?.dual && (
-        <FieldRow label="Dual">
+        <FieldRow label={t`Dual`}>
           <ArabicValue>{ism.dual}</ArabicValue>
         </FieldRow>
       )}
       {ism?.plurals && ism.plurals.length > 0 && (
-        <FieldRow label="Plurals">
+        <FieldRow label={t`Plurals`}>
           <View className="flex-row flex-wrap items-center justify-end gap-1.5">
             {ism.plurals.map((plural, idx) => (
               <View
@@ -88,13 +106,13 @@ export const MorphologySection: React.FC<MorphologySectionProps> = ({
       )}
 
       {verbRows.map((row) => (
-        <FieldRow key={row.label} label={row.label}>
+        <FieldRow key={row.key} label={row.label}>
           <ArabicValue>{row.value}</ArabicValue>
         </FieldRow>
       ))}
 
       {verb?.masadir && verb.masadir.length > 0 && (
-        <FieldRow label="Masdar">
+        <FieldRow label={t`Masdar`}>
           <View className="flex-row flex-wrap items-center justify-end gap-1.5">
             {verb.masadir.map((m, idx) => (
               <View

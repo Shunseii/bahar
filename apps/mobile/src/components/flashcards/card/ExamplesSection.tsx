@@ -1,4 +1,5 @@
 import type { Example } from "@bahar/drizzle-user-db-schemas";
+import { plural } from "@lingui/core/macro";
 import type React from "react";
 import { Text, View } from "react-native";
 import { SectionHeader } from "./shared";
@@ -12,7 +13,12 @@ export const ExamplesSection: React.FC<ExamplesSectionProps> = ({
 }) => {
   if (!examples || examples.length === 0) return null;
 
-  const headerLabel = examples.length === 1 ? "EXAMPLE" : "EXAMPLES";
+  // A plural rather than a two-way ternary: Arabic has dual and several plural
+  // categories, so one/other alone can't be translated correctly.
+  const headerLabel = plural(examples.length, {
+    one: "EXAMPLE",
+    other: "EXAMPLES",
+  });
 
   return (
     <View className="w-full gap-3">

@@ -27,15 +27,22 @@ All commands run from monorepo root.
 ### Dev
 
 ```bash
-make local-db                        # Local database (port 8080) — required for API
-make tunnel                          # Cloudflared tunnel — required for mobile dev + OAuth
+make dev-backend                     # Local DB (port 8080) + cloudflared tunnel, together
 pnpm run dev                         # API + web + marketing dev servers
-pnpm run start --filter mobile       # Mobile (requires API server + tunnel running)
+pnpm run start --filter mobile       # Mobile (requires make dev-backend + pnpm run dev)
 ```
 
-Run `make local-db` and `make tunnel` in separate terminals before `pnpm run dev`. The
-tunnel exposes the local API over HTTPS so the mobile dev client and OAuth callbacks (Apple
-Sign In) can reach it. Web-only work doesn't strictly need the tunnel.
+Run `make dev-backend` in its own terminal before `pnpm run dev`. It runs `make local-db` and
+`make tunnel` in parallel and pulls the tunnel token from 1Password, so the `op` CLI has to be
+signed in.
+
+The tunnel is not optional for day-to-day work: `APP_DOMAIN` (api), `VITE_API_BASE_URL` (web),
+and `EXPO_PUBLIC_API_BASE_URL` (mobile) all point at the tunnel domain, so without it the web
+app has no reachable API. SSO providers also reject `http://localhost` callbacks. Those three
+must always name the same host or OAuth state cookies won't flow end-to-end — see
+[apps/api/README.md](./apps/api/README.md#local-development).
+
+Individual pieces, when you need them separately: `make local-db`, `make tunnel`.
 
 Individual servers: `pnpm run dev --filter api|web|marketing`
 

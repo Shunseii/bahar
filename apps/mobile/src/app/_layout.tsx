@@ -149,26 +149,24 @@ function RootLayout() {
     <JotaiProvider store={store}>
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <KeyboardProvider>
-              <SafeAreaProvider>
-                <SafeAreaListener
-                  // Enables using p-safe and m-safe class names
-                  // with uniwind
-                  onChange={({ insets }) => {
-                    Uniwind.updateInsets(insets);
-                  }}
-                >
-                  <View className="flex-1 bg-background">
-                    <ThemeColorsInner
-                      authData={authData}
-                      colorScheme={colorScheme}
-                    />
-                  </View>
-                </SafeAreaListener>
-              </SafeAreaProvider>
-            </KeyboardProvider>
-          </BottomSheetModalProvider>
+          <KeyboardProvider>
+            <SafeAreaProvider>
+              <SafeAreaListener
+                // Enables using p-safe and m-safe class names
+                // with uniwind
+                onChange={({ insets }) => {
+                  Uniwind.updateInsets(insets);
+                }}
+              >
+                <View className="flex-1 bg-background">
+                  <ThemeColorsInner
+                    authData={authData}
+                    colorScheme={colorScheme}
+                  />
+                </View>
+              </SafeAreaListener>
+            </SafeAreaProvider>
+          </KeyboardProvider>
         </GestureHandlerRootView>
       </QueryClientProvider>
     </JotaiProvider>
@@ -192,74 +190,79 @@ function ThemeColorsInner({
     <ThemeColorsProvider value={themeColors}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <I18nProvider defaultComponent={DefaultComponent} i18n={i18n}>
-          <Stack
-            screenOptions={{
-              // Paint the native screen card with the app background so screen
-              // transitions (e.g. the review screen's slide_from_bottom) don't
-              // flash the stock navigation-theme background (near-black) before
-              // the screen's own bg-background view paints.
-              contentStyle: { backgroundColor: themeColors.background },
-            }}
-          >
-            <Stack.Protected guard={!authData}>
-              <Stack.Screen
-                name="(auth)"
-                options={{ headerShown: false, animation: "fade" }}
-              />
-            </Stack.Protected>
+          {/* Bottom sheets render through this provider's portal, so it has to
+              sit inside I18nProvider -- above it, sheet content is outside the
+              i18n context and <Trans> throws. */}
+          <BottomSheetModalProvider>
+            <Stack
+              screenOptions={{
+                // Paint the native screen card with the app background so screen
+                // transitions (e.g. the review screen's slide_from_bottom) don't
+                // flash the stock navigation-theme background (near-black) before
+                // the screen's own bg-background view paints.
+                contentStyle: { backgroundColor: themeColors.background },
+              }}
+            >
+              <Stack.Protected guard={!authData}>
+                <Stack.Screen
+                  name="(auth)"
+                  options={{ headerShown: false, animation: "fade" }}
+                />
+              </Stack.Protected>
 
-            <Stack.Protected guard={!!authData}>
-              <Stack.Screen
-                name="(search)"
-                options={{ headerShown: false, animation: "fade" }}
-              />
-              <Stack.Screen
-                name="review"
-                options={{
-                  headerShown: false,
-                  animation: "slide_from_bottom",
-                  // Snappier than the platform default so the review screen
-                  // opens and closes quickly. Applies to both push and pop.
-                  animationDuration: 220,
-                  // Disabled on iOS for parity with Android (no swipe-to-
-                  // dismiss). Closing happens via the X button. Keeping the
-                  // native gesture caused stuck-state bugs with horizontal
-                  // card swipes after partial swipe-down attempts.
-                  gestureEnabled: false,
-                }}
-              />
-              <Stack.Screen
-                name="link-account"
-                options={{
-                  headerShown: false,
-                  animation: "slide_from_bottom",
-                  gestureEnabled: true,
-                  gestureDirection: "vertical",
-                }}
-              />
-              <Stack.Screen
-                name="link-code/[email]"
-                options={{
-                  headerShown: false,
-                  animation: "slide_from_right",
-                }}
-              />
-            </Stack.Protected>
+              <Stack.Protected guard={!!authData}>
+                <Stack.Screen
+                  name="(search)"
+                  options={{ headerShown: false, animation: "fade" }}
+                />
+                <Stack.Screen
+                  name="review"
+                  options={{
+                    headerShown: false,
+                    animation: "slide_from_bottom",
+                    // Snappier than the platform default so the review screen
+                    // opens and closes quickly. Applies to both push and pop.
+                    animationDuration: 220,
+                    // Disabled on iOS for parity with Android (no swipe-to-
+                    // dismiss). Closing happens via the X button. Keeping the
+                    // native gesture caused stuck-state bugs with horizontal
+                    // card swipes after partial swipe-down attempts.
+                    gestureEnabled: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="link-account"
+                  options={{
+                    headerShown: false,
+                    animation: "slide_from_bottom",
+                    gestureEnabled: true,
+                    gestureDirection: "vertical",
+                  }}
+                />
+                <Stack.Screen
+                  name="link-code/[email]"
+                  options={{
+                    headerShown: false,
+                    animation: "slide_from_right",
+                  }}
+                />
+              </Stack.Protected>
 
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-          <Toaster
-            toastOptions={{
-              style: {
-                backgroundColor: themeColors.card,
-                borderColor: themeColors.border,
-                borderWidth: 1,
-              },
-              titleStyle: { color: themeColors.foreground },
-              descriptionStyle: { color: themeColors.mutedForeground },
-            }}
-          />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
+            <Toaster
+              toastOptions={{
+                style: {
+                  backgroundColor: themeColors.card,
+                  borderColor: themeColors.border,
+                  borderWidth: 1,
+                },
+                titleStyle: { color: themeColors.foreground },
+                descriptionStyle: { color: themeColors.mutedForeground },
+              }}
+            />
+          </BottomSheetModalProvider>
         </I18nProvider>
       </ThemeProvider>
     </ThemeColorsProvider>

@@ -4,6 +4,7 @@
 
 import type {
   SelectDictionaryEntry,
+  TagMode,
   WordType,
 } from "@bahar/drizzle-user-db-schemas";
 import { Trans } from "@lingui/react/macro";
@@ -16,7 +17,14 @@ import { useFocusEffect } from "expo-router";
 import { useAtom } from "jotai";
 import { ArrowUp, BookOpen, SearchX } from "lucide-react-native";
 import type { ReactElement } from "react";
-import { type FC, useCallback, useEffect, useRef, useState } from "react";
+import {
+  type FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -25,17 +33,24 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   FadeIn,
   FadeInDown,
+  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useDragSelect } from "@/hooks/useDragSelect";
 import { type SortOption, useInfiniteSearch } from "@/hooks/useSearch";
 import { dictionaryEntriesTable } from "@/lib/db/operations";
 import { performSync } from "@/lib/db/sync";
 import { reviewsPendingRefreshAtom } from "@/lib/store";
+import {
+  useBulkSelection,
+  usePublishAllMatchingIds,
+} from "@/lib/store/selection";
 import { useThemeColors } from "@/lib/theme";
 import { queryClient } from "@/utils/api";
 import { DictionaryEntryCard } from "./DictionaryEntryCard";
@@ -43,6 +58,7 @@ import { DictionaryEntryCard } from "./DictionaryEntryCard";
 interface DictionaryListProps {
   searchQuery: string;
   tags?: string[];
+  tagMode?: TagMode;
   types?: WordType[];
   sort?: SortOption;
   bottomInset?: number;
@@ -71,7 +87,7 @@ const EmptyDictionary: FC = () => {
   );
 };
 
-const NoResults: FC = () => {
+const NoResults: FC<{ hasSearchQuery: boolean }> = ({ hasSearchQuery }) => {
   const colors = useThemeColors();
   return (
     <Animated.View
@@ -85,7 +101,11 @@ const NoResults: FC = () => {
         <Trans>No results found</Trans>
       </Text>
       <Text className="px-8 text-center text-muted-foreground">
-        <Trans>Try a different search term</Trans>
+        {hasSearchQuery ? (
+          <Trans>Try a different search term</Trans>
+        ) : (
+          <Trans>Try adjusting your filters</Trans>
+        )}
       </Text>
     </Animated.View>
   );
@@ -100,6 +120,7 @@ const LoadingIndicator: FC = () => (
 export const DictionaryList: FC<DictionaryListProps> = ({
   searchQuery,
   tags,
+  tagMode,
   types,
   sort,
   bottomInset = 0,
@@ -111,6 +132,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     tags?.length || types?.length
       ? {
           tags: tags?.length ? tags : undefined,
+          tagMode,
           types: types?.length ? types : undefined,
         }
       : undefined;
@@ -122,6 +144,7 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     refresh,
     totalCount,
     elapsedTimeNs,
+    allMatchingIds,
   } = useInfiniteSearch({
     term: searchQuery,
     filters,
@@ -143,6 +166,38 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     }, [reviewsPending, refresh, setReviewsPending])
   );
 
+  const listRef = useRef<FlashListRef<(typeof hits)[number]>>(null);
+  const {
+    selectionMode,
+    selectedIds,
+    toggle,
+    setSelection,
+    enterSelectionMode,
+    exitSelectionMode,
+  } = useBulkSelection();
+
+  // The gesture callbacks run outside React's render, so the live selection and
+  // scroll position are read through refs rather than captured in a closure.
+  const selectedIdsRef = useRef(selectedIds);
+  selectedIdsRef.current = selectedIds;
+  const scrollOffsetRef = useRef(0);
+
+  const orderedIds = hits.map((hit) => hit.id);
+
+  const { gesture, registerRow, registerList } = useDragSelect({
+    orderedIds,
+    // The caller pads the list by the action bar's height while selecting; the
+    // same padding is what auto-scroll has to stay clear of.
+    bottomInset,
+    getSelectedIds: () => selectedIdsRef.current,
+    setSelection,
+    enterSelectionMode,
+    exitSelectionMode,
+    getScrollOffset: () => scrollOffsetRef.current,
+    scrollToOffset: (offset) =>
+      listRef.current?.scrollToOffset({ offset, animated: false }),
+  });
+
   const [refreshing, setRefreshing] = useState(false);
   const expandedIdsRef = useRef(new Set<string>());
   const [expandedVersion, setExpandedVersion] = useState(0);
@@ -162,13 +217,13 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     setExpandedVersion((n) => n + 1);
   }, []);
   const colors = useThemeColors();
-  const listRef = useRef<FlashListRef<(typeof hits)[number]>>(null);
   const scrollY = useSharedValue(0);
   const { height: screenHeight } = useWindowDimensions();
 
   const handleScroll = useCallback(
     (event: { nativeEvent: { contentOffset: { y: number } } }) => {
       scrollY.value = event.nativeEvent.contentOffset.y;
+      scrollOffsetRef.current = event.nativeEvent.contentOffset.y;
     },
     []
   );
@@ -215,6 +270,8 @@ export const DictionaryList: FC<DictionaryListProps> = ({
     onElapsedTimeChange?.(elapsedTimeNs);
   }, [elapsedTimeNs, onElapsedTimeChange]);
 
+  usePublishAllMatchingIds(allMatchingIds);
+
   // Prefetch full entries from SQLite for the current batch of hits
   // so ExpandedDetails can read from a warm cache on expand
   const prefetchedIdsRef = useRef(new Set<string>());
@@ -240,25 +297,50 @@ export const DictionaryList: FC<DictionaryListProps> = ({
 
   const renderItem = useCallback(
     ({ item, index }: { item: (typeof hits)[0]; index: number }) => (
-      <Animated.View
-        entering={FadeInDown.delay(Math.min(index * 50, 300))
-          .duration(400)
-          .springify()
-          .damping(15)
-          .stiffness(120)}
-      >
-        <DictionaryEntryCard
-          entry={item.document as SelectDictionaryEntry}
-          isExpanded={expandedIdsRef.current.has(item.id)}
-          onToggleExpand={toggleExpanded}
-          searchQuery={searchQuery}
-        />
-      </Animated.View>
+      // The plain wrapper is what drag-select measures: it exposes the native
+      // measure methods (Animated.View's ref doesn't) and collapsable={false}
+      // keeps Android from flattening it away.
+      <View collapsable={false} ref={(node) => registerRow(item.id, node)}>
+        <Animated.View
+          entering={FadeInDown.delay(Math.min(index * 50, 300))
+            .duration(400)
+            .springify()
+            .damping(15)
+            .stiffness(120)}
+          // Selection mode slides a checkbox in and shifts the word across, so
+          // the row animates to its new shape instead of snapping.
+          layout={LinearTransition.duration(180)}
+        >
+          <DictionaryEntryCard
+            entry={item.document as SelectDictionaryEntry}
+            isExpanded={expandedIdsRef.current.has(item.id)}
+            isSelected={selectedIds.has(item.id)}
+            onToggleExpand={toggleExpanded}
+            onToggleSelect={toggle}
+            searchQuery={searchQuery}
+            selectionMode={selectionMode}
+          />
+        </Animated.View>
+      </View>
     ),
-    [toggleExpanded]
+    [
+      toggleExpanded,
+      registerRow,
+      selectedIds,
+      selectionMode,
+      toggle,
+      searchQuery,
+    ]
   );
 
   const keyExtractor = useCallback((item: (typeof hits)[0]) => item.id, []);
+
+  // FlashList only re-renders rows when extraData's identity changes, and both
+  // expansion and selection live outside the row data.
+  const extraData = useMemo(
+    () => ({ expandedVersion, selectionMode, selectedIds }),
+    [expandedVersion, selectionMode, selectedIds]
+  );
 
   const onEndReached = useCallback(() => {
     if (!isLoading && hasMore) {
@@ -268,38 +350,47 @@ export const DictionaryList: FC<DictionaryListProps> = ({
 
   const emptyComponent = (() => {
     if (isLoading) return <LoadingIndicator />;
-    if (searchQuery.trim()) return <NoResults />;
+    // Filters count the same as a search term: narrowing to zero with no
+    // search term would otherwise claim the dictionary itself is empty.
+    const hasSearchQuery = searchQuery.trim().length > 0;
+    const hasActiveFilters = !!(tags?.length || types?.length);
+    if (hasSearchQuery || hasActiveFilters) {
+      return <NoResults hasSearchQuery={hasSearchQuery} />;
+    }
     return <EmptyDictionary />;
   })();
+
   return (
-    <View className="flex-1">
-      <FlashList
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: bottomInset + 16,
-        }}
-        data={hits}
-        extraData={expandedVersion}
-        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-        keyExtractor={keyExtractor}
-        ListEmptyComponent={emptyComponent}
-        ListFooterComponent={hasMore ? <LoadingIndicator /> : null}
-        ListHeaderComponent={
-          ListHeaderComponent as FlashListProps<
-            (typeof hits)[0]
-          >["ListHeaderComponent"]
-        }
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.3}
-        onScroll={handleScroll}
-        ref={listRef}
-        refreshControl={
-          <RefreshControl onRefresh={handleRefresh} refreshing={refreshing} />
-        }
-        renderItem={renderItem}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-      />
+    <View className="flex-1" collapsable={false} ref={registerList}>
+      <GestureDetector gesture={gesture}>
+        <FlashList
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: bottomInset + 16,
+          }}
+          data={hits}
+          extraData={extraData}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          keyExtractor={keyExtractor}
+          ListEmptyComponent={emptyComponent}
+          ListFooterComponent={hasMore ? <LoadingIndicator /> : null}
+          ListHeaderComponent={
+            ListHeaderComponent as FlashListProps<
+              (typeof hits)[0]
+            >["ListHeaderComponent"]
+          }
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.3}
+          onScroll={handleScroll}
+          ref={listRef}
+          refreshControl={
+            <RefreshControl onRefresh={handleRefresh} refreshing={refreshing} />
+          }
+          renderItem={renderItem}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+        />
+      </GestureDetector>
       <Animated.View
         className="absolute right-6"
         style={[{ bottom: bottomInset + 24 }, scrollButtonStyle]}

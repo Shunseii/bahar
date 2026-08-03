@@ -101,7 +101,10 @@ export const Autocomplete: FC<AutocompleteProps> = ({
           !addedTagIsFiltered &&
           (tags.length > 0 || (tags.length === 0 && allowAdd)) && (
             <div
-              className="absolute top-12 right-0 left-0 max-h-[164px] overflow-y-auto rounded-lg border-2 border-border bg-background"
+              // z-index so the dropdown paints over whatever follows it in the
+              // DOM. Without it the dialog footer's button, being a later
+              // sibling, covers the bottom of the list.
+              className="absolute top-12 right-0 left-0 z-20 max-h-[164px] overflow-y-auto rounded-lg border-2 border-border bg-background"
               ref={dropdownRef}
             >
               {(() => {

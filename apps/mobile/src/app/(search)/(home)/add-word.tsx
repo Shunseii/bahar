@@ -294,6 +294,32 @@ export default function AddWordScreen() {
                   />
                 </View>
               </CollapsibleCard>
+
+              <View className="flex-row items-center gap-2 self-center">
+                <Pressable
+                  className="flex-row items-center gap-2"
+                  onPress={() => setCreateMultiple(!createMultiple)}
+                >
+                  <Checkbox
+                    checked={createMultiple}
+                    onCheckedChange={setCreateMultiple}
+                  />
+                  <Text className="text-muted-foreground text-sm">
+                    <Trans>Create multiple</Trans>
+                  </Text>
+                </Pressable>
+                <Pressable
+                  hitSlop={8}
+                  onPress={() =>
+                    Alert.alert(
+                      t`Create multiple`,
+                      t`Keep adding words after saving instead of going back to the homepage.`
+                    )
+                  }
+                >
+                  <Info color={colors.mutedForeground} size={14} />
+                </Pressable>
+              </View>
             </View>
           </View>
         </KeyboardAwareScrollView>
@@ -303,33 +329,7 @@ export default function AddWordScreen() {
             back down by the inset slides that padding under the keyboard
             instead of leaving it as a visible gap above it. */}
         <KeyboardStickyView offset={{ opened: insets.bottom }}>
-          <View className="gap-3 border-border border-t bg-background px-4 pt-3 pb-safe-offset-3">
-            <View className="flex-row items-center gap-2 self-center">
-              <Pressable
-                className="flex-row items-center gap-2"
-                onPress={() => setCreateMultiple(!createMultiple)}
-              >
-                <Checkbox
-                  checked={createMultiple}
-                  onCheckedChange={setCreateMultiple}
-                />
-                <Text className="text-muted-foreground text-sm">
-                  <Trans>Create multiple</Trans>
-                </Text>
-              </Pressable>
-              <Pressable
-                hitSlop={8}
-                onPress={() =>
-                  Alert.alert(
-                    t`Create multiple`,
-                    t`Keep adding words after saving instead of going back to the homepage.`
-                  )
-                }
-              >
-                <Info color={colors.mutedForeground} size={14} />
-              </Pressable>
-            </View>
-
+          <View className="border-border border-t bg-background px-4 pt-3 pb-safe-offset-3">
             <View className="flex-row items-center justify-center gap-3">
               <Button onPress={() => router.back()} variant="outline">
                 <Trans>Cancel</Trans>
@@ -341,6 +341,8 @@ export default function AddWordScreen() {
               >
                 {addWordMutation.isPending ? (
                   <ActivityIndicator color="white" size="small" />
+                ) : createMultiple ? (
+                  <Trans>Save & add another</Trans>
                 ) : (
                   <Trans>Save</Trans>
                 )}

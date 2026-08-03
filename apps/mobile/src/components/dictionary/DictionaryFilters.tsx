@@ -1,5 +1,10 @@
-import { WORD_TYPES, type WordType } from "@bahar/drizzle-user-db-schemas";
-import { Trans, useLingui } from "@lingui/react/macro";
+import {
+  TAG_MODES,
+  type TagMode,
+  WORD_TYPES,
+  type WordType,
+} from "@bahar/drizzle-user-db-schemas";
+import { Plural, Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
 import {
@@ -7,6 +12,8 @@ import {
   BookType,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   FunnelX,
   Lock,
   SlidersHorizontal,
@@ -38,6 +45,7 @@ import {
   selectedTagsAtom,
   selectedTypesAtom,
   sortOptionAtom,
+  tagModeAtom,
 } from "@/lib/store/filters";
 import { useThemeColors } from "@/lib/theme";
 import { Button } from "../ui/button";
@@ -70,6 +78,14 @@ const useWordTypeLabels = (): Record<WordType, string> => {
     "fi'l": t`Fi'l`,
     harf: t`Harf`,
     expression: t`Expression`,
+  };
+};
+
+const useTagModeLabels = (): Record<TagMode, string> => {
+  const { t } = useLingui();
+  return {
+    all: t`Match all`,
+    any: t`Match any`,
   };
 };
 
@@ -121,7 +137,190 @@ const CollapsibleSection: FC<{
   );
 };
 
-const TAG_LIST_MAX_HEIGHT = 300;
+/**
+ * Full-screen tag picker, pushed over the filters modal.
+ *
+ * A drill-in rather than a section inside the filters sheet: the tag list is
+ * the only unbounded list in there, and inlining it meant a capped-height
+ * ScrollView nested inside the sheet's own ScrollView. Two vertical scroll
+ * regions in the same direction make the gesture ambiguous, and a ~300pt
+ * window is a poor place to search twenty-plus tags.
+ *
+ * Writes straight into the parent's draft. It deliberately has no Apply of its
+ * own -- nesting a second commit step under the sheet's Apply makes "apply
+ * here, then cancel there" mean something nobody can predict. Closing this is
+ * just "done looking"; the sheet's Apply stays the only commit.
+ */
+const TagPickerModal: FC<{
+  visible: boolean;
+  onClose: () => void;
+  selectedTags: string[];
+  onToggleTag: (tag: string) => void;
+  tagMode: TagMode;
+  onTagModeChange: (mode: TagMode) => void;
+}> = ({
+  visible,
+  onClose,
+  selectedTags,
+  onToggleTag,
+  tagMode,
+  onTagModeChange,
+}) => {
+  const { t } = useLingui();
+  const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
+  const { formatNumber } = useFormatNumber();
+  const tagModeLabels = useTagModeLabels();
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    if (visible) setSearch("");
+  }, [visible]);
+
+  const { data: availableTags } = useQuery({
+    queryFn: () => dictionaryEntriesTable.tags.query(),
+    ...dictionaryEntriesTable.tags.cacheOptions,
+  });
+
+  const filteredTags = availableTags?.filter(
+    (item) =>
+      !search.trim() || item.tag.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <Modal
+      animationType="slide"
+      onRequestClose={onClose}
+      presentationStyle="fullScreen"
+      visible={visible}
+    >
+      <View
+        className="flex-1 bg-background"
+        style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+      >
+        <View className="flex-row items-center gap-2 border-border border-b px-4 py-3">
+          <Pressable
+            className="-ml-2 p-2 active:opacity-60"
+            hitSlop={8}
+            onPress={onClose}
+          >
+            <ChevronLeft color={colors.foreground} size={24} />
+          </Pressable>
+          <Text className="flex-1 font-semibold text-foreground text-lg">
+            <Trans>Tags</Trans>
+          </Text>
+          {selectedTags.length > 0 && (
+            <Text className="text-muted-foreground text-sm">
+              <Plural
+                one="# selected"
+                other="# selected"
+                value={selectedTags.length}
+              />
+            </Text>
+          )}
+        </View>
+
+        {/* Only once a second tag makes the choice meaningful -- below two tags
+            "all" and "any" select the same entries. The helper text stays
+            because this screen covers the results, so toggling shows nothing
+            until the filters sheet is applied. */}
+        {selectedTags.length >= 2 && (
+          <View className="gap-2 px-4 pt-3">
+            <View className="flex-row gap-1 rounded-lg bg-muted/40 p-1">
+              {TAG_MODES.map((mode) => {
+                const isSelected = tagMode === mode;
+                return (
+                  <Pressable
+                    className={`flex-1 items-center rounded-md py-2 ${
+                      isSelected ? "bg-background" : ""
+                    }`}
+                    key={mode}
+                    onPress={() => onTagModeChange(mode)}
+                  >
+                    <Text
+                      className={`text-sm ${
+                        isSelected
+                          ? "font-semibold text-foreground"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {tagModeLabels[mode]}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+
+            <Text className="text-muted-foreground text-xs">
+              {tagMode === "all" ? (
+                <Trans>Words must have every selected tag.</Trans>
+              ) : (
+                <Trans>Words need only one of the selected tags.</Trans>
+              )}
+            </Text>
+          </View>
+        )}
+
+        <View className="px-4 py-3">
+          <TextInput
+            autoCorrect={false}
+            className="rounded-lg bg-muted/40 px-3 py-2.5 text-foreground text-sm"
+            onChangeText={setSearch}
+            placeholder={t`Search tags...`}
+            placeholderTextColor={colors.mutedForeground}
+            value={search}
+          />
+        </View>
+
+        {/* The one scroll region on this screen. */}
+        <ScrollView className="flex-1" keyboardShouldPersistTaps="handled">
+          {filteredTags?.map(({ tag, count }) => {
+            const isSelected = selectedTags.includes(tag);
+            return (
+              <Pressable
+                className="flex-row items-center justify-between px-4 py-3 active:bg-muted/30"
+                key={tag}
+                onPress={() => onToggleTag(tag)}
+              >
+                <View className="flex-1 flex-row items-center gap-3">
+                  <View
+                    className={`h-5.5 w-5.5 items-center justify-center rounded ${
+                      isSelected
+                        ? "bg-primary"
+                        : "border border-border bg-background"
+                    }`}
+                  >
+                    {isSelected && <Check color="#fff" size={14} />}
+                  </View>
+                  <Text
+                    className={`text-base ${
+                      isSelected
+                        ? "font-medium text-foreground"
+                        : "text-foreground"
+                    }`}
+                  >
+                    {tag}
+                  </Text>
+                </View>
+                <Text className="text-muted-foreground text-sm">
+                  {formatNumber(count)}
+                </Text>
+              </Pressable>
+            );
+          })}
+
+          {filteredTags?.length === 0 && (
+            <View className="px-4 py-6">
+              <Text className="text-center text-muted-foreground text-sm">
+                <Trans>No tags found</Trans>
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    </Modal>
+  );
+};
 
 const FiltersModal: FC<{
   visible: boolean;
@@ -134,20 +333,24 @@ const FiltersModal: FC<{
   const { formatNumber } = useFormatNumber();
   const sortLabels = useSortLabels();
   const wordTypeLabels = useWordTypeLabels();
+  const tagModeLabels = useTagModeLabels();
 
   const appliedTags = useAtomValue(selectedTagsAtom);
   const appliedTypes = useAtomValue(selectedTypesAtom);
   const appliedSort = useAtomValue(sortOptionAtom);
+  const appliedTagMode = useAtomValue(tagModeAtom);
   const setAppliedTags = useSetAtom(selectedTagsAtom);
   const setAppliedTypes = useSetAtom(selectedTypesAtom);
   const setAppliedSort = useSetAtom(sortOptionAtom);
+  const setAppliedTagMode = useSetAtom(tagModeAtom);
 
   const [draftTags, setDraftTags] = useState<string[]>([]);
   const [draftTypes, setDraftTypes] = useState<WordType[]>([]);
   const [draftSort, setDraftSort] = useState<SortOption>("relevance");
-  const [tagSearch, setTagSearch] = useState("");
+  const [draftTagMode, setDraftTagMode] = useState<TagMode>("any");
+  const [tagPickerVisible, setTagPickerVisible] = useState(false);
   const [expandedSection, setExpandedSection] = useState<
-    "tags" | "types" | "sort" | null
+    "types" | "sort" | null
   >("sort");
 
   // Sync draft state from applied state when modal opens
@@ -156,21 +359,11 @@ const FiltersModal: FC<{
       setDraftTags(appliedTags);
       setDraftTypes(appliedTypes);
       setDraftSort(appliedSort);
-      setTagSearch("");
+      setDraftTagMode(appliedTagMode);
+      setTagPickerVisible(false);
       setExpandedSection("sort");
     }
   }, [visible]);
-
-  const { data: availableTags } = useQuery({
-    queryFn: () => dictionaryEntriesTable.tags.query(),
-    ...dictionaryEntriesTable.tags.cacheOptions,
-  });
-
-  const filteredTags = availableTags?.filter(
-    (item) =>
-      !tagSearch.trim() ||
-      item.tag.toLowerCase().includes(tagSearch.toLowerCase())
-  );
 
   const toggleTag = (tag: string) => {
     setDraftTags((prev) =>
@@ -188,18 +381,23 @@ const FiltersModal: FC<{
     setAppliedTags([]);
     setAppliedTypes([]);
     setAppliedSort("relevance");
+    setAppliedTagMode("any");
     setDraftTags([]);
     setDraftTypes([]);
     setDraftSort("relevance");
+    setDraftTagMode("any");
   };
 
   const handleApply = () => {
     setAppliedTags(draftTags);
     setAppliedTypes(draftTypes);
     setAppliedSort(draftSort);
+    setAppliedTagMode(draftTagMode);
     onClose();
   };
 
+  // Matches activeFilterCountAtom: tagMode on its own isn't an active filter,
+  // so it shouldn't be what makes "Clear all" appear.
   const hasAppliedFilters =
     appliedTags.length > 0 ||
     appliedTypes.length > 0 ||
@@ -208,12 +406,8 @@ const FiltersModal: FC<{
   const hasDraftChanges =
     JSON.stringify(draftTags) !== JSON.stringify(appliedTags) ||
     JSON.stringify(draftTypes) !== JSON.stringify(appliedTypes) ||
-    draftSort !== appliedSort;
-
-  const tagsSummary =
-    draftTags.length > 0
-      ? t`${formatNumber(draftTags.length)} tags selected`
-      : undefined;
+    draftSort !== appliedSort ||
+    draftTagMode !== appliedTagMode;
 
   const typesSummary =
     draftTypes.length > 0
@@ -255,75 +449,28 @@ const FiltersModal: FC<{
         </View>
 
         <ScrollView className="flex-1">
-          {/* Tags section */}
-          <CollapsibleSection
-            icon={Tag}
-            isExpanded={expandedSection === "tags"}
-            label={t`Tags`}
-            onToggle={() =>
-              setExpandedSection((prev) => (prev === "tags" ? null : "tags"))
-            }
-            summary={tagsSummary}
+          {/* Tags drill into their own screen rather than expanding inline --
+              see TagPickerModal for why. */}
+          <Pressable
+            className="flex-row items-center gap-2 px-4 py-3 active:bg-muted/30"
+            onPress={() => setTagPickerVisible(true)}
           >
-            <View className="px-4 pb-3">
-              <TextInput
-                className="rounded-lg bg-muted/40 px-3 py-2.5 text-foreground text-sm"
-                onChangeText={setTagSearch}
-                placeholder={t`Search tags...`}
-                placeholderTextColor={colors.mutedForeground}
-                value={tagSearch}
-              />
-            </View>
-
-            <ScrollView
-              nestedScrollEnabled
-              showsVerticalScrollIndicator
-              style={{ maxHeight: TAG_LIST_MAX_HEIGHT }}
-            >
-              {filteredTags?.map(({ tag, count }) => {
-                const isSelected = draftTags.includes(tag);
-                return (
-                  <Pressable
-                    className="flex-row items-center justify-between px-4 py-3 active:bg-muted/30"
-                    key={tag}
-                    onPress={() => toggleTag(tag)}
-                  >
-                    <View className="flex-row items-center gap-3">
-                      <View
-                        className={`h-5.5 w-5.5 items-center justify-center rounded ${
-                          isSelected
-                            ? "bg-primary"
-                            : "border border-border bg-background"
-                        }`}
-                      >
-                        {isSelected && <Check color="#fff" size={14} />}
-                      </View>
-                      <Text
-                        className={`text-base ${
-                          isSelected
-                            ? "font-medium text-foreground"
-                            : "text-foreground"
-                        }`}
-                      >
-                        {tag}
-                      </Text>
-                    </View>
-                    <Text className="text-muted-foreground text-sm">
-                      {formatNumber(count)}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-
-              {filteredTags?.length === 0 && (
-                <View className="px-4 py-6">
-                  <Text className="text-center text-muted-foreground text-sm">
-                    <Trans>No tags found</Trans>
-                  </Text>
-                </View>
-              )}
-            </ScrollView>
-          </CollapsibleSection>
+            <Tag color={colors.mutedForeground} size={16} />
+            <Text className="font-semibold text-muted-foreground text-xs uppercase tracking-widest">
+              <Trans>Tags</Trans>
+            </Text>
+            <View className="h-px flex-1 bg-border/50" />
+            {draftTags.length > 0 && (
+              <Text className="text-muted-foreground text-sm">
+                <Plural
+                  one="# tag selected"
+                  other="# tags selected"
+                  value={draftTags.length}
+                />
+              </Text>
+            )}
+            <ChevronRight color={colors.mutedForeground} size={16} />
+          </Pressable>
 
           {/* Word Types section */}
           <CollapsibleSection
@@ -428,6 +575,15 @@ const FiltersModal: FC<{
           </View>
         </View>
       </View>
+
+      <TagPickerModal
+        onClose={() => setTagPickerVisible(false)}
+        onTagModeChange={setDraftTagMode}
+        onToggleTag={toggleTag}
+        selectedTags={draftTags}
+        tagMode={draftTagMode}
+        visible={tagPickerVisible}
+      />
     </Modal>
   );
 };
@@ -449,7 +605,7 @@ export const DictionaryFilters: FC = () => {
   };
 
   return (
-    <View className="flex-row items-center justify-between">
+    <View className="flex-row items-center gap-x-4">
       <Pressable
         className="flex-row items-center gap-1.5 py-1 active:opacity-70"
         onPress={() => setShowModal(true)}

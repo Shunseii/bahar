@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "messages:extract": "lingui extract",
+    "messages:extract": "lingui extract --clean",
     "messages:compile": "lingui compile --typescript"
   },
   "dependencies": {

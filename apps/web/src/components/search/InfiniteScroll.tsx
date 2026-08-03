@@ -3,6 +3,7 @@ import { cn } from "@bahar/design-system";
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
 import { Button } from "@bahar/web-ui/components/button";
 import { Card, CardContent } from "@bahar/web-ui/components/card";
+import { Checkbox } from "@bahar/web-ui/components/checkbox";
 import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useQuery } from "@tanstack/react-query";
@@ -28,12 +29,19 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import {
   type FC,
+  type KeyboardEvent,
+  type MouseEvent,
   memo,
   type ReactNode,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
+import {
+  useBulkSelection,
+  usePublishAllMatchingIds,
+} from "@/components/features/dictionary/bulk/state";
 import { useInfiniteScroll } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { useUserPlan } from "@/hooks/useUserPlan";
@@ -686,10 +694,21 @@ interface WordCardContentProps {
   isExpanded: boolean;
   onToggleExpanded: (id: string) => void;
   onNavigateEdit: (id: string) => void;
+  selectionMode: boolean;
+  isSelected: boolean;
+  onToggleSelected: (options: { id: string; extendRange: boolean }) => void;
 }
 
 const WordCardContent: FC<WordCardContentProps> = memo(
-  ({ hit, isExpanded, onToggleExpanded, onNavigateEdit }) => {
+  ({
+    hit,
+    isExpanded,
+    onToggleExpanded,
+    onNavigateEdit,
+    selectionMode,
+    isSelected,
+    onToggleSelected,
+  }) => {
     const handleToggle = useCallback(() => {
       onToggleExpanded(hit.id!);
     }, [hit.id, onToggleExpanded]);
@@ -697,7 +716,34 @@ const WordCardContent: FC<WordCardContentProps> = memo(
     const handleEdit = useCallback(() => {
       onNavigateEdit(hit.id!);
     }, [hit.id, onNavigateEdit]);
+
+    const handleToggleSelected = useCallback(
+      (extendRange: boolean) => {
+        onToggleSelected({ id: hit.id!, extendRange });
+      },
+      [hit.id, onToggleSelected]
+    );
+
     const document = hit.document;
+
+    // In selection mode the whole card is the select target, so the per-card
+    // actions are hidden rather than competing with it for clicks.
+    const selectionProps = selectionMode
+      ? {
+          "aria-pressed": isSelected,
+          onClick: (event: MouseEvent<HTMLDivElement>) => {
+            handleToggleSelected(event.shiftKey);
+          },
+          onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              handleToggleSelected(event.shiftKey);
+            }
+          },
+          role: "button" as const,
+          tabIndex: 0,
+        }
+      : {};
 
     return (
       <Card
@@ -707,31 +753,52 @@ const WordCardContent: FC<WordCardContentProps> = memo(
           "transition-colors duration-200 ease-out",
           "hover:shadow-black/5 hover:shadow-md",
           isExpanded &&
-            "from-muted/50 to-muted/30 dark:from-muted/60 dark:to-muted/40"
+            "from-muted/50 to-muted/30 dark:from-muted/60 dark:to-muted/40",
+          selectionMode && "cursor-pointer select-none",
+          isSelected && "border-primary bg-primary/5"
         )}
+        {...selectionProps}
       >
-        <CardContent className="flex flex-col gap-y-2">
+        {selectionMode && (
+          // Its own gutter rather than inline with the word: an inline checkbox
+          // shifts the word but not the translation underneath it, so the two
+          // stop lining up.
+          <div className="absolute top-6 ltr:left-4 rtl:right-4">
+            {/* Presentational only -- the card owns the click and announces the
+                state through aria-pressed. */}
+            <Checkbox aria-hidden checked={isSelected} tabIndex={-1} />
+          </div>
+        )}
+
+        <CardContent
+          className={cn(
+            "flex flex-col gap-y-2",
+            selectionMode && "ltr:pl-12 rtl:pr-12"
+          )}
+        >
           <div className="flex items-start justify-between">
             <h2 className="font-semibold text-3xl transition-colors duration-200 sm:text-3xl">
               <Highlight text={document.word} />
             </h2>
 
-            <div className="flex items-center gap-1">
-              <CopyButton text={document.word} />
+            {!selectionMode && (
+              <div className="flex items-center gap-1">
+                <CopyButton text={document.word} />
 
-              <SecondaryIconButton onClick={handleEdit}>
-                <Edit className="h-4 w-4" />
-              </SecondaryIconButton>
+                <SecondaryIconButton onClick={handleEdit}>
+                  <Edit className="h-4 w-4" />
+                </SecondaryIconButton>
 
-              <SecondaryIconButton onClick={handleToggle}>
-                <motion.div
-                  animate={{ rotate: isExpanded ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </motion.div>
-              </SecondaryIconButton>
-            </div>
+                <SecondaryIconButton onClick={handleToggle}>
+                  <motion.div
+                    animate={{ rotate: isExpanded ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </motion.div>
+                </SecondaryIconButton>
+              </div>
+            )}
           </div>
 
           <p className="text-muted-foreground">
@@ -740,7 +807,7 @@ const WordCardContent: FC<WordCardContentProps> = memo(
 
           {/* Expanded details */}
           <AnimatePresence>
-            {isExpanded && (
+            {isExpanded && !selectionMode && (
               <motion.div
                 animate={{ opacity: 1, height: "auto" }}
                 className="overflow-hidden"
@@ -773,7 +840,7 @@ const PIXEL_HEIGHT_OFFSET = 800;
 export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   searchQuery,
 }) => {
-  const { tags, types, sort } = useSearch({
+  const { tags, tagMode, types, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
   const { isFreeUser } = useUserPlan();
@@ -782,14 +849,42 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
     results: { hits } = {},
     showMore,
     hasMore,
+    allMatchingIds,
   } = useInfiniteScroll({
     term: searchQuery,
-    filters: { tags, types },
+    filters: { tags, tagMode, types },
     sort: sort === "difficulty" && isFreeUser ? undefined : sort,
   });
+  usePublishAllMatchingIds(allMatchingIds);
+
   const [ref, { height }] = useMeasure();
   const [{ y }] = useWindowScroll();
   const expandedIds = useSet<string>();
+  const { selectionMode, selectedIds, toggle, addRange } = useBulkSelection();
+  const rangeAnchorRef = useRef<string | null>(null);
+
+  const handleToggleSelected = useCallback(
+    ({ id, extendRange }: { id: string; extendRange: boolean }) => {
+      const anchor = rangeAnchorRef.current;
+      const ids = (hits ?? [])
+        .map((h) => h.id)
+        .filter((hitId): hitId is string => Boolean(hitId));
+      const anchorIndex = anchor ? ids.indexOf(anchor) : -1;
+      const targetIndex = ids.indexOf(id);
+
+      // Shift-click fills in from the last card the user picked, the way a
+      // desktop list is expected to behave.
+      if (extendRange && anchorIndex !== -1 && targetIndex !== -1) {
+        const [start, end] = [anchorIndex, targetIndex].sort((a, b) => a - b);
+        addRange(ids.slice(start, end + 1));
+      } else {
+        toggle(id);
+      }
+
+      rangeAnchorRef.current = id;
+    },
+    [hits, toggle, addRange]
+  );
 
   const toggleExpanded = useCallback((id: string) => {
     if (expandedIds.has(id)) {
@@ -821,11 +916,19 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   }, [shouldLoadMore]);
 
   const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
-  const showEmptyDictionary = !(hits?.length || hasSearchQuery);
+  // Filters count the same as a search term here: without this, narrowing to
+  // zero with no search term falls through to the empty-dictionary state and
+  // tells someone with thousands of entries that they have none.
+  const hasActiveFilters = !!(tags?.length || types?.length);
+  const showEmptyDictionary = !(
+    hits?.length ||
+    hasSearchQuery ||
+    hasActiveFilters
+  );
   const debouncedShowEmptyDictionary = useDebounce(showEmptyDictionary, 150);
 
   if (!hits?.length) {
-    if (hasSearchQuery) {
+    if (hasSearchQuery || hasActiveFilters) {
       return (
         <motion.div
           animate={{ opacity: 1, y: 0 }}
@@ -839,7 +942,11 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
             <Trans>No results found</Trans>
           </p>
           <p className="text-muted-foreground">
-            <Trans>Try a different search term</Trans>
+            {hasSearchQuery ? (
+              <Trans>Try a different search term</Trans>
+            ) : (
+              <Trans>Try adjusting your filters</Trans>
+            )}
           </p>
         </motion.div>
       );
@@ -878,8 +985,11 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
                 hit as { id: string | null; document: SelectDictionaryEntry }
               }
               isExpanded={expandedIds.has(hit.id!)}
+              isSelected={selectedIds.has(hit.id!)}
               onNavigateEdit={handleNavigateEdit}
               onToggleExpanded={toggleExpanded}
+              onToggleSelected={handleToggleSelected}
+              selectionMode={selectionMode}
             />
           </li>
         ))}

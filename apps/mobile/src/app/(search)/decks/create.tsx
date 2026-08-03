@@ -1,4 +1,9 @@
-import type { DeckFilters, WordType } from "@bahar/drizzle-user-db-schemas";
+import {
+  type DeckFilters,
+  TAG_MODES,
+  type TagMode,
+  type WordType,
+} from "@bahar/drizzle-user-db-schemas";
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation } from "@tanstack/react-query";
@@ -40,15 +45,25 @@ const useWordTypeLabels = (): Record<WordType, string> => {
   };
 };
 
+const useTagModeLabels = (): Record<TagMode, string> => {
+  const { t } = useLingui();
+  return {
+    all: t`Match all`,
+    any: t`Match any`,
+  };
+};
+
 export default function CreateDeckScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const { scrollHandler } = useCollapsibleHeader(t`Create a new deck`);
   const wordTypeLabels = useWordTypeLabels();
+  const tagModeLabels = useTagModeLabels();
 
   const [name, setName] = useState("");
   const [selectedTypes, setSelectedTypes] = useState<WordType[]>([]);
   const [tags, setTags] = useState<{ name: string }[]>([]);
+  const [tagMode, setTagMode] = useState<TagMode>("any");
 
   const { mutateAsync: createDeck, isPending } = useMutation({
     mutationFn: decksTable.create.mutation,
@@ -72,7 +87,10 @@ export default function CreateDeckScreen() {
 
     const filters: DeckFilters = {};
     if (selectedTypes.length > 0) filters.types = selectedTypes;
-    if (tags.length > 0) filters.tags = tags.map((t) => t.name);
+    if (tags.length > 0) {
+      filters.tags = tags.map((t) => t.name);
+      filters.tagMode = tagMode;
+    }
 
     await createDeck({ deck: { name: name.trim(), filters } });
   };
@@ -150,8 +168,42 @@ export default function CreateDeckScreen() {
               <Text className="font-semibold text-base text-foreground">
                 <Trans>Tags</Trans>
               </Text>
+            </View>
+            <View className="gap-2 px-4 pb-1">
+              {tags.length >= 2 && (
+                <View className="flex-row gap-1 rounded-lg bg-muted/40 p-1">
+                  {TAG_MODES.map((mode) => {
+                    const isSelected = tagMode === mode;
+                    return (
+                      <Pressable
+                        className={`flex-1 items-center rounded-md py-2 ${
+                          isSelected ? "bg-background" : ""
+                        }`}
+                        key={mode}
+                        onPress={() => setTagMode(mode)}
+                      >
+                        <Text
+                          className={`text-sm ${
+                            isSelected
+                              ? "font-semibold text-foreground"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {tagModeLabels[mode]}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              )}
               <Text className="text-muted-foreground text-sm">
-                <Trans>Words with any of these tags will be included</Trans>
+                {tagMode === "all" ? (
+                  <Trans>
+                    Only words with every one of these tags will be included
+                  </Trans>
+                ) : (
+                  <Trans>Words with any of these tags will be included</Trans>
+                )}
               </Text>
             </View>
             <View className="px-4 pt-2 pb-4">
