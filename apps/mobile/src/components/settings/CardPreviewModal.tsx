@@ -1,32 +1,51 @@
-import type {
-  CardLayout,
-  SelectDictionaryEntry,
+import {
+  type CardLayout,
+  FlashcardState,
+  type SelectDictionaryEntry,
 } from "@bahar/drizzle-user-db-schemas";
-import { createScheduler } from "@bahar/fsrs";
+import { createScheduler, toFsrsCard } from "@bahar/fsrs";
 import { Trans } from "@lingui/react/macro";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { Modal, Text, View } from "react-native";
-import { createEmptyCard } from "ts-fsrs";
 import { FlashcardCard } from "@/components/flashcards/FlashcardCard";
 import { GradeButtons } from "@/components/flashcards/GradeButtons";
 import { Button } from "@/components/ui/button";
 import type { FlashcardWithDictionaryEntry } from "@/lib/db/operations";
 
 /**
- * A flashcard shaped from a real entry purely for display. Scheduling fields
- * are never read by the card, and nothing here is written back.
+ * A flashcard shaped from a real entry purely for display, scheduled as a brand
+ * new card. Every scheduling field holds a real value so the card can go through
+ * FSRS like any other -- and no cast, so the compiler catches a missing column
+ * rather than an invalid date surfacing at runtime. Nothing is written back.
  */
-const toPreviewCard = (
-  entry: SelectDictionaryEntry,
-  direction: "forward" | "reverse"
-): FlashcardWithDictionaryEntry =>
-  ({
-    id: `preview-${direction}`,
-    dictionary_entry_id: entry.id,
-    direction,
-    dictionary_entry: entry,
-  }) as FlashcardWithDictionaryEntry;
+const toPreviewCard = ({
+  entry,
+  direction,
+  now,
+}: {
+  entry: SelectDictionaryEntry;
+  direction: "forward" | "reverse";
+  now: Date;
+}): FlashcardWithDictionaryEntry => ({
+  id: `preview-${direction}`,
+  dictionary_entry_id: entry.id,
+  difficulty: 0,
+  due: now.toISOString(),
+  due_timestamp_ms: now.getTime(),
+  elapsed_days: 0,
+  lapses: 0,
+  last_review: null,
+  last_review_timestamp_ms: null,
+  learning_steps: 0,
+  reps: 0,
+  scheduled_days: 0,
+  stability: 0,
+  state: FlashcardState.NEW,
+  direction,
+  is_hidden: false,
+  dictionary_entry: entry,
+});
 
 /**
  * The review screen's card, driven by the layout being edited. Grading is
@@ -45,22 +64,23 @@ export const CardPreviewModal: React.FC<{
     setShowAnswer(false);
   }, [direction]);
 
-  const previewCard =
-    entry && direction ? toPreviewCard(entry, direction) : null;
-
-  // Interval labels come from a fresh card so the buttons read like a new card
-  // in review, without the preview touching real scheduling state.
-  const { schedulingCards, now } = useMemo(() => {
+  // Memoised so the card keeps one identity across renders, and its intervals
+  // come from the card itself -- the same path review takes.
+  const { previewCard, schedulingCards, now } = useMemo(() => {
     const reference = new Date();
 
+    if (!(entry && direction)) {
+      return { previewCard: null, schedulingCards: null, now: reference };
+    }
+
+    const card = toPreviewCard({ entry, direction, now: reference });
+
     return {
+      previewCard: card,
       now: reference,
-      schedulingCards: createScheduler().repeat(
-        createEmptyCard(reference),
-        reference
-      ),
+      schedulingCards: createScheduler().repeat(toFsrsCard(card), reference),
     };
-  }, []);
+  }, [entry, direction]);
 
   return (
     <Modal
@@ -96,7 +116,7 @@ export const CardPreviewModal: React.FC<{
               />
             </View>
 
-            {showAnswer ? (
+            {showAnswer && schedulingCards ? (
               <GradeButtons
                 now={now}
                 onGrade={() => {

@@ -41,6 +41,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Trans, useLingui } from "@lingui/react/macro";
 import * as Sentry from "@sentry/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -323,6 +325,26 @@ export const FlashcardSettingsCardSection = () => {
             </Button>
           </form>
         </Form>
+
+        <div className="mt-4 border-t pt-4">
+          <Link
+            className="flex items-center justify-between gap-4 rounded-lg border p-4 transition-colors hover:bg-muted/50"
+            to="/settings/card-appearance"
+          >
+            <div className="space-y-0.5">
+              <p className="font-medium text-sm">
+                <Trans>Card appearance</Trans>
+              </p>
+              <p className="text-muted-foreground text-sm">
+                <Trans>
+                  Choose which fields show on each side of your cards, and in
+                  what order.
+                </Trans>
+              </p>
+            </div>
+            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+          </Link>
+        </div>
 
         <div className="mt-4 border-t pt-4">
           <div className="flex flex-col gap-3 rounded-lg border p-4">
