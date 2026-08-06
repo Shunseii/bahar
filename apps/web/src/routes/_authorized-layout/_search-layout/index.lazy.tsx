@@ -28,13 +28,36 @@ import { useSearch } from "@/hooks/search/useSearch";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { flashcardsTable } from "@/lib/db/operations";
 
+/**
+ * Rendered twice with complementary visibility classes: it sits with the other
+ * actions from `sm` up, and drops onto the filters toggle's row below that,
+ * where three buttons no longer fit on one line.
+ */
+const SelectionModeButton = ({ className }: { className?: string }) => {
+  const { selectionMode, enterSelectionMode } = useBulkSelection();
+
+  return (
+    <Button
+      className={cn("h-9 px-3", className)}
+      disabled={selectionMode}
+      onClick={enterSelectionMode}
+      size="sm"
+      variant="outline"
+    >
+      <ListChecks className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
+      <span className="text-sm">
+        <Trans>Select</Trans>
+      </span>
+    </Button>
+  );
+};
+
 const Index = () => {
   const { formatNumber, formatElapsedTime } = useFormatNumber();
   const [{ y }, scrollTo] = useWindowScroll();
   const searchQuery = useAtomValue(searchQueryAtom);
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const { results } = useSearch();
-  const { selectionMode, enterSelectionMode } = useBulkSelection();
   const { height } = useWindowSize();
   const { data: counts, isPending } = useQuery({
     queryFn: () =>
@@ -102,18 +125,7 @@ const Index = () => {
 
                 {/* Actions */}
                 <div className="flex items-center justify-between gap-2">
-                  <Button
-                    className="h-9 px-3"
-                    disabled={selectionMode}
-                    onClick={enterSelectionMode}
-                    size="sm"
-                    variant="outline"
-                  >
-                    <ListChecks className="h-4 w-4 ltr:mr-1.5 rtl:ml-1.5" />
-                    <span className="text-sm">
-                      <Trans>Select</Trans>
-                    </span>
-                  </Button>
+                  <SelectionModeButton className="hidden sm:inline-flex" />
 
                   <Button
                     asChild
@@ -164,7 +176,9 @@ const Index = () => {
             </div>
 
             <div className="px-4 pt-4 pb-4 sm:px-6">
-              <DictionaryFilters />
+              <DictionaryFilters
+                trailingAction={<SelectionModeButton className="sm:hidden" />}
+              />
             </div>
           </Card>
         </motion.div>
