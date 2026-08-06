@@ -26,6 +26,7 @@ import {
   Lock,
   SlidersHorizontal,
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { useMemo } from "react";
 import { TagsFilter } from "@/components/features/dictionary/filters/TagsFilter";
 import { TagPill } from "@/components/TagsCombobox";
@@ -83,7 +84,15 @@ const useTagModeLabels = (): Record<TagMode, string> => {
   };
 };
 
-export const DictionaryFilters = () => {
+/**
+ * `trailingAction` shares the filters toggle's row so callers can put an action
+ * beside it instead of spending another row on it.
+ */
+export const DictionaryFilters = ({
+  trailingAction,
+}: {
+  trailingAction?: ReactNode;
+}) => {
   const navigate = useNavigate();
   const dir = useDir();
   const { formatNumber } = useFormatNumber();
@@ -128,26 +137,34 @@ export const DictionaryFilters = () => {
 
   return (
     <div className="flex flex-col gap-3">
-      <Button
-        className="h-9 w-max gap-2 text-muted-foreground hover:text-foreground"
-        onClick={() => setIsExpanded(!isExpanded)}
-        size="sm"
-        variant="ghost"
-      >
-        {isExpanded ? <Trans>Hide filters</Trans> : <Trans>Show filters</Trans>}
-
-        {hasActiveFilters && (
-          <span className="rounded-full bg-primary px-1.5 py-0.5 text-primary-foreground text-xs">
-            {formatNumber(activeFilterCount)}
-          </span>
-        )}
-        <ChevronDown
-          className={cn(
-            "h-4 w-4 transition-transform duration-200",
-            isExpanded && "rotate-180"
+      <div className="flex items-center justify-between gap-2">
+        <Button
+          className="h-9 w-max gap-2 text-muted-foreground hover:text-foreground"
+          onClick={() => setIsExpanded(!isExpanded)}
+          size="sm"
+          variant="ghost"
+        >
+          {isExpanded ? (
+            <Trans>Hide filters</Trans>
+          ) : (
+            <Trans>Show filters</Trans>
           )}
-        />
-      </Button>
+
+          {hasActiveFilters && (
+            <span className="rounded-full bg-primary px-1.5 py-0.5 text-primary-foreground text-xs">
+              {formatNumber(activeFilterCount)}
+            </span>
+          )}
+          <ChevronDown
+            className={cn(
+              "h-4 w-4 transition-transform duration-200",
+              isExpanded && "rotate-180"
+            )}
+          />
+        </Button>
+
+        {trailingAction}
+      </div>
 
       <div
         className={cn(
