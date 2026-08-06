@@ -1,4 +1,8 @@
-node_modules
+# A bare `node_modules` only matches the top level, so every nested one still
+# gets uploaded. Worktrees under .claude/ carry a full checkout each.
+**/node_modules
+.claude
+**/.turbo
 npm-debug.log
 .git
 dist
