@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import {
   applyAllNewMigrations,
-  tursoPlatformClient,
+  createUserAccessToken,
 } from "../src/clients/turso";
 import { db } from "../src/db";
 import { users } from "../src/db/schema/auth";
@@ -17,10 +17,7 @@ const refreshAccessToken = async (
 ): Promise<string> => {
   logger.info({ dbName, dbId }, "Access token expired, creating new token...");
 
-  const newToken = await tursoPlatformClient.databases.createToken(dbName, {
-    authorization: "full-access",
-    expiration: "2w",
-  });
+  const newToken = await createUserAccessToken({ dbName });
 
   // Update the token in the databases table
   await db

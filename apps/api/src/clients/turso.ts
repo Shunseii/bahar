@@ -35,11 +35,16 @@ const TOKEN_AUTHORIZATION_CLAIM = {
  *
  * The SDK always sends a `permissions.read_attach` body, even when the caller
  * asks for no permissions (its `createToken` defaults the database list to
- * `[]`). A token minted with that body comes back carrying a `p` (permissions)
- * claim and no `a` claim at all -- so `authorization=read-only` is silently
- * dropped and the token can write. Sending no body, as the platform API docs
- * do, yields `a: "ro"` and a token the database rejects writes on with
- * "SQL write operations are forbidden".
+ * `[]`). That body breaks token minting two separate ways:
+ *
+ * - A token minted with it comes back carrying a `p` (permissions) claim and no
+ *   `a` claim at all -- so `authorization=read-only` is silently dropped and the
+ *   token can write.
+ * - Turso's AWS-hosted platform rejects the body outright with "attach is not
+ *   supported at AWS", so the call throws and no token is minted at all.
+ *
+ * Sending no body, as the platform API docs do, avoids both: the response
+ * carries the `a` claim matching the requested authorization.
  */
 const mintDatabaseToken = async ({
   dbName,
@@ -103,8 +108,8 @@ const mintDatabaseToken = async ({
  * stored, so they're kept shorter-lived -- but still comfortably longer than
  * the CLI's 24h cache refresh buffer, or every command would re-fetch one.
  *
- * Read-only tokens bypass `@tursodatabase/api`, which cannot mint one -- see
- * {@link mintDatabaseToken}.
+ * Every token bypasses `@tursodatabase/api`, which can no longer mint one at
+ * all -- see {@link mintDatabaseToken}.
  */
 export const createUserAccessToken = async ({
   dbName,
@@ -114,18 +119,8 @@ export const createUserAccessToken = async ({
   dbName: string;
   authorization?: TokenAuthorization;
   expiration?: string;
-}): Promise<{ jwt: string }> => {
-  if (authorization === "read-only") {
-    return mintDatabaseToken({ dbName, authorization, expiration });
-  }
-
-  const accessToken = await tursoPlatformClient.databases.createToken(dbName, {
-    authorization,
-    expiration,
-  });
-
-  return accessToken;
-};
+}): Promise<{ jwt: string }> =>
+  mintDatabaseToken({ dbName, authorization, expiration });
 
 /** See {@link createUserAccessToken}. */
 export const READ_ONLY_TOKEN_EXPIRATION = "7d";
@@ -313,10 +308,7 @@ const refreshAccessToken = async (
     "Refreshing access token..."
   );
 
-  const newToken = await tursoPlatformClient.databases.createToken(dbName, {
-    authorization: "full-access",
-    expiration: "2w",
-  });
+  const newToken = await createUserAccessToken({ dbName });
 
   await centralDb
     .update(databases)
