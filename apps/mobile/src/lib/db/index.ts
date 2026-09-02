@@ -5,6 +5,11 @@
  * with the user's Turso database.
  */
 
+import {
+  type DbConnectionInfo,
+  type DbError,
+  runDbInit,
+} from "@bahar/db-core";
 import { err, ok, type Result, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react-native";
 import { getDbPath } from "@tursodatabase/sync-react-native";
@@ -15,7 +20,6 @@ import {
   connect,
   type DatabaseAdapter,
   isSyncError,
-  syncDatabase,
 } from "./adapter";
 
 const LOCAL_DB_NAME = "bahar-user.db";
@@ -27,16 +31,6 @@ export const SYNC_INTERVAL_MS = 60_000;
 let db: DatabaseAdapter | null = null;
 let dbInitPromise: Promise<Result<null, DbError>> | null = null;
 let currentDbName: string | null = null;
-
-type DbError = {
-  type: string;
-  reason: string;
-  name?: string;
-  stack?: string;
-  cause?: string;
-  wasmTrap?: boolean;
-  migrationVersion?: number;
-};
 
 /**
  * Serializes an arbitrary thrown value into a Sentry-friendly shape. `String(error)`
@@ -202,127 +196,78 @@ export const initDb = async (): Promise<Result<null, DbError>> => {
 const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   Sentry.logger.info("initDb: start");
 
-  // Get database connection info from API
-  const infoResult = await tryCatch(
-    async () => {
+  const platform = {
+    getConnectionInfo: async (): Promise<DbConnectionInfo> => {
       const { data, error } = await api.databases.user.get();
       if (error) throw error;
       return data;
     },
-    (error) => ({
-      type: "get_db_info_failed",
-      ...describeError(error),
-    })
-  );
+    connect: async (info: DbConnectionInfo) => {
+      const dbFileName = `${LOCAL_DB_NAME}-${info.db_name}.db`;
+      const connectOptions = {
+        name: dbFileName,
+        url: `libsql://${info.hostname}`,
+        authToken: info.access_token,
+      };
 
-  if (!infoResult.ok) {
-    Sentry.logger.warn("initDb: failed to fetch db info", {
-      outcome: infoResult.error.type,
-      reason: infoResult.error.reason,
-    });
-    return infoResult;
-  }
+      const dbAlreadyExists = replicaExists(dbFileName);
+      Sentry.logger.info("initDb: fetched db info", {
+        dbName: info.db_name,
+        hostname: info.hostname,
+        dbAlreadyExists,
+      });
 
-  const { access_token, hostname, db_name } = infoResult.value;
+      const connected = await connect(connectOptions);
+      db = connected;
+      currentDbName = dbFileName;
 
-  const dbFileName = `${LOCAL_DB_NAME}-${db_name}.db`;
-  const connectOptions = {
-    name: dbFileName,
-    url: `libsql://${hostname}`,
-    authToken: access_token,
+      Sentry.logger.info("initDb: connected to local db");
+    },
+    pull: async () => {
+      await db!.pull!();
+    },
+    push: async () => {
+      await db!.push!();
+    },
+    isSyncError: (error: unknown) => isSyncError(error),
+    isOffline: () => isDeviceOffline(),
   };
 
-  const dbAlreadyExists = replicaExists(dbFileName);
-  Sentry.logger.info("initDb: fetched db info", {
-    dbName: db_name,
-    hostname,
-    dbAlreadyExists,
-  });
-
-  // Connect to local database with remote sync
-  const connectionResult = await tryCatch(
-    () => connect(connectOptions),
-    (error) => {
-      const described = describeError(error);
-      // A wasm `unreachable` trap (Rust panic / OOM inside the sync engine)
-      // surfaces as a RuntimeError. Flag it and rely on the captured stack.
-      const wasmTrap =
-        described.name === "RuntimeError" ||
-        described.reason.includes("unreachable");
+  // Mobile's applyRequiredMigrations returns errors directly; map
+  // the migrations-API-fetch failure to api_schema_verification_failed
+  // so runDbInit's degradation policy applies (same as web).
+  const originalApplyMigrations = applyRequiredMigrations;
+  const migrationsWithMappedError = async (): Promise<
+    Result<unknown, DbError>
+  > => {
+    const result = await originalApplyMigrations();
+    if (!result.ok && result.error.type === "get_migrations_failed") {
       return {
-        type: "db_connection_failed",
-        wasmTrap,
-        ...described,
+        ok: false as const,
+        error: { ...result.error, type: "api_schema_verification_failed" },
       };
     }
-  );
+    return result;
+  };
 
-  if (!connectionResult.ok) {
-    Sentry.logger.warn("initDb: connect failed", {
-      outcome: connectionResult.error.type,
-      wasmTrap: connectionResult.error.wasmTrap,
-      name: connectionResult.error.name,
-      reason: connectionResult.error.reason,
-    });
-    return connectionResult;
-  }
-
-  db = connectionResult.value;
-  currentDbName = dbFileName;
-
-  Sentry.logger.info("initDb: connected to local db");
-
-  // Pull from remote before migrations — local migration writes
-  // create frames that conflict with the remote's existing frames.
-  const pullResult = await tryCatch(
-    () => syncDatabase(),
-    (error) => ({
-      type: "initial_pull_failed" as const,
-      ...describeError(error),
-    })
-  );
-  Sentry.logger.info("initDb: initial pull complete", { ok: pullResult.ok });
-
-  if (!pullResult.ok && isSyncError(pullResult.error.reason)) {
-    await recoverFromSyncConflict();
-    return pullResult;
-  }
-
-  // Apply any required migrations (split by statement since libSQL's
-  // execAsync only executes the first statement in multi-statement SQL)
-  const migrationResult = await applyRequiredMigrations();
-  if (!migrationResult.ok) {
-    Sentry.logger.warn("initDb: migrations failed", {
-      outcome: migrationResult.error.type,
-      reason: migrationResult.error.reason,
-    });
-    return migrationResult;
-  }
-
-  // Sync after migrations to push any new migration records
-  const syncResult = await tryCatch(
-    async () => {
-      await syncDatabase();
-      return null;
-    },
-    (error) => ({
-      type: "post_migration_sync_failed",
-      ...describeError(error),
-    })
-  );
-  Sentry.logger.info("initDb: post-migration sync complete", {
-    ok: syncResult.ok,
+  const outcome = await runDbInit(platform, {
+    applyRequiredMigrations: migrationsWithMappedError,
   });
 
-  if (!syncResult.ok && isSyncError(syncResult.error.reason)) {
-    await recoverFromSyncConflict();
+  if (outcome.outcome === "degraded") {
+    Sentry.logger.warn("initDb: degraded -- using stale local replica", {
+      outcome: outcome.error.type,
+      reason: outcome.error.reason,
+    });
+    return ok(null);
   }
 
-  if (syncResult.ok) {
-    Sentry.logger.info("initDb: success");
+  if (outcome.outcome === "err") {
+    return err(outcome.error);
   }
 
-  return syncResult;
+  Sentry.logger.info("initDb: success");
+  return ok(null);
 };
 
 /**
