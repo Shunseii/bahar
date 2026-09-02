@@ -33,7 +33,7 @@ import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/search/useSearch";
 import { api } from "@/lib/api";
 import { getCachedSession, isLoggedOut } from "@/lib/auth-client";
-import { ensureDb, initDb } from "@/lib/db";
+import { ensureDb, initDb, isDbDegraded } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
 import { dictionaryEntriesTable, migrationTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
@@ -336,12 +336,22 @@ export const Route = createFileRoute("/_authorized-layout")({
       const error = initDbResult.error;
       const errReason = "reason" in error ? error.reason : null;
 
+      // BAHAR-WEB-38: retryable classification so "no transient failure
+      // reaches the error page" is measurable in Sentry (telemetry gap 2).
+      const transientSyncTypes = [
+        "get_db_info_failed",
+        "api_schema_verification_failed",
+      ];
+      const retryable = transientSyncTypes.includes(error.type);
+
       Sentry.captureException(new Error(error.type, { cause: error }), {
         fingerprint: ["db-init-error", error.type],
+        tags: { retryable: retryable ? "true" : "false" },
         contexts: {
           db_init: {
             type: error.type,
             reason: errReason,
+            retryable,
             // Preserved from the underlying throw -- for a wasm trap the stack
             // carries the `wasm://` frames that String(error) would drop.
             name: "name" in error ? error.name : null,
@@ -353,7 +363,6 @@ export const Route = createFileRoute("/_authorized-layout")({
           },
         },
       });
-
       switch (error.type) {
         case "latest_migration_is_failing":
           // We ignore this error because we don't want to block user
@@ -413,20 +422,21 @@ export const Route = createFileRoute("/_authorized-layout")({
             hasManualFix: true,
           });
 
-        // Don't throw on turso sync errors
-        // since user can still use local db.
-        // Set atom so component can show toast after mount
-        case "turso_remote_sync_failed":
-        case "turso_remote_sync_and_pull_failed":
-        case "turso_db_pull_failed":
-          break;
-
         default:
           throw new DisplayError({
             message: t`There was an unexpected error. Please try again.`,
             details: t`Unknown error.`,
           });
       }
+    } else if (isDbDegraded()) {
+      // BAHAR-WEB-38: init degraded to the stale local replica (the
+      // initial sync failed but the replica is open and usable). Do
+      // NOT throw -- the user keeps working; background sync will
+      // retry. Logged, not captured, since this is the designed
+      // degradation path, not an exception.
+      Sentry.logger.info("db-init degraded: serving stale replica", {
+        href: location.href,
+      });
     }
 
     const hydrateOramaDbResult = await hydrateOramaDb();

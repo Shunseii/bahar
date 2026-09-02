@@ -454,6 +454,9 @@ importers:
       '@bahar/date':
         specifier: workspace:*
         version: link:../../packages/date
+      '@bahar/db-core':
+        specifier: workspace:*
+        version: link:../../packages/db-core
       '@bahar/db-operations':
         specifier: workspace:*
         version: link:../../packages/db-operations
@@ -532,12 +535,12 @@ importers:
       '@bahar/date':
         specifier: workspace:*
         version: link:../../packages/date
+      '@bahar/db-core':
+        specifier: workspace:*
+        version: link:../../packages/db-core
       '@bahar/db-operations':
         specifier: workspace:*
         version: link:../../packages/db-operations
-      '@bahar/fsrs':
-        specifier: workspace:*
-        version: link:../../packages/fsrs
       '@bahar/result':
         specifier: workspace:*
         version: link:../../packages/result
@@ -763,6 +766,18 @@ importers:
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      vitest:
+        specifier: ^4.1.9
+        version: 4.1.9(@types/node@20.10.6)(@vitest/browser-playwright@4.1.9)(@vitest/coverage-v8@4.1.9)(vite@6.4.1)
+
+  packages/db-core:
+    devDependencies:
+      '@bahar/result':
+        specifier: workspace:*
+        version: link:../result
+      '@bahar/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
       vitest:
         specifier: ^4.1.9
         version: 4.1.9(@types/node@20.10.6)(@vitest/browser-playwright@4.1.9)(@vitest/coverage-v8@4.1.9)(vite@6.4.1)

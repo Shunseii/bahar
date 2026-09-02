@@ -1,8 +1,10 @@
 import {
+  dictionaryEntries,
   FlashcardState,
   type InsertFlashcard,
   type SelectFlashcard,
 } from "@bahar/drizzle-user-db-schemas";
+import { eq } from "drizzle-orm";
 import { startOfDay } from "date-fns";
 import { Rating } from "ts-fsrs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -739,6 +741,31 @@ describe("flashcardsTable", () => {
 
       const result = await flashcardsTable.counts.query({});
       expect(result).toEqual({ regular: 0, backlog: 0, total: 0 });
+    });
+
+    // BAHAR-MOBILE-1: a sync race can leave a flashcard referencing an
+    // entry that was deleted remotely -- the local reference wasn't
+    // cleaned up. today.query's innerJoin drops such cards, but counts
+    // used a leftJoin, so the queue badge advertised cards the review
+    // screen could never serve. Counts must match what the queue serves.
+    it("excludes flashcards whose dictionary entry no longer exists (BAHAR-MOBILE-1)", async () => {
+      const entry = await insertDictionaryEntry(testDb);
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: entry.id,
+      });
+      // Stale reference: entry deleted (flashcard's FK points nowhere).
+      await testDb.drizzleDb
+        .delete(dictionaryEntries)
+        .where(eq(dictionaryEntries.id, entry.id));
+      await insertFlashcard(testDb, {
+        dictionary_entry_id: "deleted-entry-id",
+      });
+
+      const counts = await flashcardsTable.counts.query({});
+      const queue = await flashcardsTable.today.query({});
+
+      expect(counts).toEqual({ regular: 0, backlog: 0, total: 0 });
+      expect(queue).toEqual([]);
     });
   });
 

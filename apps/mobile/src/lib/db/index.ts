@@ -138,8 +138,25 @@ export const deleteLocalDb = (): void => {
  * Recovers from an unresolvable sync conflict by deleting the local
  * replica and restarting the app. On restart, openDatabaseAsync
  * will pull a fresh copy from the remote.
+ *
+ * BAHAR-MOBILE-2: never wipe when offline. The wipe+reload recovery
+ * re-inits via connect+pull -- all network operations -- so wiping
+ * offline destroys the only copy of the user's data and leaves the
+ * app unable to start. Offline, degrade instead: keep the conflicted
+ * but locally-intact replica; the next online sync re-runs recovery.
  */
 export const recoverFromSyncConflict = async (): Promise<void> => {
+  const offline = isDeviceOffline();
+
+  if (offline) {
+    console.warn("[db] Sync conflict while offline — keeping local replica");
+    Sentry.logger.warn(
+      "recoverFromSyncConflict: offline — deferring wipe, keeping local replica",
+      { dbName: currentDbName }
+    );
+    return;
+  }
+
   console.warn("[db] Sync conflict — deleting local DB and restarting...");
   // Destructive: wipes the local replica and restarts. Log before the wipe so
   // there's a record even though the reload tears down the JS context -- this
@@ -150,6 +167,15 @@ export const recoverFromSyncConflict = async (): Promise<void> => {
   deleteLocalDb();
   await reloadAppAsync("Resolving sync conflict");
 };
+
+/**
+ * Whether the device currently has no network connection. Best-effort
+ * via RN's navigator.onLine (updated on reachability change events);
+ * a false "online" just means the wipe+reload proceeds as before, and
+ * a true "offline" blocks the destructive wipe (BAHAR-MOBILE-2).
+ */
+const isDeviceOffline = (): boolean =>
+  typeof navigator !== "undefined" && !navigator.onLine;
 
 /**
  * Initializes the database connection.

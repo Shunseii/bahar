@@ -40,6 +40,7 @@ import {
 } from "./db/schema/auth";
 import { databases } from "./db/schema/databases";
 import { revlogs } from "./db/schema/revlogs";
+import { logOtpFailure, OTP_PATHS } from "./otp-telemetry";
 import { getAllowedDomains } from "./utils";
 import { config, MOBILE_APP_BUNDLE_ID } from "./utils/config";
 import { LogCategory, logger } from "./utils/logger";
@@ -220,6 +221,22 @@ export const auth = betterAuth({
         category: LogCategory.AUTH,
         path,
       });
+
+      // OTP endpoints return an APIError on failure (invalid code, expired
+      // token, rate limit). Without this, OTP rejections are invisible in
+      // telemetry -- the user's most-reported instability ("invalid OTP
+      // once, then works") left zero events across 90 days.
+      if (
+        OTP_PATHS.includes(path) &&
+        logOtpFailure({
+          authLogger,
+          path,
+          returned: (ctx as { context?: { returned?: unknown } }).context
+            ?.returned,
+        })
+      ) {
+        return;
+      }
 
       if (path === "/get-session") {
         authLogger.debug(
