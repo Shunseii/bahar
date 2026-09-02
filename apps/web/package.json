@@ -22,6 +22,7 @@
     "@bahar/date": "workspace:*",
     "@bahar/db-core": "workspace:*",
     "@bahar/db-operations": "workspace:*",
+    "@bahar/fsrs": "workspace:^",
     "@bahar/result": "workspace:*",
     "@bahar/search": "workspace:*",
     "@bahar/web-ui": "workspace:*",
