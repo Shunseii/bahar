@@ -2,9 +2,20 @@ import { describe, expect, it } from "vitest";
 import {
   type DbConnectionInfo,
   type DbPlatform,
+  type RetryPolicy,
   runDbInit,
   runSync,
 } from "./init";
+
+/**
+ * Retry is exercised by its own tests below; everywhere else it would only
+ * add real backoff to a fault that is meant to surface, so the default
+ * policy is replaced with a single attempt.
+ */
+const NO_RETRY: RetryPolicy = { attempts: 1, delayMs: () => 0 };
+
+/** Same number of attempts as the default, without the wall-clock wait. */
+const INSTANT_RETRY: RetryPolicy = { attempts: 3, delayMs: () => 0 };
 
 const CONNECTION_INFO: DbConnectionInfo = {
   access_token: "token",
@@ -45,6 +56,8 @@ const makePlatform = ({
   },
   isSyncError: (error) => isSyncError(String(error)),
   isOffline,
+  deleteLocalReplica: () => {},
+  restart: async () => {},
 });
 
 const noOpMigrations = async () => ({ ok: true, value: null }) as const;
@@ -54,6 +67,7 @@ describe("runDbInit", () => {
     const platform = makePlatform();
 
     const result = await runDbInit(platform, {
+      retry: NO_RETRY,
       applyRequiredMigrations: noOpMigrations,
     });
 
@@ -69,6 +83,7 @@ describe("runDbInit", () => {
       });
 
       const result = await runDbInit(platform, {
+        retry: NO_RETRY,
         applyRequiredMigrations: noOpMigrations,
       });
 
@@ -86,6 +101,7 @@ describe("runDbInit", () => {
       });
 
       const result = await runDbInit(platform, {
+        retry: NO_RETRY,
         applyRequiredMigrations: noOpMigrations,
       });
 
@@ -101,6 +117,7 @@ describe("runDbInit", () => {
       });
 
       const result = await runDbInit(platform, {
+        retry: NO_RETRY,
         applyRequiredMigrations: noOpMigrations,
       });
 
@@ -118,6 +135,7 @@ describe("runDbInit", () => {
       });
 
       const result = await runDbInit(platform, {
+        retry: NO_RETRY,
         applyRequiredMigrations: noOpMigrations,
       });
 
@@ -131,6 +149,7 @@ describe("runDbInit", () => {
       const platform = makePlatform();
 
       const result = await runDbInit(platform, {
+        retry: NO_RETRY,
         applyRequiredMigrations: async () =>
           ({
             ok: false,
@@ -157,6 +176,7 @@ describe("runDbInit", () => {
       });
 
       const result = await runDbInit(platform, {
+        retry: NO_RETRY,
         applyRequiredMigrations: noOpMigrations,
       });
 
@@ -173,6 +193,7 @@ describe("runDbInit", () => {
       let migrationsRan = false;
 
       const result = await runDbInit(platform, {
+        retry: NO_RETRY,
         applyRequiredMigrations: async () => {
           migrationsRan = true;
           return { ok: true, value: null } as const;
@@ -189,6 +210,7 @@ describe("runDbInit", () => {
       });
 
       const result = await runDbInit(platform, {
+        retry: NO_RETRY,
         applyRequiredMigrations: noOpMigrations,
       });
 
@@ -197,6 +219,161 @@ describe("runDbInit", () => {
         error: { type: "turso_remote_sync_failed" },
       });
     });
+  });
+});
+
+describe("retry on the network-only stages", () => {
+  // The flaky-connection case BAHAR-WEB-38 is really about: one attempt fails,
+  // the next succeeds, and the user never sees a degraded or blocked app.
+  it("recovers when a transient getConnectionInfo failure clears on retry", async () => {
+    let attempts = 0;
+    const platform: DbPlatform = {
+      ...makePlatform(),
+      getConnectionInfo: async () => {
+        attempts++;
+        if (attempts === 1) throw new TypeError("Failed to fetch");
+        return CONNECTION_INFO;
+      },
+    };
+
+    const result = await runDbInit(platform, {
+      retry: INSTANT_RETRY,
+      applyRequiredMigrations: noOpMigrations,
+    });
+
+    expect(result).toEqual({ outcome: "ok" });
+    expect(attempts).toBe(2);
+  });
+
+  it("recovers when a transient first pull clears on retry", async () => {
+    let attempts = 0;
+    const platform: DbPlatform = {
+      ...makePlatform(),
+      pull: async () => {
+        attempts++;
+        if (attempts === 1) throw new TypeError("Failed to fetch");
+      },
+    };
+
+    const result = await runDbInit(platform, {
+      retry: INSTANT_RETRY,
+      applyRequiredMigrations: noOpMigrations,
+    });
+
+    expect(result).toEqual({ outcome: "ok" });
+  });
+
+  it("gives up after the configured number of attempts", async () => {
+    let attempts = 0;
+    const platform: DbPlatform = {
+      ...makePlatform(),
+      getConnectionInfo: async () => {
+        attempts++;
+        throw new TypeError("Failed to fetch");
+      },
+    };
+
+    const result = await runDbInit(platform, {
+      retry: INSTANT_RETRY,
+      applyRequiredMigrations: noOpMigrations,
+    });
+
+    expect(result).toMatchObject({
+      outcome: "err",
+      error: { type: "get_db_info_failed" },
+    });
+    expect(attempts).toBe(3);
+  });
+
+  // Credentials do not improve by asking again, and retrying would delay the
+  // redirect to login by the full backoff.
+  it("does not retry an unauthorized response", async () => {
+    let attempts = 0;
+    const platform: DbPlatform = {
+      ...makePlatform(),
+      getConnectionInfo: async () => {
+        attempts++;
+        throw { status: 401 };
+      },
+    };
+
+    const result = await runDbInit(platform, {
+      retry: INSTANT_RETRY,
+      applyRequiredMigrations: noOpMigrations,
+    });
+
+    expect(result).toMatchObject({
+      outcome: "err",
+      error: { type: "unauthorized" },
+    });
+    expect(attempts).toBe(1);
+  });
+
+  // A lock or schema fault repeats identically; retrying just delays it.
+  // Asserted on getConnectionInfo because runDbInit calls it exactly once,
+  // whereas pull runs again as the post-migration sync and would make the
+  // count ambiguous.
+  it("does not retry a non-network failure", async () => {
+    let attempts = 0;
+    const platform: DbPlatform = {
+      ...makePlatform(),
+      getConnectionInfo: async () => {
+        attempts++;
+        throw new Error("database is locked");
+      },
+    };
+
+    await runDbInit(platform, {
+      retry: INSTANT_RETRY,
+      applyRequiredMigrations: noOpMigrations,
+    });
+
+    expect(attempts).toBe(1);
+  });
+
+  it("retries the migrations-API fetch and succeeds on the second try", async () => {
+    let attempts = 0;
+    const platform = makePlatform();
+
+    const result = await runDbInit(platform, {
+      retry: INSTANT_RETRY,
+      applyRequiredMigrations: async () => {
+        attempts++;
+        if (attempts === 1) {
+          return {
+            ok: false,
+            error: {
+              type: "api_schema_verification_failed",
+              reason: "Failed to fetch",
+            },
+          } as const;
+        }
+        return { ok: true, value: null } as const;
+      },
+    });
+
+    expect(result).toEqual({ outcome: "ok" });
+    expect(attempts).toBe(2);
+  });
+
+  // Once migration SQL has started, repeating the step could double-apply a
+  // partially-applied migration -- so only the pre-SQL fetch failure retries.
+  it("never repeats the migrations step once SQL has run", async () => {
+    let attempts = 0;
+    const platform = makePlatform();
+
+    await runDbInit(platform, {
+      retry: INSTANT_RETRY,
+      applyRequiredMigrations: async () => {
+        attempts++;
+        return {
+          ok: false,
+          error: { type: "migration_failed", migrationVersion: 7 },
+        } as const;
+      },
+    });
+
+    expect(attempts).toBe(1);
   });
 });
 
@@ -213,6 +390,7 @@ describe("runSync", () => {
     const platform = makePlatform();
 
     const result = await runDbInit(platform, {
+      retry: NO_RETRY,
       applyRequiredMigrations: async () =>
         ({
           ok: false,
@@ -233,6 +411,7 @@ describe("runSync", () => {
     const platform = makePlatform();
 
     const result = await runDbInit(platform, {
+      retry: NO_RETRY,
       applyRequiredMigrations: async () =>
         ({
           ok: false,
@@ -246,7 +425,7 @@ describe("runSync", () => {
     });
   });
 
-  it("returns degraded with conflict: false on a plain network failure", async () => {
+  it("classifies a plain network failure as transient, not a conflict", async () => {
     const platform = makePlatform({
       faults: { pull: new TypeError("Failed to fetch") },
     });
@@ -255,12 +434,12 @@ describe("runSync", () => {
 
     expect(result).toMatchObject({
       outcome: "degraded",
-      conflict: false,
+      classification: { kind: "transient" },
       error: { type: "turso_remote_sync_failed" },
     });
   });
 
-  it("returns degraded with conflict: true when the error is a sync error", async () => {
+  it("classifies a sync-protocol failure as a conflict", async () => {
     const platform = makePlatform({
       faults: { pull: new Error("sync error: frame divergence") },
       isSyncError: (reason) => reason.includes("sync error"),
@@ -270,7 +449,22 @@ describe("runSync", () => {
 
     expect(result).toMatchObject({
       outcome: "degraded",
-      conflict: true,
+      classification: { kind: "conflict" },
+    });
+  });
+
+  // runSync stamps every failure `turso_remote_sync_failed`, which is not a
+  // known-transient type, so an unrecognised reason has to land as permanent.
+  it("classifies an unrecognised sync failure as permanent", async () => {
+    const platform = makePlatform({
+      faults: { pull: new Error("unexpected end of protobuf message") },
+    });
+
+    const result = await runSync(platform);
+
+    expect(result).toMatchObject({
+      outcome: "degraded",
+      classification: { kind: "permanent" },
     });
   });
 });

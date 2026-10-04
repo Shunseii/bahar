@@ -11,6 +11,8 @@
  */
 
 export {
+  type ConflictRecoveryResult,
+  recoverFromSyncConflict,
   type SyncConflictPolicy,
   shouldRecoverFromConflict,
 } from "./conflict-recovery";
@@ -19,10 +21,12 @@ export type {
   DbError,
   DbInitOutcome,
   DbPlatform,
+  RetryPolicy,
   SyncOutcome,
 } from "./init";
-export { runDbInit, runSync, syncOutcomeFromInitOutcome } from "./init";
+export { DEFAULT_RETRY_POLICY, runDbInit, runSync } from "./init";
 export {
   classifySyncFailure,
+  isSyncConflictError,
   type SyncFailureClassification,
 } from "./sync-failure";

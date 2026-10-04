@@ -1,4 +1,12 @@
-import { type DbConnectionInfo, type DbError, runDbInit } from "@bahar/db-core";
+import {
+  type DbConnectionInfo,
+  type DbError,
+  type DbPlatform,
+  isSyncConflictError,
+  runDbInit,
+  runSync,
+  type SyncOutcome,
+} from "@bahar/db-core";
 import { configureDbQueue } from "@bahar/db-operations";
 import type { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import * as schema from "@bahar/drizzle-user-db-schemas";
@@ -7,6 +15,7 @@ import * as Sentry from "@sentry/react";
 import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
 import { drizzle } from "drizzle-orm/sqlite-proxy";
 import { api } from "../api";
+import { DbInitFailedError } from "./errors";
 
 // Wire web's Sentry logger into the shared DB queue (which has no logging
 // dependency of its own). Done here because every DB path -- operations and
@@ -272,7 +281,7 @@ export const getDb = () => {
 export const ensureDb = async () => {
   const result = await initDb();
   if (!result.ok) {
-    throw new Error(`Database initialization failed: ${result.error.type}`);
+    throw new DbInitFailedError({ dbErrorType: result.error.type });
   }
   return getDb();
 };
@@ -354,6 +363,68 @@ export const deleteLocalDatabase = async () => {
  * Uses a promise-based singleton pattern to prevent race conditions
  * if called concurrently before initialization completes.
  */
+/**
+ * The sync-wasm side of the db-core boundary. Module-scoped because both
+ * init and the periodic sync loops run against the same live connection --
+ * `connect` takes its info as an argument, so nothing here closes over
+ * per-call state.
+ *
+ * Conflict detection is live, but web deliberately does not act on it yet:
+ * the sync loop reports a conflict and leaves the replica alone. Wiping is
+ * lossy -- unpushed turso_cdc rows go with it -- and the engine over-declares
+ * conflicts by design, so web arms the destructive path only once there is
+ * real data showing conflicts happen here at all.
+ */
+const dbPlatform: DbPlatform = {
+  getConnectionInfo: async (): Promise<DbConnectionInfo> => {
+    const { data, error } = await api.databases.user.get();
+    if (error) throw error;
+    return data;
+  },
+  connect: async (info: DbConnectionInfo) => {
+    const dbAlreadyExists = await localDbExists(info.db_name);
+    Sentry.logger.info("initDb: fetched db info", {
+      dbName: info.db_name,
+      hostname: info.hostname,
+      dbAlreadyExists,
+    });
+
+    const connected = await _connectToLocalDb({
+      hostname: info.hostname,
+      authToken: info.access_token,
+      dbName: info.db_name,
+    });
+
+    db = connected;
+    drizzleDb = buildDrizzleDb(() => db);
+
+    Sentry.logger.info("initDb: connected to local db");
+  },
+  pull: async () => {
+    await db!.pull();
+  },
+  push: async () => {
+    await db!.push();
+  },
+  isSyncError: (error: unknown) => isSyncConflictError(String(error)),
+  isOffline: () => !navigator.onLine,
+  deleteLocalReplica: () => deleteLocalDatabase(),
+  restart: async (reason: string) => {
+    Sentry.logger.warn("recovery: restarting after wipe", { reason });
+    window.location.reload();
+  },
+};
+
+/**
+ * One pull+push cycle against the open replica, shared by the background
+ * and visibility sync loops. Returns the outcome rather than throwing: a
+ * failed sync leaves the replica usable, so the caller logs and waits for
+ * the next tick instead of surfacing anything.
+ *
+ * Requires an open connection -- call `ensureDb()` first.
+ */
+export const syncDb = async (): Promise<SyncOutcome> => runSync(dbPlatform);
+
 export const initDb = async () => {
   if (db) return ok(null);
   if (dbInitPromise) return dbInitPromise;
@@ -374,44 +445,9 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   Sentry.logger.info("initDb: start");
   await setStorageEnvContext();
 
-  const platform = {
-    getConnectionInfo: async (): Promise<DbConnectionInfo> => {
-      const { data, error } = await api.databases.user.get();
-      if (error) throw error;
-      return data;
-    },
-    connect: async (info: DbConnectionInfo) => {
-      const dbAlreadyExists = await localDbExists(info.db_name);
-      Sentry.logger.info("initDb: fetched db info", {
-        dbName: info.db_name,
-        hostname: info.hostname,
-        dbAlreadyExists,
-      });
-
-      const connected = await _connectToLocalDb({
-        hostname: info.hostname,
-        authToken: info.access_token,
-        dbName: info.db_name,
-      });
-
-      db = connected;
-      drizzleDb = buildDrizzleDb(() => db);
-
-      Sentry.logger.info("initDb: connected to local db");
-    },
-    pull: async () => {
-      await db!.pull();
-    },
-    push: async () => {
-      await db!.push();
-    },
-    isSyncError: () => false,
-    isOffline: () => !navigator.onLine,
-  };
-
   // The poisoned-change-log repair is web-specific, so it wraps the
   // state machine's final sync step rather than living in db-core.
-  const outcome = await runDbInit(platform, {
+  const outcome = await runDbInit(dbPlatform, {
     applyRequiredMigrations,
   });
 
@@ -420,7 +456,7 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
       const repaired = await repairPoisonedChangeLog();
 
       if (repaired) {
-        const retry = await runDbInit(platform, {
+        const retry = await runDbInit(dbPlatform, {
           applyRequiredMigrations,
         });
         Sentry.logger.info("initDb: sync retried after change-log repair", {

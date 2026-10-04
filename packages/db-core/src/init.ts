@@ -1,4 +1,9 @@
 import { type Result, tryCatch } from "@bahar/result";
+import {
+  classifySyncFailure,
+  isTransientNetworkFailure,
+  type SyncFailureClassification,
+} from "./sync-failure";
 
 /**
  * Connection info for the user's remote database, fetched from the API
@@ -27,8 +32,9 @@ export type DbError = {
 };
 
 /**
- * Whether the platform considers a thrown error a sync-protocol conflict
- * (sync-wasm/sync-react-native "sync error") that may require recovery.
+ * Whether the platform considers a thrown error a sync-protocol conflict --
+ * the engine's `database sync engine conflict`, not its generic
+ * `database sync engine error`. See isSyncConflictError.
  */
 export type IsSyncError = (error: unknown) => boolean;
 
@@ -70,6 +76,16 @@ export type DbPlatform = {
    * corruption, is the problem.
    */
   isOffline: () => boolean;
+  /**
+   * Deletes the local replica and its sidecar state. Destructive: anything
+   * in the change log that has not pushed yet goes with it.
+   */
+  deleteLocalReplica: () => Promise<void> | void;
+  /**
+   * Restarts the app so the engine re-inits against a fresh replica. The
+   * native/wasm engine keeps state a reconnect alone will not clear.
+   */
+  restart: (reason: string) => Promise<void>;
 };
 
 const describeError = (error: unknown): Omit<DbError, "type"> => ({
@@ -84,6 +100,89 @@ const describeError = (error: unknown): Omit<DbError, "type"> => ({
 
 const reasonOf = (error: { reason?: string; type?: string }): string =>
   error.reason ?? error.type ?? "unknown";
+
+/**
+ * How many times a network-only init stage is reattempted, and how long to
+ * wait between tries.
+ *
+ * Only the stages that are pure network calls retry: fetching connection
+ * info, the first pull, and the migrations-API fetch. Nothing that has
+ * already executed SQL is ever repeated.
+ */
+export type RetryPolicy = {
+  /** Total attempts including the first. 1 disables retrying. */
+  attempts: number;
+  /** Delay before the nth retry, 1-based. */
+  delayMs: (attempt: number) => number;
+};
+
+export const DEFAULT_RETRY_POLICY: RetryPolicy = {
+  attempts: 3,
+  delayMs: (attempt) => 200 * 2 ** (attempt - 1),
+};
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Reattempts `operation` while the failure looks like a transient network
+ * fault. A 401 is never retried -- the credentials will not improve -- and
+ * neither is anything whose reason does not read as a network problem, since
+ * repeating a schema or lock failure just delays the same error.
+ */
+const retryTransientThrow = async <T>({
+  operation,
+  policy,
+}: {
+  operation: () => Promise<T>;
+  policy: RetryPolicy;
+}): Promise<T> => {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= policy.attempts; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+
+      const worthRetrying =
+        attempt < policy.attempts &&
+        !isUnauthorizedApiError(error) &&
+        isTransientNetworkFailure(String(error));
+
+      if (!worthRetrying) break;
+
+      await sleep(policy.delayMs(attempt));
+    }
+  }
+
+  throw lastError;
+};
+
+/**
+ * Reattempts the migrations step, but only while it is failing on its API
+ * fetch (`api_schema_verification_failed`), which happens before any
+ * migration SQL runs. Once execution has started a retry could double-apply
+ * a partially-applied migration, so every other failure is returned as-is.
+ */
+const retryMigrationsFetch = async ({
+  applyRequiredMigrations,
+  policy,
+}: {
+  applyRequiredMigrations: () => Promise<Result<unknown, DbError>>;
+  policy: RetryPolicy;
+}): Promise<Result<unknown, DbError>> => {
+  let result = await applyRequiredMigrations();
+
+  for (let attempt = 1; attempt < policy.attempts; attempt++) {
+    if (result.ok) return result;
+    if (result.error.type !== "api_schema_verification_failed") return result;
+
+    await sleep(policy.delayMs(attempt));
+    result = await applyRequiredMigrations();
+  }
+
+  return result;
+};
 
 /**
  * Outcome of a db-init run.
@@ -107,13 +206,17 @@ export type DbInitOutcome =
  *
  * - `ok`: pull+push succeeded.
  * - `degraded`: sync failed but the local replica remains usable.
- *   Includes `conflict: true` when the failure is a sync conflict,
- *   so the caller can route to conflict-recovery policy.
+ *   Carries the `classification` so the caller can route a conflict to
+ *   the conflict-recovery policy and let a transient pass quietly.
  * - `err`: sync failed and the replica itself is broken.
  */
 export type SyncOutcome =
   | { outcome: "ok" }
-  | { outcome: "degraded"; error: DbError; conflict: boolean }
+  | {
+      outcome: "degraded";
+      error: DbError;
+      classification: SyncFailureClassification;
+    }
   | { outcome: "err"; error: DbError };
 
 /**
@@ -137,10 +240,14 @@ export const runDbInit = async (
   platform: DbPlatform,
   options: {
     applyRequiredMigrations: () => Promise<Result<unknown, DbError>>;
+    retry?: RetryPolicy;
   }
 ): Promise<DbInitOutcome> => {
+  const policy = options.retry ?? DEFAULT_RETRY_POLICY;
+
   const infoResult = await tryCatch(
-    () => platform.getConnectionInfo(),
+    () =>
+      retryTransientThrow({ operation: platform.getConnectionInfo, policy }),
     (error): DbError =>
       isUnauthorizedApiError(error)
         ? { type: "unauthorized", ...describeError(error) }
@@ -166,14 +273,17 @@ export const runDbInit = async (
   if (!connectResult.ok) return { outcome: "err", error: connectResult.error };
 
   const firstPullResult = await tryCatch(
-    () => platform.pull(),
+    () => retryTransientThrow({ operation: platform.pull, policy }),
     (error): DbError => ({
       type: "turso_db_pull_failed",
       ...describeError(error),
     })
   );
 
-  const migrationResult = await options.applyRequiredMigrations();
+  const migrationResult = await retryMigrationsFetch({
+    applyRequiredMigrations: options.applyRequiredMigrations,
+    policy,
+  });
 
   // A migration failure after a successful pull is schema-level: no
   // retry fixes it, block. But the very same migrations step includes
@@ -252,18 +362,9 @@ export const runSync = async (platform: DbPlatform): Promise<SyncOutcome> => {
   );
   if (syncResult.ok) return { outcome: "ok" };
 
-  const conflict = platform.isSyncError(syncResult.error.reason);
-  return { outcome: "degraded", error: syncResult.error, conflict };
-};
-
-/**
- * Maps an init outcome to the equivalent sync outcome for callers that
- * treat init's final sync like any other sync (e.g. mobile's
- * recoverFromSyncConflict path after re-init).
- */
-export const syncOutcomeFromInitOutcome = (
-  initOutcome: DbInitOutcome
-): SyncOutcome => {
-  if (initOutcome.outcome === "ok") return { outcome: "ok" };
-  return { outcome: "degraded", error: initOutcome.error, conflict: false };
+  const classification = classifySyncFailure({
+    error: syncResult.error,
+    isSyncError: platform.isSyncError,
+  });
+  return { outcome: "degraded", error: syncResult.error, classification };
 };

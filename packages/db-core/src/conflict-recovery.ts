@@ -34,7 +34,44 @@ export const shouldRecoverFromConflict = ({
   syncOutcome: SyncOutcome;
 }): SyncConflictPolicy => {
   if (syncOutcome.outcome !== "degraded") return { shouldRecover: false };
-  if (!syncOutcome.conflict) return { shouldRecover: false };
+  if (syncOutcome.classification.kind !== "conflict") {
+    return { shouldRecover: false };
+  }
 
   return { shouldRecover: !platform.isOffline() };
+};
+
+/**
+ * Why recovery did or did not run. Returned rather than logged because
+ * db-core has no reporting dependency -- each platform logs its own.
+ */
+export type ConflictRecoveryResult =
+  | { recovered: true }
+  | { recovered: false; reason: "not-a-conflict" | "offline" };
+
+/**
+ * Wipe the local replica and restart, when the policy allows it.
+ *
+ * Shared by both platforms: the primitives differ (OPFS + localStorage and a
+ * page reload on web, replica files and an Expo reload on mobile) but the
+ * sequence and the guard around it do not.
+ */
+export const recoverFromSyncConflict = async ({
+  platform,
+  syncOutcome,
+}: {
+  platform: Pick<DbPlatform, "isOffline" | "deleteLocalReplica" | "restart">;
+  syncOutcome: SyncOutcome;
+}): Promise<ConflictRecoveryResult> => {
+  const isConflict =
+    syncOutcome.outcome === "degraded" &&
+    syncOutcome.classification.kind === "conflict";
+
+  if (!isConflict) return { recovered: false, reason: "not-a-conflict" };
+  if (platform.isOffline()) return { recovered: false, reason: "offline" };
+
+  await platform.deleteLocalReplica();
+  await platform.restart("Resolving sync conflict");
+
+  return { recovered: true };
 };

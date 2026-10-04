@@ -1,3 +1,4 @@
+import { classifySyncFailure, type SyncOutcome } from "@bahar/db-core";
 import { enqueueSyncOperation } from "@bahar/db-operations";
 import { Button } from "@bahar/web-ui/components/button";
 import {
@@ -33,7 +34,7 @@ import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/search/useSearch";
 import { api } from "@/lib/api";
 import { getCachedSession, isLoggedOut } from "@/lib/auth-client";
-import { ensureDb, initDb, isDbDegraded } from "@/lib/db";
+import { ensureDb, initDb, isDbDegraded, syncDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
 import { dictionaryEntriesTable, migrationTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
@@ -174,25 +175,70 @@ const AuthorizedLayout = () => {
       try {
         store.set(isSyncingAtom, true);
 
-        await enqueueSyncOperation(async () => {
-          const maxTsBefore = await dictionaryEntriesTable.maxUpdatedAt.query();
+        // enqueueSyncOperation resolves void, so the outcome is carried out
+        // through a local. Reading it behind this function's annotated return
+        // type also stops the compiler narrowing it to the initial value,
+        // which it cannot see the callback reassign. "ok" stands for the
+        // merged case, where the queue folded this tick into an in-flight run
+        // and the body never executed.
+        const runQueuedSync = async (): Promise<SyncOutcome> => {
+          let result: SyncOutcome = { outcome: "ok" };
 
-          const db = await ensureDb();
+          await enqueueSyncOperation(async () => {
+            const maxTsBefore =
+              await dictionaryEntriesTable.maxUpdatedAt.query();
 
-          Sentry.logger.info("Background syncing...");
+            await ensureDb();
 
-          await db.pull();
-          await db.push();
+            Sentry.logger.info("Background syncing...");
 
-          const maxTsAfter = await dictionaryEntriesTable.maxUpdatedAt.query();
-          dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+            result = await syncDb();
+            if (result.outcome !== "ok") return;
 
-          Sentry.logger.info("Background sync complete", {
-            dictionaryChanged: dictionaryChangedRef.current,
+            const maxTsAfter =
+              await dictionaryEntriesTable.maxUpdatedAt.query();
+            dictionaryChangedRef.current = maxTsBefore !== maxTsAfter;
+
+            Sentry.logger.info("Background sync complete", {
+              dictionaryChanged: dictionaryChangedRef.current,
+            });
           });
-        });
 
-        store.set(syncCompletedCountAtom, (c) => c + 1);
+          return result;
+        };
+
+        const outcome = await runQueuedSync();
+
+        if (outcome.outcome === "ok") {
+          store.set(syncCompletedCountAtom, (c) => c + 1);
+        } else {
+          // runSync only ever degrades, but SyncOutcome also admits "err",
+          // which carries no classification -- treat that as unrecoverable.
+          const classification =
+            outcome.outcome === "degraded"
+              ? outcome.classification.kind
+              : "permanent";
+
+          Sentry.logger.warn("Background sync failed", {
+            reason: outcome.error.reason,
+            classification,
+          });
+
+          // Web detects conflicts but does not recover from them: the wipe is
+          // lossy and has never run here. Capture so there is finally data on
+          // whether web conflicts happen at all -- previously the detector was
+          // hardcoded false, so "zero conflicts" measured nothing.
+          if (classification === "conflict") {
+            Sentry.captureException(
+              new Error("sync_conflict_detected", { cause: outcome.error }),
+              {
+                fingerprint: ["sync-conflict-detected"],
+                tags: { recovered: "false" },
+                contexts: { sync: { reason: outcome.error.reason ?? null } },
+              }
+            );
+          }
+        }
       } catch (error) {
         Sentry.logger.warn("Background sync failed", {
           reason: String(error),
@@ -338,11 +384,11 @@ export const Route = createFileRoute("/_authorized-layout")({
 
       // BAHAR-WEB-38: retryable classification so "no transient failure
       // reaches the error page" is measurable in Sentry (telemetry gap 2).
-      const transientSyncTypes = [
-        "get_db_info_failed",
-        "api_schema_verification_failed",
-      ];
-      const retryable = transientSyncTypes.includes(error.type);
+      // isSyncError is false here for the same reason it is on the platform:
+      // web has no conflict-recovery path to route one into.
+      const retryable =
+        classifySyncFailure({ error, isSyncError: () => false }).kind ===
+        "transient";
 
       Sentry.captureException(new Error(error.type, { cause: error }), {
         fingerprint: ["db-init-error", error.type],
@@ -385,14 +431,6 @@ export const Route = createFileRoute("/_authorized-layout")({
           throw new DisplayError({
             message: t`There's a temporary issue loading your account. Please try reloading the page.`,
             details: t`Failed to retrieve database information.`,
-            cause: error.type,
-            hasManualFix: true,
-          });
-
-        case "api_schema_verification_failed":
-          throw new DisplayError({
-            message: t`We can't reach our servers right now. Check your connection and try again.`,
-            details: t`Unable to connect to remote database.`,
             cause: error.type,
             hasManualFix: true,
           });

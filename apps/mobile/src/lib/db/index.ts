@@ -8,7 +8,10 @@
 import {
   type DbConnectionInfo,
   type DbError,
+  type DbPlatform,
   runDbInit,
+  runSync,
+  type SyncOutcome,
 } from "@bahar/db-core";
 import { err, ok, type Result, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react-native";
@@ -16,11 +19,7 @@ import { getDbPath } from "@tursodatabase/sync-react-native";
 import { reloadAppAsync } from "expo";
 import { File } from "expo-file-system";
 import { api } from "../../utils/api";
-import {
-  connect,
-  type DatabaseAdapter,
-  isSyncError,
-} from "./adapter";
+import { connect, type DatabaseAdapter, isSyncError } from "./adapter";
 
 const LOCAL_DB_NAME = "bahar-user.db";
 export const SYNC_INTERVAL_MS = 60_000;
@@ -129,40 +128,6 @@ export const deleteLocalDb = (): void => {
 };
 
 /**
- * Recovers from an unresolvable sync conflict by deleting the local
- * replica and restarting the app. On restart, openDatabaseAsync
- * will pull a fresh copy from the remote.
- *
- * BAHAR-MOBILE-2: never wipe when offline. The wipe+reload recovery
- * re-inits via connect+pull -- all network operations -- so wiping
- * offline destroys the only copy of the user's data and leaves the
- * app unable to start. Offline, degrade instead: keep the conflicted
- * but locally-intact replica; the next online sync re-runs recovery.
- */
-export const recoverFromSyncConflict = async (): Promise<void> => {
-  const offline = isDeviceOffline();
-
-  if (offline) {
-    console.warn("[db] Sync conflict while offline — keeping local replica");
-    Sentry.logger.warn(
-      "recoverFromSyncConflict: offline — deferring wipe, keeping local replica",
-      { dbName: currentDbName }
-    );
-    return;
-  }
-
-  console.warn("[db] Sync conflict — deleting local DB and restarting...");
-  // Destructive: wipes the local replica and restarts. Log before the wipe so
-  // there's a record even though the reload tears down the JS context -- this
-  // path was previously silent (console-only).
-  Sentry.logger.warn("recoverFromSyncConflict: deleting local replica", {
-    dbName: currentDbName,
-  });
-  deleteLocalDb();
-  await reloadAppAsync("Resolving sync conflict");
-};
-
-/**
  * Whether the device currently has no network connection. Best-effort
  * via RN's navigator.onLine (updated on reachability change events);
  * a false "online" just means the wipe+reload proceeds as before, and
@@ -170,6 +135,65 @@ export const recoverFromSyncConflict = async (): Promise<void> => {
  */
 const isDeviceOffline = (): boolean =>
   typeof navigator !== "undefined" && !navigator.onLine;
+
+/**
+ * The sync-react-native side of the db-core boundary. Module-scoped so init
+ * and the periodic sync loop share one definition; `connect` takes its info
+ * as an argument, so nothing here closes over per-call state.
+ */
+export const dbPlatform: DbPlatform = {
+  getConnectionInfo: async (): Promise<DbConnectionInfo> => {
+    const { data, error } = await api.databases.user.get();
+    if (error) throw error;
+    return data;
+  },
+  connect: async (info: DbConnectionInfo) => {
+    const dbFileName = `${LOCAL_DB_NAME}-${info.db_name}.db`;
+    const connectOptions = {
+      name: dbFileName,
+      url: `libsql://${info.hostname}`,
+      authToken: info.access_token,
+    };
+
+    const dbAlreadyExists = replicaExists(dbFileName);
+    Sentry.logger.info("initDb: fetched db info", {
+      dbName: info.db_name,
+      hostname: info.hostname,
+      dbAlreadyExists,
+    });
+
+    const connected = await connect(connectOptions);
+    db = connected;
+    currentDbName = dbFileName;
+
+    Sentry.logger.info("initDb: connected to local db");
+  },
+  pull: async () => {
+    await db!.pull!();
+  },
+  push: async () => {
+    await db!.push!();
+  },
+  isSyncError: (error: unknown) => isSyncError(error),
+  isOffline: () => isDeviceOffline(),
+  deleteLocalReplica: () => {
+    Sentry.logger.warn("recovery: deleting local replica", {
+      dbName: currentDbName,
+    });
+    deleteLocalDb();
+  },
+  restart: async (reason: string) => {
+    await reloadAppAsync(reason);
+  },
+};
+
+/**
+ * One pull+push cycle against the open replica. Returns the outcome rather
+ * than throwing -- a failed sync leaves the replica usable, and the
+ * classification tells the caller whether it is a conflict worth recovering
+ * from or a transient to wait out.
+ */
+export const syncDb = async (): Promise<SyncOutcome> => runSync(dbPlatform);
 
 /**
  * Initializes the database connection.
@@ -196,43 +220,6 @@ export const initDb = async (): Promise<Result<null, DbError>> => {
 const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   Sentry.logger.info("initDb: start");
 
-  const platform = {
-    getConnectionInfo: async (): Promise<DbConnectionInfo> => {
-      const { data, error } = await api.databases.user.get();
-      if (error) throw error;
-      return data;
-    },
-    connect: async (info: DbConnectionInfo) => {
-      const dbFileName = `${LOCAL_DB_NAME}-${info.db_name}.db`;
-      const connectOptions = {
-        name: dbFileName,
-        url: `libsql://${info.hostname}`,
-        authToken: info.access_token,
-      };
-
-      const dbAlreadyExists = replicaExists(dbFileName);
-      Sentry.logger.info("initDb: fetched db info", {
-        dbName: info.db_name,
-        hostname: info.hostname,
-        dbAlreadyExists,
-      });
-
-      const connected = await connect(connectOptions);
-      db = connected;
-      currentDbName = dbFileName;
-
-      Sentry.logger.info("initDb: connected to local db");
-    },
-    pull: async () => {
-      await db!.pull!();
-    },
-    push: async () => {
-      await db!.push!();
-    },
-    isSyncError: (error: unknown) => isSyncError(error),
-    isOffline: () => isDeviceOffline(),
-  };
-
   // Mobile's applyRequiredMigrations returns errors directly; map
   // the migrations-API-fetch failure to api_schema_verification_failed
   // so runDbInit's degradation policy applies (same as web).
@@ -250,7 +237,7 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     return result;
   };
 
-  const outcome = await runDbInit(platform, {
+  const outcome = await runDbInit(dbPlatform, {
     applyRequiredMigrations: migrationsWithMappedError,
   });
 
