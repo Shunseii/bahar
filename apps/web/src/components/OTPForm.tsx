@@ -19,7 +19,7 @@ import type { FC } from "react";
 import { type SubmitHandler, useForm, useFormContext } from "react-hook-form";
 import z from "zod";
 import { showOTPFormAtom } from "@/atoms/otp";
-import { authClient, invalidateCachedSession } from "@/lib/auth-client";
+import { authClient, clearCachedSession } from "@/lib/auth-client";
 import { getLangDir, type TLocale } from "@/lib/i18n";
 import {
   convertArabicNumToEnglish,
@@ -111,9 +111,9 @@ export const OTPForm: FC<{
       }
 
       // Sign-in happened outside any route load, so the cached session is
-      // still the logged-out one. Refresh it before navigating or the
-      // authorized layout reads that stale result and bounces back here.
-      await invalidateCachedSession();
+      // still the logged-out one. Drop it before navigating or the
+      // authorized layout reads that result and bounces back here.
+      clearCachedSession();
 
       onVerifyOTP();
     } catch (err) {

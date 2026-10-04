@@ -58,12 +58,20 @@ export const getCachedSession = (): Promise<SessionResult> =>
  *
  * Must be called whenever the session changes outside of a route load --
  * signing in, most importantly. Without it the cached logged-out result
- * survives for SESSION_STALE_TIME_MS, so `_authorized-layout` keeps seeing
- * "logged out" while `/login` (which reads the session uncached) sees
- * "logged in", and the two redirect at each other indefinitely.
+ * survives, so `_authorized-layout` keeps seeing "logged out" while
+ * `/login` (which reads the session uncached) sees "logged in", and the two
+ * redirect at each other indefinitely.
+ *
+ * Removes rather than invalidates. `getCachedSession` goes through
+ * `ensureQueryData`, which returns whatever is in the cache and only fetches
+ * when there is no data at all -- it ignores staleness unless called with
+ * `revalidateIfStale`, and even then serves the stale value while
+ * refetching behind it. Marking the entry stale therefore changes nothing;
+ * the entry has to go. This is the same reason `useLogout` calls
+ * `queryClient.clear()`.
  */
-export const invalidateCachedSession = (): Promise<void> =>
-  queryClient.invalidateQueries({ queryKey: sessionQueryOptions.queryKey });
+export const clearCachedSession = (): void =>
+  queryClient.removeQueries({ queryKey: sessionQueryOptions.queryKey });
 
 /**
  * True only for a *confirmed* logged-out response. better-auth returns a 200
