@@ -27,7 +27,11 @@ export const themeAtom = atomWithStorage<Theme>(
   (localStorage.getItem("theme") as Theme) ?? Theme.SYSTEM,
   {
     getItem: (key) => {
-      const val = localStorage.getItem(key) as Theme;
+      // Falls back the way colorThemeAtom below does. Without it a first
+      // visit reads null, which leaves the theme Select showing no value and
+      // makes updateThemeInDOM strip the dark class -- so a device set to
+      // dark renders light until the user picks a theme by hand.
+      const val = (localStorage.getItem(key) as Theme) ?? Theme.SYSTEM;
 
       updateThemeInDOM(val);
 
