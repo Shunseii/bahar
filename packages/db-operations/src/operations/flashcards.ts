@@ -360,7 +360,11 @@ export const makeFlashcardsTable = ({
         const [regularResult] = await drizzleDb
           .select({ count: countDistinct(flashcards.id) })
           .from(flashcards)
-          .leftJoin(
+          // BAHAR-MOBILE-1: innerJoin matches today.query, which drops
+          // flashcards whose entry was deleted remotely (sync race).
+          // leftJoin counted them, so the queue badge showed cards the
+          // review screen could never serve.
+          .innerJoin(
             dictionaryEntries,
             eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
           )
@@ -375,7 +379,8 @@ export const makeFlashcardsTable = ({
         const [backlogResult] = await drizzleDb
           .select({ count: countDistinct(flashcards.id) })
           .from(flashcards)
-          .leftJoin(
+          // BAHAR-MOBILE-1: same innerJoin as the regular count -- see above.
+          .innerJoin(
             dictionaryEntries,
             eq(flashcards.dictionary_entry_id, dictionaryEntries.id)
           )

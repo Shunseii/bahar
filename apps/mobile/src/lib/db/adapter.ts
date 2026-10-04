@@ -16,6 +16,7 @@
  *   migrations (../index) and sync bookkeeping (./sync) that need raw SQL.
  */
 
+import { isSyncConflictError } from "@bahar/db-core";
 import type { DatabaseAdapter, PreparedStatement } from "@bahar/db-operations";
 import {
   type BindParams,
@@ -25,7 +26,7 @@ import {
 import { buildDrizzleDb } from "./turso-sync-adapter";
 
 export const isSyncError = (error: unknown): boolean =>
-  String(error).includes("sync error");
+  isSyncConflictError(String(error));
 
 let dbInstance: Database | null = null;
 

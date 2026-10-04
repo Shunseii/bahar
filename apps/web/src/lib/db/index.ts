@@ -1,11 +1,22 @@
+import {
+  classifySyncFailure,
+  type DbConnectionInfo,
+  type DbError,
+  type DbPlatform,
+  isSyncConflictError,
+  runDbInit,
+  runSync,
+  type SyncOutcome,
+} from "@bahar/db-core";
 import { configureDbQueue } from "@bahar/db-operations";
 import type { SelectMigration } from "@bahar/drizzle-user-db-schemas";
 import * as schema from "@bahar/drizzle-user-db-schemas";
-import { err, ok, tryCatch } from "@bahar/result";
+import { err, ok, type Result, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react";
 import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
 import { drizzle } from "drizzle-orm/sqlite-proxy";
 import { api } from "../api";
+import { DbInitFailedError } from "./errors";
 
 // Wire web's Sentry logger into the shared DB queue (which has no logging
 // dependency of its own). Done here because every DB path -- operations and
@@ -271,7 +282,7 @@ export const getDb = () => {
 export const ensureDb = async () => {
   const result = await initDb();
   if (!result.ok) {
-    throw new Error(`Database initialization failed: ${result.error.type}`);
+    throw new DbInitFailedError({ dbErrorType: result.error.type });
   }
   return getDb();
 };
@@ -353,6 +364,68 @@ export const deleteLocalDatabase = async () => {
  * Uses a promise-based singleton pattern to prevent race conditions
  * if called concurrently before initialization completes.
  */
+/**
+ * The sync-wasm side of the db-core boundary. Module-scoped because both
+ * init and the periodic sync loops run against the same live connection --
+ * `connect` takes its info as an argument, so nothing here closes over
+ * per-call state.
+ *
+ * Conflict detection is live, but web deliberately does not act on it yet:
+ * the sync loop reports a conflict and leaves the replica alone. Wiping is
+ * lossy -- unpushed turso_cdc rows go with it -- and the engine over-declares
+ * conflicts by design, so web arms the destructive path only once there is
+ * real data showing conflicts happen here at all.
+ */
+const dbPlatform: DbPlatform = {
+  getConnectionInfo: async (): Promise<DbConnectionInfo> => {
+    const { data, error } = await api.databases.user.get();
+    if (error) throw error;
+    return data;
+  },
+  connect: async (info: DbConnectionInfo) => {
+    const dbAlreadyExists = await localDbExists(info.db_name);
+    Sentry.logger.info("initDb: fetched db info", {
+      dbName: info.db_name,
+      hostname: info.hostname,
+      dbAlreadyExists,
+    });
+
+    const connected = await _connectToLocalDb({
+      hostname: info.hostname,
+      authToken: info.access_token,
+      dbName: info.db_name,
+    });
+
+    db = connected;
+    drizzleDb = buildDrizzleDb(() => db);
+
+    Sentry.logger.info("initDb: connected to local db");
+  },
+  pull: async () => {
+    await db!.pull();
+  },
+  push: async () => {
+    await db!.push();
+  },
+  isSyncError: (error: unknown) => isSyncConflictError(String(error)),
+  isOffline: () => !navigator.onLine,
+  deleteLocalReplica: () => deleteLocalDatabase(),
+  restart: async (reason: string) => {
+    Sentry.logger.warn("recovery: restarting after wipe", { reason });
+    window.location.reload();
+  },
+};
+
+/**
+ * One pull+push cycle against the open replica, shared by the background
+ * and visibility sync loops. Returns the outcome rather than throwing: a
+ * failed sync leaves the replica usable, so the caller logs and waits for
+ * the next tick instead of surfacing anything.
+ *
+ * Requires an open connection -- call `ensureDb()` first.
+ */
+export const syncDb = async (): Promise<SyncOutcome> => runSync(dbPlatform);
+
 export const initDb = async () => {
   if (db) return ok(null);
   if (dbInitPromise) return dbInitPromise;
@@ -361,202 +434,109 @@ export const initDb = async () => {
   const result = await dbInitPromise;
   if (!result.ok) {
     dbInitPromise = null; // Allow retry on failure
-    Sentry.logger.warn("initDb failed", {
-      outcome: result.error.type,
-      reason: "reason" in result.error ? result.error.reason : null,
-    });
+    reportDbInitFailure(result.error);
   }
   return result;
 };
 
-const isApiError = (
-  err: unknown
-): err is NonNullable<
-  Awaited<ReturnType<typeof api.databases.user.get>>
->["error"] => {
-  return (
-    typeof err === "object" && err !== null && "status" in err && "value" in err
-  );
+/**
+ * The one place a db-init failure is reported.
+ *
+ * Every path funnels through initDb, so capturing here covers the failures
+ * the route boundary never sees -- a query calling ensureDb outside a route
+ * load, for instance. Reporting at the route instead left those invisible,
+ * and reporting at both filed every failure twice.
+ */
+const reportDbInitFailure = (error: DbError) => {
+  Sentry.logger.warn("initDb failed", {
+    outcome: error.type,
+    reason: error.reason ?? null,
+  });
+
+  // BAHAR-WEB-38: classification so "no transient failure reaches the error
+  // page" is measurable. isSyncError is false here because web reports
+  // conflicts rather than recovering from them.
+  const retryable =
+    classifySyncFailure({ error, isSyncError: () => false }).kind ===
+    "transient";
+
+  Sentry.captureException(new Error(error.type, { cause: error }), {
+    fingerprint: ["db-init-error", error.type],
+    tags: { retryable: retryable ? "true" : "false" },
+    contexts: {
+      db_init: {
+        type: error.type,
+        reason: error.reason ?? null,
+        retryable,
+        // Preserved from the underlying throw -- for a wasm trap the stack
+        // carries the `wasm://` frames that String(error) would drop.
+        name: error.name ?? null,
+        stack: error.stack ?? null,
+        cause: error.cause ?? null,
+        wasmTrap: error.wasmTrap ?? null,
+        migrationVersion: error.migrationVersion ?? null,
+      },
+    },
+  });
 };
 
-const _initDbInternal = async () => {
+const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   Sentry.logger.info("initDb: start");
   await setStorageEnvContext();
 
-  const infoResult = await tryCatch(
-    async () => {
-      const { data, error } = await api.databases.user.get();
-      if (error) throw error;
-      return data;
-    },
-    (error) => {
-      if (isApiError(error) && error?.status === 401) {
-        return {
-          type: "unauthorized",
-          ...describeError(error),
-        };
+  // The poisoned-change-log repair is web-specific, so it wraps the
+  // state machine's final sync step rather than living in db-core.
+  const outcome = await runDbInit(dbPlatform, {
+    applyRequiredMigrations,
+  });
+
+  if (outcome.outcome === "degraded") {
+    if (isPoisonedChangeLogError(outcome.error.reason ?? "")) {
+      const repaired = await repairPoisonedChangeLog();
+
+      if (repaired) {
+        const retry = await runDbInit(dbPlatform, {
+          applyRequiredMigrations,
+        });
+        Sentry.logger.info("initDb: sync retried after change-log repair", {
+          ok: retry.outcome === "ok",
+        });
+        if (retry.outcome === "ok") return ok(null);
+        if (retry.outcome === "degraded") {
+          reportDegradedDb(retry.error);
+          return ok(null);
+        }
+        return err(retry.error);
       }
-
-      return {
-        type: "get_db_info_failed",
-        ...describeError(error),
-      };
-    }
-  );
-  if (!infoResult.ok) {
-    Sentry.logger.warn("initDb: failed to fetch db info", {
-      outcome: infoResult.error.type,
-      reason: infoResult.error.reason,
-    });
-    return infoResult;
-  }
-
-  const { access_token, hostname, db_name } = infoResult.value;
-
-  const dbAlreadyExists = await localDbExists(db_name);
-  Sentry.logger.info("initDb: fetched db info", {
-    dbName: db_name,
-    hostname,
-    dbAlreadyExists,
-  });
-
-  const connectionResult = await tryCatch(
-    () =>
-      _connectToLocalDb({
-        hostname,
-        authToken: access_token,
-        dbName: db_name,
-      }),
-    (error) => {
-      const described = describeError(error);
-      const isOpfsLock = described.reason.includes("createSyncAccessHandle");
-      // A wasm `unreachable` trap (Rust panic / OOM inside sync-wasm) surfaces
-      // as a RuntimeError. Flag it so it's filterable, and rely on the captured
-      // stack (wasm frames) to pinpoint the failing engine function.
-      const wasmTrap =
-        described.name === "RuntimeError" ||
-        described.reason.includes("unreachable");
-      return {
-        type: isOpfsLock ? "opfs_lock_error" : "db_connection_failed",
-        wasmTrap,
-        ...described,
-      };
-    }
-  );
-
-  // If OPFS lock error, return immediately - don't try token refresh
-  if (
-    !connectionResult.ok &&
-    connectionResult.error.type === "opfs_lock_error"
-  ) {
-    Sentry.logger.warn("initDb: opfs lock during connect", {
-      reason: connectionResult.error.reason,
-    });
-    return connectionResult;
-  }
-
-  if (!connectionResult.ok) {
-    Sentry.logger.warn("initDb: connect failed", {
-      outcome: connectionResult.error.type,
-      wasmTrap: connectionResult.error.wasmTrap,
-      name: connectionResult.error.name,
-      reason: connectionResult.error.reason,
-    });
-    return connectionResult;
-  }
-
-  db = connectionResult.value;
-
-  drizzleDb = buildDrizzleDb(() => db);
-
-  Sentry.logger.info("initDb: connected to local db");
-
-  const dbPullResult = await tryCatch(
-    async () => {
-      await db!.pull();
-    },
-    (error) => ({
-      type: "turso_remote_sync_failed",
-      ...describeError(error),
-    })
-  );
-  Sentry.logger.info("initDb: initial pull complete", { ok: dbPullResult.ok });
-
-  const migrationResult = await applyRequiredMigrations();
-  if (!migrationResult.ok) {
-    Sentry.logger.warn("initDb: migrations failed", {
-      outcome: migrationResult.error.type,
-      reason:
-        "reason" in migrationResult.error ? migrationResult.error.reason : null,
-    });
-    return migrationResult;
-  }
-
-  let syncResult = await tryCatch(
-    async () => {
-      await db!.pull();
-      await db!.push();
-    },
-    (error) => ({
-      type: "turso_remote_sync_failed",
-      ...describeError(error),
-    })
-  );
-
-  if (!syncResult.ok && isPoisonedChangeLogError(syncResult.error.reason)) {
-    const repaired = await repairPoisonedChangeLog();
-
-    if (repaired) {
-      syncResult = await tryCatch(
-        async () => {
-          await db!.pull();
-          await db!.push();
-        },
-        (error) => ({
-          type: "turso_remote_sync_failed",
-          ...describeError(error),
-        })
-      );
-      Sentry.logger.info("initDb: sync retried after change-log repair", {
-        ok: syncResult.ok,
-      });
-    }
-  }
-
-  Sentry.logger.info("initDb: post-migration sync complete", {
-    ok: syncResult.ok,
-  });
-
-  const aggregateResult = (() => {
-    if (!dbPullResult.ok && !syncResult.ok) {
-      return err({
-        type: "turso_remote_sync_and_pull_failed",
-        reason: `Pull error: ${dbPullResult.error.reason}\nSync error: ${syncResult.error.reason}`,
-      });
     }
 
-    if (!dbPullResult.ok) {
-      return err({
-        type: "turso_db_pull_failed",
-        reason: dbPullResult.error.reason,
-      });
-    }
-
-    if (!syncResult.ok) {
-      return err({
-        type: "turso_remote_sync_failed",
-        reason: syncResult.error.reason,
-      });
-    }
-
+    reportDegradedDb(outcome.error);
     return ok(null);
-  })();
-
-  if (aggregateResult.ok) {
-    Sentry.logger.info("initDb: success");
   }
 
-  return aggregateResult;
+  if (outcome.outcome === "err") {
+    return err(outcome.error);
+  }
+
+  Sentry.logger.info("initDb: success");
+  return ok(null);
+};
+
+/**
+ * True after the last initDb completed with a usable-but-stale local
+ * replica (initial sync failed, e.g. a transient network fault). Read
+ * by the authorized layout to show a non-blocking offline indicator
+ * instead of the error page (BAHAR-WEB-38).
+ */
+let dbDegraded = false;
+export const isDbDegraded = () => dbDegraded;
+
+const reportDegradedDb = (error: DbError) => {
+  dbDegraded = true;
+  Sentry.logger.warn("initDb: degraded -- using stale local replica", {
+    outcome: error.type,
+    reason: error.reason,
+  });
 };
 
 /**

@@ -2,6 +2,7 @@
 
 import * as Sentry from "@sentry/react";
 import { createRouter } from "@tanstack/react-router";
+import { DbInitFailedError } from "./lib/db/errors";
 import { routeTree } from "./routeTree.gen";
 
 // Create a new router instance
@@ -19,6 +20,19 @@ Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   environment: import.meta.env.VITE_SENTRY_ENV,
   enableLogs: true,
+
+  beforeSend: (event, hint) => {
+    // initDb captures every db-init failure itself, with full context.
+    // ensureDb's throw is the downstream symptom of one already reported, so
+    // letting it through would file a second issue for the same failure --
+    // which is what made db-init counts read roughly double. Dropping it is
+    // safe precisely because the capture no longer depends on the route
+    // boundary having been the thing that triggered init.
+    if (hint?.originalException instanceof DbInitFailedError) return null;
+
+    return event;
+  },
+
   integrations: [
     Sentry.tanstackRouterBrowserTracingIntegration(router),
     // Skip session replay locally -- no value in recording dev sessions, and it
