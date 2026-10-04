@@ -1,4 +1,4 @@
-import { classifySyncFailure, type SyncOutcome } from "@bahar/db-core";
+import type { SyncOutcome } from "@bahar/db-core";
 import { enqueueSyncOperation } from "@bahar/db-operations";
 import { Button } from "@bahar/web-ui/components/button";
 import {
@@ -374,36 +374,10 @@ export const Route = createFileRoute("/_authorized-layout")({
     const initDbResult = await initDb();
 
     if (!initDbResult.ok) {
+      // Reporting happens in initDb, the one place every path to a db-init
+      // failure funnels through. The route only decides what the user sees.
       const error = initDbResult.error;
-      const errReason = "reason" in error ? error.reason : null;
 
-      // BAHAR-WEB-38: retryable classification so "no transient failure
-      // reaches the error page" is measurable in Sentry (telemetry gap 2).
-      // isSyncError is false here for the same reason it is on the platform:
-      // web has no conflict-recovery path to route one into.
-      const retryable =
-        classifySyncFailure({ error, isSyncError: () => false }).kind ===
-        "transient";
-
-      Sentry.captureException(new Error(error.type, { cause: error }), {
-        fingerprint: ["db-init-error", error.type],
-        tags: { retryable: retryable ? "true" : "false" },
-        contexts: {
-          db_init: {
-            type: error.type,
-            reason: errReason,
-            retryable,
-            // Preserved from the underlying throw -- for a wasm trap the stack
-            // carries the `wasm://` frames that String(error) would drop.
-            name: "name" in error ? error.name : null,
-            stack: "stack" in error ? error.stack : null,
-            cause: "cause" in error ? error.cause : null,
-            wasmTrap: "wasmTrap" in error ? error.wasmTrap : null,
-            migrationVersion:
-              "migrationVersion" in error ? error.migrationVersion : null,
-          },
-        },
-      });
       switch (error.type) {
         case "latest_migration_is_failing":
           // We ignore this error because we don't want to block user

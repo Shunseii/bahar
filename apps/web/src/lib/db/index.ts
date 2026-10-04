@@ -1,4 +1,5 @@
 import {
+  classifySyncFailure,
   type DbConnectionInfo,
   type DbError,
   type DbPlatform,
@@ -433,12 +434,50 @@ export const initDb = async () => {
   const result = await dbInitPromise;
   if (!result.ok) {
     dbInitPromise = null; // Allow retry on failure
-    Sentry.logger.warn("initDb failed", {
-      outcome: result.error.type,
-      reason: "reason" in result.error ? result.error.reason : null,
-    });
+    reportDbInitFailure(result.error);
   }
   return result;
+};
+
+/**
+ * The one place a db-init failure is reported.
+ *
+ * Every path funnels through initDb, so capturing here covers the failures
+ * the route boundary never sees -- a query calling ensureDb outside a route
+ * load, for instance. Reporting at the route instead left those invisible,
+ * and reporting at both filed every failure twice.
+ */
+const reportDbInitFailure = (error: DbError) => {
+  Sentry.logger.warn("initDb failed", {
+    outcome: error.type,
+    reason: error.reason ?? null,
+  });
+
+  // BAHAR-WEB-38: classification so "no transient failure reaches the error
+  // page" is measurable. isSyncError is false here because web reports
+  // conflicts rather than recovering from them.
+  const retryable =
+    classifySyncFailure({ error, isSyncError: () => false }).kind ===
+    "transient";
+
+  Sentry.captureException(new Error(error.type, { cause: error }), {
+    fingerprint: ["db-init-error", error.type],
+    tags: { retryable: retryable ? "true" : "false" },
+    contexts: {
+      db_init: {
+        type: error.type,
+        reason: error.reason ?? null,
+        retryable,
+        // Preserved from the underlying throw -- for a wasm trap the stack
+        // carries the `wasm://` frames that String(error) would drop.
+        name: error.name ?? null,
+        stack: error.stack ?? null,
+        cause: error.cause ?? null,
+        wasmTrap: error.wasmTrap ?? null,
+        migrationVersion: error.migrationVersion ?? null,
+      },
+    },
+  });
 };
 
 const _initDbInternal = async (): Promise<Result<null, DbError>> => {

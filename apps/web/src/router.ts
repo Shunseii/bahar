@@ -22,10 +22,12 @@ Sentry.init({
   enableLogs: true,
 
   beforeSend: (event, hint) => {
-    // A failed db init surfaces twice: once where it is captured with full
-    // context at the route boundary, and again as ensureDb's throw further
-    // down the same page load. Dropping the second keeps one issue per
-    // failure -- reporting both is what made every db-init count read double.
+    // initDb captures every db-init failure itself, with full context.
+    // ensureDb's throw is the downstream symptom of one already reported, so
+    // letting it through would file a second issue for the same failure --
+    // which is what made db-init counts read roughly double. Dropping it is
+    // safe precisely because the capture no longer depends on the route
+    // boundary having been the thing that triggered init.
     if (hint?.originalException instanceof DbInitFailedError) return null;
 
     return event;
