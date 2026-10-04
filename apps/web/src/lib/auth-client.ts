@@ -54,6 +54,18 @@ export const getCachedSession = (): Promise<SessionResult> =>
   queryClient.ensureQueryData(sessionQueryOptions);
 
 /**
+ * Drops the cached session so the next read refetches.
+ *
+ * Must be called whenever the session changes outside of a route load --
+ * signing in, most importantly. Without it the cached logged-out result
+ * survives for SESSION_STALE_TIME_MS, so `_authorized-layout` keeps seeing
+ * "logged out" while `/login` (which reads the session uncached) sees
+ * "logged in", and the two redirect at each other indefinitely.
+ */
+export const invalidateCachedSession = (): Promise<void> =>
+  queryClient.invalidateQueries({ queryKey: sessionQueryOptions.queryKey });
+
+/**
  * True only for a *confirmed* logged-out response. better-auth returns a 200
  * with `data: null` (and no error) when there's no session, or a 401. A 429
  * rate-limit or a network failure returns `data: null` WITH a transient error
