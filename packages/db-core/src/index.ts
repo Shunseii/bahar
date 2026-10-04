@@ -13,8 +13,6 @@
 export {
   type ConflictRecoveryResult,
   recoverFromSyncConflict,
-  type SyncConflictPolicy,
-  shouldRecoverFromConflict,
 } from "./conflict-recovery";
 export type {
   DbConnectionInfo,

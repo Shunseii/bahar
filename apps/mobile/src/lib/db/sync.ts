@@ -52,7 +52,7 @@ const runQueuedSync = async (): Promise<SyncOutcome> => {
  * A sync failure never breaks the open replica, so a transient one is logged
  * and left for the next tick. Only a conflict or an unrecoverable failure is
  * worth an error event -- and the wipe behind a conflict runs only when
- * `shouldRecoverFromConflict` allows it (BAHAR-MOBILE-2: never while offline).
+ * `recoverFromSyncConflict` allows it (BAHAR-MOBILE-2: never while offline).
  */
 const reportSyncFailure = async (outcome: SyncOutcome) => {
   if (outcome.outcome === "ok") return;

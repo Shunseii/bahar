@@ -7,7 +7,7 @@ import { beforeEach, describe, expect, it, jest } from "@jest/globals";
  * Offline, that turns a sync conflict into data loss: the replica is deleted
  * and the fresh pull can't run.
  *
- * The decision policy lives in @bahar/db-core (shouldRecoverFromConflict) and
+ * The decision policy lives in @bahar/db-core (recoverFromSyncConflict) and
  * is unit-tested there. What this pins is the mobile wiring -- that
  * performSync actually consults the policy before calling the destructive
  * primitive, which is the seam that would silently rot if someone called
