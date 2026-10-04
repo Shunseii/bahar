@@ -74,6 +74,23 @@ export const clearCachedSession = (): void =>
   queryClient.removeQueries({ queryKey: sessionQueryOptions.queryKey });
 
 /**
+ * Drops every cached query so a new session starts clean.
+ *
+ * Call on sign-in. Logout clears the cache too, but anything still in flight
+ * at that moment settles afterwards and repopulates it -- a db-backed query
+ * refetching as the cookie disappears gets a 401 from ensureDb, and queries
+ * default to throwOnError, so that rejection is stored. Signing back in
+ * during the same page session remounts the component, the stored error
+ * re-throws on render, and the user lands on the error page from inside the
+ * app even though initialization just succeeded.
+ *
+ * Nothing cached under the previous session is worth keeping, and at this
+ * point no authorized route is mounted, so clearing wholesale is both safe
+ * and the only reliable way to catch whatever settled late.
+ */
+export const clearQueryCacheForNewSession = (): void => queryClient.clear();
+
+/**
  * True only for a *confirmed* logged-out response. better-auth returns a 200
  * with `data: null` (and no error) when there's no session, or a 401. A 429
  * rate-limit or a network failure returns `data: null` WITH a transient error

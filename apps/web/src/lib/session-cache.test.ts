@@ -68,3 +68,33 @@ describe("session cache invalidation after sign-in", () => {
     expect(getSession).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("stale errors from the previous session", () => {
+  it("a cleared cache drops an error stored after logout", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: 0, throwOnError: true } },
+    });
+
+    const entries = vi
+      .fn()
+      .mockRejectedValueOnce(
+        new Error("Database initialization failed: unauthorized")
+      )
+      .mockResolvedValue(["entry"]);
+
+    const read = () =>
+      client.fetchQuery({ queryKey: ["entries"], queryFn: entries });
+
+    // A db-backed query losing its session on the way out of the app.
+    await expect(read()).rejects.toThrow("unauthorized");
+    expect(client.getQueryState(["entries"])?.error).toBeTruthy();
+
+    // Signing back in must not inherit it: throwOnError would re-throw the
+    // stored rejection on the next render and drop the user on the error
+    // page from inside the app.
+    client.clear();
+
+    expect(client.getQueryState(["entries"])).toBeUndefined();
+    await expect(read()).resolves.toEqual(["entry"]);
+  });
+});

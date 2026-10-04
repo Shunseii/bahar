@@ -19,7 +19,7 @@ import type { FC } from "react";
 import { type SubmitHandler, useForm, useFormContext } from "react-hook-form";
 import z from "zod";
 import { showOTPFormAtom } from "@/atoms/otp";
-import { authClient, clearCachedSession } from "@/lib/auth-client";
+import { authClient, clearQueryCacheForNewSession } from "@/lib/auth-client";
 import { getLangDir, type TLocale } from "@/lib/i18n";
 import {
   convertArabicNumToEnglish,
@@ -110,10 +110,11 @@ export const OTPForm: FC<{
         return;
       }
 
-      // Sign-in happened outside any route load, so the cached session is
-      // still the logged-out one. Drop it before navigating or the
-      // authorized layout reads that result and bounces back here.
-      clearCachedSession();
+      // Sign-in happened outside any route load, so nothing has refreshed
+      // the cache. It still holds the logged-out session -- which bounces the
+      // authorized layout straight back here -- and, after a logout earlier
+      // in this page session, any db query that failed on the way out.
+      clearQueryCacheForNewSession();
 
       onVerifyOTP();
     } catch (err) {
