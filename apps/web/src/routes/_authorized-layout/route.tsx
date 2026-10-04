@@ -212,12 +212,7 @@ const AuthorizedLayout = () => {
         if (outcome.outcome === "ok") {
           store.set(syncCompletedCountAtom, (c) => c + 1);
         } else {
-          // runSync only ever degrades, but SyncOutcome also admits "err",
-          // which carries no classification -- treat that as unrecoverable.
-          const classification =
-            outcome.outcome === "degraded"
-              ? outcome.classification.kind
-              : "permanent";
+          const classification = outcome.classification.kind;
 
           Sentry.logger.warn("Background sync failed", {
             reason: outcome.error.reason,

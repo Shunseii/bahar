@@ -57,8 +57,7 @@ const runQueuedSync = async (): Promise<SyncOutcome> => {
 const reportSyncFailure = async (outcome: SyncOutcome) => {
   if (outcome.outcome === "ok") return;
 
-  const kind =
-    outcome.outcome === "degraded" ? outcome.classification.kind : "permanent";
+  const kind = outcome.classification.kind;
 
   console.warn("[sync] Sync failed:", outcome.error.reason);
 

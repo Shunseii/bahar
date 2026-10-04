@@ -208,7 +208,12 @@ export type DbInitOutcome =
  * - `degraded`: sync failed but the local replica remains usable.
  *   Carries the `classification` so the caller can route a conflict to
  *   the conflict-recovery policy and let a transient pass quietly.
- * - `err`: sync failed and the replica itself is broken.
+ *
+ * There is no fatal variant. A sync runs against an already-open replica,
+ * so failing cannot take it away -- and a failure no retry can fix already
+ * arrives as `classification: permanent`. Unlike DbInitOutcome, which does
+ * have `err`, there is no state here where the caller has nothing to fall
+ * back to.
  */
 export type SyncOutcome =
   | { outcome: "ok" }
@@ -216,8 +221,7 @@ export type SyncOutcome =
       outcome: "degraded";
       error: DbError;
       classification: SyncFailureClassification;
-    }
-  | { outcome: "err"; error: DbError };
+    };
 
 /**
  * The db-init state machine. Mirrors the sequence both platforms run

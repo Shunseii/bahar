@@ -63,11 +63,13 @@ export const recoverFromSyncConflict = async ({
   platform: Pick<DbPlatform, "isOffline" | "deleteLocalReplica" | "restart">;
   syncOutcome: SyncOutcome;
 }): Promise<ConflictRecoveryResult> => {
-  const isConflict =
-    syncOutcome.outcome === "degraded" &&
-    syncOutcome.classification.kind === "conflict";
+  if (
+    syncOutcome.outcome === "ok" ||
+    syncOutcome.classification.kind !== "conflict"
+  ) {
+    return { recovered: false, reason: "not-a-conflict" };
+  }
 
-  if (!isConflict) return { recovered: false, reason: "not-a-conflict" };
   if (platform.isOffline()) return { recovered: false, reason: "offline" };
 
   await platform.deleteLocalReplica();
