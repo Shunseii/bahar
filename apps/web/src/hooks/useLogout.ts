@@ -27,6 +27,24 @@ export const useLogout = () => {
 
     await authClient.signOut();
 
+    // Tear the local db down before leaving the authorized layout, and clear
+    // the query cache last.
+    //
+    // Any db-backed query that refetches between signOut and this teardown
+    // calls ensureDb, which re-inits, which fetches connection info with no
+    // cookie and gets a 401. Queries default to throwOnError, so that failure
+    // is kept in the cache -- and when the user signs back in during the same
+    // page session the component remounts, the cached error re-throws on
+    // render, and they land on the error page from inside the app.
+    //
+    // Clearing after the teardown discards anything that failed on the way
+    // out, and by then the authorized routes are unmounted so nothing is left
+    // to repopulate it.
+    resetOramaDb();
+    await resetDb("logout");
+
+    Sentry.setUser(null);
+
     navigate({
       to: "/login",
       replace: true,
@@ -34,11 +52,6 @@ export const useLogout = () => {
     });
 
     queryClient.clear();
-
-    Sentry.setUser(null);
-
-    resetOramaDb();
-    await resetDb("logout");
   };
 
   return { logout };
