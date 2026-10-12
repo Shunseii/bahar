@@ -153,6 +153,32 @@ const setStorageEnvContext = async () => {
 };
 
 /**
+ * Memory readings at the moment of a db-init failure, to test whether sync-wasm
+ * traps cluster on low-memory devices. Browsers expose no free-RAM figure, so
+ * these are proxies: `deviceMemory` is total RAM (GB, rounded, capped at 8) and
+ * the heap fields are the page's JS heap. Both are Chromium-only and null
+ * elsewhere (Safari/iOS, Firefox). sync-wasm's own wasm memory isn't exposed.
+ */
+const getMemorySnapshot = () => {
+  const heap = (
+    performance as {
+      memory?: {
+        jsHeapSizeLimit: number;
+        totalJSHeapSize: number;
+        usedJSHeapSize: number;
+      };
+    }
+  ).memory;
+
+  return {
+    deviceMemory: (navigator as { deviceMemory?: number }).deviceMemory ?? null,
+    jsHeapSizeLimit: heap?.jsHeapSizeLimit ?? null,
+    totalJSHeapSize: heap?.totalJSHeapSize ?? null,
+    usedJSHeapSize: heap?.usedJSHeapSize ?? null,
+  };
+};
+
+/**
  * Best-effort check of whether the local OPFS db file already exists, to
  * distinguish a first-run create from a reconnect in init logs. Returns null if
  * OPFS can't be enumerated -- itself a useful signal, since a browser without
@@ -448,9 +474,12 @@ export const initDb = async () => {
  * and reporting at both filed every failure twice.
  */
 const reportDbInitFailure = (error: DbError) => {
+  const memory = getMemorySnapshot();
+
   Sentry.logger.warn("initDb failed", {
     outcome: error.type,
     reason: error.reason ?? null,
+    ...memory,
   });
 
   // BAHAR-WEB-38: classification so "no transient failure reaches the error
@@ -476,12 +505,13 @@ const reportDbInitFailure = (error: DbError) => {
         wasmTrap: error.wasmTrap ?? null,
         migrationVersion: error.migrationVersion ?? null,
       },
+      memory,
     },
   });
 };
 
 const _initDbInternal = async (): Promise<Result<null, DbError>> => {
-  Sentry.logger.info("initDb: start");
+  Sentry.logger.info("initDb: start", getMemorySnapshot());
   await setStorageEnvContext();
 
   // The poisoned-change-log repair is web-specific, so it wraps the
