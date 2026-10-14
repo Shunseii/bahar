@@ -489,9 +489,6 @@ const hasMorphology = (ism: Ism, verb: Verb) =>
       (ism?.plurals?.length ?? 0) > 0 ||
       verb?.past_tense ||
       verb?.present_tense ||
-      verb?.imperative ||
-      verb?.active_participle ||
-      verb?.passive_participle ||
       (verb?.masadir?.length ?? 0) > 0
   );
 
