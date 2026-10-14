@@ -11,6 +11,16 @@ export const isSyncingAtom = atom(false);
 export const dictionaryChangedAtom = atom(false);
 
 /**
+ * Epoch ms of the last sync that completed, or null if none has since
+ * launch. Set from performSync rather than read back from the engine,
+ * which already knows when it succeeded.
+ */
+export const lastSyncedAtAtom = atom<number | null>(null);
+
+/** Whether the device reports no usable network, via expo-network. */
+export const isOfflineAtom = atom(false);
+
+/**
  * Title shown in the drawer header, set by each screen on focus.
  *
  * An atom rather than context state: the drawer keeps every screen mounted and

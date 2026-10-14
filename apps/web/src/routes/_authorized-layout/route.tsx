@@ -25,7 +25,12 @@ import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { hydrationSkippedCountAtom } from "@/atoms/hydration";
-import { isSyncingAtom, syncCompletedCountAtom } from "@/atoms/sync";
+import {
+  isOfflineAtom,
+  isSyncingAtom,
+  lastSyncedAtAtom,
+  syncCompletedCountAtom,
+} from "@/atoms/sync";
 import { AnimatedLogo } from "@/components/AnimatedLogo";
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { ErrorMessage } from "@/components/errors/ErrorMessage";
@@ -212,6 +217,7 @@ const AuthorizedLayout = () => {
 
         if (outcome.outcome === "ok") {
           store.set(syncCompletedCountAtom, (c) => c + 1);
+          store.set(lastSyncedAtAtom, Date.now());
         } else {
           const classification = outcome.classification.kind;
 
@@ -247,6 +253,21 @@ const AuthorizedLayout = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Mirror the browser's connectivity into an atom so the sync indicator can
+  // distinguish "offline" from "online but not syncing".
+  useEffect(() => {
+    const update = () => store.set(isOfflineAtom, !navigator.onLine);
+
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
+
   // Sync when app visibility changes (e.g., user switches apps on mobile PWA)
   useEffect(() => {
     const handleVisibilityChange = async () => {
@@ -274,6 +295,7 @@ const AuthorizedLayout = () => {
           });
 
           store.set(syncCompletedCountAtom, (c) => c + 1);
+          store.set(lastSyncedAtAtom, Date.now());
         }
       } catch (error) {
         Sentry.logger.warn("Visibility sync failed", {
