@@ -19,6 +19,7 @@ import * as Sentry from "@sentry/react-native";
 import { getDbPath } from "@tursodatabase/sync-react-native";
 import { reloadAppAsync } from "expo";
 import { File } from "expo-file-system";
+import * as Network from "expo-network";
 import { api } from "../../utils/api";
 import { connect, type DatabaseAdapter, isSyncError } from "./adapter";
 import {
@@ -133,13 +134,50 @@ export const deleteLocalDb = (): void => {
 };
 
 /**
- * Whether the device currently has no network connection. Best-effort
- * via RN's navigator.onLine (updated on reachability change events);
- * a false "online" just means the wipe+reload proceeds as before, and
- * a true "offline" blocks the destructive wipe (BAHAR-MOBILE-2).
+ * Whether the device currently has no usable network.
+ *
+ * Kept as a cached boolean because DbPlatform.isOffline is synchronous,
+ * while expo-network only reports asynchronously. A listener keeps it
+ * current and {@link primeNetworkState} seeds it at startup, so the worst
+ * case is a reading one event stale rather than an unanswerable question.
+ *
+ * Previously this read navigator.onLine, which React Native defines but
+ * does not reliably update -- it reported "online" for a device with no
+ * route to the internet. That mattered because the value gates destructive
+ * sync-conflict recovery: a wrong "online" lets a wipe proceed on a device
+ * that cannot then re-pull the data it just deleted.
+ *
+ * isInternetReachable is preferred over isConnected: a device attached to
+ * a captive-portal wifi is connected and still cannot reach the API. It is
+ * null until determined, in which case connectivity is assumed, since
+ * blocking on an unknown is worse than acting on a stale true.
  */
-const isDeviceOffline = (): boolean =>
-  typeof navigator !== "undefined" && !navigator.onLine;
+let deviceOffline = false;
+
+const applyNetworkState = (state: {
+  isConnected?: boolean | null;
+  isInternetReachable?: boolean | null;
+}): void => {
+  deviceOffline =
+    state.isConnected === false || state.isInternetReachable === false;
+};
+
+Network.addNetworkStateListener(applyNetworkState);
+
+/**
+ * Reads the network state once so the cached value is not simply `false`
+ * until the first change event. Called during init; failures are ignored,
+ * leaving the optimistic default.
+ */
+export const primeNetworkState = async (): Promise<void> => {
+  try {
+    applyNetworkState(await Network.getNetworkStateAsync());
+  } catch {
+    // Leave the optimistic default; a listener event will correct it.
+  }
+};
+
+const isDeviceOffline = (): boolean => deviceOffline;
 
 /**
  * The sync-react-native side of the db-core boundary. Module-scoped so init
@@ -250,6 +288,9 @@ export const initDb = async (): Promise<Result<null, DbError>> => {
 
 const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   Sentry.logger.info("initDb: start");
+
+  // Seed the cached network state before anything consults isOffline.
+  await primeNetworkState();
 
   // Mobile's applyRequiredMigrations returns errors directly; map
   // the migrations-API-fetch failure to api_schema_verification_failed
