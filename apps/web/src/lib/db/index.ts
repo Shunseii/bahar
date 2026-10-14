@@ -4,6 +4,7 @@ import {
   type DbError,
   type DbPlatform,
   isSyncConflictError,
+  isUnauthorizedApiError,
   runDbInit,
   runSync,
   type SyncOutcome,
@@ -409,17 +410,6 @@ export const deleteLocalDatabase = async () => {
  * conflicts by design, so web arms the destructive path only once there is
  * real data showing conflicts happen here at all.
  */
-/**
- * Mirrors the check runDbInit makes on the same error, which it does not
- * export. Kept in step with it: a 401 must stay a 401 all the way to the
- * login redirect.
- */
-const isUnauthorized = (error: unknown): boolean =>
-  typeof error === "object" &&
-  error !== null &&
-  "status" in error &&
-  error.status === 401;
-
 const dbPlatform: DbPlatform = {
   getConnectionInfo: async (): Promise<DbConnectionInfo> => {
     try {
@@ -434,7 +424,7 @@ const dbPlatform: DbPlatform = {
       // would connect with a token the server has already rejected and hide
       // a real sign-out behind a stale success, so it propagates and
       // runDbInit routes it to the login redirect.
-      if (isUnauthorized(error)) throw error;
+      if (isUnauthorizedApiError(error)) throw error;
 
       // Anything else -- offline, DNS, a 5xx -- says nothing about whether
       // the replica is usable. If we have talked to the API before, its

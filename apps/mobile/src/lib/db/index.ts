@@ -9,6 +9,7 @@ import {
   type DbConnectionInfo,
   type DbError,
   type DbPlatform,
+  isUnauthorizedApiError,
   runDbInit,
   runSync,
   type SyncOutcome,
@@ -145,17 +146,6 @@ const isDeviceOffline = (): boolean =>
  * and the periodic sync loop share one definition; `connect` takes its info
  * as an argument, so nothing here closes over per-call state.
  */
-/**
- * Mirrors the check runDbInit makes on the same error, which it does not
- * export. Kept in step with it: a 401 must stay a 401 so init reports
- * unauthorized rather than a generic failure.
- */
-const isUnauthorized = (error: unknown): boolean =>
-  typeof error === "object" &&
-  error !== null &&
-  "status" in error &&
-  error.status === 401;
-
 export const dbPlatform: DbPlatform = {
   getConnectionInfo: async (): Promise<DbConnectionInfo> => {
     try {
@@ -170,7 +160,7 @@ export const dbPlatform: DbPlatform = {
       // would connect with a token the server has already rejected and hide
       // a real sign-out behind a stale success, so it propagates and
       // runDbInit routes it to the unauthorized outcome.
-      if (isUnauthorized(error)) throw error;
+      if (isUnauthorizedApiError(error)) throw error;
 
       // Anything else -- offline, DNS, a 5xx -- says nothing about whether
       // the replica is usable. If we have talked to the API before, its
