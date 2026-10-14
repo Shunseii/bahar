@@ -6,6 +6,7 @@ import { showOTPFormAtom } from "@/atoms/otp";
 import { authClient } from "@/lib/auth-client";
 import { resetDb } from "@/lib/db";
 import { resetOramaDb } from "@/lib/search";
+import { clearCachedIdentity } from "@/lib/session-store";
 
 /**
  * A hook that logs the user out of the application
@@ -42,6 +43,11 @@ export const useLogout = () => {
     // to repopulate it.
     resetOramaDb();
     await resetDb("logout");
+
+    // Must outlive the query cache: the persisted identity is what keeps an
+    // offline reload signed in, so leaving it behind would resurrect the
+    // session the user just ended.
+    clearCachedIdentity();
 
     Sentry.setUser(null);
 

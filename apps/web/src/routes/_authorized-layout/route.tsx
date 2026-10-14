@@ -1,3 +1,4 @@
+import { isSignedOut } from "@bahar/auth-core";
 import type { SyncOutcome } from "@bahar/db-core";
 import { enqueueSyncOperation } from "@bahar/db-operations";
 import { Button } from "@bahar/web-ui/components/button";
@@ -33,7 +34,7 @@ import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/search/useSearch";
 import { api } from "@/lib/api";
-import { getCachedSession, isLoggedOut } from "@/lib/auth-client";
+import { getResolvedSession } from "@/lib/auth-client";
 import { ensureDb, initDb, isDbDegraded, syncDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
 import { dictionaryEntriesTable, migrationTable } from "@/lib/db/operations";
@@ -345,31 +346,29 @@ const AuthorizedLayoutError: ErrorRouteComponent = ({ error }) => {
 
 export const Route = createFileRoute("/_authorized-layout")({
   beforeLoad: async ({ location }) => {
-    const sessionResult = await getCachedSession();
+    const session = await getResolvedSession();
 
-    if (sessionResult.error) {
-      // Distinguishes 429 (rate limit) vs 401 (real unauth) vs network/other.
-      Sentry.logger.warn("getSession failed", {
-        status: sessionResult.error.status,
-        statusText: sessionResult.error.statusText,
-        href: location.href,
-      });
-    }
-
-    if (isLoggedOut(sessionResult)) {
+    if (isSignedOut(session)) {
       Sentry.logger.warn("Redirecting to login", {
         reason: "no_session",
-        status: sessionResult.error?.status ?? null,
         href: location.href,
       });
       throw redirect({ to: "/login", search: { redirect: location.href } });
     }
 
-    const { data: session } = sessionResult;
-
-    if (session?.user) {
-      Sentry.setUser({ id: session.user.id, email: session.user.email });
+    if (session.source === "cached") {
+      // Running on the last identity the server confirmed, because it could
+      // not be reached. The user keeps their local replica instead of being
+      // bounced to a login they cannot complete without a network.
+      Sentry.logger.info("session: serving cached identity", {
+        href: location.href,
+      });
     }
+
+    Sentry.setUser({
+      id: session.identity.userId,
+      email: session.identity.email,
+    });
 
     const initDbResult = await initDb();
 
