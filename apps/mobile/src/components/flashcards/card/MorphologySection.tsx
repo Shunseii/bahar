@@ -13,12 +13,7 @@ const hasIsmContent = (ism: NonNullable<Morphology>["ism"]) =>
 
 const hasVerbRowContent = (verb: NonNullable<Morphology>["verb"]) =>
   Boolean(
-    verb?.past_tense ||
-      verb?.present_tense ||
-      verb?.imperative ||
-      verb?.active_participle ||
-      verb?.passive_participle ||
-      (verb?.masadir?.length ?? 0) > 0
+    verb?.past_tense || verb?.present_tense || (verb?.masadir?.length ?? 0) > 0
   );
 
 export const MorphologySection: React.FC<MorphologySectionProps> = ({
@@ -39,24 +34,6 @@ export const MorphologySection: React.FC<MorphologySectionProps> = ({
       key: "present",
       label: t`Present`,
       value: verb.present_tense,
-    });
-  if (verb?.imperative)
-    verbRows.push({
-      key: "imperative",
-      label: t`Imperative`,
-      value: verb.imperative,
-    });
-  if (verb?.active_participle)
-    verbRows.push({
-      key: "active-participle",
-      label: t`Active P.`,
-      value: verb.active_participle,
-    });
-  if (verb?.passive_participle)
-    verbRows.push({
-      key: "passive-participle",
-      label: t`Passive P.`,
-      value: verb.passive_participle,
     });
 
   return (
