@@ -48,6 +48,7 @@ import { Button } from "@/components/ui/button";
 import { UpdatePrompt } from "@/components/updates/UpdatePrompt";
 import { HeaderScrollContext } from "@/contexts/header-scroll";
 import { useSearch } from "@/hooks/useSearch";
+import { clearCachedIdentity } from "@/lib/auth/session-store";
 import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
 import { performSync } from "@/lib/db/sync";
 import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
@@ -181,6 +182,11 @@ function DrawerContent(props: DrawerContentComponentProps) {
               resetOramaDb();
               await resetDb();
               await authClient.signOut();
+
+              // Must outlive the query cache: the persisted identity is what
+              // keeps an offline launch signed in, so leaving it behind would
+              // resurrect the session the user just ended.
+              await clearCachedIdentity();
             }}
             variant="secondary"
           >

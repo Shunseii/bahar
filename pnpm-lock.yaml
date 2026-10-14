@@ -231,6 +231,9 @@ importers:
 
   apps/mobile:
     dependencies:
+      '@bahar/auth-core':
+        specifier: workspace:*
+        version: link:../../packages/auth-core
       '@better-auth/expo':
         specifier: 1.4.19
         version: 1.4.19(@better-auth/core@1.4.19)(better-auth@1.4.19)(expo-constants@18.0.13)(expo-linking@8.0.11)(expo-network@8.0.8)(expo-web-browser@15.0.10)
