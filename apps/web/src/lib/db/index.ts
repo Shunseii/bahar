@@ -16,6 +16,11 @@ import * as Sentry from "@sentry/react";
 import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
 import { drizzle } from "drizzle-orm/sqlite-proxy";
 import { api } from "../api";
+import {
+  clearCachedConnectionInfo,
+  readCachedConnectionInfo,
+  writeCachedConnectionInfo,
+} from "./connection-cache";
 import { DbInitFailedError } from "./errors";
 
 // Wire web's Sentry logger into the shared DB queue (which has no logging
@@ -344,6 +349,8 @@ export const resetDb = async (caller: ResetDbCaller) => {
 export const deleteLocalDatabase = async () => {
   await resetDb("delete_local_db");
 
+  clearCachedConnectionInfo();
+
   // OPFS files and localStorage sync metadata live in this context.
   const opfsRoot = await navigator.storage.getDirectory();
 
@@ -402,11 +409,48 @@ export const deleteLocalDatabase = async () => {
  * conflicts by design, so web arms the destructive path only once there is
  * real data showing conflicts happen here at all.
  */
+/**
+ * Mirrors the check runDbInit makes on the same error, which it does not
+ * export. Kept in step with it: a 401 must stay a 401 all the way to the
+ * login redirect.
+ */
+const isUnauthorized = (error: unknown): boolean =>
+  typeof error === "object" &&
+  error !== null &&
+  "status" in error &&
+  error.status === 401;
+
 const dbPlatform: DbPlatform = {
   getConnectionInfo: async (): Promise<DbConnectionInfo> => {
-    const { data, error } = await api.databases.user.get();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await api.databases.user.get();
+      if (error) throw error;
+
+      writeCachedConnectionInfo(data);
+
+      return data;
+    } catch (error) {
+      // A 401 is the server refusing us, not an absent network. Falling back
+      // would connect with a token the server has already rejected and hide
+      // a real sign-out behind a stale success, so it propagates and
+      // runDbInit routes it to the login redirect.
+      if (isUnauthorized(error)) throw error;
+
+      // Anything else -- offline, DNS, a 5xx -- says nothing about whether
+      // the replica is usable. If we have talked to the API before, its
+      // answer is still good enough to open the local database; the pull
+      // that follows will fail and runDbInit degrades to the stale replica.
+      const cached = readCachedConnectionInfo();
+      if (cached) {
+        Sentry.logger.info("initDb: using cached connection info", {
+          reason: String(error),
+        });
+
+        return cached;
+      }
+
+      throw error;
+    }
   },
   connect: async (info: DbConnectionInfo) => {
     const dbAlreadyExists = await localDbExists(info.db_name);
