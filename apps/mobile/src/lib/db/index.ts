@@ -20,6 +20,10 @@ import { reloadAppAsync } from "expo";
 import { File } from "expo-file-system";
 import { api } from "../../utils/api";
 import { connect, type DatabaseAdapter, isSyncError } from "./adapter";
+import {
+  readCachedConnectionInfo,
+  writeCachedConnectionInfo,
+} from "./connection-cache";
 
 const LOCAL_DB_NAME = "bahar-user.db";
 export const SYNC_INTERVAL_MS = 60_000;
@@ -141,11 +145,48 @@ const isDeviceOffline = (): boolean =>
  * and the periodic sync loop share one definition; `connect` takes its info
  * as an argument, so nothing here closes over per-call state.
  */
+/**
+ * Mirrors the check runDbInit makes on the same error, which it does not
+ * export. Kept in step with it: a 401 must stay a 401 so init reports
+ * unauthorized rather than a generic failure.
+ */
+const isUnauthorized = (error: unknown): boolean =>
+  typeof error === "object" &&
+  error !== null &&
+  "status" in error &&
+  error.status === 401;
+
 export const dbPlatform: DbPlatform = {
   getConnectionInfo: async (): Promise<DbConnectionInfo> => {
-    const { data, error } = await api.databases.user.get();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await api.databases.user.get();
+      if (error) throw error;
+
+      await writeCachedConnectionInfo(data);
+
+      return data;
+    } catch (error) {
+      // A 401 is the server refusing us, not an absent network. Falling back
+      // would connect with a token the server has already rejected and hide
+      // a real sign-out behind a stale success, so it propagates and
+      // runDbInit routes it to the unauthorized outcome.
+      if (isUnauthorized(error)) throw error;
+
+      // Anything else -- offline, DNS, a 5xx -- says nothing about whether
+      // the replica is usable. If we have talked to the API before, its
+      // answer is still good enough to open the local database; the pull
+      // that follows will fail and runDbInit degrades to the stale replica.
+      const cached = await readCachedConnectionInfo();
+      if (cached) {
+        Sentry.logger.info("initDb: using cached connection info", {
+          reason: String(error),
+        });
+
+        return cached;
+      }
+
+      throw error;
+    }
   },
   connect: async (info: DbConnectionInfo) => {
     const dbFileName = `${LOCAL_DB_NAME}-${info.db_name}.db`;

@@ -51,6 +51,7 @@ import { useSearch } from "@/hooks/useSearch";
 import { useUserPlan } from "@/hooks/useUserPlan";
 import { deleteLocalDb, ensureDb, resetDb } from "@/lib/db";
 import { getDrizzleDb } from "@/lib/db/adapter";
+import { clearCachedConnectionInfo } from "@/lib/db/connection-cache";
 import {
   clampPostponeWindow,
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
@@ -453,6 +454,7 @@ export default function SettingsScreen() {
               await resetDb();
               deleteLocalDb();
               resetOramaDb();
+              await clearCachedConnectionInfo();
             } catch (err) {
               console.error("Failed to clear local data:", err);
             }

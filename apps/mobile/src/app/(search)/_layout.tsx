@@ -50,6 +50,7 @@ import { HeaderScrollContext } from "@/contexts/header-scroll";
 import { useSearch } from "@/hooks/useSearch";
 import { clearCachedIdentity } from "@/lib/auth/session-store";
 import { resetDb, SYNC_INTERVAL_MS } from "@/lib/db";
+import { clearCachedConnectionInfo } from "@/lib/db/connection-cache";
 import { performSync } from "@/lib/db/sync";
 import { rehydrateOramaDb, resetOramaDb } from "@/lib/search";
 import {
@@ -187,6 +188,7 @@ function DrawerContent(props: DrawerContentComponentProps) {
               // keeps an offline launch signed in, so leaving it behind would
               // resurrect the session the user just ended.
               await clearCachedIdentity();
+              await clearCachedConnectionInfo();
             }}
             variant="secondary"
           >
