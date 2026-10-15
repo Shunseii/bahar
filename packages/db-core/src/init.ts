@@ -38,7 +38,16 @@ export type DbError = {
  */
 export type IsSyncError = (error: unknown) => boolean;
 
-const isUnauthorizedApiError = (error: unknown): boolean => {
+/**
+ * Whether a thrown API error is a 401.
+ *
+ * Exported because the platforms have to make the same call: their
+ * getConnectionInfo falls back to a cached response when the API cannot be
+ * reached, and a 401 has to be excluded from that fallback or a rejected
+ * token is reported as success. Two copies of this check would have to stay
+ * in step by hand.
+ */
+export const isUnauthorizedApiError = (error: unknown): boolean => {
   return (
     typeof error === "object" &&
     error !== null &&

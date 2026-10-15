@@ -53,6 +53,21 @@ const APP_NAME = "Bahar";
 const OTP_LENGTH = 6;
 const OTP_EXPIRY_SECS = 60 * 5; // 5 minutes
 const SESSION_COOKIE_CACHE_EXPIRY_SECS = 60 * 5; // 5 minutes
+
+/**
+ * How long a session survives without being used. better-auth refreshes it
+ * on use (updateAge, 1 day by default), so an active user never reaches
+ * this; it only decides how long someone can be away before signing in
+ * again.
+ *
+ * Raised from better-auth's 7-day default because the apps now work
+ * offline. Signing in requires an email OTP, so an expiry that lands while
+ * the user has no connection locks them out of a local database that is
+ * sitting on their device, and they cannot clear it until they are back
+ * online. Seven days is well inside the span someone might be travelling
+ * or simply not studying.
+ */
+const SESSION_EXPIRY_SECS = 60 * 60 * 24 * 30; // 30 days
 const MOBILE_DEEP_LINK_SCHEME = "bahar://";
 const API_KEY_PREFIX = "bahar_cli_";
 
@@ -349,6 +364,7 @@ export const auth = betterAuth({
     },
   },
   session: {
+    expiresIn: SESSION_EXPIRY_SECS,
     cookieCache: {
       enabled: true,
       maxAge: SESSION_COOKIE_CACHE_EXPIRY_SECS,

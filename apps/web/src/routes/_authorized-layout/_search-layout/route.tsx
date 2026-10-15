@@ -1,3 +1,4 @@
+import { isSignedOut } from "@bahar/auth-core";
 import { TAG_MODES, WORD_TYPES } from "@bahar/drizzle-user-db-schemas";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { zodValidator } from "@tanstack/zod-adapter";
@@ -6,7 +7,11 @@ import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/search/SearchInput";
 import { SORT_OPTIONS } from "@/hooks/search/useSearch";
-import { authClient, getCachedSession, isLoggedOut } from "@/lib/auth-client";
+import {
+  authClient,
+  getLiveSessionUser,
+  getResolvedSession,
+} from "@/lib/auth-client";
 import { settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 
@@ -49,9 +54,9 @@ export const Route = createFileRoute("/_authorized-layout/_search-layout")({
   component: AppLayout,
   validateSearch: zodValidator(filtersSchema),
   beforeLoad: async ({ location, search }) => {
-    const sessionResult = await getCachedSession();
+    const session = await getResolvedSession();
 
-    if (isLoggedOut(sessionResult)) {
+    if (isSignedOut(session)) {
       throw redirect({
         to: "/login",
         search: {
@@ -65,15 +70,16 @@ export const Route = createFileRoute("/_authorized-layout/_search-layout")({
       queryFn: settingsTable.getSettings.query,
     });
 
-    // `data` can be null on a transient error (429/network) that isn't a
-    // logout; skip the plan-gated redirect since we can't read the plan then.
-    const { data } = sessionResult;
-    if (!data?.user) return;
+    // Null whenever the server did not answer -- a transient error, or an
+    // offline load running on the cached identity. Plan is an entitlement, so
+    // skip the gate rather than guessing at it from stale state.
+    const user = await getLiveSessionUser();
+    if (!user) return;
 
     const activeStatuses = ["active", "trialing", "past_due"];
     const isFreeUser =
-      data.user.plan !== "pro" ||
-      !activeStatuses.includes(data.user.subscriptionStatus ?? "");
+      user.plan !== "pro" ||
+      !activeStatuses.includes(user.subscriptionStatus ?? "");
 
     const proOnlySorts = ["difficulty", "lastReviewed"];
     if (isFreeUser && search.sort && proOnlySorts.includes(search.sort)) {

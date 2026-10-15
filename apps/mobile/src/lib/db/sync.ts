@@ -5,6 +5,7 @@ import { dbPlatform, ensureDb, syncDb } from "@/lib/db";
 import {
   dictionaryChangedAtom,
   isSyncingAtom,
+  lastSyncedAtAtom,
   store,
   syncCompletedCountAtom,
 } from "@/lib/store";
@@ -121,6 +122,7 @@ export const performSync = async () => {
     }
 
     store.set(syncCompletedCountAtom, (c) => c + 1);
+    store.set(lastSyncedAtAtom, Date.now());
     console.log("[sync] Sync complete", {
       dictionaryChanged: changed,
       countBefore,
