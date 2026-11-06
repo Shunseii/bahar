@@ -23,7 +23,6 @@ import {
   BookType,
   ChevronDown,
   FunnelXIcon,
-  Lock,
   SlidersHorizontal,
 } from "lucide-react";
 import type { ReactNode } from "react";
@@ -32,7 +31,6 @@ import { TagsFilter } from "@/components/features/dictionary/filters/TagsFilter"
 import { TagPill } from "@/components/TagsCombobox";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
-import { useUserPlan } from "@/hooks/useUserPlan";
 
 type SortOption =
   | "relevance"
@@ -64,8 +62,6 @@ const sortOptions: SortOption[] = [
   "lastReviewed",
 ];
 
-const PRO_ONLY_SORTS: SortOption[] = ["difficulty", "lastReviewed"];
-
 const useWordTypeLabels = (): Record<WordType, string> => {
   const { t } = useLingui();
   return {
@@ -96,7 +92,6 @@ export const DictionaryFilters = ({
   const navigate = useNavigate();
   const dir = useDir();
   const { formatNumber } = useFormatNumber();
-  const { isFreeUser } = useUserPlan();
   const wordTypeLabels = useWordTypeLabels();
   const tagModeLabels = useTagModeLabels();
   const {
@@ -345,29 +340,15 @@ export const DictionaryFilters = ({
 
                 <SelectContent>
                   <SelectGroup>
-                    {sortOptions.map((option) => {
-                      const isProOnly = PRO_ONLY_SORTS.includes(option);
-                      const isDisabled = isProOnly && isFreeUser;
-
-                      return (
-                        <SelectItem
-                          className={cn(
-                            "cursor-pointer",
-                            isDisabled && "opacity-50"
-                          )}
-                          disabled={isDisabled}
-                          key={option}
-                          value={option}
-                        >
-                          <span className="flex items-center gap-1.5">
-                            <SortOptionLabel option={option} />
-                            {isProOnly && isFreeUser && (
-                              <Lock className="h-3 w-3" />
-                            )}
-                          </span>
-                        </SelectItem>
-                      );
-                    })}
+                    {sortOptions.map((option) => (
+                      <SelectItem
+                        className="cursor-pointer"
+                        key={option}
+                        value={option}
+                      >
+                        <SortOptionLabel option={option} />
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>

@@ -22,7 +22,12 @@ export type {
   RetryPolicy,
   SyncOutcome,
 } from "./init";
-export { DEFAULT_RETRY_POLICY, runDbInit, runSync } from "./init";
+export {
+  DEFAULT_RETRY_POLICY,
+  isUnauthorizedApiError,
+  runDbInit,
+  runSync,
+} from "./init";
 export {
   classifySyncFailure,
   isSyncConflictError,

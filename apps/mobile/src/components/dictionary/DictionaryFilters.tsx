@@ -15,7 +15,6 @@ import {
   ChevronLeft,
   ChevronRight,
   FunnelX,
-  Lock,
   SlidersHorizontal,
   Tag,
   X,
@@ -38,7 +37,6 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import type { SortOption } from "@/hooks/useSearch";
-import { useUserPlan } from "@/hooks/useUserPlan";
 import { dictionaryEntriesTable } from "@/lib/db/operations";
 import {
   activeFilterCountAtom,
@@ -57,8 +55,6 @@ const SORT_OPTIONS: SortOption[] = [
   "difficulty",
   "lastReviewed",
 ];
-
-const PRO_ONLY_SORTS: SortOption[] = ["difficulty", "lastReviewed"];
 
 const useSortLabels = (): Record<SortOption, string> => {
   const { t } = useLingui();
@@ -329,7 +325,6 @@ const FiltersModal: FC<{
   const { t } = useLingui();
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
-  const { isFreeUser } = useUserPlan();
   const { formatNumber } = useFormatNumber();
   const sortLabels = useSortLabels();
   const wordTypeLabels = useWordTypeLabels();
@@ -522,16 +517,12 @@ const FiltersModal: FC<{
           >
             {SORT_OPTIONS.map((option) => {
               const isActive = draftSort === option;
-              const isProOnly = PRO_ONLY_SORTS.includes(option);
-              const isDisabled = isProOnly && isFreeUser;
 
               return (
                 <Pressable
                   className="flex-row items-center justify-between px-4 py-3.5 active:bg-muted/30"
-                  disabled={isDisabled}
                   key={option}
                   onPress={() => setDraftSort(option)}
-                  style={isDisabled ? { opacity: 0.5 } : undefined}
                 >
                   <View className="flex-row items-center gap-2">
                     <Text
@@ -543,16 +534,6 @@ const FiltersModal: FC<{
                     >
                       {sortLabels[option]}
                     </Text>
-                    {isProOnly && isFreeUser && (
-                      <View className="flex-row items-center gap-1.5">
-                        <View className="rounded bg-primary/10 px-1.5 py-0.5">
-                          <Text className="font-bold text-[10px] text-primary uppercase">
-                            Pro
-                          </Text>
-                        </View>
-                        <Lock color={colors.mutedForeground} size={14} />
-                      </View>
-                    )}
                   </View>
                   {isActive && <Check color={colors.primary} size={20} />}
                 </Pressable>

@@ -30,7 +30,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import { useEffect, useRef } from "react";
-import { authClient } from "@/utils/auth-client";
+import { useResolvedSession } from "@/lib/auth/useResolvedSession";
 import "react-native-reanimated";
 import { messages as arMessages } from "@bahar/i18n/locales/ar";
 import { messages as enMessages } from "@bahar/i18n/locales/en";
@@ -112,7 +112,7 @@ Sentry.init({
 setup();
 
 function RootLayout() {
-  const { isPending, data: authData } = authClient.useSession();
+  const { session, isResolving } = useResolvedSession();
   const colorScheme = useColorScheme();
   const navigationRef = useNavigationContainerRef();
   const hasResolved = useRef(false);
@@ -121,11 +121,11 @@ function RootLayout() {
   });
 
   useEffect(() => {
-    if (loaded && !isPending) {
+    if (loaded && !isResolving) {
       hasResolved.current = true;
       SplashScreen.hideAsync();
     }
-  }, [loaded, isPending]);
+  }, [loaded, isResolving]);
 
   useEffect(() => {
     if (navigationRef?.current) {
@@ -134,16 +134,24 @@ function RootLayout() {
   }, [navigationRef]);
 
   useEffect(() => {
-    if (authData?.user) {
-      Sentry.setUser({ id: authData.user.id, email: authData.user.email });
+    if (session?.identity) {
+      Sentry.setUser({
+        id: session.identity.userId,
+        email: session.identity.email,
+      });
     } else {
       Sentry.setUser(null);
     }
-  }, [authData?.user]);
+  }, [session?.identity]);
 
-  if (!loaded || (!hasResolved.current && isPending)) {
+  if (!loaded || (!hasResolved.current && isResolving)) {
     return null;
   }
+
+  // Offline with a usable local replica resolves to the cached identity, so
+  // the user stays in the app rather than being sent to a login they cannot
+  // complete without a network.
+  const isAuthenticated = session?.identity != null;
 
   return (
     <JotaiProvider store={store}>
@@ -160,8 +168,8 @@ function RootLayout() {
               >
                 <View className="flex-1 bg-background">
                   <ThemeColorsInner
-                    authData={authData}
                     colorScheme={colorScheme}
+                    isAuthenticated={isAuthenticated}
                   />
                 </View>
               </SafeAreaListener>
@@ -179,10 +187,10 @@ function RootLayout() {
  */
 function ThemeColorsInner({
   colorScheme,
-  authData,
+  isAuthenticated,
 }: {
   colorScheme: ReturnType<typeof useColorScheme>;
-  authData: unknown;
+  isAuthenticated: boolean;
 }) {
   const themeColors = useResolvedThemeColors();
 
@@ -203,14 +211,14 @@ function ThemeColorsInner({
                 contentStyle: { backgroundColor: themeColors.background },
               }}
             >
-              <Stack.Protected guard={!authData}>
+              <Stack.Protected guard={!isAuthenticated}>
                 <Stack.Screen
                   name="(auth)"
                   options={{ headerShown: false, animation: "fade" }}
                 />
               </Stack.Protected>
 
-              <Stack.Protected guard={!!authData}>
+              <Stack.Protected guard={isAuthenticated}>
                 <Stack.Screen
                   name="(search)"
                   options={{ headerShown: false, animation: "fade" }}
