@@ -7,11 +7,7 @@ import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/search/SearchInput";
 import { SORT_OPTIONS } from "@/hooks/search/useSearch";
-import {
-  authClient,
-  getLiveSessionUser,
-  getResolvedSession,
-} from "@/lib/auth-client";
+import { authClient, getResolvedSession } from "@/lib/auth-client";
 import { settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 
@@ -53,7 +49,7 @@ const AppLayout = () => {
 export const Route = createFileRoute("/_authorized-layout/_search-layout")({
   component: AppLayout,
   validateSearch: zodValidator(filtersSchema),
-  beforeLoad: async ({ location, search }) => {
+  beforeLoad: async ({ location }) => {
     const session = await getResolvedSession();
 
     if (isSignedOut(session)) {
@@ -69,24 +65,5 @@ export const Route = createFileRoute("/_authorized-layout/_search-layout")({
       queryKey: settingsTable.getSettings.cacheOptions.queryKey,
       queryFn: settingsTable.getSettings.query,
     });
-
-    // Null whenever the server did not answer -- a transient error, or an
-    // offline load running on the cached identity. Plan is an entitlement, so
-    // skip the gate rather than guessing at it from stale state.
-    const user = await getLiveSessionUser();
-    if (!user) return;
-
-    const activeStatuses = ["active", "trialing", "past_due"];
-    const isFreeUser =
-      user.plan !== "pro" ||
-      !activeStatuses.includes(user.subscriptionStatus ?? "");
-
-    const proOnlySorts = ["difficulty", "lastReviewed"];
-    if (isFreeUser && search.sort && proOnlySorts.includes(search.sort)) {
-      throw redirect({
-        to: location.pathname,
-        search: { ...search, sort: undefined },
-      });
-    }
   },
 });

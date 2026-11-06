@@ -58,21 +58,8 @@ const SESSION_STALE_TIME_MS = 1000 * 60 * 5;
  * fetch, a 429, a 5xx -- says nothing about the user, so it resolves to
  * `unreachable` and the cached identity decides.
  */
-type LiveSessionUser = NonNullable<
-  Awaited<ReturnType<typeof authClient.getSession>>["data"]
->["user"];
-
-/**
- * The cached outcome, plus the live user when there was one.
- *
- * `user` carries fields the identity policy deliberately does not -- plan and
- * subscription status. Those are entitlements, and a cached entitlement is
- * not something to gate billing on, so they are available only while the
- * server is actually answering.
- */
 type SessionFetchResult = {
   outcome: SessionFetchOutcome;
-  user: LiveSessionUser | null;
 };
 
 const fetchSessionOutcome = async (): Promise<SessionFetchResult> => {
@@ -85,11 +72,10 @@ const fetchSessionOutcome = async (): Promise<SessionFetchResult> => {
           error.status === 401
             ? { kind: "loggedOut" }
             : { kind: "unreachable" },
-        user: null,
       };
     }
 
-    if (!data?.user) return { outcome: { kind: "loggedOut" }, user: null };
+    if (!data?.user) return { outcome: { kind: "loggedOut" } };
 
     return {
       outcome: {
@@ -100,10 +86,9 @@ const fetchSessionOutcome = async (): Promise<SessionFetchResult> => {
           expiresAtMs: new Date(data.session.expiresAt).getTime(),
         },
       },
-      user: data.user,
     };
   } catch {
-    return { outcome: { kind: "unreachable" }, user: null };
+    return { outcome: { kind: "unreachable" } };
   }
 };
 
@@ -176,16 +161,3 @@ export const clearCachedSession = (): void =>
  * and the only reliable way to catch whatever settled late.
  */
 export const clearQueryCacheForNewSession = (): void => queryClient.clear();
-
-/**
- * The live user, or null when the session came from cache or there is none.
- *
- * Reads the same cached query as {@link getResolvedSession}, so it costs no
- * extra request. Callers gating on plan or subscription must treat null as
- * "cannot tell" and skip the gate rather than assuming free.
- */
-export const getLiveSessionUser = async (): Promise<LiveSessionUser | null> => {
-  const { user } = await queryClient.ensureQueryData(sessionQueryOptions);
-
-  return user;
-};
