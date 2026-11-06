@@ -162,3 +162,41 @@ describe("dictionary bulk operations (web wiring)", () => {
     ).toBe(2);
   });
 });
+
+// today.query joins flashcards to dictionary entries, and both tables have an
+// "id" column. The adapter maps rows positionally via Object.values, so a
+// change in how the engine expands same-named columns would shift every value
+// after the collision. The Node engine is covered in @bahar/db-operations; this
+// pins down the same alignment on sync-wasm.
+describe("flashcardsTable.today (web wiring)", () => {
+  let testDb: TestDb;
+
+  beforeEach(async () => {
+    testDb = await createTestDb();
+    dbRef.current = testDb;
+  });
+
+  afterEach(async () => {
+    await testDb.close();
+  });
+
+  it("returns the joined entry's fields aligned with the flashcard's", async () => {
+    const { entry, forward } =
+      await dictionaryEntriesTable.addWordWithFlashcards.mutation({
+        word: { word: "كتاب", translation: "book", type: "ism" },
+      });
+
+    const results = await flashcardsTable.today.query({});
+
+    expect(results).toHaveLength(1);
+    expect(results[0].id).toBe(forward.id);
+    expect(results[0].dictionary_entry_id).toBe(entry.id);
+    expect(results[0].direction).toBe(forward.direction);
+    expect(results[0].dictionary_entry).toMatchObject({
+      id: entry.id,
+      word: "كتاب",
+      translation: "book",
+      type: "ism",
+    });
+  });
+});

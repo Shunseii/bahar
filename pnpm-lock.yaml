@@ -55,8 +55,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.15(elysia@1.4.27)
       '@libsql/client':
-        specifier: ^0.10.0
-        version: 0.10.0
+        specifier: ^0.18.0
+        version: 0.18.0
       '@polar-sh/better-auth':
         specifier: ^1.8.3
         version: 1.8.3(@polar-sh/sdk@0.47.0)(@stripe/react-stripe-js@4.0.2)(@stripe/stripe-js@7.9.0)(better-auth@1.4.19)(react-dom@19.1.0)(react-is@19.2.5)(react@19.1.0)(zod@4.3.6)
@@ -70,8 +70,8 @@ importers:
         specifier: ^0.6.1
         version: 0.6.1
       '@tursodatabase/api':
-        specifier: ^1.9.0
-        version: 1.9.0
+        specifier: ^2.0.5
+        version: 2.0.5
       '@upstash/redis':
         specifier: ^1.36.0
         version: 1.36.0
@@ -83,7 +83,7 @@ importers:
         version: 16.4.5
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+        version: 0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       drizzle-zod:
         specifier: ^0.8.3
         version: 0.8.3(drizzle-orm@0.45.1)(zod@4.3.6)
@@ -140,14 +140,14 @@ importers:
         specifier: 0.1.0
         version: 0.1.0(bun@1.3.14)
       '@libsql/client':
-        specifier: ^0.17.0
-        version: 0.17.4
+        specifier: ^0.18.0
+        version: 0.18.0
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@libsql/client@0.17.4)(bun-types@1.3.11)
+        version: 0.45.1(@libsql/client@0.18.0)(bun-types@1.3.11)
       open:
         specifier: ^10.1.0
         version: 10.2.0
@@ -310,8 +310,8 @@ importers:
         specifier: ^5.82.2
         version: 5.83.0(react@19.1.0)
       '@tursodatabase/sync-react-native':
-        specifier: ^0.6.1
-        version: 0.6.1(react-native@0.81.5)(react@19.1.0)
+        specifier: ^0.8.3
+        version: 0.8.3(react-native@0.81.5)(react@19.1.0)
       better-auth:
         specifier: 1.4.19
         version: 1.4.19(drizzle-orm@0.45.1)(react-dom@19.1.0)(react@19.1.0)(vitest@4.1.9)
@@ -323,7 +323,7 @@ importers:
         version: 3.6.0
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+        version: 0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       expo:
         specifier: ~54.0.33
         version: 54.0.33(@babel/core@7.26.0)(@expo/metro-runtime@6.1.2)(expo-router@6.0.23)(react-native-webview@13.15.0)(react-native@0.81.5)(react@19.1.0)(typescript@5.9.2)
@@ -620,8 +620,8 @@ importers:
         specifier: ^1.150.0
         version: 1.150.0(@tanstack/react-router@1.120.13)(zod@4.3.6)
       '@tursodatabase/sync-wasm':
-        specifier: ^0.6.1
-        version: 0.6.1
+        specifier: ^0.8.3
+        version: 0.8.3
       '@uidotdev/usehooks':
         specifier: ^2.4.1
         version: 2.4.1(react-dom@19.1.0)(react@19.1.0)
@@ -636,7 +636,7 @@ importers:
         version: 3.3.0
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+        version: 0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       input-otp:
         specifier: 1.4.2
         version: 1.4.2(react-dom@19.1.0)(react@19.1.0)
@@ -711,8 +711,8 @@ importers:
         specifier: ^1.91.1
         version: 1.91.1(vite@6.4.1)
       '@tursodatabase/serverless':
-        specifier: ^0.2.4
-        version: 0.2.4
+        specifier: ^1.4.1
+        version: 1.4.1
       '@types/bun':
         specifier: ^1.3.11
         version: 1.3.11
@@ -813,11 +813,11 @@ importers:
         specifier: workspace:*
         version: link:../config-typescript
       '@tursodatabase/sync':
-        specifier: ^0.6.1
-        version: 0.6.1
+        specifier: ^0.8.3
+        version: 0.8.3
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+        version: 0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       vitest:
         specifier: ^4.1.9
         version: 4.1.9(@types/node@20.10.6)(@vitest/browser-playwright@4.1.9)(@vitest/coverage-v8@4.1.9)(vite@6.4.1)
@@ -848,7 +848,7 @@ importers:
     dependencies:
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+        version: 0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       drizzle-zod:
         specifier: ^0.8.3
         version: 0.8.3(drizzle-orm@0.45.1)(zod@4.3.6)
@@ -3934,7 +3934,7 @@ packages:
     peerDependencies:
       elysia: '>=1.4.19'
     dependencies:
-      elysia: 1.4.27(@sinclair/typebox@0.34.49)(@types/bun@1.3.11)(exact-mirror@1.0.0)(file-type@22.0.0)(openapi-types@12.1.3)(typescript@5.8.3)
+      elysia: 1.4.27(@sinclair/typebox@0.34.49)(exact-mirror@1.0.0)(file-type@22.0.0)(openapi-types@12.1.3)(typescript@5.9.2)
     dev: false
 
   /@elysiajs/openapi@1.4.15(elysia@1.4.27):
@@ -6891,22 +6891,10 @@ packages:
       '@jridgewell/sourcemap-codec': 1.5.5
     dev: true
 
-  /@libsql/client@0.10.0:
-    resolution: {integrity: sha512-2ERn08T4XOVx34yBtUPq0RDjAdd9TJ5qNH/izugr208ml2F94mk92qC64kXyDVQINodWJvp3kAdq6P4zTtCZ7g==}
+  /@libsql/client@0.18.0:
+    resolution: {integrity: sha512-zMCCo58vv7w27j7+cnt/GW+X6/Rih6cHZ86PKi0AxCMOqMfrVgG9OZ5lW2bDMJhSeOjsv2szH2nJF3A9l36UmA==}
     dependencies:
-      '@libsql/core': 0.10.0
-      '@libsql/hrana-client': 0.6.2
-      js-base64: 3.7.6
-      libsql: 0.4.1
-      promise-limit: 2.7.0
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  /@libsql/client@0.17.4:
-    resolution: {integrity: sha512-lYayFWasDV78A+TjlEhr6ubb3odBV6OHjb+wdp8VQcyWWAEIjuwbCHaraEUS4m4yWoo0BvZo96It4VdzZRmRWw==}
-    dependencies:
-      '@libsql/core': 0.17.4
+      '@libsql/core': 0.18.0
       '@libsql/hrana-client': 0.10.0
       js-base64: 3.7.6
       libsql: 0.5.29
@@ -6914,51 +6902,15 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-    dev: false
 
-  /@libsql/core@0.10.0:
-    resolution: {integrity: sha512-rqynAXGaiSpTsykOZdBtI1N4z4O+KZ6mt33K/aHeXAY0gSIfK/ctxuWa0Y1Bjo4FMz1idBTCXz4Ps5kITOvZZw==}
+  /@libsql/core@0.18.0:
+    resolution: {integrity: sha512-N8RR2CIpcgtbKZnXs2KVpw2lJQfinUj3I56e7qRDRpK18Hty0Rr8nr00VmFb4R/DsqOanPB/TaP3+QAQLZeXMg==}
     dependencies:
       js-base64: 3.7.6
-
-  /@libsql/core@0.17.4:
-    resolution: {integrity: sha512-LqF9gIvnJ38nmAH1y/ChizHqDO/MO1wLgA96XrraulEEbqXxLjleSH92YWTolbuJKgPUmGu4aJk9W3UnAcxLOQ==}
-    dependencies:
-      js-base64: 3.7.6
-    dev: false
-
-  /@libsql/darwin-arm64@0.3.19:
-    resolution: {integrity: sha512-rmOqsLcDI65zzxlUOoEiPJLhqmbFsZF6p4UJQ2kMqB+Kc0Rt5/A1OAdOZ/Wo8fQfJWjR1IbkbpEINFioyKf+nQ==}
-    cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    optional: true
-
-  /@libsql/darwin-arm64@0.4.1:
-    resolution: {integrity: sha512-XICT9/OyU8Aa9Iv1xZIHgvM09n/1OQUk3VC+s5uavzdiGHrDMkOWzN47JN7/FiMa/NWrcgoEiDMk3+e7mE53Ig==}
-    cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    optional: true
 
   /@libsql/darwin-arm64@0.5.29:
     resolution: {integrity: sha512-K+2RIB1OGFPYQbfay48GakLhqf3ArcbHqPFu7EZiaUcRgFcdw8RoltsMyvbj5ix2fY0HV3Q3Ioa/ByvQdaSM0A==}
     cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@libsql/darwin-x64@0.3.19:
-    resolution: {integrity: sha512-q9O55B646zU+644SMmOQL3FIfpmEvdWpRpzubwFc2trsa+zoBlSkHuzU9v/C+UNoPHQVRMP7KQctJ455I/h/xw==}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    optional: true
-
-  /@libsql/darwin-x64@0.4.1:
-    resolution: {integrity: sha512-pSKxhRrhu4SsTD+IBRZXcs1SkwMdeAG1tv6Z/Ctp/sOEYrgkU8MDKLqkOr9NsmwpK4S0+JdwjkLMyhTkct/5TQ==}
-    cpu: [x64]
     os: [darwin]
     requiresBuild: true
     optional: true
@@ -6968,7 +6920,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@libsql/hrana-client@0.10.0:
@@ -6979,28 +6930,12 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-    dev: false
-
-  /@libsql/hrana-client@0.6.2:
-    resolution: {integrity: sha512-MWxgD7mXLNf9FXXiM0bc90wCjZSpErWKr5mGza7ERy2FJNNMXd7JIOv+DepBA1FQTIfI8TFO4/QDYgaQC0goNw==}
-    dependencies:
-      '@libsql/isomorphic-fetch': 0.2.5
-      '@libsql/isomorphic-ws': 0.1.5
-      js-base64: 3.7.6
-      node-fetch: 3.3.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  /@libsql/isomorphic-fetch@0.2.5:
-    resolution: {integrity: sha512-8s/B2TClEHms2yb+JGpsVRTPBfy1ih/Pq6h6gvyaNcYnMVJvgQRY7wAa8U2nD0dppbCuDU5evTNMEhrQ17ZKKg==}
-    engines: {node: '>=18.0.0'}
 
   /@libsql/isomorphic-ws@0.1.5:
     resolution: {integrity: sha512-DtLWIH29onUYR00i0GlQ3UdcTRC6EP4u9w/h9LxpUZJWRMARk6dQwZ6Jkd+QdwVpuAOrdxt18v0K2uIYR3fwFg==}
     dependencies:
       '@types/ws': 8.5.10
-      ws: 8.18.3
+      ws: 8.21.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -7010,7 +6945,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@libsql/linux-arm-musleabihf@0.5.29:
@@ -7018,40 +6952,10 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: false
-    optional: true
-
-  /@libsql/linux-arm64-gnu@0.3.19:
-    resolution: {integrity: sha512-mgeAUU1oqqh57k7I3cQyU6Trpdsdt607eFyEmH5QO7dv303ti+LjUvh1pp21QWV6WX7wZyjeJV1/VzEImB+jRg==}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    optional: true
-
-  /@libsql/linux-arm64-gnu@0.4.1:
-    resolution: {integrity: sha512-9lpvb24tO2qZd9nq5dlq3ESA3hSKYWBIK7lJjfiCM6f7a70AUwBY9QoPJV9q4gILIyVnR1YBGrlm50nnb+dYgw==}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
     optional: true
 
   /@libsql/linux-arm64-gnu@0.5.29:
     resolution: {integrity: sha512-gURBqaiXIGGwFNEaUj8Ldk7Hps4STtG+31aEidCk5evMMdtsdfL3HPCpvys+ZF/tkOs2MWlRWoSq7SOuCE9k3w==}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@libsql/linux-arm64-musl@0.3.19:
-    resolution: {integrity: sha512-VEZtxghyK6zwGzU9PHohvNxthruSxBEnRrX7BSL5jQ62tN4n2JNepJ6SdzXp70pdzTfwroOj/eMwiPt94gkVRg==}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    optional: true
-
-  /@libsql/linux-arm64-musl@0.4.1:
-    resolution: {integrity: sha512-lyxi+lFxE+NcBRDMQCxCtDg3c4WcKAbc9u63d5+B23Vm+UgphD9XY4seu+tGrBy1MU2tuNVix7r9S7ECpAaVrA==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
@@ -7062,40 +6966,10 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: false
-    optional: true
-
-  /@libsql/linux-x64-gnu@0.3.19:
-    resolution: {integrity: sha512-2t/J7LD5w2f63wGihEO+0GxfTyYIyLGEvTFEsMO16XI5o7IS9vcSHrxsvAJs4w2Pf907uDjmc7fUfMg6L82BrQ==}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    optional: true
-
-  /@libsql/linux-x64-gnu@0.4.1:
-    resolution: {integrity: sha512-psvuQ3UFBEmDFV8ZHG+WkUHIJiWv+elZ+zIPvOVedlIKdxG1O+8WthWUAhFHOGnbiyzc4sAZ4c3de1oCvyHxyQ==}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
     optional: true
 
   /@libsql/linux-x64-gnu@0.5.29:
     resolution: {integrity: sha512-y14V0vY0nmMC6G0pHeJcEarcnGU2H6cm21ZceRkacWHvQAEhAG0latQkCtoS2njFOXiYIg+JYPfAoWKbi82rkg==}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: false
-    optional: true
-
-  /@libsql/linux-x64-musl@0.3.19:
-    resolution: {integrity: sha512-BLsXyJaL8gZD8+3W2LU08lDEd9MIgGds0yPy5iNPp8tfhXx3pV/Fge2GErN0FC+nzt4DYQtjL+A9GUMglQefXQ==}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    optional: true
-
-  /@libsql/linux-x64-musl@0.4.1:
-    resolution: {integrity: sha512-PDidJ3AhGDqosGg3OAZzGxMFIbnuOALya4BoezJKl667AFv3x7BBQ30H81Mngsq3Fh8RkJkXSdWfL91+Txb1iA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
@@ -7106,21 +6980,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: false
-    optional: true
-
-  /@libsql/win32-x64-msvc@0.3.19:
-    resolution: {integrity: sha512-ay1X9AobE4BpzG0XPw1gplyLZPGHIgJOovvW23gUrukRegiUP62uzhpRbKNogLlUOynyXeq//prHgPXiebUfWg==}
-    cpu: [x64]
-    os: [win32]
-    requiresBuild: true
-    optional: true
-
-  /@libsql/win32-x64-msvc@0.4.1:
-    resolution: {integrity: sha512-IdODVqV/PrdOnHA/004uWyorZQuRsB7U7bCRCE3vXgABj3eJLJGc6cv2C6ksEaEoVxJbD8k53H4VVAGrtYwXzQ==}
-    cpu: [x64]
-    os: [win32]
-    requiresBuild: true
     optional: true
 
   /@libsql/win32-x64-msvc@0.5.29:
@@ -7128,7 +6987,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@lingui/babel-plugin-extract-messages@5.3.2:
@@ -7154,6 +7012,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
       - typescript
+    dev: true
 
   /@lingui/babel-plugin-lingui-macro@5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.2):
     resolution: {integrity: sha512-NdXrq8aZlPjN4jeA/LkSLNyx5vPGmrW+r2ywMNQDPQPVP28Hq8c3hF9SQc1t7hwBorGQ3qzIQ7i2Vm6Y8PnjQw==}
@@ -7282,6 +7141,7 @@ packages:
       jiti: 1.21.7
     transitivePeerDependencies:
       - typescript
+    dev: true
 
   /@lingui/conf@5.3.2(typescript@5.9.2):
     resolution: {integrity: sha512-c0Dfovr9BLuwAnY5GADxKcwBUQdVl0Jo/JUa3cumIXFhHzZGb78kfhCHjWWQdX8+WQD8qzSl/YkVDbxhcQJGmg==}
@@ -7325,7 +7185,7 @@ packages:
         optional: true
     dependencies:
       '@babel/runtime': 7.26.7
-      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.8.3)
+      '@lingui/babel-plugin-lingui-macro': 5.3.2(babel-plugin-macros@3.1.0)(typescript@5.9.2)
       '@lingui/message-utils': 5.3.2
       babel-plugin-macros: 3.1.0
       unraw: 3.0.0
@@ -13710,17 +13570,17 @@ packages:
       typescript: 5.9.2
     dev: true
 
-  /@tursodatabase/api@1.9.0:
-    resolution: {integrity: sha512-wRxSVBjauf8AVDNoFu8114AmaCEIyHP6BtQo2QzYRYCJ06JVmcrPYPw+Uh6RPDNTi6F8cfyU9ShgxB+EsUeW4Q==}
+  /@tursodatabase/api@2.0.5:
+    resolution: {integrity: sha512-Bp17LkleBhxMkLEEdzYjflVQEueavxyKaYifY3An3ZimXn6bKmcBUYGDpjzIe7rxqZVoswzlYOXA4jociI5Z1Q==}
     dependencies:
       whatwg-fetch: 3.6.20
     dev: false
 
-  /@tursodatabase/database-common@0.6.1:
-    resolution: {integrity: sha512-fkmkhgSUDg3MXkcziTG9Ime3AY5+YvvDN7VvUDEMNV7MP+XgwE/i5tU6eQP1EKa/zDkdSYPq8gPcmROmKmKL8Q==}
+  /@tursodatabase/database-common@0.8.3:
+    resolution: {integrity: sha512-T8sMfSnRjgGzKMDVkSg0lh1Jh6dDtTWzjYFK0ZJHtKzr+zs69a7Igo4Z+sxfh+rk9gEqn2njLgRYfpMEghMVMw==}
 
-  /@tursodatabase/database-wasm-common@0.6.1:
-    resolution: {integrity: sha512-lZdZ7b8YSF0RKN0U1ZTtPNaf9zR6k+8tGpN3eWN8vtCXWIPVEw4ydhZodSuFK+EkoPekVHcW/yAYHvGu2KQLug==}
+  /@tursodatabase/database-wasm-common@0.8.3:
+    resolution: {integrity: sha512-lqsbszBThqLmnSLUBcCOTqLRigv6kVhOOQonz+2JKM5nU227TTNQibnl3Q3fyfn7HOuYcgiodJgcBECnVc/TXg==}
     dependencies:
       '@emnapi/core': 1.8.1
       '@emnapi/runtime': 1.8.1
@@ -13730,38 +13590,42 @@ packages:
   /@tursodatabase/serverless@0.2.4:
     resolution: {integrity: sha512-kqf3FINvTGx8N1iH/4e1Dkbr/om5q9qitshzvljtQXwZFQIsVP/mDE76mGg9U2dg/ElOZKFKtT1VXDgd39Dr1w==}
 
-  /@tursodatabase/sync-common@0.6.1:
-    resolution: {integrity: sha512-QjImpfwGomXRPmr7+KQUxN1RHslOCY77ElHgmAdpDy0IAqp4WDO12waPpzV45hxoVb6tlmuArFEDdBGdiq9npQ==}
+  /@tursodatabase/serverless@1.4.1:
+    resolution: {integrity: sha512-kcbGx0zb0Js4WnIrIF4AlsK3gzryRdTyUQev/9UbxtcH/iyk7u0Rk+l7dWdPC/5Ymu1WlbSyn4oUb02eNbn6Mw==}
+    dev: true
+
+  /@tursodatabase/sync-common@0.8.3:
+    resolution: {integrity: sha512-y8a3f3+AzenDD1uY6+iGNf3hpj8CtdJ/sfXCJXSW+bOJyFgqV68WsRzZZqy6fU3ua7wJ+yRRqNJJr31kfQ8wsw==}
     dependencies:
-      '@tursodatabase/database-common': 0.6.1
+      '@tursodatabase/database-common': 0.8.3
       '@tursodatabase/serverless': 0.2.4
 
-  /@tursodatabase/sync-darwin-arm64@0.6.1:
-    resolution: {integrity: sha512-OneZUhTPTPkf048nu2rr39YLM2+CnAcY9oJUsAJvUc2ClLUIvFQtHSgTP7L13LtaLXLjR6Htzy77jKz+0hF4Tw==}
+  /@tursodatabase/sync-darwin-arm64@0.8.3:
+    resolution: {integrity: sha512-G6ZOmF5+K7CYVA4Wn+jlQ22H6tqI5GdRu1DWt1J0q3u3H6ORiEJlyfguKTTI6iaJFh8miLm5Gjp3qy8hKFIN7g==}
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@tursodatabase/sync-linux-arm64-gnu@0.6.1:
-    resolution: {integrity: sha512-Rs2Pei/sxBKma9Wfq5MNpUMLrfCxzx3qxiBEZcrfDsiBPkXCoU2F9GUzRKUo24pRcmKaZCCfSx0zLs1FFgt68A==}
+  /@tursodatabase/sync-linux-arm64-gnu@0.8.3:
+    resolution: {integrity: sha512-B/8c8ZqJCi9oe5yoghYRVkg8DYEHlIKn1t7Kh02hAWYRqc3FqNR7YxSG+kOV+evfk1QSAO0XVXGnoe6/dO3XEg==}
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@tursodatabase/sync-linux-x64-gnu@0.6.1:
-    resolution: {integrity: sha512-YWCt0SPi5imXGdVYBFao0Y8jYlkxh4TLBdHNw5QBffbxOKFwV5+ur2qf9rD1hTaY1SLxrosiWvygPAE/1DCUTA==}
+  /@tursodatabase/sync-linux-x64-gnu@0.8.3:
+    resolution: {integrity: sha512-WMqSQRuGwNKVjSF4Ktik9Om+D6hpVPSMhzu+/+WfASVCCHKXkYjr9hP4DRx4bmFXHl/VWhOffw+hFLJ4t1DneA==}
     cpu: [x64]
     os: [linux]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@tursodatabase/sync-react-native@0.6.1(react-native@0.81.5)(react@19.1.0):
-    resolution: {integrity: sha512-PaychaN3Y9Zacb/ogr5HbnmMfbiaACanjbOcRXeBaw1ot1fOGsiwNZ+TZj6HHb+xW/086wsKfZAZKAvyS1lzpQ==}
+  /@tursodatabase/sync-react-native@0.8.3(react-native@0.81.5)(react@19.1.0):
+    resolution: {integrity: sha512-JuWqH1jXb5eIsaP6LVhTvJjbJfphsE3F2ZQ1YdA+eL8hDiEab+thh1r1NcfAfHp2J2oyv6o8EtPLnwRv/ELvUA==}
     engines: {node: '>=18'}
     peerDependencies:
       react: 19.1.0
@@ -13772,32 +13636,32 @@ packages:
       react-native: 0.81.5(@babel/core@7.26.0)(@types/react@19.1.17)(react@19.1.0)
     dev: false
 
-  /@tursodatabase/sync-wasm@0.6.1:
-    resolution: {integrity: sha512-VPkpJYIJzutTjkmkwZe8v313GdMP+brXRoMGPC3pPptHxW5vn9WZ7wWp4vfEc00O4vMUSeOFpc9WbENnHzvdiA==}
+  /@tursodatabase/sync-wasm@0.8.3:
+    resolution: {integrity: sha512-n9ifWybmAeJ2Vt6G9u9X3PaKjnQr1yrb5AmvWY0GgEUxG/3BRG+kW79bgmT15jitgXazLnCxq8JjYkeWcgVkXQ==}
     dependencies:
-      '@tursodatabase/database-common': 0.6.1
-      '@tursodatabase/database-wasm-common': 0.6.1
-      '@tursodatabase/sync-common': 0.6.1
+      '@tursodatabase/database-common': 0.8.3
+      '@tursodatabase/database-wasm-common': 0.8.3
+      '@tursodatabase/sync-common': 0.8.3
     dev: false
 
-  /@tursodatabase/sync-win32-x64-msvc@0.6.1:
-    resolution: {integrity: sha512-KGTcLjN46laYBZCFm3F972e/mn6t8XPbm5zx34r1C7UC17GC5ONlDA5ArWegLfFAL5wuRbUjkk1kYFRIKAsPiw==}
+  /@tursodatabase/sync-win32-x64-msvc@0.8.3:
+    resolution: {integrity: sha512-2AJ5uLke0OY1shxtCp7UZebCgNR51aW33J1HvjUwmszd6Z7e1FApwNX9RK1Hj6yEJBlz9j8NdUtGCgGS4s3JNQ==}
     cpu: [x64]
     os: [win32]
     requiresBuild: true
     dev: true
     optional: true
 
-  /@tursodatabase/sync@0.6.1:
-    resolution: {integrity: sha512-FsyiVFdi6ufPy/l00XryacTLG/hpc7gum7JjhRvWGbABDqOiZL2WI4V/hPf3iu0eppWuU5PS6gHvIBm+DyCdiQ==}
+  /@tursodatabase/sync@0.8.3:
+    resolution: {integrity: sha512-NB7lgKHNBDmeotjdv9jsfZ7OtAdHztHy6/ut5NBxsAKhoA4d8IJsRA8+X/TpDKyZ4xfQPDPaIPPWnSQEm4wChg==}
     dependencies:
-      '@tursodatabase/database-common': 0.6.1
-      '@tursodatabase/sync-common': 0.6.1
+      '@tursodatabase/database-common': 0.8.3
+      '@tursodatabase/sync-common': 0.8.3
     optionalDependencies:
-      '@tursodatabase/sync-darwin-arm64': 0.6.1
-      '@tursodatabase/sync-linux-arm64-gnu': 0.6.1
-      '@tursodatabase/sync-linux-x64-gnu': 0.6.1
-      '@tursodatabase/sync-win32-x64-msvc': 0.6.1
+      '@tursodatabase/sync-darwin-arm64': 0.8.3
+      '@tursodatabase/sync-linux-arm64-gnu': 0.8.3
+      '@tursodatabase/sync-linux-x64-gnu': 0.8.3
+      '@tursodatabase/sync-win32-x64-msvc': 0.8.3
     dev: true
 
   /@tybys/wasm-util@0.10.1:
@@ -15527,7 +15391,7 @@ packages:
       better-call: 1.1.8(zod@4.3.6)
       defu: 6.1.4
       drizzle-kit: 0.31.9
-      drizzle-orm: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+      drizzle-orm: 0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       jose: 6.1.3
       kysely: 0.28.5
       nanostores: 1.1.0
@@ -15606,7 +15470,7 @@ packages:
       '@noble/hashes': 2.0.1
       better-call: 1.1.8(zod@4.3.6)
       defu: 6.1.4
-      drizzle-orm: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+      drizzle-orm: 0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       jose: 6.1.3
       kysely: 0.28.5
       nanostores: 1.1.0
@@ -16365,6 +16229,7 @@ packages:
       parse-json: 5.2.0
       path-type: 4.0.0
       typescript: 5.8.3
+    dev: true
 
   /cosmiconfig@8.3.6(typescript@5.9.2):
     resolution: {integrity: sha512-kcZ6+W5QzcJ3P1Mt+83OUv/oHFqZHIx8DuxG6eZ5RGMERoLqp4BuGjhHLYGK+Kf5XVkQvqBSmAy/nGWN3qDgEA==}
@@ -16642,6 +16507,9 @@ packages:
   /data-uri-to-buffer@4.0.1:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
     engines: {node: '>= 12'}
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /data-urls@3.0.2:
     resolution: {integrity: sha512-Jy/tj3ldjZJo63sVAvg6LHt2mHvl4V6AgRAmNDtLdm7faqtsx+aJG42rsyCo9JCoRVKwPFzKlIPx3DIibwSIaQ==}
@@ -16974,7 +16842,7 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /drizzle-orm@0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5):
+  /drizzle-orm@0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5):
     resolution: {integrity: sha512-Te0FOdKIistGNPMq2jscdqngBRfBpC8uMFVwqjf6gtTVJHIQ/dosgV/CLBU2N4ZJBsXL5savCba9b0YJskKdcA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -17066,13 +16934,13 @@ packages:
       sqlite3:
         optional: true
     dependencies:
-      '@libsql/client': 0.10.0
+      '@libsql/client': 0.18.0
       '@opentelemetry/api': 1.9.0
       '@upstash/redis': 1.36.0
       bun-types: 1.3.5
       kysely: 0.28.5
 
-  /drizzle-orm@0.45.1(@libsql/client@0.17.4)(bun-types@1.3.11):
+  /drizzle-orm@0.45.1(@libsql/client@0.18.0)(bun-types@1.3.11):
     resolution: {integrity: sha512-Te0FOdKIistGNPMq2jscdqngBRfBpC8uMFVwqjf6gtTVJHIQ/dosgV/CLBU2N4ZJBsXL5savCba9b0YJskKdcA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
@@ -17164,7 +17032,7 @@ packages:
       sqlite3:
         optional: true
     dependencies:
-      '@libsql/client': 0.17.4
+      '@libsql/client': 0.18.0
       bun-types: 1.3.11
     dev: false
 
@@ -17174,7 +17042,7 @@ packages:
       drizzle-orm: '>=0.36.0'
       zod: ^3.25.0 || ^4.0.0
     dependencies:
-      drizzle-orm: 0.45.1(@libsql/client@0.10.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
+      drizzle-orm: 0.45.1(@libsql/client@0.18.0)(@opentelemetry/api@1.9.0)(@upstash/redis@1.36.0)(bun-types@1.3.5)(kysely@0.28.5)
       zod: 4.3.6
     dev: false
 
@@ -17246,6 +17114,31 @@ packages:
       memoirist: 0.4.0
       openapi-types: 12.1.3
       typescript: 5.8.3
+    dev: false
+
+  /elysia@1.4.27(@sinclair/typebox@0.34.49)(exact-mirror@1.0.0)(file-type@22.0.0)(openapi-types@12.1.3)(typescript@5.9.2):
+    resolution: {integrity: sha512-2UlmNEjPJVA/WZVPYKy+KdsrfFwwNlqSBW1lHz6i2AHc75k7gV4Rhm01kFeotH7PDiHIX2G8X3KnRPc33SGVIg==}
+    peerDependencies:
+      '@sinclair/typebox': '>= 0.34.0 < 1'
+      '@types/bun': '>= 1.2.0'
+      exact-mirror: '>= 0.0.9'
+      file-type: '>= 20.0.0'
+      openapi-types: '>= 12.0.0'
+      typescript: '>= 5.0.0'
+    peerDependenciesMeta:
+      '@types/bun':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      '@sinclair/typebox': 0.34.49
+      cookie: 1.1.1
+      exact-mirror: 1.0.0
+      fast-decode-uri-component: 1.0.1
+      file-type: 22.0.0
+      memoirist: 0.4.0
+      openapi-types: 12.1.3
+      typescript: 5.9.2
     dev: false
 
   /emittery@0.13.1:
@@ -18747,9 +18640,12 @@ packages:
   /fetch-blob@3.2.0:
     resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
     engines: {node: ^12.20 || >= 14.13}
+    requiresBuild: true
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 3.3.3
+    dev: false
+    optional: true
 
   /figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
@@ -18909,8 +18805,11 @@ packages:
   /formdata-polyfill@4.0.10:
     resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
     engines: {node: '>=12.20.0'}
+    requiresBuild: true
     dependencies:
       fetch-blob: 3.2.0
+    dev: false
+    optional: true
 
   /forwarded-parse@2.1.2:
     resolution: {integrity: sha512-alTFZZQDKMporBH77856pXgzhEzaUVmLCDk+egLgIgHst3Tpndzz8MnKe+GzRJRfvVdn69HhpW7cmXzvtLvJAw==}
@@ -20935,39 +20834,6 @@ packages:
       type-check: 0.4.0
     dev: true
 
-  /libsql@0.3.19:
-    resolution: {integrity: sha512-Aj5cQ5uk/6fHdmeW0TiXK42FqUlwx7ytmMLPSaUQPin5HKKKuUPD62MAbN4OEweGBBI7q1BekoEN4gPUEL6MZA==}
-    cpu: [x64, arm64, wasm32]
-    os: [darwin, linux, win32]
-    dependencies:
-      '@neon-rs/load': 0.0.4
-      detect-libc: 2.0.2
-    optionalDependencies:
-      '@libsql/darwin-arm64': 0.3.19
-      '@libsql/darwin-x64': 0.3.19
-      '@libsql/linux-arm64-gnu': 0.3.19
-      '@libsql/linux-arm64-musl': 0.3.19
-      '@libsql/linux-x64-gnu': 0.3.19
-      '@libsql/linux-x64-musl': 0.3.19
-      '@libsql/win32-x64-msvc': 0.3.19
-
-  /libsql@0.4.1:
-    resolution: {integrity: sha512-qZlR9Yu1zMBeLChzkE/cKfoKV3Esp9cn9Vx5Zirn4AVhDWPcjYhKwbtJcMuHehgk3mH+fJr9qW+3vesBWbQpBg==}
-    cpu: [x64, arm64, wasm32]
-    os: [darwin, linux, win32]
-    dependencies:
-      '@neon-rs/load': 0.0.4
-      detect-libc: 2.0.2
-      libsql: 0.3.19
-    optionalDependencies:
-      '@libsql/darwin-arm64': 0.4.1
-      '@libsql/darwin-x64': 0.4.1
-      '@libsql/linux-arm64-gnu': 0.4.1
-      '@libsql/linux-arm64-musl': 0.4.1
-      '@libsql/linux-x64-gnu': 0.4.1
-      '@libsql/linux-x64-musl': 0.4.1
-      '@libsql/win32-x64-msvc': 0.4.1
-
   /libsql@0.5.29:
     resolution: {integrity: sha512-8lMP8iMgiBzzoNbAPQ59qdVcj6UaE/Vnm+fiwX4doX4Narook0a4GPKWBEv+CR8a1OwbfkgL18uBfBjWdF0Fzg==}
     cpu: [x64, arm64, wasm32, arm]
@@ -20985,7 +20851,6 @@ packages:
       '@libsql/linux-x64-gnu': 0.5.29
       '@libsql/linux-x64-musl': 0.5.29
       '@libsql/win32-x64-msvc': 0.5.29
-    dev: false
 
   /lighthouse-logger@1.4.2:
     resolution: {integrity: sha512-gPWxznF6TKmUHrOQjlVo2UbaL2EJ71mb2CCeRs/2qBpi4L/g4LUVc9+3lKQ6DTUZwJswfM7ainGrLO1+fOqa2g==}
@@ -22914,6 +22779,9 @@ packages:
   /node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /node-exports-info@1.6.0:
     resolution: {integrity: sha512-pyFS63ptit/P5WqUkt+UUfe+4oevH+bFeIiPPdfb0pFeYEu/1ELnJu5l+5EcTKYL5M7zaAa7S8ddywgXypqKCw==}
@@ -22943,10 +22811,13 @@ packages:
   /node-fetch@3.3.2:
     resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    requiresBuild: true
     dependencies:
       data-uri-to-buffer: 4.0.1
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
+    dev: false
+    optional: true
 
   /node-forge@1.4.0:
     resolution: {integrity: sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ==}
@@ -27254,6 +27125,9 @@ packages:
   /web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
+    requiresBuild: true
+    dev: false
+    optional: true
 
   /webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}

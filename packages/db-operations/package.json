@@ -17,7 +17,7 @@
     "@bahar/drizzle-user-db-schemas": "workspace:*",
     "@bahar/result": "workspace:*",
     "@bahar/typescript-config": "workspace:*",
-    "@tursodatabase/sync": "^0.6.1",
+    "@tursodatabase/sync": "^0.8.3",
     "drizzle-orm": "^0.45.1",
     "vitest": "^4.1.9",
     "zod": "4.3.6"
