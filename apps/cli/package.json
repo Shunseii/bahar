@@ -19,7 +19,7 @@
     "@bahar/drizzle-user-db-schemas": "workspace:*",
     "@bahar/fsrs": "workspace:*",
     "@bunli/core": "0.1.0",
-    "@libsql/client": "^0.17.0",
+    "@libsql/client": "^0.18.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.45.1",
     "open": "^10.1.0",
