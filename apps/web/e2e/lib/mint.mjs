@@ -65,12 +65,10 @@ const readOtp = async ({ centralDbUrl, centralDbToken, email }) => {
   const connection = connect({ url: centralDbUrl, authToken: centralDbToken });
 
   try {
-    const { rows } = await connection.execute(
+    const row = await connection.get(
       "SELECT value FROM verifications WHERE identifier = ? ORDER BY created_at DESC LIMIT 1",
-      [`${OTP_IDENTIFIER_PREFIX}${email}`]
+      `${OTP_IDENTIFIER_PREFIX}${email}`
     );
-
-    const [row] = rows;
 
     if (!row) {
       throw new Error(

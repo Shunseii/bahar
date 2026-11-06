@@ -43,7 +43,7 @@
     "@shopify/flash-list": "2.0.2",
     "@shopify/react-native-skia": "2.2.12",
     "@tanstack/react-query": "^5.82.2",
-    "@tursodatabase/sync-react-native": "^0.6.1",
+    "@tursodatabase/sync-react-native": "^0.8.3",
     "better-auth": "1.4.19",
     "class-variance-authority": "^0.7.0",
     "date-fns": "^3.6.0",
