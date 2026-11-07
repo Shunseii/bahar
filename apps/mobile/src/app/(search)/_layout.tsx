@@ -41,7 +41,6 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import StreakChip from "@/components/progress/StreakChip";
 import { ScreenFocusTransition } from "@/components/ScreenFocusTransition";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { Button } from "@/components/ui/button";
@@ -126,29 +125,30 @@ function SearchBarHeader({
         </TouchableOpacity>
 
         {showSearchBar ? (
-          <>
-            <TextInput
-              autoCapitalize="none"
-              autoComplete="off"
-              autoCorrect={false}
-              className="ml-2 h-10 flex-1 rounded-md border border-border px-3 text-foreground"
-              clearButtonMode="while-editing"
-              onChangeText={onSearchChange}
-              placeholder={t`Search...`}
-              placeholderTextColor={colors.mutedForeground}
-              ref={inputRef}
-              spellCheck={false}
-              value={searchQuery}
-            />
-            <StreakChip className="ml-2" />
-          </>
+          <TextInput
+            autoCapitalize="none"
+            autoComplete="off"
+            autoCorrect={false}
+            className="ml-2 h-10 flex-1 rounded-md border border-border px-3 text-foreground"
+            clearButtonMode="while-editing"
+            onChangeText={onSearchChange}
+            placeholder={t`Search...`}
+            placeholderTextColor={colors.mutedForeground}
+            ref={inputRef}
+            spellCheck={false}
+            value={searchQuery}
+          />
         ) : headerTitle ? (
-          <Animated.View className="ml-3" style={titleAnimatedStyle}>
+          <Animated.View className="ml-3 flex-1" style={titleAnimatedStyle}>
             <RNText className="font-semibold text-foreground text-lg">
               {headerTitle}
             </RNText>
           </Animated.View>
-        ) : null}
+        ) : (
+          <View className="flex-1" />
+        )}
+
+        <SyncIndicator />
       </View>
     </View>
   );
@@ -323,7 +323,6 @@ export default function Layout() {
             }}
           />
         </Drawer>
-        <SyncIndicator />
         <UpdatePrompt />
       </SearchContext.Provider>
     </HeaderScrollContext.Provider>

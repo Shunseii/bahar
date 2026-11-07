@@ -31,6 +31,7 @@ import { BulkActionBar } from "@/components/dictionary/bulk/BulkActionBar";
 import { DictionaryFilters } from "@/components/dictionary/DictionaryFilters";
 import { Divider } from "@/components/flashcards/card";
 import { GuestBanner } from "@/components/GuestBanner";
+import StreakChip from "@/components/progress/StreakChip";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
 import { useBackToExit } from "@/hooks/useBackToExit";
@@ -147,9 +148,12 @@ const HeaderCard = ({
             <BookOpen color={colors.primary} size={20} />
           </View>
           <View className="flex-1">
-            <Text className="font-semibold text-foreground text-lg tracking-tight">
-              <Trans>Your Dictionary</Trans>
-            </Text>
+            <View className="flex-row items-center gap-2">
+              <Text className="font-semibold text-foreground text-lg tracking-tight">
+                <Trans>Your Dictionary</Trans>
+              </Text>
+              <StreakChip />
+            </View>
             <Text className="text-muted-foreground text-sm">
               {totalResults !== null ? (
                 <>
