@@ -40,7 +40,7 @@ import { I18nProvider, type TransRenderProps } from "@lingui/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getLocales } from "expo-localization";
 import { Provider as JotaiProvider } from "jotai";
-import { Appearance, Text, useColorScheme, View } from "react-native";
+import { Appearance, LogBox, Text, useColorScheme, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import {
@@ -87,6 +87,13 @@ const sentryEnv =
   (process.env.NODE_ENV === "production" ? "production" : "local");
 const isLocalEnv = sentryEnv === "local";
 
+// @tursodatabase/sync-react-native console.errors every failed fetch before
+// rethrowing it. Offline that fires on each sync tick, and the sync loop
+// already reports the rethrown error, so the console line is pure noise --
+// in the dev error overlay and in Sentry Logs alike.
+const TURSO_FETCH_FAILURE_LOG = "[Turso HTTP] Request failed";
+LogBox.ignoreLogs([TURSO_FETCH_FAILURE_LOG]);
+
 Sentry.init({
   dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
   environment: sentryEnv,
@@ -107,6 +114,8 @@ Sentry.init({
     ...(isLocalEnv ? [] : [Sentry.mobileReplayIntegration()]),
     Sentry.consoleLoggingIntegration({ levels: ["warn", "error"] }),
   ],
+  beforeSendLog: (log) =>
+    String(log.message).startsWith(TURSO_FETCH_FAILURE_LOG) ? null : log,
 });
 
 setup();
