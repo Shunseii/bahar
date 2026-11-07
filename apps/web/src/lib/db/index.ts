@@ -16,6 +16,8 @@ import { err, ok, type Result, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react";
 import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
 import { drizzle } from "drizzle-orm/sqlite-proxy";
+import { lastSyncedAtAtom } from "@/atoms/sync";
+import { store } from "@/lib/store";
 import { api } from "../api";
 import {
   clearCachedConnectionInfo,
@@ -565,7 +567,10 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
         Sentry.logger.info("initDb: sync retried after change-log repair", {
           ok: retry.outcome === "ok",
         });
-        if (retry.outcome === "ok") return ok(null);
+        if (retry.outcome === "ok") {
+          store.set(lastSyncedAtAtom, Date.now());
+          return ok(null);
+        }
         if (retry.outcome === "degraded") {
           reportDegradedDb(retry.error);
           return ok(null);
@@ -582,6 +587,9 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     return err(outcome.error);
   }
 
+  // The initial sync just succeeded; without this the indicator reports
+  // "not synced" until the first background sync, a full interval later.
+  store.set(lastSyncedAtAtom, Date.now());
   Sentry.logger.info("initDb: success");
   return ok(null);
 };

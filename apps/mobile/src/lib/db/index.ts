@@ -20,6 +20,7 @@ import { getDbPath } from "@tursodatabase/sync-react-native";
 import { reloadAppAsync } from "expo";
 import { File } from "expo-file-system";
 import * as Network from "expo-network";
+import { isOfflineAtom, lastSyncedAtAtom, store } from "@/lib/store";
 import { api } from "../../utils/api";
 import { connect, type DatabaseAdapter, isSyncError } from "./adapter";
 import {
@@ -137,9 +138,12 @@ export const deleteLocalDb = (): void => {
  * Whether the device currently has no usable network.
  *
  * Kept as a cached boolean because DbPlatform.isOffline is synchronous,
- * while expo-network only reports asynchronously. A listener keeps it
- * current and {@link primeNetworkState} seeds it at startup, so the worst
- * case is a reading one event stale rather than an unanswerable question.
+ * while expo-network only reports asynchronously. {@link primeNetworkState}
+ * seeds it at startup and re-reads it before every sync; the listener only
+ * shortens the gap between those reads. It cannot be relied on alone: on a
+ * Galaxy S22 (Android 16) it never fires when airplane mode turns on.
+ *
+ * Mirrored into isOfflineAtom so the sync indicator can render it.
  *
  * Previously this read navigator.onLine, which React Native defines but
  * does not reliably update -- it reported "online" for a device with no
@@ -160,20 +164,21 @@ const applyNetworkState = (state: {
 }): void => {
   deviceOffline =
     state.isConnected === false || state.isInternetReachable === false;
+  store.set(isOfflineAtom, deviceOffline);
 };
 
 Network.addNetworkStateListener(applyNetworkState);
 
 /**
- * Reads the network state once so the cached value is not simply `false`
- * until the first change event. Called during init; failures are ignored,
- * leaving the optimistic default.
+ * Re-reads the network state. Called during init and before every sync, so
+ * the cached value is at most one sync interval stale even when no change
+ * event arrives. Failures are ignored, leaving the previous value.
  */
 export const primeNetworkState = async (): Promise<void> => {
   try {
     applyNetworkState(await Network.getNetworkStateAsync());
   } catch {
-    // Leave the optimistic default; a listener event will correct it.
+    // Keep the previous value; the next read will correct it.
   }
 };
 
@@ -325,6 +330,9 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     return err(outcome.error);
   }
 
+  // The initial sync just succeeded; without this the indicator reports
+  // "not synced" until the first periodic sync, a full interval later.
+  store.set(lastSyncedAtAtom, Date.now());
   Sentry.logger.info("initDb: success");
   return ok(null);
 };

@@ -17,7 +17,10 @@ export const dictionaryChangedAtom = atom(false);
  */
 export const lastSyncedAtAtom = atom<number | null>(null);
 
-/** Whether the device reports no usable network, via expo-network. */
+/**
+ * Whether the device reports no usable network, via expo-network. Written
+ * only by the db layer's network-state cache.
+ */
 export const isOfflineAtom = atom(false);
 
 /**

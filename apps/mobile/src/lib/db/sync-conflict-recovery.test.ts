@@ -19,6 +19,7 @@ const mockRestart = jest.fn<(reason: string) => Promise<void>>();
 const mockSyncDb = jest.fn<() => Promise<SyncOutcome>>();
 const mockCaptureException = jest.fn();
 const mockOffline = jest.fn<() => boolean>();
+const mockPrimeNetworkState = jest.fn<() => Promise<void>>();
 
 jest.mock("@sentry/react-native", () => ({
   logger: { warn: jest.fn(), info: jest.fn(), error: jest.fn() },
@@ -38,6 +39,7 @@ const stubDb = {
 
 jest.mock("@/lib/db", () => ({
   ensureDb: async () => stubDb,
+  primeNetworkState: () => mockPrimeNetworkState(),
   syncDb: () => mockSyncDb(),
   dbPlatform: {
     isOffline: () => mockOffline(),
@@ -70,6 +72,7 @@ beforeEach(() => {
   mockRestart.mockClear().mockResolvedValue(undefined);
   mockCaptureException.mockClear();
   mockOffline.mockReturnValue(false);
+  mockPrimeNetworkState.mockReset().mockResolvedValue(undefined);
 });
 
 import { performSync } from "./sync";
@@ -86,6 +89,19 @@ describe("performSync conflict recovery wiring (BAHAR-MOBILE-2)", () => {
 
   it("does not wipe the replica on a conflict while offline", async () => {
     mockOffline.mockReturnValue(true);
+    mockSyncDb.mockResolvedValue(conflict);
+
+    await expect(performSync()).rejects.toThrow();
+
+    expect(mockDeleteReplica).not.toHaveBeenCalled();
+  });
+
+  it("re-reads the network state before deciding, rather than trusting a cached value", async () => {
+    // The cached value says online, as it would after a missed change event;
+    // the fresh read finds the device offline.
+    mockPrimeNetworkState.mockImplementation(async () => {
+      mockOffline.mockReturnValue(true);
+    });
     mockSyncDb.mockResolvedValue(conflict);
 
     await expect(performSync()).rejects.toThrow();
