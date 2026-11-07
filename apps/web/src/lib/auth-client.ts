@@ -1,4 +1,5 @@
 import {
+  isSignedOut,
   type ResolvedSession,
   resolveSession,
   type SessionFetchOutcome,
@@ -43,50 +44,52 @@ export const authClient = createAuthClient({
 // and rapid navigation trips the endpoint's rate limit (429).
 const SESSION_STALE_TIME_MS = 1000 * 60 * 5;
 
+type SessionState = Pick<
+  Awaited<ReturnType<typeof authClient.getSession>>,
+  "data" | "error"
+>;
+
 /**
- * Reduces a session fetch to the three cases the policy cares about, and
- * never rejects.
+ * Only a confirmed answer signs anyone out. A 401, or a 200 carrying no
+ * session, is the server exercising authority. Anything else -- a 429, a 5xx,
+ * a failed fetch -- says nothing about the user, so it resolves to
+ * `unreachable` and the cached identity decides.
+ */
+const toOutcome = ({ data, error }: SessionState): SessionFetchOutcome => {
+  if (error) {
+    return error.status === 401
+      ? { kind: "loggedOut" }
+      : { kind: "unreachable" };
+  }
+
+  if (!data?.user) return { kind: "loggedOut" };
+
+  return {
+    kind: "authenticated",
+    identity: {
+      userId: data.user.id,
+      email: data.user.email,
+      expiresAtMs: new Date(data.session.expiresAt).getTime(),
+    },
+  };
+};
+
+type SessionFetchResult = {
+  outcome: SessionFetchOutcome;
+};
+
+/**
+ * Never rejects.
  *
  * better-fetch does not wrap its `fetch` call, so offline the underlying
  * `TypeError: Failed to fetch` propagates straight out of
  * `authClient.getSession()`. That used to reject the query and throw out of
  * `beforeLoad` before the db layer ran at all -- so an offline user never
  * reached the local replica holding their data.
- *
- * Only a confirmed answer signs anyone out. A 401, or a 200 carrying no
- * session, is the server exercising authority. Anything else -- a thrown
- * fetch, a 429, a 5xx -- says nothing about the user, so it resolves to
- * `unreachable` and the cached identity decides.
  */
-type SessionFetchResult = {
-  outcome: SessionFetchOutcome;
-};
-
 const fetchSessionOutcome = async (): Promise<SessionFetchResult> => {
   try {
-    const { data, error } = await authClient.getSession();
-
-    if (error) {
-      return {
-        outcome:
-          error.status === 401
-            ? { kind: "loggedOut" }
-            : { kind: "unreachable" },
-      };
-    }
-
-    if (!data?.user) return { outcome: { kind: "loggedOut" } };
-
-    return {
-      outcome: {
-        kind: "authenticated",
-        identity: {
-          userId: data.user.id,
-          email: data.user.email,
-          expiresAtMs: new Date(data.session.expiresAt).getTime(),
-        },
-      },
-    };
+    return { outcome: toOutcome(await authClient.getSession()) };
   } catch {
     return { outcome: { kind: "unreachable" } };
   }
@@ -123,6 +126,25 @@ export const getResolvedSession = async (): Promise<ResolvedSession> => {
   }
 
   return resolved;
+};
+
+/**
+ * Whether the authorized layouts should render: true for a live session, and
+ * for the cached identity when the server cannot be reached.
+ *
+ * A confirmed sign-out still renders nothing. `useLogout` relies on that to
+ * unmount the authorized routes before it tears down the local db.
+ */
+export const useIsSignedIn = (): boolean => {
+  const { data, error } = authClient.useSession();
+
+  const resolved = resolveSession({
+    outcome: toOutcome({ data, error }),
+    cached: readCachedIdentity(),
+    nowMs: Date.now(),
+  });
+
+  return !isSignedOut(resolved);
 };
 
 /**

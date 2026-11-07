@@ -7,7 +7,7 @@ import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
 import { SearchInput } from "@/components/search/SearchInput";
 import { SORT_OPTIONS } from "@/hooks/search/useSearch";
-import { authClient, getResolvedSession } from "@/lib/auth-client";
+import { getResolvedSession, useIsSignedIn } from "@/lib/auth-client";
 import { settingsTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 
@@ -21,9 +21,9 @@ const filtersSchema = z.object({
 });
 
 const AppLayout = () => {
-  const { data } = authClient.useSession();
+  const isSignedIn = useIsSignedIn();
 
-  if (!data?.user) return null;
+  if (!isSignedIn) return null;
 
   return (
     <>

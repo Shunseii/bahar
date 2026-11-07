@@ -2,12 +2,12 @@ import { isSignedOut } from "@bahar/auth-core";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { MobileHeader } from "@/components/MobileHeader";
-import { authClient, getResolvedSession } from "@/lib/auth-client";
+import { getResolvedSession, useIsSignedIn } from "@/lib/auth-client";
 
 const AppLayout = () => {
-  const { data } = authClient.useSession();
+  const isSignedIn = useIsSignedIn();
 
-  if (!data?.user) return null;
+  if (!isSignedIn) return null;
 
   return (
     <>
