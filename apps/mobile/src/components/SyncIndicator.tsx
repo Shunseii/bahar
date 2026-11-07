@@ -1,24 +1,50 @@
+import { useLingui } from "@lingui/react/macro";
 import { useAtomValue } from "jotai";
-import { Cloud } from "lucide-react-native";
+import { Cloud, CloudOff } from "lucide-react-native";
 import { View } from "react-native";
-import { isSyncingAtom } from "@/lib/store";
+import { isOfflineAtom, isSyncingAtom, lastSyncedAtAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 
+/**
+ * How long after a successful sync the app stops claiming to be up to date.
+ * Periodic sync runs every 60s, so passing this means several attempts in a
+ * row have failed rather than one being slow.
+ */
+const STALE_AFTER_MS = 1000 * 60 * 5;
+
+/**
+ * Header icon for sync state. Icon-only so it never covers screen content,
+ * which the earlier floating badge did (it sat over the add-word Save
+ * button).
+ */
 export const SyncIndicator = () => {
+  const { t } = useLingui();
   const isSyncing = useAtomValue(isSyncingAtom);
+  const isOffline = useAtomValue(isOfflineAtom);
+  const lastSyncedAt = useAtomValue(lastSyncedAtAtom);
   const colors = useThemeColors();
 
-  if (!isSyncing) return null;
+  const isStale =
+    lastSyncedAt === null || Date.now() - lastSyncedAt > STALE_AFTER_MS;
+
+  if (!(isSyncing || isOffline || isStale)) return null;
+
+  // Both non-syncing states mean the same thing to the user -- their changes
+  // are saved here but have not reached the server -- so the label differs
+  // only in why.
+  const label = isSyncing
+    ? t`Syncing`
+    : isOffline
+      ? t`Offline — changes saved on this device`
+      : t`Not synced — changes saved on this device`;
 
   return (
-    <View
-      accessibilityLabel="Syncing"
-      className="absolute right-4 bottom-20 z-50"
-      role="alert"
-    >
-      <View className="flex-row items-center gap-2 rounded-full border border-border bg-background/90 px-3 py-2 shadow-lg">
-        <Cloud color={colors.mutedForeground} size={16} />
-      </View>
+    <View accessibilityLabel={label} className="ml-2 p-1" role="status">
+      {isSyncing ? (
+        <Cloud color={colors.mutedForeground} size={20} />
+      ) : (
+        <CloudOff color={colors.mutedForeground} size={20} />
+      )}
     </View>
   );
 };

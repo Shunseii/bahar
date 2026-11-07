@@ -1,0 +1,15 @@
+{
+  "name": "@bahar/auth-core",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@bahar/typescript-config": "workspace:*",
+    "vitest": "^4.1.9"
+  }
+}

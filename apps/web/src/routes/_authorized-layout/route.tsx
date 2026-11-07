@@ -1,3 +1,4 @@
+import { isSignedOut } from "@bahar/auth-core";
 import type { SyncOutcome } from "@bahar/db-core";
 import { enqueueSyncOperation } from "@bahar/db-operations";
 import { Button } from "@bahar/web-ui/components/button";
@@ -24,7 +25,12 @@ import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { hydrationSkippedCountAtom } from "@/atoms/hydration";
-import { isSyncingAtom, syncCompletedCountAtom } from "@/atoms/sync";
+import {
+  isOfflineAtom,
+  isSyncingAtom,
+  lastSyncedAtAtom,
+  syncCompletedCountAtom,
+} from "@/atoms/sync";
 import { AnimatedLogo } from "@/components/AnimatedLogo";
 import { DesktopNavigation } from "@/components/DesktopNavigation";
 import { ErrorMessage } from "@/components/errors/ErrorMessage";
@@ -33,7 +39,7 @@ import { SchemaOutdatedBanner } from "@/components/SchemaOutdatedBanner";
 import { SyncIndicator } from "@/components/SyncIndicator";
 import { useSearch } from "@/hooks/search/useSearch";
 import { api } from "@/lib/api";
-import { getCachedSession, isLoggedOut } from "@/lib/auth-client";
+import { getResolvedSession } from "@/lib/auth-client";
 import { ensureDb, initDb, isDbDegraded, syncDb } from "@/lib/db";
 import { DisplayError } from "@/lib/db/errors";
 import { dictionaryEntriesTable, migrationTable } from "@/lib/db/operations";
@@ -211,6 +217,7 @@ const AuthorizedLayout = () => {
 
         if (outcome.outcome === "ok") {
           store.set(syncCompletedCountAtom, (c) => c + 1);
+          store.set(lastSyncedAtAtom, Date.now());
         } else {
           const classification = outcome.classification.kind;
 
@@ -246,6 +253,21 @@ const AuthorizedLayout = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Mirror the browser's connectivity into an atom so the sync indicator can
+  // distinguish "offline" from "online but not syncing".
+  useEffect(() => {
+    const update = () => store.set(isOfflineAtom, !navigator.onLine);
+
+    update();
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
+
   // Sync when app visibility changes (e.g., user switches apps on mobile PWA)
   useEffect(() => {
     const handleVisibilityChange = async () => {
@@ -273,6 +295,7 @@ const AuthorizedLayout = () => {
           });
 
           store.set(syncCompletedCountAtom, (c) => c + 1);
+          store.set(lastSyncedAtAtom, Date.now());
         }
       } catch (error) {
         Sentry.logger.warn("Visibility sync failed", {
@@ -345,31 +368,29 @@ const AuthorizedLayoutError: ErrorRouteComponent = ({ error }) => {
 
 export const Route = createFileRoute("/_authorized-layout")({
   beforeLoad: async ({ location }) => {
-    const sessionResult = await getCachedSession();
+    const session = await getResolvedSession();
 
-    if (sessionResult.error) {
-      // Distinguishes 429 (rate limit) vs 401 (real unauth) vs network/other.
-      Sentry.logger.warn("getSession failed", {
-        status: sessionResult.error.status,
-        statusText: sessionResult.error.statusText,
-        href: location.href,
-      });
-    }
-
-    if (isLoggedOut(sessionResult)) {
+    if (isSignedOut(session)) {
       Sentry.logger.warn("Redirecting to login", {
         reason: "no_session",
-        status: sessionResult.error?.status ?? null,
         href: location.href,
       });
       throw redirect({ to: "/login", search: { redirect: location.href } });
     }
 
-    const { data: session } = sessionResult;
-
-    if (session?.user) {
-      Sentry.setUser({ id: session.user.id, email: session.user.email });
+    if (session.source === "cached") {
+      // Running on the last identity the server confirmed, because it could
+      // not be reached. The user keeps their local replica instead of being
+      // bounced to a login they cannot complete without a network.
+      Sentry.logger.info("session: serving cached identity", {
+        href: location.href,
+      });
     }
+
+    Sentry.setUser({
+      id: session.identity.userId,
+      email: session.identity.email,
+    });
 
     const initDbResult = await initDb();
 

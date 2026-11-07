@@ -1,10 +1,11 @@
 import { recoverFromSyncConflict, type SyncOutcome } from "@bahar/db-core";
 import { enqueueSyncOperation } from "@bahar/db-operations";
 import * as Sentry from "@sentry/react-native";
-import { dbPlatform, ensureDb, syncDb } from "@/lib/db";
+import { dbPlatform, ensureDb, primeNetworkState, syncDb } from "@/lib/db";
 import {
   dictionaryChangedAtom,
   isSyncingAtom,
+  lastSyncedAtAtom,
   store,
   syncCompletedCountAtom,
 } from "@/lib/store";
@@ -95,6 +96,9 @@ const reportSyncFailure = async (outcome: SyncOutcome) => {
 
 export const performSync = async () => {
   store.set(isSyncingAtom, true);
+  // Before the sync, so conflict recovery's offline check and the indicator
+  // both see the current network state rather than a missed change event.
+  await primeNetworkState();
   // Set once reportSyncFailure has already told Sentry about this failure, so
   // the catch below doesn't file it a second time under the same fingerprint.
   let reported = false;
@@ -121,6 +125,7 @@ export const performSync = async () => {
     }
 
     store.set(syncCompletedCountAtom, (c) => c + 1);
+    store.set(lastSyncedAtAtom, Date.now());
     console.log("[sync] Sync complete", {
       dictionaryChanged: changed,
       countBefore,

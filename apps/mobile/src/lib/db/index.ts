@@ -9,6 +9,7 @@ import {
   type DbConnectionInfo,
   type DbError,
   type DbPlatform,
+  isUnauthorizedApiError,
   runDbInit,
   runSync,
   type SyncOutcome,
@@ -18,8 +19,14 @@ import * as Sentry from "@sentry/react-native";
 import { getDbPath } from "@tursodatabase/sync-react-native";
 import { reloadAppAsync } from "expo";
 import { File } from "expo-file-system";
+import * as Network from "expo-network";
+import { isOfflineAtom, lastSyncedAtAtom, store } from "@/lib/store";
 import { api } from "../../utils/api";
 import { connect, type DatabaseAdapter, isSyncError } from "./adapter";
+import {
+  readCachedConnectionInfo,
+  writeCachedConnectionInfo,
+} from "./connection-cache";
 
 const LOCAL_DB_NAME = "bahar-user.db";
 export const SYNC_INTERVAL_MS = 60_000;
@@ -128,13 +135,54 @@ export const deleteLocalDb = (): void => {
 };
 
 /**
- * Whether the device currently has no network connection. Best-effort
- * via RN's navigator.onLine (updated on reachability change events);
- * a false "online" just means the wipe+reload proceeds as before, and
- * a true "offline" blocks the destructive wipe (BAHAR-MOBILE-2).
+ * Whether the device currently has no usable network.
+ *
+ * Kept as a cached boolean because DbPlatform.isOffline is synchronous,
+ * while expo-network only reports asynchronously. {@link primeNetworkState}
+ * seeds it at startup and re-reads it before every sync; the listener only
+ * shortens the gap between those reads. It cannot be relied on alone: on a
+ * Galaxy S22 (Android 16) it never fires when airplane mode turns on.
+ *
+ * Mirrored into isOfflineAtom so the sync indicator can render it.
+ *
+ * Previously this read navigator.onLine, which React Native defines but
+ * does not reliably update -- it reported "online" for a device with no
+ * route to the internet. That mattered because the value gates destructive
+ * sync-conflict recovery: a wrong "online" lets a wipe proceed on a device
+ * that cannot then re-pull the data it just deleted.
+ *
+ * isInternetReachable is preferred over isConnected: a device attached to
+ * a captive-portal wifi is connected and still cannot reach the API. It is
+ * null until determined, in which case connectivity is assumed, since
+ * blocking on an unknown is worse than acting on a stale true.
  */
-const isDeviceOffline = (): boolean =>
-  typeof navigator !== "undefined" && !navigator.onLine;
+let deviceOffline = false;
+
+const applyNetworkState = (state: {
+  isConnected?: boolean | null;
+  isInternetReachable?: boolean | null;
+}): void => {
+  deviceOffline =
+    state.isConnected === false || state.isInternetReachable === false;
+  store.set(isOfflineAtom, deviceOffline);
+};
+
+Network.addNetworkStateListener(applyNetworkState);
+
+/**
+ * Re-reads the network state. Called during init and before every sync, so
+ * the cached value is at most one sync interval stale even when no change
+ * event arrives. Failures are ignored, leaving the previous value.
+ */
+export const primeNetworkState = async (): Promise<void> => {
+  try {
+    applyNetworkState(await Network.getNetworkStateAsync());
+  } catch {
+    // Keep the previous value; the next read will correct it.
+  }
+};
+
+const isDeviceOffline = (): boolean => deviceOffline;
 
 /**
  * The sync-react-native side of the db-core boundary. Module-scoped so init
@@ -143,9 +191,35 @@ const isDeviceOffline = (): boolean =>
  */
 export const dbPlatform: DbPlatform = {
   getConnectionInfo: async (): Promise<DbConnectionInfo> => {
-    const { data, error } = await api.databases.user.get();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await api.databases.user.get();
+      if (error) throw error;
+
+      await writeCachedConnectionInfo(data);
+
+      return data;
+    } catch (error) {
+      // A 401 is the server refusing us, not an absent network. Falling back
+      // would connect with a token the server has already rejected and hide
+      // a real sign-out behind a stale success, so it propagates and
+      // runDbInit routes it to the unauthorized outcome.
+      if (isUnauthorizedApiError(error)) throw error;
+
+      // Anything else -- offline, DNS, a 5xx -- says nothing about whether
+      // the replica is usable. If we have talked to the API before, its
+      // answer is still good enough to open the local database; the pull
+      // that follows will fail and runDbInit degrades to the stale replica.
+      const cached = await readCachedConnectionInfo();
+      if (cached) {
+        Sentry.logger.info("initDb: using cached connection info", {
+          reason: String(error),
+        });
+
+        return cached;
+      }
+
+      throw error;
+    }
   },
   connect: async (info: DbConnectionInfo) => {
     const dbFileName = `${LOCAL_DB_NAME}-${info.db_name}.db`;
@@ -220,6 +294,9 @@ export const initDb = async (): Promise<Result<null, DbError>> => {
 const _initDbInternal = async (): Promise<Result<null, DbError>> => {
   Sentry.logger.info("initDb: start");
 
+  // Seed the cached network state before anything consults isOffline.
+  await primeNetworkState();
+
   // Mobile's applyRequiredMigrations returns errors directly; map
   // the migrations-API-fetch failure to api_schema_verification_failed
   // so runDbInit's degradation policy applies (same as web).
@@ -253,6 +330,9 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     return err(outcome.error);
   }
 
+  // The initial sync just succeeded; without this the indicator reports
+  // "not synced" until the first periodic sync, a full interval later.
+  store.set(lastSyncedAtAtom, Date.now());
   Sentry.logger.info("initDb: success");
   return ok(null);
 };

@@ -4,6 +4,7 @@ import {
   type DbError,
   type DbPlatform,
   isSyncConflictError,
+  isUnauthorizedApiError,
   runDbInit,
   runSync,
   type SyncOutcome,
@@ -15,7 +16,14 @@ import { err, ok, type Result, tryCatch } from "@bahar/result";
 import * as Sentry from "@sentry/react";
 import { connect, type Database } from "@tursodatabase/sync-wasm/vite";
 import { drizzle } from "drizzle-orm/sqlite-proxy";
+import { lastSyncedAtAtom } from "@/atoms/sync";
+import { store } from "@/lib/store";
 import { api } from "../api";
+import {
+  clearCachedConnectionInfo,
+  readCachedConnectionInfo,
+  writeCachedConnectionInfo,
+} from "./connection-cache";
 import { DbInitFailedError } from "./errors";
 
 // Wire web's Sentry logger into the shared DB queue (which has no logging
@@ -344,6 +352,8 @@ export const resetDb = async (caller: ResetDbCaller) => {
 export const deleteLocalDatabase = async () => {
   await resetDb("delete_local_db");
 
+  clearCachedConnectionInfo();
+
   // OPFS files and localStorage sync metadata live in this context.
   const opfsRoot = await navigator.storage.getDirectory();
 
@@ -404,9 +414,35 @@ export const deleteLocalDatabase = async () => {
  */
 const dbPlatform: DbPlatform = {
   getConnectionInfo: async (): Promise<DbConnectionInfo> => {
-    const { data, error } = await api.databases.user.get();
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await api.databases.user.get();
+      if (error) throw error;
+
+      writeCachedConnectionInfo(data);
+
+      return data;
+    } catch (error) {
+      // A 401 is the server refusing us, not an absent network. Falling back
+      // would connect with a token the server has already rejected and hide
+      // a real sign-out behind a stale success, so it propagates and
+      // runDbInit routes it to the login redirect.
+      if (isUnauthorizedApiError(error)) throw error;
+
+      // Anything else -- offline, DNS, a 5xx -- says nothing about whether
+      // the replica is usable. If we have talked to the API before, its
+      // answer is still good enough to open the local database; the pull
+      // that follows will fail and runDbInit degrades to the stale replica.
+      const cached = readCachedConnectionInfo();
+      if (cached) {
+        Sentry.logger.info("initDb: using cached connection info", {
+          reason: String(error),
+        });
+
+        return cached;
+      }
+
+      throw error;
+    }
   },
   connect: async (info: DbConnectionInfo) => {
     const dbAlreadyExists = await localDbExists(info.db_name);
@@ -531,7 +567,10 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
         Sentry.logger.info("initDb: sync retried after change-log repair", {
           ok: retry.outcome === "ok",
         });
-        if (retry.outcome === "ok") return ok(null);
+        if (retry.outcome === "ok") {
+          store.set(lastSyncedAtAtom, Date.now());
+          return ok(null);
+        }
         if (retry.outcome === "degraded") {
           reportDegradedDb(retry.error);
           return ok(null);
@@ -548,6 +587,9 @@ const _initDbInternal = async (): Promise<Result<null, DbError>> => {
     return err(outcome.error);
   }
 
+  // The initial sync just succeeded; without this the indicator reports
+  // "not synced" until the first background sync, a full interval later.
+  store.set(lastSyncedAtAtom, Date.now());
   Sentry.logger.info("initDb: success");
   return ok(null);
 };

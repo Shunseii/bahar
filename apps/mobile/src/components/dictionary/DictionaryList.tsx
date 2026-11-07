@@ -77,7 +77,7 @@ const EmptyDictionary: FC = () => {
       <View className="mb-4 rounded-full bg-muted/50 p-4">
         <BookOpen color={colors.mutedForeground} size={32} />
       </View>
-      <Text className="mb-1 font-medium text-foreground text-lg">
+      <Text className="mb-1 self-stretch px-8 text-center font-medium text-foreground text-lg">
         <Trans>Your dictionary is empty</Trans>
       </Text>
       <Text className="px-8 text-center text-muted-foreground">
@@ -97,7 +97,7 @@ const NoResults: FC<{ hasSearchQuery: boolean }> = ({ hasSearchQuery }) => {
       <View className="mb-4 rounded-full bg-muted/50 p-4">
         <SearchX color={colors.mutedForeground} size={32} />
       </View>
-      <Text className="mb-1 font-medium text-foreground text-lg">
+      <Text className="mb-1 self-stretch px-8 text-center font-medium text-foreground text-lg">
         <Trans>No results found</Trans>
       </Text>
       <Text className="px-8 text-center text-muted-foreground">

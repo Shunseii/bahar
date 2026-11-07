@@ -16,6 +16,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@bahar/auth-core": "workspace:*",
     "@better-auth/expo": "1.4.19",
     "@digitalartlab/expo-plugin-localization": "^3.0.0",
     "@elysiajs/eden": "^1.4.6",

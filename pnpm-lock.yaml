@@ -231,6 +231,9 @@ importers:
 
   apps/mobile:
     dependencies:
+      '@bahar/auth-core':
+        specifier: workspace:*
+        version: link:../../packages/auth-core
       '@better-auth/expo':
         specifier: 1.4.19
         version: 1.4.19(@better-auth/core@1.4.19)(better-auth@1.4.19)(expo-constants@18.0.13)(expo-linking@8.0.11)(expo-network@8.0.8)(expo-web-browser@15.0.10)
@@ -532,6 +535,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@bahar/auth-core':
+        specifier: workspace:*
+        version: link:../../packages/auth-core
       '@bahar/date':
         specifier: workspace:*
         version: link:../../packages/date
@@ -758,6 +764,15 @@ importers:
       wrangler:
         specifier: ^4.54.0
         version: 4.54.0
+
+  packages/auth-core:
+    devDependencies:
+      '@bahar/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
+      vitest:
+        specifier: ^4.1.9
+        version: 4.1.9(@types/node@20.10.6)(@vitest/browser-playwright@4.1.9)(@vitest/coverage-v8@4.1.9)(vite@6.4.1)
 
   packages/config-typescript: {}
 

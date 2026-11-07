@@ -1,3 +1,9 @@
+import {
+  isSignedOut,
+  type ResolvedSession,
+  resolveSession,
+  type SessionFetchOutcome,
+} from "@bahar/auth-core";
 import { polarClient } from "@polar-sh/better-auth/client";
 import {
   adminClient,
@@ -8,6 +14,11 @@ import {
 import { createAuthClient } from "better-auth/react";
 import type { auth } from "../../../api/src/auth";
 import { queryClient } from "./query";
+import {
+  clearCachedIdentity,
+  readCachedIdentity,
+  writeCachedIdentity,
+} from "./session-store";
 import { generateTraceId, TRACE_ID_HEADER } from "./utils";
 
 export const authClient = createAuthClient({
@@ -33,25 +44,108 @@ export const authClient = createAuthClient({
 // and rapid navigation trips the endpoint's rate limit (429).
 const SESSION_STALE_TIME_MS = 1000 * 60 * 5;
 
+type SessionState = Pick<
+  Awaited<ReturnType<typeof authClient.getSession>>,
+  "data" | "error"
+>;
+
+/**
+ * Only a confirmed answer signs anyone out. A 401, or a 200 carrying no
+ * session, is the server exercising authority. Anything else -- a 429, a 5xx,
+ * a failed fetch -- says nothing about the user, so it resolves to
+ * `unreachable` and the cached identity decides.
+ */
+const toOutcome = ({ data, error }: SessionState): SessionFetchOutcome => {
+  if (error) {
+    return error.status === 401
+      ? { kind: "loggedOut" }
+      : { kind: "unreachable" };
+  }
+
+  if (!data?.user) return { kind: "loggedOut" };
+
+  return {
+    kind: "authenticated",
+    identity: {
+      userId: data.user.id,
+      email: data.user.email,
+      expiresAtMs: new Date(data.session.expiresAt).getTime(),
+    },
+  };
+};
+
+type SessionFetchResult = {
+  outcome: SessionFetchOutcome;
+};
+
+/**
+ * Never rejects.
+ *
+ * better-fetch does not wrap its `fetch` call, so offline the underlying
+ * `TypeError: Failed to fetch` propagates straight out of
+ * `authClient.getSession()`. That used to reject the query and throw out of
+ * `beforeLoad` before the db layer ran at all -- so an offline user never
+ * reached the local replica holding their data.
+ */
+const fetchSessionOutcome = async (): Promise<SessionFetchResult> => {
+  try {
+    return { outcome: toOutcome(await authClient.getSession()) };
+  } catch {
+    return { outcome: { kind: "unreachable" } };
+  }
+};
+
 const sessionQueryOptions = {
   queryKey: ["auth.session"],
-  queryFn: () => authClient.getSession(),
+  queryFn: fetchSessionOutcome,
   staleTime: SESSION_STALE_TIME_MS,
 } as const;
 
-// Derived from the (non-generic) queryFn rather than
-// `ReturnType<typeof authClient.getSession>`: `getSession` is generic and its
-// return type varies on the type param, so `ReturnType` collapses it to `any`.
-type SessionResult = Awaited<ReturnType<typeof sessionQueryOptions.queryFn>>;
+/**
+ * The effective session: live when the server answered, the persisted
+ * identity when it could not be reached, and nothing once a sign-out is
+ * confirmed.
+ *
+ * Deduped across the nested `beforeLoad`s via Tanstack Query. Resolution
+ * happens outside the query so the cached outcome stays a plain value and
+ * the storage write is not buried in a query function.
+ */
+export const getResolvedSession = async (): Promise<ResolvedSession> => {
+  const { outcome } = await queryClient.ensureQueryData(sessionQueryOptions);
+
+  const resolved = resolveSession({
+    outcome,
+    cached: readCachedIdentity(),
+    nowMs: Date.now(),
+  });
+
+  if (resolved.store === "write") {
+    writeCachedIdentity(resolved.identity);
+  } else if (resolved.store === "clear") {
+    clearCachedIdentity();
+  }
+
+  return resolved;
+};
 
 /**
- * Fetches the current session, deduped across route `beforeLoad` calls and
- * rapid navigation via Tanstack Query. Returns better-auth's
- * `{ data, error }` shape untouched. The cache is cleared on logout via
- * `queryClient.clear()` in `useLogout`.
+ * Whether the authorized layouts should render: true for a live session, and
+ * for the cached identity when the server cannot be reached.
+ *
+ * A confirmed sign-out still renders nothing. `useLogout` relies on that to
+ * unmount the authorized routes before it tears down the local db.
  */
-export const getCachedSession = (): Promise<SessionResult> =>
-  queryClient.ensureQueryData(sessionQueryOptions);
+export const useIsSignedIn = (): boolean => {
+  const { data, error } = authClient.useSession();
+
+  const resolved = resolveSession({
+    outcome: toOutcome({ data, error }),
+    cached: readCachedIdentity(),
+    nowMs: Date.now(),
+  });
+
+  return !isSignedOut(resolved);
+};
 
 /**
  * Drops the cached session so the next read refetches.
@@ -89,13 +183,3 @@ export const clearCachedSession = (): void =>
  * and the only reliable way to catch whatever settled late.
  */
 export const clearQueryCacheForNewSession = (): void => queryClient.clear();
-
-/**
- * True only for a *confirmed* logged-out response. better-auth returns a 200
- * with `data: null` (and no error) when there's no session, or a 401. A 429
- * rate-limit or a network failure returns `data: null` WITH a transient error
- * -- those must NOT be treated as logged out, otherwise a redirect to the
- * unauthorized layout calls `resetDb()` and closes the local db mid-read.
- */
-export const isLoggedOut = ({ data, error }: SessionResult): boolean =>
-  !data && (!error || error.status === 401);
