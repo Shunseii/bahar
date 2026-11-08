@@ -53,6 +53,7 @@ import { deleteLocalDb, ensureDb, resetDb } from "@/lib/db";
 import { getDrizzleDb } from "@/lib/db/adapter";
 import { clearCachedConnectionInfo } from "@/lib/db/connection-cache";
 import {
+  clampBacklogThreshold,
   clampPostponeWindow,
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   DEFAULT_POSTPONE_WINDOW_DAYS,
@@ -287,6 +288,40 @@ export default function SettingsScreen() {
     onError: () => toast.error(t`Failed to update settings`),
   });
 
+  const backlogThresholdDays =
+    settings?.backlog_threshold_days ?? DEFAULT_BACKLOG_THRESHOLD_DAYS;
+  // Raw string for the same reason as windowInput below; committed on blur.
+  const [thresholdInput, setThresholdInput] = useState(
+    String(backlogThresholdDays)
+  );
+
+  useEffect(() => {
+    setThresholdInput(String(backlogThresholdDays));
+  }, [backlogThresholdDays]);
+
+  const commitThreshold = () => {
+    const next = clampBacklogThreshold(Number(thresholdInput));
+    setThresholdInput(String(next));
+
+    if (next === backlogThresholdDays) return;
+
+    updateMutation.mutate(
+      { updates: { backlog_threshold_days: next } },
+      {
+        // The threshold decides which queue each card is in, so every count
+        // and queue computed with the old value is now wrong.
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+          });
+          queryClient.invalidateQueries({
+            queryKey: flashcardsTable.today.cacheOptions.queryKey,
+          });
+        },
+      }
+    );
+  };
+
   const [postponeProgress, setPostponeProgress] = useState<{
     total: number;
     postponed: number;
@@ -299,8 +334,12 @@ export default function SettingsScreen() {
   );
 
   const { data: counts } = useQuery({
-    queryFn: () => flashcardsTable.counts.query(),
+    queryFn: () => flashcardsTable.counts.query({ backlogThresholdDays }),
     ...flashcardsTable.counts.cacheOptions,
+    queryKey: [
+      ...flashcardsTable.counts.cacheOptions.queryKey,
+      backlogThresholdDays,
+    ],
   });
 
   const scopeCount =
@@ -374,6 +413,7 @@ export default function SettingsScreen() {
         for await (const progress of flashcardsTable.postpone.generator({
           scope: postponeScope,
           windowDays,
+          backlogThresholdDays,
         })) {
           lastProgress = progress;
 
@@ -703,6 +743,26 @@ export default function SettingsScreen() {
 
               <View className="my-2 border-border/50 border-t" />
 
+              <SettingRow
+                description={t`Cards overdue by more than this move from Review to Backlog.`}
+                title={t`Backlog after`}
+              >
+                <View className="flex-row items-center gap-2">
+                  <Input
+                    className="w-16 text-center"
+                    keyboardType="number-pad"
+                    onChangeText={setThresholdInput}
+                    onEndEditing={commitThreshold}
+                    value={thresholdInput}
+                  />
+                  <Text className="text-muted-foreground text-sm">
+                    <Trans>days</Trans>
+                  </Text>
+                </View>
+              </SettingRow>
+
+              <View className="my-2 border-border/50 border-t" />
+
               <View className="py-2">
                 <Text className="mb-1 font-medium text-base text-foreground">
                   <Trans>Show antonyms</Trans>
@@ -746,9 +806,8 @@ export default function SettingsScreen() {
                   ) : (
                     <Trans>
                       Spread your backlog cards evenly across the days ahead.
-                      Cards overdue by less than{" "}
-                      {DEFAULT_BACKLOG_THRESHOLD_DAYS} days stay due today. Your
-                      progress on each card is untouched.
+                      Cards overdue by less than {backlogThresholdDays} days
+                      stay due today. Your progress on each card is untouched.
                     </Trans>
                   )}
                 </Text>

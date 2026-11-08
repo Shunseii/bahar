@@ -39,6 +39,14 @@ export const FLASHCARD_LIMIT = 100;
  */
 export const DEFAULT_BACKLOG_THRESHOLD_DAYS = 7;
 
+export const MIN_BACKLOG_THRESHOLD_DAYS = 1;
+
+/**
+ * Past a month the regular queue would hold cards overdue long enough to be
+ * mostly forgotten, which is what the backlog exists to separate out.
+ */
+export const MAX_BACKLOG_THRESHOLD_DAYS = 30;
+
 /**
  * Number of days the postpone operation spreads an overdue pile across,
  * starting with today. A default rather than a fixed policy -- the user picks

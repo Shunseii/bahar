@@ -1,4 +1,3 @@
-import { DEFAULT_BACKLOG_THRESHOLD_DAYS } from "@bahar/db-operations";
 import { cn } from "@bahar/design-system";
 import { Button } from "@bahar/web-ui/components/button";
 import { Card } from "@bahar/web-ui/components/card";
@@ -25,6 +24,7 @@ import { itemVariants, Page } from "@/components/Page";
 import { InfiniteScroll } from "@/components/search/InfiniteScroll";
 import { searchQueryAtom } from "@/components/search/state";
 import { useSearch } from "@/hooks/search/useSearch";
+import { useBacklogThreshold } from "@/hooks/useBacklogThreshold";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { flashcardsTable } from "@/lib/db/operations";
 
@@ -59,12 +59,15 @@ const Index = () => {
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const { results } = useSearch();
   const { height } = useWindowSize();
+  const backlogThresholdDays = useBacklogThreshold();
   const { data: counts, isPending } = useQuery({
-    queryFn: () =>
-      flashcardsTable.counts.query({
-        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
-      }),
+    queryFn: () => flashcardsTable.counts.query({ backlogThresholdDays }),
     ...flashcardsTable.counts.cacheOptions,
+    queryKey: [
+      ...flashcardsTable.counts.cacheOptions.queryKey,
+      backlogThresholdDays,
+    ],
+    enabled: backlogThresholdDays !== undefined,
   });
 
   // Check that the window dimensions are available

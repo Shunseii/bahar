@@ -17,6 +17,10 @@ export const settings = sqliteTable("settings", {
   create_reverse_by_default: integer("show_reverse_flashcards", {
     mode: "boolean",
   }).default(false),
+  // How overdue a card must be before it leaves the regular review queue for
+  // the backlog. Null on rows written before this column existed, so readers
+  // fall back to DEFAULT_BACKLOG_THRESHOLD_DAYS.
+  backlog_threshold_days: integer("backlog_threshold_days"),
 });
 
 export type SelectSetting = typeof settings.$inferSelect;

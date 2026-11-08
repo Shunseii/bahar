@@ -23,6 +23,7 @@ describe("settingsTable", () => {
       expect(result).toEqual({
         show_antonyms_in_flashcard: "hidden",
         create_reverse_by_default: false,
+        backlog_threshold_days: 7,
       });
 
       const row = await (
@@ -43,7 +44,26 @@ describe("settingsTable", () => {
       expect(result).toEqual({
         show_antonyms_in_flashcard: "hint",
         create_reverse_by_default: true,
+        backlog_threshold_days: 7,
       });
+    });
+
+    it("returns a stored backlog threshold", async () => {
+      await insertSettings(testDb);
+      await testDb.db.exec("UPDATE settings SET backlog_threshold_days = 3");
+
+      const result = await settingsTable.getSettings.query();
+
+      expect(result.backlog_threshold_days).toBe(3);
+    });
+
+    it("clamps an out-of-range stored threshold rather than trusting it", async () => {
+      await insertSettings(testDb);
+      await testDb.db.exec("UPDATE settings SET backlog_threshold_days = 0");
+
+      const result = await settingsTable.getSettings.query();
+
+      expect(result.backlog_threshold_days).toBe(1);
     });
   });
 
@@ -61,6 +81,7 @@ describe("settingsTable", () => {
       expect(updated).toEqual({
         show_antonyms_in_flashcard: "hidden",
         create_reverse_by_default: true,
+        backlog_threshold_days: 7,
       });
 
       // Raw read: the underlying SQL column is still `show_reverse_flashcards`
@@ -90,7 +111,27 @@ describe("settingsTable", () => {
       expect(updated).toEqual({
         show_antonyms_in_flashcard: "hint",
         create_reverse_by_default: false,
+        backlog_threshold_days: 7,
       });
+    });
+
+    it("stores the backlog threshold, clamped to the allowed range", async () => {
+      await insertSettings(testDb);
+
+      const updated = await settingsTable.update.mutation({
+        updates: { backlog_threshold_days: 3 },
+      });
+      expect(updated.backlog_threshold_days).toBe(3);
+
+      const clamped = await settingsTable.update.mutation({
+        updates: { backlog_threshold_days: 400 },
+      });
+      expect(clamped.backlog_threshold_days).toBe(30);
+
+      const row = (await (
+        await testDb.db.prepare("SELECT backlog_threshold_days FROM settings")
+      ).get()) as { backlog_threshold_days: number };
+      expect(row.backlog_threshold_days).toBe(30);
     });
 
     it("throws when no fields are provided", async () => {

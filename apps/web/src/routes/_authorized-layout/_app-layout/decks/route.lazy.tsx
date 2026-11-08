@@ -30,14 +30,18 @@ import { toast } from "sonner";
 import { DeckDialogContent } from "@/components/features/decks/DeckDialogContent";
 import { FlashcardDrawer } from "@/components/features/flashcards/FlashcardDrawer/FlashcardDrawer";
 import { Page } from "@/components/Page";
+import { useBacklogThreshold } from "@/hooks/useBacklogThreshold";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { decksTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 
 const Decks = () => {
+  const backlogThresholdDays = useBacklogThreshold();
   const { data } = useQuery({
-    queryFn: () => decksTable.list.query({}),
+    queryFn: () => decksTable.list.query({ backlogThresholdDays }),
     ...decksTable.list.cacheOptions,
+    queryKey: [...decksTable.list.cacheOptions.queryKey, backlogThresholdDays],
+    enabled: backlogThresholdDays !== undefined,
   });
 
   const { mutateAsync: deleteDeck } = useMutation({

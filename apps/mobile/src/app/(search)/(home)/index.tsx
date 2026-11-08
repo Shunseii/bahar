@@ -34,14 +34,12 @@ import { GuestBanner } from "@/components/GuestBanner";
 import StreakChip from "@/components/progress/StreakChip";
 import { Button } from "@/components/ui/button";
 import { useAppInit } from "@/hooks/useAppInit";
+import { useBacklogThreshold } from "@/hooks/useBacklogThreshold";
 import { useBackToExit } from "@/hooks/useBackToExit";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { usePreloadDrawerScreens } from "@/hooks/usePreloadDrawerScreens";
 import { useUserPlan } from "@/hooks/useUserPlan";
-import {
-  DEFAULT_BACKLOG_THRESHOLD_DAYS,
-  flashcardsTable,
-} from "@/lib/db/operations";
+import { flashcardsTable } from "@/lib/db/operations";
 import {
   selectedTagsAtom,
   selectedTypesAtom,
@@ -266,13 +264,16 @@ export default function HomeScreen() {
   const [totalResults, setTotalResults] = useState<number | null>(null);
   const [elapsedTimeNs, setElapsedTimeNs] = useState<number | null>(null);
 
+  const backlogThresholdDays = useBacklogThreshold();
+
   const { data: counts, isPending } = useQuery({
-    queryFn: () =>
-      flashcardsTable.counts.query({
-        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
-      }),
+    queryFn: () => flashcardsTable.counts.query({ backlogThresholdDays }),
     ...flashcardsTable.counts.cacheOptions,
-    enabled: state === "ready",
+    queryKey: [
+      ...flashcardsTable.counts.cacheOptions.queryKey,
+      backlogThresholdDays,
+    ],
+    enabled: state === "ready" && backlogThresholdDays !== undefined,
     refetchOnMount: true,
     // Cards cross their due time purely by the clock advancing, with nothing to
     // invalidate the query. Poll while mounted so the due count updates on its

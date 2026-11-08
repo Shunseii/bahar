@@ -21,12 +21,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import ReAnimated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { type Grade, Rating } from "ts-fsrs";
+import { useBacklogThreshold } from "@/hooks/useBacklogThreshold";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { getIndexedEntry, markEntryReviewedInIndex } from "@/lib/search";
 import { reviewsPendingRefreshAtom } from "@/lib/store";
 import { useThemeColors } from "@/lib/theme";
 import {
-  DEFAULT_BACKLOG_THRESHOLD_DAYS,
   decksTable,
   FLASHCARD_LIMIT,
   type FlashcardQueue,
@@ -174,17 +174,17 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
   const [selectedQueue, setSelectedQueue] =
     useState<FlashcardQueue>(initialQueue);
   const scheduler = useMemo(() => createScheduler(), []);
+  const backlogThresholdDays = useBacklogThreshold();
 
   const { data: fetchedCounts } = useQuery({
     queryFn: () =>
-      flashcardsTable.counts.query({
-        filters,
-        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
-      }),
+      flashcardsTable.counts.query({ filters, backlogThresholdDays }),
     queryKey: [
       ...flashcardsTable.counts.cacheOptions.queryKey,
       JSON.stringify(filters),
+      backlogThresholdDays,
     ],
+    enabled: backlogThresholdDays !== undefined,
     placeholderData: queueCounts
       ? { ...queueCounts, total: queueCounts.regular + queueCounts.backlog }
       : undefined,
@@ -198,14 +198,16 @@ export const FlashcardReview: React.FC<FlashcardReviewProps> = ({
       flashcardsTable.today.query({
         filters,
         queue: selectedQueue,
-        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
+        backlogThresholdDays,
       }),
     ...flashcardsTable.today.cacheOptions,
     queryKey: [
       ...flashcardsTable.today.cacheOptions.queryKey,
       JSON.stringify(filters),
       selectedQueue,
+      backlogThresholdDays,
     ],
+    enabled: backlogThresholdDays !== undefined,
   });
 
   useEffect(() => {
