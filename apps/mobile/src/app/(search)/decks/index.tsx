@@ -20,6 +20,7 @@ import Animated, {
 import { DeckCard } from "@/components/decks/DeckCard";
 import { Button } from "@/components/ui/button";
 import { ScreenHeader } from "@/components/ui/screen-header";
+import { useBacklogThreshold } from "@/hooks/useBacklogThreshold";
 import { useCollapsibleHeader } from "@/hooks/useCollapsibleHeader";
 import { type DeckWithCounts, decksTable } from "@/lib/db/operations";
 import { performSync } from "@/lib/db/sync";
@@ -32,9 +33,13 @@ export default function DecksListScreen() {
   const { scrollHandler } = useCollapsibleHeader(t`Decks`);
   const [refreshing, setRefreshing] = useState(false);
 
+  const backlogThresholdDays = useBacklogThreshold();
+
   const { data: decks, status } = useQuery({
-    queryFn: () => decksTable.list.query(),
+    queryFn: () => decksTable.list.query({ backlogThresholdDays }),
     ...decksTable.list.cacheOptions,
+    queryKey: [...decksTable.list.cacheOptions.queryKey, backlogThresholdDays],
+    enabled: backlogThresholdDays !== undefined,
   });
 
   const { mutateAsync: deleteDeck } = useMutation({

@@ -16,7 +16,9 @@ export {
   DEFAULT_POSTPONE_WINDOW_DAYS,
   DICTIONARY_ENTRY_COLUMNS,
   FLASHCARD_LIMIT,
+  MAX_BACKLOG_THRESHOLD_DAYS,
   MAX_POSTPONE_WINDOW_DAYS,
+  MIN_BACKLOG_THRESHOLD_DAYS,
   MIN_POSTPONE_WINDOW_DAYS,
 } from "./constants";
 export {
@@ -40,7 +42,11 @@ export {
 } from "./operations/flashcards";
 export { makeMigrationTable } from "./operations/migration";
 export { makeProgressTable } from "./operations/progress";
-export { makeSettingsTable } from "./operations/settings";
+export {
+  clampBacklogThreshold,
+  makeSettingsTable,
+  type Settings,
+} from "./operations/settings";
 export {
   configureDbQueue,
   enqueueDbOperation,

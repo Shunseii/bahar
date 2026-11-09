@@ -4,9 +4,41 @@ import {
   settings,
 } from "@bahar/drizzle-user-db-schemas";
 import { nanoid } from "nanoid/non-secure";
+import {
+  DEFAULT_BACKLOG_THRESHOLD_DAYS,
+  MAX_BACKLOG_THRESHOLD_DAYS,
+  MIN_BACKLOG_THRESHOLD_DAYS,
+} from "../constants";
 import { enqueueDbOperation } from "../queue";
 import type { TableOperation } from "../types";
 import type { OperationDeps } from "./deps";
+
+/**
+ * Settings as the apps consume them: the backlog threshold is always a usable
+ * number, with rows that predate the column falling back to the default.
+ */
+export type Settings = Omit<SelectSetting, "id" | "backlog_threshold_days"> & {
+  backlog_threshold_days: number;
+};
+
+/** Bounds a user-entered threshold to whole days within the allowed range. */
+export const clampBacklogThreshold = (days: number): number => {
+  if (!Number.isFinite(days)) return DEFAULT_BACKLOG_THRESHOLD_DAYS;
+
+  return Math.min(
+    MAX_BACKLOG_THRESHOLD_DAYS,
+    Math.max(MIN_BACKLOG_THRESHOLD_DAYS, Math.round(days))
+  );
+};
+
+const toSettings = (row: SelectSetting): Settings => ({
+  show_antonyms_in_flashcard: row.show_antonyms_in_flashcard,
+  create_reverse_by_default: row.create_reverse_by_default,
+  backlog_threshold_days:
+    row.backlog_threshold_days === null
+      ? DEFAULT_BACKLOG_THRESHOLD_DAYS
+      : clampBacklogThreshold(row.backlog_threshold_days),
+});
 
 export const makeSettingsTable = ({
   enqueue = enqueueDbOperation,
@@ -14,7 +46,7 @@ export const makeSettingsTable = ({
 }: OperationDeps) =>
   ({
     getSettings: {
-      query: async (): Promise<Omit<SelectSetting, "id">> => {
+      query: async (): Promise<Settings> => {
         const drizzleDb = await getDb();
 
         const [res] = await drizzleDb.select().from(settings).limit(1);
@@ -30,13 +62,11 @@ export const makeSettingsTable = ({
           return {
             show_antonyms_in_flashcard: "hidden",
             create_reverse_by_default: false,
+            backlog_threshold_days: DEFAULT_BACKLOG_THRESHOLD_DAYS,
           };
         }
 
-        return {
-          show_antonyms_in_flashcard: res.show_antonyms_in_flashcard,
-          create_reverse_by_default: res.create_reverse_by_default,
-        };
+        return toSettings(res);
       },
       cacheOptions: {
         queryKey: ["turso.settings.query"],
@@ -46,8 +76,8 @@ export const makeSettingsTable = ({
       mutation: ({
         updates,
       }: {
-        updates: Partial<Omit<SelectSetting, "id">>;
-      }): Promise<Omit<SelectSetting, "id">> =>
+        updates: Partial<Settings>;
+      }): Promise<Settings> =>
         enqueue(async () => {
           const drizzleDb = await getDb();
 
@@ -67,6 +97,14 @@ export const makeSettingsTable = ({
             setValues.create_reverse_by_default =
               updates.create_reverse_by_default;
           }
+          if (
+            "backlog_threshold_days" in updates &&
+            updates.backlog_threshold_days !== undefined
+          ) {
+            setValues.backlog_threshold_days = clampBacklogThreshold(
+              updates.backlog_threshold_days
+            );
+          }
 
           if (Object.keys(setValues).length === 0) {
             throw new Error("No fields to update");
@@ -80,10 +118,7 @@ export const makeSettingsTable = ({
             throw new Error("Settings not found");
           }
 
-          return {
-            show_antonyms_in_flashcard: res.show_antonyms_in_flashcard,
-            create_reverse_by_default: res.create_reverse_by_default,
-          };
+          return toSettings(res);
         }),
       cacheOptions: {
         queryKey: ["turso.settings.update"],

@@ -4,6 +4,8 @@ import {
   DEFAULT_POSTPONE_WINDOW_DAYS,
   enqueueDbOperation,
   enqueueSyncOperation,
+  MAX_BACKLOG_THRESHOLD_DAYS,
+  MIN_BACKLOG_THRESHOLD_DAYS,
   MIN_POSTPONE_WINDOW_DAYS,
   type PostponeScope,
   postponeCardsPerDay,
@@ -54,6 +56,12 @@ import { z } from "@/lib/zod";
 const FormSchema = z.object({
   show_antonyms_in_flashcard: z.enum(["hidden", "answer", "hint"]).optional(),
   create_reverse_by_default: z.boolean().optional(),
+  backlog_threshold_days: z
+    .number()
+    .int()
+    .min(MIN_BACKLOG_THRESHOLD_DAYS)
+    .max(MAX_BACKLOG_THRESHOLD_DAYS)
+    .optional(),
 });
 
 export const FlashcardSettingsCardSection = () => {
@@ -64,11 +72,22 @@ export const FlashcardSettingsCardSection = () => {
     ...settingsTable.getSettings.cacheOptions,
   });
 
+  const backlogThresholdDays =
+    data?.backlog_threshold_days ?? DEFAULT_BACKLOG_THRESHOLD_DAYS;
+
   const { mutateAsync: updateSettings } = useMutation({
     mutationFn: settingsTable.update.mutation,
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: settingsTable.getSettings.cacheOptions.queryKey,
+      });
+      // The threshold decides which queue each card is in, so counts and
+      // queues computed with the old value are stale.
+      await queryClient.invalidateQueries({
+        queryKey: flashcardsTable.counts.cacheOptions.queryKey,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: flashcardsTable.today.cacheOptions.queryKey,
       });
     },
   });
@@ -85,8 +104,12 @@ export const FlashcardSettingsCardSection = () => {
   );
 
   const { data: counts } = useQuery({
-    queryFn: () => flashcardsTable.counts.query(),
+    queryFn: () => flashcardsTable.counts.query({ backlogThresholdDays }),
     ...flashcardsTable.counts.cacheOptions,
+    queryKey: [
+      ...flashcardsTable.counts.cacheOptions.queryKey,
+      backlogThresholdDays,
+    ],
   });
 
   const scopeCount =
@@ -149,6 +172,7 @@ export const FlashcardSettingsCardSection = () => {
         for await (const progress of flashcardsTable.postpone.generator({
           scope: postponeScope,
           windowDays,
+          backlogThresholdDays,
         })) {
           setPostponeProgress(progress);
           lastProgress = progress;
@@ -188,17 +212,19 @@ export const FlashcardSettingsCardSection = () => {
     } finally {
       setPostponeProgress(null);
     }
-  }, [t, postponeScope, windowDays]);
+  }, [t, postponeScope, windowDays, backlogThresholdDays]);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       show_antonyms_in_flashcard: "hidden",
       create_reverse_by_default: false,
+      backlog_threshold_days: DEFAULT_BACKLOG_THRESHOLD_DAYS,
     },
     values: {
       show_antonyms_in_flashcard: data?.show_antonyms_in_flashcard ?? "hidden",
       create_reverse_by_default: data?.create_reverse_by_default ?? false,
+      backlog_threshold_days: backlogThresholdDays,
     },
   });
 
@@ -313,6 +339,49 @@ export const FlashcardSettingsCardSection = () => {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="backlog_threshold_days"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between gap-4 rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">
+                        <Trans>Backlog after</Trans>
+                      </FormLabel>
+
+                      <FormDescription>
+                        <Trans>
+                          Cards overdue by more than this move from Review to
+                          Backlog.
+                        </Trans>
+                      </FormDescription>
+
+                      <FormMessage />
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-2">
+                      <FormControl>
+                        <Input
+                          className="w-20 text-center"
+                          inputMode="numeric"
+                          max={MAX_BACKLOG_THRESHOLD_DAYS}
+                          min={MIN_BACKLOG_THRESHOLD_DAYS}
+                          type="number"
+                          {...field}
+                          onChange={(event) =>
+                            field.onChange(event.target.valueAsNumber)
+                          }
+                          value={Number.isNaN(field.value) ? "" : field.value}
+                        />
+                      </FormControl>
+                      <span className="text-muted-foreground text-sm">
+                        <Trans>days</Trans>
+                      </span>
+                    </div>
+                  </FormItem>
+                )}
+              />
             </div>
 
             <Button
@@ -339,9 +408,8 @@ export const FlashcardSettingsCardSection = () => {
                 ) : (
                   <Trans>
                     Spread your backlog cards evenly across the days ahead.
-                    Cards overdue by less than {DEFAULT_BACKLOG_THRESHOLD_DAYS}{" "}
-                    days stay due today. Your progress on each card is
-                    untouched.
+                    Cards overdue by less than {backlogThresholdDays} days stay
+                    due today. Your progress on each card is untouched.
                   </Trans>
                 )}
               </p>

@@ -15,6 +15,7 @@ import { ensureDb } from ".";
 import { getDrizzleDb } from "./adapter";
 
 export {
+  clampBacklogThreshold,
   clampPostponeWindow,
   DEFAULT_BACKLOG_THRESHOLD_DAYS,
   DEFAULT_POSTPONE_WINDOW_DAYS,

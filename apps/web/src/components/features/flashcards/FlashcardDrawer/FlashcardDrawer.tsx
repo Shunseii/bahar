@@ -1,5 +1,4 @@
 import {
-  DEFAULT_BACKLOG_THRESHOLD_DAYS,
   type FlashcardQueue,
   type FlashcardWithDictionaryEntry,
   keepCurrentCardFirst,
@@ -37,6 +36,7 @@ import {
 } from "react";
 import { type Grade, Rating } from "ts-fsrs";
 import { useSearch } from "@/hooks/search/useSearch";
+import { useBacklogThreshold } from "@/hooks/useBacklogThreshold";
 import { useDir } from "@/hooks/useDir";
 import { useFormatNumber } from "@/hooks/useFormatNumber";
 import { api } from "@/lib/api";
@@ -91,15 +91,18 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
     setShowAnswer(false);
   }, [selectedQueue]);
 
+  const backlogThresholdDays = useBacklogThreshold();
+
   const { data: fetchedCounts } = useQuery({
     queryFn: () =>
-      flashcardsTable.counts.query({
-        filters,
-        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
-      }),
+      flashcardsTable.counts.query({ filters, backlogThresholdDays }),
     ...flashcardsTable.counts.cacheOptions,
-    queryKey: [...flashcardsTable.counts.cacheOptions.queryKey, filters],
-    enabled: !queueCounts,
+    queryKey: [
+      ...flashcardsTable.counts.cacheOptions.queryKey,
+      filters,
+      backlogThresholdDays,
+    ],
+    enabled: !queueCounts && backlogThresholdDays !== undefined,
   });
 
   const counts = queueCounts ?? fetchedCounts ?? { regular: 0, backlog: 0 };
@@ -109,14 +112,16 @@ export const FlashcardDrawer: FC<FlashcardDrawerProps> = ({
       flashcardsTable.today.query({
         filters,
         queue: selectedQueue,
-        backlogThresholdDays: DEFAULT_BACKLOG_THRESHOLD_DAYS,
+        backlogThresholdDays,
       }),
     ...flashcardsTable.today.cacheOptions,
     queryKey: [
       ...flashcardsTable.today.cacheOptions.queryKey,
       filters,
       selectedQueue,
+      backlogThresholdDays,
     ],
+    enabled: backlogThresholdDays !== undefined,
   });
 
   const { reset: resetSearch } = useSearch();
