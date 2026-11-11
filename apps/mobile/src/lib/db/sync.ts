@@ -6,6 +6,7 @@ import {
   dictionaryChangedAtom,
   isSyncingAtom,
   lastSyncedAtAtom,
+  lastSyncFailedAtom,
   store,
   syncCompletedCountAtom,
 } from "@/lib/store";
@@ -126,6 +127,7 @@ export const performSync = async () => {
 
     store.set(syncCompletedCountAtom, (c) => c + 1);
     store.set(lastSyncedAtAtom, Date.now());
+    store.set(lastSyncFailedAtom, false);
     console.log("[sync] Sync complete", {
       dictionaryChanged: changed,
       countBefore,
@@ -139,6 +141,7 @@ export const performSync = async () => {
       countAfter,
     });
   } catch (error) {
+    store.set(lastSyncFailedAtom, true);
     if (!reported) {
       console.warn("[sync] Sync failed:", error);
       // The periodic sync caller swallows this rejection, so capture here or

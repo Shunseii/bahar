@@ -51,6 +51,8 @@ jest.mock("@/lib/db", () => ({
 jest.mock("@/lib/store", () => ({
   store: { set: jest.fn() },
   isSyncingAtom: {},
+  lastSyncedAtAtom: {},
+  lastSyncFailedAtom: {},
   dictionaryChangedAtom: {},
   syncCompletedCountAtom: {},
 }));
@@ -75,6 +77,7 @@ beforeEach(() => {
   mockPrimeNetworkState.mockReset().mockResolvedValue(undefined);
 });
 
+import { lastSyncFailedAtom, store } from "@/lib/store";
 import { performSync } from "./sync";
 
 describe("performSync conflict recovery wiring (BAHAR-MOBILE-2)", () => {
@@ -118,5 +121,37 @@ describe("performSync conflict recovery wiring (BAHAR-MOBILE-2)", () => {
     // A transient sync failure is expected on a flaky connection and leaves
     // the replica usable, so it must not land in Sentry as an error event.
     expect(mockCaptureException).not.toHaveBeenCalled();
+  });
+});
+
+describe("performSync failure flag for the sync indicator", () => {
+  const ok: SyncOutcome = { outcome: "ok" };
+
+  const lastFailedValue = () =>
+    jest
+      .mocked(store.set)
+      .mock.calls.filter(([atom]) => atom === lastSyncFailedAtom)
+      .at(-1)?.[1];
+
+  beforeEach(() => {
+    jest.mocked(store.set).mockClear();
+  });
+
+  it("flags a failed attempt", async () => {
+    mockSyncDb.mockResolvedValue(transient);
+
+    await expect(performSync()).rejects.toThrow();
+
+    expect(lastFailedValue()).toBe(true);
+  });
+
+  it("clears the flag once a sync succeeds", async () => {
+    mockSyncDb.mockResolvedValue(transient);
+    await expect(performSync()).rejects.toThrow();
+
+    mockSyncDb.mockResolvedValue(ok);
+    await performSync();
+
+    expect(lastFailedValue()).toBe(false);
   });
 });

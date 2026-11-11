@@ -18,6 +18,13 @@ export const dictionaryChangedAtom = atom(false);
 export const lastSyncedAtAtom = atom<number | null>(null);
 
 /**
+ * Whether the most recent periodic sync attempt failed. Lets the sync
+ * indicator tell "a sync is overdue because the app was backgrounded" (no
+ * attempt yet, nothing wrong) from "syncs are actually failing".
+ */
+export const lastSyncFailedAtom = atom(false);
+
+/**
  * Whether the device reports no usable network, via expo-network. Written
  * only by the db layer's network-state cache.
  */

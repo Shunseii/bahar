@@ -27,6 +27,7 @@ import {
   useState,
 } from "react";
 import {
+  AppState,
   Text as RNText,
   TextInput,
   TouchableOpacity,
@@ -209,13 +210,24 @@ export default function Layout() {
   const { refresh } = useSearch();
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const sync = () => {
       performSync().catch(() => {
         // Transient sync failures are expected offline; the next tick retries.
       });
-    }, SYNC_INTERVAL_MS);
+    };
 
-    return () => clearInterval(interval);
+    const interval = setInterval(sync, SYNC_INTERVAL_MS);
+
+    // Timers don't run in the background, so without this a reopened app
+    // shows data up to a full interval old before the next tick.
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      if (nextState === "active") sync();
+    });
+
+    return () => {
+      clearInterval(interval);
+      subscription.remove();
+    };
   }, []);
 
   useEffect(() => {
