@@ -11,6 +11,7 @@ import { api } from "@/lib/api";
 import { flashcardsTable, progressTable } from "@/lib/db/operations";
 import { queryClient } from "@/lib/query";
 import { DifficultWordsCard } from "./-components/DifficultWordsCard";
+import { OfflinePlaceholder } from "./-components/OfflinePlaceholder";
 import { ProPlaceholder } from "./-components/ProPlaceholder";
 import {
   type RecentReview,
@@ -24,7 +25,7 @@ import { WorkloadForecastCard } from "./-components/WorkloadForecastCard";
 
 const Progress = () => {
   const { i18n } = useLingui();
-  const { isFreeUser } = useUserPlan();
+  const { isProUser, isFreeUser, needsConnection } = useUserPlan();
 
   const { data: streakData, isLoading: isStreakLoading } = useQuery({
     queryFn: progressTable.streak.query,
@@ -43,7 +44,7 @@ const Progress = () => {
       queryFn: progressTable.wordsLearned.query,
       ...progressTable.wordsLearned.cacheOptions,
       staleTime: 5 * 60 * 1000,
-      enabled: !isFreeUser,
+      enabled: isProUser,
     }
   );
 
@@ -51,7 +52,7 @@ const Progress = () => {
     queryFn: progressTable.difficultWords.query,
     ...progressTable.difficultWords.cacheOptions,
     staleTime: 5 * 60 * 1000,
-    enabled: !isFreeUser,
+    enabled: isProUser,
   });
 
   const { data: retentionData, isLoading: isRetentionLoading } = useQuery({
@@ -62,7 +63,7 @@ const Progress = () => {
     },
     queryKey: ["stats.retention"],
     staleTime: 5 * 60 * 1000,
-    enabled: !isFreeUser,
+    enabled: isProUser,
   });
 
   const { data: forecastData, isLoading: isForecastLoading } = useQuery({
@@ -75,7 +76,7 @@ const Progress = () => {
       i18n.locale,
     ],
     staleTime: 5 * 60 * 1000,
-    enabled: !isFreeUser,
+    enabled: isProUser,
   });
 
   const { data: recentRevlogs, isLoading: isRecentLoading } = useQuery({
@@ -86,7 +87,7 @@ const Progress = () => {
     },
     queryKey: ["stats.revlogs.recent"],
     staleTime: 60 * 1000,
-    enabled: !isFreeUser,
+    enabled: isProUser,
   });
 
   const entryIds = [
@@ -224,9 +225,9 @@ const Progress = () => {
         <WordsAddedCard data={wordsData} isLoading={isWordsLoading} />
       </div>
 
-      {isFreeUser ? (
-        <ProPlaceholder />
-      ) : (
+      {isFreeUser && <ProPlaceholder />}
+      {needsConnection && <OfflinePlaceholder />}
+      {isProUser && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <h2 className="font-semibold text-lg">

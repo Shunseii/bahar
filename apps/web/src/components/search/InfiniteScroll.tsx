@@ -21,10 +21,10 @@ import {
   Copy,
   Edit,
   Loader2,
-  Lock,
   RotateCcw,
   SearchX,
   Timer,
+  WifiOff,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -362,37 +362,37 @@ const RATING_DOT_STYLES: Record<string, string> = {
 
 const ReviewHistory: FC<{ entryId: string }> = memo(({ entryId }) => {
   const { i18n } = useLingui();
-  const { isProUser } = useUserPlan();
+  const { needsConnection } = useUserPlan();
 
-  const { data: revlogData } = useQuery({
+  // Review history lives in the central API database, not the local replica,
+  // so it is the one part of this panel that needs the server.
+  const { data: revlogData, isError } = useQuery({
     queryFn: async () => {
       const { data, error } = await api.stats.revlogs.entry({ entryId }).get();
       if (error) throw error;
       return data;
     },
     queryKey: ["stats.revlogs.entry", entryId],
-    enabled: isProUser,
+    enabled: !needsConnection,
+    retry: false,
   });
 
   const { data: flashcardData } = useQuery({
     queryFn: () => flashcardsTable.findByEntryId.query(entryId),
     queryKey: [...flashcardsTable.findByEntryId.cacheOptions.queryKey, entryId],
-    enabled: isProUser,
   });
 
-  if (!isProUser) {
+  if (needsConnection || (isError && !revlogData)) {
     return (
       <div className="flex flex-col gap-1.5 border-border/50 border-t pt-3">
         <div className="flex items-center gap-1.5">
           <p className="font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Review History</Trans>
           </p>
-          <Lock className="h-3 w-3 text-muted-foreground/50" />
+          <WifiOff className="h-3 w-3 text-muted-foreground/50" />
         </div>
         <p className="text-muted-foreground text-xs">
-          <Trans>
-            Upgrade to Pro to see your review history for this word.
-          </Trans>
+          <Trans>Review history needs an internet connection.</Trans>
         </p>
       </div>
     );
@@ -843,7 +843,6 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   const { tags, tagMode, types, sort } = useSearch({
     from: "/_authorized-layout/_search-layout",
   });
-  const { isFreeUser } = useUserPlan();
   const navigate = useNavigate();
   const {
     results: { hits } = {},
@@ -853,7 +852,7 @@ export const InfiniteScroll: FC<{ searchQuery?: string }> = ({
   } = useInfiniteScroll({
     term: searchQuery,
     filters: { tags, tagMode, types },
-    sort: sort === "difficulty" && isFreeUser ? undefined : sort,
+    sort,
   });
   usePublishAllMatchingIds(allMatchingIds);
 
