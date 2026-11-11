@@ -9,6 +9,7 @@ import { RefreshControl, Text, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { Rating, type ReviewLog } from "ts-fsrs";
 import { DifficultWordsCard } from "@/components/progress/DifficultWordsCard";
+import { OfflinePlaceholder } from "@/components/progress/OfflinePlaceholder";
 import { ProPlaceholder } from "@/components/progress/ProPlaceholder";
 import {
   type RecentReview,
@@ -29,7 +30,7 @@ const STALE_TIME = 5 * 60 * 1000;
 export default function StatsScreen() {
   const { i18n } = useLingui();
   const { scrollHandler } = useCollapsibleHeader(t`Progress`);
-  const { isFreeUser } = useUserPlan();
+  const { isProUser, isFreeUser, needsConnection } = useUserPlan();
   const { formatNumber } = useFormatNumber();
 
   // -- Free tier queries --
@@ -51,7 +52,7 @@ export default function StatsScreen() {
       queryFn: progressTable.wordsLearned.query,
       ...progressTable.wordsLearned.cacheOptions,
       staleTime: STALE_TIME,
-      enabled: !isFreeUser,
+      enabled: isProUser,
     }
   );
 
@@ -63,7 +64,7 @@ export default function StatsScreen() {
     },
     queryKey: ["stats.retention"],
     staleTime: STALE_TIME,
-    enabled: !isFreeUser,
+    enabled: isProUser,
   });
 
   const { data: forecastData, isLoading: isForecastLoading } = useQuery({
@@ -76,14 +77,14 @@ export default function StatsScreen() {
       i18n.locale,
     ],
     staleTime: STALE_TIME,
-    enabled: !isFreeUser,
+    enabled: isProUser,
   });
 
   const { data: difficultData, isLoading: isDifficultLoading } = useQuery({
     queryFn: progressTable.difficultWords.query,
     ...progressTable.difficultWords.cacheOptions,
     staleTime: STALE_TIME,
-    enabled: !isFreeUser,
+    enabled: isProUser,
   });
 
   const { data: recentRevlogs, isLoading: isRecentLoading } = useQuery({
@@ -94,7 +95,7 @@ export default function StatsScreen() {
     },
     queryKey: ["stats.revlogs.recent"],
     staleTime: 60 * 1000,
-    enabled: !isFreeUser,
+    enabled: isProUser,
   });
 
   const entryIds = [
@@ -290,9 +291,9 @@ export default function StatsScreen() {
         />
 
         {/* Pro-gated insights section */}
-        {isFreeUser ? (
-          <ProPlaceholder />
-        ) : (
+        {isFreeUser && <ProPlaceholder />}
+        {needsConnection && <OfflinePlaceholder />}
+        {isProUser && (
           <>
             <View className="flex-row items-center gap-2">
               <Text className="font-semibold text-foreground text-lg">

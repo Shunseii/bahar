@@ -289,7 +289,7 @@ const getDefaultFormValues = (
 const Edit = () => {
   const { editDictionaryEntry } = useEditDictionaryEntry();
   const { wordId } = Route.useParams();
-  const { isProUser } = useUserPlan();
+  const { isProUser, isFreeUser, needsConnection } = useUserPlan();
 
   const { data } = useQuery({
     queryFn: () => dictionaryEntriesTable.entry.query(wordId),
@@ -518,7 +518,11 @@ const Edit = () => {
                     </span>
                   </TooltipTrigger>
 
-                  {!isProUser ? (
+                  {needsConnection ? (
+                    <TooltipContent>
+                      <Trans>AI autofill needs an internet connection.</Trans>
+                    </TooltipContent>
+                  ) : isFreeUser ? (
                     <TooltipContent>
                       <Trans>Upgrade to Pro to use AI autofill.</Trans>
                     </TooltipContent>
@@ -573,7 +577,11 @@ const Edit = () => {
                 </span>
               </TooltipTrigger>
 
-              {!isProUser ? (
+              {needsConnection ? (
+                <TooltipContent>
+                  <Trans>AI autofill needs an internet connection.</Trans>
+                </TooltipContent>
+              ) : isFreeUser ? (
                 <TooltipContent>
                   <Trans>Upgrade to Pro to use AI autofill.</Trans>
                 </TooltipContent>

@@ -42,7 +42,7 @@ import type { z } from "@/lib/zod";
 export const AdditionalDetailsFormSection = () => {
   const { t } = useLingui();
   const form = useFormContext<z.infer<typeof FormSchema>>();
-  const { isProUser } = useUserPlan();
+  const { isProUser, isFreeUser, needsConnection } = useUserPlan();
 
   const {
     fields: examplesFields,
@@ -355,9 +355,16 @@ export const AdditionalDetailsFormSection = () => {
                   </span>
                 </TooltipTrigger>
 
-                {!isProUser && (
+                {isFreeUser && (
                   <TooltipContent>
                     <Trans>Upgrade to Pro to generate examples.</Trans>
+                  </TooltipContent>
+                )}
+                {needsConnection && (
+                  <TooltipContent>
+                    <Trans>
+                      Generating examples needs an internet connection.
+                    </Trans>
                   </TooltipContent>
                 )}
               </Tooltip>

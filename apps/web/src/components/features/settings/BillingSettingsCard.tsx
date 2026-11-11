@@ -14,17 +14,13 @@ import { authClient } from "@/lib/auth-client";
 
 export const BillingSettingsCard = () => {
   const { t } = useLingui();
-  const { data: userData } = authClient.useSession();
-  const { isFreeUser } = useUserPlan();
+  const { planStatus, isProUser, isFreeUser } = useUserPlan();
 
-  const getLocalizedPlanName = (
-    plan: NonNullable<typeof userData>["user"]["plan"]
-  ) => {
-    if (plan === "pro" && !isFreeUser) {
-      return t`Pro`;
-    }
-
-    return t`Free`;
+  const getLocalizedPlanName = () => {
+    if (planStatus === "pro") return t`Pro`;
+    if (planStatus === "free") return t`Free`;
+    if (planStatus === "offline") return t`Unavailable offline`;
+    return "";
   };
 
   const handleManageSubscription = useCallback(async () => {
@@ -50,12 +46,10 @@ export const BillingSettingsCard = () => {
               <Trans>Current plan</Trans>
             </p>
 
-            <p className="font-semibold text-xl">
-              {getLocalizedPlanName(userData?.user.plan)}
-            </p>
+            <p className="font-semibold text-xl">{getLocalizedPlanName()}</p>
           </div>
 
-          {!isFreeUser && (
+          {isProUser && (
             <Button onClick={handleManageSubscription} variant="outline">
               <Trans>Manage Subscription</Trans>
             </Button>

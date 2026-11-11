@@ -18,7 +18,7 @@ type FormData = z.infer<typeof FormSchema>;
 
 export const ExamplesSection = () => {
   const colors = useThemeColors();
-  const { isProUser, isFreeUser } = useUserPlan();
+  const { isProUser, isFreeUser, needsConnection } = useUserPlan();
   const [isGenerating, setIsGenerating] = useState(false);
   const { control, getValues, watch } = useFormContext<FormData>();
 
@@ -163,6 +163,13 @@ export const ExamplesSection = () => {
                 <View className="rounded bg-primary/10 px-1 py-0.5">
                   <Text className="font-bold text-[9px] text-primary tracking-wider">
                     PRO
+                  </Text>
+                </View>
+              )}
+              {needsConnection && (
+                <View className="rounded bg-primary/10 px-1 py-0.5">
+                  <Text className="font-bold text-[9px] text-primary uppercase tracking-wider">
+                    <Trans>Offline</Trans>
                   </Text>
                 </View>
               )}

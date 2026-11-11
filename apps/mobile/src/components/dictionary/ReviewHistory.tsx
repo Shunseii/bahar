@@ -7,7 +7,7 @@ import {
 import { plural, t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Lock, RotateCcw, Timer } from "lucide-react-native";
+import { RotateCcw, Timer, WifiOff } from "lucide-react-native";
 import type { FC } from "react";
 import { Alert, Text, View } from "react-native";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -351,18 +351,21 @@ export const ReverseToggle: FC<{ entryId: string }> = ({ entryId }) => {
 };
 
 export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
-  const { isProUser } = useUserPlan();
+  const { needsConnection } = useUserPlan();
   const colors = useThemeColors();
   const { i18n } = useLingui();
 
-  const { data: revlogData } = useQuery({
+  // Review history lives in the central API database, not the local replica,
+  // so it is the one part of this card that needs the server.
+  const { data: revlogData, isError } = useQuery({
     queryFn: async () => {
       const { data, error } = await api.stats.revlogs.entry({ entryId }).get();
       if (error) throw error;
       return data;
     },
     queryKey: ["stats.revlogs.entry", entryId],
-    enabled: isProUser,
+    enabled: !needsConnection,
+    retry: false,
   });
 
   const { data: flashcardData } = useQuery({
@@ -377,19 +380,17 @@ export const ReviewHistory: FC<{ entryId: string }> = ({ entryId }) => {
     (f) => f.direction === "reverse"
   );
 
-  if (!isProUser) {
+  if (needsConnection || (isError && !revlogData)) {
     return (
       <View className="gap-3 border-border/50 border-t pt-3">
         <View className="flex-row items-center gap-1.5">
           <Text className="font-medium text-muted-foreground/70 text-xs uppercase tracking-wide">
             <Trans>Review History</Trans>
           </Text>
-          <Lock color={colors.mutedForeground} size={12} />
+          <WifiOff color={colors.mutedForeground} size={12} />
         </View>
         <Text className="text-muted-foreground text-xs">
-          <Trans>
-            Upgrade to Pro to see your review history for this word.
-          </Trans>
+          <Trans>Review history needs an internet connection.</Trans>
         </Text>
         <NextReviewSection
           forwardFlashcard={forwardFlashcard}

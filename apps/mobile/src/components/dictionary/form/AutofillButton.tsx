@@ -15,7 +15,7 @@ type FormData = z.infer<typeof FormSchema>;
 
 export const AutofillButton = () => {
   const colors = useThemeColors();
-  const { isProUser } = useUserPlan();
+  const { isProUser, isFreeUser, needsConnection } = useUserPlan();
   const [isLoading, setIsLoading] = useState(false);
   const { setValue: setFieldValue, watch } = useFormContext<FormData>();
 
@@ -143,10 +143,19 @@ export const AutofillButton = () => {
         <Text className="font-medium text-primary-foreground text-sm">
           {isLoading ? <Trans>Generating...</Trans> : <Trans>Autofill</Trans>}
         </Text>
-        {!isProUser && (
+        {isFreeUser && (
           <View className="rounded bg-white/20 px-1.5 py-0.5">
             <Text className="font-bold text-[10px] text-white uppercase">
               Pro
+            </Text>
+          </View>
+        )}
+        {/* Offline the plan is unknown, and autofill needs the server either
+            way, so say that rather than asking a possible Pro user to pay. */}
+        {needsConnection && (
+          <View className="rounded bg-white/20 px-1.5 py-0.5">
+            <Text className="font-bold text-[10px] text-white uppercase">
+              <Trans>Offline</Trans>
             </Text>
           </View>
         )}

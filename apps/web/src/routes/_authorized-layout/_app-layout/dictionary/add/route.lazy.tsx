@@ -104,7 +104,7 @@ const BackButton = () => {
 
 const Add = () => {
   const { addDictionaryEntry } = useAddDictionaryEntry();
-  const { isProUser } = useUserPlan();
+  const { isProUser, isFreeUser, needsConnection } = useUserPlan();
   const [createMultiple, setCreateMultiple] = useAtom(createMultipleAtom);
   const navigate = useNavigate();
   const shouldNavigateRef = useRef(false);
@@ -373,7 +373,11 @@ const Add = () => {
                     </span>
                   </TooltipTrigger>
 
-                  {!isProUser ? (
+                  {needsConnection ? (
+                    <TooltipContent>
+                      <Trans>AI autofill needs an internet connection.</Trans>
+                    </TooltipContent>
+                  ) : isFreeUser ? (
                     <TooltipContent>
                       <Trans>Upgrade to Pro to use AI autofill.</Trans>
                     </TooltipContent>
@@ -428,7 +432,11 @@ const Add = () => {
                 </span>
               </TooltipTrigger>
 
-              {!isProUser ? (
+              {needsConnection ? (
+                <TooltipContent>
+                  <Trans>AI autofill needs an internet connection.</Trans>
+                </TooltipContent>
+              ) : isFreeUser ? (
                 <TooltipContent>
                   <Trans>Upgrade to Pro to use AI autofill.</Trans>
                 </TooltipContent>

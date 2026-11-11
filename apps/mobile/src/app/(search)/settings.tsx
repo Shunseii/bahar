@@ -139,9 +139,16 @@ const SelectOptions: React.FC<SelectOptionProps> = ({
 const BillingCard = () => {
   const colors = useThemeColors();
   const { t } = useLingui();
-  const { isFreeUser } = useUserPlan();
+  const { planStatus } = useUserPlan();
 
-  const planName = !isFreeUser ? t`Pro` : t`Free`;
+  const planName =
+    planStatus === "pro"
+      ? t`Pro`
+      : planStatus === "free"
+        ? t`Free`
+        : planStatus === "offline"
+          ? t`Unavailable offline`
+          : "";
 
   return (
     <Card>
