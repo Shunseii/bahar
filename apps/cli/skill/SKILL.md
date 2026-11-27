@@ -59,11 +59,13 @@ bahar login
 ```
 
 Opens the user's browser to sign in to their Bahar account, then stores a personal API
-key locally (`~/.config/bahar/credentials.json`, or the platform equivalent). Only needs
-to be run again if the user explicitly logs out or the key expires (keys minted this way
-last 7 days). For an agent that runs unattended, the user can create a longer-lived or
-non-expiring key in the web app under **Settings → API keys** and put it in
-`credentials.json` instead — a non-expiring key stays valid until it's revoked there.
+key in the OS keychain. Where there is no keychain (SSH sessions, containers, CI), it
+falls back to `~/.config/bahar/credentials.json` (or the platform equivalent), readable
+only by the user. Only needs to be run again if the user explicitly logs out or the key
+expires (keys minted this way last 7 days). For an agent that runs unattended, the user
+can create a longer-lived or non-expiring key in the web app under **Settings → API
+keys** and set it as `BAHAR_TOKEN`, which takes precedence over the stored key — a
+non-expiring key stays valid until it's revoked there.
 
 ## Step 2 — get connection info
 
