@@ -23,6 +23,7 @@ export const dictionarySchema = {
   definition: "string",
   type: "enum",
   root: "string[]",
+  root_key: "enum",
   tags: "enum[]",
   "morphology.ism.singular": "string",
   "morphology.ism.plurals": "string[]",
@@ -70,6 +71,7 @@ export interface DictionaryDocument {
   definition?: string;
   type?: string;
   root?: string[];
+  root_key?: string;
   tags?: string[];
   morphology?: IndexedMorphology;
   antonyms?: Antonym[];

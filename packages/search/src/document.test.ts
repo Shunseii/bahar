@@ -27,6 +27,15 @@ describe("toOramaDocument", () => {
     expect(doc.word_exact).toBe("كِتَاب");
   });
 
+  it("keys the root so entries sharing it can be found together", () => {
+    const doc = toOramaDocument({
+      entry: { ...baseEntry, root: ["ك", "ت", "ب"] },
+    });
+
+    expect(doc.root_key).toBe("كتب");
+    expect(toOramaDocument({ entry: baseEntry }).root_key).toBeUndefined();
+  });
+
   it("coalesces nulls to undefined", () => {
     const doc = toOramaDocument({ entry: baseEntry });
 

@@ -3,6 +3,7 @@
  */
 
 import type { SelectDictionaryEntry } from "@bahar/drizzle-user-db-schemas";
+import { rootKey } from "./root";
 import type { DictionaryDocument } from "./schema";
 
 /**
@@ -42,6 +43,7 @@ export const toOramaDocument = ({
     definition: entry.definition ?? undefined,
     type: entry.type ?? undefined,
     root: entry.root ?? undefined,
+    root_key: entry.root?.length ? rootKey(entry.root) : undefined,
     tags: entry.tags ?? undefined,
     antonyms: entry.antonyms ?? undefined,
     examples: entry.examples ?? undefined,

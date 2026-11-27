@@ -40,6 +40,40 @@ export const englishTokenizer = defaultTokenizer.createTokenizer({
   stemmerSkipProperties: ["tags"],
 });
 
+const DEFINITE_ARTICLE_PREFIX = /^(وال|بال|كال|فال|لل|ال)/;
+
+/**
+ * Removes a leading definite article (with an attached و/ب/ك/ف/ل) unless that
+ * would leave fewer than two letters, e.g. "البيان" → "بيان".
+ */
+export const stripDefiniteArticle = (word: string): string => {
+  const stripped = word.replace(DEFINITE_ARTICLE_PREFIX, "");
+  return stripped.length >= 2 ? stripped : word;
+};
+
+/**
+ * The Arabic stemmer strips root letters as affixes (بيان → يان, البيان → الب),
+ * so a stem alone often fails to match the same word with ال. Indexing the
+ * unstemmed word and its article-less form alongside the stems keeps those
+ * matches, and an exact word then matches more tokens and ranks higher.
+ */
+const withSurfaceForms = ({
+  stems,
+  normalizedRaw,
+  prop,
+}: {
+  stems: string[];
+  normalizedRaw: string;
+  prop?: string;
+}): string[] => {
+  const words = arabicExactTokenizer.tokenize(normalizedRaw, "arabic", prop);
+  const surfaceForms = words.flatMap((word) => {
+    const bare = stripDefiniteArticle(word);
+    return [word, bare, ...arabicTokenizer.tokenize(bare, "arabic", prop)];
+  });
+  return [...new Set([...stems, ...surfaceForms])];
+};
+
 /**
  * Properties that should use English tokenization
  */
@@ -64,11 +98,19 @@ export const multiLanguageTokenizer = {
     const normalizedRaw = normalizeArabicForSearch(raw);
 
     if (prop && !language && !ENGLISH_PROPS.includes(prop)) {
-      return arabicTokenizer.tokenize(normalizedRaw, "arabic", prop);
+      return withSurfaceForms({
+        stems: arabicTokenizer.tokenize(normalizedRaw, "arabic", prop),
+        normalizedRaw,
+        prop,
+      });
     }
 
     if (language === "arabic") {
-      return arabicTokenizer.tokenize(normalizedRaw, language, prop);
+      return withSurfaceForms({
+        stems: arabicTokenizer.tokenize(normalizedRaw, language, prop),
+        normalizedRaw,
+        prop,
+      });
     }
 
     return englishTokenizer.tokenize(raw, language, prop);

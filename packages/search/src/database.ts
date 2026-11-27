@@ -16,6 +16,8 @@ import {
 } from "@orama/orama";
 import { pluginQPS } from "@orama/plugin-qps";
 import { normalizeArabicForSearch, stripArabicDiacritics } from "./arabic";
+import { rankByVisibleMatch } from "./rank";
+import { guessRootKeys } from "./root";
 import {
   type DictionaryDocument,
   type DictionaryOrama,
@@ -163,6 +165,13 @@ export const BOOST = {
 
 export type SearchLanguage = "arabic" | "english";
 
+const RERANK_WINDOW = 40;
+
+const uniqueById = <Hit extends { id: string }>(hits: Hit[]): Hit[] => {
+  const seen = new Set<string>();
+  return hits.filter((hit) => !seen.has(hit.id) && Boolean(seen.add(hit.id)));
+};
+
 export type SearchDictionaryOptions = {
   limit?: number;
   offset?: number;
@@ -173,8 +182,10 @@ export type SearchDictionaryOptions = {
 };
 
 /**
- * Searches the Orama database using two-pass search for better relevance.
- * Results are merged with exact matches prioritized.
+ * Searches the Orama database in three passes: stemmed, fuzzy, and entries
+ * sharing a root guessed from an Arabic query. Without an explicit sort, the
+ * top of the merged results is reordered so a match on the visible word comes
+ * first (see rankByVisibleMatch).
  */
 export const searchDictionary = (
   db: DictionaryOrama,
@@ -213,8 +224,9 @@ export const searchDictionary = (
       : [stripArabicDiacritics(term)];
   const stemmedLen = Math.max(...stemmedTokens.map((t) => t.length), 1);
 
-  // Fetch enough results to cover offset + limit for proper pagination
-  const fetchLimit = offset + limit;
+  // Fetch at least a rerank window so an exact match that Orama scored a few
+  // places down is still there to move to the top.
+  const fetchLimit = Math.max(offset + limit, RERANK_WINDOW);
 
   // Pass 1: Stemmed exact match (tolerance=0 instead of exact:true,
   // because exact:true bypasses stemming on the query and never matches
@@ -250,14 +262,53 @@ export const searchDictionary = (
     language
   ) as SearchResults;
 
-  // Merge results: exact matches first, then fuzzy (deduplicated)
-  const exactIds = new Set(exactResults.hits.map((h) => h.id));
+  // Pass 3: entries whose stored root matches a root guessed from the query,
+  // so تجريب finds جرّب even when no form of it is listed on the entry.
+  const rootKeys = language === "arabic" ? guessRootKeys(term) : [];
+  const rootResults: SearchResults | undefined = rootKeys.length
+    ? (search(
+        db,
+        {
+          term: "",
+          limit: fetchLimit,
+          where: { ...options?.where, root_key: { in: rootKeys } },
+          sortBy: options?.sortBy,
+        },
+        language
+      ) as SearchResults)
+    : undefined;
+
+  const passes = [
+    exactResults.hits,
+    fuzzyResults.hits,
+    rootResults?.hits ?? [],
+  ];
+
+  // An explicit sort order wins over relevance, so only rerank without one.
+  // The rerank covers a fixed window from the top of each pass, which doesn't
+  // change as offset grows, so pages stay consistent while scrolling.
+  const reranked = options?.sortBy
+    ? []
+    : rankByVisibleMatch({
+        hits: uniqueById(
+          passes.flatMap((hits) => hits.slice(0, RERANK_WINDOW))
+        ),
+        term,
+        language,
+      });
+  const rerankedIds = new Set(reranked.map((hit) => hit.id));
   const mergedHits = [
-    ...exactResults.hits,
-    ...fuzzyResults.hits.filter((h) => !exactIds.has(h.id)),
+    ...reranked,
+    ...uniqueById(passes.flat()).filter((hit) => !rerankedIds.has(hit.id)),
   ].slice(offset, offset + limit);
 
-  const estimatedCount = Math.max(exactResults.count, fuzzyResults.count);
+  // The passes overlap, so this is the largest pass rather than their union.
+  // The union can't exceed the passes added together (3 × this estimate).
+  const estimatedCount = Math.max(
+    exactResults.count,
+    fuzzyResults.count,
+    rootResults?.count ?? 0
+  );
 
   return {
     elapsed: exactResults.elapsed,

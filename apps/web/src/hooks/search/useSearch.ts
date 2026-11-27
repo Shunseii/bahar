@@ -293,11 +293,11 @@ export const useInfiniteScroll = (
         term: params.term,
         where: whereFilter,
         offset: 0,
-        // searchDictionary reports count as max(exact, fuzzy) but returns their
-        // union, so a limit of count truncates whenever the two passes match
-        // different entries. The union can't exceed the two passes added together,
-        // which is bounded by twice the estimate.
-        limit: total * 2,
+        // searchDictionary reports count as its largest pass but returns the
+        // union of all three, so a limit of count truncates whenever the passes
+        // match different entries. The union can't exceed the three passes added
+        // together, which is bounded by three times the estimate.
+        limit: total * 3,
       },
       searchQueryLanguage
     );
