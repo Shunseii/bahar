@@ -157,3 +157,24 @@ describe("searchDictionary ranking", () => {
     expect(paged).toEqual(ids("stone", "english", 60));
   });
 });
+
+describe("searchDictionary on a sparse dictionary", () => {
+  it("searches when no entry fills some searched fields", async () => {
+    const sparseDb = createDictionaryDatabase();
+    await insertDocuments(sparseDb, [
+      toOramaDocument({
+        entry: entry({ id: "kitab", word: "كتاب", translation: "book" }),
+      }),
+    ]);
+
+    for (const [term, language] of [
+      ["كتاب", "arabic"],
+      ["book", "english"],
+    ] as const) {
+      const results = searchDictionary(sparseDb, term, {
+        language,
+      }) as Results<InternalTypedDocument<DictionaryDocument>>;
+      expect(results.hits.map((hit) => hit.id)).toEqual(["kitab"]);
+    }
+  });
+});
