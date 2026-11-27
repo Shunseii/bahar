@@ -1,6 +1,5 @@
-import { chmod } from "node:fs/promises";
 import { join } from "node:path";
-import { configDir } from "./credentials";
+import { configDir, writePrivateFile } from "./credentials";
 
 /**
  * Connection info for the user's personal Turso database, as returned by the
@@ -75,13 +74,11 @@ export const loadDbInfoCache = async (): Promise<UserDatabaseInfo | null> => {
 export const saveDbInfoCache = async (
   info: UserDatabaseInfo
 ): Promise<void> => {
-  const path = cachePath();
-  await Bun.write(path, JSON.stringify(info, null, 2));
-
-  if (process.platform !== "win32") {
-    // The cache holds a live DB access token -- lock it down like credentials.
-    await chmod(path, 0o600);
-  }
+  // The cache holds a live DB access token -- lock it down like credentials.
+  await writePrivateFile({
+    path: cachePath(),
+    contents: JSON.stringify(info, null, 2),
+  });
 };
 
 /**
