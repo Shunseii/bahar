@@ -113,6 +113,7 @@ jobs:
           MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
           MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
         run: |
+          umask 077
           keychain="$RUNNER_TEMP/signing.keychain-db"
           keychain_password="$(openssl rand -base64 24)"
 
@@ -149,8 +150,14 @@ jobs:
             codesign --verify --strict --verbose=2 "$binary"
           done
 
-          # The runner is Apple silicon; a crash here means missing entitlements.
-          dist/bahar-darwin-arm64 version
+          # Drop the signing key before running anything we built, so a
+          # compromised dependency can't use the unlocked keychain.
+          security delete-keychain "$SIGNING_KEYCHAIN"
+          echo "SIGNING_KEYCHAIN=" >> "$GITHUB_ENV"
+
+      - name: Check the signed binary launches
+        # The runner is Apple silicon; a crash here means missing entitlements.
+        run: dist/bahar-darwin-arm64 version
 
       - name: Notarize binaries
         env:
@@ -158,6 +165,7 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
         run: |
+          umask 077
           key_path="$RUNNER_TEMP/AuthKey.p8"
           printf '%s\n' "$ASC_KEY_P8" > "$key_path"
 
