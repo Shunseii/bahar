@@ -8,6 +8,11 @@ overrides:
   react: 19.1.0
   react-dom: 19.1.0
 
+patchedDependencies:
+  '@orama/plugin-qps@3.1.16':
+    hash: 67vigcfidn6d53ixpia6usve5m
+    path: patches/@orama__plugin-qps@3.1.16.patch
+
 importers:
 
   .:
@@ -278,7 +283,7 @@ importers:
         version: 3.1.16
       '@orama/plugin-qps':
         specifier: ^3.1.16
-        version: 3.1.16
+        version: 3.1.16(patch_hash=67vigcfidn6d53ixpia6usve5m)
       '@orama/stemmers':
         specifier: ^3.1.16
         version: 3.1.16
@@ -585,7 +590,7 @@ importers:
         version: 3.1.16
       '@orama/plugin-qps':
         specifier: ^3.1.16
-        version: 3.1.16
+        version: 3.1.16(patch_hash=67vigcfidn6d53ixpia6usve5m)
       '@orama/stemmers':
         specifier: ^3.1.16
         version: 3.1.16
@@ -923,7 +928,7 @@ importers:
         version: 3.1.16
       '@orama/plugin-qps':
         specifier: ^3.1.16
-        version: 3.1.16
+        version: 3.1.16(patch_hash=67vigcfidn6d53ixpia6usve5m)
       '@orama/stemmers':
         specifier: ^3.1.16
         version: 3.1.16
@@ -7874,10 +7879,11 @@ packages:
     resolution: {integrity: sha512-scSmQBD8eANlMUOglxHrN1JdSW8tDghsPuS83otqealBiIeMukCQMOf/wc0JJjDXomqwNdEQFLXLGHrU6PGxuA==}
     engines: {node: '>= 20.0.0'}
 
-  /@orama/plugin-qps@3.1.16:
+  /@orama/plugin-qps@3.1.16(patch_hash=67vigcfidn6d53ixpia6usve5m):
     resolution: {integrity: sha512-/CIhC7GIx4kFEju3pjey9C4Q6feIn+xIkLKk4O+OASAKaocvygs4Q1A004utsQT+gFgD1va4309rDMV1SJ/1yA==}
     dependencies:
       '@orama/orama': 3.1.16
+    patched: true
 
   /@orama/stemmers@3.1.16:
     resolution: {integrity: sha512-DdkAkhDvWD12HZez+kniLxRK4hxf1f1y+7OHxv47HIdZPYUx1Y+7Z7dX/8nM7+jrq7sa7M0wLCYOpdhVXOYEBg==}

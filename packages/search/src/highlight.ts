@@ -1,103 +1,76 @@
 /**
- * Arabic-aware text highlighting for search results
+ * Highlights what the user typed, literally: a word is marked when it starts
+ * with a query word once harakat are stripped and hamza unified, with a leading
+ * ال (or وال/بال/كال/فال/لل) optional on either side. English words also match
+ * on their stem, so "arrives" marks "arrive".
+ *
+ * Whole words only. Splitting an Arabic word across spans breaks letter joining
+ * and can drop harakat at the span edge, so a match marks the entire word.
+ *
+ * Results found another way (a plural, a typo, a shared root) get no highlight.
  */
 
 import { normalizeArabicForSearch } from "./arabic";
-
-/** Regex for Arabic diacritics (harakat) and tatweel */
-const DIACRITICS_REGEX = /[\u064B-\u0652\u0640]/;
+import { englishTokenizer, stripDefiniteArticle } from "./tokenizer";
 
 interface HighlightOptions {
   HTMLTag?: string;
   CSSClass?: string;
 }
 
-/**
- * Creates a mapping from normalized text positions to original text positions.
- * Only diacritics are skipped (not counted as positions).
- */
-const buildPositionMap = (original: string): number[] => {
-  const map: number[] = [];
+type Range = { start: number; end: number };
 
-  for (let i = 0; i < original.length; i++) {
-    if (!DIACRITICS_REGEX.test(original[i])) {
-      map.push(i);
-    }
+const WORD = /[\p{L}\p{M}]+/gu;
+const ARABIC_LETTER = /[؀-ۿ]/;
+
+const normalize = (word: string) =>
+  normalizeArabicForSearch(word).toLowerCase();
+
+const englishStem = (word: string) =>
+  englishTokenizer.tokenize(word, "english", "translation")[0] ?? word;
+
+const wordMatchesQueryWord = ({
+  word,
+  queryWord,
+}: {
+  word: string;
+  queryWord: string;
+}): boolean => {
+  const text = normalize(word);
+  const query = normalize(queryWord);
+
+  if (text.startsWith(query)) return true;
+  if (ARABIC_LETTER.test(queryWord)) {
+    return stripDefiniteArticle(text).startsWith(stripDefiniteArticle(query));
   }
-
-  return map;
+  return englishStem(text) === englishStem(query);
 };
 
 /**
- * Maps normalized-text match positions back to original-text positions,
- * including any trailing diacritics.
- */
-const mapToOriginalPositions = (
-  matches: Array<{ start: number; end: number }>,
-  positionMap: number[],
-  originalText: string
-): Array<{ start: number; end: number }> => {
-  return matches.map(({ start, end }) => {
-    const originalStart = positionMap[start];
-    const lastCharOriginalPos = positionMap[end - 1];
-
-    let originalEnd = lastCharOriginalPos + 1;
-    while (
-      originalEnd < originalText.length &&
-      DIACRITICS_REGEX.test(originalText[originalEnd])
-    ) {
-      originalEnd++;
-    }
-
-    return { start: originalStart, end: originalEnd };
-  });
-};
-
-/**
- * Finds highlight match positions in text using Arabic-aware normalization.
- * Returns an array of { start, end } positions in the original text.
- * This is the platform-agnostic core — use it to build highlighting
- * for any rendering target (HTML, React Native Text, etc.).
+ * Finds highlight ranges (whole words) in the original text.
+ * Platform-agnostic core for HTML and React Native rendering.
  */
 export const findHighlightPositions = (
   text: string,
   searchTerm: string
-): Array<{ start: number; end: number }> => {
-  if (!searchTerm.trim()) return [];
+): Range[] => {
+  const queryWords = searchTerm.match(WORD) ?? [];
+  if (queryWords.length === 0) return [];
 
-  const normalizedText = normalizeArabicForSearch(text);
-  const normalizedTerm = normalizeArabicForSearch(searchTerm);
-  const positionMap = buildPositionMap(text);
-
-  const regex = new RegExp(escapeRegExp(normalizedTerm), "gi");
-  const matches: Array<{ start: number; end: number }> = [];
-
-  for (
-    let match = regex.exec(normalizedText);
-    match !== null;
-    match = regex.exec(normalizedText)
-  ) {
-    matches.push({ start: match.index, end: match.index + match[0].length });
+  const ranges: Range[] = [];
+  for (const match of text.matchAll(WORD)) {
+    const word = match[0];
+    if (
+      queryWords.some((queryWord) => wordMatchesQueryWord({ word, queryWord }))
+    ) {
+      ranges.push({ start: match.index, end: match.index + word.length });
+    }
   }
-
-  if (matches.length === 0) return [];
-
-  return mapToOriginalPositions(matches, positionMap, text);
+  return ranges;
 };
 
 /**
- * Escapes special regex characters in a string.
- */
-const escapeRegExp = (string: string): string => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-};
-
-/**
- * Highlights text matches with Arabic-aware normalization.
- * Mimics Meilisearch's behavior:
- * - Ignores diacritics (harakat): "كتاب" matches "كِتَابٌ"
- * - Normalizes hamza: "هيأة" matches "هيئة"
- * - Normalizes weak letters: "عميرة" matches "عمارة"
+ * Wraps matching words in an HTML tag (default <mark>).
  */
 export const highlightWithDiacritics = (
   text: string,
@@ -105,52 +78,16 @@ export const highlightWithDiacritics = (
   options: HighlightOptions = {}
 ): string => {
   const { HTMLTag = "mark", CSSClass = "" } = options;
+  const ranges = findHighlightPositions(text, searchTerm);
+  if (ranges.length === 0) return text;
 
-  if (!searchTerm.trim()) {
-    return text;
-  }
-
-  const normalizedText = normalizeArabicForSearch(text);
-  const normalizedTerm = normalizeArabicForSearch(searchTerm);
-  const positionMap = buildPositionMap(text);
-
-  // Find all matches in the normalized text (case-insensitive)
-  const regex = new RegExp(escapeRegExp(normalizedTerm), "gi");
-  const matches: Array<{ start: number; end: number }> = [];
-
-  for (
-    let match = regex.exec(normalizedText);
-    match !== null;
-    match = regex.exec(normalizedText)
-  ) {
-    matches.push({
-      start: match.index,
-      end: match.index + match[0].length,
-    });
-  }
-
-  if (matches.length === 0) {
-    return text;
-  }
-
-  // Map normalized positions back to original positions
-  const originalMatches = mapToOriginalPositions(matches, positionMap, text);
-
-  // Build the highlighted string
   const classAttr = CSSClass ? ` class="${CSSClass}"` : "";
-  const openTag = `<${HTMLTag}${classAttr}>`;
-  const closeTag = `</${HTMLTag}>`;
-
   let result = "";
   let lastEnd = 0;
-
-  for (const { start, end } of originalMatches) {
+  for (const { start, end } of ranges) {
     result += text.slice(lastEnd, start);
-    result += openTag + text.slice(start, end) + closeTag;
+    result += `<${HTMLTag}${classAttr}>${text.slice(start, end)}</${HTMLTag}>`;
     lastEnd = end;
   }
-
-  result += text.slice(lastEnd);
-
-  return result;
+  return result + text.slice(lastEnd);
 };
