@@ -108,7 +108,5 @@ make delete-local-data               # Delete local databases
 
 ## AI Assistance Policy
 
-- Do not implement large features or big chunks of code autonomously. Default to spotting bugs and suggesting improvements, not writing the fix, unless explicitly asked to fix it.
-- Small, scoped code changes are fine when the user asks for them directly.
 - Any code written must strictly follow existing patterns in the surrounding codebase — no new abstractions, libraries, or conventions introduced on your own initiative.
 - Prioritize testing. If you notice meaningful missing test coverage, flag it or write it.
